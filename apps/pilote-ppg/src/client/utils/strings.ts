@@ -28,3 +28,9 @@ export function commenceParUneVoyelle(chaîneDeCaractères: string) {
     normaliserChaîneDeCaractères(chaîneDeCaractères).charAt(0),
   );
 }
+
+export const pluriel = (
+  nombre: number,
+  singulier: string,
+  plurielLibelle: string,
+) => `${nombre} ${nombre > 1 ? plurielLibelle : singulier}`;

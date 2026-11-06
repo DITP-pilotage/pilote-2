@@ -1,5 +1,6 @@
 import { formaterDate } from "@/client/utils/date/date";
-import type { DetailIndicateursACompleter } from "@/server/albert/tools/getIndicateursACompleter";
+import { pluriel } from "@/client/utils/strings";
+import type { DetailIndicateursACompleter } from "@/server/albert/tools/sortieIndicateursACompleter";
 import type {
   LigneACompleter,
   LibelleMotif,
@@ -30,6 +31,57 @@ export const libelleIndicateur = (ligne: LigneDetail) =>
 
 export const libelleTerritoire = (ligne: LigneDetail) =>
   ligne.territoire_nom_affiche ?? ligne.territoire_nom ?? ligne.territoire_code;
+
+const nombreDistincts = (
+  lignes: LigneDetail[],
+  cle: (ligne: LigneDetail) => string,
+) => new Set(lignes.map(cle)).size;
+
+/** Le libellé d'une ligne de groupe : des nombres distincts, jamais de somme entre motifs ou mailles. */
+export const libelleGroupe = ({
+  colonne,
+  lignes,
+  avecChantier,
+}: {
+  colonne: string;
+  lignes: LigneDetail[];
+  avecChantier: boolean;
+}): { libelle: string; details: string[] } => {
+  const [premiere] = lignes;
+  const indicateurs = pluriel(
+    nombreDistincts(lignes, (ligne) => ligne.indicateur_id),
+    "indicateur",
+    "indicateurs",
+  );
+  const territoires = pluriel(
+    nombreDistincts(lignes, (ligne) => ligne.territoire_code),
+    "territoire",
+    "territoires",
+  );
+  const chantiers = pluriel(
+    nombreDistincts(lignes, (ligne) => ligne.chantier_id),
+    "chantier",
+    "chantiers",
+  );
+  if (colonne === "chantier")
+    return {
+      libelle: libelleChantier(premiere),
+      details: [indicateurs, territoires],
+    };
+  if (colonne === "indicateur")
+    return {
+      libelle: libelleIndicateur(premiere),
+      details: avecChantier
+        ? [premiere.chantier_id, territoires]
+        : [territoires],
+    };
+  if (colonne === "territoire")
+    return {
+      libelle: libelleTerritoire(premiere),
+      details: [indicateurs, chantiers],
+    };
+  return { libelle: premiere.motif, details: [indicateurs, territoires] };
+};
 
 export type ColonneDetail = {
   id: string;

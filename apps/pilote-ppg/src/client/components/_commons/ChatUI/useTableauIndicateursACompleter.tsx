@@ -9,30 +9,22 @@ import {
   tableFeatures,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import { Badge, type BadgeVariant } from "@/components/shared/Badge";
+import { filtreTerritoires } from "@/client/utils/territoire/filtreTerritoires";
+import { CelluleIndicateursACompleter } from "@/components/_commons/ChatUI/CelluleIndicateursACompleter";
 import {
-  type ColonneDetail,
   colonnesDetail,
   libelleChantier,
-  libelleIndicateur,
   libelleTerritoire,
   lignesDetail,
   type LigneDetail,
 } from "@/components/_commons/ChatUI/detailIndicateursACompleter";
 import { createDataTableHook } from "@/components/shared/DataTable/createDataTableHook";
 import { filterFnOneOf } from "@/components/shared/DataTable/filterFns";
-import type { FilterDescriptor } from "@/components/shared/DataTable/types";
-import type { DetailIndicateursACompleter } from "@/server/albert/tools/getIndicateursACompleter";
 import type {
-  LibelleMaille,
-  LibelleMotif,
-} from "@/server/albert/tools/indicateursACompleter";
-
-const VARIANTES_MOTIF: Record<LibelleMotif, BadgeVariant> = {
-  "VA non à jour": "warning",
-  "VI manquante": "info",
-  "VC manquante": "default",
-};
+  FilterDescriptor,
+  FilterOption,
+} from "@/components/shared/DataTable/types";
+import type { DetailIndicateursACompleter } from "@/server/albert/tools/sortieIndicateursACompleter";
 
 const tableauIndicateursACompleter = createDataTableHook(
   tableFeatures({
@@ -80,110 +72,23 @@ const champsRecherche = (ligne: LigneDetail) => [
   ligne.territoire_nom ?? "",
 ];
 
-export const pluriel = (
-  nombre: number,
-  singulier: string,
-  plurielLibelle: string,
-) => `${nombre} ${nombre > 1 ? plurielLibelle : singulier}`;
-
-const nombreDistincts = (
-  lignes: LigneDetail[],
-  cle: (ligne: LigneDetail) => string,
-) => new Set(lignes.map(cle)).size;
-
-/** Le libellé d'une ligne de groupe : des nombres distincts, jamais de somme entre motifs ou mailles. */
-export const libelleGroupe = ({
-  colonne,
-  lignes,
-  avecChantier,
-}: {
-  colonne: string;
-  lignes: LigneDetail[];
-  avecChantier: boolean;
-}): { libelle: string; details: string[] } => {
-  const [premiere] = lignes;
-  const indicateurs = pluriel(
-    nombreDistincts(lignes, (ligne) => ligne.indicateur_id),
-    "indicateur",
-    "indicateurs",
-  );
-  const territoires = pluriel(
-    nombreDistincts(lignes, (ligne) => ligne.territoire_code),
-    "territoire",
-    "territoires",
-  );
-  const chantiers = pluriel(
-    nombreDistincts(lignes, (ligne) => ligne.chantier_id),
-    "chantier",
-    "chantiers",
-  );
-  if (colonne === "chantier")
-    return {
-      libelle: libelleChantier(premiere),
-      details: [indicateurs, territoires],
-    };
-  if (colonne === "indicateur")
-    return {
-      libelle: libelleIndicateur(premiere),
-      details: avecChantier
-        ? [premiere.chantier_id, territoires]
-        : [territoires],
-    };
-  if (colonne === "territoire")
-    return {
-      libelle: libelleTerritoire(premiere),
-      details: [indicateurs, chantiers],
-    };
-  return { libelle: premiere.motif, details: [indicateurs, territoires] };
-};
-
-const optionsDistinctes = (valeurs: { value: string; label: string }[]) => [
+const optionsDistinctes = (valeurs: FilterOption[]) => [
   ...new Map(valeurs.map((option) => [option.value, option])).values(),
 ];
 
 const filtre = (
   label: string,
-  options: { value: string; label: string }[],
-): FilterDescriptor | undefined =>
-  options.length > 1 ? { type: "multiselect", label, options } : undefined;
-
-const MAILLES_ORDONNEES: LibelleMaille[] = [
-  "nationale",
-  "régionale",
-  "départementale",
-];
-
-const GROUPES_MAILLE: Record<LibelleMaille, string> = {
-  nationale: "National",
-  régionale: "Régions",
-  départementale: "Départements",
-};
-
-const filtreTerritoires = (
-  lignes: LigneDetail[],
-): FilterDescriptor | undefined => {
-  const options = optionsDistinctes(
-    lignes.map((ligne) => ({
-      value: ligne.territoire_code,
-      label: libelleTerritoire(ligne),
-    })),
-  ).sort((gauche, droite) => gauche.label.localeCompare(droite.label, "fr"));
-  if (options.length <= 1) return undefined;
-  const mailleParCode = new Map(
-    lignes.map((ligne) => [ligne.territoire_code, ligne.maille]),
-  );
-  return {
-    type: "multiselect",
-    label: "Territoire",
+  {
     options,
-    groups: MAILLES_ORDONNEES.map((maille) => ({
-      label: GROUPES_MAILLE[maille],
-      values: options
-        .filter((option) => mailleParCode.get(option.value) === maille)
-        .map((option) => option.value),
-    })).filter((groupe) => groupe.values.length > 0),
-  };
-};
+    groups,
+  }: {
+    options: FilterOption[];
+    groups?: { label: string; values: string[] }[];
+  },
+): FilterDescriptor | undefined =>
+  options.length > 1
+    ? { type: "multiselect", label, options, ...(groups && { groups }) }
+    : undefined;
 
 // Les autres colonnes passent à la ligne pour tenir dans la largeur du chat.
 const COLONNES_COURTES = [
@@ -201,43 +106,6 @@ const LARGEURS: Partial<Record<string, string>> = {
   derniere_vc_connue: "5.5rem",
 };
 
-const Cellule = ({
-  colonne,
-  ligne,
-}: {
-  colonne: ColonneDetail;
-  ligne: LigneDetail;
-}) => {
-  if (colonne.id === "motif")
-    return (
-      <Badge
-        className="normal-case"
-        size="sm"
-        variant={VARIANTES_MOTIF[ligne.motif]}
-      >
-        {ligne.motif}
-      </Badge>
-    );
-  // Le chantier n'a pas de colonne dans le tableau : son code précède l'indicateur.
-  if (colonne.id === "indicateur")
-    return (
-      <span
-        className="block truncate"
-        title={`${libelleChantier(ligne)} · ${libelleIndicateur(ligne)}`}
-      >
-        <span className="text-dsfr-mention-grey">{ligne.chantier_id}</span>{" "}
-        {libelleIndicateur(ligne)}
-      </span>
-    );
-  if (colonne.id === "territoire")
-    return (
-      <span className="block truncate" title={colonne.valeur(ligne)}>
-        {colonne.valeur(ligne)}
-      </span>
-    );
-  return colonne.valeur(ligne);
-};
-
 const columnHelper =
   tableauIndicateursACompleter.createColumnHelper<LigneDetail>();
 
@@ -250,29 +118,41 @@ const useColonnes = ({
 }) =>
   useMemo(() => {
     const filtres: Partial<Record<string, FilterDescriptor>> = {
-      chantier: filtre(
-        "Chantier",
-        optionsDistinctes(
+      chantier: filtre("Chantier", {
+        options: optionsDistinctes(
           lignes.map((ligne) => ({
             value: ligne.chantier_id,
             label: libelleChantier(ligne),
           })),
         ),
-      ),
-      territoire: filtreTerritoires(lignes),
-      motif: filtre(
-        "Motif",
-        optionsDistinctes(
-          lignes.map((ligne) => ({ value: ligne.motif, label: ligne.motif })),
+      }),
+      territoire: filtre(
+        "Territoire",
+        filtreTerritoires(
+          lignes.map((ligne) => ({
+            code: ligne.territoire_code,
+            libelle: libelleTerritoire(ligne),
+            maille: ligne.maille,
+          })),
         ),
       ),
+      motif: filtre("Motif", {
+        options: optionsDistinctes(
+          lignes.map((ligne) => ({ value: ligne.motif, label: ligne.motif })),
+        ),
+      }),
     };
     return columnHelper.columns(
       colonnesDetail({ motifs }).map((colonne) =>
         columnHelper.accessor(IDENTIFIANTS[colonne.id] ?? colonne.valeur, {
           id: colonne.id,
           header: colonne.titreCourt ?? colonne.titre,
-          cell: ({ row }) => <Cellule colonne={colonne} ligne={row.original} />,
+          cell: ({ row }) => (
+            <CelluleIndicateursACompleter
+              colonne={colonne}
+              ligne={row.original}
+            />
+          ),
           filterFn: filterFnOneOf,
           meta: {
             filter: filtres[colonne.id],
@@ -333,7 +213,3 @@ export const useTableauIndicateursACompleter = (
     avecChantierDansGroupe: regroupement === "indicateur" && plusieursChantiers,
   };
 };
-
-export type TableDetail = ReturnType<
-  typeof useTableauIndicateursACompleter
->["table"];

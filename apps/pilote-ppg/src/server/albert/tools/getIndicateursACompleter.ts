@@ -1,5 +1,5 @@
 import type { $Enums } from "@prisma/client";
-import { tool, type JSONValue, type ModelMessage } from "ai";
+import { tool, type ModelMessage } from "ai";
 import { z } from "zod";
 import { configuration } from "@/config";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
@@ -9,35 +9,31 @@ import type {
   ValeursRecherchees,
 } from "@/server/chantiers/infrastructure/queries/GetIndicateursSansViVcQuery";
 import type { GetIndicateursIdentiteQuery } from "@/server/chantiers/query/GetIndicateursIdentiteQuery";
-import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
+import type {
+  GetTerritoiresIdentiteQuery,
+  TerritoireIdentiteResult,
+} from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { ClarifyWithChoicesOutput } from "@/server/albert/tools/clarifyWithChoices";
 import {
   fusionnerLignes,
   MOTIFS_ORDER,
   versLigneACompleter,
-  type LigneACompleter,
   type Motif,
 } from "@/server/albert/tools/indicateursACompleter";
 import { doitDemanderPrecision } from "@/server/albert/tools/precisionTypeDeValeurs";
+import { resumerIndicateursACompleter } from "@/server/albert/tools/resumeIndicateursACompleter";
 import {
-  resumerIndicateursACompleter,
-  type ResumeIndicateursACompleter,
-} from "@/server/albert/tools/resumeIndicateursACompleter";
+  indicateursACompleterVersModele,
+  type GetIndicateursACompleterOutput,
+} from "@/server/albert/tools/sortieIndicateursACompleter";
 import {
   chantierIdsIndicateursSchema,
   CONSIGNE_ACCES_REFUSE,
   indicateurIdsSchema,
   perimetreIndicateursSchema,
   resoudreAccesIndicateurs,
-  type ChampsAcces,
 } from "@/server/albert/tools/socleValeursIndicateurs";
-
-const CONSIGNE_PRECISION =
-  "Les choix sont déjà affichés à l'utilisateur. N'appelle aucun autre outil, en particulier pas clarify_with_choices. Termine ta réponse par la seule phrase « Choisissez une option pour continuer. »";
-
-const CONSIGNE_TABLEAU =
-  "Le détail par territoire est affiché dans un tableau sous ta réponse. Termine ta réponse par une phrase qui y renvoie.";
 
 export const getIndicateursACompleterInputSchema = z.object({
   motifs: z
@@ -60,67 +56,6 @@ type GetIndicateursACompleterInput = z.infer<
   typeof getIndicateursACompleterInputSchema
 >;
 
-export type DetailIndicateursACompleter = {
-  motifs: Motif[];
-  jalon?: number;
-  perimetre: string;
-  lignes: LigneACompleter[];
-};
-
-type ClarificationRenvoyee = ChampsAcces & {
-  clarification: ClarifyWithChoicesOutput;
-};
-
-type DonneesRenvoyees = ChampsAcces & {
-  resume: ResumeIndicateursACompleter;
-  detail: DetailIndicateursACompleter;
-};
-
-export type GetIndicateursACompleterOutput =
-  ClarificationRenvoyee | DonneesRenvoyees | ChampsAcces;
-
-function estClarification(
-  output: GetIndicateursACompleterOutput,
-): output is ClarificationRenvoyee {
-  return "clarification" in output;
-}
-
-function contientDesDonnees(
-  output: GetIndicateursACompleterOutput,
-): output is DonneesRenvoyees {
-  return "resume" in output;
-}
-
-export function indicateursACompleterVersModele({
-  output,
-}: {
-  output: GetIndicateursACompleterOutput;
-}): { type: "json"; value: JSONValue } {
-  if (estClarification(output)) {
-    const { clarification: _clarification, ...champsAcces } = output;
-    return {
-      type: "json",
-      value: {
-        precision_demandee: true,
-        consigne: CONSIGNE_PRECISION,
-        ...champsAcces,
-      },
-    };
-  }
-  if (contientDesDonnees(output)) {
-    const { resume, detail: _detail, ...champsAcces } = output;
-    return {
-      type: "json",
-      value: {
-        ...resume,
-        ...(resume.chantiers.length > 0 && { consigne: CONSIGNE_TABLEAU }),
-        ...champsAcces,
-      },
-    };
-  }
-  return { type: "json", value: output };
-}
-
 function ordonnerMotifs(motifs: Motif[]): Motif[] {
   return MOTIFS_ORDER.filter((motif) => motifs.includes(motif));
 }
@@ -130,15 +65,22 @@ function valeursRecherchees(motifs: Motif[]): ValeursRecherchees {
   return motifs.includes("vi") ? "vi" : "vc";
 }
 
-function maillesDesTerritoires(territoireCodes: string[]): $Enums.Maille[] {
-  const prefixes: Record<$Enums.Maille, string> = {
-    NAT: "NAT-",
-    REG: "REG-",
-    DEPT: "DEPT-",
-  };
-  return (Object.keys(prefixes) as $Enums.Maille[]).filter((maille) =>
-    territoireCodes.some((code) => code.startsWith(prefixes[maille])),
+const MAILLES_DE_LA_PLUS_LARGE: $Enums.Maille[] = ["NAT", "REG", "DEPT"];
+
+function maillesDesTerritoires({
+  territoireCodes,
+  territoires,
+}: {
+  territoireCodes: string[];
+  territoires: TerritoireIdentiteResult[];
+}): $Enums.Maille[] {
+  const codes = new Set(territoireCodes);
+  const mailles = new Set(
+    territoires
+      .filter((territoire) => codes.has(territoire.code))
+      .map((territoire) => territoire.maille),
   );
+  return MAILLES_DE_LA_PLUS_LARGE.filter((maille) => mailles.has(maille));
 }
 
 function libellePerimetreClarification({
@@ -268,7 +210,6 @@ export function createGetIndicateursACompleterTool({
 Les nombres sont calculés par l'outil.
 - \`motifs\` : les types de valeurs nommés ou établis par les échanges, sinon les trois, plusieurs dans un seul appel. L'outil demande lui-même la précision du type de valeurs : n'appelle jamais clarify_with_choices pour cela.
 - \`precision_demandee\` : suis la \`consigne\` renvoyée.
-- « Pourquoi la VA de cet indicateur n'est-elle pas à jour ? » : appelle cet outil sur l'indicateur (motifs ["va"]), explique la règle (périodicité, délai de disponibilité) et renvoie au tableau pour les dates ; le centre d'aide ne sert que pour la définition ou le calcul en général.
 - Rédaction :
   - cite le périmètre interrogé (\`perimetre\`) ;
   - présente les indicateurs, regroupés par chantier, motif par motif, avec le nombre de territoires par maille ;
@@ -358,7 +299,10 @@ Ne l'utilise pas pour :
           resume: resumerIndicateursACompleter({
             lignes,
             motifs,
-            mailles: maillesDesTerritoires(acces.territoireCodes),
+            mailles: maillesDesTerritoires({
+              territoireCodes: acces.territoireCodes,
+              territoires,
+            }),
             perimetre,
             jalon: jalonDeLaVc,
             demandesExplicites,

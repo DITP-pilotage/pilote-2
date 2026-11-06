@@ -52,7 +52,7 @@ describe("fusionnerLignes et versLigneACompleter", () => {
         territoire_code: "DEPT-29",
         territoire_nom: "Finistère",
         territoire_nom_affiche: "29 - Finistère",
-        maille: "départementale",
+        maille: "DEPT",
         motifs: ["VA non à jour", "VC manquante"],
         date_derniere_valeur: "2025-01-31",
         mise_a_jour_attendue_depuis: "2025-03-01",
@@ -77,7 +77,7 @@ describe("fusionnerLignes et versLigneACompleter", () => {
         territoire_code: "DEPT-29",
         territoire_nom: "Finistère",
         territoire_nom_affiche: "29 - Finistère",
-        maille: "départementale",
+        maille: "DEPT",
         motifs: ["VI manquante"],
       },
     ]);

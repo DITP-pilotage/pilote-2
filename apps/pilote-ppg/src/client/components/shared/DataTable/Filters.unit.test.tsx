@@ -61,6 +61,46 @@ function Tableau() {
   );
 }
 
+const colonnesMultiselect = (() => {
+  const helper = hook.createColumnHelper<Axe>();
+  return helper.columns([
+    helper.accessor("nom", { header: "Nom" }),
+    helper.accessor("statut", {
+      header: "Statut",
+      filterFn: filterFnOneOf,
+      meta: {
+        filter: {
+          type: "multiselect",
+          label: "Statut",
+          options: [
+            { value: "ACTIF", label: "Actif" },
+            { value: "SUPPRIME", label: "Supprimé" },
+          ],
+        },
+      },
+    }),
+  ]);
+})();
+
+function TableauCompact() {
+  const table = hook.useDataTable({
+    data: axes,
+    columns: colonnesMultiselect,
+    search: (axe) => [axe.nom],
+    initialState: { columnFilters: [{ id: "statut", value: ["ACTIF"] }] },
+  });
+  return (
+    <>
+      <table.Filters layout="compact">
+        <button type="button">Regrouper</button>
+      </table.Filters>
+      <table.Root caption="Axes">
+        <table.Body />
+      </table.Root>
+    </>
+  );
+}
+
 const nomsAffiches = () =>
   within(screen.getByRole("table"))
     .getAllByRole("cell")
@@ -97,6 +137,28 @@ describe("table.Filters", () => {
     expect(bouton).toBeEnabled();
 
     await userEvent.click(bouton);
+    expect(nomsAffiches()).toEqual(["Eau", "Air"]);
+  });
+
+  it("en compact, nomme le filtre dans son bouton avec le nombre de valeurs choisies et ne propose la réinitialisation qu'avec un filtre actif", async () => {
+    render(<TableauCompact />);
+
+    const filtres = screen.getByRole("region", { name: "Filtres du tableau" });
+    expect(
+      within(filtres)
+        .getAllByRole("button")
+        .map((bouton) => bouton.textContent),
+    ).toEqual(["Statut (1)", "Regrouper", "Réinitialiser"]);
+
+    await userEvent.click(
+      within(filtres).getByRole("button", { name: "Réinitialiser" }),
+    );
+
+    expect(
+      within(filtres)
+        .getAllByRole("button")
+        .map((bouton) => bouton.textContent),
+    ).toEqual(["Statut", "Regrouper"]);
     expect(nomsAffiches()).toEqual(["Eau", "Air"]);
   });
 });

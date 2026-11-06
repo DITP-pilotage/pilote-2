@@ -13,7 +13,7 @@ describe("csvIndicateursACompleter", () => {
         territoire_code: "REG-53",
         territoire_nom: "Bretagne",
         territoire_nom_affiche: "Bretagne",
-        maille: "régionale",
+        maille: "REG",
         motif: "VA non à jour",
         date_derniere_valeur: null,
         mise_a_jour_attendue_depuis: null,
@@ -25,7 +25,7 @@ describe("csvIndicateursACompleter", () => {
 
     // Then
     expect(csv).toEqual(
-      '﻿"Chantier";"Indicateur";"Territoire";"Motif";"Dernière VA";"Mise à jour attendue depuis"\r\n' +
+      '﻿"Chantier";"Indicateur";"Territoire";"Motif";"Dernière VA";"Mise à jour attendue depuis"\n' +
         '"CH-018 Accès aux soins";"IND-1 Taux de ""pose""; total";"Bretagne";"VA non à jour";"jamais renseignée";"—"',
     );
   });
@@ -40,7 +40,7 @@ describe("csvIndicateursACompleter", () => {
       territoire_code: "REG-53",
       territoire_nom: "Finistère",
       territoire_nom_affiche: "29 - Finistère",
-      maille: "départementale" as const,
+      maille: "DEPT" as const,
       date_derniere_valeur: "2026-03-31",
       mise_a_jour_attendue_depuis: "2026-06-30",
       derniere_vc_connue: { valeur: 100, jalon: 2024 },
@@ -54,7 +54,7 @@ describe("csvIndicateursACompleter", () => {
     const csv = csvIndicateursACompleter({ lignes, motifs: ["va", "vc"] });
 
     // Then
-    expect(csv.split("\r\n").slice(1)).toEqual([
+    expect(csv.split("\n").slice(1)).toEqual([
       '"CH-018 Accès aux soins";"IND-1 Taux de pose";"29 - Finistère";"VA non à jour";"31/03/2026";"30/06/2026";"—"',
       '"CH-018 Accès aux soins";"IND-1 Taux de pose";"29 - Finistère";"VC manquante";"—";"—";"100 (jalon 2024)"',
     ]);

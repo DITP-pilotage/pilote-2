@@ -2,7 +2,7 @@ import { fireEvent, screen } from "@testing-library/react";
 import { render } from "@/components/shared/DataTable/testUtils";
 import "@testing-library/jest-dom";
 import { TableauIndicateursACompleter } from "@/components/_commons/ChatUI/TableauIndicateursACompleter";
-import type { DetailIndicateursACompleter } from "@/server/albert/tools/getIndicateursACompleter";
+import type { DetailIndicateursACompleter } from "@/server/albert/tools/sortieIndicateursACompleter";
 import type { LigneACompleter } from "@/server/albert/tools/indicateursACompleter";
 
 const NOMS_CHANTIERS: Record<string, string> = {
@@ -20,7 +20,7 @@ const ligne = (
   chantier_nom: NOMS_CHANTIERS[ligneACompleter.chantier_id],
   territoire_nom_affiche: `${ligneACompleter.territoire_code.slice(5)} - ${ligneACompleter.territoire_nom}`,
   indicateur_nom: `Nom ${ligneACompleter.indicateur_id}`,
-  maille: "départementale",
+  maille: "DEPT",
   motifs: ["VA non à jour"],
   date_derniere_valeur: null,
   mise_a_jour_attendue_depuis: null,

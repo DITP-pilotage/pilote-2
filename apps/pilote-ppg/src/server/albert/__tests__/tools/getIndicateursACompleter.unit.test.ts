@@ -4,9 +4,11 @@ import { mock } from "vitest-mock-extended";
 import {
   createGetIndicateursACompleterTool,
   getIndicateursACompleterInputSchema,
+} from "@/server/albert/tools/getIndicateursACompleter";
+import {
   indicateursACompleterVersModele,
   type GetIndicateursACompleterOutput,
-} from "@/server/albert/tools/getIndicateursACompleter";
+} from "@/server/albert/tools/sortieIndicateursACompleter";
 import type {
   GetIndicateursNonAJourQuery,
   LigneIndicateurNonAJour,
@@ -105,6 +107,7 @@ const buildTool = ({
   );
   const getTerritoiresIdentiteQuery = mock<GetTerritoiresIdentiteQuery>();
   getTerritoiresIdentiteQuery.execute.mockResolvedValue([
+    { code: "NAT-FR", nom: "France", maille: "NAT", code_parent: null },
     { code: "REG-53", nom: "Bretagne", maille: "REG", code_parent: "NAT-FR" },
     {
       code: "DEPT-29",
@@ -234,7 +237,7 @@ describe("get_indicateurs_a_completer", () => {
             territoire_code: "DEPT-29",
             territoire_nom: "Finistère",
             territoire_nom_affiche: "29 - Finistère",
-            maille: "départementale",
+            maille: "DEPT",
             motifs: ["VA non à jour", "VC manquante"],
             date_derniere_valeur: "2025-01-31",
             mise_a_jour_attendue_depuis: "2025-03-01",
@@ -293,6 +296,36 @@ describe("get_indicateurs_a_completer", () => {
         ],
       },
       detail: expect.objectContaining({ perimetre: "Finistère" }),
+    });
+  });
+
+  test("les mailles du résumé sont celles des territoires interrogés, à zéro comprises", async () => {
+    // given
+    const { tool } = buildTool();
+
+    // when
+    const result = await executeTool(tool, {
+      messages: MESSAGE_AVEC_TYPES,
+      motifs: ["va"],
+    });
+
+    // then
+    expect(result).toEqual({
+      resume: {
+        perimetre: "tous vos territoires",
+        chantiers: [
+          {
+            chantier: "CH-001 · Chantier bornes",
+            indicateurs: [
+              {
+                indicateur: "IND-001 · Nombre de bornes",
+                "VA non à jour": { nationale: 0, départementale: 1 },
+              },
+            ],
+          },
+        ],
+      },
+      detail: expect.anything(),
     });
   });
 

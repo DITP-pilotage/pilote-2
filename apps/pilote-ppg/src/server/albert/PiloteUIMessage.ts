@@ -51,10 +51,8 @@ import {
   getChantiersSignalesInputSchema,
   type GetChantiersSignalesOutput,
 } from "@/server/albert/tools/getChantiersSignales";
-import {
-  getIndicateursACompleterInputSchema,
-  type GetIndicateursACompleterOutput,
-} from "@/server/albert/tools/getIndicateursACompleter";
+import { getIndicateursACompleterInputSchema } from "@/server/albert/tools/getIndicateursACompleter";
+import type { GetIndicateursACompleterOutput } from "@/server/albert/tools/sortieIndicateursACompleter";
 import {
   getEvolutionIndicateurInputSchema,
   type GetEvolutionIndicateurOutput,

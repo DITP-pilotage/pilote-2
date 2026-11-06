@@ -37,7 +37,7 @@ export type LigneACompleter = {
   territoire_code: string;
   territoire_nom: string | null;
   territoire_nom_affiche: string;
-  maille: LibelleMaille;
+  maille: $Enums.Maille;
   motifs: LibelleMotif[];
   date_derniere_valeur?: string | null;
   mise_a_jour_attendue_depuis?: string | null;
@@ -112,7 +112,7 @@ export function versLigneACompleter(ligne: LigneFusionnee): LigneACompleter {
     territoire_code: ligne.territoireCode,
     territoire_nom: ligne.territoireNom,
     territoire_nom_affiche: ligne.territoireNomAffiche,
-    maille: libelleMaille({ maille: ligne.maille }),
+    maille: ligne.maille,
     motifs: MOTIFS_ORDER.filter((motif) => ligne.motifs.has(motif)).map(
       (motif) => LIBELLES_MOTIF[motif],
     ),

@@ -8,6 +8,10 @@ import type {
   TerritoireAnnuaire,
 } from "@/server/annuaire/queries/personnesAnnuaire";
 import type { FilterOption } from "@/components/shared/DataTable/types";
+import {
+  type FiltreTerritoires,
+  filtreTerritoires as filtreTerritoiresParMaille,
+} from "@/client/utils/territoire/filtreTerritoires";
 
 export type LigneCoordinateur = {
   personne: PersonneAnnuaire;
@@ -81,49 +85,19 @@ export const comparerChantiersPuisTerritoires = (
   collator.compare(gauche.chantier.id, droite.chantier.id) ||
   comparerTerritoires(gauche.territoire, droite.territoire);
 
-export const pluriel = (
-  nombre: number,
-  singulier: string,
-  plurielMot: string,
-) => `${nombre} ${nombre > 1 ? plurielMot : singulier}`;
-
 export const nomComplet = (personne: PersonneAnnuaire) =>
   `${personne.prenom} ${personne.nom}`;
 
-export type FiltreAvecGroupes = {
-  options: FilterOption[];
-  groups: { label: string; values: string[] }[];
-};
-
-export function filtreTerritoires(
+export const filtreTerritoires = (
   territoires: TerritoireAnnuaire[],
-): FiltreAvecGroupes {
-  const uniques = [
-    ...new Map(
-      territoires.map((territoire) => [territoire.code, territoire]),
-    ).values(),
-  ].sort(comparerTerritoires);
-  return {
-    options: uniques.map((territoire) => ({
-      value: territoire.code,
-      label: territoire.nom,
+): FiltreTerritoires =>
+  filtreTerritoiresParMaille(
+    territoires.map((territoire) => ({
+      code: territoire.code,
+      libelle: territoire.nom,
+      maille: territoire.maille,
     })),
-    groups: [
-      {
-        label: "Régions",
-        values: uniques
-          .filter((territoire) => territoire.maille === "REG")
-          .map((territoire) => territoire.code),
-      },
-      {
-        label: "Départements",
-        values: uniques
-          .filter((territoire) => territoire.maille === "DEPT")
-          .map((territoire) => territoire.code),
-      },
-    ],
-  };
-}
+  );
 
 export function filtreChantiers(chantiers: ChantierAnnuaire[]): FilterOption[] {
   return [

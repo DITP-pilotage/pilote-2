@@ -7,6 +7,7 @@ import type {
   PiloteUIMessage,
   PiloteUITools,
 } from "@/server/albert/PiloteUIMessage";
+import { indicateursACompleterVersModele } from "@/server/albert/tools/sortieIndicateursACompleter";
 import { clsxm } from "@/utils/clsxm";
 
 export type SourceToolPart = Extract<
@@ -69,14 +70,14 @@ const formaterValeur = (valeur: unknown): string =>
     ? String(valeur)
     : JSON.stringify(valeur);
 
+// Ce que le modèle a lu : le détail ligne à ligne, déjà affiché en tableau, pèserait plusieurs Mo.
 const sortieAffichee = (part: SourceToolPart): unknown => {
   if (!estTerminee(part)) return undefined;
   if (
     part.type === "tool-get_indicateurs_a_completer" &&
-    part.state === "output-available" &&
-    "resume" in part.output
+    part.state === "output-available"
   ) {
-    return part.output.resume;
+    return indicateursACompleterVersModele({ output: part.output }).value;
   }
   return (
     (part as { output?: unknown }).output ??

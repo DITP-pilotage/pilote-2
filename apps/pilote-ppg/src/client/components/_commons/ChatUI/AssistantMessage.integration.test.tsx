@@ -51,7 +51,7 @@ const ligneACompleter = (numero: number): LigneACompleter => ({
   territoire_code: "REG-53",
   territoire_nom: "Bretagne",
   territoire_nom_affiche: "Bretagne",
-  maille: "régionale",
+  maille: "REG",
   motifs: ["VA non à jour"],
   date_derniere_valeur: null,
   mise_a_jour_attendue_depuis: null,
