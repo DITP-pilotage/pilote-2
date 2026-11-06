@@ -1,5 +1,6 @@
 import { useId } from "react";
 import { telechargerCsv } from "@/client/utils/csv";
+import { horodatage } from "@/client/utils/date/date";
 import { pluriel } from "@/client/utils/strings";
 import { csvIndicateursACompleter } from "@/components/_commons/ChatUI/csvIndicateursACompleter";
 import { libelleGroupe } from "@/components/_commons/ChatUI/detailIndicateursACompleter";
@@ -121,7 +122,7 @@ export const TableauIndicateursACompleter = ({
                 lignes: lignesFiltrees,
                 motifs: detail.motifs,
               }),
-              `indicateurs-a-completer-${new Date().toISOString().slice(0, 10)}`,
+              `indicateurs-a-completer-${horodatage()}`,
             );
           }}
           size="sm"
