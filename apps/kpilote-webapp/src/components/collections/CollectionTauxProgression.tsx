@@ -8,14 +8,18 @@ const formatTaux = (taux: number | null): string => {
   return `${taux} %`
 }
 
+// Seules les contributions pondérées (> 0) comptent : le calcul ignore celles à
+// pondération 0, la légende aussi.
 const buildCaption = (
   taux: number | null,
-  contributions: ReadonlyArray<{ tauxProgression: number | null }>,
+  contributions: ReadonlyArray<{ tauxProgression: number | null; ponderation: number }>,
 ): string => {
   if (taux !== null) return 'Moyenne pondérée des indicateurs'
-  const nbBloquants = contributions.filter((c) => c.tauxProgression === null).length
   if (contributions.length === 0) return 'Collection sans indicateur'
-  return `${nbBloquants}/${contributions.length} indicateur${nbBloquants > 1 ? 's' : ''} sans taux`
+  const ponderees = contributions.filter((c) => c.ponderation > 0)
+  if (ponderees.length === 0) return 'Aucun indicateur pondéré'
+  const nbBloquants = ponderees.filter((c) => c.tauxProgression === null).length
+  return `${nbBloquants}/${ponderees.length} indicateur${nbBloquants > 1 ? 's' : ''} sans taux`
 }
 
 export function CollectionTauxProgression({
