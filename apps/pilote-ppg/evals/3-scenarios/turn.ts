@@ -31,6 +31,7 @@ export type ScenarioTurn = AgentTurn & {
   userTerritories: string[];
   truth: GroundTruth;
   tableTerritories: string[];
+  expectedPersons: string[] | null;
   /** Les tours qui précèdent, dans l'ordre ; vide pour un tour isolé. */
   history: PreviousTurn[];
 };
@@ -77,6 +78,7 @@ export function buildEvidence({
     }),
     truth: turn.truth,
     tableTerritories: turn.tableTerritories,
+    expectedPersons: turn.expectedPersons,
     conversation: turn.history.map((previous) => ({
       question: previous.question,
       answer: previous.text,

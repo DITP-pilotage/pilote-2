@@ -34,6 +34,7 @@ export const GROUPS = {
   aide: "3.3 · Centre d'aide",
   forme: "3.4 · Forme de la réponse",
   suivi: "3.5 · Questions de suivi",
+  personnes: "3.6 · Personnes",
 };
 
 export type ScenarioCase = {
@@ -49,6 +50,8 @@ export type ScenarioCase = {
   forbidden?: string[];
   /** Codes des territoires que le tableau comparatif doit contenir. */
   tableTerritories?: string[];
+  /** Références des personnes que la réponse doit citer, et elles seules. */
+  expectedPersons?: string[];
   /**
    * Messages envoyés avant `question`, dans l'ordre, chacun suivi de la
    * réponse de l'agent. Seul le dernier tour est noté.
@@ -247,6 +250,7 @@ export function scenarioEval({
               userTerritories: user.habilitations.lecture.territoires,
               truth,
               tableTerritories: input.tableTerritories ?? [],
+              expectedPersons: input.expectedPersons ?? null,
               history,
             };
           },

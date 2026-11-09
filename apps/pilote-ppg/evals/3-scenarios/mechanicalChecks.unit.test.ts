@@ -14,6 +14,8 @@ import {
   checkNoMeteoCode,
   checkNoVerbatim,
   checkNoToolName,
+  checkExpectedPersons,
+  checkPersonReferences,
   checkSectionsDashboard,
   checkTableChantiers,
   checkTableTerritories,
@@ -485,6 +487,16 @@ describe("checkEncartChantiers", () => {
       detail: "CH-071 : écart -14 absent ; CH-045 : absent",
     });
   });
+
+  test("ne lit pas l'écart dans les chiffres d'une référence de personne (PIL-1860)", () => {
+    expect(
+      checkEncartChantiers({
+        text: "**CH-071 — Rénover**\n**Écart** : −12 points · **Niveau de confiance** : Appuis nécessaires\n**Directeurs de projet** : @[personne:3f14c2ab-14d0-4b7e-9a14-c5e014a7d214]",
+        chantiers,
+        avecEcart: true,
+      }),
+    ).toEqual({ ok: false, detail: "CH-071 : écart -14 absent" });
+  });
 });
 
 describe("checkEncartChantiers en comparaison", () => {
@@ -563,5 +575,122 @@ describe("checkRestrictionEncart", () => {
         resultats,
       }),
     ).toEqual({ ok: true, detail: "restriction d'accès mentionnée" });
+  });
+});
+
+describe("checkPersonReferences", () => {
+  const recue = "@[personne:3f14c2a8-14d0-4b7e-9a14-c5e014a7d214]";
+  const toolResults = [
+    {
+      toolName: "get_chantiers",
+      output: { resultats: [{ directeurs_projet: [recue] }] },
+    },
+  ];
+
+  test("laisse passer une référence recopiée d'une sortie d'outil", () => {
+    expect(
+      checkPersonReferences({
+        text: `Le directeur de projet est ${recue}.`,
+        toolResults,
+      }),
+    ).toEqual({ ok: true, detail: "personnes citées par leur référence" });
+  });
+
+  test("laisse passer une référence aux tirets typographiques et en capitales, que l'interface affiche", () => {
+    expect(
+      checkPersonReferences({
+        text: "Le directeur de projet est @[personne:3F14C2A8‑14D0‑4B7E‑9A14‑C5E014A7D214].",
+        toolResults,
+      }),
+    ).toEqual({ ok: true, detail: "personnes citées par leur référence" });
+  });
+
+  test("signale une référence absente des sorties d'outils", () => {
+    expect(
+      checkPersonReferences({
+        text: "Le directeur de projet est @[personne:3f14c2a8-14d0-4b7e-9a14-c5e014a7d215].",
+        toolResults,
+      }),
+    ).toEqual({
+      ok: false,
+      detail:
+        "référence absente des données : @[personne:3f14c2a8-14d0-4b7e-9a14-c5e014a7d215]",
+    });
+  });
+
+  test("signale une référence entre backticks ou dans un lien", () => {
+    expect(
+      checkPersonReferences({
+        text: `Directeur : \`${recue}\`. Contact : [${recue}](mailto:x).`,
+        toolResults,
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "référence entre backticks ; référence dans un lien",
+    });
+  });
+
+  test("signale une référence mal formée, un identifiant nu et une adresse e-mail", () => {
+    expect(
+      checkPersonReferences({
+        text: "Directeur : @[personne:3f14c2a8]. Responsable : 3f14c2a8-14d0-4b7e-9a14-c5e014a7d214, claire.morvan@sante.gouv.fr.",
+        toolResults,
+      }),
+    ).toEqual({
+      ok: false,
+      detail:
+        "référence mal formée ; identifiant nu : 3f14c2a8-14d0-4b7e-9a14-c5e014a7d214 ; adresse e-mail : claire.morvan@sante.gouv.fr",
+    });
+  });
+
+  test("laisse passer une adresse e-mail qu'un outil a renvoyée", () => {
+    expect(
+      checkPersonReferences({
+        text: "Écrivez à support@pilote.gouv.fr.",
+        toolResults: [
+          {
+            toolName: "consulter_centre_aide",
+            output: { reponse: "Contact : support@pilote.gouv.fr" },
+          },
+        ],
+      }),
+    ).toEqual({ ok: true, detail: "personnes citées par leur référence" });
+  });
+});
+
+describe("checkExpectedPersons", () => {
+  const directrice = "@[personne:c7e2ab1f-14d0-4f3a-15e3-2b8c0a4d6e13]";
+  const directeur = "@[personne:e41b7c2d-9a65-4e08-b315-7d2f6c1a0b94]";
+
+  test("accepte les personnes attendues, quel que soit leur ordre et leurs tirets", () => {
+    expect(
+      checkExpectedPersons({
+        text:
+          "Directeurs : @[personne:E41B7C2D‑9A65‑4E08‑B315‑7D2F6C1A0B94] et " +
+          directrice,
+        expected: [directrice, directeur],
+      }),
+    ).toEqual({ ok: true, detail: "2 personne(s) attendue(s) citée(s)" });
+  });
+
+  test("signale une personne attendue absente et une personne en trop", () => {
+    expect(
+      checkExpectedPersons({
+        text: `Directeur : ${directeur}.`,
+        expected: [directrice],
+      }),
+    ).toEqual({
+      ok: false,
+      detail: `absente : ${directrice} ; en trop : ${directeur}`,
+    });
+  });
+
+  test("n'attend aucune personne quand la liste est vide", () => {
+    expect(
+      checkExpectedPersons({
+        text: "Aucun directeur de projet n'est renseigné.",
+        expected: [],
+      }),
+    ).toEqual({ ok: true, detail: "aucune personne citée" });
   });
 });

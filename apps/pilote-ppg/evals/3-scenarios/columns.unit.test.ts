@@ -1,3 +1,4 @@
+import { PERSONNES, referenceDe } from "../personnes";
 import { calibrationColumns, scenarioColumns } from "./columns";
 
 const REPONSE_LONGUE = `# Synthèse pour Bretagne\n\n${"Une phrase de la réponse. ".repeat(40)}`;
@@ -31,6 +32,25 @@ describe("scenarioColumns", () => {
       },
       { label: "Réponse", value: REPONSE_LONGUE },
     ]);
+  });
+
+  test("nomme chaque personne citée, et signale une référence qu'aucune personne du monde ne porte (PIL-1860)", () => {
+    // When
+    const columns = scenarioColumns({
+      reason: "Directeurs de projet",
+      profile: "ditp",
+      question: "Qui sont les directeurs de projet du CH-005 ?",
+      toolCalls: [],
+      toolResults: [],
+      text: `Directeurs de projet : ${referenceDe(PERSONNES.directriceUrgences)} et @[personne:00000000-0000-4000-8000-000000000000].`,
+      withWidgets: false,
+    });
+
+    // Then
+    expect(columns.find((column) => column.label === "Réponse")).toEqual({
+      label: "Réponse",
+      value: `Directeurs de projet : ${referenceDe(PERSONNES.directriceUrgences)} (Claire Morvan) et @[personne:00000000-0000-4000-8000-000000000000] (inconnue).`,
+    });
   });
 
   test("ajoute les widgets par section pour un tableau de bord", () => {

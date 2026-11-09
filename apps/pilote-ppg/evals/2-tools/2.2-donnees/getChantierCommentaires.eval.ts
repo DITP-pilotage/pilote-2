@@ -26,6 +26,16 @@ import { toolSelectionEval } from "../toolSelectionEval";
 
 const CASES: ToolCase[] = [
   {
+    question: "Qui a rédigé les commentaires du CH-004 au national ?",
+    reason: "l'auteur d'un commentaire est porté par le commentaire (PIL-1860)",
+    expected: [
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-004" },
+      },
+    ],
+  },
+  {
     question: "Quels sont les commentaires sur le CH-004 au national ?",
     reason: "demande générique : tous les types, sans filtre",
     expected: [

@@ -30,6 +30,7 @@ const TOUR: ScenarioTurn = {
     commentaires: [],
   },
   tableTerritories: [],
+  expectedPersons: null,
   history: [],
 };
 

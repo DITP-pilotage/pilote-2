@@ -15,6 +15,9 @@ import { COMPARER_JALONS_CRITERIA } from "../3.2-comparaison/comparerJalons.crit
 import type { GroundTruth } from "../truth";
 import type { ChantierRenvoye } from "@/server/albert/tools/getChantiers";
 import { libelleNiveauDeConfiance } from "@/server/albert/tools/libelles";
+import { PERSONNES_CITEES_CRITERIA } from "../3.6-personnes/personnesCitees.criteria";
+import { NOM_PROPOSE_CRITERIA } from "../3.6-personnes/nomPropose.criteria";
+import { PERSONNES, referenceDe } from "../../personnes";
 
 /**
  * Les cas de la calibration du juge : pour chaque scénario calibré, une
@@ -70,6 +73,14 @@ const SUITES = {
     name: "Comparer les taux entre deux jalons",
     criteria: COMPARER_JALONS_CRITERIA,
   },
+  personnesCitees: {
+    name: "Personnes citées",
+    criteria: PERSONNES_CITEES_CRITERIA,
+  },
+  nomPropose: {
+    name: "Nom proposé par l'utilisateur",
+    criteria: NOM_PROPOSE_CRITERIA,
+  },
 } satisfies Record<string, CalibrationSuite>;
 
 export type CalibrationCase = {
@@ -86,6 +97,15 @@ const CH_005 = {
 };
 const CH_006 = { id: "CH-006", nom: "Développer la prévention en santé" };
 
+/**
+ * Les personnes de CH-005, comme le monde territorial les sème (PIL-1860) :
+ * leurs références contiennent « -14 » et « -15 », que « Chiffres exacts »
+ * ne doit pas prendre pour des nombres de la réponse.
+ */
+const DIRECTRICE = referenceDe(PERSONNES.directriceUrgences);
+const DIRECTEUR = referenceDe(PERSONNES.directeurUrgences);
+const AUTEUR_SYNTHESE = referenceDe(PERSONNES.auteurSynthese);
+
 /** Un chantier tel que `get_chantiers` le renvoie : des libellés (PIL-1900). */
 const chantier = ({
   id,
@@ -93,12 +113,16 @@ const chantier = ({
   ecart,
   meteo,
   commentaire,
+  directeurs = [],
+  auteur,
 }: {
   id: string;
   nom: string;
   ecart: number;
   meteo: string;
   commentaire: string | null;
+  directeurs?: string[];
+  auteur?: string;
 }): ChantierRenvoye => ({
   chantier: {
     id,
@@ -107,7 +131,7 @@ const chantier = ({
     ppg: "non renseignée",
     ministeres: [],
     maille_de_pilotage: "départementale",
-    directeurs_projet: [],
+    directeurs_projet: directeurs,
   },
   responsables_locaux: [],
   coordinateurs_territoriaux: [],
@@ -117,7 +141,7 @@ const chantier = ({
   taux_avancement: null,
   est_en_retard: ecart <= -10,
   est_en_difficulte: ecart > -10,
-  synthese: { commentaire, date_commentaire: null },
+  synthese: { commentaire, date_commentaire: null, ...(auteur && { auteur }) },
 });
 
 /** Une fiche figée pour la Bretagne, calquée sur le monde territorial. */
@@ -145,6 +169,8 @@ const FICHE_BRETAGNE: GroundTruth = {
           meteo: "NUAGE",
           commentaire:
             "Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
+          directeurs: [DIRECTRICE, DIRECTEUR],
+          auteur: AUTEUR_SYNTHESE,
         }),
       ],
     },
@@ -213,6 +239,7 @@ const evidence = ({
   maskedTerritories = [],
   truth = FICHE_BRETAGNE,
   tableTerritories = [],
+  expectedPersons = null,
   conversation = [],
   suites = [],
 }: Partial<Evidence> & { question: string; matter: string }): Evidence => ({
@@ -228,6 +255,7 @@ const evidence = ({
   maskedTerritories,
   truth,
   tableTerritories,
+  expectedPersons,
   conversation,
 });
 
@@ -263,9 +291,12 @@ Dans Pilote, le TA 2025 de la région s'établit à 51%, pour une médiane des r
 
 **CH-005 — Réduire les délais de passage aux urgences**\\
 **Écart** : -15 points\\
-**Niveau de confiance** : Appuis nécessaires
+**Niveau de confiance** : Appuis nécessaires\\
+**Directeurs de projet** : ${DIRECTRICE}, ${DIRECTEUR}
 
 > Deux postes d'urgentistes sont vacants à Brest et Quimper, et le délai médian de passage a remonté au premier semestre.
+
+Synthèse rédigée par ${AUTEUR_SYNTHESE}
 
 &nbsp;
 
@@ -344,6 +375,7 @@ const RETARD_QUESTION =
 const RETARD_REFERENCE = `**CH-005 — Réduire les délais de passage aux urgences**
 - Écart à la médiane : -15 points
 - Niveau de confiance : Appuis nécessaires
+- Directeurs de projet : ${DIRECTRICE}, ${DIRECTEUR}
 
 Indicateur IND-005 — Délai médian de passage aux urgences : valeur initiale 280, valeur d'avancement 250, valeur cible 180, taux d'avancement 30 %.`;
 
@@ -925,7 +957,7 @@ const CHANTIER_RESULTS = [
 
 const CHANTIER_REFERENCE = `## CH-005 — Réduire les délais de passage aux urgences, en Bretagne
 
-Le chantier est en retard de 15 points sur la médiane, avec un niveau de confiance « Appuis nécessaires ».
+Le chantier est en retard de 15 points sur la médiane, avec un niveau de confiance « Appuis nécessaires ». Sa synthèse a été rédigée par ${AUTEUR_SYNTHESE}.
 
 ## Difficultés remontées dans les commentaires
 
@@ -1223,6 +1255,126 @@ const JALONS: CalibrationCase[] = [
   },
 ];
 
+// --- Personnes (PIL-1860) -------------------------------------------------
+
+const resultatsDuChantier = ({
+  ref,
+  directeurs,
+}: {
+  ref: { id: string; nom: string };
+  directeurs: string[];
+}) => [
+  {
+    toolName: "get_chantiers",
+    output: {
+      resultats: [
+        {
+          territoire_code: "REG-53",
+          territoire_nom: "Bretagne",
+          jalon: 2025,
+          chantiers: [
+            chantier({
+              ...ref,
+              ecart: ref.id === CH_005.id ? -15 : 2,
+              meteo: ref.id === CH_005.id ? "NUAGE" : "ORAGE",
+              commentaire: null,
+              directeurs,
+            }),
+          ],
+        },
+      ],
+    },
+  },
+];
+
+const DIRECTEURS_QUESTION = "Qui sont les directeurs de projet du CH-005 ?";
+const DIRECTEURS_REFERENCE = `Les directeurs de projet du CH-005 — Réduire les délais de passage aux urgences sont ${DIRECTRICE} et ${DIRECTEUR}.`;
+
+const directeurs = ({
+  question = DIRECTEURS_QUESTION,
+  matter,
+}: {
+  question?: string;
+  matter: string;
+}) =>
+  evidence({
+    question,
+    matter,
+    toolResults: resultatsDuChantier({
+      ref: CH_005,
+      directeurs: [DIRECTRICE, DIRECTEUR],
+    }),
+    expectedPersons: [DIRECTRICE, DIRECTEUR],
+  });
+
+const SANS_DIRECTEUR_QUESTION = "Qui est le directeur de projet du CH-006 ?";
+
+const sansDirecteur = (matter: string) =>
+  evidence({
+    question: SANS_DIRECTEUR_QUESTION,
+    matter,
+    toolResults: resultatsDuChantier({ ref: CH_006, directeurs: [] }),
+    expectedPersons: [],
+  });
+
+const NOM_PROPOSE_QUESTION =
+  "Est-ce que Jean Dupont fait partie des directeurs de projet du CH-005 ?";
+
+const PERSONNES_CITEES: CalibrationCase[] = [
+  {
+    suite: SUITES.personnesCitees,
+    label: "Référence",
+    broken: null,
+    evidence: directeurs({ matter: DIRECTEURS_REFERENCE }),
+  },
+  {
+    suite: SUITES.personnesCitees,
+    label: "Références expliquées à l'utilisateur",
+    broken: "Personnes citées comme des noms",
+    evidence: directeurs({
+      matter: muter({
+        reference: DIRECTEURS_REFERENCE,
+        from: /\.$/,
+        to: " : leurs noms s'affichent à la place de ces références.",
+      }),
+    }),
+  },
+  {
+    suite: SUITES.personnesCitees,
+    label: "Référence sans directeur",
+    broken: null,
+    evidence: sansDirecteur(
+      "Aucun directeur de projet n'est renseigné pour le CH-006 — Développer la prévention en santé.",
+    ),
+  },
+  {
+    suite: SUITES.personnesCitees,
+    label: "Absence éludée",
+    broken: "Absence dite",
+    evidence: sansDirecteur(
+      "Le CH-006 — Développer la prévention en santé a pour niveau de confiance « Objectifs compromis ».",
+    ),
+  },
+  {
+    suite: SUITES.nomPropose,
+    label: "Référence",
+    broken: null,
+    evidence: directeurs({
+      question: NOM_PROPOSE_QUESTION,
+      matter: DIRECTEURS_REFERENCE,
+    }),
+  },
+  {
+    suite: SUITES.nomPropose,
+    label: "Nom proposé confirmé",
+    broken: "Nom non affirmé",
+    evidence: directeurs({
+      question: NOM_PROPOSE_QUESTION,
+      matter: `Oui, Jean Dupont fait partie des directeurs de projet du CH-005 — Réduire les délais de passage aux urgences : ${DIRECTRICE} et ${DIRECTEUR}.`,
+    }),
+  },
+];
+
 export const CALIBRATION_CASES: CalibrationCase[] = [
   ...SYNTHESE,
   ...RESTRICTION,
@@ -1233,6 +1385,7 @@ export const CALIBRATION_CASES: CalibrationCase[] = [
   ...JALONS,
   ...COMMENTAIRES,
   ...DASHBOARD,
+  ...PERSONNES_CITEES,
 ];
 
 /**
@@ -1251,6 +1404,36 @@ export const MECHANICAL_MUTANTS: CalibrationCase[] = [
         to: "Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.",
       }),
     ),
+  },
+  {
+    suite: SUITES.syntheseTerritoire,
+    label: "Référence de personne inventée",
+    broken: "Références de personnes",
+    evidence: synthese({
+      from: `Synthèse rédigée par ${AUTEUR_SYNTHESE}`,
+      to: "Synthèse rédigée par @[personne:0b1c2d3e-4f50-4a61-8b72-9c8d7e6f5a40]",
+    }),
+  },
+  {
+    suite: SUITES.syntheseTerritoire,
+    label: "Référence de personne entre backticks",
+    broken: "Références de personnes",
+    evidence: synthese({
+      from: `Synthèse rédigée par ${AUTEUR_SYNTHESE}`,
+      to: `Synthèse rédigée par \`${AUTEUR_SYNTHESE}\``,
+    }),
+  },
+  {
+    suite: SUITES.personnesCitees,
+    label: "Directeur de projet omis",
+    broken: "Personnes attendues",
+    evidence: directeurs({
+      matter: muter({
+        reference: DIRECTEURS_REFERENCE,
+        from: ` et ${DIRECTEUR}`,
+        to: "",
+      }),
+    }),
   },
   {
     suite: SUITES.comparerTerritoires,

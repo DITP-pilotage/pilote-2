@@ -6,6 +6,7 @@ import {
   checkNoMeteo,
   checkNoMeteoCode,
   checkNoToolName,
+  checkPersonReferences,
   type CheckResult,
 } from "./mechanicalChecks";
 
@@ -51,7 +52,13 @@ export const BASE_IDS = {
   french: "Réponse en français",
   noMeteo: "Pas de météo",
   noHtml: "Pas de HTML",
+  personReferences: "Références de personnes",
+  personsAsNames: "Personnes citées comme des noms",
 } as const;
+
+/** Une sortie d'outil de la conversation cite au moins une personne. */
+export const personnesRecues = (evidence: Evidence) =>
+  JSON.stringify(evidence.toolResults).includes("@[personne:");
 
 /**
  * Le socle : les « Règles fondamentales » du prompt, valables pour toute
@@ -94,6 +101,22 @@ const BASE: Criterion[] = [
     rule: "Le chat n'affiche pas le HTML : aucune balise dans la réponse (revue PIL-1900)",
     check: (evidence) => checkNoHtml({ text: evidence.answer }),
   }),
+  mechanical({
+    id: BASE_IDS.personReferences,
+    rule: "Personnes : recopie exactement la référence reçue, hors backticks et hors lien ; n'invente ni nom, ni référence (PIL-1860)",
+    check: (evidence) =>
+      checkPersonReferences({
+        text: evidence.matter,
+        toolResults: evidence.toolResults,
+      }),
+  }),
+  judged({
+    id: BASE_IDS.personsAsNames,
+    rule: "Personnes : ne parle jamais de référence ni d'identifiant de personne, ni de la façon dont les noms s'affichent (PIL-1860)",
+    instruction:
+      "La matière cite les personnes comme elle écrirait leur nom : « Directeur de projet : @[personne:…] » est conforme. Parler de la référence ou de l'identifiant d'une personne, ou expliquer que son nom s'affiche à la place, est non conforme. Ne pas citer de personne est conforme.",
+    applicable: personnesRecues,
+  }),
   judged({
     id: BASE_IDS.noOpinion,
     rule: "Règle 4 : ni opinion, ni recommandation, ni causalité absente des données",
@@ -104,7 +127,7 @@ const BASE: Criterion[] = [
     id: BASE_IDS.exactFigures,
     rule: "Règle 2 : ne cite que des données renvoyées par les outils",
     instruction:
-      "Chaque nombre écrit en chiffres dans la matière (taux, médiane, écart, valeur d'indicateur) figure dans les DONNÉES REÇUES PAR L'ASSISTANT, ou est l'écart entre deux de ces valeurs. Un nombre introuvable ou faux est non conforme : cite-le dans la preuve. Ne sont pas des données : les seuils des règles (« 10 points »), les années de jalon, les codes de chantier ou de territoire. Le sens d'une variation et la position face à la médiane relèvent d'autres critères.",
+      "Chaque nombre écrit en chiffres dans la matière (taux, médiane, écart, valeur d'indicateur) figure dans les DONNÉES REÇUES PAR L'ASSISTANT, ou est l'écart entre deux de ces valeurs. Un nombre introuvable ou faux est non conforme : cite-le dans la preuve. Ne sont pas des données : les seuils des règles (« 10 points »), les années de jalon, les codes de chantier ou de territoire, les chiffres d'une référence de personne (« @[personne:…] »). Le sens d'une variation et la position face à la médiane relèvent d'autres critères.",
   }),
   judged({
     id: BASE_IDS.restriction,
