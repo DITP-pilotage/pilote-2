@@ -34,6 +34,11 @@ export const formatNumberAvecUniteFr = (
 
 export const formatVariationFr = (value: number): string => variationFr.format(value)
 
+// Une variation ou un écart que l'affichage arrondit à « 0 » est traité comme 0,
+// pour que l'interprétation (« STABLE », « à la médiane ») suive ce qui est lu.
+export const zeroSiAfficheZero = (value: number): number =>
+  variationFr.format(value) === variationFr.format(0) ? 0 : value
+
 export const formatVariationAvecUniteFr = (
   value: number,
   unite: UniteIndicateurApiModel | null,

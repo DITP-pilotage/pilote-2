@@ -218,6 +218,7 @@ function IndicateurDetailComponent() {
               individuId={individuId}
               referentielId={referentielId}
               unite={indicateur.unite}
+              sensSouhaite={indicateur.sensSouhaite}
               referentielNom={referentielNom}
               sousOnglet={search.sousOnglet}
               onSousOngletChange={(sousOnglet) => {
