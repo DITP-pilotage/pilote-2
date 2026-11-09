@@ -3,7 +3,7 @@ name = "datafactory-pilote-ppg"
 version = "0.1.0"
 description = "Datafactory de l'outil PILOTE"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "chardet~=5.2.0",
     "dbt-core~=1.11.0",
