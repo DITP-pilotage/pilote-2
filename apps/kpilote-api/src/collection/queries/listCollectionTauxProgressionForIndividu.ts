@@ -21,7 +21,7 @@ const collectionListArgs = {
       orderBy: { createdAt: 'asc' as const },
       select: {
         ponderation: true,
-        indicateur: { select: { id: true, publicId: true } },
+        indicateur: { select: { id: true, publicId: true, sensSouhaite: true } },
       },
     },
   },
