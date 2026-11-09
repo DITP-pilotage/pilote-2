@@ -1,17 +1,23 @@
 import { groupBy } from '@/framework/array'
 import { type Decimal } from '@/framework/decimal'
 
-export const computeMediane = (values: ReadonlyArray<Decimal>): number | null => {
+// Médiane calculée en décimal exact : une valeur dérivée (moyenne) garde toutes
+// ses décimales, et un passage par les flottants laisserait un écart résiduel
+// (≈ 1e-13) entre un individu seul dans son référentiel et sa propre médiane.
+export const computeMedianeDecimal = (values: ReadonlyArray<Decimal>): Decimal | null => {
   if (values.length === 0) return null
 
-  const sorted = values.map((v) => v.toNumber()).sort((a, b) => a - b)
+  const sorted = [...values].sort((a, b) => a.comparedTo(b))
   const middle = sorted.length / 2
 
   if (sorted.length % 2 === 1) {
     return sorted[Math.floor(middle)]!
   }
-  return (sorted[middle - 1]! + sorted[middle]!) / 2
+  return sorted[middle - 1]!.plus(sorted[middle]!).div(2)
 }
+
+export const computeMediane = (values: ReadonlyArray<Decimal>): number | null =>
+  computeMedianeDecimal(values)?.toNumber() ?? null
 
 export const groupMedianesByKey = <T, K>(
   rows: ReadonlyArray<T>,
