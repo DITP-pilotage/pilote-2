@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { Decimal } from '@/framework/decimal'
 import { computeEcartMediane } from '@/valeurAvancement/computeEcartMediane'
+import { computeMedianeDecimal } from '@/valeurAvancement/computeMediane'
 
 const d = (n: number): Decimal => new Decimal(n)
 
@@ -32,5 +33,11 @@ describe('computeEcartMediane', () => {
 
   it('évite les erreurs de précision IEEE 754', () => {
     expect(computeEcartMediane(d(0.3), 0.15)).toBeCloseTo(0.15)
+  })
+
+  it('renvoie un écart nul pour une valeur dérivée seule dans son référentiel', () => {
+    // Moyenne dérivée à décimales infinies (1227,1043333…), comme la valeur nationale d'IND-004.
+    const valeur = new Decimal(3681.313).div(3)
+    expect(computeEcartMediane(valeur, computeMedianeDecimal([valeur]))).toBe(0)
   })
 })

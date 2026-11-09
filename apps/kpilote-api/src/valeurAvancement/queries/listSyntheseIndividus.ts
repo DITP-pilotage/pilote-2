@@ -14,7 +14,7 @@ import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { computeEcartMediane } from '@/valeurAvancement/computeEcartMediane'
-import { computeMediane } from '@/valeurAvancement/computeMediane'
+import { computeMedianeDecimal } from '@/valeurAvancement/computeMediane'
 import { computeVariation } from '@/valeurAvancement/computeVariation'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
 import {
@@ -151,7 +151,7 @@ const computeMedianeParReferentiel = async ({
   graphe: GrapheSerie
   noeud: (params: { individu: IndividuRef }) => Noeud
   cache: Map<string, ReadonlyArray<PointInterne>>
-}): Promise<Map<string, number | null>> => {
+}): Promise<Map<string, Decimal | null>> => {
   const valeursParReferentiel = new Map<string, Decimal[]>()
   for (const individu of population) {
     const dernier = (await resolveSerieNoeud(noeud({ individu }), graphe, cache)).at(-1)
@@ -160,9 +160,9 @@ const computeMedianeParReferentiel = async ({
     liste.push(dernier.valeur)
     valeursParReferentiel.set(individu.referentielId, liste)
   }
-  const result = new Map<string, number | null>()
+  const result = new Map<string, Decimal | null>()
   for (const [referentielId, valeurs] of valeursParReferentiel) {
-    result.set(referentielId, computeMediane(valeurs))
+    result.set(referentielId, computeMedianeDecimal(valeurs))
   }
   return result
 }
