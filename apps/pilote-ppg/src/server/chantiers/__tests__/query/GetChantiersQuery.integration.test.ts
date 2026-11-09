@@ -98,3 +98,52 @@ describe("GetChantiersQuery — plusieurs territoires", () => {
     }),
   );
 });
+
+describe("GetChantiersQuery — taux d'avancement", () => {
+  const query = new GetChantiersQuery({ prisma: new PrismaPilote() });
+
+  it(
+    "renvoie un taux d'avancement nul quand celui du jalon n'est pas calculé, sans se rabattre sur le taux mandat",
+    createIntegrationTest(async () => {
+      // Given
+      await fixtures.chantierIdentite({
+        id: "CH-001",
+        ministeres_acronymes: ["MIN-01"],
+        statut: "PUBLIE",
+      });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "DEPT-29",
+        code_insee: "29",
+        maille: "DEPT",
+        zone_id: "DEPT-29",
+        est_applicable: true,
+        // Le taux mandat est renseigné, celui du jalon 2026 ne l'est pas
+        taux_avancement_mandat: 89.675,
+      });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "DEPT-29",
+        code_insee: "29",
+        maille: "DEPT",
+        zone_id: "DEPT-29",
+        jalon: 2026,
+        taux_avancement: null,
+      });
+
+      // When
+      const [resultat] = await query.execute({
+        territoireCodes: ["DEPT-29"],
+        jalon: 2026,
+      });
+
+      // Then
+      expect(resultat.chantiers).toEqual([
+        expect.objectContaining({
+          chantier: expect.objectContaining({ id: "CH-001" }),
+          taux_avancement: null,
+        }),
+      ]);
+    }),
+  );
+});

@@ -128,7 +128,7 @@ export class GetChantiersQuery {
           meteo: ct.meteo,
           tendance: ct.tendance,
           ecart,
-          taux_avancement: jalon?.taux_avancement ?? ct.taux_avancement_mandat,
+          taux_avancement: jalon?.taux_avancement ?? null,
           est_en_retard: estEnRetard,
           est_en_difficulte: estEnDifficulte,
           synthese:
@@ -203,7 +203,9 @@ export class GetChantiersQuery {
     if (params.view === "en_difficulte") {
       filters.push({
         meteo: { in: ["ORAGE", "NUAGE"] },
-        OR: [{ ecart: null }, { ecart: { gt: -10 } }],
+        chantier_territoire_jalon: {
+          none: { jalon: params.jalon, ecart: { lte: -10 } },
+        },
       });
     }
 
