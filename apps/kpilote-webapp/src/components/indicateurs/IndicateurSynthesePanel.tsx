@@ -119,7 +119,7 @@ export function IndicateurSynthesePanel({
             )}
           </div>
 
-          {taux !== null && dernierPoint && (
+          {dernierPoint && (
             <IndicateurProgression
               taux={taux}
               valeurCible={dernierPoint.valeurCible}
