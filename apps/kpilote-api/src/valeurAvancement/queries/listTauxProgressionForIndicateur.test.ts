@@ -105,6 +105,52 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
   )
 
   it(
+    'renvoie un taux null mais garde valeur et cible pour un indicateur à la baisse',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const deptId = testDeptId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId, sensSouhaite: 'BAISSE' },
+        referentiel: { publicId: refId },
+      })
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId, referentiel: { publicId: refId } },
+        date: '2024-06-01',
+        valeur: 8,
+      })
+      await fixtures.objectifIndicateurIndividu({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId },
+        dateCible: '2024-12-31',
+        valeurCible: 7,
+      })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+      )
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            indicateur: indId,
+            individu: deptId,
+            date: '2024-06-01',
+            valeur: 8,
+            valeurCible: 7,
+            dateCible: '2024-12-01',
+            tauxProgression: null,
+          },
+        ],
+      })
+    }),
+  )
+
+  it(
     'plafonne le taux à 100 quand la valeur dépasse la cible',
     integrationTest(async () => {
       const indId = testIndicateurId()
