@@ -380,6 +380,7 @@ export function createGetChantiersTool({
 - \`acces_refuse\` : l'utilisateur n'a accès à aucun des chantiers demandés.
 - \`acces_restreint\` : territoire hors de l'accès complet de l'utilisateur ; la tendance et le commentaire de synthèse y sont masqués, ce n'est pas une absence de données.
 - \`maille_de_pilotage\` null : la maille de pilotage du chantier n'est pas connue.
+- \`taux_avancement\` null : le taux d'avancement du chantier n'est pas calculé à ce jalon, en raison d'indicateurs non renseignés ; dis-le, sans le remplacer par un autre taux.
 - \`tri\` classe les chantiers tous territoires confondus ; \`limite\` (20 par défaut) garde les premiers.
 - \`total\` : le nombre de chantiers avant la limite. \`tronque\` : la liste est coupée ; dis-le (« les 20 plus en retard, sur 340 ») ou resserre la demande (vue, tendance, périmètre).
 Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels chantiers sont en retard, en difficulté, en baisse ? », « où ça coince ? », « les chantiers les plus en retard » (tri) ; un ensemble de territoires (« la Bretagne et ses départements », « toutes les régions », « tous les départements ») : un seul appel avec le \`perimetre\` adapté.
