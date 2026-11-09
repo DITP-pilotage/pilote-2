@@ -1,8 +1,15 @@
 import { $Enums } from "@prisma/client";
 import { DateTime } from "luxon";
+import { useRef } from "react";
+import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { ConversationTranscript } from "@/components/PagePanelAdministrateur/Albert/ConversationTranscript";
 import { Modale } from "@/components/shared/Modale";
+import { Button } from "@/components/shared/Button";
+import { Icone } from "@/components/_commons/Icone";
+import { FileTextIcon } from "@/components/_commons/Icones/FileTextIcon";
+import { imprimer } from "@/components/_commons/ChatUI/imprimer";
+import { nomConversation } from "@/components/PagePanelAdministrateur/Albert/exporterConversation";
 
 type ConversationDetailModaleProps = {
   id: string;
@@ -54,6 +61,7 @@ export const ConversationDetailModale = ({
 }: ConversationDetailModaleProps) => {
   const { data, isLoading } =
     api.albert.conversations.recupererPourAdmin.useQuery({ id });
+  const conversationRef = useRef<HTMLDivElement>(null);
 
   const nbPouce =
     data?.llmCalls.filter(
@@ -84,7 +92,30 @@ export const ConversationDetailModale = ({
         </div>
       )}
       {!isLoading && data && (
-        <>
+        <div ref={conversationRef}>
+          <div className="mb-4 flex justify-end">
+            <Button
+              iconLeft={
+                <Icone className="h-4 w-4 text-current" icone={FileTextIcon} />
+              }
+              onClick={() => {
+                const conversation = conversationRef.current;
+                if (conversation === null) return;
+                imprimer({
+                  contenu: conversation,
+                  titre: nomConversation({
+                    titre: data.titre,
+                    createdAt: data.createdAt,
+                  }),
+                  entete: data.titre || "Sans titre",
+                }).catch(() => toast.error("Le PDF n'a pas pu être préparé"));
+              }}
+              size="sm"
+              variant="secondary"
+            >
+              Télécharger en PDF
+            </Button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pb-5 mb-6 border-b border-dsfr-grey-925">
             <ChipMeta label="Profil" valeur={data.utilisateur.profilNom} />
             <ChipMeta label="Tours" valeur={`${data.llmCalls.length}`} />
@@ -108,7 +139,7 @@ export const ConversationDetailModale = ({
             llmCalls={data.llmCalls}
             messages={data.messages}
           />
-        </>
+        </div>
       )}
     </Modale>
   );
