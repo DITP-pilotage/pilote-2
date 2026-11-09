@@ -222,6 +222,7 @@ describe("rediger_synthese_chantier", () => {
 
     // Then
     expect(promptDuSousAgent()).toEqual({
+      jalon: 2025,
       territoire: { nom: "Morbihan", maille: "département" },
       chantier: {
         id: "CH-071",
@@ -270,7 +271,10 @@ describe("rediger_synthese_chantier", () => {
     expect(commentairesQuery.execute).not.toHaveBeenCalled();
     expect(promptDuSousAgent()).toMatchObject({
       territoire: { acces_restreint: true },
-      chantier: { tendance: null, commentaire_de_synthese: null },
+      chantier: {
+        tendance: "non accessible (restriction d'accès)",
+        commentaire_de_synthese: null,
+      },
       commentaires: [],
     });
   });

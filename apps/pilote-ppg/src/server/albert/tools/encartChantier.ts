@@ -31,6 +31,7 @@ type CommentaireEncart = {
 
 /** Ce que l'outil a collecté et passé au sous-agent de rédaction (PIL-1966). */
 export type DonneesEncartChantier = {
+  jalon: number;
   territoire_code: string;
   territoire_nom: string | null;
   /** Territoire hors de l'accès complet : tendance et commentaires y sont masqués. */
@@ -146,6 +147,7 @@ export async function collecterDonneesEncartChantier({
 
   const [resultat] = chantiers.resultats;
   return {
+    jalon,
     territoire_code: territoireCode,
     territoire_nom: resultat?.territoire_nom ?? null,
     ...(!accesComplet && { acces_restreint: true }),
@@ -177,10 +179,27 @@ const positionFaceALaMediane = (ecart: number | null): string => {
   return "dans la médiane";
 };
 
+/**
+ * Une valeur absente s'écrit : le sous-agent laissait « Tendance : » vide.
+ * Hors de l'accès complet, la tendance est masquée, pas absente.
+ */
+const valeurOuAbsence = ({
+  valeur,
+  masquee,
+}: {
+  valeur: string | null;
+  masquee: boolean;
+}): string => {
+  if (valeur !== null) return valeur;
+  return masquee ? "non accessible (restriction d'accès)" : "non renseigné";
+};
+
 /** Ce que le sous-agent lit : seulement ce que le gabarit écrit. */
 export const donneesChantierPourLeSousAgent = (
   donnees: DonneesEncartChantier,
 ) => ({
+  // Sans le jalon, le sous-agent remplissait « {jalon} » avec le taux
+  jalon: donnees.jalon,
   territoire: {
     nom: donnees.territoire_nom ?? donnees.territoire_code,
     maille: mailleDuTerritoire(donnees.territoire_code),
@@ -195,8 +214,14 @@ export const donneesChantierPourLeSousAgent = (
         : `${Math.round(donnees.chantier.taux_avancement)} %`,
     ecart: ecartPourLeSousAgent({ ecart: donnees.chantier.ecart }),
     position_face_a_la_mediane: positionFaceALaMediane(donnees.chantier.ecart),
-    niveau_de_confiance: donnees.chantier.niveau_de_confiance,
-    tendance: donnees.chantier.tendance,
+    niveau_de_confiance: valeurOuAbsence({
+      valeur: donnees.chantier.niveau_de_confiance,
+      masquee: false,
+    }),
+    tendance: valeurOuAbsence({
+      valeur: donnees.chantier.tendance,
+      masquee: donnees.acces_restreint === true,
+    }),
     commentaire_de_synthese: donnees.chantier.synthese?.commentaire ?? null,
   },
   indicateurs: indicateursPourLeSousAgent(donnees.indicateurs),

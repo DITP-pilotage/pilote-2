@@ -26,6 +26,8 @@ import { SYNTHESE_CHANTIER_CRITERIA } from "./syntheseChantier.criteria";
  * Second run du 2026-09-30 : outils 50 %, forme 75 %, fond 100 %.
  * Run du 2026-10-14, juge mistral-medium-3-5 : outils 42 %, forme 50 %, fond
  * 100 % ; échecs : Libellés météo 0/6, Format des chantiers 3/6.
+ * Run du 2026-11-09, avec l'encart du chantier (PIL-1966) : 100 % sur
+ * chacun des 13 critères, outils compris.
  */
 
 const MESSAGE = (territoire: string) =>
@@ -48,6 +50,7 @@ scenarioEval({
   suite: "Synthèse d'un chantier sur un territoire",
   group: "synthese",
   criteria: SYNTHESE_CHANTIER_CRITERIA,
+  matter: "encart",
   cases: [
     {
       question: MESSAGE("le territoire Bretagne"),

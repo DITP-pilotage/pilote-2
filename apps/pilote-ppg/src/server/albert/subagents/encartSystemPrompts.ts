@@ -164,6 +164,7 @@ const DONNEES_ET_REGLES_CHANTIER = `${INTRODUCTION}
 # Les données
 
 Le message contient les données d'un chantier sur un territoire, en JSON :
+- \`jalon\` : l'année de référence des cibles.
 - \`territoire\` : son nom et sa maille (département, région, national). \`acces_restreint: true\` : l'utilisateur n'a pas accès à la tendance ni aux commentaires de ce territoire, ils sont masqués.
 - \`chantier\` : identifiant, nom, taux d'avancement, écart à la médiane déjà écrit (\`ecart\`, par exemple « −15 points ») : recopie-le tel quel, signe compris ; position face à la médiane, niveau de confiance, tendance, et le commentaire de la synthèse des résultats (\`commentaire_de_synthese\`). \`chantier: null\` : le chantier n'a pas de données sur ce territoire ; écris-le en une phrase, sous le titre, et rien d'autre.
 - \`indicateurs\` : les indicateurs du chantier sur le territoire, valeurs déjà écrites.

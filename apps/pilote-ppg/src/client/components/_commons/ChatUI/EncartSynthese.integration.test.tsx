@@ -83,7 +83,9 @@ describe("EncartSynthese", () => {
 
     // Then
     expect(screen.getByText("Synthèse d'un chantier")).toBeInTheDocument();
-    expect(screen.getByText("Réduire les délais de passage aux urgences")).toBeInTheDocument();
+    expect(
+      screen.getByText("Réduire les délais de passage aux urgences"),
+    ).toBeInTheDocument();
   });
 
   test("dès que le texte arrive, affiche le texte sans l'état de rédaction", () => {
