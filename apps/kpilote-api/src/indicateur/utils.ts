@@ -87,6 +87,7 @@ export const toIndicateurApiModel = ({
     nom: indicateur.nom,
     visibilite: indicateur.visibilite,
     unite: toUniteIndicateurApiModel(indicateur.unite),
+    sensSouhaite: indicateur.sensSouhaite,
     description: indicateur.description,
     methodeCalcul: indicateur.methodeCalcul,
     sourceDonnees: indicateur.sourceDonnees,

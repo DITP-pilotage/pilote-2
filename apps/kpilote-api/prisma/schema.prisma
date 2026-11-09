@@ -97,6 +97,7 @@ model Indicateur {
   nom              String
   visibilite       Visibilite
   unite            UniteIndicateur?
+  sensSouhaite     SensSouhaite      @default(HAUSSE) @map("sens_souhaite")
   description      String?
   methodeCalcul    String?           @map("methode_calcul")
   sourceDonnees    String?           @map("source_donnees")
@@ -195,6 +196,13 @@ enum UniteDuree {
   ANNEES
 
   @@map("unite_duree_enum")
+}
+
+enum SensSouhaite {
+  HAUSSE
+  BAISSE
+
+  @@map("sens_souhaite_enum")
 }
 
 model IndicateurReferentiel {

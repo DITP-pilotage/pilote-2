@@ -179,6 +179,7 @@ const updateIndicateurExistant = async (
       nom: body.nom,
       visibilite: body.visibilite,
       unite: body.unite,
+      sensSouhaite: body.sensSouhaite,
       ...metadonneesData(body),
     },
   })
@@ -214,6 +215,7 @@ const createIndicateurAvecGrants = async (
       nom: body.nom,
       visibilite: body.visibilite,
       unite: body.unite,
+      sensSouhaite: body.sensSouhaite,
       ...metadonneesData(body),
     },
   })
