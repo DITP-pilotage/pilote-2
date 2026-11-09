@@ -43,7 +43,7 @@ export function IndicateurAvancement({
         {formatNumberAvecUniteFr(data.valeur, unite)}
       </span>
       <span className="text-xs text-text-muted">{formatMonthYearNumericFr(data.date)}</span>
-      {tauxData?.tauxProgression != null && (
+      {tauxData != null && (
         <div className="mt-auto pt-4">
           <IndicateurProgression
             taux={tauxData.tauxProgression}
