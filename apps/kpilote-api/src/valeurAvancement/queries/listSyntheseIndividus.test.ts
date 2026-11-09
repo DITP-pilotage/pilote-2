@@ -98,7 +98,7 @@ describe.concurrent('listSyntheseIndividus', () => {
   )
 
   it(
-    "retourne variation = valeur lorsqu'il n'y a qu'une seule valeur (seul dans son référentiel)",
+    "retourne une variation null lorsqu'il n'y a qu'une seule valeur (seul dans son référentiel)",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
@@ -117,7 +117,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 50, ecartMediane: 0 }],
+        items: [{ individu: deptId, variation: null, ecartMediane: 0 }],
       })
     }),
   )
@@ -245,7 +245,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       expect(result._unsafeUnwrap()).toEqual({
         items: [
           { individu: dept1, variation: 20, ecartMediane: 12.5 },
-          { individu: dept2, variation: 5, ecartMediane: -12.5 },
+          { individu: dept2, variation: null, ecartMediane: -12.5 },
           { individu: dept3, variation: null, ecartMediane: null },
         ],
       })
@@ -280,7 +280,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 100, ecartMediane: 0 }],
+        items: [{ individu: deptId, variation: null, ecartMediane: 0 }],
       })
     }),
   )
@@ -306,7 +306,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 42, ecartMediane: 0 }],
+        items: [{ individu: deptId, variation: null, ecartMediane: 0 }],
       })
     }),
   )
@@ -469,7 +469,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptA, variation: 100, ecartMediane: 0 }],
+        items: [{ individu: deptA, variation: null, ecartMediane: 0 }],
       })
     }),
   )
@@ -517,8 +517,8 @@ describe.concurrent('listSyntheseIndividus', () => {
       const items = result._unsafeUnwrap().items
       const itemA1 = items.find((i) => i.individu === deptA1)
       const itemB1 = items.find((i) => i.individu === deptB1)
-      expect(itemA1).toEqual({ individu: deptA1, variation: 10, ecartMediane: -10 })
-      expect(itemB1).toEqual({ individu: deptB1, variation: 100, ecartMediane: -50 })
+      expect(itemA1).toEqual({ individu: deptA1, variation: null, ecartMediane: -10 })
+      expect(itemB1).toEqual({ individu: deptB1, variation: null, ecartMediane: -50 })
     }),
   )
 
