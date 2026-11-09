@@ -10,8 +10,8 @@ describe('computeVariation', () => {
     expect(computeVariation([])).toBeNull()
   })
 
-  it('retourne la valeur seule (comparée à 0) si une seule entrée', () => {
-    expect(computeVariation([{ valeur: d(50) }])).toBe(50)
+  it('retourne null si une seule entrée', () => {
+    expect(computeVariation([{ valeur: d(50) }])).toBeNull()
   })
 
   it('retourne la différence entre la valeur la plus récente et la précédente', () => {
