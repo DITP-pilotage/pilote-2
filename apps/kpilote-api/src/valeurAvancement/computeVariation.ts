@@ -1,8 +1,9 @@
-import { Decimal } from '@/framework/decimal'
+import { type Decimal } from '@/framework/decimal'
 
+// Variation entre la valeur la plus récente et la précédente. Une variation
+// suppose deux valeurs : avec moins de deux, il n'y a rien à comparer (null).
 export const computeVariation = (valeurs: ReadonlyArray<{ valeur: Decimal }>): number | null => {
-  if (valeurs.length === 0) return null
   const [recente, precedente] = valeurs
-  const precedenteValeur = precedente?.valeur ?? new Decimal(0)
-  return recente!.valeur.minus(precedenteValeur).toNumber()
+  if (!recente || !precedente) return null
+  return recente.valeur.minus(precedente.valeur).toNumber()
 }

@@ -266,7 +266,7 @@ export const syntheseIndividuApiModelSchema = z.object({
     .nullable()
     .describe(
       'Variation absolue entre la valeur la plus récente et la précédente (par date de la valeur). ' +
-        "null si l'individu n'a aucune valeur ; égale à la valeur la plus récente s'il n'en a qu'une (comparée à 0).",
+        "null si l'individu a moins de deux valeurs (aucune valeur précédente à comparer).",
     ),
   ecartMediane: z
     .number()

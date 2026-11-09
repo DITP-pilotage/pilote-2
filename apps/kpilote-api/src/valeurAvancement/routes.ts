@@ -292,8 +292,8 @@ const getSyntheseIndividusRoute = createRoute({
     'Retourne, pour chaque individu demandé existant, sa variation depuis la dernière mise à jour et son écart à la médiane de son référentiel. ' +
     'Le paramètre `individus` est obligatoire (1..N identifiants séparés par une virgule, ex. `DEPT-84,DEPT-13`). ' +
     'Les individus inexistants sont omis de la réponse. ' +
-    'La variation est calculée sur la base de la date de la valeur (pas de la date de saisie) : null si aucune valeur, ' +
-    'égale à la valeur la plus récente si une seule (comparée à 0), sinon différence avec la valeur précédente. ' +
+    'La variation est calculée sur la base de la date de la valeur (pas de la date de saisie) : ' +
+    "null si l'individu a moins de deux valeurs (aucune valeur précédente à comparer), sinon différence avec la valeur précédente. " +
     "L'écart à la médiane est calculé par rapport à la médiane des valeurs récentes des individus du même référentiel " +
     "ayant au moins une valeur pour l'indicateur ; null si l'individu n'a aucune valeur.",
   middleware: [requireAuthentication],
