@@ -3,6 +3,7 @@ import type { ToolCase } from "../../types";
 const OUTILS_ENCART = [
   "rediger_synthese_territoire",
   "rediger_comparaison_territoires",
+  "rediger_synthese_chantier",
 ];
 
 /** Les demandes précises : une réponse dans le fil, jamais un encart. */

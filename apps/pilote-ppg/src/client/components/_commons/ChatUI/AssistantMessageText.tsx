@@ -27,6 +27,7 @@ const TOOL_NAMES = [
   "export_rapport",
   "rediger_synthese_territoire",
   "rediger_comparaison_territoires",
+  "rediger_synthese_chantier",
   "get_taux_avancement_territoire",
   "get_chantiers",
   "get_indicateurs",

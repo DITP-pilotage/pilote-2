@@ -5,7 +5,7 @@ import { MockLanguageModelV4 } from "ai/test";
 import { Albert } from "@/server/albert/Albert";
 import {
   type DonneesEncart,
-  type EncartOutput,
+  type EncartTerritorialOutput,
   couvertureEncart,
   ecartPourLeSousAgent,
   encartVersModele,
@@ -157,9 +157,11 @@ const OPTIONS = {
   context: {},
 };
 
-const collecter = async (sorties: unknown): Promise<EncartOutput[]> => {
-  const resultat: EncartOutput[] = [];
-  for await (const sortie of sorties as AsyncIterable<EncartOutput>) {
+const collecter = async (
+  sorties: unknown,
+): Promise<EncartTerritorialOutput[]> => {
+  const resultat: EncartTerritorialOutput[] = [];
+  for await (const sortie of sorties as AsyncIterable<EncartTerritorialOutput>) {
     resultat.push(sortie);
   }
   return resultat;
@@ -245,7 +247,9 @@ const DONNEES_DU_NORD: DonneesEncart = {
   },
 };
 
-const encart = (surcharge: Partial<EncartOutput>): EncartOutput => ({
+const encart = (
+  surcharge: Partial<EncartTerritorialOutput>,
+): EncartTerritorialOutput => ({
   type: "synthese",
   jalon: 2025,
   date_redaction: "2026-10-27T10:00:00.000Z",
@@ -640,7 +644,8 @@ describe("outils de rédaction d'encart", () => {
 
     // Then
     expect(
-      (resultat.steps[0].toolResults[0].output as EncartOutput).termine,
+      (resultat.steps[0].toolResults[0].output as EncartTerritorialOutput)
+        .termine,
     ).toEqual(true);
   });
   test("au national sans aucun chantier accessible, ne lance pas le sous-agent", async () => {

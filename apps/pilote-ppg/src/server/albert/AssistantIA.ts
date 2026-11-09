@@ -57,6 +57,9 @@ export class AssistantIA {
       rediger_comparaison_territoires: container.resolve(
         "createRedigerComparaisonTerritoiresTool",
       )({ habilitations }),
+      rediger_synthese_chantier: container.resolve(
+        "createRedigerSyntheseChantierTool",
+      )({ habilitations }),
       get_indicateurs: container.resolve("createGetChantierIndicateursTool")({
         chantiersAccessibles,
       }),

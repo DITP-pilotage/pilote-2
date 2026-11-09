@@ -4,17 +4,9 @@
  * s'impose pas aux autres réponses d'Albert.
  */
 
-const DONNEES_ET_REGLES = `Tu rédiges, pour PILOTE, l'outil de suivi des chantiers prioritaires du gouvernement, le contenu d'un encart affiché dans la discussion d'Albert, l'assistant de PILOTE. Ton texte est rendu tel quel, en markdown.
+const INTRODUCTION = `Tu rédiges, pour PILOTE, l'outil de suivi des chantiers prioritaires du gouvernement, le contenu d'un encart affiché dans la discussion d'Albert, l'assistant de PILOTE. Ton texte est rendu tel quel, en markdown.`;
 
-# Les données
-
-Le message contient les données, en JSON :
-- \`taux\` : pour chaque territoire, son nom (\`territoire_nom\`), son taux d'avancement global au jalon, la médiane des territoires de sa maille et sa position face à cette médiane (EN_RETARD, EN_AVANCE, DANS_LA_MEDIANE). « - % » : pas de donnée.
-- \`chantiers_en_retard\` et \`chantiers_en_difficulte\` : par territoire (\`resultats\`), les chantiers de la vue. Un chantier de \`chantiers_en_retard\` est en retard, un chantier de \`chantiers_en_difficulte\` est en difficulté. Pour chaque chantier : identifiant, nom, écart à la médiane déjà écrit (\`ecart\`, par exemple « −15 points ») : recopie-le tel quel, signe compris ; niveau de confiance, tendance, et le commentaire de la synthèse des résultats (\`commentaire_de_synthese\`).
-- \`acces_restreint: true\` sur un territoire : l'utilisateur n'a pas accès à ses commentaires, ils sont masqués.
-- \`non_applicable\` : la liste des territoires où l'analyse n'a pas de sens (pas de chantiers en retard au niveau national). Pour ces territoires, écris-le en une phrase, et liste normalement les chantiers des autres territoires.
-
-# Les règles
+const REGLES = `# Les règles
 
 - Écris en français.
 - Ne cite que les données du message : aucun chiffre, aucun chantier, aucun fait d'ailleurs.
@@ -25,6 +17,18 @@ Le message contient les données, en JSON :
 - Écris uniquement du markdown : aucune balise HTML, aucun lien, aucun JSON, aucun nom de champ.
 - Pour un chantier, le résumé tient en 1 ou 2 phrases factuelles tirées du commentaire de synthèse, sans le recopier. Sans commentaire : « Pas de commentaire disponible ». Sur un territoire en accès restreint : « Commentaire non accessible (restriction d'accès) ».
 - Commence directement par le titre, sans phrase d'introduction ni de conclusion.`;
+
+const DONNEES_ET_REGLES = `${INTRODUCTION}
+
+# Les données
+
+Le message contient les données, en JSON :
+- \`taux\` : pour chaque territoire, son nom (\`territoire_nom\`), son taux d'avancement global au jalon, la médiane des territoires de sa maille et sa position face à cette médiane (EN_RETARD, EN_AVANCE, DANS_LA_MEDIANE). « - % » : pas de donnée.
+- \`chantiers_en_retard\` et \`chantiers_en_difficulte\` : par territoire (\`resultats\`), les chantiers de la vue. Un chantier de \`chantiers_en_retard\` est en retard, un chantier de \`chantiers_en_difficulte\` est en difficulté. Pour chaque chantier : identifiant, nom, écart à la médiane déjà écrit (\`ecart\`, par exemple « −15 points ») : recopie-le tel quel, signe compris ; niveau de confiance, tendance, et le commentaire de la synthèse des résultats (\`commentaire_de_synthese\`).
+- \`acces_restreint: true\` sur un territoire : l'utilisateur n'a pas accès à ses commentaires, ils sont masqués.
+- \`non_applicable\` : la liste des territoires où l'analyse n'a pas de sens (pas de chantiers en retard au niveau national). Pour ces territoires, écris-le en une phrase, et liste normalement les chantiers des autres territoires.
+
+${REGLES}`;
 
 const FICHE_CHANTIER = `**{identifiant} — {nom du chantier}**
 **Écart** : {écart} points · **Niveau de confiance** : {niveau de confiance}
@@ -153,4 +157,66 @@ ${FICHE_CHANTIER}
 ---
 
 Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.`;
+}
+
+const DONNEES_ET_REGLES_CHANTIER = `${INTRODUCTION}
+
+# Les données
+
+Le message contient les données d'un chantier sur un territoire, en JSON :
+- \`territoire\` : son nom et sa maille (département, région, national). \`acces_restreint: true\` : l'utilisateur n'a pas accès à la tendance ni aux commentaires de ce territoire, ils sont masqués.
+- \`chantier\` : identifiant, nom, taux d'avancement, écart à la médiane déjà écrit (\`ecart\`, par exemple « −15 points ») : recopie-le tel quel, signe compris ; position face à la médiane, niveau de confiance, tendance, et le commentaire de la synthèse des résultats (\`commentaire_de_synthese\`). \`chantier: null\` : le chantier n'a pas de données sur ce territoire ; écris-le en une phrase, sous le titre, et rien d'autre.
+- \`indicateurs\` : les indicateurs du chantier sur le territoire, valeurs déjà écrites.
+- \`commentaires\` : les commentaires publiés pour ce territoire, un par type, dans leur version en vigueur, avec leur date.
+
+${REGLES}`;
+
+export function buildSyntheseChantierSystemPrompt(): string {
+  return `Reasoning: medium
+
+${DONNEES_ET_REGLES_CHANTIER}
+
+# Le gabarit : synthèse d'un chantier sur un territoire
+
+Suis ce gabarit. Les accolades sont à remplacer par les données.
+
+# {identifiant} — {nom du chantier}
+
+Synthèse pour {nom du territoire}.
+
+Dans PILOTE, le taux d'avancement {jalon} du chantier {de la maille : dans le département, dans la région, au national} s'établit à {taux}, soit un écart de {écart} à la médiane : {position face à la médiane}.
+
+**Niveau de confiance** : {niveau de confiance} · **Tendance** : {tendance}
+
+---
+
+## Synthèse des résultats
+
+> {résumé du commentaire de synthèse}
+
+---
+
+## Indicateurs
+
+| Indicateur | Valeur initiale | Valeur d'avancement | Cible | Taux d'avancement |
+|---|---|---|---|---|
+| {identifiant} — {nom de l'indicateur} | {valeur initiale} | {valeur d'avancement} | {cible} | {taux d'avancement} |
+
+Une ligne par indicateur, valeurs recopiées telles quelles. Sans indicateur : « Aucun indicateur renseigné pour ce chantier sur ce territoire. »
+
+---
+
+## Commentaires du territoire
+
+Pour chaque commentaire :
+
+**{type de commentaire}** ({date de publication})
+
+> {1 ou 2 phrases factuelles tirées du commentaire, sans le recopier}
+
+Sans commentaire : « Aucun commentaire publié pour ce chantier sur ce territoire. » Sur un territoire en accès restreint : « Commentaires non accessibles (restriction d'accès). »
+
+---
+
+Sources analysées : données quantitatives et qualitatives du chantier publiées sur PILOTE.`;
 }

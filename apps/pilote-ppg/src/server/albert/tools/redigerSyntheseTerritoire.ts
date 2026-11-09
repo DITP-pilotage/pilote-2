@@ -5,7 +5,7 @@ import {
   collecterDonneesEncart,
   type DependancesEncart,
   encartVersModele,
-  type EncartOutput,
+  type EncartTerritorialOutput,
   jalonEncartSchema,
   redigerEncart,
 } from "@/server/albert/tools/encart";
@@ -37,13 +37,18 @@ export function createRedigerSyntheseTerritoireTool({
   getChantierIndicateursQuery,
 }: DependancesEncart) {
   return ({ habilitations }: { habilitations: Habilitations }) =>
-    tool<RedigerSyntheseTerritoireInput, EncartOutput, Record<string, never>>({
+    tool<
+      RedigerSyntheseTerritoireInput,
+      EncartTerritorialOutput,
+      Record<string, never>
+    >({
       description: `Rédige la synthèse d'un territoire dans un encart affiché à l'utilisateur : son taux d'avancement face à la médiane, ses chantiers en retard et ses chantiers en difficulté, avec un résumé de leur synthèse. L'outil collecte lui-même ces données.
 Utilise-le pour : une synthèse ou un état des lieux générique d'un territoire. Par exemple « Fais-moi la synthèse du Nord », « Où en est la Gironde ? », « La situation en Bretagne », « Fais-moi la synthèse des difficultés de la Bretagne », « Où en est la France sur l'ensemble des chantiers ? », « Crée un rapport de synthèse du Nord avec les indicateurs des chantiers » (avec_indicateurs).
 Ne l'utilise pas pour :
 - une demande qui nomme son critère (« compare les taux d'avancement », « les chantiers en retard ») → les outils de données ;
 - un critère précis (« les chantiers en retard du Nord », « le taux d'avancement de la Gironde », « les difficultés en Hauts-de-France ») → get_chantiers ou get_taux_avancement_territoire ;
-- un chantier ou un indicateur précis → les outils de données ;
+- un chantier précis, même quand la demande nomme son territoire (« la synthèse du chantier CH-071 sur le Morbihan », « la synthèse de ce chantier ») → rediger_synthese_chantier ;
+- un indicateur précis → les outils de données ;
 - plusieurs territoires → rediger_comparaison_territoires ;
 - un graphique → create_dashboard.
 Un rapport ou un téléchargement de la synthèse passe aussi par cet outil, même quand la demande liste son contenu (taux, chantiers en retard, en difficulté) ; si elle cite les indicateurs, passe avec_indicateurs à true. Ne dis jamais que l'encart contient les indicateurs si tu ne les as pas demandés. L'encart se copie ou se télécharge en PDF depuis son bouton « Exporter ». Il collecte ses données lui-même : n'appelle pas en plus les outils de données pour la même demande.
@@ -52,7 +57,7 @@ L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter s
       execute: async function* (
         { territoire_code, jalon, avec_indicateurs },
         { abortSignal },
-      ): AsyncGenerator<EncartOutput> {
+      ): AsyncGenerator<EncartTerritorialOutput> {
         const donnees = await collecterDonneesEncart({
           getChantiersQuery,
           territoireResolver,

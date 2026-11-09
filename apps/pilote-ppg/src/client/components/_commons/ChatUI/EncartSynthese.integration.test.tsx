@@ -3,7 +3,10 @@ import "@testing-library/jest-dom";
 import { EncartSynthese } from "@/components/_commons/ChatUI/EncartSynthese";
 import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLinksContext";
 import { imprimerEncart } from "@/components/_commons/ChatUI/exporterEncart";
-import type { EncartOutput } from "@/server/albert/tools/encart";
+import type {
+  EncartOutput,
+  EncartTerritorialOutput,
+} from "@/server/albert/tools/encart";
 
 vi.mock(
   "@/components/_commons/ChatUI/exporterEncart",
@@ -13,7 +16,9 @@ vi.mock(
   }),
 );
 
-const encart = (surcharge: Partial<EncartOutput>): EncartOutput => ({
+const encart = (
+  surcharge: Partial<EncartTerritorialOutput>,
+): EncartTerritorialOutput => ({
   type: "synthese",
   jalon: 2025,
   date_redaction: "2026-10-27T10:00:00.000Z",
@@ -64,6 +69,21 @@ describe("EncartSynthese", () => {
       screen.getByText("À partir des données publiées dans PILOTE"),
     ).toBeInTheDocument();
     expect(screen.getByText("Rédaction en cours…")).toBeInTheDocument();
+  });
+
+  test("nomme l'encart d'un chantier dans son en-tête", () => {
+    // When
+    renderEncart({
+      type: "synthese_chantier",
+      jalon: 2025,
+      date_redaction: "2026-11-09T10:00:00.000Z",
+      markdown: "# Réduire les délais de passage aux urgences",
+      termine: true,
+    });
+
+    // Then
+    expect(screen.getByText("Synthèse d'un chantier")).toBeInTheDocument();
+    expect(screen.getByText("Réduire les délais de passage aux urgences")).toBeInTheDocument();
   });
 
   test("dès que le texte arrive, affiche le texte sans l'état de rédaction", () => {

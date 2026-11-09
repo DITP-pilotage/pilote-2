@@ -33,20 +33,12 @@ const MESSAGE = (territoire: string) =>
 Quel est son écart à la médiane ?
 Quelles sont les principales difficultés remontées dans les commentaires ?`;
 
+// Depuis PIL-1966, l'encart du chantier porte les trois volets : écart,
+// synthèse des résultats et commentaires du territoire.
 const OUTILS = [
   {
-    toolName: "get_chantiers",
-    input: {
-      perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
-      chantier_ids: ["CH-005"],
-    },
-  },
-  {
-    toolName: "get_chantier_commentaires",
-    input: {
-      chantier_id: "CH-005",
-      perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
-    },
+    toolName: "rediger_synthese_chantier",
+    input: { chantier_id: "CH-005", territoire_code: "REG-53" },
   },
 ];
 

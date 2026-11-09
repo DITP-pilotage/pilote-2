@@ -17,6 +17,7 @@ import type {
 import type { GetChantiersQuery } from "@/server/chantiers/query/GetChantiersQuery";
 import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import type { DonneesEncartChantier } from "@/server/albert/tools/encartChantier";
 
 /** Ce que l'outil a collecté et passé au sous-agent de rédaction. */
 export type DonneesEncart = {
@@ -27,22 +28,35 @@ export type DonneesEncart = {
   indicateurs?: GetChantierIndicateursResult[];
 };
 
-/**
- * Un état de l'encart de synthèse ou de comparaison (PIL-1900). L'outil en
- * renvoie un à chaque morceau rédigé : l'interface remplit l'encart au fil
- * de la rédaction.
- */
-export type EncartOutput = {
-  type: "synthese" | "comparaison";
+/** L'état commun aux encarts, quel que soit leur type. */
+type EtatEncart = {
   jalon: number;
   /** L'instant de rédaction (ISO 8601) : le navigateur l'affiche dans son fuseau. */
   date_redaction: string;
   markdown: string;
   termine: boolean;
   acces_refuse?: true;
+};
+
+/**
+ * Un état de l'encart de synthèse ou de comparaison de territoires
+ * (PIL-1900). L'outil en renvoie un à chaque morceau rédigé : l'interface
+ * remplit l'encart au fil de la rédaction.
+ */
+export type EncartTerritorialOutput = EtatEncart & {
+  type: "synthese" | "comparaison";
   /** Seulement dans le dernier état : les données lues par le juge des evals. */
   donnees?: DonneesEncart;
 };
+
+/** Un état de l'encart de synthèse d'un chantier sur un territoire (PIL-1966). */
+export type EncartChantierOutput = EtatEncart & {
+  type: "synthese_chantier";
+  /** Seulement dans le dernier état : les données lues par le juge des evals. */
+  donnees?: DonneesEncartChantier;
+};
+
+export type EncartOutput = EncartTerritorialOutput | EncartChantierOutput;
 
 /**
  * L'écart tel que l'encart l'écrit, signe compris : le sous-agent recopie une
@@ -79,7 +93,7 @@ const valeurPourLeSousAgent = ({
   return `${nombre.format(valeur)}${affichee ? ` ${affichee}` : ""}`;
 };
 
-const indicateursPourLeSousAgent = (
+export const indicateursPourLeSousAgent = (
   indicateurs: GetChantierIndicateursResult["indicateurs"],
 ) =>
   indicateurs.map((indicateur) => ({
@@ -163,27 +177,61 @@ export async function* redigerEncart({
   abortSignal,
   maintenant = new Date(),
 }: {
-  type: EncartOutput["type"];
+  type: EncartTerritorialOutput["type"];
   jalon: number;
   systemPrompt: string;
   donnees: DonneesEncart;
   abortSignal?: AbortSignal;
   maintenant?: Date;
-}): AsyncGenerator<EncartOutput> {
-  const etat = (markdown: string, termine: boolean): EncartOutput => ({
-    type,
+}): AsyncGenerator<EncartTerritorialOutput> {
+  // Les deux vues dépendent des mêmes chantiers accessibles ; au national, la
+  // vue en retard s'arrête avant le contrôle d'accès.
+  const accesRefuse =
+    donnees.chantiers_en_retard.acces_refuse === true ||
+    donnees.chantiers_en_difficulte.acces_refuse === true;
+
+  for await (const etat of streamerEncart({
+    jalon,
+    systemPrompt,
+    prompt: JSON.stringify(donneesPourLeSousAgent(donnees)),
+    accesRefuse,
+    abortSignal,
+    maintenant,
+  })) {
+    yield etat.termine && !etat.acces_refuse
+      ? { ...etat, type, donnees }
+      : { ...etat, type };
+  }
+}
+
+/**
+ * La rédaction d'un encart par le sous-agent, quel que soit son type : un
+ * premier état vide, puis le texte au fil de l'eau, puis l'état terminé.
+ * Chaque outil y ajoute son type et, au dernier état, ses données.
+ */
+export async function* streamerEncart({
+  jalon,
+  systemPrompt,
+  prompt,
+  accesRefuse,
+  abortSignal,
+  maintenant = new Date(),
+}: {
+  jalon: number;
+  systemPrompt: string;
+  prompt: string;
+  accesRefuse: boolean;
+  abortSignal?: AbortSignal;
+  maintenant?: Date;
+}): AsyncGenerator<EtatEncart> {
+  const etat = (markdown: string, termine: boolean): EtatEncart => ({
     jalon,
     date_redaction: maintenant.toISOString(),
     markdown,
     termine,
   });
 
-  // Les deux vues dépendent des mêmes chantiers accessibles ; au national, la
-  // vue en retard s'arrête avant le contrôle d'accès.
-  if (
-    donnees.chantiers_en_retard.acces_refuse ||
-    donnees.chantiers_en_difficulte.acces_refuse
-  ) {
+  if (accesRefuse) {
     yield { ...etat("", true), acces_refuse: true };
     return;
   }
@@ -194,7 +242,7 @@ export async function* redigerEncart({
   let dernierEnvoi = Date.now();
   for await (const morceau of Albert.streamSubagentText({
     systemPrompt,
-    prompt: JSON.stringify(donneesPourLeSousAgent(donnees)),
+    prompt,
     abortSignal,
   })) {
     markdown += morceau;
@@ -204,7 +252,7 @@ export async function* redigerEncart({
     }
   }
 
-  yield { ...etat(markdown, true), donnees };
+  yield etat(markdown, true);
 }
 
 /**
@@ -264,7 +312,7 @@ export const couvertureEncart = ({
 export const encartVersModele = ({
   output,
 }: {
-  output: EncartOutput;
+  output: EncartTerritorialOutput;
 }): { type: "text"; value: string } => {
   if (output.acces_refuse) {
     return {

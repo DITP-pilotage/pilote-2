@@ -1,3 +1,5 @@
+import type { EvalProfile } from "./world";
+
 /**
  * Ce qu'une `task` d'eval rend aux scorers.
  *
@@ -42,4 +44,16 @@ export type ToolCase = {
    * contexte, le jalon par défaut et pas de territoire courant.
    */
   contexteAccueil?: { territoireCode: string; jalon: number };
+  /** Le profil qui pose la question. Absent : le profil DITP. */
+  profil?: EvalProfile;
+  /**
+   * Le chantier consulté sur sa page, avec son territoire et son jalon :
+   * « ce chantier » le désigne. Exclusif de `contexteAccueil`.
+   */
+  contexteChantier?: {
+    chantierId: string;
+    chantierNom: string;
+    territoireCode: string;
+    jalon: number;
+  };
 };

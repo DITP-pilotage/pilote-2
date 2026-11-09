@@ -35,6 +35,12 @@ import {
 } from "@/components/_commons/ChatUI/assistantEvents";
 import { useChatTracking } from "@/components/_commons/ChatUI/ChatContext";
 
+const TYPES_ENCART: Record<string, EncartOutput["type"]> = {
+  "tool-rediger_synthese_territoire": "synthese",
+  "tool-rediger_comparaison_territoires": "comparaison",
+  "tool-rediger_synthese_chantier": "synthese_chantier",
+};
+
 // Avant le premier résultat de l'outil : l'en-tête de l'encart, sans texte.
 const encartEnAttente = ({
   type,
@@ -43,10 +49,7 @@ const encartEnAttente = ({
   type: string;
   input: { jalon?: number } | undefined;
 }): EncartOutput => ({
-  type:
-    type === "tool-rediger_comparaison_territoires"
-      ? "comparaison"
-      : "synthese",
+  type: TYPES_ENCART[type] ?? "synthese",
   jalon: input?.jalon ?? new Date().getFullYear(),
   date_redaction: new Date().toISOString(),
   markdown: "",
@@ -185,7 +188,8 @@ export const AssistantMessage = memo(function AssistantMessage({
 
         if (
           part.type === "tool-rediger_synthese_territoire" ||
-          part.type === "tool-rediger_comparaison_territoires"
+          part.type === "tool-rediger_comparaison_territoires" ||
+          part.type === "tool-rediger_synthese_chantier"
         ) {
           if (part.state === "output-error") return null;
           return (

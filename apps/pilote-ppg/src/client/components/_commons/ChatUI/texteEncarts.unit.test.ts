@@ -51,4 +51,37 @@ describe("texteEncarts", () => {
     // Then
     expect(textes).toEqual(["# Synthèse pour le Nord"]);
   });
+
+  test("renvoie le texte de l'encart d'un chantier", () => {
+    // Given
+    const message: PiloteUIMessage = {
+      id: "message-1",
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-rediger_synthese_chantier",
+          toolCallId: "appel-1",
+          state: "output-available",
+          input: {
+            chantier_id: "CH-071",
+            territoire_code: "DEPT-56",
+            jalon: 2025,
+          },
+          output: {
+            type: "synthese_chantier",
+            jalon: 2025,
+            date_redaction: "2026-11-09",
+            markdown: "# CH-071 — Chantier",
+            termine: true,
+          },
+        },
+      ],
+    };
+
+    // When
+    const textes = texteEncarts({ message });
+
+    // Then
+    expect(textes).toEqual(["# CH-071 — Chantier"]);
+  });
 });
