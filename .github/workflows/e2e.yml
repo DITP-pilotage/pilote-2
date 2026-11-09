@@ -117,19 +117,18 @@ jobs:
             apps/pilote-ppg/test-results/
           retention-days: 2
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
       - name: Notify Tchap on failure
         if: failure()
         env:
-          TCHAP_URL: "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/${{ secrets.TCHAP_ROOM_ID_E2E }}/send/m.room.message"
-          TCHAP_ACCESS_TOKEN: ${{ secrets.TCHAP_ACCESS_TOKEN }}
+          TCHAP_BASE_URL: ${{ secrets.TCHAP_BASE_URL }}
+          TCHAP_ROOM_ID: ${{ secrets.TCHAP_ROOM_ID_E2E }}
+          TCHAP_BOT_USER_ID: ${{ secrets.TCHAP_BOT_USER_ID }}
+          TCHAP_BOT_DEVICE_ID: ${{ secrets.TCHAP_BOT_DEVICE_ID }}
+          TCHAP_BOT_ACCESS_TOKEN: ${{ secrets.TCHAP_BOT_ACCESS_TOKEN }}
+          TCHAP_BOT_OLM_ACCOUNT: ${{ secrets.TCHAP_BOT_OLM_ACCOUNT }}
           BODY: "❌ Tests E2E ÉCHEC"
           FORMATTED_BODY: >-
             <h2>❌ Tests E2E ÉCHEC</h2><h3>📊 Résultats des tests :</h3><ul><li><strong>Total :</strong> ${{ steps.test-results.outputs.total_tests }} tests</li><li><strong>✅ Réussis :</strong> ${{ steps.test-results.outputs.passed_tests }}</li><li><strong>❌ Échoués :</strong> ${{ steps.test-results.outputs.failed_tests }}</li><li><strong>⚠️ Instables :</strong> ${{ steps.test-results.outputs.flaky_tests }}</li><li><strong>⏭️ Ignorés :</strong> ${{ steps.test-results.outputs.skipped_tests }}</li><li><strong>⏱️ Durée :</strong> ${{ steps.test-results.outputs.duration }}ms</li></ul><h3>🔍 Tests échoués :</h3><p>${{ steps.test-results.outputs.failed_test_names }}</p><h3>🔗 Liens utiles :</h3><ul><li><strong>Commit :</strong> <a href="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}">${{ github.sha }}</a></li><li><strong>Workflow :</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Voir les logs</a></li><li><strong>Artefacts :</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Télécharger les rapports</a></li><li><strong>Environnement :</strong> <a href="${{ env.BASE_URL }}">${{ env.BASE_URL }}</a></li></ul><p><em>Branche : ${{ github.ref_name }} | Déclenché par : ${{ github.actor }}</em></p>
-        run: |
-          jq -n --arg body "$BODY" --arg formatted "$FORMATTED_BODY" \
-            '{body: $body, format: "org.matrix.custom.html", formatted_body: $formatted, msgtype: "m.text"}' |
-            curl --fail-with-body --silent --show-error --max-time 6 --retry 3 --retry-all-errors \
-              -X POST "$TCHAP_URL" \
-              -H "Authorization: Bearer $TCHAP_ACCESS_TOKEN" \
-              -H "Content-Type: application/json" \
-              --data-binary @-
+        run: uv run --with "matrix-nio[e2e]~=0.26.0" python .github/scripts/send_tchap.py

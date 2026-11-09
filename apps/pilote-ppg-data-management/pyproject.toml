@@ -11,6 +11,7 @@ dependencies = [
     "dbt-postgres~=1.11.0",
     "markdown2~=2.5",
     "python-dotenv~=1.0",
+    "matrix-nio[e2e]~=0.26.0",
     "requests~=2.32",
     "elementary-data[postgres]~=0.23",
     "sqlfluff~=4.2.0",
