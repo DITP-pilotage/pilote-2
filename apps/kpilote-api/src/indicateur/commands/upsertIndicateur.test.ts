@@ -44,6 +44,7 @@ const getConfigurationsReferentiels = async (publicId: string) => {
 const BODY_BASE = {
   nom: 'Données fiscales',
   visibilite: 'PRIVE' as const,
+  sensSouhaite: 'HAUSSE' as const,
   unite: null,
   ...METADONNEES_VIDES,
   referentiels: [],
@@ -105,6 +106,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'Nouvel indicateur',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [
@@ -142,6 +144,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PUBLIC',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [],
@@ -163,6 +166,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: 'POURCENTAGE',
           ...METADONNEES_VIDES,
           referentiels: [],
@@ -175,6 +179,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: 'ANNEES',
           ...METADONNEES_VIDES,
           referentiels: [],
@@ -187,6 +192,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [],
@@ -194,6 +200,26 @@ describe.concurrent('upsertIndicateur', () => {
       )
       const apresRemise = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
       expect(apresRemise.unite).toBeNull()
+    }),
+  )
+
+  it(
+    'persiste le sens souhaité fourni à la création et le met à jour via PUT',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, sensSouhaite: 'BAISSE' }),
+      )
+      const apresCreation = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
+      expect(apresCreation.sensSouhaite).toBe('BAISSE')
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, sensSouhaite: 'HAUSSE' }),
+      )
+      const apresMaj = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
+      expect(apresMaj.sensSouhaite).toBe('HAUSSE')
     }),
   )
 
@@ -207,6 +233,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           description: 'Description initiale',
           methodeCalcul: 'Moyenne',
@@ -230,6 +257,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           description: null,
           methodeCalcul: null,
@@ -266,6 +294,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PUBLIC',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [],
@@ -294,6 +323,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [
@@ -307,6 +337,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [
@@ -335,6 +366,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [{ id: refEmptyA, fonctionAgregation: 'SUM' }],
@@ -345,6 +377,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [],
@@ -367,6 +400,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [
@@ -397,6 +431,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [
@@ -430,6 +465,7 @@ describe.concurrent('upsertIndicateur', () => {
           upsertIndicateur(indId, {
             nom: 'X',
             visibilite: 'PRIVE',
+            sensSouhaite: 'HAUSSE',
             unite: null,
             ...METADONNEES_VIDES,
             referentiels: [],
@@ -451,6 +487,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [{ id: refUpdateA, fonctionAgregation: 'SUM' }],
@@ -461,6 +498,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [{ id: refUpdateA, fonctionAgregation: 'NONE' }],
@@ -485,6 +523,7 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
+          sensSouhaite: 'HAUSSE',
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [
@@ -644,6 +683,7 @@ describe.concurrent('upsertIndicateur — garde ADMIN', () => {
   const body = {
     nom: 'Nouveau nom',
     visibilite: 'PRIVE' as const,
+    sensSouhaite: 'HAUSSE' as const,
     unite: null,
     ...METADONNEES_VIDES,
     referentiels: [],
