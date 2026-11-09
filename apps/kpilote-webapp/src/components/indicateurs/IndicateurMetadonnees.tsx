@@ -1,9 +1,12 @@
 import {
   PERIODE_MISE_A_JOUR_LABELS,
+  SENS_SOUHAITE_HINTS,
+  SENS_SOUHAITE_LABELS,
   UNITE_DUREE_LABELS,
   type ConfigurationIndicateurReferentielApiModel,
   type DelaiMiseADisposition,
   type PeriodeMiseAJour,
+  type SensSouhaite,
   type UniteIndicateurApiModel,
 } from '@pilote/kpilote-shared/indicateur'
 import { type ResponsableApiModel } from '@pilote/kpilote-shared/responsable'
@@ -31,6 +34,12 @@ const formatReferentiels = (
 const formatDelai = (delai: DelaiMiseADisposition | null): string =>
   delai ? `${delai.nombre} ${UNITE_DUREE_LABELS[delai.unite]}` : VALEUR_VIDE
 
+// Ex. « À la baisse — une valeur plus faible est favorable ».
+const formatSensSouhaite = (sens: SensSouhaite): string => {
+  const hint = SENS_SOUHAITE_HINTS[sens]
+  return `${SENS_SOUHAITE_LABELS[sens]} — ${hint.charAt(0).toLowerCase()}${hint.slice(1)}`
+}
+
 const formatDateMoisAnnee = (date: string | null): string =>
   date ? formatMoisAnneeLongFr(date) : VALEUR_VIDE
 
@@ -39,6 +48,7 @@ type IndicateurMetadonneesProps = {
     id: string
     nom: string
     unite: UniteIndicateurApiModel | null
+    sensSouhaite: SensSouhaite
     description: string | null
     methodeCalcul: string | null
     sourceDonnees: string | null
@@ -67,6 +77,9 @@ export function IndicateurMetadonnees({ indicateur }: IndicateurMetadonneesProps
               ? `${indicateur.unite.libelle} (${indicateur.unite.abbreviation})`
               : indicateur.unite.libelle
             : VALEUR_VIDE}
+        </DescriptionList.Item>
+        <DescriptionList.Item label="Sens souhaité">
+          {formatSensSouhaite(indicateur.sensSouhaite)}
         </DescriptionList.Item>
         <DescriptionList.Item label="Description">
           <span className="whitespace-pre-line">{indicateur.description ?? VALEUR_VIDE}</span>
