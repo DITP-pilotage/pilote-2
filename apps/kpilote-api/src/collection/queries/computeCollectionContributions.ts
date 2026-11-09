@@ -1,3 +1,5 @@
+import { type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
+
 import { type Bucket, compareBuckets } from '@/framework/bucket'
 import { withConcurrency } from '@/framework/concurrency'
 import { type Decimal } from '@/framework/decimal'
@@ -13,7 +15,7 @@ const DATE_TRUNC_OBJECTIF = 'month' as const
 
 type CollectionIndicateurRef = {
   ponderation: Decimal
-  indicateur: { id: string; publicId: string }
+  indicateur: { id: string; publicId: string; sensSouhaite: SensSouhaite }
 }
 
 export const computeContributions = (
@@ -22,7 +24,11 @@ export const computeContributions = (
 ): Promise<IndicateurContribution[]> =>
   withConcurrency(
     indicateurs.map(({ indicateur, ponderation }) => async () => {
-      const dernier = await computeDernierTaux({ indicateurId: indicateur.id, individuCible })
+      const dernier = await computeDernierTaux({
+        indicateurId: indicateur.id,
+        sensSouhaite: indicateur.sensSouhaite,
+        individuCible,
+      })
       return {
         indicateurPublicId: indicateur.publicId,
         tauxProgression: dernier?.tauxProgression ?? null,
@@ -34,13 +40,16 @@ export const computeContributions = (
 
 const computeDernierTaux = async ({
   indicateurId,
+  sensSouhaite,
   individuCible,
 }: {
   indicateurId: string
+  sensSouhaite: SensSouhaite
   individuCible: IndividuRef
 }): Promise<{ tauxProgression: number | null; date: Bucket } | null> => {
   const points = await computeTauxProgressionPoints({
     indicateurId,
+    sensSouhaite,
     individusCibles: [individuCible],
     dateTruncValeur: DATE_TRUNC_VALEUR,
     dateTruncObjectif: DATE_TRUNC_OBJECTIF,

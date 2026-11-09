@@ -6,6 +6,7 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
+import { type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Bucket, compareBuckets, formatBucket } from '@/framework/bucket'
@@ -35,7 +36,7 @@ const collectionTauxProgressionArgs = {
       orderBy: { createdAt: 'asc' },
       select: {
         ponderation: true,
-        indicateur: { select: { id: true, publicId: true } },
+        indicateur: { select: { id: true, publicId: true, sensSouhaite: true } },
       },
     },
   },
@@ -83,7 +84,11 @@ const buildResult = async ({
 
   const contributions: IndicateurContribution[] = []
   for (const { indicateur: ind, ponderation } of collection.indicateurs) {
-    const dernier = await computeDernierTaux({ indicateurId: ind.id, cible })
+    const dernier = await computeDernierTaux({
+      indicateurId: ind.id,
+      sensSouhaite: ind.sensSouhaite,
+      cible,
+    })
     contributions.push({
       indicateurPublicId: ind.publicId,
       tauxProgression: dernier?.tauxProgression ?? null,
@@ -126,17 +131,20 @@ const buildResult = async ({
 // Sélectionne le dernier bucket parmi les points calculés par le pipeline
 // taux-progression. La règle « tout-ou-rien » côté collection veut que tout
 // indicateur dont l'un des prérequis manque (pas de série, pas d'objectif,
-// dernier objectif à 0) produise `null` — ce qui correspond ici à l'absence
+// dernier objectif à 0, indicateur à la baisse en attendant PIL-1777) produise `null` — ce qui correspond ici à l'absence
 // de point ou à un dernier point sans taux.
 const computeDernierTaux = async ({
   indicateurId,
+  sensSouhaite,
   cible,
 }: {
   indicateurId: string
+  sensSouhaite: SensSouhaite
   cible: IndividuRef
 }): Promise<{ tauxProgression: number | null; date: Bucket } | null> => {
   const points = await computeTauxProgressionPoints({
     indicateurId,
+    sensSouhaite,
     individusCibles: [cible],
     dateTruncValeur: DATE_TRUNC_VALEUR,
     dateTruncObjectif: DATE_TRUNC_OBJECTIF,
