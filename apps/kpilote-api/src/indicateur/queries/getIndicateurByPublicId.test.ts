@@ -51,6 +51,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
         nom: 'Indicateur de test',
         visibilite: 'PRIVE',
         unite: null,
+        sensSouhaite: 'HAUSSE',
         description: null,
         methodeCalcul: null,
         sourceDonnees: null,
