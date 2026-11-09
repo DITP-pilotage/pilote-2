@@ -5,6 +5,9 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import {
   PERIODE_MISE_A_JOUR_LABELS,
   PERIODES_MISE_A_JOUR,
+  SENS_SOUHAITE_HINTS,
+  SENS_SOUHAITE_LABELS,
+  SENS_SOUHAITES,
   UNITE_DUREE_LABELS,
   UNITES_DUREE,
 } from '@pilote/kpilote-shared/indicateur'
@@ -22,12 +25,18 @@ import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
 import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
 import { SegmentedField } from '@pilote/kpilote-ui/SegmentedField'
+import { Text } from '@pilote/kpilote-ui/Typography'
 import { useAppConfig } from '@/context/AppConfigContext'
 
 const VISIBILITE_OPTIONS = [
   { value: 'PUBLIC', label: 'Public' },
   { value: 'PRIVE', label: 'Privé' },
 ] as const
+
+const SENS_SOUHAITE_OPTIONS = SENS_SOUHAITES.map((sens) => ({
+  value: sens,
+  label: SENS_SOUHAITE_LABELS[sens],
+}))
 
 export function IndicateurForm({
   mode,
@@ -113,6 +122,28 @@ export function IndicateurForm({
                 )}
               />
             </div>
+          </div>
+
+          <div className="mb-6">
+            <Controller
+              control={form.control}
+              name="sensSouhaite"
+              render={({ field, fieldState }) => (
+                <>
+                  <SegmentedField
+                    label="Sens souhaité"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    error={fieldState.error?.message}
+                    options={SENS_SOUHAITE_OPTIONS}
+                  />
+                  <Text variant="caption" className="mt-1.5">
+                    {SENS_SOUHAITE_HINTS[field.value]}. Changer le sens ne modifie ni les valeurs
+                    d&apos;avancement ni les cibles.
+                  </Text>
+                </>
+              )}
+            />
           </div>
 
           <div className="mb-6 border-t border-border pt-5">
