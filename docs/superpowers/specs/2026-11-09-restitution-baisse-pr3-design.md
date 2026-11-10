@@ -39,8 +39,8 @@ Les trois PR sont mergées sur `dev` avant le prochain déploiement en prod.
 8. **Un texte masqué pour les lecteurs d'écran porte l'interprétation** (*choix de Claude, annoncé à Triko*). Sur la pastille de variation : « évolution favorable » ou « évolution défavorable ». Sur la pastille d'écart : « position favorable » ou « position défavorable ». Sur les valeurs maximale et minimale : « favorable » ou « défavorable », selon le sens (*ajouté après relecture* : à la baisse, c'est une information nouvelle que seule la couleur porterait). Rien pour « STABLE », « à la médiane » et la médiane, dont le libellé suffit. Aujourd'hui, cette information n'existe que par la couleur.
 9. **Une fonction pure porte la règle d'interprétation** (*choix de Claude*). Elle traduit les deux tableaux du ticket ; le composant ne fait que choisir des couleurs à partir de son résultat.
 10. **Un minimum égal au maximum n'est pas interprété** (*correctif de la relecture finale*). Dans un référentiel à un seul individu (vue nationale), min = médiane = max : les trois valeurs restent en bleu, sans texte masqué. Une même valeur ne peut pas être à la fois favorable et défavorable.
-11. **Ce qui s'affiche « 0 » se lit comme 0** (décision de Triko : « Si on affiche 0, on doit afficher stable », puis « harmoniser tout ça »). Une variation ou un écart que l'affichage arrondit à « 0 » donne « → STABLE » ou « à la médiane », en bleu, sans texte masqué. La règle s'appuie sur le formateur d'affichage (`formatVariationFr`, trois décimales), pour que l'interprétation suive toujours ce qui est lu.
-12. **La médiane est calculée en décimal exact** (décision de Triko). Elle passait par des nombres flottants, alors que la valeur d'une série dérivée en moyenne garde toutes ses décimales : un individu seul dans son référentiel avait un écart d'environ 10⁻¹³ au lieu de 0. L'API renvoie désormais un écart exactement nul dans ce cas.
+11. **Ce qui s'affiche « 0 » se lit comme 0** (décision de Triko : « Si on affiche 0, on doit afficher stable », puis « harmoniser tout ça »). Une variation ou un écart que l'affichage arrondit à « 0 » donne « → STABLE » ou « à la médiane », en bleu, sans texte masqué. La variation et l'écart sont arrondis comme à l'affichage (trois décimales) avant d'être affichés et interprétés, pour que l'interprétation suive toujours ce qui est lu (*simplifié après relecture de Triko* : un arrondi explicite plutôt qu'une comparaison de chaînes formatées).
+12. **La médiane est calculée en décimal exact** (décision de Triko). Elle était convertie en nombre flottant avant d'être soustraite à la dernière valeur, restée en décimal : pour une série dérivée en moyenne, qui garde toutes ses décimales, l'individu situé à la médiane (par exemple seul dans son référentiel) avait un écart d'environ 10⁻¹³ au lieu de 0. L'API renvoie désormais un écart exactement nul dans ce cas. L'arrondi de la décision 11 suffirait à l'écran, mais l'assistant (#2359) lit les nombres bruts de l'API.
 
 ## Règle d'interprétation
 
@@ -78,8 +78,9 @@ Fichier proposé : `apps/kpilote-webapp/src/components/indicateurs/interpreterSe
 
 ### `valeurAvancement/computeMediane.ts` et `computeEcartMediane.ts`
 
-- Nouvelle `computeMedianeDecimal(values): Decimal | null`, calculée sans conversion en nombre (tri par `comparedTo`, moyenne des deux valeurs centrales par `plus` puis `div(2)`). `computeMediane` en devient un simple `toNumber()`, inchangé pour ses appelants.
-- `listSyntheseIndividus` calcule la médiane de chaque référentiel avec `computeMedianeDecimal`, et `computeEcartMediane` accepte une médiane `Decimal | number | null`.
+- `computeMediane(values): Decimal | null` est calculée sans conversion en nombre (tri par `comparedTo`, moyenne des deux valeurs centrales par `plus` puis `div(2)`). Une seule fonction : la conversion en nombre se fait à la sortie de l'API, dans `listValeursRemarquablesForIndicateur` (`?.toNumber() ?? null`).
+- `listSyntheseIndividus` garde la médiane de chaque référentiel en `Decimal`, et `computeEcartMediane` prend une médiane `Decimal | null`.
+- `groupMedianesByKey`, que seuls ses tests appelaient, est supprimée.
 
 ### Descriptions
 
@@ -128,7 +129,7 @@ Nouvelle prop `sensSouhaite: SensSouhaite`.
 
 `x unité` est formaté par `formatVariationAvecUniteFr`, comme aujourd'hui.
 
-**Zéros affichés.** Avant toute interprétation, la variation et l'écart passent par `zeroSiAfficheZero(value: number): number` (`lib/format.ts`), qui renvoie 0 quand `formatVariationFr` afficherait « 0 », et la valeur telle quelle sinon. Les tableaux ci-dessus s'appliquent ensuite à cette valeur.
+**Zéros affichés.** À la lecture, la variation et l'écart passent par `roundForDisplay(value: number | null): number | null` (`lib/format.ts`), qui les arrondit à `MAX_FRACTION_DIGITS` (3) décimales, comme les formateurs d'affichage. Le texte et les tableaux ci-dessus s'appliquent ensuite à cette valeur arrondie : un « 0 » affiché se lit comme 0.
 
 ### Ce qui ne change pas
 

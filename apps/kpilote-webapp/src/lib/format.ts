@@ -1,8 +1,14 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 
-const numberFr = new Intl.NumberFormat('fr-FR')
-const variationFr = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })
+// Les nombres s'affichent avec au plus 3 décimales.
+const MAX_FRACTION_DIGITS = 3
+
+const numberFr = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: MAX_FRACTION_DIGITS })
+const variationFr = new Intl.NumberFormat('fr-FR', {
+  signDisplay: 'exceptZero',
+  maximumFractionDigits: MAX_FRACTION_DIGITS,
+})
 const dateFr = new Intl.DateTimeFormat('fr-FR')
 const heureFr = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' })
 const monthYearShortOptions = { month: 'short', year: '2-digit' } as const
@@ -34,10 +40,10 @@ export const formatNumberAvecUniteFr = (
 
 export const formatVariationFr = (value: number): string => variationFr.format(value)
 
-// Une variation ou un écart que l'affichage arrondit à « 0 » est traité comme 0,
-// pour que l'interprétation (« STABLE », « à la médiane ») suive ce qui est lu.
-export const zeroSiAfficheZero = (value: number): number =>
-  variationFr.format(value) === variationFr.format(0) ? 0 : value
+// Arrondit comme l'affichage, pour que l'interprétation (couleur, « STABLE »,
+// « à la médiane ») suive le nombre lu : un « 0 » affiché se lit comme 0.
+export const roundForDisplay = (value: number | null): number | null =>
+  value === null ? null : Number(value.toFixed(MAX_FRACTION_DIGITS))
 
 export const formatVariationAvecUniteFr = (
   value: number,
