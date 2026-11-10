@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { libelleOuAbsence } from "@/server/albert/tools/libelles";
+import {
+  compter,
+  enumerer,
+  libelleOuAbsence,
+} from "@/server/albert/tools/libelles";
 import { Albert } from "@/server/albert/Albert";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
@@ -37,6 +41,13 @@ type EtatEncart = {
   markdown: string;
   termine: boolean;
   acces_refuse?: true;
+  /**
+   * Seulement dans le premier état : ce que le sous-agent analyse avant
+   * d'écrire. Sa réflexion dure une dizaine de secondes avant le premier
+   * mot, la collecte quelques dizaines de millisecondes : l'interface le dit
+   * plutôt qu'un « Rédaction en cours » qui ne rédige rien.
+   */
+  donnees_analysees?: string;
 };
 
 /**
@@ -201,6 +212,7 @@ export async function* redigerEncart({
     systemPrompt,
     prompt: JSON.stringify(donneesPourLeSousAgent(donnees)),
     accesRefuse,
+    donneesAnalysees: decrireDonneesEncart({ type, donnees }),
     abortSignal,
     maintenant,
   })) {
@@ -209,6 +221,65 @@ export async function* redigerEncart({
       : { ...etat, type };
   }
 }
+
+const nombreDeChantiers = (vue: GetChantiersOutput) =>
+  vue.resultats.reduce(
+    (total, resultat) => total + resultat.chantiers.length,
+    0,
+  );
+
+/** Ce que le sous-agent d'un encart territorial analyse, en clair. */
+export const decrireDonneesEncart = ({
+  type,
+  donnees,
+}: {
+  type: EncartTerritorialOutput["type"];
+  donnees: DonneesEncart;
+}): string => {
+  // Au national, la vue en retard est sans objet : elle ne compte pas
+  const retardSansObjet =
+    donnees.chantiers_en_retard.non_applicable !== undefined &&
+    donnees.chantiers_en_retard.resultats.length === 0;
+  return enumerer({
+    elements: [
+      ...(type === "comparaison"
+        ? [
+            compter({
+              nombre: donnees.taux.length,
+              singulier: "territoire",
+              pluriel: "territoires",
+            }),
+          ]
+        : []),
+      ...(retardSansObjet
+        ? []
+        : [
+            compter({
+              nombre: nombreDeChantiers(donnees.chantiers_en_retard),
+              singulier: "chantier en retard",
+              pluriel: "chantiers en retard",
+            }),
+          ]),
+      compter({
+        nombre: nombreDeChantiers(donnees.chantiers_en_difficulte),
+        singulier: "chantier en difficulté",
+        pluriel: "chantiers en difficulté",
+      }),
+      ...(donnees.indicateurs
+        ? [
+            compter({
+              nombre: donnees.indicateurs.reduce(
+                (total, parChantier) => total + parChantier.indicateurs.length,
+                0,
+              ),
+              singulier: "indicateur",
+              pluriel: "indicateurs",
+            }),
+          ]
+        : []),
+    ],
+  });
+};
 
 /**
  * La rédaction d'un encart par le sous-agent, quel que soit son type : un
@@ -220,6 +291,7 @@ export async function* streamerEncart({
   systemPrompt,
   prompt,
   accesRefuse,
+  donneesAnalysees,
   abortSignal,
   maintenant = new Date(),
 }: {
@@ -227,6 +299,8 @@ export async function* streamerEncart({
   systemPrompt: string;
   prompt: string;
   accesRefuse: boolean;
+  /** Ce que le sous-agent analyse, tel que l'interface l'affiche en attendant son texte. */
+  donneesAnalysees: string;
   abortSignal?: AbortSignal;
   maintenant?: Date;
 }): AsyncGenerator<EtatEncart> {
@@ -242,7 +316,7 @@ export async function* streamerEncart({
     return;
   }
 
-  yield etat("", false);
+  yield { ...etat("", false), donnees_analysees: donneesAnalysees };
 
   let markdown = "";
   let dernierEnvoi = Date.now();

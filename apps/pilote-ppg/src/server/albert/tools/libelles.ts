@@ -163,3 +163,23 @@ export function libelleOuAbsence<Valeur>({
   if (valeur === null) return absence;
   return libelle(valeur);
 }
+
+/** Un nombre et ce qu'il compte, accordé : « 1 indicateur », « 3 indicateurs », « aucun indicateur ». */
+export function compter({
+  nombre,
+  singulier,
+  pluriel,
+}: {
+  nombre: number;
+  singulier: string;
+  pluriel: string;
+}): string {
+  if (nombre === 0) return `aucun ${singulier}`;
+  return `${nombre} ${nombre === 1 ? singulier : pluriel}`;
+}
+
+/** Une énumération en français : « a », « a et b », « a, b et c ». */
+export function enumerer({ elements }: { elements: string[] }): string {
+  if (elements.length <= 1) return elements.join("");
+  return `${elements.slice(0, -1).join(", ")} et ${elements.at(-1)}`;
+}

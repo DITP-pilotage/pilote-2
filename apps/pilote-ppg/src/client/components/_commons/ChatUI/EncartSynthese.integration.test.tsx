@@ -68,7 +68,25 @@ describe("EncartSynthese", () => {
     expect(
       screen.getByText("À partir des données publiées dans PILOTE"),
     ).toBeInTheDocument();
-    expect(screen.getByText("Rédaction en cours…")).toBeInTheDocument();
+    expect(screen.getByText("Analyse des données…")).toBeInTheDocument();
+  });
+
+  test("avant l'arrivée du texte, dit ce que l'assistant analyse", () => {
+    // When
+    renderEncart(
+      encart({
+        markdown: "",
+        termine: false,
+        donnees_analysees: "le chantier, 3 indicateurs et 2 commentaires",
+      }),
+    );
+
+    // Then
+    expect(
+      screen.getByText(
+        "Analyse des données : le chantier, 3 indicateurs et 2 commentaires…",
+      ),
+    ).toBeInTheDocument();
   });
 
   test("nomme l'encart d'un chantier dans son en-tête", () => {
@@ -93,7 +111,7 @@ describe("EncartSynthese", () => {
     renderEncart(encart({ termine: false }));
 
     // Then
-    expect(screen.queryByText("Rédaction en cours…")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Analyse des données/)).not.toBeInTheDocument();
     expect(screen.getByText("Synthèse pour le Nord")).toBeInTheDocument();
   });
 
@@ -102,7 +120,7 @@ describe("EncartSynthese", () => {
     renderEncart(encart({ termine: true }));
 
     // Then
-    expect(screen.queryByText("Rédaction en cours…")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Analyse des données/)).not.toBeInTheDocument();
     expect(screen.getByText("Synthèse pour le Nord")).toBeInTheDocument();
   });
 
@@ -111,7 +129,7 @@ describe("EncartSynthese", () => {
     renderEncart(encart({ markdown: "", termine: false }), false);
 
     // Then
-    expect(screen.queryByText("Rédaction en cours…")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Analyse des données/)).not.toBeInTheDocument();
   });
 
   test("une fois rédigé, s'exporte en markdown dans le presse-papiers", async () => {

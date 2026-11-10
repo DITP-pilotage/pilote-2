@@ -10,6 +10,7 @@ import {
 import {
   collecterDonneesEncartChantier,
   type DependancesEncartChantier,
+  decrireDonneesEncartChantier,
   donneesChantierPourLeSousAgent,
   encartChantierVersModele,
 } from "@/server/albert/tools/encartChantier";
@@ -74,6 +75,8 @@ L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter s
               ? ""
               : JSON.stringify(donneesChantierPourLeSousAgent(donnees)),
           accesRefuse: donnees === null,
+          donneesAnalysees:
+            donnees === null ? "" : decrireDonneesEncartChantier(donnees),
           abortSignal,
         })) {
           yield etat.termine && donnees !== null

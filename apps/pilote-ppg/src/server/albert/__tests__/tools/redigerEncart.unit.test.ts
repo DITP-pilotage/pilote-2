@@ -283,7 +283,10 @@ describe("outils de rédaction d'encart", () => {
 
     // Then
     expect(sorties).toEqual([
-      encart({ markdown: "" }),
+      encart({
+        markdown: "",
+        donnees_analysees: "1 chantier en retard et 1 chantier en difficulté",
+      }),
       encart({ markdown: "# Synthèse" }),
       encart({ markdown: "# Synthèse pour le Nord" }),
       encart({
