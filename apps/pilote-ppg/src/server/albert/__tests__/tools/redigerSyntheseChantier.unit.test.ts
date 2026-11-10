@@ -254,6 +254,19 @@ describe("rediger_synthese_chantier", () => {
     });
   });
 
+  test("dit dans son premier état ce que le sous-agent analyse", async () => {
+    // Given
+    subagentRedige(["# CH-071"]);
+
+    // When
+    const [premier] = await collecter(outil().execute!(INPUT, OPTIONS));
+
+    // Then
+    expect(premier.donnees_analysees).toEqual(
+      "le chantier, 1 indicateur et 1 commentaire",
+    );
+  });
+
   test("ne lit pas les commentaires d'un territoire hors de l'accès complet", async () => {
     // Given
     subagentRedige(["# CH-071"]);

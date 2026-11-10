@@ -119,7 +119,9 @@ export const EncartSynthese = ({
       </header>
       {enAttenteDuTexte && (
         <p className="mb-2 text-sm text-dsfr-mention-grey">
-          Rédaction en cours…
+          {output.donnees_analysees
+            ? `Analyse des données : ${output.donnees_analysees}…`
+            : "Analyse des données…"}
         </p>
       )}
       <AssistantMessageText streaming={enCours} text={output.markdown} />

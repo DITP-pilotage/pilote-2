@@ -10,7 +10,9 @@ import {
 } from "@/server/albert/tools/getChantiers";
 import { regrouperParType } from "@/server/albert/tools/getChantierCommentaires";
 import {
+  compter,
   designationMaille,
+  enumerer,
   libelleOuAbsence,
   libelleTypeCommentaire,
 } from "@/server/albert/tools/libelles";
@@ -155,6 +157,31 @@ const positionFaceALaMediane = (ecart: number | null): string => {
   if (ecart >= SEUIL_ECART_MEDIANE) return "en avance";
   return "dans la médiane";
 };
+
+/** Ce que le sous-agent de l'encart d'un chantier analyse, en clair. */
+export const decrireDonneesEncartChantier = (
+  donnees: DonneesEncartChantier,
+): string =>
+  enumerer({
+    elements: [
+      "le chantier",
+      compter({
+        nombre: donnees.indicateurs.length,
+        singulier: "indicateur",
+        pluriel: "indicateurs",
+      }),
+      // Hors de l'accès complet, les commentaires ne sont pas lus
+      ...(donnees.acces_restreint
+        ? []
+        : [
+            compter({
+              nombre: donnees.commentaires.length,
+              singulier: "commentaire",
+              pluriel: "commentaires",
+            }),
+          ]),
+    ],
+  });
 
 /** Ce que le sous-agent lit : seulement ce que le gabarit écrit. */
 export const donneesChantierPourLeSousAgent = (

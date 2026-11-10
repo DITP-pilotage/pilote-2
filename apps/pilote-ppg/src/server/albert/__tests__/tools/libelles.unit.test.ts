@@ -1,6 +1,8 @@
 import {
   codeMeteoDepuisLibelle,
+  compter,
   designationMaille,
+  enumerer,
   libelleCategorieSignalement,
   libelleMaille,
   libelleOuAbsence,
@@ -118,5 +120,29 @@ describe("libelleOuAbsence", () => {
         masquee: true,
       }),
     ).toEqual("non accessible (restriction d'accès)");
+  });
+});
+
+describe("compter", () => {
+  it.each`
+    nombre | texte
+    ${0}   | ${"aucun indicateur"}
+    ${1}   | ${"1 indicateur"}
+    ${3}   | ${"3 indicateurs"}
+  `("compte $nombre : $texte", ({ nombre, texte }) => {
+    expect(
+      compter({ nombre, singulier: "indicateur", pluriel: "indicateurs" }),
+    ).toEqual(texte);
+  });
+});
+
+describe("enumerer", () => {
+  it.each`
+    elements           | texte
+    ${["a"]}           | ${"a"}
+    ${["a", "b"]}      | ${"a et b"}
+    ${["a", "b", "c"]} | ${"a, b et c"}
+  `("énumère $elements : $texte", ({ elements, texte }) => {
+    expect(enumerer({ elements })).toEqual(texte);
   });
 });
