@@ -87,7 +87,7 @@ const buildStats = async ({
       referentiel: referentiel.publicId,
       min: computeMin(valeurs),
       max: computeMax(valeurs),
-      mediane: computeMediane(valeurs),
+      mediane: computeMediane(valeurs)?.toNumber() ?? null,
       contributions,
     })
   }

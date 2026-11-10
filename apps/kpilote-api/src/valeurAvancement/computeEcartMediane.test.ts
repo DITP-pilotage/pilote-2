@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest'
 
 import { Decimal } from '@/framework/decimal'
 import { computeEcartMediane } from '@/valeurAvancement/computeEcartMediane'
-import { computeMedianeDecimal } from '@/valeurAvancement/computeMediane'
+import { computeMediane } from '@/valeurAvancement/computeMediane'
 
 const d = (n: number): Decimal => new Decimal(n)
 
 describe('computeEcartMediane', () => {
   it('retourne null si la dernière valeur est undefined', () => {
-    expect(computeEcartMediane(undefined, 10)).toBeNull()
+    expect(computeEcartMediane(undefined, d(10))).toBeNull()
   })
 
   it('retourne null si la médiane est null', () => {
@@ -20,24 +20,24 @@ describe('computeEcartMediane', () => {
   })
 
   it("retourne l'écart positif quand la valeur est au-dessus de la médiane", () => {
-    expect(computeEcartMediane(d(50), 30)).toBe(20)
+    expect(computeEcartMediane(d(50), d(30))).toBe(20)
   })
 
   it("retourne l'écart négatif quand la valeur est en-dessous de la médiane", () => {
-    expect(computeEcartMediane(d(10), 30)).toBe(-20)
+    expect(computeEcartMediane(d(10), d(30))).toBe(-20)
   })
 
   it('retourne 0 quand la valeur est égale à la médiane', () => {
-    expect(computeEcartMediane(d(42), 42)).toBe(0)
+    expect(computeEcartMediane(d(42), d(42))).toBe(0)
   })
 
   it('évite les erreurs de précision IEEE 754', () => {
-    expect(computeEcartMediane(d(0.3), 0.15)).toBeCloseTo(0.15)
+    expect(computeEcartMediane(d(0.3), d(0.15))).toBeCloseTo(0.15)
   })
 
   it('renvoie un écart nul pour une valeur dérivée seule dans son référentiel', () => {
     // Moyenne dérivée à décimales infinies (1227,1043333…), comme la valeur nationale d'IND-004.
     const valeur = new Decimal(3681.313).div(3)
-    expect(computeEcartMediane(valeur, computeMedianeDecimal([valeur]))).toBe(0)
+    expect(computeEcartMediane(valeur, computeMediane([valeur]))).toBe(0)
   })
 })
