@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { evalite } from "evalite";
 import { AssistantIA } from "@/server/albert/AssistantIA";
 import { construireAgentContextTerritoire } from "@/components/PageAccueil/agentContextTerritoire";
+import { construireAgentContextChantier } from "@/components/PageChantier/agentContextChantier";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import {
   BRETAGNE,
@@ -77,14 +78,13 @@ export function toolSelectionEval({
 
         await createIntegrationTest(
           async () => {
-            const { habilitations, userId } = world();
+            const { habilitations, userId } =
+              world().users[input.profil ?? "ditp"];
             const result = await AssistantIA.generateText({
               chatId: randomUUID(),
               question: input.question,
               habilitations,
-              agentContext: input.contexteAccueil
-                ? construireAgentContextTerritoire(input.contexteAccueil)
-                : undefined,
+              agentContext: agentContextDuCas(input),
               userId,
             });
 
@@ -138,6 +138,12 @@ export function toolSelectionEval({
       ],
     },
   );
+}
+
+function agentContextDuCas({ contexteAccueil, contexteChantier }: ToolCase) {
+  if (contexteChantier) return construireAgentContextChantier(contexteChantier);
+  if (contexteAccueil) return construireAgentContextTerritoire(contexteAccueil);
+  return undefined;
 }
 
 function decrireAppel({ toolName, input }: ObservedToolCall) {

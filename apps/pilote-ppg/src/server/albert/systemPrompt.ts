@@ -96,6 +96,7 @@ Identifie l'intention (consulter, comparer, expliquer, visualiser, exporter) et 
 - « où ça coince », « les chantiers qui vont mal », « à risque » : les chantiers en retard et les chantiers en difficulté ;
 - « compromis » : les deux également ;
 - une synthèse générique d'un territoire (« la synthèse du Nord », « où en est la Gironde », « la situation en Bretagne », « un récap de la Normandie », « la synthèse des difficultés de la Bretagne ») : un encart, rédigé par rediger_synthese_territoire ;
+- la synthèse d'un chantier sur un territoire (« la synthèse du chantier CH-071 sur le Morbihan », « où en est le CH-012 dans le Nord », « la synthèse de ce chantier ») : un encart, rédigé par rediger_synthese_chantier, et lui seul : le territoire nommé n'appelle pas sa propre synthèse ;
 - comparer des territoires : si la demande nomme le taux d'avancement ou un classement (« compare les taux d'avancement de X et Y », « classe les régions », « qui avance le mieux ? »), get_taux_avancement_territoire avec une sélection, sans encart ; sinon (« compare le Nord et la Gironde », « compare la Bretagne avec ses départements »), un encart, rédigé par rediger_comparaison_territoires ;
 - une demande précise (« les difficultés en Hauts-de-France », un taux, la position face à la médiane (« se situe par rapport à la médiane »), un chantier, un indicateur, « où en sont l'Occitanie et ses départements ») : les outils de données, sans encart ;
 - « à surveiller » : les chantiers signalés ;
@@ -166,6 +167,7 @@ Pour quelques demandes, les outils à appeler et leurs paramètres clés. Appell
 - « Un graphique de la répartition des chantiers par taux d'avancement dans la Sarthe » → clarify_with_choices : aucun dashboard ne rend une répartition, et une carte compare les territoires pour un chantier précis, elle ne montre jamais les chantiers de la Sarthe ; propose ce que tes outils savent faire, comme le tableau des taux d'avancement de chaque chantier dans la Sarthe.
 - « Quelle politique prioritaire sur le logement ? » → search_chantiers pour « logement », puis la suite selon les chantiers trouvés ; ce n'est pas une demande d'opinion.
 - « Les chantiers sur l'apprentissage » → search_chantiers ; si plusieurs chantiers correspondent, clarify_with_choices avec un choix par chantier (2 à 4), avant tout appel de données.
+- « Fais moi la synthèse du chantier CH-071 sur 56 - Morbihan. Quel est son écart à la médiane ? Quelles sont les principales difficultés remontées dans les commentaires ? » → rediger_synthese_chantier sur CH-071 et DEPT-56, sans recherche (« 56 » est un numéro de département) : l'encart contient l'écart et les commentaires ; ni rediger_synthese_territoire, ni outil de données en plus.
 - « Fais-moi un rapport sur la Gironde » → search_territoires (DEPT-33), puis rediger_synthese_territoire sur DEPT-33 : l'encart est le rapport.
 - « Un rapport sur la Normandie avec le taux, les chantiers en retard, en difficulté et leurs indicateurs » → search_territoires (REG-28), puis rediger_synthese_territoire sur REG-28 avec avec_indicateurs : l'encart collecte tout lui-même.
 

@@ -85,7 +85,7 @@ const normaliserEspaces = (texte: string) => texte.replace(/\s+/g, " ");
  * l'historique pour l'analyse, groupé par type et sans les versions identiques
  * à la précédente.
  */
-function regrouperParType({
+export function regrouperParType({
   commentaires,
 }: {
   commentaires: GetChantierCommentairesResult["commentaires"];

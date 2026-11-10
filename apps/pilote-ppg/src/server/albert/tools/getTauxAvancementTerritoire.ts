@@ -11,6 +11,7 @@ import {
   variantesPerimetre,
 } from "@/server/albert/tools/perimetre";
 import { determineMaille } from "@/shared/maille/determineMaille";
+import { SEUIL_ECART_MEDIANE } from "@/shared/chantier/avancement/ecartMediane";
 import type { GetTerritoiresIdentiteQuery } from "@/server/chantiers/query/GetTerritoiresIdentiteQuery";
 
 export const getTauxAvancementTerritoireInputSchema = z.object({
@@ -191,9 +192,9 @@ export async function collecterTauxAvancement({
       null;
     if (taux_avancement_global !== null && mediane_repartition !== null) {
       const ecart = taux_avancement_global - mediane_repartition;
-      if (ecart <= -10) {
+      if (ecart <= -SEUIL_ECART_MEDIANE) {
         position_mediane = "EN_RETARD";
-      } else if (ecart >= 10) {
+      } else if (ecart >= SEUIL_ECART_MEDIANE) {
         position_mediane = "EN_AVANCE";
       } else {
         position_mediane = "DANS_LA_MEDIANE";

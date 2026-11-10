@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { SEUIL_ECART_MEDIANE } from "@/shared/chantier/avancement/ecartMediane";
 
 type ChantierIdentite = {
   id: string;
@@ -103,7 +104,7 @@ export class GetChantiersQuery {
       const jalon = ct.chantier_territoire_jalon[0];
       const ecart = jalon?.ecart ?? null;
       const meteo = ct.meteo;
-      const estEnRetard = ecart !== null && ecart <= -10;
+      const estEnRetard = ecart !== null && ecart <= -SEUIL_ECART_MEDIANE;
       const estEnDifficulte =
         !estEnRetard && (meteo === "ORAGE" || meteo === "NUAGE");
 
@@ -195,7 +196,7 @@ export class GetChantiersQuery {
     if (params.view === "en_retard") {
       filters.push({
         chantier_territoire_jalon: {
-          some: { jalon: params.jalon, ecart: { lte: -10 } },
+          some: { jalon: params.jalon, ecart: { lte: -SEUIL_ECART_MEDIANE } },
         },
       });
     }

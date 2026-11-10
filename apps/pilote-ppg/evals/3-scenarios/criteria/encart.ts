@@ -29,12 +29,20 @@ type Encart = {
   };
 };
 
-/** Le dernier encart rédigé avec ses données, s'il y en a un. */
+/**
+ * Le dernier encart territorial rédigé avec ses données, s'il y en a un.
+ * L'encart d'un chantier (PIL-1966) suit un autre gabarit : ces contrôles ne
+ * s'y appliquent pas.
+ */
 function encartDe(evidence: Evidence): Encart | null {
   const encarts = evidence.toolResults
     .filter((result) => OUTILS_ENCART.includes(result.toolName))
     .map((result) => result.output as Partial<Encart>)
-    .filter((sortie): sortie is Encart => sortie.donnees !== undefined);
+    .filter(
+      (sortie): sortie is Encart =>
+        sortie.donnees !== undefined &&
+        (sortie.type === "synthese" || sortie.type === "comparaison"),
+    );
   return encarts.at(-1) ?? null;
 }
 

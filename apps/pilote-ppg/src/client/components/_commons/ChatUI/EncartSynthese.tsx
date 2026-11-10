@@ -21,6 +21,7 @@ import type { EncartOutput } from "@/server/albert/tools/encart";
 const TYPES: Record<EncartOutput["type"], string> = {
   synthese: "Synthèse territoriale",
   comparaison: "Comparaison territoriale",
+  synthese_chantier: "Synthèse d'un chantier",
 };
 
 /**

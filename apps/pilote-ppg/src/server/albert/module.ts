@@ -4,6 +4,7 @@ import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/get
 import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
 import { createRedigerSyntheseTerritoireTool } from "@/server/albert/tools/redigerSyntheseTerritoire";
 import { createRedigerComparaisonTerritoiresTool } from "@/server/albert/tools/redigerComparaisonTerritoires";
+import { createRedigerSyntheseChantierTool } from "@/server/albert/tools/redigerSyntheseChantier";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
 import { createGetEvolutionIndicateurTool } from "@/server/albert/tools/getEvolutionIndicateur";
 import { createGetHistoriqueIndicateurTool } from "@/server/albert/tools/getHistoriqueIndicateur";
@@ -52,6 +53,9 @@ type AlbertOwnCradle = {
   >;
   createRedigerComparaisonTerritoiresTool: ReturnType<
     typeof createRedigerComparaisonTerritoiresTool
+  >;
+  createRedigerSyntheseChantierTool: ReturnType<
+    typeof createRedigerSyntheseChantierTool
   >;
   createGetChantierIndicateursTool: ReturnType<
     typeof createGetChantierIndicateursTool
@@ -111,6 +115,9 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       ),
       createRedigerComparaisonTerritoiresTool: asModuleFunction(
         createRedigerComparaisonTerritoiresTool,
+      ),
+      createRedigerSyntheseChantierTool: asModuleFunction(
+        createRedigerSyntheseChantierTool,
       ),
       createGetChantierIndicateursTool: asModuleFunction(
         createGetChantierIndicateursTool,

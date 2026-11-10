@@ -4,6 +4,9 @@ import {
   type MeteoSaisissable,
 } from "@/shared/meteo/Meteo.interface";
 import type { $Enums } from "@prisma/client";
+import type { TypeContenuChantier } from "@/server/chantiers/query/GetChantierCommentairesQuery";
+import { determineMaille } from "@/shared/maille/determineMaille";
+import type { Maille } from "@/shared/maille/Maille.interface";
 import type { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 
 /**
@@ -99,4 +102,64 @@ export function libelleCategorieSignalement({
   categorie: TypeAlerteChantier;
 }): string {
   return LIBELLES_CATEGORIE_SIGNALEMENT[categorie];
+}
+
+const DESIGNATIONS_MAILLE: Record<Maille, string> = {
+  nationale: "national",
+  regionale: "région",
+  departementale: "département",
+};
+
+/** La maille d'un territoire, telle qu'un texte la nomme : « la région », « le département ». */
+export function designationMaille({
+  territoireCode,
+}: {
+  territoireCode: string;
+}): string {
+  return DESIGNATIONS_MAILLE[determineMaille(territoireCode)];
+}
+
+const LIBELLES_TYPES_COMMENTAIRE: Record<TypeContenuChantier, string> = {
+  freins_a_lever: "Freins à lever",
+  actions_a_venir: "Actions à venir",
+  actions_a_valoriser: "Actions à valoriser",
+  autres_resultats_obtenus_non_correles_aux_indicateurs:
+    "Autres résultats obtenus non corrélés aux indicateurs",
+  decision_strategique: "Décisions stratégiques",
+  commentaires_sur_les_donnees: "Commentaires sur les données",
+  autres_resultats_obtenus: "Autres résultats obtenus",
+  synthese_des_resultats: "Synthèse des résultats",
+};
+
+export function libelleTypeCommentaire({
+  type,
+}: {
+  type: TypeContenuChantier;
+}): string {
+  return LIBELLES_TYPES_COMMENTAIRE[type];
+}
+
+const LIBELLE_MASQUE = "non accessible (restriction d'accès)";
+
+/**
+ * Une valeur telle qu'un sous-agent la recopie : son libellé, ou ce qui en
+ * tient lieu. Une valeur absente s'écrit (le sous-agent laissait
+ * « Tendance : » vide), et une valeur masquée par une restriction d'accès
+ * n'est pas une valeur absente.
+ */
+export function libelleOuAbsence<Valeur>({
+  valeur,
+  absence,
+  libelle = String,
+  masquee = false,
+}: {
+  valeur: Valeur | null;
+  /** Ce qui s'écrit à la place d'une valeur absente, accordé : « non renseignée ». */
+  absence: string;
+  libelle?: (valeur: Valeur) => string;
+  masquee?: boolean;
+}): string {
+  if (masquee) return LIBELLE_MASQUE;
+  if (valeur === null) return absence;
+  return libelle(valeur);
 }

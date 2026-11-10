@@ -4,6 +4,7 @@ import type { EncartOutput } from "@/server/albert/tools/encart";
 const TYPES: Record<EncartOutput["type"], string> = {
   synthese: "synthese-territoriale",
   comparaison: "comparaison-territoriale",
+  synthese_chantier: "synthese-chantier",
 };
 
 /** Le nom du document : le titre de l'encart, à défaut son type et sa date. */

@@ -52,15 +52,19 @@ export type MatterKind = "text" | "dashboard" | "encart";
 export const OUTILS_ENCART = [
   "rediger_synthese_territoire",
   "rediger_comparaison_territoires",
+  "rediger_synthese_chantier",
 ];
 
 type SortieEncart = {
   markdown: string;
   acces_refuse?: true;
-  donnees?: {
-    chantiers_en_retard: { resultats: { territoire_code: string }[] };
-    chantiers_en_difficulte: { resultats: { territoire_code: string }[] };
-  };
+  donnees?:
+    | {
+        chantiers_en_retard: { resultats: { territoire_code: string }[] };
+        chantiers_en_difficulte: { resultats: { territoire_code: string }[] };
+      }
+    // L'encart d'un chantier porte sur un seul territoire
+    | { territoire_code: string };
 };
 
 type ToolResult = { toolName: string; input: unknown; output: unknown };
@@ -164,12 +168,12 @@ export function maskedTerritories({
       const donnees = OUTILS_ENCART.includes(result.toolName)
         ? (result.output as SortieEncart).donnees
         : undefined;
-      return donnees
-        ? [
-            ...donnees.chantiers_en_retard.resultats,
-            ...donnees.chantiers_en_difficulte.resultats,
-          ].map((resultat) => resultat.territoire_code)
-        : [];
+      if (!donnees) return [];
+      if ("territoire_code" in donnees) return [donnees.territoire_code];
+      return [
+        ...donnees.chantiers_en_retard.resultats,
+        ...donnees.chantiers_en_difficulte.resultats,
+      ].map((resultat) => resultat.territoire_code);
     })
     .filter((code) => !userTerritories.includes(code));
   return [...new Set(codes)].sort();

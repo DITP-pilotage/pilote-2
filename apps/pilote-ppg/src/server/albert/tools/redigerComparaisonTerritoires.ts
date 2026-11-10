@@ -5,7 +5,7 @@ import {
   collecterDonneesEncart,
   type DependancesEncart,
   encartVersModele,
-  type EncartOutput,
+  type EncartTerritorialOutput,
   jalonEncartSchema,
   redigerEncart,
 } from "@/server/albert/tools/encart";
@@ -55,7 +55,7 @@ export function createRedigerComparaisonTerritoiresTool({
   return ({ habilitations }: { habilitations: Habilitations }) =>
     tool<
       RedigerComparaisonTerritoiresInput,
-      EncartOutput,
+      EncartTerritorialOutput,
       Record<string, never>
     >({
       description: `Rédige la comparaison de plusieurs territoires dans un encart affiché à l'utilisateur : un tableau des taux d'avancement face à la médiane, l'analyse des écarts, puis les chantiers en retard et en difficulté, communs ou propres à chaque territoire. L'outil collecte lui-même ces données.
@@ -73,7 +73,7 @@ L'interface affiche l'encart : écris ensuite une seule phrase, sans répéter s
       execute: async function* (
         { perimetre, jalon },
         { abortSignal },
-      ): AsyncGenerator<EncartOutput> {
+      ): AsyncGenerator<EncartTerritorialOutput> {
         const donnees = await collecterDonneesEncart({
           getChantiersQuery,
           territoireResolver,

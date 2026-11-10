@@ -200,7 +200,8 @@ export const exportsAvailableEvents = ({
   // Un encart rédigé se copie ou se télécharge en PDF : c'est le rapport (PIL-1900)
   const reports = (message.parts ?? []).flatMap((part) =>
     (part.type === "tool-rediger_synthese_territoire" ||
-      part.type === "tool-rediger_comparaison_territoires") &&
+      part.type === "tool-rediger_comparaison_territoires" ||
+      part.type === "tool-rediger_synthese_chantier") &&
     part.state === "output-available" &&
     part.output.termine &&
     !part.output.acces_refuse

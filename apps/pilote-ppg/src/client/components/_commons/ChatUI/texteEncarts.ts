@@ -3,6 +3,7 @@ import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 export const OUTILS_ENCART = new Set([
   "tool-rediger_synthese_territoire",
   "tool-rediger_comparaison_territoires",
+  "tool-rediger_synthese_chantier",
 ]);
 
 /** Le texte des encarts d'une réponse, pour « Copier le texte ». */
@@ -13,7 +14,8 @@ export const texteEncarts = ({
 }): string[] =>
   message.parts.flatMap((part) =>
     (part.type === "tool-rediger_synthese_territoire" ||
-      part.type === "tool-rediger_comparaison_territoires") &&
+      part.type === "tool-rediger_comparaison_territoires" ||
+      part.type === "tool-rediger_synthese_chantier") &&
     part.state === "output-available" &&
     !part.output.acces_refuse
       ? [part.output.markdown]

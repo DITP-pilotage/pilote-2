@@ -26,6 +26,8 @@ import { SYNTHESE_CHANTIER_CRITERIA } from "./syntheseChantier.criteria";
  * Second run du 2026-09-30 : outils 50 %, forme 75 %, fond 100 %.
  * Run du 2026-10-14, juge mistral-medium-3-5 : outils 42 %, forme 50 %, fond
  * 100 % ; échecs : Libellés météo 0/6, Format des chantiers 3/6.
+ * Run du 2026-11-09, avec l'encart du chantier (PIL-1966) : 100 % sur
+ * chacun des 13 critères, outils compris.
  */
 
 const MESSAGE = (territoire: string) =>
@@ -33,20 +35,12 @@ const MESSAGE = (territoire: string) =>
 Quel est son écart à la médiane ?
 Quelles sont les principales difficultés remontées dans les commentaires ?`;
 
+// Depuis PIL-1966, l'encart du chantier porte les trois volets : écart,
+// synthèse des résultats et commentaires du territoire.
 const OUTILS = [
   {
-    toolName: "get_chantiers",
-    input: {
-      perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
-      chantier_ids: ["CH-005"],
-    },
-  },
-  {
-    toolName: "get_chantier_commentaires",
-    input: {
-      chantier_id: "CH-005",
-      perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
-    },
+    toolName: "rediger_synthese_chantier",
+    input: { chantier_id: "CH-005", territoire_code: "REG-53" },
   },
 ];
 
@@ -56,6 +50,7 @@ scenarioEval({
   suite: "Synthèse d'un chantier sur un territoire",
   group: "synthese",
   criteria: SYNTHESE_CHANTIER_CRITERIA,
+  matter: "encart",
   cases: [
     {
       question: MESSAGE("le territoire Bretagne"),
