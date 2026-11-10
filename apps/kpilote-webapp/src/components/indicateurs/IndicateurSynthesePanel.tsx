@@ -11,12 +11,10 @@ import { Pill, type PillTone } from '@pilote/kpilote-ui/Pill'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 import {
+  displayedDifferenceSign,
+  formatDifferenceFr,
   formatMonthYearNumericFr,
-  formatNumberAvecUniteFr,
   formatNumberFr,
-  formatVariationAvecUniteFr,
-  formatVariationFr,
-  roundForDisplay,
 } from '@/lib/format'
 import {
   indicateurSyntheseIndividuQueryOptions,
@@ -84,9 +82,8 @@ export function IndicateurSynthesePanel({
   const derniere = serie[0]
   const precedente = serie[1]
 
-  // Arrondies comme à l'affichage : couleur et libellé suivent le nombre lu.
-  const variation = roundForDisplay(synthese.items[0]?.variation ?? null)
-  const ecartMediane = roundForDisplay(synthese.items[0]?.ecartMediane ?? null)
+  const variation = synthese.items[0]?.variation ?? null
+  const ecartMediane = synthese.items[0]?.ecartMediane ?? null
   const stats = remarquables.items[0] ?? { min: null, max: null, mediane: null }
 
   const dernierPoint = tauxProgression.items[tauxProgression.items.length - 1]
@@ -129,7 +126,7 @@ export function IndicateurSynthesePanel({
               <Text variant="body" tone="muted" className="mt-3">
                 <span className="font-bold">Valeur précédente :</span>{' '}
                 <span className="font-semibold text-primary">
-                  {formatNumberAvecUniteFr(precedente.valeur, unite)}
+                  {formatNumberFr(precedente.valeur, unite)}
                 </span>{' '}
                 ({formatMonthYearNumericFr(precedente.date)})
               </Text>
@@ -197,6 +194,7 @@ export function IndicateurSynthesePanel({
 }
 
 // Flèche et libellé décrivent le mouvement réel ; seule la couleur l'interprète.
+// Tous suivent le signe affiché : une variation lue « 0 » est stable.
 function PastilleVariation({
   variation,
   sensSouhaite,
@@ -204,18 +202,19 @@ function PastilleVariation({
   variation: number
   sensSouhaite: SensSouhaite
 }) {
-  const interpretation = interpreterSelonSens(variation, sensSouhaite)
+  const signe = displayedDifferenceSign(variation)
+  const interpretation = interpreterSelonSens(signe, sensSouhaite)
   const libelle = LIBELLE_INTERPRETATION[interpretation]
   return (
     <Pill tone={TON_PAR_INTERPRETATION[interpretation]} className="mt-3 w-fit text-sm">
-      {variation === 0 ? (
+      {signe === 0 ? (
         <span>
           <span aria-hidden="true">→</span> STABLE
         </span>
       ) : (
         <span>
-          <span aria-hidden="true">{variation > 0 ? '↑' : '↓'}</span>{' '}
-          {variation > 0 ? 'EN HAUSSE' : 'EN BAISSE'} : {formatVariationFr(variation)}
+          <span aria-hidden="true">{signe > 0 ? '↑' : '↓'}</span>{' '}
+          {signe > 0 ? 'EN HAUSSE' : 'EN BAISSE'} : {formatDifferenceFr(variation)}
           {libelle && <span className="sr-only"> (évolution {libelle})</span>}
         </span>
       )}
@@ -233,18 +232,15 @@ function PastilleEcartMediane({
   unite: UniteIndicateurApiModel | null
   sensSouhaite: SensSouhaite
 }) {
-  const interpretation = interpreterSelonSens(ecartMediane, sensSouhaite)
+  const signe = displayedDifferenceSign(ecartMediane)
+  const interpretation = interpreterSelonSens(signe, sensSouhaite)
   const libelle = LIBELLE_INTERPRETATION[interpretation]
   const position =
-    ecartMediane > 0
-      ? 'au-dessus de la médiane'
-      : ecartMediane < 0
-        ? 'au-dessous de la médiane'
-        : 'à la médiane'
+    signe > 0 ? 'au-dessus de la médiane' : signe < 0 ? 'au-dessous de la médiane' : 'à la médiane'
   return (
     <Pill tone={TON_PAR_INTERPRETATION[interpretation]}>
       <span>
-        {formatVariationAvecUniteFr(ecartMediane, unite)} · {position}
+        {formatDifferenceFr(ecartMediane, unite)} · {position}
         {libelle && <span className="sr-only"> (position {libelle})</span>}
       </span>
     </Pill>

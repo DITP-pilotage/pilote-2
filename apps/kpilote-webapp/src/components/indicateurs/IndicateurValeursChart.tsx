@@ -4,12 +4,7 @@ import ReactECharts from 'echarts-for-react'
 import { useMemo } from 'react'
 
 import { buildMonthlySeries } from '@/components/indicateurs/MonthlySeries'
-import {
-  formatMonthYearShortFr,
-  formatNumberAvecUniteFr,
-  formatNumberFr,
-  formatVariationFr,
-} from '@/lib/format'
+import { formatDifferenceFr, formatMonthYearShortFr, formatNumberFr } from '@/lib/format'
 import {
   indicateurTauxProgressionQueryOptions,
   indicateurValeursQueryOptions,
@@ -60,7 +55,7 @@ const renderTooltip = ({
   const lines = params.map((p) => {
     const marker = p.marker ?? ''
     const name = p.seriesName ?? ''
-    const value = typeof p.value === 'number' ? formatNumberAvecUniteFr(p.value, unite) : '—'
+    const value = typeof p.value === 'number' ? formatNumberFr(p.value, unite) : '—'
     return `${marker}${name} : <strong>${value}</strong>`
   })
   const valeur = valeursByIndex[dataIndex]
@@ -71,7 +66,7 @@ const renderTooltip = ({
     valeurPrecedente !== null &&
     valeurPrecedente !== undefined
   ) {
-    lines.push(`Variation : <strong>${formatVariationFr(valeur - valeurPrecedente)}</strong>`)
+    lines.push(`Variation : <strong>${formatDifferenceFr(valeur - valeurPrecedente)}</strong>`)
   }
   const taux = tauxByIndex[dataIndex]
   if (taux !== null && taux !== undefined) {
@@ -129,7 +124,7 @@ export function IndicateurValeursChart({
     yAxis: {
       type: 'value',
       axisLabel: {
-        formatter: (value: number) => formatNumberAvecUniteFr(value, unite),
+        formatter: (value: number) => formatNumberFr(value, unite),
       },
     },
     dataZoom: showSlider
