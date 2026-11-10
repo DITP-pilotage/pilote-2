@@ -80,9 +80,8 @@ export const resolveTauxProgression = ({
       valeur: valeur.valeur,
       valeurCible: objectif.valeurCible,
       dateCible: objectif.dateCible,
-      // Pas de taux pour un indicateur à la baisse : VA / VC n'y a pas de sens, et
-      // le calcul dédié (depuis une valeur initiale) viendra avec PIL-1777. Le point
-      // garde valeur et cible pour l'affichage.
+      // Pas de taux pour un indicateur à la baisse : VA / VC n'y a pas de sens. Le
+      // point garde valeur et cible pour l'affichage.
       tauxProgression:
         sensSouhaite === 'BAISSE' ? null : computeTaux(valeur.valeur, objectif.valeurCible),
     })

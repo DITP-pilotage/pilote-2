@@ -353,8 +353,8 @@ const getTauxProgressionForIndividuRoute = createRoute({
     'Retourne, pour chaque indicateur demandé accessible en lecture, le taux de progression ' +
     "calculé sur la dernière valeur connue de l'individu (`min(100, valeur / valeurCible × 100)`, " +
     'tronqué à 2 décimales). Les indicateurs sans objectif défini ou sans valeur connue sont omis. ' +
-    'Les indicateurs dont la valeurCible est zéro, ou à la baisse (`sensSouhaite = BAISSE`, calcul ' +
-    'dédié à venir avec PIL-1777), sont inclus avec `tauxProgression: null`. ' +
+    'Les indicateurs dont la valeurCible est zéro, ou à la baisse (`sensSouhaite = BAISSE`), ' +
+    'sont inclus avec `tauxProgression: null`. ' +
     'Endpoint pensé pour des appels batch côté client en parallèle de `dernieres-valeurs`.',
   middleware: [requireAuthentication],
   request: {
@@ -412,7 +412,7 @@ const getTauxProgressionRoute = createRoute({
     'Retourne, pour chaque bucket de valeur des individus demandés, le taux de progression ' +
     'calculé comme `min(100, valeur / valeurCible × 100)`, tronqué à 2 décimales (jamais ' +
     '100 % avant atteinte stricte de la cible). Pour un indicateur à la baisse (`sensSouhaite = BAISSE`), ' +
-    'les points sont renvoyés avec `tauxProgression: null` en attendant leur calcul dédié (PIL-1777). La valeur et la valeurCible sont résolues par ' +
+    'les points sont renvoyés avec `tauxProgression: null`. La valeur et la valeurCible sont résolues par ' +
     'agrégation hiérarchique (cf. doc `indicateur-derives.md` / `objectifs-derives.md`) ' +
     "lorsque l'individu est un nœud parent. La granularité des buckets est paramétrable " +
     'indépendamment pour les valeurs (`dateTruncValeur`) et les objectifs (`dateTruncObjectif`), ' +

@@ -131,8 +131,8 @@ const buildResult = async ({
 // Sélectionne le dernier bucket parmi les points calculés par le pipeline
 // taux-progression. La règle « tout-ou-rien » côté collection veut que tout
 // indicateur dont l'un des prérequis manque (pas de série, pas d'objectif,
-// dernier objectif à 0, indicateur à la baisse en attendant PIL-1777) produise `null` — ce qui correspond ici à l'absence
-// de point ou à un dernier point sans taux.
+// dernier objectif à 0, indicateur à la baisse) produise `null` — ce qui
+// correspond ici à l'absence de point ou à un dernier point sans taux.
 const computeDernierTaux = async ({
   indicateurId,
   sensSouhaite,
