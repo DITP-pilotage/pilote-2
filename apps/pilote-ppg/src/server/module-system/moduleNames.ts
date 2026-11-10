@@ -25,7 +25,6 @@ export const moduleNames = [
   "ficheTerritoriale",
   "applicationLog",
   "actualites",
-  "mbSync",
   "parametrageChantier",
   "referentiels",
   "annuaire",
