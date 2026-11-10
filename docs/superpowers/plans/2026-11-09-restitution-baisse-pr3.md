@@ -222,23 +222,22 @@ Description de PR, le moment venu : signaler que la PR ouverte #2359 (assistant 
 
 ---
 
-### Task 4 : Harmoniser les zéros (ajoutée après la relecture finale, décisions 11 et 12 de la spec)
+### Task 4 : Harmoniser les zéros (ajoutée après la relecture finale, décisions 11 et 12 de la spec ; simplifiée après relecture de Triko)
 
 **Files:**
-- Modify: `apps/kpilote-api/src/valeurAvancement/computeMediane.ts` (`computeMedianeDecimal`)
-- Modify: `apps/kpilote-api/src/valeurAvancement/computeEcartMediane.ts` (médiane `Decimal | number | null`)
+- Modify: `apps/kpilote-api/src/valeurAvancement/computeMediane.ts` (une seule `computeMediane`, en `Decimal` ; `groupMedianesByKey` supprimée)
+- Modify: `apps/kpilote-api/src/valeurAvancement/computeEcartMediane.ts` (médiane `Decimal | null`)
 - Modify: `apps/kpilote-api/src/valeurAvancement/queries/listSyntheseIndividus.ts` (`computeMedianeParReferentiel` en `Decimal`)
-- Modify: `apps/kpilote-webapp/src/lib/format.ts` (`zeroSiAfficheZero`)
+- Modify: `apps/kpilote-api/src/valeurAvancement/queries/listValeursRemarquablesForIndicateur.ts` (conversion `?.toNumber() ?? null`)
+- Modify: `apps/kpilote-webapp/src/lib/format.ts` (`MAX_FRACTION_DIGITS`, `roundForDisplay`)
 - Modify: `apps/kpilote-webapp/src/components/indicateurs/IndicateurSynthesePanel.tsx`
+- Test: `apps/kpilote-api/src/valeurAvancement/computeMediane.test.ts`
 - Test: `apps/kpilote-api/src/valeurAvancement/computeEcartMediane.test.ts`
-- Test: `apps/kpilote-webapp/src/lib/format.test.ts`
 
 **Interfaces:**
-- Produces: `computeMedianeDecimal(values: ReadonlyArray<Decimal>): Decimal | null` ; `computeEcartMediane(derniereValeur: Decimal | undefined, mediane: Decimal | number | null): number | null` ; `zeroSiAfficheZero(value: number): number`.
+- Produces: `computeMediane(values: ReadonlyArray<Decimal>): Decimal | null` ; `computeEcartMediane(derniereValeur: Decimal | undefined, mediane: Decimal | null): number | null` ; `roundForDisplay(value: number | null): number | null`.
 
-- [ ] **Step 1 : Tests qui échouent**
-  - API : « renvoie un écart nul pour une valeur dérivée seule dans son référentiel » — `const valeur = new Decimal(3681.313).div(3)` ; `expect(computeEcartMediane(valeur, computeMedianeDecimal([valeur]))).toBe(0)`.
-  - Webapp : `zeroSiAfficheZero(0.0001)` et `zeroSiAfficheZero(-3e-13)` valent 0 ; `zeroSiAfficheZero(0.0005)` vaut 0.0005 (affiché « +0,001 ») ; `zeroSiAfficheZero(-1.3)` vaut -1.3.
-- [ ] **Step 2 : Vérifier l'échec** — `pnpm -F @pilote/kpilote-api test src/valeurAvancement/computeEcartMediane` et `pnpm -F @pilote/kpilote-webapp test src/lib/format` : FAIL, fonctions absentes.
-- [ ] **Step 3 : Implémenter** les trois fonctions ; le panneau applique `zeroSiAfficheZero` à `variation` et à `ecartMediane` (non nuls) avant tout usage.
+- [ ] **Step 1 : Test qui échoue** — API : « renvoie un écart nul pour une valeur dérivée seule dans son référentiel » — `const valeur = new Decimal(3681.313).div(3)` ; `expect(computeEcartMediane(valeur, computeMediane([valeur]))).toBe(0)`. Pas de test pour `roundForDisplay`, une ligne.
+- [ ] **Step 2 : Vérifier l'échec** — `pnpm -F @pilote/kpilote-api test src/valeurAvancement/computeEcartMediane` : FAIL.
+- [ ] **Step 3 : Implémenter** ; le panneau applique `roundForDisplay` à `variation` et à `ecartMediane` à la lecture, avant tout affichage et toute interprétation.
 - [ ] **Step 4 : Vérifier** — `pnpm -F @pilote/kpilote-api test src/valeurAvancement`, `pnpm -F @pilote/kpilote-webapp test`, lint des deux paquets : verts. À l'écran, IND-004 / NAT-FR : écart « 0 j · à la médiane » en bleu.

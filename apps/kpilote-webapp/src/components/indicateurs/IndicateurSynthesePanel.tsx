@@ -16,7 +16,7 @@ import {
   formatNumberFr,
   formatVariationAvecUniteFr,
   formatVariationFr,
-  zeroSiAfficheZero,
+  roundForDisplay,
 } from '@/lib/format'
 import {
   indicateurSyntheseIndividuQueryOptions,
@@ -84,11 +84,9 @@ export function IndicateurSynthesePanel({
   const derniere = serie[0]
   const precedente = serie[1]
 
-  // Un « 0 » affiché se lit comme 0 : « STABLE », « à la médiane », sans interprétation.
-  const variationBrute = synthese.items[0]?.variation ?? null
-  const ecartMedianeBrut = synthese.items[0]?.ecartMediane ?? null
-  const variation = variationBrute === null ? null : zeroSiAfficheZero(variationBrute)
-  const ecartMediane = ecartMedianeBrut === null ? null : zeroSiAfficheZero(ecartMedianeBrut)
+  // Arrondies comme à l'affichage : couleur et libellé suivent le nombre lu.
+  const variation = roundForDisplay(synthese.items[0]?.variation ?? null)
+  const ecartMediane = roundForDisplay(synthese.items[0]?.ecartMediane ?? null)
   const stats = remarquables.items[0] ?? { min: null, max: null, mediane: null }
 
   const dernierPoint = tauxProgression.items[tauxProgression.items.length - 1]

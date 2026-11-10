@@ -12,7 +12,7 @@ import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { computeEcartMediane } from '@/valeurAvancement/computeEcartMediane'
-import { computeMedianeDecimal } from '@/valeurAvancement/computeMediane'
+import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeVariation } from '@/valeurAvancement/computeVariation'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
 import {
@@ -128,7 +128,7 @@ const computeMedianeParReferentiel = async ({
   }
   const result = new Map<string, Decimal | null>()
   for (const [referentielId, valeurs] of valeursParReferentiel) {
-    result.set(referentielId, computeMedianeDecimal(valeurs))
+    result.set(referentielId, computeMediane(valeurs))
   }
   return result
 }
