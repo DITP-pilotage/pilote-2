@@ -25,7 +25,6 @@ import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
 import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
 import { SegmentedField } from '@pilote/kpilote-ui/SegmentedField'
-import { Text } from '@pilote/kpilote-ui/Typography'
 import { useAppConfig } from '@/context/AppConfigContext'
 
 const VISIBILITE_OPTIONS = [
@@ -129,19 +128,14 @@ export function IndicateurForm({
               control={form.control}
               name="sensSouhaite"
               render={({ field, fieldState }) => (
-                <>
-                  <SegmentedField
-                    label="Sens souhaité"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    error={fieldState.error?.message}
-                    options={SENS_SOUHAITE_OPTIONS}
-                  />
-                  <Text variant="caption" className="mt-1.5">
-                    {SENS_SOUHAITE_HINTS[field.value]}. Changer le sens ne modifie ni les valeurs
-                    d&apos;avancement ni les cibles.
-                  </Text>
-                </>
+                <SegmentedField
+                  label="Sens souhaité"
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  error={fieldState.error?.message}
+                  options={SENS_SOUHAITE_OPTIONS}
+                  description={`${SENS_SOUHAITE_HINTS[field.value]}. Changer le sens ne modifie ni les valeurs d'avancement ni les cibles.`}
+                />
               )}
             />
           </div>
