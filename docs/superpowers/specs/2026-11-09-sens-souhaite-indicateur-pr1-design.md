@@ -162,7 +162,7 @@ Une valeur plus faible est favorable. Changer le sens ne modifie ni les valeurs 
 Tests d'intégration côté API seulement, dans les fichiers existants :
 
 - **`indicateur/commands/upsertIndicateur.test.ts`** (les tests appellent la commande directement, sans passer par la route)
-  - un test « persiste le sens fourni à la création et le met à jour via PUT » : création en `BAISSE`, puis mise à jour en `HAUSSE`, sur le modèle du test existant sur l'unité ;
+  - un test « persiste le sens fourni à la création et le met à jour » : création en `BAISSE`, puis mise à jour en `HAUSSE`, sur le modèle du test existant sur l'unité ;
   - `BODY_BASE` et les bodies écrits en dur sont complétés avec `sensSouhaite: 'HAUSSE'`.
 - **`indicateur/queries/getIndicateurByPublicId.test.ts`** : le champ est présent dans la réponse, et vaut `HAUSSE` pour un indicateur créé par fixture sans le préciser (défaut de la base).
 
