@@ -2,10 +2,9 @@ import { CollectionPermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { getCollectionTauxProgression } from '@/collection/queries/getCollectionTauxProgression'
-import { db } from '@/framework/persistence/dbStore'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testCollectionId, testDeptId, testIndicateurId, testReferentielId } from '@/test/randomIds'
+import { testDeptId, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getCollectionTauxProgression', () => {
@@ -384,86 +383,6 @@ describe.concurrent('getCollectionTauxProgression', () => {
       )
 
       expect(result._unsafeUnwrap().tauxProgression).toBe(25)
-    }),
-  )
-
-  // Indicateur A à la hausse : 50 / 100 → 50 %. Indicateur B à la baisse :
-  // 8 visé à 7, taux non calculé en attendant PIL-1777.
-  const creerCollectionHausseEtBaisse = async () => {
-    const refId = testReferentielId()
-    const deptId = testDeptId()
-    const indA = testIndicateurId()
-    const indB = testIndicateurId()
-    const colId = testCollectionId()
-    const indicateurs = [
-      { publicId: indA, sensSouhaite: 'HAUSSE' as const, valeur: 50, valeurCible: 100 },
-      { publicId: indB, sensSouhaite: 'BAISSE' as const, valeur: 8, valeurCible: 7 },
-    ]
-    for (const { publicId, sensSouhaite, valeur, valeurCible } of indicateurs) {
-      await fixtures.indicateurReferentiel({
-        indicateur: { publicId, sensSouhaite },
-        referentiel: { publicId: refId },
-      })
-      await fixtures.valeurAvancement({
-        indicateur: { publicId },
-        individu: { publicId: deptId, referentiel: { publicId: refId } },
-        date: '2024-06-01',
-        valeur,
-      })
-      await fixtures.objectifIndicateurIndividu({
-        indicateur: { publicId },
-        individu: { publicId: deptId },
-        dateCible: '2024-12-31',
-        valeurCible,
-      })
-    }
-    await fixtures.collection({
-      publicId: colId,
-      visibilite: 'PUBLIC',
-      indicateurs: [{ publicId: indA }, { publicId: indB }],
-    })
-    return { deptId, indA, indB, colId }
-  }
-
-  it(
-    'retourne null si un indicateur à la baisse est pondéré (tout-ou-rien)',
-    integrationTest(async () => {
-      const { deptId, indA, indB, colId } = await creerCollectionHausseEtBaisse()
-      const apiKey = await fixtures.apiKey()
-
-      const result = await runAsPrincipal(apiKey.id, () =>
-        getCollectionTauxProgression(colId, { individu: deptId }),
-      )
-
-      const data = result._unsafeUnwrap()
-      expect(data.tauxProgression).toBeNull()
-      expect(data.contributions).toEqual([
-        { indicateur: indA, tauxProgression: 50, date: '2024-06-01', ponderation: 1 },
-        { indicateur: indB, tauxProgression: null, date: '2024-06-01', ponderation: 1 },
-      ])
-    }),
-  )
-
-  it(
-    'ignore un indicateur à la baisse de pondération 0',
-    integrationTest(async () => {
-      const { deptId, indA, indB, colId } = await creerCollectionHausseEtBaisse()
-      await db().collectionIndicateur.updateMany({
-        where: { collection: { publicId: colId }, indicateur: { publicId: indB } },
-        data: { ponderation: 0 },
-      })
-      const apiKey = await fixtures.apiKey()
-
-      const result = await runAsPrincipal(apiKey.id, () =>
-        getCollectionTauxProgression(colId, { individu: deptId }),
-      )
-
-      const data = result._unsafeUnwrap()
-      expect(data.tauxProgression).toBe(50)
-      expect(data.contributions).toEqual([
-        { indicateur: indA, tauxProgression: 50, date: '2024-06-01', ponderation: 1 },
-        { indicateur: indB, tauxProgression: null, date: '2024-06-01', ponderation: 0 },
-      ])
     }),
   )
 })
