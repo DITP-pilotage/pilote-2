@@ -39,7 +39,7 @@ Les trois PR sont mergées sur `dev` avant le prochain déploiement en prod.
 8. **Un texte masqué pour les lecteurs d'écran porte l'interprétation** (*choix de Claude, annoncé à Triko*). Sur la pastille de variation : « évolution favorable » ou « évolution défavorable ». Sur la pastille d'écart : « position favorable » ou « position défavorable ». Sur les valeurs maximale et minimale : « favorable » ou « défavorable », selon le sens (*ajouté après relecture* : à la baisse, c'est une information nouvelle que seule la couleur porterait). Rien pour « STABLE », « à la médiane » et la médiane, dont le libellé suffit. Aujourd'hui, cette information n'existe que par la couleur.
 9. **Une fonction pure porte la règle d'interprétation** (*choix de Claude*). Elle traduit les deux tableaux du ticket ; le composant ne fait que choisir des couleurs à partir de son résultat.
 10. **Un minimum égal au maximum n'est pas interprété** (*correctif de la relecture finale*). Dans un référentiel à un seul individu (vue nationale), min = médiane = max : les trois valeurs restent en bleu, sans texte masqué. Une même valeur ne peut pas être à la fois favorable et défavorable.
-11. **Ce qui s'affiche « 0 » se lit comme 0** (décision de Triko : « Si on affiche 0, on doit afficher stable », puis « harmoniser tout ça »). Une variation ou un écart que l'affichage arrondit à « 0 » donne « → STABLE » ou « à la médiane », en bleu, sans texte masqué. La variation et l'écart sont arrondis comme à l'affichage (trois décimales) avant d'être affichés et interprétés, pour que l'interprétation suive toujours ce qui est lu (*simplifié après relecture de Triko* : un arrondi explicite plutôt qu'une comparaison de chaînes formatées).
+11. **Ce qui s'affiche « 0 » se lit comme 0** (décision de Triko : « Si on affiche 0, on doit afficher stable », puis « harmoniser tout ça »). Une variation ou un écart que l'affichage arrondit à « 0 » donne « → STABLE » ou « à la médiane », en bleu, sans texte masqué. La variation et l'écart sont interprétés sur le signe de leur affichage (trois décimales, le défaut d'`Intl`), lu dans le nombre formaté, pour que l'interprétation suive toujours ce qui est lu (*harmonisé après relecture de Triko* : un seul arrondi, celui de l'affichage, plutôt qu'un arrondi `toFixed` en double de celui d'`Intl`, qui pouvait donner « +1 » dans le panneau et « +1,001 » sur la courbe).
 12. **La médiane est calculée en décimal exact** (décision de Triko). Elle était convertie en nombre flottant avant d'être soustraite à la dernière valeur, restée en décimal : pour une série dérivée en moyenne, qui garde toutes ses décimales, l'individu situé à la médiane (par exemple seul dans son référentiel) avait un écart d'environ 10⁻¹³ au lieu de 0. L'API renvoie désormais un écart exactement nul dans ce cas. L'arrondi de la décision 11 suffirait à l'écran, mais l'assistant (#2359) lit les nombres bruts de l'API.
 
 ## Règle d'interprétation
@@ -109,7 +109,7 @@ Nouvelle prop `sensSouhaite: SensSouhaite`.
 | `variation < 0` | « ↓ EN BAISSE : −x » | `warning` | `success` |
 | `variation === 0` | « → STABLE » | `info` | `info` |
 
-`x` est formaté par `formatVariationFr`, comme aujourd'hui.
+`x` est formaté par `formatDifferenceFr`, comme aujourd'hui.
 
 **Données de comparaison** (`ComparaisonRow`) :
 
@@ -127,9 +127,9 @@ Nouvelle prop `sensSouhaite: SensSouhaite`.
 | `ecartMediane < 0` | « −x unité · au-dessous de la médiane » | `warning` | `success` |
 | `ecartMediane === 0` | « 0 unité · à la médiane » | `info` | `info` |
 
-`x unité` est formaté par `formatVariationAvecUniteFr`, comme aujourd'hui.
+`x unité` est formaté par `formatDifferenceFr`, avec l'unité, comme aujourd'hui.
 
-**Zéros affichés.** À la lecture, la variation et l'écart passent par `roundForDisplay(value: number | null): number | null` (`lib/format.ts`), qui les arrondit à `MAX_FRACTION_DIGITS` (3) décimales, comme les formateurs d'affichage. Le texte et les tableaux ci-dessus s'appliquent ensuite à cette valeur arrondie : un « 0 » affiché se lit comme 0.
+**Zéros affichés.** Les cas des tableaux ci-dessus se lisent sur le signe affiché, donné par `displayedDifferenceSign` (`lib/format.ts`) : c'est le signe du nombre formaté par `formatDifferenceFr`, donc après son arrondi à 3 décimales. Un « 0 » affiché n'a pas de signe et se lit comme 0.
 
 ### Ce qui ne change pas
 

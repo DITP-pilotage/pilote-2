@@ -13,11 +13,10 @@ import {
 } from '@/api/indicateurs'
 import { WidgetRenderer } from '@/components/widgets/WidgetRenderer'
 import {
+  formatDifferenceFr,
   formatMonthYearNumericFr,
   formatMonthYearShortFr,
-  formatNumberAvecUniteFr,
   formatNumberFr,
-  formatVariationAvecUniteFr,
 } from '@/lib/format'
 import { collectionTauxProgressionQueryOptions } from '@/queries/collections'
 import {
@@ -44,7 +43,7 @@ const taux = (value: number | null | undefined): string =>
   value === null || value === undefined ? '—' : `${formatNumberFr(Math.round(value))} %`
 
 const valeur = (value: number | null | undefined, unite: UniteIndicateurApiModel | null) =>
-  value === null || value === undefined ? '—' : formatNumberAvecUniteFr(value, unite)
+  value === null || value === undefined ? '—' : formatNumberFr(value, unite)
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -147,7 +146,7 @@ function EvolutionIndicateur({
   // Mémorisée : une option recréée redessine la courbe à chaque rendu du fil.
   const option = useMemo(() => {
     const dates = [...new Set(series.flatMap((items) => items.map((item) => item.date)))].sort()
-    const format = (value: number) => formatNumberAvecUniteFr(value, unite)
+    const format = (value: number) => formatNumberFr(value, unite)
     return {
       grid: { top: 40, right: 24, bottom: 32, left: 64 },
       legend: { top: 0 },
@@ -238,7 +237,7 @@ function TableauIndividus({
             cell: (row) =>
               row.synthese?.ecartMediane === null || row.synthese?.ecartMediane === undefined
                 ? '—'
-                : formatVariationAvecUniteFr(row.synthese.ecartMediane, unite),
+                : formatDifferenceFr(row.synthese.ecartMediane, unite),
           },
         ]}
       />
