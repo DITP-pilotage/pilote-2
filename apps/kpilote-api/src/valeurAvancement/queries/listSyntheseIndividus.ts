@@ -105,7 +105,8 @@ const buildSynthese = async ({
     const serie = await resolveSerieNoeud(noeud({ individu, selection }), graphe, cache)
     items.push({
       individu: individu.publicId,
-      variation: computeVariation(extractDeuxDerniers(serie)),
+      // computeVariation attend [recente, precedente] ; la série est ASC par bucket.
+      variation: computeVariation(serie.slice(-2).reverse()),
       ecartMediane: computeEcartMediane(
         serie.at(-1)?.valeur,
         medianeParReferentiel.get(individu.referentielId) ?? null,
@@ -126,19 +127,6 @@ const buildSynthese = async ({
     'listSyntheseIndividus computed',
   )
   return { items }
-}
-
-// computeVariation attend [recente, precedente] ; nos séries sont ASC par
-// bucket → on inverse les deux derniers points.
-const extractDeuxDerniers = (
-  serie: ReadonlyArray<PointInterne>,
-): ReadonlyArray<{ valeur: Decimal }> => {
-  const dernier = serie.at(-1)
-  if (!dernier) return []
-  const precedent = serie.at(-2)
-  return precedent
-    ? [{ valeur: dernier.valeur }, { valeur: precedent.valeur }]
-    : [{ valeur: dernier.valeur }]
 }
 
 const computeMedianeParReferentiel = async ({
