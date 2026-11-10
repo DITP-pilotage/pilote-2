@@ -2,7 +2,7 @@ import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 
 import { ProgressBar } from '@pilote/kpilote-ui/ProgressBar'
 import { Text } from '@pilote/kpilote-ui/Typography'
-import { formatMonthYearNumericFr, formatNumberAvecUniteFr, formatNumberFr } from '@/lib/format'
+import { formatMonthYearNumericFr, formatNumberFr } from '@/lib/format'
 
 // `taux` vaut null quand l'API ne calcule pas de taux alors qu'un objectif existe
 // (indicateur à la baisse, cible à 0) : on garde le bloc et l'objectif, avec « — »
@@ -47,7 +47,7 @@ export function IndicateurProgression({
         <Text variant="caption" tone="muted">
           Objectif :{' '}
           <span className="font-semibold text-text-muted">
-            {formatNumberAvecUniteFr(valeurCible, unite)}
+            {formatNumberFr(valeurCible, unite)}
           </span>
         </Text>
         <Text variant="caption" tone="muted">
