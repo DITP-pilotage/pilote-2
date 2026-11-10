@@ -18,6 +18,8 @@ type SegmentedControlProps<TValue extends string> = {
   // `aria-labelledby` quand un `<label>` externe (ex. Field) décrit le groupe.
   'aria-label'?: string
   'aria-labelledby'?: string
+  // Aide associée au groupe (ex. description d'un Field), annoncée avec lui.
+  'aria-describedby'?: string | undefined
 }
 
 export function SegmentedControl<TValue extends string>({
@@ -37,6 +39,7 @@ export function SegmentedControl<TValue extends string>({
       }}
       aria-label={aria['aria-label']}
       aria-labelledby={aria['aria-labelledby']}
+      aria-describedby={aria['aria-describedby']}
       className={clsxm(
         'inline-flex items-center gap-1 rounded-lg border border-border bg-surface-tinted p-1',
         className,
