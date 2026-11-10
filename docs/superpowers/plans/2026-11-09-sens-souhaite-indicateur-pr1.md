@@ -75,7 +75,7 @@ Dans `upsertIndicateur.test.ts` :
 
 ```ts
 it(
-  'persiste le sens souhaité fourni à la création et le met à jour via PUT',
+  'persiste le sens souhaité fourni à la création et le met à jour',
   integrationTest(async () => {
     const indId = testIndicateurId()
     const apiKey = await fixtures.apiKey()

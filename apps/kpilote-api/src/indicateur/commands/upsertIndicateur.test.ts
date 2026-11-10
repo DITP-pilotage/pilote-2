@@ -157,7 +157,7 @@ describe.concurrent('upsertIndicateur', () => {
   )
 
   it(
-    "persiste l'unité fournie à la création et la met à jour via PUT",
+    "persiste l'unité fournie à la création et la met à jour",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey()
@@ -204,7 +204,7 @@ describe.concurrent('upsertIndicateur', () => {
   )
 
   it(
-    'persiste le sens souhaité fourni à la création et le met à jour via PUT',
+    'persiste le sens souhaité fourni à la création et le met à jour',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey()
@@ -224,7 +224,7 @@ describe.concurrent('upsertIndicateur', () => {
   )
 
   it(
-    'persiste les métadonnées (description, méthode, sources, période/jour) à la création et au PUT',
+    'persiste les métadonnées (description, méthode, sources, période/jour) à la création et à la mise à jour',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey()
@@ -307,7 +307,7 @@ describe.concurrent('upsertIndicateur', () => {
   )
 
   it(
-    "remplace l'ensemble des configurations à chaque PUT (ajout + suppression)",
+    "remplace l'ensemble des configurations à chaque mise à jour (ajout + suppression)",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refReplaceA = testReferentielId()
