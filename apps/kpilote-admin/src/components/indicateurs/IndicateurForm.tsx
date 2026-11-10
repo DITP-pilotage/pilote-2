@@ -9,6 +9,7 @@ import {
   UNITES_DUREE,
 } from '@pilote/kpilote-shared/indicateur'
 
+import { AdminDimensions, useDimensionsIndicateur } from '@/components/indicateurs/AdminDimensions'
 import { AdminReferentiels } from '@/components/indicateurs/AdminReferentiels'
 import { AdminResponsables } from '@/components/indicateurs/AdminResponsables'
 import { UnitePicker } from '@/components/indicateurs/UnitePicker'
@@ -49,10 +50,23 @@ export function IndicateurForm({
     mode: 'onChange',
     defaultValues: initial,
   })
+  // Un indicateur déjà multi-dimension garde ses dimensions côté API même si on
+  // retire ici tous les niveaux de l'une d'elles (remplacement par dimension).
+  const dimensionsConservees = useMemo(
+    () => (initial.dimensions.length >= 2 ? initial.dimensions.map((d) => d.id) : []),
+    [initial.dimensions],
+  )
+  const dimensions = useDimensionsIndicateur({ control: form.control, dimensionsConservees })
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}>
+      <form
+        onSubmit={(event) =>
+          void form.handleSubmit((values) =>
+            onSubmit({ ...values, dimensions: dimensions.resolues }),
+          )(event)
+        }
+      >
         <div className="rounded-xl border border-border bg-surface p-6">
           <div className="mb-5">
             {mode === 'edit' ? (
@@ -223,6 +237,8 @@ export function IndicateurForm({
 
           <AdminReferentiels />
 
+          <AdminDimensions dimensionsConservees={dimensionsConservees} />
+
           <AdminResponsables />
         </div>
 
@@ -232,7 +248,7 @@ export function IndicateurForm({
           </Button>
           <Button
             type="submit"
-            disabled={!form.formState.isValid || pending}
+            disabled={!form.formState.isValid || dimensions.erreur !== null || pending}
             className={isProd ? 'bg-red-marianne hover:bg-red-marianne' : undefined}
           >
             {pending ? 'Enregistrement…' : isProd ? '🚨 Enregistrer en Prod' : 'Enregistrer'}

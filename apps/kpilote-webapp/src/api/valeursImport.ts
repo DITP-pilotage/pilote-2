@@ -25,6 +25,17 @@ export class ImportError extends Error {
   }
 }
 
+// Item du batch : `coordonnees` (multi-dimension, cellules vides retirées) ou la
+// forme historique `individu` — exactement l'un des deux, comme l'exige l'API.
+export const versItemBatch = (row: ParsedRow) =>
+  row.coordonnees
+    ? {
+        coordonnees: row.coordonnees.filter((membre) => membre.length > 0),
+        date: row.date,
+        valeur: row.valeur,
+      }
+    : { individu: row.individu, date: row.date, valeur: row.valeur }
+
 export async function importValeursBatch({
   indicateurId,
   rows,
@@ -34,7 +45,9 @@ export async function importValeursBatch({
 }): Promise<Result<UpsertValeursAvancementBatchResultApiModel, ImportBatchError>> {
   try {
     const json = await apiClient
-      .put(`indicateurs/${indicateurId}/valeurs:batch`, { json: { items: rows } })
+      .put(`indicateurs/${indicateurId}/valeurs:batch`, {
+        json: { items: rows.map(versItemBatch) },
+      })
       .json()
     return ok(upsertValeursAvancementBatchResultApiModelSchema.parse(json))
   } catch (error) {

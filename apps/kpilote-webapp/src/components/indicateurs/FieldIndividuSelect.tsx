@@ -2,7 +2,7 @@ import { useId } from 'react'
 
 import { Field } from '@pilote/kpilote-ui/Field'
 
-import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
+import { IndividuSelect, type OptionTous } from '@/components/indicateurs/IndividuSelect'
 
 // Champ « Individu » : Field (label) + IndividuSelect, avec un id généré par
 // useId pour l'association label ↔ contrôle. Factorise le combo répété dans les
@@ -12,11 +12,13 @@ export function FieldIndividuSelect({
   referentielIds,
   value,
   onChange,
+  optionTous,
 }: {
   label?: string
   referentielIds: ReadonlyArray<string>
-  value: string
+  value: string | null
   onChange: (next: { individu: string; referentiel: string }) => void
+  optionTous?: OptionTous | undefined
 }) {
   const selectId = useId()
 
@@ -27,6 +29,7 @@ export function FieldIndividuSelect({
         referentielIds={referentielIds}
         value={value}
         onChange={onChange}
+        optionTous={optionTous}
       />
     </Field>
   )

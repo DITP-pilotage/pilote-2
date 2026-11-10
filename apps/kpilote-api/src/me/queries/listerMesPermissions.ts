@@ -33,7 +33,10 @@ const loadPermissions = (principalId: string) =>
     }),
     db().indicateurPermission.findMany({
       where: { principalId },
-      include: { indicateur: { select: { publicId: true } } },
+      include: {
+        indicateur: { select: { publicId: true } },
+        perimetres: { select: { individu: { select: { publicId: true } } } },
+      },
     }),
   ])
 
@@ -50,13 +53,23 @@ const buildResponse = ([collectionPerms, indicateurPerms]: LoadResult): MePermis
       addAction(indicateursActions, link.indicateur.publicId, IndicateurPermissionAction.READ)
     }
   }
+  const perimetres = new Map<string, string[]>()
   for (const perm of indicateurPerms) {
     addAction(indicateursActions, perm.indicateur.publicId, perm.action)
+    if (perm.perimetreRestreint) {
+      perimetres.set(
+        perm.indicateur.publicId,
+        perm.perimetres.map((p) => p.individu.publicId).sort(),
+      )
+    }
   }
 
   return {
     collections: serializeMap(collectionsActions, COLLECTION_ACTION_ORDER),
-    indicateurs: serializeMap(indicateursActions, INDICATEUR_ACTION_ORDER),
+    indicateurs: serializeMap(indicateursActions, INDICATEUR_ACTION_ORDER).map((entree) => {
+      const perimetre = perimetres.get(entree.id)
+      return perimetre ? { ...entree, perimetre } : entree
+    }),
   }
 }
 

@@ -11,6 +11,8 @@ type WidgetRendererProps = {
   widget: WidgetApiModel
   indicateurId: string
   referentielId: string
+  fixe?: string | undefined
+  onSelectIndividu?: ((individuId: string) => void) | undefined
 }
 
 const RENDERERS: Record<string, (props: WidgetRendererProps) => React.ReactNode> = {

@@ -6,17 +6,13 @@ import {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { loadContexteSerie } from '@/dimension/queries/loadContexteResolution'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { formatBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import {
-  type IndividuRef,
-  type PointInterne,
-  resolveSerieIndividu,
-} from '@/valeurAvancement/resolveSerieIndividu'
+import { type PointInterne, resolveSerieIndividu } from '@/valeurAvancement/resolveSerieIndividu'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
@@ -32,13 +28,6 @@ const build = async (
 ): Promise<DernieresValeursIndividuListApiModel> => {
   const principalId = requireCurrentPrincipalId()
 
-  const individuRow = await db().individu.findUnique({
-    where: { publicId: individuPublicId },
-    select: { id: true, publicId: true, referentielId: true },
-  })
-  if (!individuRow) return { items: [] }
-  const individu: IndividuRef = individuRow
-
   const indicateurs = await db().indicateur.findMany({
     where: withIndicateurReadPermission({ publicId: { in: [...params.indicateurs] } }, principalId),
     select: { id: true, publicId: true },
@@ -49,14 +38,18 @@ const build = async (
   const dateTrunc = DEFAULT_DATE_TRUNC
   const resolus = await Promise.all(
     indicateurs.map(async (indicateur) => {
-      const { ctx: serieCtx } = await loadResolveSerieContext({
+      // La cellule (un individu, ou `DEPT-84~OP-ORANGE`) est utilisée telle
+      // quelle par indicateur ; invalide pour l'indicateur → indicateur omis.
+      const { ctx: serieCtx, cibles } = await loadContexteSerie({
         indicateurId: indicateur.id,
-        individusCibles: [individu],
+        cellules: [individuPublicId],
         dateTrunc,
       })
+      const cible = cibles[0]
+      if (!cible) return null
 
       const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
-      const serie = await resolveSerieIndividu(individu.id, serieCtx, serieCache)
+      const serie = await resolveSerieIndividu(cible.id, serieCtx, serieCache)
       const dernier = serie.at(-1)
       if (!dernier) return null
 
@@ -74,7 +67,7 @@ const build = async (
   logger.info(
     {
       event: 'valeurAvancement.listDernieresValeursForIndividu.timing',
-      individuId: individu.id,
+      cellule: individuPublicId,
       nbIndicateursDemandes: params.indicateurs.length,
       nbIndicateursAccessibles: indicateurs.length,
       nbItems: items.length,

@@ -37,6 +37,7 @@ export const listReferentiels = (
     orderBy: { id: 'asc' },
     include: {
       _count: { select: { individus: true } },
+      dimension: { select: { publicId: true } },
       widgets: { include: { widget: true }, orderBy: { createdAt: 'asc' } },
     },
     ...buildPaginationArgs(params.cursor, params.pageSize),

@@ -23,6 +23,22 @@ const traduireEntree = (entree: BatchInvalidErrorEntryApiModel): string => {
       return `Individu inconnu « ${entree.individu} » (${libelleLignes(entree.indices)}).`
     case 'DUPLICATE_KEY':
       return `Doublon ${entree.individu} / ${entree.date} (${libelleLignes(entree.indices)}).`
+    case 'COORDONNEE_MANQUANTE':
+      return (
+        `Membre manquant pour la dimension « ${entree.dimension} » (${libelleLignes(entree.indices)}) : ` +
+        'une valeur se saisit avec un membre par dimension.'
+      )
+    case 'DIMENSION_NON_DECLAREE':
+      return `« ${entree.individu} » relève d'une dimension que l'indicateur ne déclare pas (${libelleLignes(entree.indices)}).`
+    case 'COORDONNEES_EN_DOUBLE':
+      return `Plusieurs membres de la dimension « ${entree.dimension} » sur une même ligne (${libelleLignes(entree.indices)}).`
+    case 'CELLULE_AGREGEE':
+      return (
+        `« ${entree.individu} » est un membre agrégé dont la valeur se calcule ` +
+        `(${libelleLignes(entree.indices)}) : saisissez ses membres détaillés.`
+      )
+    case 'HORS_PERIMETRE':
+      return `« ${entree.individu} » est hors de votre périmètre de saisie (${libelleLignes(entree.indices)}).`
     default: {
       const exhaustif: never = entree
       return exhaustif

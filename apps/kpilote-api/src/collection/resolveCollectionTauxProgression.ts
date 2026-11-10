@@ -7,6 +7,9 @@ export type IndicateurContribution = {
   tauxProgression: number | null
   date: Bucket | null
   ponderation: Decimal
+  // Indicateur ne portant aucune dimension de la cellule demandée (collection
+  // mixte mono/multi-dimension) : exclu du calcul, comme une pondération 0.
+  nonApplicable?: boolean
 }
 
 export type CollectionTauxProgressionResult = {
@@ -31,7 +34,7 @@ export const resolveCollectionTauxProgression = (
   for (const c of contributions) {
     // Pondération 0 = indicateur volontairement exclu du calcul (cf. PIL-1578).
     // L'absence de taux ne bloque pas si l'utilisateur a déjà décidé de l'écarter.
-    if (c.ponderation.isZero()) continue
+    if (c.ponderation.isZero() || c.nonApplicable) continue
     if (c.tauxProgression === null) {
       // Règle tout-ou-rien : un indicateur pondéré non calculable invalide la moyenne.
       return { tauxProgression: null, contributions }

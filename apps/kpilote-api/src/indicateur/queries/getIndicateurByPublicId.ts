@@ -5,18 +5,12 @@ import { isAdminPrincipal, requireCurrentPrincipalId } from '@/framework/auth/us
 import { db } from '@/framework/persistence/dbStore'
 import { type Prisma } from '@/generated/prisma/client'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { toIndicateurApiModel } from '@/indicateur/utils'
+import { indicateurAvecReferentielsInclude, toIndicateurApiModel } from '@/indicateur/utils'
 
 const loadIndicateur = async (where: Prisma.IndicateurWhereInput): Promise<IndicateurApiModel> => {
   const indicateur = await db().indicateur.findFirstOrThrow({
     where,
-    include: {
-      referentiels: { include: { referentiel: true } },
-      responsables: {
-        orderBy: { createdAt: 'asc' },
-        include: { utilisateur: true },
-      },
-    },
+    include: indicateurAvecReferentielsInclude,
   })
   // La date est stockée en `YYYY-MM-DD` : le MAX lexicographique = MAX chronologique.
   const { _max } = await db().valeurAvancement.aggregate({

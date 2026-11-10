@@ -4,19 +4,39 @@ import { type NormaliserValeursImportResponseApiModel } from '@pilote/kpilote-sh
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@pilote/kpilote-ui/Collapsible'
 import { ImportPreviewTable } from './ImportPreviewTable'
 
-const decrirePlan = (plan: NormaliserValeursImportResponseApiModel['plan']): string => {
+type Revue = NormaliserValeursImportResponseApiModel
+
+// Mono : « individu « X » » (libellé historique) ; multi : toutes les colonnes d'identité.
+const decrireIdentite = (plan: Revue['plan']): string => {
+  const supplementaires = plan.colonnesIdentiteSupplementaires ?? []
+  if (supplementaires.length === 0) return `individu « ${plan.colonneIndividu} »`
+  return `identité ${[plan.colonneIndividu, ...supplementaires]
+    .map((colonne) => `« ${colonne} »`)
+    .join(' × ')}`
+}
+
+const decrirePlan = (plan: Revue['plan']): string => {
   if (plan.layout === 'long') {
     return (
-      `Tableau « long » — individu « ${plan.colonneIndividu} », ` +
+      `Tableau « long » — ${decrireIdentite(plan)}, ` +
       `date « ${plan.colonneDate.nom} », ` +
       `valeur « ${plan.colonneValeur} »`
     )
   }
   return (
-    `Tableau « pivot » — individu « ${plan.colonneIndividu} », ` +
+    `Tableau « pivot » — ${decrireIdentite(plan)}, ` +
     `${plan.colonnesPivot.length} colonne${plan.colonnesPivot.length > 1 ? 's' : ''}-date`
   )
 }
+
+// En-têtes de la prévisualisation : une colonne par coordonnée (ordre canonique),
+// libellée « colonne du fichier (dimension) ». Absent en mono.
+export const enTetesIdentite = (
+  colonnesIdentite: Revue['resolution']['colonnesIdentite'],
+): string[] | undefined =>
+  colonnesIdentite && colonnesIdentite.length > 1
+    ? colonnesIdentite.map(({ colonne, dimension }) => `${colonne} (${dimension.nom})`)
+    : undefined
 
 function Stat({ libelle, valeur }: { libelle: string; valeur: number }) {
   return (
@@ -104,6 +124,17 @@ export function NormalisationReviewView({
               </div>
             ) : null}
 
+            {resolution.colonnesIdentite ? (
+              <div className="text-sm">
+                <div className="font-medium text-text">Dimensions</div>
+                <p className="mt-0.5 text-text-muted">
+                  {resolution.colonnesIdentite
+                    .map(({ colonne, dimension }) => `colonne « ${colonne} » → ${dimension.nom}`)
+                    .join(' · ')}
+                </p>
+              </div>
+            ) : null}
+
             {resolution.mapping.length > 0 ? (
               <div className="text-sm">
                 <div className="font-medium text-text">
@@ -113,7 +144,10 @@ export function NormalisationReviewView({
                   <table className="w-full text-left text-[13px]">
                     <tbody className="divide-y divide-border">
                       {resolution.mapping.map((entree) => (
-                        <tr key={entree.libelleSource}>
+                        <tr key={`${entree.colonne ?? ''}:${entree.libelleSource}`}>
+                          {entree.colonne !== undefined ? (
+                            <td className="px-3 py-1.5 text-text-subtle">{entree.colonne}</td>
+                          ) : null}
                           <td className="px-3 py-1.5 text-text-muted">{entree.libelleSource}</td>
                           <td className="px-3 py-1.5 text-text-subtle">→</td>
                           <td className="px-3 py-1.5 font-mono text-text">
@@ -149,7 +183,10 @@ export function NormalisationReviewView({
       {nbImportables > 0 ? (
         <div>
           <h3 className="mb-2 text-sm font-semibold text-text">Valeurs détectées</h3>
-          <ImportPreviewTable rows={items} />
+          <ImportPreviewTable
+            rows={items}
+            colonnesIdentite={enTetesIdentite(resolution.colonnesIdentite)}
+          />
         </div>
       ) : null}
     </div>

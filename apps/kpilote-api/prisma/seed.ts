@@ -7,6 +7,7 @@ import {
   type UniteIndicateurCode,
 } from '@pilote/kpilote-shared/indicateur'
 
+import { cleCellule } from '../src/dimension/cellule.js'
 import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
 import {
   type FonctionAgregation,
@@ -14,6 +15,17 @@ import {
   IndicateurPermissionAction,
 } from '../src/generated/prisma/enums.js'
 
+import {
+  buildFaitsDimensions,
+  collectionsDimensionsSeed,
+  dimensionsSeed,
+  type FaitSeed,
+  indicateursDimensionsSeed,
+  individusDimensionsSeed,
+  permissionsCloisonneesSeed,
+  referentielsDimensionsSeed,
+  relationsDimensionsSeed,
+} from './seedData/dimensions.js'
 import {
   buildObjectifsPourIndicateur,
   buildValeursPourIndicateur,
@@ -215,6 +227,15 @@ const utilisateursSeed: ReadonlyArray<{
     service: 'Bureau des indicateurs',
     fonction: 'Chargée de mission',
   },
+  // Contributeur cloisonné : n'écrit sur IND-101 que pour l'opérateur Orange
+  // (cf. permissionsCloisonneesSeed).
+  {
+    email: 'operateur.orange@example.com',
+    nom: 'Orange',
+    prenom: 'Opérateur',
+    service: 'Orange — Relations collectivités',
+    fonction: 'Contributeur données fibre',
+  },
 ]
 
 // Clusters de mise à jour : plusieurs indicateurs peuvent partager la même
@@ -313,112 +334,164 @@ const parLots = <T>(rows: ReadonlyArray<T>): Array<ReadonlyArray<T>> => {
   return lots
 }
 
+// Les faits (valeurs, objectifs) sont portés par des cellules : un ensemble de
+// coordonnées (dimension, membre), au plus une par dimension. Un fait du seed
+// désigne sa cellule par les publicIds de ses membres ; une cellule
+// mono-coordonnée a pour clé l'uuid de l'individu (cf. src/dimension/cellule.ts,
+// seule source de la clé canonique).
+type Membre = { id: string; dimensionId: string }
+type Coordonnee = { dimensionId: string; individuId: string }
+
+const resoudreCellule = ({
+  membres,
+  membreParPublicId,
+}: {
+  membres: ReadonlyArray<string>
+  membreParPublicId: ReadonlyMap<string, Membre>
+}): { cle: string; coordonnees: ReadonlyArray<Coordonnee> } => {
+  const coordonnees = membres.map((publicId) => {
+    const membre = membreParPublicId.get(publicId)
+    if (!membre) throw new Error(`Membre inconnu dans le jeu de seed : ${publicId}`)
+    return { dimensionId: membre.dimensionId, individuId: membre.id }
+  })
+  return { cle: cleCellule(coordonnees.map((c) => c.individuId)), coordonnees }
+}
+
+// Création en masse des cellules et de leurs coordonnées. Une cellule existante
+// est conservée telle quelle (son id est référencé par les faits) : la clé
+// encode les membres, donc les coordonnées d'une clé donnée sont toujours les
+// mêmes.
+const upsertCellules = async ({
+  indicateurId,
+  cellules,
+}: {
+  indicateurId: string
+  cellules: ReadonlyMap<string, ReadonlyArray<Coordonnee>>
+}): Promise<void> => {
+  for (const lot of parLots([...cellules.keys()])) {
+    const tuples = lot.map(
+      (cle) => Prisma.sql`(${uuidv7()}::uuid, ${indicateurId}::uuid, ${cle}::text)`,
+    )
+    await prisma.$executeRaw`
+      INSERT INTO cellule (id, indicateur_id, cle)
+      VALUES ${Prisma.join(tuples)}
+      ON CONFLICT (indicateur_id, cle) DO NOTHING
+    `
+  }
+  const coordonnees = [...cellules.entries()].flatMap(([cle, liste]) =>
+    liste.map((coordonnee) => ({ cle, ...coordonnee })),
+  )
+  for (const lot of parLots(coordonnees)) {
+    const tuples = lot.map(
+      (c) => Prisma.sql`(${c.cle}::text, ${c.dimensionId}::uuid, ${c.individuId}::uuid)`,
+    )
+    await prisma.$executeRaw`
+      INSERT INTO cellule_coordonnee (cellule_id, dimension_id, individu_id)
+      SELECT c.id, v.dimension_id, v.individu_id
+      FROM (VALUES ${Prisma.join(tuples)}) AS v(cle, dimension_id, individu_id)
+      JOIN cellule c ON c.indicateur_id = ${indicateurId}::uuid AND c.cle = v.cle
+      ON CONFLICT (cellule_id, dimension_id) DO NOTHING
+    `
+  }
+}
+
+const TABLES_FAITS = {
+  valeur: { table: 'valeur_avancement', colonneDate: 'date', colonneValeur: 'valeur' },
+  objectif: {
+    table: 'objectif_indicateur_individu',
+    colonneDate: 'date_cible',
+    colonneValeur: 'valeur_cible',
+  },
+} as const
+
 // Sur les indicateurs du seed, le jeu de données fait autorité : ce qui n'en
 // fait pas partie est supprimé. Sans cela, une valeur importée à une date hors
 // série survivrait à tous les seeds et fausserait tendances et taux de
 // progression — la dégradation silencieuse que l'upsert corrige pour les
 // valeurs reviendrait par les dates.
 //
-// La condition est exacte parce que les générateurs produisent le produit
-// cartésien complet individus × dates (cf. seedData/geo.ts) : appartenir au jeu
-// équivaut à être dans les deux listes à la fois. Les indicateurs hors seed ne
+// La condition porte sur les couples exacts (clé de cellule, date) du jeu : elle
+// ne suppose plus le produit cartésien individus × dates, faux pour un cube
+// creux (un opérateur absent d'un département). Les indicateurs hors seed ne
 // sont jamais concernés, la clause portant sur un seul indicateur_id.
 const supprimerHorsJeu = async ({
-  table,
-  colonneDate,
+  type,
   indicateurId,
-  dates,
-  individuIds,
+  jeu,
 }: {
-  table: 'valeur_avancement' | 'objectif_indicateur_individu'
-  colonneDate: 'date' | 'date_cible'
+  type: keyof typeof TABLES_FAITS
   indicateurId: string
-  dates: ReadonlyArray<string>
-  individuIds: ReadonlyArray<string>
+  jeu: ReadonlyArray<{ cle: string; date: string }>
 }): Promise<number> => {
-  // Garde-fou : sur des listes vides la condition serait vraie partout et
-  // viderait l'indicateur.
-  if (dates.length === 0 || individuIds.length === 0) return 0
+  // Garde-fou : sur un jeu vide la condition serait vraie partout et viderait
+  // l'indicateur.
+  if (jeu.length === 0) return 0
+  const { table, colonneDate } = TABLES_FAITS[type]
   return prisma.$executeRaw`
-    DELETE FROM ${Prisma.raw(table)}
-    WHERE indicateur_id = ${indicateurId}::uuid
-      AND NOT (
-        ${Prisma.raw(`"${colonneDate}"`)} = ANY(${dates as string[]}::text[])
-        AND individu_id = ANY(${individuIds as string[]}::uuid[])
+    DELETE FROM ${Prisma.raw(table)} AS f
+    USING cellule c
+    WHERE f.indicateur_id = ${indicateurId}::uuid
+      AND c.id = f.cellule_id
+      AND (c.cle, f.${Prisma.raw(`"${colonneDate}"`)}) NOT IN (
+        SELECT * FROM unnest(${jeu.map((j) => j.cle)}::text[], ${jeu.map((j) => j.date)}::text[])
       )
   `
 }
 
-const upsertValeurs = async (
-  rows: ReadonlyArray<{
-    id: string
-    indicateurId: string
-    individuId: string
-    date: string
-    valeur: Prisma.Decimal
-  }>,
-): Promise<{ ecrites: number; supprimees: number }> => {
-  if (rows.length === 0) return { ecrites: 0, supprimees: 0 }
-  let ecrites = 0
-  for (const lot of parLots(rows)) {
-    const tuples = lot.map(
-      (row) =>
-        Prisma.sql`(${row.id}::uuid, ${row.indicateurId}::uuid, ${row.individuId}::uuid, ${row.date}, ${row.valeur.toString()}::decimal, NOW())`,
-    )
-    ecrites += await prisma.$executeRaw`
-      INSERT INTO valeur_avancement (id, indicateur_id, individu_id, "date", valeur, updated_at)
-      VALUES ${Prisma.join(tuples)}
-      ON CONFLICT (indicateur_id, individu_id, "date") DO UPDATE
-        SET valeur = EXCLUDED.valeur, updated_at = NOW()
-        WHERE valeur_avancement.valeur IS DISTINCT FROM EXCLUDED.valeur
-    `
-  }
-  const supprimees = await supprimerHorsJeu({
-    table: 'valeur_avancement',
-    colonneDate: 'date',
-    indicateurId: rows[0]!.indicateurId,
-    dates: [...new Set(rows.map((row) => row.date))],
-    individuIds: [...new Set(rows.map((row) => row.individuId))],
+// Écrit les faits d'un indicateur : cellules d'abord (bulk, ON CONFLICT DO
+// NOTHING), puis les faits joints sur `cellule(indicateur_id, cle)`.
+const upsertFaits = async ({
+  type,
+  indicateurId,
+  faits,
+  membreParPublicId,
+}: {
+  type: keyof typeof TABLES_FAITS
+  indicateurId: string
+  faits: ReadonlyArray<Pick<FaitSeed, 'membres' | 'date' | 'valeur'>>
+  membreParPublicId: ReadonlyMap<string, Membre>
+}): Promise<{ ecrites: number; supprimees: number }> => {
+  if (faits.length === 0) return { ecrites: 0, supprimees: 0 }
+  const { table, colonneDate, colonneValeur } = TABLES_FAITS[type]
+  const cellules = new Map<string, ReadonlyArray<Coordonnee>>()
+  const rows = faits.map((fait) => {
+    const { cle, coordonnees } = resoudreCellule({ membres: fait.membres, membreParPublicId })
+    cellules.set(cle, coordonnees)
+    return { cle, date: fait.date, valeur: new Prisma.Decimal(fait.valeur) }
   })
-  return { ecrites, supprimees }
-}
+  await upsertCellules({ indicateurId, cellules })
 
-const upsertObjectifs = async (
-  rows: ReadonlyArray<{
-    id: string
-    indicateurId: string
-    individuId: string
-    dateCible: string
-    valeurCible: Prisma.Decimal
-  }>,
-): Promise<{ ecrites: number; supprimees: number }> => {
-  if (rows.length === 0) return { ecrites: 0, supprimees: 0 }
+  const date = Prisma.raw(`"${colonneDate}"`)
+  const valeur = Prisma.raw(colonneValeur)
   let ecrites = 0
   for (const lot of parLots(rows)) {
     const tuples = lot.map(
       (row) =>
-        Prisma.sql`(${row.id}::uuid, ${row.indicateurId}::uuid, ${row.individuId}::uuid, ${row.dateCible}, ${row.valeurCible.toString()}::decimal, NOW())`,
+        Prisma.sql`(${uuidv7()}::uuid, ${row.cle}::text, ${row.date}::text, ${row.valeur.toString()}::decimal)`,
     )
     ecrites += await prisma.$executeRaw`
-      INSERT INTO objectif_indicateur_individu (id, indicateur_id, individu_id, date_cible, valeur_cible, updated_at)
-      VALUES ${Prisma.join(tuples)}
-      ON CONFLICT (indicateur_id, individu_id, date_cible) DO UPDATE
-        SET valeur_cible = EXCLUDED.valeur_cible, updated_at = NOW()
-        WHERE objectif_indicateur_individu.valeur_cible IS DISTINCT FROM EXCLUDED.valeur_cible
+      INSERT INTO ${Prisma.raw(table)} (id, indicateur_id, cellule_id, ${date}, ${valeur}, updated_at)
+      SELECT f.id, c.indicateur_id, c.id, f.date_fait, f.valeur_fait, NOW()
+      FROM (VALUES ${Prisma.join(tuples)}) AS f(id, cle, date_fait, valeur_fait)
+      JOIN cellule c ON c.indicateur_id = ${indicateurId}::uuid AND c.cle = f.cle
+      ON CONFLICT (indicateur_id, cellule_id, ${date}) DO UPDATE
+        SET ${valeur} = EXCLUDED.${valeur}, updated_at = NOW()
+        WHERE ${Prisma.raw(table)}.${valeur} IS DISTINCT FROM EXCLUDED.${valeur}
     `
   }
-  const supprimees = await supprimerHorsJeu({
-    table: 'objectif_indicateur_individu',
-    colonneDate: 'date_cible',
-    indicateurId: rows[0]!.indicateurId,
-    dates: [...new Set(rows.map((row) => row.dateCible))],
-    individuIds: [...new Set(rows.map((row) => row.individuId))],
-  })
+  const supprimees = await supprimerHorsJeu({ type, indicateurId, jeu: rows })
   return { ecrites, supprimees }
 }
 
 const main = async () => {
-  for (const [index, item] of indicateursSeed.entries()) {
+  // Les indicateurs multi-dimension (et leur contournement historique) suivent
+  // les indicateurs historiques : même mécanique d'upsert, dates de création
+  // dans la continuité des clusters.
+  const tousIndicateursSeed: ReadonlyArray<(typeof indicateursSeed)[number]> = [
+    ...indicateursSeed,
+    ...indicateursDimensionsSeed,
+  ]
+  for (const [index, item] of tousIndicateursSeed.entries()) {
     const { createdAt, updatedAt } = indicateurDates(index)
     const visibilite = item.visibilite ?? 'PRIVE'
     const unite = item.unite ?? null
@@ -482,7 +555,9 @@ const main = async () => {
     select: { id: true },
   })
   let permissionsCount = 0
-  for (const item of indicateursSeed.slice(0, 8)) {
+  // ditp.admin a les droits complets sur les indicateurs de démo (IND-001..008)
+  // et sur les jeux multi-dimension, sans périmètre restreint.
+  for (const item of [...indicateursSeed.slice(0, 8), ...indicateursDimensionsSeed]) {
     const indicateur = await prisma.indicateur.findUniqueOrThrow({
       where: { publicId: item.publicId },
       select: { id: true },
@@ -511,7 +586,44 @@ const main = async () => {
     }
   }
 
-  for (const item of referentielsSeed) {
+  // Dimensions : la dimension d'un référentiel ancre déjà présent est renommée
+  // en place (la migration l'a créée sous un nom automatique et des
+  // `cellule_coordonnee` la référencent) ; sinon (base vierge) elle est créée.
+  const dimensionParPublicId = new Map<string, string>()
+  for (const item of dimensionsSeed) {
+    const ancre = await prisma.referentiel.findUnique({
+      where: { publicId: item.referentielAncre },
+    })
+    const dimension = ancre
+      ? await prisma.dimension.update({
+          where: { id: ancre.dimensionId },
+          data: { publicId: item.publicId, nom: item.nom, description: item.description },
+        })
+      : await prisma.dimension.upsert({
+          where: { publicId: item.publicId },
+          update: { nom: item.nom, description: item.description },
+          create: {
+            id: uuidv7(),
+            publicId: item.publicId,
+            nom: item.nom,
+            description: item.description,
+          },
+        })
+    dimensionParPublicId.set(item.publicId, dimension.id)
+  }
+
+  // Un référentiel existant n'est jamais réaffecté à une autre dimension : cela
+  // casserait `cellule_coordonnee.dimension_id`. Une incohérence est signalée.
+  const tousReferentielsSeed = [...referentielsSeed, ...referentielsDimensionsSeed]
+  for (const item of tousReferentielsSeed) {
+    const dimensionId = dimensionParPublicId.get(item.dimension)
+    if (!dimensionId) throw new Error(`Dimension non déclarée dans le seed : ${item.dimension}`)
+    const existant = await prisma.referentiel.findUnique({ where: { publicId: item.publicId } })
+    if (existant && existant.dimensionId !== dimensionId) {
+      throw new Error(
+        `${item.publicId} appartient déjà à une autre dimension que ${item.dimension} : réaffectation refusée.`,
+      )
+    }
     await prisma.referentiel.upsert({
       where: { publicId: item.publicId },
       update: { nom: item.nom, description: item.description },
@@ -520,11 +632,18 @@ const main = async () => {
         publicId: item.publicId,
         nom: item.nom,
         description: item.description,
+        dimensionId,
       },
     })
   }
 
-  for (const item of individusSeed) {
+  const tousIndividusSeed: ReadonlyArray<{
+    publicId: string
+    nom: string
+    referentiel: string
+    metadata: Record<string, unknown> | null
+  }> = [...individusSeed, ...individusDimensionsSeed.map((i) => ({ ...i, metadata: null }))]
+  for (const item of tousIndividusSeed) {
     const referentiel = await prisma.referentiel.findUniqueOrThrow({
       where: { publicId: item.referentiel },
       select: { id: true },
@@ -653,7 +772,14 @@ const main = async () => {
       }),
   ]
 
-  for (const item of indicateurReferentielsSeed) {
+  const tousLiensReferentielsSeed = [
+    ...indicateurReferentielsSeed,
+    ...indicateursDimensionsSeed.map((item) => ({
+      indicateurPublicId: item.publicId,
+      referentiels: item.referentiels,
+    })),
+  ]
+  for (const item of tousLiensReferentielsSeed) {
     const indicateur = await prisma.indicateur.findUniqueOrThrow({
       where: { publicId: item.indicateurPublicId },
       select: { id: true },
@@ -680,12 +806,61 @@ const main = async () => {
     }
   }
 
-  const liaisonsCount = indicateurReferentielsSeed.reduce(
+  const liaisonsCount = tousLiensReferentielsSeed.reduce(
     (acc, item) => acc + item.referentiels.length,
     0,
   )
 
-  for (const item of relationsSeed) {
+  // Configuration par dimension. Un indicateur historique porte une seule
+  // dimension (celle de ses niveaux) : ordre 0, marginale SUM (sans effet en
+  // mono), objectifs portés — comme la migration. Les jeux multi-dimension
+  // déclarent la leur explicitement.
+  const dimensionParReferentielPublicId = new Map(
+    tousReferentielsSeed.map((r) => [r.publicId, r.dimension]),
+  )
+  const indicateurDimensionsSeed = [
+    ...indicateurReferentielsSeed.map((item) => ({
+      indicateurPublicId: item.indicateurPublicId,
+      dimensions: [
+        ...new Set(item.referentiels.map((r) => dimensionParReferentielPublicId.get(r.id)!)),
+      ].map((dimension, ordre) => ({
+        dimension,
+        ordre,
+        fonctionAgregation: 'SUM' as const,
+        porteObjectifs: true,
+      })),
+    })),
+    ...indicateursDimensionsSeed.map((item) => ({
+      indicateurPublicId: item.publicId,
+      dimensions: item.dimensions,
+    })),
+  ]
+  for (const item of indicateurDimensionsSeed) {
+    const indicateur = await prisma.indicateur.findUniqueOrThrow({
+      where: { publicId: item.indicateurPublicId },
+      select: { id: true },
+    })
+    for (const configuration of item.dimensions) {
+      const dimensionId = dimensionParPublicId.get(configuration.dimension)!
+      const donnees = {
+        ordre: configuration.ordre,
+        fonctionAgregation: configuration.fonctionAgregation,
+        porteObjectifs: configuration.porteObjectifs,
+      }
+      await prisma.indicateurDimension.upsert({
+        where: { indicateurId_dimensionId: { indicateurId: indicateur.id, dimensionId } },
+        update: donnees,
+        create: { indicateurId: indicateur.id, dimensionId, ...donnees },
+      })
+    }
+  }
+  const indicateurDimensionsCount = indicateurDimensionsSeed.reduce(
+    (acc, item) => acc + item.dimensions.length,
+    0,
+  )
+
+  const tousRelationsSeed = [...relationsSeed, ...relationsDimensionsSeed]
+  for (const item of tousRelationsSeed) {
     const parent = await prisma.individu.findUniqueOrThrow({
       where: { publicId: item.parent },
       select: { id: true },
@@ -715,16 +890,18 @@ const main = async () => {
   const indicateursParPublicId = new Map(
     (
       await prisma.indicateur.findMany({
-        where: { publicId: { in: indicateursSeed.map((i) => i.publicId) } },
+        where: { publicId: { in: tousIndicateursSeed.map((i) => i.publicId) } },
       })
     ).map((row) => [row.publicId, row.id]),
   )
-  const individusParPublicId = new Map(
+  // Membre = individu et dimension de son niveau : de quoi former une cellule.
+  const membreParPublicId = new Map(
     (
       await prisma.individu.findMany({
-        where: { publicId: { in: individusSeed.map((i) => i.publicId) } },
+        where: { publicId: { in: tousIndividusSeed.map((i) => i.publicId) } },
+        include: { referentiel: true },
       })
-    ).map((row) => [row.publicId, { id: row.id, referentielId: row.referentielId }]),
+    ).map((row) => [row.publicId, { id: row.id, dimensionId: row.referentiel.dimensionId }]),
   )
   const referentielParPublicId = new Map(
     (
@@ -744,6 +921,7 @@ const main = async () => {
 
   const unitePourIndicateur = new Map(indicateursSeed.map((i) => [i.publicId, i.unite ?? null]))
 
+  // Seed historique : une cellule mono-coordonnée par individu de la maille.
   let valeursCount = 0
   let valeursHorsJeuCount = 0
   for (const lien of indicateurReferentielsSeed) {
@@ -761,21 +939,16 @@ const main = async () => {
       individuPublicIds: individusPublicIds,
       estPourcentage: unitePourIndicateur.get(lien.indicateurPublicId) === 'POURCENTAGE',
     })
-    const rows = generated
-      .map((g) => {
-        const individu = individusParPublicId.get(g.individuPublicId)
-        if (!individu) return null
-        return {
-          id: uuidv7(),
-          indicateurId,
-          individuId: individu.id,
-          date: g.date,
-          valeur: new Prisma.Decimal(g.valeur),
-        }
-      })
-      .filter((row): row is NonNullable<typeof row> => row !== null)
-
-    const ecriture = await upsertValeurs(rows)
+    const ecriture = await upsertFaits({
+      type: 'valeur',
+      indicateurId,
+      faits: generated.map((g) => ({
+        membres: [g.individuPublicId],
+        date: g.date,
+        valeur: g.valeur,
+      })),
+      membreParPublicId,
+    })
     valeursCount += ecriture.ecrites
     valeursHorsJeuCount += ecriture.supprimees
   }
@@ -817,23 +990,44 @@ const main = async () => {
       individuPublicIds: individusPublicIds,
       estPourcentage: unitePourIndicateur.get(indicateurPublicId) === 'POURCENTAGE',
     })
-    const rows = generated
-      .map((g) => {
-        const individu = individusParPublicId.get(g.individuPublicId)
-        if (!individu) return null
-        return {
-          id: uuidv7(),
-          indicateurId,
-          individuId: individu.id,
-          dateCible: g.dateCible,
-          valeurCible: new Prisma.Decimal(g.valeurCible),
-        }
-      })
-      .filter((row): row is NonNullable<typeof row> => row !== null)
-
-    const ecriture = await upsertObjectifs(rows)
+    const ecriture = await upsertFaits({
+      type: 'objectif',
+      indicateurId,
+      faits: generated.map((g) => ({
+        membres: [g.individuPublicId],
+        date: g.dateCible,
+        valeur: g.valeurCible,
+      })),
+      membreParPublicId,
+    })
     objectifsCount += ecriture.ecrites
     objectifsHorsJeuCount += ecriture.supprimees
+  }
+
+  // Jeux multi-dimension : cellules (DEPT, opérateur) / (DEPT, type de fraude)
+  // pour les valeurs, cellules territoire seul pour les objectifs (sous-cube
+  // des dimensions qui portent les objectifs) ; IND-111..115 en mono.
+  const faitsDimensions = buildFaitsDimensions()
+  for (const item of indicateursDimensionsSeed) {
+    const indicateurId = indicateursParPublicId.get(item.publicId)!
+    for (const [type, faits] of [
+      ['valeur', faitsDimensions.valeurs],
+      ['objectif', faitsDimensions.objectifs],
+    ] as const) {
+      const ecriture = await upsertFaits({
+        type,
+        indicateurId,
+        faits: faits.filter((f) => f.indicateurPublicId === item.publicId),
+        membreParPublicId,
+      })
+      if (type === 'valeur') {
+        valeursCount += ecriture.ecrites
+        valeursHorsJeuCount += ecriture.supprimees
+      } else {
+        objectifsCount += ecriture.ecrites
+        objectifsHorsJeuCount += ecriture.supprimees
+      }
+    }
   }
 
   // Collections d'indicateurs : collections thématiques pour le front. L'ordre
@@ -894,8 +1088,11 @@ const main = async () => {
     },
   ]
 
+  // COL-010 (contournement « collection d'opérateurs ») et COL-011 (mixte
+  // mono/multi-dimension) : cf. seedData/dimensions.ts.
+  const tousCollectionsSeed = [...collectionsSeed, ...collectionsDimensionsSeed]
   const collectionsByPublicId = new Map<string, { id: string }>()
-  for (const collectionItem of collectionsSeed) {
+  for (const collectionItem of tousCollectionsSeed) {
     const collection = await prisma.collection.upsert({
       where: { publicId: collectionItem.publicId },
       update: {
@@ -929,7 +1126,7 @@ const main = async () => {
       })
     }
   }
-  const collectionLiaisonsCount = collectionsSeed.reduce(
+  const collectionLiaisonsCount = tousCollectionsSeed.reduce(
     (acc, item) => acc + item.indicateurPublicIds.length,
     0,
   )
@@ -1089,9 +1286,42 @@ const main = async () => {
 
   const contactsUtilesCount = 4
 
+  // ── Cloisonnement par périmètre ─────────────────────────────────────────────
+  // Permission restreinte (fail-closed) : `perimetreRestreint` et les lignes de
+  // périmètre sont posés ensemble ; le jeu fait autorité sur les lignes.
+  let perimetresCount = 0
+  for (const item of permissionsCloisonneesSeed) {
+    const utilisateur = await prisma.utilisateur.findUniqueOrThrow({
+      where: { email: item.email },
+    })
+    const indicateurId = indicateursParPublicId.get(item.indicateurPublicId)!
+    const action = IndicateurPermissionAction[item.action]
+    const perimetreRestreint = item.perimetre !== null
+    const cle = { principalId: utilisateur.id, indicateurId, action }
+    await prisma.indicateurPermission.upsert({
+      where: { principalId_indicateurId_action: cle },
+      update: { perimetreRestreint },
+      create: { ...cle, perimetreRestreint },
+    })
+    const individuIds = (item.perimetre ?? []).map(
+      (publicId) => membreParPublicId.get(publicId)!.id,
+    )
+    await prisma.indicateurPermissionPerimetre.deleteMany({
+      where: { ...cle, individuId: { notIn: individuIds } },
+    })
+    for (const individuId of individuIds) {
+      await prisma.indicateurPermissionPerimetre.upsert({
+        where: { principalId_indicateurId_action_individuId: { ...cle, individuId } },
+        update: {},
+        create: { ...cle, individuId },
+      })
+    }
+    perimetresCount += individuIds.length
+  }
+
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs écrites, ${objectifsCount} objectifs écrits (créés ou restaurés ; les lignes déjà conformes ne sont pas réécrites), ${valeursHorsJeuCount} valeurs et ${objectifsHorsJeuCount} objectifs hors jeu supprimés,${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${collectionsSeed.length} collections (${collectionLiaisonsCount} liaisons collection-indicateur, ${collectionPermissionsCount} permissions collection, ${collectionResponsablesCount} responsable collection, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
+    `Seed terminé : ${tousIndicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur (+ ${permissionsCloisonneesSeed.length} cloisonnées, ${perimetresCount} lignes de périmètre), ${dimensionsSeed.length} dimensions, ${tousReferentielsSeed.length} référentiels, ${tousIndividusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${indicateurDimensionsCount} liaisons indicateur-dimension, ${tousRelationsSeed.length} relations, ${valeursCount} valeurs écrites, ${objectifsCount} objectifs écrits (créés ou restaurés ; les lignes déjà conformes ne sont pas réécrites), ${valeursHorsJeuCount} valeurs et ${objectifsHorsJeuCount} objectifs hors jeu supprimés,${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${tousCollectionsSeed.length} collections (${collectionLiaisonsCount} liaisons collection-indicateur, ${collectionPermissionsCount} permissions collection, ${collectionResponsablesCount} responsable collection, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
   )
 }
 

@@ -31,7 +31,7 @@ import {
   collectionQueryOptions,
   collectionTauxProgressionQueryOptions,
 } from '@/queries/collections'
-import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
+import { loadReferentielIdsCollection, useReferentielIdsCollection } from '@/queries/referentiels'
 
 const paramsSchema = z.object({
   id: collectionPublicIdSchema,
@@ -59,14 +59,22 @@ export const Route = createFileRoute('/_authenticated/collections/$id')({
     const { queryClient } = context
     const collection = await loadCollection({ queryClient, collectionId: params.id })
     const indicateurIds = collection.indicateurs.map((lien) => lien.id)
-    if (indicateurIds.length > 0) {
-      await loadIndicateurs({ queryClient, query: { ids: indicateurIds } })
-    }
+    const indicateursCollection =
+      indicateurIds.length > 0
+        ? (await loadIndicateurs({ queryClient, query: { ids: indicateurIds } })).items
+        : []
 
-    const referentielIds = await loadAllReferentielIds({ queryClient })
+    // Sélecteur du tableau de bord, plus les dimensions croisées des indicateurs
+    // multi-dimension de la collection ; l'individu par défaut reste pris dans
+    // le sélecteur du tableau de bord (cf. lib/individus/tableauDeBord.ts).
+    const { referentielIds, referentielIdsParDefaut } = await loadReferentielIdsCollection({
+      queryClient,
+      indicateursCollection,
+    })
     await ensureIndividuReferentielPair({
       queryClient,
       referentielIds,
+      referentielIdsParDefaut,
       deps,
       onMismatch: ({ individu, referentiel }) => {
         throw redirect({
@@ -102,8 +110,7 @@ function CollectionDetailComponent() {
   useRecordVisit({ type: 'collection', id: collection.id, label: collection.nom })
   const indicateurIds = collection.indicateurs.map((lien) => lien.id)
   const { data: indicateurs } = useSuspenseQuery(indicateursQueryOptions({ ids: indicateurIds }))
-  const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
-  const referentielIds = referentiels.map((r) => r.id)
+  const referentielIds = useReferentielIdsCollection(indicateurs.items)
 
   // Re-tri selon l'ordre de la collection : la query indicateurs ne garantit pas
   // l'ordre du filtre `ids`.

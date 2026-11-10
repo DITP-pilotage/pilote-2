@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
-import { importValeursBatch } from '@/api/valeursImport'
+import { importValeursBatch, versItemBatch } from '@/api/valeursImport'
 import { apiUrl, server } from '@/tests/server'
 
 describe('importValeursBatch', () => {
@@ -74,5 +74,43 @@ describe('importValeursBatch', () => {
         expect(result.error.issues).toHaveLength(1)
       }
     }
+  })
+
+  it('envoie `coordonnees` (sans cellule vide) pour une ligne multi-dimension, `individu` sinon', async () => {
+    let corps: unknown = null
+    server.use(
+      http.put(apiUrl('/indicateurs/IND-1/valeurs:batch'), async ({ request }) => {
+        corps = await request.json()
+        return HttpResponse.json({ total: 2, created: 2, updated: 0 })
+      }),
+    )
+    await importValeursBatch({
+      indicateurId: 'IND-1',
+      rows: [
+        { individu: 'DEPT-84', date: '2024-01-15', valeur: 7.2 },
+        {
+          individu: 'DEPT-84',
+          coordonnees: ['DEPT-84', 'OP-SFR', ''],
+          date: '2024-01-15',
+          valeur: 3,
+        },
+      ],
+    })
+    expect(corps).toStrictEqual({
+      items: [
+        { individu: 'DEPT-84', date: '2024-01-15', valeur: 7.2 },
+        { coordonnees: ['DEPT-84', 'OP-SFR'], date: '2024-01-15', valeur: 3 },
+      ],
+    })
+  })
+})
+
+describe('versItemBatch', () => {
+  it('garde la forme historique quand la ligne n’a pas de coordonnées', () => {
+    expect(versItemBatch({ individu: 'DEPT-84', date: '2024-01-15', valeur: 1 })).toStrictEqual({
+      individu: 'DEPT-84',
+      date: '2024-01-15',
+      valeur: 1,
+    })
   })
 })

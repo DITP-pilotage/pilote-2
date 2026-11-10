@@ -31,6 +31,29 @@ describe('traduireErreursBatch', () => {
   })
 })
 
+describe('traduireErreursBatch — multi-dimension', () => {
+  it('traduit les erreurs de cellule et de périmètre', () => {
+    const messages = traduireErreursBatch({
+      details: {
+        errors: [
+          { code: 'COORDONNEE_MANQUANTE', indices: [0], dimension: 'DIM-OPERATEUR' },
+          { code: 'DIMENSION_NON_DECLAREE', indices: [1], individu: 'IS-FRAUDE' },
+          { code: 'COORDONNEES_EN_DOUBLE', indices: [2, 3], dimension: 'DIM-TERRITOIRE' },
+          { code: 'CELLULE_AGREGEE', indices: [4], individu: 'REG-93' },
+          { code: 'HORS_PERIMETRE', indices: [5], individu: 'DEPT-84~OP-SFR' },
+        ],
+      },
+    })
+    expect(messages).toEqual([
+      'Membre manquant pour la dimension « DIM-OPERATEUR » (ligne 2) : une valeur se saisit avec un membre par dimension.',
+      "« IS-FRAUDE » relève d'une dimension que l'indicateur ne déclare pas (ligne 3).",
+      'Plusieurs membres de la dimension « DIM-TERRITOIRE » sur une même ligne (lignes 4, 5).',
+      '« REG-93 » est un membre agrégé dont la valeur se calcule (ligne 6) : saisissez ses membres détaillés.',
+      '« DEPT-84~OP-SFR » est hors de votre périmètre de saisie (ligne 7).',
+    ])
+  })
+})
+
 describe('traduireIssuesValidation', () => {
   it('traduit les issues zod avec path ["items", index, champ]', () => {
     const issues: ValidationIssueApiModel[] = [

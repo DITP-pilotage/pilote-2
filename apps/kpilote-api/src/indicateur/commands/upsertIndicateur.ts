@@ -5,6 +5,10 @@ import {
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
+import {
+  appliquerConfigurationsDimensions,
+  planifierDimensionsIndicateur,
+} from '@/dimension/commands/planifierDimensionsIndicateur'
 import { ensurePrincipal, isApiKeyAdmin, isOidcUser } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
@@ -13,6 +17,7 @@ import { type FonctionAgregation, IndicateurPermissionAction } from '@/generated
 
 type ConfigurationResolue = {
   referentielId: string
+  dimensionId: string
   fonctionAgregation: FonctionAgregation
 }
 
@@ -45,6 +50,7 @@ const resoudreConfigurationsReferentiels = async (
   }
   return referentiels.map((referentiel) => ({
     referentielId: referentiel.id,
+    dimensionId: referentiel.dimensionId,
     fonctionAgregation: fonctionParPublicId.get(referentiel.publicId)!,
   }))
 }
@@ -146,6 +152,14 @@ const assertWritePermission = async (indicateurId: string, principalId: string):
   if (!hasWrite) {
     throw new ForbiddenError("Vous n'avez pas la permission de modifier cet indicateur")
   }
+  // Un principal cloisonné (périmètre d'écriture) écrit des valeurs, pas la
+  // structure de l'indicateur (niveaux, dimensions, ordre de remontée). Le
+  // drapeau fait foi : restreint sans ligne de périmètre reste restreint.
+  if (hasWrite.perimetreRestreint) {
+    throw new ForbiddenError(
+      "Un principal au périmètre d'écriture restreint ne peut pas modifier la structure de l'indicateur",
+    )
+  }
 }
 
 // Les champs métadonnées sont optionnels dans le body : une clé absente signifie
@@ -170,7 +184,11 @@ const updateIndicateurExistant = async (
   principalId: string,
 ): Promise<void> => {
   await assertWritePermission(indicateurId, principalId)
-  const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
+  const plan = await planifierDimensionsIndicateur({
+    indicateurId,
+    niveauxDemandes: await resoudreConfigurationsReferentiels(body.referentiels),
+    dimensionsDemandees: body.dimensions,
+  })
   const responsablesCibles =
     body.responsables === undefined ? undefined : await resoudreResponsables(body.responsables)
   await db().indicateur.update({
@@ -182,7 +200,8 @@ const updateIndicateurExistant = async (
       ...metadonneesData(body),
     },
   })
-  await remplacerConfigurationsReferentiels(indicateurId, configurations)
+  await remplacerConfigurationsReferentiels(indicateurId, plan.niveaux)
+  await appliquerConfigurationsDimensions({ indicateurId, configurations: plan.configurations })
   if (responsablesCibles !== undefined) {
     await remplacerResponsables(indicateurId, responsablesCibles)
   }
@@ -203,7 +222,12 @@ const createIndicateurAvecGrants = async (
   body: UpsertIndicateurBody,
   principalId: string,
 ): Promise<void> => {
-  const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
+  const plan = await planifierDimensionsIndicateur({
+    indicateurId: null,
+    niveauxDemandes: await resoudreConfigurationsReferentiels(body.referentiels),
+    dimensionsDemandees: body.dimensions,
+  })
+  const configurations = plan.niveaux
   const responsablesCibles =
     body.responsables === undefined ? undefined : await resoudreResponsables(body.responsables)
   const indicateurId = uuidv7()
@@ -227,6 +251,7 @@ const createIndicateurAvecGrants = async (
       })),
     })
   }
+  await appliquerConfigurationsDimensions({ indicateurId, configurations: plan.configurations })
   if (responsablesCibles !== undefined) {
     await remplacerResponsables(indicateurId, responsablesCibles)
   }

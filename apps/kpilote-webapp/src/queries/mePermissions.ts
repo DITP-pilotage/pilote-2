@@ -12,6 +12,9 @@ import {
 import { type QueryClient, queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 
 import { fetchMePermissions } from '@/api/mePermissions'
+import { type Coordonnee, type DimensionCellule } from '@/lib/individus/cellule'
+import { type IndividuNode } from '@/lib/individus/hierarchy'
+import { estDansPerimetre } from '@/lib/individus/perimetre'
 
 import { DEFAULT_STALE_TIME } from './utils'
 
@@ -48,6 +51,28 @@ export const canWriteDataIndicateur = ({
 }): boolean =>
   permissions.isAdmin === true || hasIndicateurWriteData(permissions.indicateurs, indicateurId)
 
+// WRITE_DATA sur une cellule : si la permission est restreinte (`perimetre`),
+// la cellule doit être dans le périmètre. Sans périmètre : règle historique.
+export const canWriteDataCellule = ({
+  permissions,
+  indicateurId,
+  coordonnees,
+  nodes,
+  dimensions,
+}: {
+  permissions: MePermissionsApiModel
+  indicateurId: string
+  coordonnees: ReadonlyArray<Coordonnee>
+  nodes: ReadonlyArray<IndividuNode>
+  dimensions: ReadonlyArray<DimensionCellule>
+}): boolean => {
+  if (!canWriteDataIndicateur({ permissions, indicateurId })) return false
+  if (permissions.isAdmin === true) return true
+  const perimetre = permissions.indicateurs.find((entry) => entry.id === indicateurId)?.perimetre
+  if (perimetre === undefined) return true
+  return estDansPerimetre({ perimetre, coordonnees, nodes, dimensions })
+}
+
 export const canWriteCommentIndicateur = ({
   permissions,
   indicateurId,
@@ -70,6 +95,16 @@ export const canWriteCommentCollection = ({
 export const useCanWriteDataIndicateur = (indicateurId: string): boolean => {
   const { data } = useSuspenseQuery(mePermissionsQueryOptions())
   return canWriteDataIndicateur({ permissions: data, indicateurId })
+}
+
+export const useCanWriteDataCellule = (params: {
+  indicateurId: string
+  coordonnees: ReadonlyArray<Coordonnee>
+  nodes: ReadonlyArray<IndividuNode>
+  dimensions: ReadonlyArray<DimensionCellule>
+}): boolean => {
+  const { data } = useSuspenseQuery(mePermissionsQueryOptions())
+  return canWriteDataCellule({ permissions: data, ...params })
 }
 
 export const useCanWriteCommentIndicateur = (indicateurId: string): boolean => {

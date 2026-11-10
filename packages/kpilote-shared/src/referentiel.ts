@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
 import { individuPublicIdSchema, referentielPublicIdSchema } from './publicIds'
+import { dimensionPublicIdSchema } from './dimension'
 import { widgetApiModelSchema } from './widget'
 
 export { referentielPublicIdSchema } from './publicIds'
@@ -10,6 +11,9 @@ export const referentielApiModelSchema = z.object({
   id: referentielPublicIdSchema,
   nom: z.string().describe('Nom lisible du référentiel.'),
   description: z.string().nullable().describe('Description optionnelle du référentiel.'),
+  dimension: dimensionPublicIdSchema.describe(
+    'Dimension dont ce référentiel est un niveau (ex. REF-DEPT est un niveau de DIM-TERRITOIRE).',
+  ),
   nombreIndividus: z
     .number()
     .int()
@@ -49,6 +53,11 @@ export type UpsertReferentielIndividuItem = z.infer<typeof upsertReferentielIndi
 export const upsertReferentielBodySchema = z.object({
   nom: z.string().min(1).describe('Nom lisible du référentiel.'),
   description: z.string().nullable().describe('Description du référentiel (peut être null).'),
+  dimension: dimensionPublicIdSchema
+    .optional()
+    .describe(
+      'Dimension dont le référentiel est un niveau. Absent : dimension existante conservée ; à la création, une dimension dédiée est créée. Changer la dimension est refusé si des valeurs existent sur ses individus.',
+    ),
   individus: z
     .array(upsertReferentielIndividuItemSchema)
     .optional()

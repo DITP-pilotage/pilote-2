@@ -11,6 +11,9 @@ import { brouillonQueryOptions, commentairesPubliesQueryOptions } from '@/querie
 import { useCanWriteCommentIndicateur } from '@/queries/mePermissions'
 import { niveauPourCommentaireQueryOptions } from '@/queries/niveauConfiance'
 
+// `individuId` est un identifiant de cellule : l'individu seul en
+// mono-dimension, la cellule courante (ex. DEPT-84~OP-ORANGE) en multi — les
+// commentaires et niveaux de confiance portent sur la cellule.
 export function IndicateurCommentaireConfigProvider({
   indicateurId,
   individuId,

@@ -12,6 +12,7 @@ import {
 import { PageHeading } from '@/components/PageHeading'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
+import { dimensionsAllQueryOptions } from '@/queries/dimensions'
 import { indicateurQueryOptions } from '@/queries/indicateurs'
 import { referentielsAllQueryOptions } from '@/queries/referentiels'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
@@ -21,6 +22,7 @@ export const Route = createFileRoute('/_authed/indicateurs/$id')({
     Promise.all([
       context.queryClient.fetchQuery(indicateurQueryOptions(params.id)),
       context.queryClient.fetchQuery(referentielsAllQueryOptions()),
+      context.queryClient.fetchQuery(dimensionsAllQueryOptions()),
       context.queryClient.fetchQuery(utilisateursAllQueryOptions()),
     ]),
   component: EditIndicateurComponent,

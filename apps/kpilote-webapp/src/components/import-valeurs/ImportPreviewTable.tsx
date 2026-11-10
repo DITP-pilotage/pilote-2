@@ -5,7 +5,34 @@ import type { ParsedRow } from './lecture/matriceVersRows'
 
 const MAX_LIGNES_AFFICHEES = 100
 
-export function ImportPreviewTable({ rows }: { rows: ParsedRow[] }) {
+// Colonnes d'identité : `individu` seule (mono, rendu historique) ou une colonne
+// par coordonnée (multi-dimension, `colonnesIdentite[i]` ↔ `coordonnees[i]`).
+const colonnesIdentiteTable = (
+  colonnesIdentite: ReadonlyArray<string> | undefined,
+): DataTableColumn<ParsedRow>[] => {
+  if (!colonnesIdentite || colonnesIdentite.length < 2) {
+    return [
+      {
+        key: 'individu',
+        header: 'individu',
+        cell: (row) => <span className="font-mono text-[13px]">{row.individu}</span>,
+      },
+    ]
+  }
+  return colonnesIdentite.map((colonne, rang) => ({
+    key: `identite-${rang}`,
+    header: colonne,
+    cell: (row) => <span className="font-mono text-[13px]">{row.coordonnees?.[rang] ?? ''}</span>,
+  }))
+}
+
+export function ImportPreviewTable({
+  rows,
+  colonnesIdentite,
+}: {
+  rows: ParsedRow[]
+  colonnesIdentite?: ReadonlyArray<string> | undefined
+}) {
   const visibles = rows.slice(0, MAX_LIGNES_AFFICHEES)
   const reste = rows.length - visibles.length
 
@@ -15,11 +42,7 @@ export function ImportPreviewTable({ rows }: { rows: ParsedRow[] }) {
       header: '#',
       cell: (_, index) => <span className="text-text-subtle">{index + 2}</span>,
     },
-    {
-      key: 'individu',
-      header: 'individu',
-      cell: (row) => <span className="font-mono text-[13px]">{row.individu}</span>,
-    },
+    ...colonnesIdentiteTable(colonnesIdentite),
     {
       key: 'date',
       header: 'date',

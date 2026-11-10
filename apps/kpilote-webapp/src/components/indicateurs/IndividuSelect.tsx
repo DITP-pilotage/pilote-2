@@ -18,11 +18,16 @@ import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/que
 
 type IndividuSelection = { individu: string; referentiel: string }
 
+// Option « Tous » (indicateur multi-dimension) : marginale de la dimension,
+// sélectionnée quand `value` vaut null.
+export type OptionTous = { libelle: string; onSelect: () => void }
+
 type IndividuSelectProps = {
   id?: string
   referentielIds: ReadonlyArray<string>
-  value: string
+  value: string | null
   onChange: (next: IndividuSelection) => void
+  optionTous?: OptionTous | undefined
 }
 
 // Réutilise le scorer par défaut de cmdk (matching par initiales, sous-séquence,
@@ -77,7 +82,7 @@ function IndividuCommandItem({
   onSelect,
 }: {
   node: IndividuNode
-  value: string
+  value: string | null
   onSelect: (next: IndividuSelection) => void
 }) {
   const isSelected = node.individu.id === value
@@ -151,7 +156,7 @@ function FlatIndividuList({
   onSelect,
 }: {
   nodes: ReadonlyArray<IndividuNode>
-  value: string
+  value: string | null
   hasSearch: boolean
   nodeMatches: (node: IndividuNode) => boolean
   onSelect: (next: IndividuSelection) => void
@@ -179,7 +184,7 @@ function GroupedIndividuList({
   onSelect,
 }: {
   groups: ReadonlyArray<ReferentielGroup>
-  value: string
+  value: string | null
   hasSearch: boolean
   nodeMatches: (node: IndividuNode) => boolean
   expandedGroups: ReadonlySet<string>
@@ -215,7 +220,13 @@ function GroupedIndividuList({
   )
 }
 
-export function IndividuSelect({ id, referentielIds, value, onChange }: IndividuSelectProps) {
+export function IndividuSelect({
+  id,
+  referentielIds,
+  value,
+  onChange,
+  optionTous,
+}: IndividuSelectProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [expandedGroups, setExpandedGroups] = useState<ReadonlySet<string>>(new Set())
@@ -259,7 +270,7 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
 
   // À l'ouverture : recherche vide et seul le groupe de l'individu sélectionné déplié.
   const resolveInitialExpanded = (): ReadonlySet<string> => {
-    const referentielId = findRootReferentielIdForIndividu(groups, value)
+    const referentielId = value ? findRootReferentielIdForIndividu(groups, value) : null
     return referentielId ? new Set([referentielId]) : new Set()
   }
 
@@ -301,6 +312,8 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
                 </span>
               ) : null}
             </>
+          ) : value === null && optionTous ? (
+            <span className="truncate">{optionTous.libelle}</span>
           ) : (
             <span className="text-text-subtle">Sélectionner un individu…</span>
           )}
@@ -322,6 +335,28 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
             />
             <Command.List className="max-h-[min(20rem,var(--radix-popover-content-available-height))] overflow-y-auto p-1.5">
               {isEmpty ? <CommandEmptyMessage>Aucun individu trouvé.</CommandEmptyMessage> : null}
+
+              {optionTous && !hasSearch ? (
+                <Command.Item
+                  value="__tous__"
+                  onSelect={() => {
+                    optionTous.onSelect()
+                    setOpen(false)
+                  }}
+                  className={clsxm(
+                    itemClassName,
+                    value === null && 'bg-primary-tinted font-semibold text-primary',
+                  )}
+                >
+                  <Check
+                    className={clsxm(
+                      'size-4 shrink-0',
+                      value === null ? 'opacity-100' : 'opacity-0',
+                    )}
+                  />
+                  <span className="truncate">{optionTous.libelle}</span>
+                </Command.Item>
+              ) : null}
 
               {singleGroup ? (
                 <FlatIndividuList

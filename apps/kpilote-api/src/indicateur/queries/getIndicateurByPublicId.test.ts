@@ -59,6 +59,17 @@ describe.concurrent('getIndicateurByPublicId', () => {
         jourMiseAJour: null,
         delaiMiseADisposition: null,
         referentiels: referentielsTries,
+        // Sans configuration explicite (fixture brute), la dimension reçoit les défauts.
+        dimensions: [
+          {
+            id: 'DIM-TEST-DEFAUT',
+            nom: 'Dimension de test',
+            ordre: Number.MAX_SAFE_INTEGER,
+            fonctionAgregation: 'SUM',
+            porteObjectifs: false,
+            referentiels: referentielsTries.map((r) => r.id),
+          },
+        ],
         responsables: [],
         dateDerniereValeur: null,
         dateProchaineValeur: null,

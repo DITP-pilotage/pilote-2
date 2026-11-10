@@ -95,4 +95,20 @@ describe('apiRouter served by @hono/node-server', () => {
   it('does not forward a body on GET', async () => {
     expect(await send('GET')).toEqual({ method: 'GET', contentType: null, body: '' })
   })
+
+  it('relays the dimensions resource', async () => {
+    const body = JSON.stringify({ nom: 'Opérateur', description: null })
+    const response = await fetch(`${proxyUrl}/api/dimensions/DIM-OPERATEUR`, {
+      method: 'PUT',
+      headers: { cookie, 'content-type': 'application/json' },
+      body,
+    })
+    expect(response.status).toBe(200)
+    expect(await response.json()).toEqual({ method: 'PUT', contentType: 'application/json', body })
+  })
+
+  it('rejects a resource outside the allowlist', async () => {
+    const response = await fetch(`${proxyUrl}/api/cellules/X`, { headers: { cookie } })
+    expect(response.status).toBe(403)
+  })
 })

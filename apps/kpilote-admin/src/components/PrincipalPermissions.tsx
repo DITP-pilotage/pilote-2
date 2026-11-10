@@ -146,6 +146,30 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
     )
   }
 
+  // Périmètre d'écriture (WRITE_DATA restreint, cloisonnement par membre) :
+  // lecture seule ici, il se pose via `POST /permissions/indicateur`. Le PUT de
+  // ce formulaire est différentiel et le conserve.
+  const perimetreParIndicateur = new Map(
+    data.indicateurs.flatMap((indicateur) =>
+      indicateur.perimetre ? [[indicateur.publicId, indicateur.perimetre] as const] : [],
+    ),
+  )
+
+  const renderPerimetreForIndicateur = (indicateurPublicId: string): ReactNode => {
+    const perimetre = perimetreParIndicateur.get(indicateurPublicId)
+    if (!perimetre) return null
+    return (
+      <p className="mt-1.5 text-xs text-text-muted" title="Données : écriture restreinte">
+        Périmètre d'écriture :{' '}
+        {perimetre.length > 0 ? (
+          <span className="font-mono">{perimetre.join(', ')}</span>
+        ) : (
+          <span className="italic">vide (aucune écriture de données)</span>
+        )}
+      </p>
+    )
+  }
+
   const isEmpty =
     data.collections.length === 0 &&
     data.indicateurs.length === 0 &&
@@ -202,6 +226,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           writeActions={INDICATEUR_WRITE_OPTIONS}
           disabled={disabled}
           nouveauxPublicIds={nouveauxIndicateurs}
+          extraForRow={renderPerimetreForIndicateur}
           addControl={(append, publicIds) => (
             <IndicateurPicker
               excludedIds={[

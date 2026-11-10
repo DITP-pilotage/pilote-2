@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { individuPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import { MAX_VALEURS_PAR_BATCH } from '@pilote/kpilote-shared/valeurAvancement'
 import { celluleVersTexte } from './celluleXlsx'
 
@@ -8,7 +9,11 @@ export type ParseError =
   | { code: 'MISSING_COLUMNS'; missing: string[] }
   | { code: 'UNREADABLE' }
 
-export type ParseResult = { ok: true; rows: ParsedRow[] } | { ok: false; error: ParseError }
+// `colonnesIdentite` n'est présent que pour un fichier multi-dimension (au moins une
+// colonne d'identité en plus de `individu`) ; `colonnesIdentite[i]` est la colonne
+// de `coordonnees[i]` dans chaque ligne.
+export type ParseResult =
+  { ok: true; rows: ParsedRow[]; colonnesIdentite?: string[] } | { ok: false; error: ParseError }
 
 const COLONNES = ['individu', 'date', 'valeur'] as const
 
@@ -34,11 +39,38 @@ const rowSchema = z.object({
   valeur: z.preprocess((cell) => parseValeurCell({ cell }), z.union([z.number(), z.string()])),
 })
 
-export type ParsedRow = z.infer<typeof rowSchema>
+// Ligne à importer. `coordonnees` (multi-dimension) : un membre par colonne
+// d'identité, alignés sur les colonnes (chaîne vide si la cellule est vide) ;
+// `individu` reste la valeur de la colonne `individu`.
+export type ParsedRow = z.infer<typeof rowSchema> & { coordonnees?: string[] | undefined }
+
+// Une colonne hors individu/date/valeur est une colonne d'identité supplémentaire
+// si toutes ses valeurs non vides sont des publicIds d'individus au format
+// `PREFIXE-CODE` (ex. OP-ORANGE). Le tiret est exigé pour ne pas prendre une colonne
+// de commentaire (« OK », « RAS ») d'un fichier mono pour une dimension.
+const ressembleAPublicId = (texte: string): boolean =>
+  texte.includes('-') && individuPublicIdSchema.safeParse(texte).success
+
+const estColonneIdentite = ({ lignes, index }: { lignes: unknown[][]; index: number }): boolean => {
+  const valeurs = lignes
+    .map((ligne) => celluleVersTexte(ligne[index]).trim())
+    .filter((valeur) => valeur.length > 0)
+  return valeurs.length > 0 && valeurs.every(ressembleAPublicId)
+}
 
 // Projection stricte d'une matrice de cellules vers des lignes normalisées.
-// Attend les colonnes individu, date, valeur (ordre et casse libres).
-export function matriceVersRows({ matrice }: { matrice: unknown[][] }): ParseResult {
+// Attend les colonnes individu, date, valeur (ordre et casse libres), plus,
+// pour un indicateur multi-dimension seulement, d'éventuelles colonnes
+// d'identité (ex. operateur). Pour un indicateur mono-dimension, les colonnes
+// supplémentaires sont ignorées, même si elles ressemblent à des publicIds
+// (ex. une colonne `region` à REG-11) : sortie historique.
+export function matriceVersRows({
+  matrice,
+  multiDimension = false,
+}: {
+  matrice: unknown[][]
+  multiDimension?: boolean
+}): ParseResult {
   const [ligneEntetes, ...lignesSuivantes] = matrice
   if (ligneEntetes === undefined) return { ok: false, error: { code: 'EMPTY' } }
 
@@ -66,6 +98,17 @@ export function matriceVersRows({ matrice }: { matrice: unknown[][] }): ParseRes
     }
   }
 
+  const reservees = new Set<number>([indices.individu, indices.date, indices.valeur])
+  const indicesIdentite = multiDimension
+    ? entetes.flatMap((entete, index) =>
+        entete.length > 0 &&
+        !reservees.has(index) &&
+        estColonneIdentite({ lignes: lignesData, index })
+          ? [index]
+          : [],
+      )
+    : []
+
   const rows = lignesData.map((ligne) =>
     rowSchema.parse({
       individu: ligne[indices.individu],
@@ -74,5 +117,20 @@ export function matriceVersRows({ matrice }: { matrice: unknown[][] }): ParseRes
     }),
   )
 
-  return { ok: true, rows }
+  // Mono : sortie historique, sans `coordonnees`.
+  if (indicesIdentite.length === 0) return { ok: true, rows }
+
+  const indicesCoordonnees = [indices.individu, ...indicesIdentite]
+  return {
+    ok: true,
+    colonnesIdentite: indicesCoordonnees.map((index) =>
+      celluleVersTexte(ligneEntetes[index]).trim(),
+    ),
+    rows: rows.map((row, numero) => ({
+      ...row,
+      coordonnees: indicesCoordonnees.map((index) =>
+        celluleVersTexte(lignesData[numero]?.[index]).trim(),
+      ),
+    })),
+  }
 }

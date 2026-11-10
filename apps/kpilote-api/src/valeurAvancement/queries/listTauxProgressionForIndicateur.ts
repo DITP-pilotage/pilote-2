@@ -11,7 +11,6 @@ import { compareBuckets, formatBucket, parseBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
 
 // Défauts compromis lisibilité × coût : mensuel des deux côtés (cf. doc archi
@@ -41,16 +40,13 @@ const buildList = async ({
   indicateur: { id: string; publicId: string }
   params: ListTauxProgressionQuery
 }): Promise<TauxProgressionListApiModel> => {
-  const individusCibles = await loadIndividusParPublicId(params.individus)
-  if (individusCibles.length === 0) return { items: [] }
-
   const dateTruncValeur = params.dateTruncValeur ?? DEFAULT_DATE_TRUNC_VALEUR
   const dateTruncObjectif = params.dateTruncObjectif ?? DEFAULT_DATE_TRUNC_OBJECTIF
   const startedAt = performance.now()
 
   const points = await computeTauxProgressionPoints({
     indicateurId: indicateur.id,
-    individusCibles: individusCibles,
+    cellules: params.individus,
     dateTruncValeur,
     dateTruncObjectif,
   })
@@ -87,7 +83,7 @@ const buildList = async ({
       indicateurId: indicateur.id,
       dateTruncValeur,
       dateTruncObjectif,
-      nbCibles: individusCibles.length,
+      nbCibles: params.individus.length,
       nbPoints: items.length,
       durationMs: Math.round(performance.now() - startedAt),
     },

@@ -19,6 +19,14 @@ export type CollectionPermissionWriteActionValue = Exclude<CollectionPermissionA
 export const permissionResourceTypeSchema = z.enum(['COLLECTION', 'INDICATEUR'])
 export type PermissionResourceType = z.infer<typeof permissionResourceTypeSchema>
 
+const perimetreSchema = z
+  .array(z.string())
+  .describe(
+    "Périmètre d'écriture (cloisonnement par membre de dimension) : publicIds des membres autorisés, " +
+      'descendants inclus (OU dans une dimension, ET entre dimensions). Présent ssi `WRITE_DATA` est ' +
+      'restreint ; vide = restreint sans périmètre, aucune écriture possible (fail-closed).',
+  )
+
 const directIndicateurPermissionSchema = z.object({
   publicId: z.string().describe('Identifiant public de la ressource (`IND-…`).'),
   nom: z.string().describe('Nom lisible de la ressource.'),
@@ -28,6 +36,7 @@ const directIndicateurPermissionSchema = z.object({
     .describe(
       'Actions directes accordées, triées `READ` avant `WRITE_DATA` avant `WRITE_COMMENT`.',
     ),
+  perimetre: perimetreSchema.optional(),
 })
 
 const directCollectionPermissionSchema = z.object({
@@ -73,6 +82,15 @@ export const grantIndicateurPermissionBodySchema = z.object({
   principalId: z.string().uuid().describe('Principal (UUID) à qui accorder le droit.'),
   indicateurPublicId: z.string().describe("Identifiant public de l'indicateur (`IND-…`)."),
   action: indicateurPermissionActionSchema,
+  perimetre: z
+    .array(z.string())
+    .nullable()
+    .optional()
+    .describe(
+      '`WRITE_DATA` uniquement — cloisonnement par membre de dimension, posé **atomiquement** avec le ' +
+        "droit : liste des membres autorisés (ex. `['OP-ORANGE']`, descendants inclus). `[]` = restreint " +
+        'sans périmètre (aucune écriture). `null` = lève la restriction. Absent = restriction existante inchangée.',
+    ),
 })
 export type GrantIndicateurPermissionBody = z.infer<typeof grantIndicateurPermissionBodySchema>
 

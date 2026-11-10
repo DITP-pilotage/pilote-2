@@ -62,6 +62,30 @@ describe('deriverEtatImport', () => {
     ).toEqual({ kind: 'standard', rows, nomFichier: 'a.csv' })
   })
 
+  it('standard multi-dimension : propage les colonnes d’identité', () => {
+    const rowsMulti: ParsedRow[] = [
+      {
+        individu: 'DEPT-84',
+        coordonnees: ['DEPT-84', 'OP-SFR'],
+        date: '2024-01-15',
+        valeur: 7.2,
+      },
+    ]
+    const etat = deriverEtatImport({
+      file: fichier('a.csv'),
+      lectureEnCours: false,
+      parseResult: { ok: true, rows: rowsMulti, colonnesIdentite: ['individu', 'operateur'] },
+      albert: albertVide,
+    })
+    expect(etat).toEqual({
+      kind: 'standard',
+      rows: rowsMulti,
+      nomFichier: 'a.csv',
+      colonnesIdentite: ['individu', 'operateur'],
+    })
+    expect(payloadDepuisEtat(etat)).toBe(rowsMulti)
+  })
+
   it('illisible pour une erreur de parse non liée aux colonnes', () => {
     expect(
       deriverEtatImport({

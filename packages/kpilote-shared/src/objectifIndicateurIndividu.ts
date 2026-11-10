@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { indicateurPublicIdSchema } from './publicIds'
+import { celluleIdSchema, coordonneesSchema } from './cellule'
 import { individuPublicIdSchema } from './individu'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
 import { dateTruncSchema, dateSchema } from './dates'
@@ -8,19 +9,38 @@ import { fonctionAgregationSchema } from './indicateur'
 
 export { dateSchema }
 
-export const upsertObjectifIndicateurIndividuBodySchema = z.object({
-  individu: individuPublicIdSchema,
-  dateCible: dateSchema,
-  valeurCible: z.number(),
-})
+// Un objectif se saisit sur une cellule complète du sous-cube des objectifs (dimensions
+// `porteObjectifs` de l'indicateur) : `individu` (forme historique) ou `coordonnees`.
+const ciblerCelluleSchema = {
+  individu: individuPublicIdSchema.optional(),
+  coordonnees: coordonneesSchema.optional(),
+}
+const exactementUneCible = (body: {
+  individu?: string | undefined
+  coordonnees?: string[] | undefined
+}) => (body.individu === undefined) !== (body.coordonnees === undefined)
+const messageUneCible = {
+  message: 'Renseigner exactement un champ parmi `individu` et `coordonnees`',
+  path: ['coordonnees'],
+}
+
+export const upsertObjectifIndicateurIndividuBodySchema = z
+  .object({
+    ...ciblerCelluleSchema,
+    dateCible: dateSchema,
+    valeurCible: z.number(),
+  })
+  .refine(exactementUneCible, messageUneCible)
 export type UpsertObjectifIndicateurIndividuBody = z.infer<
   typeof upsertObjectifIndicateurIndividuBodySchema
 >
 
-export const deleteObjectifIndicateurIndividuBodySchema = z.object({
-  individu: individuPublicIdSchema,
-  dateCible: dateSchema,
-})
+export const deleteObjectifIndicateurIndividuBodySchema = z
+  .object({
+    ...ciblerCelluleSchema,
+    dateCible: dateSchema,
+  })
+  .refine(exactementUneCible, messageUneCible)
 export type DeleteObjectifIndicateurIndividuBody = z.infer<
   typeof deleteObjectifIndicateurIndividuBodySchema
 >
@@ -40,7 +60,7 @@ export const listObjectifsForIndicateurQuerySchema = z.object({
 export type ListObjectifsForIndicateurQuery = z.infer<typeof listObjectifsForIndicateurQuerySchema>
 
 export const contributionObjectifApiModelSchema = z.object({
-  individu: individuPublicIdSchema,
+  individu: celluleIdSchema,
   valeurCible: z.number(),
   dateCible: dateSchema.describe(
     'Bucket de la valeur portée (carry-forward) retenue pour cet enfant au moment du bucket parent.',
@@ -56,7 +76,7 @@ export type ContributionObjectifApiModel = z.infer<typeof contributionObjectifAp
 
 export const objectifSaisieApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
-  individu: individuPublicIdSchema,
+  individu: celluleIdSchema,
   dateCible: dateSchema,
   valeurCible: z.number(),
   type: z.literal('saisie'),
@@ -65,7 +85,7 @@ export type ObjectifSaisieApiModel = z.infer<typeof objectifSaisieApiModelSchema
 
 export const objectifDeriveeApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
-  individu: individuPublicIdSchema,
+  individu: celluleIdSchema,
   dateCible: dateSchema,
   valeurCible: z.number(),
   type: z.literal('derivee'),

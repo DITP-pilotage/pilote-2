@@ -10,7 +10,6 @@ import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
@@ -27,13 +26,6 @@ const build = async (
 ): Promise<TauxProgressionIndividuListApiModel> => {
   const principalId = requireCurrentPrincipalId()
 
-  const individuRow = await db().individu.findUnique({
-    where: { publicId: individuPublicId },
-    select: { id: true, publicId: true, referentielId: true },
-  })
-  if (!individuRow) return { items: [] }
-  const individu: IndividuRef = individuRow
-
   const indicateurs = await db().indicateur.findMany({
     where: withIndicateurReadPermission({ publicId: { in: [...params.indicateurs] } }, principalId),
     select: { id: true, publicId: true },
@@ -46,7 +38,7 @@ const build = async (
     indicateurs.map(async (indicateur) => {
       const points = await computeTauxProgressionPoints({
         indicateurId: indicateur.id,
-        individusCibles: [individu],
+        cellules: [individuPublicId],
         dateTruncValeur: dateTrunc,
         dateTruncObjectif: dateTrunc,
       })
@@ -67,7 +59,7 @@ const build = async (
   logger.info(
     {
       event: 'valeurAvancement.listTauxProgressionForIndividu.timing',
-      individuId: individu.id,
+      cellule: individuPublicId,
       nbIndicateursDemandes: params.indicateurs.length,
       nbIndicateursAccessibles: indicateurs.length,
       nbItems: items.length,

@@ -12,6 +12,7 @@ import {
 import { PageHeading } from '@/components/PageHeading'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
+import { dimensionsAllQueryOptions } from '@/queries/dimensions'
 import { referentielsAllQueryOptions } from '@/queries/referentiels'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 
@@ -19,6 +20,7 @@ export const Route = createFileRoute('/_authed/indicateurs/nouveau')({
   loader: ({ context }) =>
     Promise.all([
       context.queryClient.fetchQuery(referentielsAllQueryOptions()),
+      context.queryClient.fetchQuery(dimensionsAllQueryOptions()),
       context.queryClient.fetchQuery(utilisateursAllQueryOptions()),
     ]),
   component: NewIndicateurComponent,

@@ -12,7 +12,13 @@ export const extractApiError = (error: unknown): string => {
     try {
       const body = errorBodySchema.parse(error.data)
       const details = body.details as
-        { unknownReferentielIds?: string[]; individuIds?: string[] } | undefined
+        | {
+            unknownReferentielIds?: string[]
+            individuIds?: string[]
+            unknownDimensionIds?: string[]
+            dimensionsAConfigurer?: string[]
+          }
+        | undefined
 
       const unknownRefs = details?.unknownReferentielIds
       if (unknownRefs && unknownRefs.length > 0) {
@@ -22,6 +28,13 @@ export const extractApiError = (error: unknown): string => {
       const conflictIndividus = details?.individuIds
       if (conflictIndividus && conflictIndividus.length > 0) {
         return `Individus déjà rattachés à un autre référentiel : ${conflictIndividus.join(', ')}`
+      }
+
+      // Erreurs de dimensions (PUT indicateur / référentiel) : le message de
+      // l'API est générique, on y ajoute les dimensions concernées.
+      const dimensionsEnErreur = details?.unknownDimensionIds ?? details?.dimensionsAConfigurer
+      if (dimensionsEnErreur && dimensionsEnErreur.length > 0) {
+        return `${body.message} : ${dimensionsEnErreur.join(', ')}`
       }
 
       return body.message
