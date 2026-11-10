@@ -486,7 +486,7 @@ export const tauxProgressionIndividuApiModelSchema = z.object({
     .nullable()
     .describe(
       "Taux de progression vers l'objectif courant (0–100). null si la valeur cible est zéro " +
-        "ou si l'indicateur est à la baisse (sensSouhaite = BAISSE) : le calcul propre à ces indicateurs n'existe pas encore (PIL-1777).",
+        "ou si l'indicateur est à la baisse (sensSouhaite = BAISSE).",
     ),
   valeurCible: z
     .number()

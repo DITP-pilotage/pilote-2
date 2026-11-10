@@ -56,7 +56,7 @@ Le `≥` (et non `>`) est volontaire : sans cette inclusivité, une valeur et un
 
 ### Indicateurs à la baisse
 
-Le rapport `valeur / valeurCible` n'a de sens que pour un indicateur à la hausse. Pour un indicateur à la baisse (`sensSouhaite = BAISSE`, PIL-1776), un chômage à 10 % visé à 7 % donnerait 100 %. Le calcul propre à ces indicateurs, depuis une valeur initiale, viendra avec PIL-1777. En attendant :
+Le rapport `valeur / valeurCible` n'a de sens que pour un indicateur à la hausse. Pour un indicateur à la baisse (`sensSouhaite = BAISSE`, PIL-1776), un chômage à 10 % visé à 7 % donnerait 100 %. Le taux n'est donc pas calculé :
 
 - `resolveTauxProgression` construit les points comme pour un indicateur à la hausse (même objectif applicable, même `valeurCible` et même `dateCible`), avec `tauxProgression = null` ;
 - les points restent renvoyés : la courbe garde sa série « Objectif », et la webapp affiche le bloc « Progression » avec « — » et l'objectif ;

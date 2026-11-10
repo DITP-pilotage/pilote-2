@@ -149,7 +149,7 @@ const getCollectionTauxProgressionRoute = createRoute({
     "de la collection pour l'individu demandé. La pondération est lue sur la jonction " +
     '`collection_indicateur.ponderation` (par défaut 1). Règle tout-ou-rien : si au moins un indicateur pondéré (pondération > 0) de la collection ' +
     "n'a pas de dernier taux calculable (aucun objectif, aucune valeur, dernier point avec " +
-    '`valeurCible = 0`, ou indicateur à la baisse en attendant PIL-1777), le champ `tauxProgression` global vaut `null`. Le tableau ' +
+    '`valeurCible = 0`, ou indicateur à la baisse), le champ `tauxProgression` global vaut `null`. Le tableau ' +
     "`contributions` est toujours renseigné, ce qui permet au client d'identifier les " +
     'indicateurs bloquants. Granularité de troncature fixée à `month` (cf. ' +
     '`docs/architecture/taux-progression.md`). Le taux est tronqué à 2 décimales (ROUND_DOWN) ' +
