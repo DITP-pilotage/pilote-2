@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { libelleOuAbsence } from "@/server/albert/tools/libelles";
 import { Albert } from "@/server/albert/Albert";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
@@ -88,9 +89,13 @@ const valeurPourLeSousAgent = ({
   valeur: number | null;
   unite: string | null;
 }): string => {
-  if (valeur === null) return "non renseignée";
   const affichee = uniteAffichee(unite);
-  return `${nombre.format(valeur)}${affichee ? ` ${affichee}` : ""}`;
+  return libelleOuAbsence({
+    valeur,
+    absence: "non renseignée",
+    libelle: (nombreAffiche) =>
+      `${nombre.format(nombreAffiche)}${affichee ? ` ${affichee}` : ""}`,
+  });
 };
 
 export const indicateursPourLeSousAgent = (
@@ -111,10 +116,11 @@ export const indicateursPourLeSousAgent = (
       valeur: indicateur.valeur_cible,
       unite: indicateur.unite_mesure,
     }),
-    taux_avancement:
-      indicateur.taux_avancement === null
-        ? "non calculé"
-        : `${Math.round(indicateur.taux_avancement)} %`,
+    taux_avancement: libelleOuAbsence({
+      valeur: indicateur.taux_avancement,
+      absence: "non calculé",
+      libelle: (taux) => `${Math.round(taux)} %`,
+    }),
   }));
 
 const vuePourLeSousAgent = (

@@ -1,7 +1,9 @@
 import {
   codeMeteoDepuisLibelle,
+  designationMaille,
   libelleCategorieSignalement,
   libelleMaille,
+  libelleOuAbsence,
   libelleNiveauDeConfiance,
   libelleTendance,
   mailleDePilotage,
@@ -74,5 +76,47 @@ describe("libelleMaille", () => {
     ${"DEPT"} | ${"départementale"}
   `("traduit $maille en $libelle", ({ maille, libelle }) => {
     expect(libelleMaille({ maille })).toEqual(libelle);
+  });
+});
+
+describe("designationMaille", () => {
+  it.each`
+    territoireCode | designation
+    ${"NAT-FR"}    | ${"national"}
+    ${"REG-53"}    | ${"région"}
+    ${"DEPT-56"}   | ${"département"}
+  `(
+    "désigne la maille de $territoireCode : $designation",
+    ({ territoireCode, designation }) => {
+      expect(designationMaille({ territoireCode })).toEqual(designation);
+    },
+  );
+});
+
+describe("libelleOuAbsence", () => {
+  it("écrit le libellé d'une valeur présente", () => {
+    expect(
+      libelleOuAbsence({
+        valeur: 40.2,
+        absence: "non calculé",
+        libelle: (taux) => `${Math.round(taux)} %`,
+      }),
+    ).toEqual("40 %");
+  });
+
+  it("écrit l'absence d'une valeur nulle", () => {
+    expect(
+      libelleOuAbsence({ valeur: null, absence: "non renseignée" }),
+    ).toEqual("non renseignée");
+  });
+
+  it("écrit la restriction d'accès d'une valeur masquée, plutôt que son absence", () => {
+    expect(
+      libelleOuAbsence({
+        valeur: null,
+        absence: "non renseignée",
+        masquee: true,
+      }),
+    ).toEqual("non accessible (restriction d'accès)");
   });
 });

@@ -8,13 +8,19 @@ import {
   collecterChantiers,
   type ChantierRenvoye,
 } from "@/server/albert/tools/getChantiers";
-import { TERRITOIRE_NATIONAL } from "@/server/albert/tools/perimetre";
-import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
+import { regrouperParType } from "@/server/albert/tools/getChantierCommentaires";
+import {
+  designationMaille,
+  libelleOuAbsence,
+  libelleTypeCommentaire,
+} from "@/server/albert/tools/libelles";
 import {
   type GetChantierCommentairesQuery,
+  type GetChantierCommentairesResult,
   type TypeContenuChantier,
   typesContenuChantier,
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
+import { SEUIL_ECART_MEDIANE } from "@/shared/chantier/avancement/ecartMediane";
 import type {
   GetChantierIndicateursQuery,
   GetChantierIndicateursResult,
@@ -47,42 +53,19 @@ const TYPES_COMMENTAIRES: TypeContenuChantier[] = typesContenuChantier.filter(
   (type) => type !== "synthese_des_resultats",
 );
 
-const LIBELLES_COMMENTAIRES: Record<TypeContenuChantier, string> = {
-  freins_a_lever: "Freins à lever",
-  actions_a_venir: "Actions à venir",
-  actions_a_valoriser: "Actions à valoriser",
-  autres_resultats_obtenus_non_correles_aux_indicateurs:
-    "Autres résultats obtenus non corrélés aux indicateurs",
-  decision_strategique: "Décisions stratégiques",
-  commentaires_sur_les_donnees: "Commentaires sur les données",
-  autres_resultats_obtenus: "Autres résultats obtenus",
-  synthese_des_resultats: "Synthèse des résultats",
-};
-
-const estTypeCommentaire = (type: string): type is TypeContenuChantier =>
-  (typesContenuChantier as readonly string[]).includes(type);
-
 /**
  * La version en vigueur de chaque type de commentaire : l'encart résume
  * l'état du chantier, pas l'historique de ses commentaires.
  */
 const versionsEnVigueur = (
-  commentaires: { type: string; date_publication: string; contenu: string }[],
+  commentaires: GetChantierCommentairesResult["commentaires"],
 ): CommentaireEncart[] => {
-  const parType = new Map<TypeContenuChantier, CommentaireEncart>();
-  for (const commentaire of commentaires) {
-    if (!estTypeCommentaire(commentaire.type)) continue;
-    const retenu = parType.get(commentaire.type);
-    if (retenu && retenu.date_publication >= commentaire.date_publication) {
-      continue;
-    }
-    parType.set(commentaire.type, {
-      type: commentaire.type,
-      date_publication: commentaire.date_publication,
-      contenu: texteDepuisHtml({ html: commentaire.contenu }),
-    });
-  }
-  return TYPES_COMMENTAIRES.flatMap((type) => parType.get(type) ?? []);
+  const groupes = regrouperParType({ commentaires });
+  return TYPES_COMMENTAIRES.flatMap((type) => {
+    const enVigueur = groupes.find((groupe) => groupe.type === type)
+      ?.versions[0];
+    return enVigueur ? [{ type, ...enVigueur }] : [];
+  });
 };
 
 export type DependancesEncartChantier = {
@@ -161,12 +144,6 @@ export async function collecterDonneesEncartChantier({
   };
 }
 
-const mailleDuTerritoire = (territoireCode: string) => {
-  if (territoireCode === TERRITOIRE_NATIONAL) return "national";
-  if (territoireCode.startsWith("REG-")) return "région";
-  return "département";
-};
-
 /**
  * La position face à la médiane, selon les seuils de PILOTE. Hors de l'accès
  * complet, `est_en_retard` est forcé à faux : on la déduit de l'écart, que
@@ -174,24 +151,9 @@ const mailleDuTerritoire = (territoireCode: string) => {
  */
 const positionFaceALaMediane = (ecart: number | null): string => {
   if (ecart === null) return "non calculée";
-  if (ecart <= -10) return "en retard";
-  if (ecart >= 10) return "en avance";
+  if (ecart <= -SEUIL_ECART_MEDIANE) return "en retard";
+  if (ecart >= SEUIL_ECART_MEDIANE) return "en avance";
   return "dans la médiane";
-};
-
-/**
- * Une valeur absente s'écrit : le sous-agent laissait « Tendance : » vide.
- * Hors de l'accès complet, la tendance est masquée, pas absente.
- */
-const valeurOuAbsence = ({
-  valeur,
-  masquee,
-}: {
-  valeur: string | null;
-  masquee: boolean;
-}): string => {
-  if (valeur !== null) return valeur;
-  return masquee ? "non accessible (restriction d'accès)" : "non renseigné";
 };
 
 /** Ce que le sous-agent lit : seulement ce que le gabarit écrit. */
@@ -202,31 +164,34 @@ export const donneesChantierPourLeSousAgent = (
   jalon: donnees.jalon,
   territoire: {
     nom: donnees.territoire_nom ?? donnees.territoire_code,
-    maille: mailleDuTerritoire(donnees.territoire_code),
+    maille: designationMaille({ territoireCode: donnees.territoire_code }),
     ...(donnees.acces_restreint && { acces_restreint: true }),
   },
   chantier: donnees.chantier && {
     id: donnees.chantier.chantier.id,
     nom: donnees.chantier.chantier.nom,
-    taux_avancement:
-      donnees.chantier.taux_avancement === null
-        ? "non calculé"
-        : `${Math.round(donnees.chantier.taux_avancement)} %`,
+    taux_avancement: libelleOuAbsence({
+      valeur: donnees.chantier.taux_avancement,
+      absence: "non calculé",
+      libelle: (taux) => `${Math.round(taux)} %`,
+    }),
     ecart: ecartPourLeSousAgent({ ecart: donnees.chantier.ecart }),
     position_face_a_la_mediane: positionFaceALaMediane(donnees.chantier.ecart),
-    niveau_de_confiance: valeurOuAbsence({
+    niveau_de_confiance: libelleOuAbsence({
       valeur: donnees.chantier.niveau_de_confiance,
-      masquee: false,
+      absence: "non renseigné",
     }),
-    tendance: valeurOuAbsence({
+    // Hors de l'accès complet, la tendance est masquée, pas absente
+    tendance: libelleOuAbsence({
       valeur: donnees.chantier.tendance,
+      absence: "non renseignée",
       masquee: donnees.acces_restreint === true,
     }),
     commentaire_de_synthese: donnees.chantier.synthese?.commentaire ?? null,
   },
   indicateurs: indicateursPourLeSousAgent(donnees.indicateurs),
   commentaires: donnees.commentaires.map((commentaire) => ({
-    type: LIBELLES_COMMENTAIRES[commentaire.type],
+    type: libelleTypeCommentaire({ type: commentaire.type }),
     date_publication: commentaire.date_publication.slice(0, 10),
     contenu: commentaire.contenu,
   })),
