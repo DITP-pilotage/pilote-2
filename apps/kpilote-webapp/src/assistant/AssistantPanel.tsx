@@ -2,7 +2,7 @@ import type { PageContext } from '@pilote/kpilote-shared/assistant/chat'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
 import { Square } from 'lucide-react'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 
 import { AssistantMessage, UserMessage } from './AssistantMessage'
 import { AssistantSignature } from './AssistantSignature'
@@ -34,6 +34,9 @@ export function AssistantPanel({
   const thread = useRef<HTMLDivElement>(null)
   const field = useRef<HTMLTextAreaElement>(null)
   const sentInitial = useRef(false)
+  // Stables : un message déjà affiché ne se re-rend pas à chaque frappe ni à chaque morceau.
+  const choose = useCallback((label: string) => void sendMessage({ text: label }), [sendMessage])
+  const writeOther = useCallback(() => field.current?.focus(), [])
 
   useEffect(() => {
     const question = initialQuestion?.trim()
@@ -79,8 +82,8 @@ export function AssistantPanel({
               message={message}
               state={message === last ? deriveAssistantState({ message, status }) : null}
               showChoices={message === last && status === 'ready'}
-              onChoose={(label) => void sendMessage({ text: label })}
-              onWriteOther={() => field.current?.focus()}
+              onChoose={choose}
+              onWriteOther={writeOther}
               actions={message === last && status === 'ready' ? renderActions?.(message) : null}
             />
           ),
