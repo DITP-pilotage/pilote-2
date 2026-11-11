@@ -59,13 +59,43 @@ const COMPONENTS: Components = {
   img: () => null,
 }
 
-export const MarkdownResponse = memo(function MarkdownResponse({ text }: { text: string }) {
+// Un encart se lit comme une note : de vrais titres, des citations et des en-têtes marqués.
+const REPORT_COMPONENTS: Components = {
+  ...COMPONENTS,
+  // Une note exportée ne porte aucun lien : il serait mort dans le PDF.
+  a: ({ children }) => <span>{children}</span>,
+  h1: ({ children }) => <h3 className="mb-3 mt-0 text-[22px] font-bold leading-8">{children}</h3>,
+  h2: ({ children }) => <h4 className="mb-2 mt-5 text-[17px] font-bold">{children}</h4>,
+  h3: ({ children }) => <h5 className="mb-1 mt-4 text-[15px] font-bold">{children}</h5>,
+  hr: () => <hr className="my-5 border-border" />,
+  blockquote: ({ children }) => (
+    <blockquote className="my-2 border-l-4 border-primary bg-primary-tinted px-4 py-2 text-text">
+      {children}
+    </blockquote>
+  ),
+  th: ({ children }) => (
+    <th className="border-b border-border bg-primary-tinted px-2 py-1.5 text-left font-semibold">
+      {children}
+    </th>
+  ),
+}
+
+export const MarkdownResponse = memo(function MarkdownResponse({
+  text,
+  variant = 'answer',
+}: {
+  text: string
+  variant?: 'answer' | 'report'
+}) {
   const cleaned = flattenLatex(cleanPseudoCalls(text))
   if (cleaned.length === 0) return null
 
   return (
     <div className="text-text">
-      <ReactMarkdown remarkPlugins={remarkPlugins} components={COMPONENTS}>
+      <ReactMarkdown
+        remarkPlugins={remarkPlugins}
+        components={variant === 'report' ? REPORT_COMPONENTS : COMPONENTS}
+      >
         {cleaned}
       </ReactMarkdown>
     </div>

@@ -2,12 +2,14 @@ import type { KpiloteUIMessage } from '@pilote/kpilote-shared/assistant/message'
 import { TOOLS, type ToolName } from '@pilote/kpilote-shared/assistant/tools'
 import type { ChatStatus } from 'ai'
 
-export type AssistantState = 'thinking' | 'consulting-sources' | 'consulting-help' | 'writing'
+export type AssistantState =
+  'thinking' | 'consulting-sources' | 'consulting-help' | 'writing-report' | 'writing'
 
 export const ASSISTANT_STATE_LABELS: Record<AssistantState, string> = {
   thinking: 'réfléchit',
   'consulting-sources': 'consulte les sources',
   'consulting-help': 'consulte le centre d’aide',
+  'writing-report': 'rédige la synthèse',
   writing: 'rédige',
 }
 
@@ -35,6 +37,12 @@ export const deriveAssistantState = ({
 
   const name = toolNameOf(last.type)
   if (!name || !('state' in last)) return 'thinking'
+  // Un encart émet ses états au fil de la rédaction : il rédige tant qu'il n'a pas fini.
+  if (TOOLS[name].kind === 'report') {
+    const output = 'output' in last ? last.output : undefined
+    const done = typeof output === 'object' && output !== null && 'done' in output && output.done
+    return last.state === 'output-error' || done ? 'thinking' : 'writing-report'
+  }
   const running = last.state === 'input-streaming' || last.state === 'input-available'
   if (!running) return 'thinking'
   if (TOOLS[name].kind === 'help') return 'consulting-help'
