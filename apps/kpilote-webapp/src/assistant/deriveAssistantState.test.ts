@@ -28,6 +28,20 @@ describe('deriveAssistantState', () => {
     )
   })
 
+  it('« consulte le centre d’aide » pendant la consultation de l’aide', () => {
+    const parts: KpiloteUIMessage['parts'] = [
+      {
+        type: 'tool-consult_centre_aide',
+        toolCallId: 't',
+        state: 'input-available',
+        input: { question: 'Comment ?' },
+      },
+    ]
+    expect(deriveAssistantState({ message: message(parts), status: 'streaming' })).toBe(
+      'consulting-help',
+    )
+  })
+
   it('« rédige » dès que du texte arrive', () => {
     const parts: KpiloteUIMessage['parts'] = [{ type: 'text', text: 'Dans le', state: 'streaming' }]
     expect(deriveAssistantState({ message: message(parts), status: 'streaming' })).toBe('writing')
