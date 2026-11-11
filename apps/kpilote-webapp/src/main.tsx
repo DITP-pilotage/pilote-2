@@ -3,6 +3,7 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
+import { loadDimensionSlots } from '@/analytics/dimensions'
 import { createAnalyticsMutationCache } from '@/analytics/mutationCache'
 import { trackPageViews } from '@/analytics/pageViews'
 import { auth } from '@/auth'
@@ -34,6 +35,7 @@ declare module '@tanstack/react-router' {
 
 syncDocumentTitle(router)
 trackPageViews(router)
+void loadDimensionSlots()
 
 const root = createRoot(rootElement)
 
