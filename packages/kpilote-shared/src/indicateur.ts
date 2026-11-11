@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { dateSchema } from './dates'
-import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
+import { createPaginatedApiListSchema, idsFilterSchema, listQuerySchema } from './pagination'
 import { indicateurPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 import { responsableApiModelSchema } from './responsable'
 
@@ -264,18 +264,7 @@ export const listIndicateursQuerySchema = listQuerySchema.extend({
     .string()
     .optional()
     .describe("Filtre case-insensitive sur l'identifiant public (`publicId`, ex. `IND-01`)."),
-  ids: z
-    .preprocess((val) => {
-      if (typeof val !== 'string') return val
-      const parts = val
-        .split(',')
-        .map((p) => p.trim())
-        .filter(Boolean)
-      return parts.length === 0 ? undefined : parts
-    }, z.array(indicateurPublicIdSchema).optional())
-    .describe(
-      'Filtre par identifiants publics (CSV, ex. `IND-001,IND-002`). Vide ou absent = aucun filtre.',
-    ),
+  ids: idsFilterSchema(indicateurPublicIdSchema, 'IND-001,IND-002'),
 })
 export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>
 
