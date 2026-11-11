@@ -28,16 +28,36 @@ const call = (overrides: Partial<Parameters<typeof recordTurn>[0]['call']> = {})
   ...overrides,
 })
 
-const turn = (principalId: string, conversationId: string, callOverrides = {}) =>
+const turn = (
+  principalId: string,
+  conversationId: string,
+  callOverrides = {},
+  startedOnSavedConversation = false,
+) =>
   recordTurn({
     conversationId,
     principalId,
+    startedOnSavedConversation,
     contexte: { indicateurId: 'IND-1' },
     messages: [userMessage('Où en est la fraude fiscale ?')],
     call: call(callOverrides),
   })
 
 describe('persistance de l’assistant', () => {
+  it(
+    'ne recrée pas une conversation supprimée pendant le tour',
+    integrationTest(async () => {
+      const principalId = randomUUID()
+      const conversationId = randomUUID()
+
+      await turn(principalId, conversationId, {}, true)
+
+      expect(
+        await db().assistantConversation.findUnique({ where: { id: conversationId } }),
+      ).toBeNull()
+    }),
+  )
+
   it(
     'écrit la conversation, l’appel et ses sous-appels',
     integrationTest(async () => {
@@ -83,6 +103,104 @@ describe('persistance de l’assistant', () => {
           ],
         }),
       )
+    }),
+  )
+
+  it(
+    'garde les deux appels quand deux premiers tours arrivent ensemble',
+    integrationTest(async () => {
+      const principalId = randomUUID()
+      const conversationId = randomUUID()
+      const [first, second] = [randomUUID(), randomUUID()]
+
+      await Promise.all([
+        turn(principalId, conversationId, { id: first }),
+        turn(principalId, conversationId, { id: second }),
+      ])
+
+      const appels = await db().assistantAppel.findMany({
+        where: { conversationId },
+        select: { id: true },
+      })
+      expect(appels.map((appel) => appel.id).sort()).toEqual([first, second].sort())
+    }),
+  )
+
+  describe('historique enregistré', () => {
+    const message = (id: string, role: 'user' | 'assistant') => ({
+      id,
+      role,
+      parts: [{ type: 'text', text: id }],
+    })
+
+    const record = (conversationId: string, principalId: string, ids: string[]) =>
+      recordTurn({
+        conversationId,
+        principalId,
+        startedOnSavedConversation: ids.length > 2,
+        contexte: null,
+        messages: ids.map((id) => message(id, id.startsWith('q') ? 'user' : 'assistant')),
+        call: call(),
+      })
+
+    const storedIds = async (conversationId: string) => {
+      const conversation = await db().assistantConversation.findUniqueOrThrow({
+        where: { id: conversationId },
+      })
+      return (conversation.messages as Array<{ id: string }>).map((stored) => stored.id)
+    }
+
+    it(
+      'garde les questions de deux tours partis du même historique',
+      integrationTest(async () => {
+        const principalId = randomUUID()
+        const conversationId = randomUUID()
+        await record(conversationId, principalId, ['q1', 'a1'])
+
+        await record(conversationId, principalId, ['q1', 'a1', 'qA', 'aA'])
+        await record(conversationId, principalId, ['q1', 'a1', 'qB', 'aB'])
+
+        expect(await storedIds(conversationId)).toEqual(['q1', 'a1', 'qA', 'aA', 'qB', 'aB'])
+      }),
+    )
+
+    it(
+      'remplace par une relance la suite de la question relancée',
+      integrationTest(async () => {
+        const principalId = randomUUID()
+        const conversationId = randomUUID()
+        await record(conversationId, principalId, ['q1', 'a1'])
+        await record(conversationId, principalId, ['q1', 'a1', 'q2', 'a2'])
+
+        await record(conversationId, principalId, ['q1', 'a1', 'q2', 'a2bis'])
+
+        expect(await storedIds(conversationId)).toEqual(['q1', 'a1', 'q2', 'a2bis'])
+      }),
+    )
+  })
+
+  it(
+    'ne garde pas les messages d’un tour dont l’appel n’a pas pu être écrit',
+    integrationTest(async () => {
+      const principalId = randomUUID()
+      const conversationId = randomUUID()
+      await turn(principalId, conversationId)
+
+      await expect(
+        recordTurn({
+          conversationId,
+          principalId,
+          startedOnSavedConversation: true,
+          contexte: null,
+          messages: [userMessage('Où en est la fraude fiscale ?'), userMessage('Et en Bretagne ?')],
+          call: call({ transcript: { tokens: 1n } }),
+        }),
+      ).rejects.toThrow()
+
+      const conversation = await db().assistantConversation.findUniqueOrThrow({
+        where: { id: conversationId },
+      })
+      expect(JSON.stringify(conversation.messages)).not.toContain('Et en Bretagne ?')
     }),
   )
 
