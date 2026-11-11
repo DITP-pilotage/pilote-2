@@ -5,6 +5,7 @@ import { Suspense, useState } from 'react'
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 
 import { analytics } from '@/analytics/tracker'
+import { useAssistantLauncher } from '@/assistant/useAssistantLauncher'
 import { CommandPalette } from '@/components/command-palette/CommandPalette'
 import { ContacterEquipe } from '@/components/ContacterEquipe'
 import { RaccourciKbd } from '@/components/command-palette/RaccourciKbd'
@@ -20,6 +21,10 @@ import type { Auth } from '@/auth'
 export function HeaderNav({ auth }: { auth: Auth }) {
   const navigate = useNavigate()
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const assistant = useAssistantLauncher({
+    enabled: auth.isAuthenticated,
+    onBackToPalette: () => setPaletteOpen(true),
+  })
 
   return (
     <>
@@ -62,9 +67,14 @@ export function HeaderNav({ auth }: { auth: Auth }) {
 
       {auth.isAuthenticated ? (
         <Suspense fallback={null}>
-          <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+          <CommandPalette
+            open={paletteOpen}
+            onOpenChange={setPaletteOpen}
+            openAssistant={assistant.allowed ? assistant.launch : undefined}
+          />
         </Suspense>
       ) : null}
+      {assistant.modal}
     </>
   )
 }
