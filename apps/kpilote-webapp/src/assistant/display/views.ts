@@ -27,12 +27,14 @@ export const viewsFor = (size: ScreenSize): readonly AssistantView[] => VIEWS_BY
  * Une vue qui ne tient pas sur l'écran se replie sur la suivante, sans que la vue demandée
  * soit oubliée pour un écran plus large.
  */
-export const effectiveView = (display: AssistantDisplay, size: ScreenSize): AssistantDisplay => {
-  if (display === 'minimized') return display
-  let view: AssistantView | null = display
+export const fallbackView = (requested: AssistantView, size: ScreenSize): AssistantView => {
+  let view: AssistantView | null = requested
   while (view && !viewsFor(size).includes(view)) view = FALLBACK[view]
   return view ?? 'fullscreen'
 }
+
+export const effectiveView = (display: AssistantDisplay, size: ScreenSize): AssistantDisplay =>
+  display === 'minimized' ? display : fallbackView(display, size)
 
 /** Plein écran et centrée sont modales : la page reste derrière, inaccessible. */
 export const hidesPage = (display: AssistantDisplay): boolean =>

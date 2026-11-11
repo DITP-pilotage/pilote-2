@@ -27,13 +27,30 @@ export function UserMessage({ message }: { message: KpiloteUIMessage }) {
 }
 
 /** L'encart d'un outil de rédaction : en attente tant que l'outil n'a rien émis. */
-function RapportOf({ part, isStreaming }: { part: RapportPart; isStreaming: boolean }) {
+function RapportOf({
+  part,
+  isStreaming,
+  conversationId,
+  llmCallId,
+}: {
+  part: RapportPart
+  isStreaming: boolean
+  conversationId: string
+  llmCallId: string | undefined
+}) {
   const pending = part.state === 'input-streaming' || part.state === 'input-available'
   const output = pending
     ? { type: rapportTypeOf(part), dateRedaction: '', markdown: '', done: false }
     : rapportOutput(part)
   if (!output || (pending && !isStreaming)) return null
-  return <RapportEncart output={output} isStreaming={isStreaming} />
+  return (
+    <RapportEncart
+      output={output}
+      isStreaming={isStreaming}
+      conversationId={conversationId}
+      llmCallId={llmCallId}
+    />
+  )
 }
 
 export const AssistantMessage = memo(function AssistantMessage({
@@ -42,9 +59,11 @@ export const AssistantMessage = memo(function AssistantMessage({
   showChoices,
   onChoose,
   onWriteOther,
+  conversationId,
   actions,
 }: {
   message: KpiloteUIMessage
+  conversationId: string
   /** Ce que fait l'assistant, sous sa signature ; `null` une fois la réponse terminée. */
   state: AssistantState | null
   showChoices: boolean
@@ -76,7 +95,15 @@ export const AssistantMessage = memo(function AssistantMessage({
           )
         }
         if (isRapportPart(part)) {
-          return <RapportOf key={index} part={part} isStreaming={state !== null} />
+          return (
+            <RapportOf
+              key={index}
+              part={part}
+              isStreaming={state !== null}
+              conversationId={conversationId}
+              llmCallId={message.metadata?.llmCallId}
+            />
+          )
         }
         return null
       })}

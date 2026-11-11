@@ -1,7 +1,10 @@
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { clsxm } from '@pilote/kpilote-ui/clsxm'
 import { X } from 'lucide-react'
 import { useState } from 'react'
+
+import { analytics } from '@/analytics/tracker'
 
 // Masqué pour la durée de l'onglet : il ne revient pas à chaque changement de vue.
 const KEY = 'kpilote-assistant:bandeau'
@@ -49,6 +52,7 @@ export function ExperimentationBanner({ compact }: { compact: boolean }) {
         onClick={() => {
           writeHidden()
           setHidden(true)
+          analytics.trackEvent(analyticsEvents.assistant.bannerDismiss())
         }}
       >
         <X />
