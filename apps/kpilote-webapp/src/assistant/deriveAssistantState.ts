@@ -2,11 +2,12 @@ import type { KpiloteUIMessage } from '@pilote/kpilote-shared/assistant/message'
 import { TOOLS, type ToolName } from '@pilote/kpilote-shared/assistant/tools'
 import type { ChatStatus } from 'ai'
 
-export type AssistantState = 'thinking' | 'consulting-sources' | 'writing'
+export type AssistantState = 'thinking' | 'consulting-sources' | 'consulting-help' | 'writing'
 
 export const ASSISTANT_STATE_LABELS: Record<AssistantState, string> = {
   thinking: 'réfléchit',
   'consulting-sources': 'consulte les sources',
+  'consulting-help': 'consulte le centre d’aide',
   writing: 'rédige',
 }
 
@@ -35,5 +36,7 @@ export const deriveAssistantState = ({
   const name = toolNameOf(last.type)
   if (!name || !('state' in last)) return 'thinking'
   const running = last.state === 'input-streaming' || last.state === 'input-available'
-  return running && TOOLS[name].kind === 'source' ? 'consulting-sources' : 'thinking'
+  if (!running) return 'thinking'
+  if (TOOLS[name].kind === 'help') return 'consulting-help'
+  return TOOLS[name].kind === 'source' ? 'consulting-sources' : 'thinking'
 }
