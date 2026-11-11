@@ -71,6 +71,16 @@ export const commentairesInput = z.discriminatedUnion('cible', [
   z.object({ cible: z.enum(['COLLECTION']), collectionId: collectionIdInput }),
 ])
 
+export const consultCentreAideInput = z.object({
+  question: z
+    .string()
+    .min(1)
+    .max(500)
+    .describe(
+      'La question, autonome : avec le contexte utile à la recherche (« comment est calculé le taux de progression d’un indicateur »), sans valeur chiffrée de la conversation.',
+    ),
+})
+
 export const clarifyInput = z.object({
   question: z.string().min(1).describe('Question affichée en haut du panneau de choix.'),
   choices: z
@@ -88,7 +98,7 @@ export const clarifyInput = z.object({
     .describe('Options concrètes et réalisables entre lesquelles trancher (2 à 4).'),
 })
 
-export type ToolKind = 'source' | 'interface'
+export type ToolKind = 'source' | 'interface' | 'help'
 
 type ToolContract = { label: string; kind: ToolKind; input: z.ZodType }
 
@@ -112,6 +122,11 @@ export const TOOLS = {
     input: evolutionIndicateurInput,
   },
   get_commentaires: { label: 'Commentaires', kind: 'source', input: commentairesInput },
+  consult_centre_aide: {
+    label: "Centre d'aide",
+    kind: 'help',
+    input: consultCentreAideInput,
+  },
   clarify_with_choices: { label: 'Question de précision', kind: 'interface', input: clarifyInput },
 } as const satisfies Record<string, ToolContract>
 
@@ -197,6 +212,15 @@ export type CommentairesOutput = {
   notFound: string[]
 }
 
+export type HelpSource = { id: string; titre: string; chemin: string[]; url: string }
+
+export type CentreAideOutput = {
+  found: boolean
+  /** La réponse du centre d'aide, à restituer fidèlement ; vide quand `found` est faux. */
+  answer: string
+  sources: HelpSource[]
+}
+
 export type ClarifyOutput = z.output<typeof clarifyInput>
 
 export interface ToolOutputs {
@@ -207,6 +231,7 @@ export interface ToolOutputs {
   get_synthese_collection: SyntheseCollectionOutput
   get_evolution_indicateur: EvolutionIndicateurOutput
   get_commentaires: CommentairesOutput
+  consult_centre_aide: CentreAideOutput
   clarify_with_choices: ClarifyOutput
 }
 
