@@ -99,6 +99,53 @@ export type ImportValeursSuccessContext = {
   updated_count: number
 }
 
+export type AssistantView = 'fullscreen' | 'centered' | 'sidePanel' | 'floating'
+
+export type AssistantOpenContext = {
+  source: 'palette' | 'pastille'
+  view: AssistantView
+}
+
+export type AssistantViewContext = {
+  view: AssistantView
+}
+
+export type AssistantViewChangeContext = {
+  from: AssistantView
+  to: AssistantView
+}
+
+export type AssistantConversationContext = {
+  conversation_id: string
+}
+
+export type AssistantCallContext = AssistantConversationContext & {
+  llm_call_id?: string | undefined
+}
+
+export type PropositionViewContext = {
+  nombre_choix: number
+  page_type: 'indicateur' | 'collection' | 'autre'
+}
+
+export type PropositionClickContext = {
+  proposition_id: string
+  proposition_mode: 'envoi_direct' | 'preremplissage'
+}
+
+export type QuestionSendContext = AssistantConversationContext & {
+  type_question: 'premiere_libre' | 'premiere_proposition' | 'suivante'
+  origine: 'saisie' | 'proposition' | 'palette' | 'choix'
+}
+
+export type ResponseChoicesContext = AssistantCallContext & {
+  nombre_choix: number
+}
+
+export type FeedbackNegativeContext = AssistantCallContext & {
+  categories: string
+}
+
 export const analyticsEvents = {
   dashboard: {
     view: (context: DashboardViewContext): AnalyticsEvent => ({
@@ -241,6 +288,179 @@ export const analyticsEvents = {
       category: 'kpilote.collection',
       action: 'filter',
       name: 'collection.individu.change',
+      context: { ...context },
+    }),
+  },
+  assistant: {
+    open: (context: AssistantOpenContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'open',
+      name: 'assistant.open',
+      context: { ...context },
+    }),
+    resume: (context: AssistantViewContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'open',
+      name: 'assistant.resume',
+      context: { ...context },
+    }),
+    minimize: (context: AssistantViewContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'assistant.minimize',
+      context: { ...context },
+    }),
+    viewChange: (context: AssistantViewChangeContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'switch',
+      name: 'assistant.view.change',
+      context: { ...context },
+    }),
+    conversationNew: (): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'conversation.new',
+    }),
+    historyOpen: (): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'open',
+      name: 'conversation.history.open',
+    }),
+    historySelect: (): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'conversation.history.select',
+    }),
+    conversationDelete: (): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'submit',
+      name: 'conversation.delete',
+    }),
+    bannerDismiss: (): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'banner.dismiss',
+    }),
+    propositionView: (context: PropositionViewContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'view',
+      name: 'prompt_proposition.view',
+      context: { ...context },
+    }),
+    propositionClick: (context: PropositionClickContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'prompt_proposition.click',
+      context: { ...context },
+    }),
+    questionSend: (context: QuestionSendContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'submit',
+      name: 'question.send',
+      context: { ...context },
+    }),
+    speechStart: (): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'speech.start',
+    }),
+    answerComplete: (context: AssistantCallContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'success',
+      name: 'answer.complete',
+      context: { ...context },
+    }),
+    answerError: (context: AssistantConversationContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'error',
+      name: 'answer.error',
+      context: { ...context },
+    }),
+    answerStop: (context: AssistantConversationContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'answer.stop',
+      context: { ...context },
+    }),
+    answerRetry: (context: AssistantConversationContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'answer.retry',
+      context: { ...context },
+    }),
+    answerFollow: (context: AssistantConversationContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'answer.follow',
+      context: { ...context },
+    }),
+    responseChoices: (context: ResponseChoicesContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'view',
+      name: 'response.choices',
+      context: { ...context },
+    }),
+    responseChoice: (context: AssistantConversationContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'response.choice',
+      context: { ...context },
+    }),
+    responseChoiceOther: (context: AssistantConversationContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'response.choice.other',
+      context: { ...context },
+    }),
+    linkInternal: (): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'response.link.internal',
+    }),
+    linkExternal: (): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'response.link.external',
+    }),
+    helpCenterLink: (): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'select',
+      name: 'response.help_center.link',
+    }),
+    exportText: (context: AssistantCallContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'success',
+      name: 'export.text',
+      context: { ...context },
+    }),
+    exportDashboardImage: (context: AssistantCallContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'success',
+      name: 'export.dashboard_image',
+      context: { ...context },
+    }),
+    exportReportCopy: (context: AssistantCallContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'success',
+      name: 'export.report_copy',
+      context: { ...context },
+    }),
+    exportReportPdf: (context: AssistantCallContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'success',
+      name: 'export.report_pdf',
+      context: { ...context },
+    }),
+    feedbackPositive: (context: AssistantCallContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'submit',
+      name: 'feedback.positive',
+      context: { ...context },
+    }),
+    feedbackNegative: (context: FeedbackNegativeContext): AnalyticsEvent => ({
+      category: 'kpilote.assistant',
+      action: 'submit',
+      name: 'feedback.negative',
       context: { ...context },
     }),
   },
