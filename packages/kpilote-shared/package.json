@@ -60,6 +60,10 @@
       "types": "./src/assistant/tools.ts",
       "default": "./src/assistant/tools.ts"
     },
+    "./assistant/dashboard": {
+      "types": "./src/assistant/dashboard.ts",
+      "default": "./src/assistant/dashboard.ts"
+    },
     "./assistant/feedback": {
       "types": "./src/assistant/feedback.ts",
       "default": "./src/assistant/feedback.ts"

@@ -6,6 +6,7 @@ import {
 } from '@pilote/kpilote-shared/assistant/tools'
 import { tool, type Tool, type ToolSet } from 'ai'
 
+import { createDashboard } from '@/assistant/tools/dashboard/createDashboard'
 import { consultCentreAide } from '@/assistant/tools/centreAide/consultCentreAide'
 import { clarifyWithChoices } from '@/assistant/tools/clarifyWithChoices'
 import { getCommentaires } from '@/assistant/tools/getCommentaires'
@@ -39,6 +40,7 @@ const TOOL_DEFINITIONS: { [N in ToolName]: ToolDefinition<N> } = {
   consult_centre_aide: consultCentreAide,
   write_synthese: writeSynthese,
   write_comparaison: writeComparaison,
+  create_dashboard: createDashboard,
   clarify_with_choices: clarifyWithChoices,
 }
 
