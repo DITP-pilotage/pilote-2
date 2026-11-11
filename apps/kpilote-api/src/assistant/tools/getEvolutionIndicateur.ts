@@ -2,12 +2,12 @@ import { type EvolutionIndicateurOutput } from '@pilote/kpilote-shared/assistant
 
 import { findIndividu } from '@/assistant/tools/entityLookups'
 import { findReadableIndicateur } from '@/assistant/tools/getSyntheseIndicateur'
-import { type ToolDefinition } from '@/assistant/tools/toolDefinition'
+import { type QueryToolDefinition } from '@/assistant/tools/toolDefinition'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
 
 export const MAX_POINTS = 60
 
-export const getEvolutionIndicateur: ToolDefinition<'get_evolution_indicateur'> = {
+export const getEvolutionIndicateur: QueryToolDefinition<'get_evolution_indicateur'> = {
   description: `Renvoie la série des valeurs d'un indicateur pour un individu, en ordre chronologique, limitée aux ${MAX_POINTS} points les plus récents.
 - \`truncated\` / \`total\` : la série était plus longue ; dis que seuls les derniers points sont lus.
 - \`notFound\` : identifiants inexistants ou que l'utilisateur ne peut pas consulter ; ne les distingue pas.

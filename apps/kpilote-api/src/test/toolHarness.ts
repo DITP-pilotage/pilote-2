@@ -23,3 +23,19 @@ export const runToolAs = (
     tool.execute?.(input, { toolCallId: 't', messages: [], context: undefined }),
   )
 }
+
+/** Exécute un outil qui rédige et rend tous ses états, comme les recevrait l'interface. */
+export const collectToolStates = async (
+  principalId: string,
+  name: ToolName,
+  definition: AnyToolDefinition,
+  input: unknown,
+): Promise<unknown[]> => {
+  const result = await runToolAs(principalId, name, definition, input)
+  if (typeof result !== 'object' || result === null || !(Symbol.asyncIterator in result)) {
+    return [result]
+  }
+  const states: unknown[] = []
+  for await (const state of result as AsyncIterable<unknown>) states.push(state)
+  return states
+}

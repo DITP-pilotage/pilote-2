@@ -142,6 +142,9 @@ assistantRoutes.openapi(chatRoute, async (context) => {
     messages: await convertToModelMessages(messages, { tools: agent.tools }),
     ...agent,
     abortSignal: context.req.raw.signal,
+    // L'erreur est journalisée assainie par `onError` de la réponse ; le défaut du SDK
+    // l'écrirait entière, prompt compris, dans la console.
+    onError: () => undefined,
   })
 
   // Rattachés dès maintenant : un tour en échec rejette ces promesses avant `onFinish`, et
