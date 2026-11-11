@@ -683,6 +683,24 @@ async function utilisateur(
   return results
 }
 
+// --- Assistant ---------------------------------------------------------------
+
+/** Un utilisateur qui peut se servir de l'assistant : assistant actif, utilisateur autorisé. */
+const assistantUtilisateur = async (o: UtilisateurOverrides = {}): Promise<UtilisateurModel> => {
+  const row = await upsertUtilisateur(o)
+  await db().assistantParametres.upsert({
+    where: { id: 1 },
+    update: { actif: true },
+    create: { id: 1, actif: true },
+  })
+  await db().assistantAccesUtilisateur.upsert({
+    where: { utilisateurId: row.id },
+    update: {},
+    create: { utilisateurId: row.id },
+  })
+  return row
+}
+
 // --- IndicateurPermission (deps requises) ------------------------------------
 
 type IndicateurPermissionOverrides = {
@@ -1038,6 +1056,7 @@ export const fixtures = {
   collection,
   apiKey,
   utilisateur,
+  assistantUtilisateur,
   indicateurPermission,
   collectionPermission,
   collectionResponsable,

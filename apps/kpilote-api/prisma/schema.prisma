@@ -50,6 +50,7 @@ model Utilisateur {
   responsabilitesCollection CollectionResponsable[]
   responsabilitesIndicateur IndicateurResponsable[]
   featuresAutorises         FeatureUtilisateur[]
+  accesAssistant            AssistantAccesUtilisateur?
 
   @@map("utilisateur")
 }
@@ -744,4 +745,23 @@ model AssistantSousAppel {
 
   @@index([appelId])
   @@map("assistant_sous_appel")
+}
+
+// Interrupteur général de l'assistant : une seule ligne (id = 1).
+model AssistantParametres {
+  id        Int      @id @default(1)
+  actif     Boolean  @default(false)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("assistant_parametres")
+}
+
+// Utilisateurs autorisés à se servir de l'assistant quand il est actif.
+model AssistantAccesUtilisateur {
+  utilisateurId String   @id @map("utilisateur_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@map("assistant_acces_utilisateur")
 }
