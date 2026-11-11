@@ -6,6 +6,7 @@ import {
 } from '@pilote/kpilote-shared/assistant/tools'
 import { tool, type Tool, type ToolSet } from 'ai'
 
+import { consultCentreAide } from '@/assistant/tools/centreAide/consultCentreAide'
 import { clarifyWithChoices } from '@/assistant/tools/clarifyWithChoices'
 import { getCommentaires } from '@/assistant/tools/getCommentaires'
 import { getEvolutionIndicateur } from '@/assistant/tools/getEvolutionIndicateur'
@@ -32,6 +33,7 @@ const TOOL_DEFINITIONS: { [N in ToolName]: ToolDefinition<N> } = {
   get_synthese_collection: getSyntheseCollection,
   get_evolution_indicateur: getEvolutionIndicateur,
   get_commentaires: getCommentaires,
+  consult_centre_aide: consultCentreAide,
   clarify_with_choices: clarifyWithChoices,
 }
 

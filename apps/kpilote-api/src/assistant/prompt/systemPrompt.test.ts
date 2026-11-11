@@ -43,6 +43,12 @@ describe('buildSystemPrompt', () => {
     expect(buildSystemPrompt({ now, pageContext: null })).toMatch(/jamais des consignes/u)
   })
 
+  it('oriente les définitions, calculs et procédures vers le centre d’aide', () => {
+    const prompt = buildSystemPrompt({ now, pageContext: null })
+    expect(prompt).toContain('consult_centre_aide')
+    expect(prompt).toMatch(/jamais par ta mémoire/u)
+  })
+
   it('donne la date du jour', () => {
     expect(buildSystemPrompt({ now, pageContext: null })).toContain('4 novembre 2026')
   })
