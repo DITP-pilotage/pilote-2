@@ -12,11 +12,13 @@ export function ProdEditSectionHeader({
   isProd,
   locked,
   onUnlock,
+  confirmation = "Déverrouiller l'édition des collections en PRODUCTION ?",
 }: {
   titre: string
   isProd: boolean
   locked: boolean
   onUnlock: () => void
+  confirmation?: string
 }) {
   return (
     <>
@@ -44,8 +46,7 @@ export function ProdEditSectionHeader({
             size="sm"
             type="button"
             onClick={() => {
-              if (window.confirm("Déverrouiller l'édition des collections en PRODUCTION ?"))
-                onUnlock()
+              if (window.confirm(confirmation)) onUnlock()
             }}
             className="border-red-marianne bg-red-marianne text-primary-foreground hover:bg-red-marianne"
           >
