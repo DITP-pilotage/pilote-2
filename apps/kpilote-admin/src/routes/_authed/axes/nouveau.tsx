@@ -26,7 +26,7 @@ function NewAxeComponent() {
         body: {
           nom: values.nom.trim(),
           description: values.description.trim() === '' ? null : values.description,
-          niveaux: values.niveaux.map((nom) => ({ nom: nom.trim() })),
+          niveaux: values.niveaux.map((niveau) => ({ nom: niveau.nom.trim() })),
         },
       }),
     onSuccess: async (axe) => {
@@ -53,7 +53,7 @@ function NewAxeComponent() {
       <PageHeading title="Nouvel axe" />
       <AxeForm
         mode="create"
-        initial={{ id: '', nom: '', description: '', niveaux: [''] }}
+        initial={{ id: '', nom: '', description: '', niveaux: [{ nom: '' }] }}
         pending={mutation.isPending}
         isProd={isProd}
         onCancel={() => void navigate({ to: '/axes' })}

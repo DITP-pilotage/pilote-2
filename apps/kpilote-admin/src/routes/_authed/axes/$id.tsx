@@ -35,7 +35,7 @@ function EditAxeComponent() {
     id: axe.id,
     nom: axe.nom,
     description: axe.description ?? '',
-    niveaux: axe.niveaux.map((niveau) => niveau.nom),
+    niveaux: axe.niveaux.map((niveau) => ({ nom: niveau.nom })),
   }
 
   const mutation = useMutation({
@@ -45,7 +45,7 @@ function EditAxeComponent() {
         body: {
           nom: values.nom.trim(),
           description: values.description.trim() === '' ? null : values.description,
-          niveaux: values.niveaux.map((nom) => ({ nom: nom.trim() })),
+          niveaux: values.niveaux.map((niveau) => ({ nom: niveau.nom.trim() })),
         },
       }),
     onSuccess: async () => {
