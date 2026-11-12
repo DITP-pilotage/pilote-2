@@ -27,7 +27,8 @@
     "database:init": "prisma migrate reset --force",
     "database:migration": "prisma migrate dev",
     "api-key:generate": "tsx scripts/generate-api-key.ts",
-    "feature:creer": "tsx scripts/creer-feature.ts"
+    "feature:creer": "tsx scripts/creer-feature.ts",
+    "snapshot:lecture": "tsx scripts/snapshotLecture.ts"
   },
   "prisma": {
     "schema": "prisma/schema.prisma"
