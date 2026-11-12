@@ -5,6 +5,8 @@ import {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { type Selection } from '@/axe/calculMarginale'
+import { type ResoudreSelectionError, resoudreSelection } from '@/axe/resoudreSelection'
 import { unique } from '@/framework/array'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Decimal } from '@/framework/decimal'
@@ -30,8 +32,24 @@ const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 export const listSyntheseIndividus = (
   indicateurPublicId: string,
   params: ListSyntheseIndividusQuery,
-): ResultAsync<SyntheseIndividusListApiModel, never> =>
-  ResultAsync.fromSafePromise(buildSynthese(indicateurPublicId, params))
+): ResultAsync<SyntheseIndividusListApiModel, ResoudreSelectionError> => {
+  const principalId = requireCurrentPrincipalId()
+  return ResultAsync.fromSafePromise(
+    db().indicateur.findFirstOrThrow({
+      where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
+      select: { id: true },
+    }),
+  ).andThen((indicateur) =>
+    resoudreSelection({
+      indicateurId: indicateur.id,
+      modalitePublicIds: params.modalites ?? [],
+    }).andThen((selection) =>
+      ResultAsync.fromSafePromise(
+        buildSynthese({ indicateurId: indicateur.id, params, selection }),
+      ),
+    ),
+  )
+}
 
 // Pour chaque individu demandé : variation (derniers 2 buckets de sa série) et
 // écart à la médiane des dernières valeurs des pairs de son référentiel.
@@ -40,15 +58,19 @@ export const listSyntheseIndividus = (
 // des référentiels concernés, puis la mémoïsation du functional core évite
 // tout recalcul. Comme pour les valeurs remarquables, la "dernière valeur" est
 // le dernier bucket de la série calculée (pas d'alignement sur une date pivot).
-const buildSynthese = async (
-  indicateurPublicId: string,
-  params: ListSyntheseIndividusQuery,
-): Promise<SyntheseIndividusListApiModel> => {
-  const principalId = requireCurrentPrincipalId()
-  const indicateur = await db().indicateur.findFirstOrThrow({
-    where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
-    select: { id: true },
-  })
+//
+// Avec une sélection de modalités, chaque individu et ses pairs sont lus sur
+// ces modalités (« individus du référentiel × modalités fixées »).
+const buildSynthese = async ({
+  indicateurId,
+  params,
+  selection,
+}: {
+  indicateurId: string
+  params: ListSyntheseIndividusQuery
+  selection: Selection
+}): Promise<SyntheseIndividusListApiModel> => {
+  const indicateur = { id: indicateurId }
 
   const individusDemandes = await loadIndividus({ publicIds: params.individus })
   if (individusDemandes.length === 0) return { items: [] }
@@ -71,13 +93,13 @@ const buildSynthese = async (
   const medianeParReferentiel = await computeMedianeParReferentiel({
     population,
     graphe,
-    noeud,
+    noeud: (individu) => noeud(individu, selection),
     cache,
   })
 
   const items: SyntheseIndividusListApiModel['items'] = []
   for (const individu of individusDemandes) {
-    const serie = await resolveSerieNoeud(noeud(individu), graphe, cache)
+    const serie = await resolveSerieNoeud(noeud(individu, selection), graphe, cache)
     items.push({
       individu: individu.publicId,
       variation: computeVariation(extractDeuxDerniers(serie)),

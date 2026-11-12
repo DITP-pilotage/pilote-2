@@ -391,17 +391,17 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** comparer les territoires pour une modalité donnée (ex. tous les départements, opérateur Orange).
 
-**Fichiers :** Modify `src/valeurAvancement/queries/{listValeursRemarquablesForIndicateur,listSyntheseIndividus}.ts`, `src/valeurAvancement/routes.ts` ; données de carte côté widget si elles passent par l'API (`src/widget/*`).
+**Fichiers :** Modify `src/valeurAvancement/queries/{listValeursRemarquablesForIndicateur,listSyntheseIndividus}.ts`, `src/valeurAvancement/routes.ts`, `packages/kpilote-shared/src/valeurAvancement.ts`.
 
 **Étapes :**
 
-- [ ] `valeurs-remarquables` et `synthese-individus` acceptent `modalites=` : la population est « individus du référentiel × modalité(s) fixée(s) ».
+- [ ] `valeurs-remarquables` et `synthese-individus` acceptent `modalites=` : la population est « individus du référentiel × modalité(s) fixée(s) ». Un individu où la modalité n'a jamais été observée n'a pas de valeur et sort des statistiques.
+- [ ] La carte lit les contributions de `valeurs-remarquables` : elle suit sans changement côté widget (paramètre côté webapp en T7.1).
 - [ ] Sans `modalites` : réponse identique à aujourd'hui.
-- [ ] Inspiration : paramètre `fixe=` du POC.
 
 **DoD :**
 
-- [ ] Commune.
+- [ ] Commune ; snapshot : 0 différence.
 - [ ] Tests sur une tranche où la modalité est absente de certains territoires.
 
 ---

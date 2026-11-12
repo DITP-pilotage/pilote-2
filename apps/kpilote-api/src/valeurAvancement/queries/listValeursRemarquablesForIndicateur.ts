@@ -6,6 +6,8 @@ import {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { type Selection } from '@/axe/calculMarginale'
+import { type ResoudreSelectionError, resoudreSelection } from '@/axe/resoudreSelection'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { formatBucket } from '@/framework/bucket'
 import { type Decimal } from '@/framework/decimal'
@@ -29,7 +31,7 @@ const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 export const listValeursRemarquablesForIndicateur = (
   indicateurPublicId: string,
   params: ListValeursRemarquablesForIndicateurQuery,
-): ResultAsync<ValeursRemarquablesListApiModel, never> => {
+): ResultAsync<ValeursRemarquablesListApiModel, ResoudreSelectionError> => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({
@@ -37,7 +39,12 @@ export const listValeursRemarquablesForIndicateur = (
       select: { id: true },
     }),
   ).andThen((indicateur) =>
-    ResultAsync.fromSafePromise(buildStats({ indicateurId: indicateur.id, params })),
+    resoudreSelection({
+      indicateurId: indicateur.id,
+      modalitePublicIds: params.modalites ?? [],
+    }).andThen((selection) =>
+      ResultAsync.fromSafePromise(buildStats({ indicateurId: indicateur.id, params, selection })),
+    ),
   )
 }
 
@@ -48,12 +55,18 @@ export const listValeursRemarquablesForIndicateur = (
 // mémoïsation du functional core évite tout recalcul. La "dernière valeur" est
 // le dernier bucket de la série calculée — sans alignement sur une date pivot,
 // donc des individus peuvent contribuer à partir de dates différentes.
+//
+// Avec une sélection de modalités, la population est « individus du
+// référentiel × modalités fixées » : un individu où la modalité n'a jamais été
+// observée n'a pas de valeur et sort des statistiques.
 const buildStats = async ({
   indicateurId,
   params,
+  selection,
 }: {
   indicateurId: string
   params: ListValeursRemarquablesForIndicateurQuery
+  selection: Selection
 }): Promise<ValeursRemarquablesListApiModel> => {
   const referentiels = await loadReferentielsAvecIndividus(params.referentiels)
   if (referentiels.length === 0) return { items: [] }
@@ -73,7 +86,9 @@ const buildStats = async ({
     const contributions: ValeursRemarquablesContributionApiModel[] = []
     const valeurs: Decimal[] = []
     for (const individu of referentiel.individus) {
-      const dernierPoint = (await resolveSerieNoeud(noeud(individu), graphe, cache)).at(-1)
+      const dernierPoint = (await resolveSerieNoeud(noeud(individu, selection), graphe, cache)).at(
+        -1,
+      )
       if (!dernierPoint) continue
       valeurs.push(dernierPoint.valeur)
       contributions.push({
