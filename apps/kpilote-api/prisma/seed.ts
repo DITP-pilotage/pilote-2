@@ -331,12 +331,16 @@ const supprimerHorsJeu = async ({
   indicateurId,
   dates,
   individuIds,
+  combinaisonId,
 }: {
   table: 'valeur_avancement' | 'objectif_indicateur_individu'
   colonneDate: 'date' | 'date_cible'
   indicateurId: string
   dates: ReadonlyArray<string>
   individuIds: ReadonlyArray<string>
+  // Valeurs seulement : le jeu du seed ne couvre que cette combinaison, les
+  // valeurs des autres combinaisons ne sont pas « hors jeu ».
+  combinaisonId?: string
 }): Promise<number> => {
   // Garde-fou : sur des listes vides la condition serait vraie partout et
   // viderait l'indicateur.
@@ -344,6 +348,7 @@ const supprimerHorsJeu = async ({
   return prisma.$executeRaw`
     DELETE FROM ${Prisma.raw(table)}
     WHERE indicateur_id = ${indicateurId}::uuid
+      ${combinaisonId === undefined ? Prisma.empty : Prisma.sql`AND combinaison_id = ${combinaisonId}::uuid`}
       AND NOT (
         ${Prisma.raw(`"${colonneDate}"`)} = ANY(${dates as string[]}::text[])
         AND individu_id = ANY(${individuIds as string[]}::uuid[])
@@ -374,7 +379,7 @@ const upsertValeurs = async (
     ecrites += await prisma.$executeRaw`
       INSERT INTO valeur_avancement (id, indicateur_id, individu_id, combinaison_id, "date", valeur, updated_at)
       VALUES ${Prisma.join(tuples)}
-      ON CONFLICT (indicateur_id, individu_id, "date") DO UPDATE
+      ON CONFLICT (indicateur_id, individu_id, combinaison_id, "date") DO UPDATE
         SET valeur = EXCLUDED.valeur, updated_at = NOW()
         WHERE valeur_avancement.valeur IS DISTINCT FROM EXCLUDED.valeur
     `
@@ -385,6 +390,7 @@ const upsertValeurs = async (
     indicateurId: rows[0]!.indicateurId,
     dates: [...new Set(rows.map((row) => row.date))],
     individuIds: [...new Set(rows.map((row) => row.individuId))],
+    combinaisonId: combinaisonVide.id,
   })
   return { ecrites, supprimees }
 }

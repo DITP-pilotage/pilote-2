@@ -1,6 +1,7 @@
 import { type DeleteValeurAvancementBody } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { trouverCombinaisonVideId } from '@/axe/combinaison'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
 import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
@@ -21,12 +22,17 @@ export const deleteValeurAvancement = ({
     individuPublicId: body.individu,
   }).andThen(({ indicateur, individu }) =>
     ResultAsync.fromSafePromise(
-      db().valeurAvancement.deleteMany({
-        where: {
-          indicateurId: indicateur.id,
-          individuId: individu.id,
-          date: body.date,
-        },
-      }),
+      trouverCombinaisonVideId().then((combinaisonId) =>
+        // Filtre sur la combinaison : sans lui, la suppression d'une valeur
+        // effacerait celles de toutes les combinaisons de la cellule.
+        db().valeurAvancement.deleteMany({
+          where: {
+            indicateurId: indicateur.id,
+            individuId: individu.id,
+            combinaisonId,
+            date: body.date,
+          },
+        }),
+      ),
     ).map(() => undefined),
   )

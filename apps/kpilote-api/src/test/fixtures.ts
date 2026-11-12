@@ -627,9 +627,10 @@ const upsertValeurAvancement = async (o: ValeurAvancementOverrides) => {
   const valeur = o.valeur ?? DEFAULT_VALEUR_AVANCEMENT_VALEUR
   return db().valeurAvancement.upsert({
     where: {
-      valeur_avancement_unique: {
+      valeur_avancement_cellule_unique: {
         indicateurId: indicateurRow.id,
         individuId: individuRow.id,
+        combinaisonId,
         date,
       },
     },

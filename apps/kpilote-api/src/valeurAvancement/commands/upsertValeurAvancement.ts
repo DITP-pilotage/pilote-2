@@ -31,9 +31,10 @@ export const upsertValeurAvancement = ({
       trouverCombinaisonVideId().then((combinaisonId) =>
         db().valeurAvancement.upsert({
           where: {
-            valeur_avancement_unique: {
+            valeur_avancement_cellule_unique: {
               indicateurId: indicateur.id,
               individuId: individu.id,
+              combinaisonId,
               date: body.date,
             },
           },

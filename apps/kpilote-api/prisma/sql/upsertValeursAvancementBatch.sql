@@ -19,7 +19,7 @@ SELECT
   NOW(),
   NOW()
 FROM jsonb_array_elements(($2::jsonb)->'items') AS input
-ON CONFLICT (indicateur_id, individu_id, date) DO UPDATE
+ON CONFLICT (indicateur_id, individu_id, combinaison_id, date) DO UPDATE
 SET valeur = EXCLUDED.valeur,
     updated_at = NOW()
 RETURNING (xmax = 0) AS created;
