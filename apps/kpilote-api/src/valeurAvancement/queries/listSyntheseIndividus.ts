@@ -5,6 +5,7 @@ import {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { trouverCombinaisonVideId } from '@/axe/combinaison'
 import { unique } from '@/framework/array'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Decimal } from '@/framework/decimal'
@@ -59,18 +60,26 @@ const buildSynthese = async (
 
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
+  // Indicateur sans axe : la combinaison vide. PIL-1991 passera la combinaison sélectionnée.
+  const combinaisonId = await trouverCombinaisonVideId()
   const { ctx, allNodes } = await loadResolveSerieContext({
     indicateurId: indicateur.id,
     individusCibles: population,
     dateTrunc,
+    combinaisonId,
   })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-  const medianeParReferentiel = await computeMedianeParReferentiel({ population, ctx, cache })
+  const medianeParReferentiel = await computeMedianeParReferentiel({
+    population,
+    combinaisonId,
+    ctx,
+    cache,
+  })
 
   const items: SyntheseIndividusListApiModel['items'] = []
   for (const individu of individusDemandes) {
-    const serie = await resolveSerieIndividu(individu.id, ctx, cache)
+    const serie = await resolveSerieIndividu({ individuId: individu.id, combinaisonId }, ctx, cache)
     items.push({
       individu: individu.publicId,
       variation: computeVariation(extractDeuxDerniers(serie)),
@@ -111,16 +120,20 @@ const extractDeuxDerniers = (
 
 const computeMedianeParReferentiel = async ({
   population,
+  combinaisonId,
   ctx,
   cache,
 }: {
   population: ReadonlyArray<IndividuRef>
+  combinaisonId: string
   ctx: Awaited<ReturnType<typeof loadResolveSerieContext>>['ctx']
   cache: Map<string, ReadonlyArray<PointInterne>>
 }): Promise<Map<string, number | null>> => {
   const valeursParReferentiel = new Map<string, Decimal[]>()
   for (const individu of population) {
-    const dernier = (await resolveSerieIndividu(individu.id, ctx, cache)).at(-1)
+    const dernier = (
+      await resolveSerieIndividu({ individuId: individu.id, combinaisonId }, ctx, cache)
+    ).at(-1)
     if (!dernier) continue
     const liste = valeursParReferentiel.get(individu.referentielId) ?? []
     liste.push(dernier.valeur)

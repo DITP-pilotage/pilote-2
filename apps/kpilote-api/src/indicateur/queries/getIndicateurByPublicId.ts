@@ -13,6 +13,8 @@ const loadIndicateur = async (where: Prisma.IndicateurWhereInput): Promise<Indic
     include: indicateurApiModelInclude,
   })
   // La date est stockée en `YYYY-MM-DD` : le MAX lexicographique = MAX chronologique.
+  // Toutes combinaisons confondues : un indicateur à axes n'a pas de valeur sur
+  // la combinaison vide, sa dernière valeur est celle d'une de ses modalités.
   const { _max } = await db().valeurAvancement.aggregate({
     where: { indicateurId: indicateur.id },
     _max: { date: true },
