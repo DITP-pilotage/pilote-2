@@ -2,6 +2,8 @@ import type { KpiloteUIMessage } from '@pilote/kpilote-shared/assistant/message'
 import { memo, type ReactNode } from 'react'
 
 import { AssistantSignature } from './AssistantSignature'
+import { helpToDisplay } from './centreAide'
+import { CentreAideEncart } from './CentreAideEncart'
 import { ChoicesInline } from './ChoicesInline'
 import { ConsultedSources, isSourcePart } from './ConsultedSources'
 import { type AssistantState } from './deriveAssistantState'
@@ -37,6 +39,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   actions?: ReactNode
 }) {
   const sources = message.parts.filter(isSourcePart)
+  const help = helpToDisplay(message)
 
   return (
     <div className="flex w-full flex-col gap-3 text-[15px] leading-6 text-text">
@@ -47,6 +50,8 @@ export const AssistantMessage = memo(function AssistantMessage({
           <MarkdownResponse key={index} text={part.text} />
         ) : null,
       )}
+      {/* Sous le texte, une fois la réponse rédigée : l'encart ferme la réponse. */}
+      {state === null && help && <CentreAideEncart output={help} />}
       {/* Les choix ferment la réponse, même si le modèle a écrit après l'appel. */}
       {showChoices &&
         message.parts.map((part, index) =>
