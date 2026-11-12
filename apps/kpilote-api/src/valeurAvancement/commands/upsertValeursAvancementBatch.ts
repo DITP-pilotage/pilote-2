@@ -6,6 +6,7 @@ import {
 import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
+import { CLE_COMBINAISON_VIDE } from '@/axe/combinaison'
 import { db } from '@/framework/persistence/dbStore'
 import { upsertValeursAvancementBatch as upsertValeursAvancementBatchQuery } from '@/generated/prisma/sql'
 import { resolveIndicateurForWriteData } from '@/indicateur/resolveIndicateurForWrite'
@@ -194,7 +195,9 @@ const executeBatch = ({
   })
 
   return ResultAsync.fromSafePromise(
-    db().$queryRawTyped(upsertValeursAvancementBatchQuery(indicateurId, { items: sqlItems })),
+    db().$queryRawTyped(
+      upsertValeursAvancementBatchQuery(indicateurId, { items: sqlItems }, CLE_COMBINAISON_VIDE),
+    ),
   ).map((rows) => {
     const total = rows.length
     const created = rows.reduce((sum, row) => sum + (row.created === true ? 1 : 0), 0)

@@ -7,6 +7,7 @@ import {
   type UniteIndicateurCode,
 } from '@pilote/kpilote-shared/indicateur'
 
+import { CLE_COMBINAISON_VIDE } from '../src/axe/combinaison.js'
 import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
 import {
   type FonctionAgregation,
@@ -361,7 +362,9 @@ const upsertValeurs = async (
 ): Promise<{ ecrites: number; supprimees: number }> => {
   if (rows.length === 0) return { ecrites: 0, supprimees: 0 }
   // Les valeurs du seed visent la combinaison vide (indicateurs sans axe).
-  const combinaisonVide = await prisma.combinaison.findUniqueOrThrow({ where: { cle: '' } })
+  const combinaisonVide = await prisma.combinaison.findUniqueOrThrow({
+    where: { cle: CLE_COMBINAISON_VIDE },
+  })
   let ecrites = 0
   for (const lot of parLots(rows)) {
     const tuples = lot.map(
