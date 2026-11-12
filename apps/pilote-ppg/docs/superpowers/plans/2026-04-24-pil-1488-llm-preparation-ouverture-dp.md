@@ -18,6 +18,7 @@ return false;
 ```
 
 Nouveaux FFs :
+
 - `NEXT_PUBLIC_FF_ASK_AI` — master (existant, inchangé)
 - `NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN` — ouverture au profil DITP_ADMIN
 - `NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET` — ouverture au profil EQUIPE_DIR_PROJET
@@ -40,6 +41,7 @@ La logique de check par profil est isolée dans une fonction `profilAutoriseParF
 ## Task 1: Feature flips + hook `useAskAIAccess`
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/config.ts`
 - Modify: `apps/pilote-ppg/src/server/gestion-contenu/domain/VariableContenuDisponible.ts`
 - Create: `apps/pilote-ppg/src/client/components/PageAccueil/useAskAIAccess.ts`
@@ -156,6 +158,7 @@ git commit -m "feat(llm): FF Ask AI par profil + hook useAskAIAccess (PIL-1488)"
 ## Task 2: Brancher `BasePageAccueilLayout` sur le hook
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/client/components/PageAccueil/BasePageAccueilLayout.tsx`
 
 - [ ] **Step 1: Importer le hook**
@@ -178,21 +181,22 @@ Supprimer la ligne `const ffAskAI = useEnv("NEXT_PUBLIC_FF_ASK_AI");` à la l.87
 
 ```tsx
 // Avant (l.191-193)
-{ffAskAI || session?.profil === ProfilEnum.DITP_ADMIN ? (
-  <BoutonSyntheseTerritoire
-    territoireCode={territoireCode}
-    jalon={jalon}
-  />
-) : null}
+{
+  ffAskAI || session?.profil === ProfilEnum.DITP_ADMIN ? (
+    <BoutonSyntheseTerritoire territoireCode={territoireCode} jalon={jalon} />
+  ) : null;
+}
 
 // Après
-{peutUtiliserAskAI ? (
-  <BoutonSyntheseTerritoire
-    territoireCode={territoireCode}
-    jalon={jalon}
-    estDITPAdmin={estDITPAdmin}
-  />
-) : null}
+{
+  peutUtiliserAskAI ? (
+    <BoutonSyntheseTerritoire
+      territoireCode={territoireCode}
+      jalon={jalon}
+      estDITPAdmin={estDITPAdmin}
+    />
+  ) : null;
+}
 ```
 
 - [ ] **Step 3: Nettoyer l'import `ProfilEnum` s'il n'est plus utilisé**
@@ -217,6 +221,7 @@ git commit -m "feat(llm): BasePageAccueilLayout utilise useAskAIAccess (PIL-1488
 ## Task 3: Brancher `PageAccueilLegacy` sur le hook
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/client/components/PageAccueil/PageAccueilLegacy.tsx`
 
 - [ ] **Step 1: Même substitution qu'à Task 2**
@@ -262,6 +267,7 @@ git commit -m "feat(llm): PageAccueilLegacy utilise useAskAIAccess (PIL-1488)"
 ## Task 4: Mise à jour des tuiles dans `BoutonSyntheseTerritoire`
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/client/components/PageAccueil/BoutonSyntheseTerritoire.tsx`
 
 - [ ] **Step 1: Ajouter la prop `estDITPAdmin`**
@@ -344,6 +350,7 @@ Remplacer les deux entrées "Rapport complet (Markdown)" et "Tableau de bord du 
 - [ ] **Step 5: Vérifier l'ordre final des tuiles du groupe Synthèse**
 
 Ordre attendu après modifs :
+
 1. `Synthèse d'un territoire` (fill)
 2. `Synthèse d'un chantier sur un territoire` (fill, **nouveau**)
 3. `Synthèse de {region} et ses départements` (send, uniquement si `estRegion`)

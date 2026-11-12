@@ -30,14 +30,14 @@ touchées que pour aligner leurs critères sur les décisions ci-dessous
 
 ### Six canaux d'instructions
 
-| Canal | Contenu | Partie dynamique |
-|---|---|---|
-| Prompt système | ~630 lignes, dont ~150 de gabarit | jalon, territoires accessibles, `agentContext`, capacités `synthese` et `inclureSousTerritoires` |
-| `description` des tools | 14 tools toujours exposés, 2 selon l'intention (`create_dashboard`, `export_rapport`) | liste filtrée |
-| `.describe` des paramètres | sens des paramètres, mais aussi des règles (`include_sous_territoires`) | aucune |
-| `_output_instructions` des résultats | 47 occurrences : mise en forme, routage, mises en garde | selon le résultat |
-| Prompts des sous-agents | recherche ×3, centre d'aide ×2, dashboard | aucune |
-| `agentContext.instructions` | inséré au milieu du prompt | tout |
+| Canal                                | Contenu                                                                               | Partie dynamique                                                                                 |
+| ------------------------------------ | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Prompt système                       | ~630 lignes, dont ~150 de gabarit                                                     | jalon, territoires accessibles, `agentContext`, capacités `synthese` et `inclureSousTerritoires` |
+| `description` des tools              | 14 tools toujours exposés, 2 selon l'intention (`create_dashboard`, `export_rapport`) | liste filtrée                                                                                    |
+| `.describe` des paramètres           | sens des paramètres, mais aussi des règles (`include_sous_territoires`)               | aucune                                                                                           |
+| `_output_instructions` des résultats | 47 occurrences : mise en forme, routage, mises en garde                               | selon le résultat                                                                                |
+| Prompts des sous-agents              | recherche ×3, centre d'aide ×2, dashboard                                             | aucune                                                                                           |
+| `agentContext.instructions`          | inséré au milieu du prompt                                                            | tout                                                                                             |
 
 Les capacités viennent de `detecterCapacities` (`detecteurIntention.ts`), qui
 cherche des mots-clés dans le dernier message. Elles changent à la fois le
@@ -67,30 +67,30 @@ Des règles nées d'un usage précis s'appliquent à tous les autres :
 
 ### Contradictions
 
-| # | Contradiction | Ticket |
-|---|---|---|
-| C1 | Restriction d'accès : le prompt dit l'écart masqué, l'instruction de `get_chantiers` le dit disponible, le code ne le masque pas et force `est_en_retard` à `false`. Trois tools lèvent une exception sur un territoire non accessible, contre « tu peux interroger n'importe quel territoire ». | A16, A23, A24 |
-| C2 | Territoires : « résous depuis la liste des territoires accessibles », « demande le code REG-XX », alors que `search_territoires` existe. « Le 84 » sert d'exemple de clarification, le sous-agent le résout en DEPT-84. | A1, A17, A19 |
-| C3 | Clarification : « 2 à 4 options » contre « une option par résultat » (jusqu'à 10) ; « pas de texte avant l'appel » contre « présente la liste » dans les `search_*`. | A13, A18 |
-| C4 | Médiane « territoriale » (glossaire), « nationale » (gabarit) ; NAT-FR est comparé à la médiane des départements. | A6 |
-| C5 | Jalon : `\${jalon}` lu littéralement dans la section dashboard ; 2025 en dur contre la date de bascule pour les signalés. | A14, A25 |
-| C6 | PPG est à la fois synonyme et attribut d'un chantier. | O3 |
-| C7 | « Ne déduis pas de tendance » contre « décris les tendances communes » (gabarit). | |
-| C8 | Le prompt décrit `create_dashboard` et l'export comme toujours disponibles, alors qu'ils sont conditionnels : faux dashboard rédigé en texte, appel écrit en pseudo-code. | A2, F1 |
-| C9 | « Ne donne jamais de lien », mais `export_rapport` renvoie l'URL au modèle. | A10 |
+| #   | Contradiction                                                                                                                                                                                                                                                                                    | Ticket        |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| C1  | Restriction d'accès : le prompt dit l'écart masqué, l'instruction de `get_chantiers` le dit disponible, le code ne le masque pas et force `est_en_retard` à `false`. Trois tools lèvent une exception sur un territoire non accessible, contre « tu peux interroger n'importe quel territoire ». | A16, A23, A24 |
+| C2  | Territoires : « résous depuis la liste des territoires accessibles », « demande le code REG-XX », alors que `search_territoires` existe. « Le 84 » sert d'exemple de clarification, le sous-agent le résout en DEPT-84.                                                                          | A1, A17, A19  |
+| C3  | Clarification : « 2 à 4 options » contre « une option par résultat » (jusqu'à 10) ; « pas de texte avant l'appel » contre « présente la liste » dans les `search_*`.                                                                                                                             | A13, A18      |
+| C4  | Médiane « territoriale » (glossaire), « nationale » (gabarit) ; NAT-FR est comparé à la médiane des départements.                                                                                                                                                                                | A6            |
+| C5  | Jalon : `\${jalon}` lu littéralement dans la section dashboard ; 2025 en dur contre la date de bascule pour les signalés.                                                                                                                                                                        | A14, A25      |
+| C6  | PPG est à la fois synonyme et attribut d'un chantier.                                                                                                                                                                                                                                            | O3            |
+| C7  | « Ne déduis pas de tendance » contre « décris les tendances communes » (gabarit).                                                                                                                                                                                                                |               |
+| C8  | Le prompt décrit `create_dashboard` et l'export comme toujours disponibles, alors qu'ils sont conditionnels : faux dashboard rédigé en texte, appel écrit en pseudo-code.                                                                                                                        | A2, F1        |
+| C9  | « Ne donne jamais de lien », mais `export_rapport` renvoie l'URL au modèle.                                                                                                                                                                                                                      | A10           |
 
 ### Redondances
 
-| Information | Occurrences |
-|---|---|
-| `include_sous_territoires` sur le parent | ~8 |
-| Routage retard / baisse vers les signalés | 4 |
-| Workflow des `search_*` | 4 |
-| Format « CH-XXX — Nom » | 7 |
-| Libellés météo | 4, dont 2 dans la même section |
-| Quand clarifier, quand appeler le centre d'aide | 2 à 3 chacun |
-| Interdiction du pseudo-code | 3 |
-| « Votre rapport est disponible » | 2 |
+| Information                                     | Occurrences                    |
+| ----------------------------------------------- | ------------------------------ |
+| `include_sous_territoires` sur le parent        | ~8                             |
+| Routage retard / baisse vers les signalés       | 4                              |
+| Workflow des `search_*`                         | 4                              |
+| Format « CH-XXX — Nom »                         | 7                              |
+| Libellés météo                                  | 4, dont 2 dans la même section |
+| Quand clarifier, quand appeler le centre d'aide | 2 à 3 chacun                   |
+| Interdiction du pseudo-code                     | 3                              |
+| « Votre rapport est disponible »                | 2                              |
 
 ### Erreurs de structure
 
@@ -114,14 +114,14 @@ Des règles nées d'un usage précis s'appliquent à tous les autres :
 
 ## Décisions
 
-| # | Décision |
-|---|---|
-| D1 | La météo disparaît du prompt. Les tools renvoient directement les libellés finaux (« Objectifs sécurisés », « Objectifs atteignables », « Appuis nécessaires », « Objectifs compromis ») : ni le mot « météo » ni les codes ne sont plus exposés au modèle. Reste à trancher : le libellé de la catégorie de signalement « Météo et synthèse non renseignées ». |
-| D2 | Commentaires et objectifs : restitués fidèlement par défaut, résumés seulement sur demande. |
-| D3 | « Le 84 » désigne le département, « la région 84 » la région. |
-| D4 | `create_dashboard` et `export_rapport` sont exposés en permanence. |
-| D5 | Un tool composite « situation d'un territoire » (TA, chantiers en retard et chantiers en difficulté en un seul appel) est envisageable, si la mesure le justifie. |
-| D6 | La liste des territoires accessibles dans le prompt est tranchée selon les mesures. |
+| #   | Décision                                                                                                                                                                                                                                                                                                                                                        |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | La météo disparaît du prompt. Les tools renvoient directement les libellés finaux (« Objectifs sécurisés », « Objectifs atteignables », « Appuis nécessaires », « Objectifs compromis ») : ni le mot « météo » ni les codes ne sont plus exposés au modèle. Reste à trancher : le libellé de la catégorie de signalement « Météo et synthèse non renseignées ». |
+| D2  | Commentaires et objectifs : restitués fidèlement par défaut, résumés seulement sur demande.                                                                                                                                                                                                                                                                     |
+| D3  | « Le 84 » désigne le département, « la région 84 » la région.                                                                                                                                                                                                                                                                                                   |
+| D4  | `create_dashboard` et `export_rapport` sont exposés en permanence.                                                                                                                                                                                                                                                                                              |
+| D5  | Un tool composite « situation d'un territoire » (TA, chantiers en retard et chantiers en difficulté en un seul appel) est envisageable, si la mesure le justifie.                                                                                                                                                                                               |
+| D6  | La liste des territoires accessibles dans le prompt est tranchée selon les mesures.                                                                                                                                                                                                                                                                             |
 
 ## Cible de la réécriture
 
@@ -227,18 +227,18 @@ objectifs, « non à jour » et « en retard ».
 
 ### Où va chaque bloc actuel
 
-| Bloc actuel | Devenir |
-|---|---|
-| Gabarit, capacités `synthese` et `inclureSousTerritoires` | supprimés |
-| Règles fondamentales | invariants en II, formats en V comme défauts |
-| Glossaire | métier en III, mécanique dans les tools |
-| « Comprendre les demandes » | notions en IV.A, routage dans les descriptions |
-| Workflows a et b | IV.D et `.describe` |
-| Workflow c et section Export | description d'`export_rapport` |
-| Workflow d | description de `get_chantiers_signales` |
+| Bloc actuel                                                  | Devenir                                              |
+| ------------------------------------------------------------ | ---------------------------------------------------- |
+| Gabarit, capacités `synthese` et `inclureSousTerritoires`    | supprimés                                            |
+| Règles fondamentales                                         | invariants en II, formats en V comme défauts         |
+| Glossaire                                                    | métier en III, mécanique dans les tools              |
+| « Comprendre les demandes »                                  | notions en IV.A, routage dans les descriptions       |
+| Workflows a et b                                             | IV.D et `.describe`                                  |
+| Workflow c et section Export                                 | description d'`export_rapport`                       |
+| Workflow d                                                   | description de `get_chantiers_signales`              |
 | Sections `search_*`, dashboard, centre d'aide, clarification | descriptions des tools ; « quand clarifier » en IV.C |
-| Questions de suivi, règle d'or | II.3 |
-| Gestion des erreurs | II.6 et IV.B |
+| Questions de suivi, règle d'or                               | II.3                                                 |
+| Gestion des erreurs                                          | II.6 et IV.B                                         |
 
 ## Démarche
 
@@ -317,17 +317,17 @@ une mesure. On garde si c'est mieux, sinon on revient en arrière.
 
 Leviers déjà repérés, qui n'entrent que si leur signal apparaît :
 
-| Signal mesuré | Levier candidat |
-|---|---|
-| Mauvais choix entre deux outils voisins (niveau 2) | description du tool |
-| Synthèse incomplète (chantiers attendus manquants) | tool composite « situation d'un territoire » (D5) |
-| Sous-territoires interrogés un par un | `.describe` d'`include_sous_territoires` |
-| Restriction d'accès mal restituée | un statut commun à tous les tools |
-| Lien ou JSON recopié dans la réponse | ne plus renvoyer ces champs au modèle (`toModelOutput` du SDK `ai`, à vérifier) |
-| Territoire mal résolu | règle des numéros, liste des territoires accessibles (D6) |
-| Forme inadaptée à un type de réponse | un format par défaut dans la partie V |
-| Dashboard vide présenté comme un succès | `create_dashboard` répond « non réalisable » |
-| Réponse en anglais, pseudo-code, noms d'outils cités | une ligne ciblée dans le prompt |
+| Signal mesuré                                        | Levier candidat                                                                 |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Mauvais choix entre deux outils voisins (niveau 2)   | description du tool                                                             |
+| Synthèse incomplète (chantiers attendus manquants)   | tool composite « situation d'un territoire » (D5)                               |
+| Sous-territoires interrogés un par un                | `.describe` d'`include_sous_territoires`                                        |
+| Restriction d'accès mal restituée                    | un statut commun à tous les tools                                               |
+| Lien ou JSON recopié dans la réponse                 | ne plus renvoyer ces champs au modèle (`toModelOutput` du SDK `ai`, à vérifier) |
+| Territoire mal résolu                                | règle des numéros, liste des territoires accessibles (D6)                       |
+| Forme inadaptée à un type de réponse                 | un format par défaut dans la partie V                                           |
+| Dashboard vide présenté comme un succès              | `create_dashboard` répond « non réalisable »                                    |
+| Réponse en anglais, pseudo-code, noms d'outils cités | une ligne ciblée dans le prompt                                                 |
 
 ### Critère d'arrêt
 
@@ -340,16 +340,16 @@ Leviers déjà repérés, qui n'entrent que si leur signal apparaît :
 
 ## Journal des mesures
 
-| Étape | Commit | Niveau 2 | Niveau 3 | Contexte (tokens) | Décision |
-|---|---|---|---|---|---|
-| 0 – ligne de base | `edc45d4` | 91 % | 91 % | 9 265 | référence |
-| 1 – réécriture minimale | `5ae608e` | 88 % | 92 % | 2 290 | base de l'étape 2 |
-| 2 – résolution, sous-territoires, exemples | `9805829` | 90 % | 93 % | 2 853 | base de l'étape 3 |
-| 3 – régressions, courbe iso prod, restriction | `dead2dc` | 91 % | 94 % | 2 928 | base de l'étape 4 |
-| 4 – encart de synthèse et de comparaison | `2b09817` | 88 % | 93 % | 3 055 | déclencheurs à resserrer |
-| 4 bis – evals assainies, code de l'étape 4 | `d8469e2` | 90 % | 94 % | – | nouvelle base |
-| 5 – données de l'encart, déclencheurs | `feb9b4d` | 91 % | 96 % | 3 274 | base de l'étape 6 |
-| 6 – rapport = encart téléchargé, commentaires à un seul endroit | `a0631a5` | 92 % | 98 % | 3 312 | état actuel |
+| Étape                                                           | Commit    | Niveau 2 | Niveau 3 | Contexte (tokens) | Décision                 |
+| --------------------------------------------------------------- | --------- | -------- | -------- | ----------------- | ------------------------ |
+| 0 – ligne de base                                               | `edc45d4` | 91 %     | 91 %     | 9 265             | référence                |
+| 1 – réécriture minimale                                         | `5ae608e` | 88 %     | 92 %     | 2 290             | base de l'étape 2        |
+| 2 – résolution, sous-territoires, exemples                      | `9805829` | 90 %     | 93 %     | 2 853             | base de l'étape 3        |
+| 3 – régressions, courbe iso prod, restriction                   | `dead2dc` | 91 %     | 94 %     | 2 928             | base de l'étape 4        |
+| 4 – encart de synthèse et de comparaison                        | `2b09817` | 88 %     | 93 %     | 3 055             | déclencheurs à resserrer |
+| 4 bis – evals assainies, code de l'étape 4                      | `d8469e2` | 90 %     | 94 %     | –                 | nouvelle base            |
+| 5 – données de l'encart, déclencheurs                           | `feb9b4d` | 91 %     | 96 %     | 3 274             | base de l'étape 6        |
+| 6 – rapport = encart téléchargé, commentaires à un seul endroit | `a0631a5` | 92 %     | 98 %     | 3 312             | état actuel              |
 
 Niveau 2 : moyenne des suites `2.*`. Niveau 3 : moyenne des suites `3.1` à
 `3.4`, calibration exclue. Contexte : tokens d'entrée du premier appel du cas
@@ -443,14 +443,14 @@ Suite · cas · critère · essais en échec, sur le prompt d'origine
 
 ### Échecs répétés de l'étape 1, par famille
 
-| Famille | Résolus | Nouveaux | Inchangés |
-|---|---|---|---|
-| Choix d'outil | 3 | 6 | 13 |
-| Sous-territoires | 0 | 4 | 0 |
-| Forme | 9 | 4 | 5 |
-| Contenu et factualité | 5 | 2 | 8 |
-| Restriction d'accès | 1 | 1 | 0 |
-| Langue | 0 | 0 | 0 |
+| Famille               | Résolus | Nouveaux | Inchangés |
+| --------------------- | ------- | -------- | --------- |
+| Choix d'outil         | 3       | 6        | 13        |
+| Sous-territoires      | 0       | 4        | 0         |
+| Forme                 | 9       | 4        | 5         |
+| Contenu et factualité | 5       | 2        | 8         |
+| Restriction d'accès   | 1       | 1        | 0         |
+| Langue                | 0       | 0        | 0         |
 
 - **Choix d'outil.**
   - Résolus : `search_chantiers` « thématique d'indicateur » ;
@@ -501,18 +501,18 @@ la remet. Le `.describe` du paramètre seul ne suffit pas.
 Ce que l'agent fait réellement sur les cas en échec, et le levier retenu, par
 effet attendu sur les scores :
 
-| # | Échec mesuré | Ce que fait l'agent | Levier |
-|---|---|---|---|
-| 1 | Sous-territoires : `get_taux_avancement_territoire` « un seul appel sur le parent » (2/3), synthèse de Bretagne et ses départements (outils, tableau comparatif, analyse des écarts) | Interroge REG-94 puis DEPT-2A et DEPT-2B un par un | Une règle dans la méthode du prompt (« un territoire et ses sous-territoires : un seul appel sur le parent, par jalon ») et une ligne « Utilise-le pour » dans les trois tools. Le test du prompt qui interdit `include_sous_territoires` change avec |
-| 2 | Analyse des écarts : 8 cas de comparaison (Bretagne et ses départements, deux régions, région face à un département, comparaison quantitative) | Donne les taux et la position face à la médiane, sans dire qui est devant et de combien de points | Une ligne dans « Rédiger » : une comparaison donne un tableau, puis qui est devant, qui est derrière et de combien de points |
-| 3 | Territoires du tableau : « piège du 84 » (Vaucluse), comparaison quantitative | Écrit « département 84 » ou le code : `get_taux_avancement_territoire` ne renvoie pas le nom du territoire | La donnée : ajouter `territoire_nom` au résultat |
-| 4 | `create_dashboard` « courbe » (3/3) | Appelle `get_evolution_indicateur` : sa description revendique « la courbe d'un indicateur » | La description : la courbe affichée relève de `create_dashboard`, `get_evolution_indicateur` donne les valeurs |
-| 5 | Synthèse des difficultés : chantiers attendus (3 cas) | N'appelle pas la vue `en_retard` (A5) | Une ligne de lexique : « les difficultés d'un territoire » = chantiers en retard et en difficulté ; si ça ne suffit pas, le tool composite (D5) |
-| 6 | Rapport complet : export appelé, réponse du chat (inchangés) | Rédige le rapport dans le chat sans appeler `export_rapport` | Lexique ou description : « rapport » désigne toujours un fichier exporté |
-| 7 | Clarification « trois chantiers logement » (2/3), signalés « plusieurs catégories, retard compris » (3/3) | Choisit un chantier sans demander ; appelle `get_chantiers` avant `get_chantiers_signales` | Les descriptions : `search_*` « plusieurs candidats plausibles → clarify_with_choices » (consigne perdue avec les `_output_instructions`) ; un exemple « en retard ou sans … renseignée → cet outil » dans les signalés |
-| 8 | `search_chantiers` « politique prioritaire » (3/3) | N'appelle aucun outil | Lexique : « politique prioritaire » = chantier |
-| 9 | Format des chantiers (4 cas) | Cite « CH-005 » sans son nom | À mesurer après les leviers 1 à 8 ; candidat : un champ « CH-XXX — Nom » dans les résultats |
-| 10 | Restriction d'accès : synthèse des difficultés hors périmètre | Rien ne signale les territoires restreints ; drapeaux forcés à faux | La donnée : un champ de restriction dans le résultat de `get_chantiers` (revue, Important 1) |
+| #   | Échec mesuré                                                                                                                                                                         | Ce que fait l'agent                                                                                        | Levier                                                                                                                                                                                                                                                |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Sous-territoires : `get_taux_avancement_territoire` « un seul appel sur le parent » (2/3), synthèse de Bretagne et ses départements (outils, tableau comparatif, analyse des écarts) | Interroge REG-94 puis DEPT-2A et DEPT-2B un par un                                                         | Une règle dans la méthode du prompt (« un territoire et ses sous-territoires : un seul appel sur le parent, par jalon ») et une ligne « Utilise-le pour » dans les trois tools. Le test du prompt qui interdit `include_sous_territoires` change avec |
+| 2   | Analyse des écarts : 8 cas de comparaison (Bretagne et ses départements, deux régions, région face à un département, comparaison quantitative)                                       | Donne les taux et la position face à la médiane, sans dire qui est devant et de combien de points          | Une ligne dans « Rédiger » : une comparaison donne un tableau, puis qui est devant, qui est derrière et de combien de points                                                                                                                          |
+| 3   | Territoires du tableau : « piège du 84 » (Vaucluse), comparaison quantitative                                                                                                        | Écrit « département 84 » ou le code : `get_taux_avancement_territoire` ne renvoie pas le nom du territoire | La donnée : ajouter `territoire_nom` au résultat                                                                                                                                                                                                      |
+| 4   | `create_dashboard` « courbe » (3/3)                                                                                                                                                  | Appelle `get_evolution_indicateur` : sa description revendique « la courbe d'un indicateur »               | La description : la courbe affichée relève de `create_dashboard`, `get_evolution_indicateur` donne les valeurs                                                                                                                                        |
+| 5   | Synthèse des difficultés : chantiers attendus (3 cas)                                                                                                                                | N'appelle pas la vue `en_retard` (A5)                                                                      | Une ligne de lexique : « les difficultés d'un territoire » = chantiers en retard et en difficulté ; si ça ne suffit pas, le tool composite (D5)                                                                                                       |
+| 6   | Rapport complet : export appelé, réponse du chat (inchangés)                                                                                                                         | Rédige le rapport dans le chat sans appeler `export_rapport`                                               | Lexique ou description : « rapport » désigne toujours un fichier exporté                                                                                                                                                                              |
+| 7   | Clarification « trois chantiers logement » (2/3), signalés « plusieurs catégories, retard compris » (3/3)                                                                            | Choisit un chantier sans demander ; appelle `get_chantiers` avant `get_chantiers_signales`                 | Les descriptions : `search_*` « plusieurs candidats plausibles → clarify_with_choices » (consigne perdue avec les `_output_instructions`) ; un exemple « en retard ou sans … renseignée → cet outil » dans les signalés                               |
+| 8   | `search_chantiers` « politique prioritaire » (3/3)                                                                                                                                   | N'appelle aucun outil                                                                                      | Lexique : « politique prioritaire » = chantier                                                                                                                                                                                                        |
+| 9   | Format des chantiers (4 cas)                                                                                                                                                         | Cite « CH-005 » sans son nom                                                                               | À mesurer après les leviers 1 à 8 ; candidat : un champ « CH-XXX — Nom » dans les résultats                                                                                                                                                           |
+| 10  | Restriction d'accès : synthèse des difficultés hors périmètre                                                                                                                        | Rien ne signale les territoires restreints ; drapeaux forcés à faux                                        | La donnée : un champ de restriction dans le résultat de `get_chantiers` (revue, Important 1)                                                                                                                                                          |
 
 À corriger côté evals plutôt que côté agent :
 

@@ -15,6 +15,7 @@ Les tests E2E de la codebase présentaient deux problèmes distincts :
 Les tests manipulaient directement les sélecteurs Playwright dans chaque fichier de test :
 
 **Code dupliqué et fragile :**
+
 ```typescript
 // Ancien pattern : sélecteurs dispersés dans chaque test
 await page.getByRole("button", { name: "Se connecter" }).click();
@@ -25,6 +26,7 @@ await page.getByRole("button").click();
 ```
 
 **Problèmes identifiés :**
+
 - **Duplication massive** : les mêmes sélecteurs et interactions copiés dans chaque test
 - **Maintenance coûteuse** : un changement d'UI nécessite de modifier tous les tests impactés
 - **Lisibilité réduite** : les tests mélangent logique métier et détails d'implémentation UI
@@ -48,6 +50,7 @@ await appActions.switchUser(autreUtilisateur); // Timeout
 ```
 
 **Problèmes identifiés :**
+
 - **Couplage temporel** : l'ordre d'exécution et le résultat des tests précédents impactent les suivants
 - **Retries inutiles** : un test qui échoue pour une raison transitoire échoue aussi en retry à cause de données résiduelles
 - **Cleanup via l'UI fragile** : tenter de nettoyer les données via des interactions UI (boutons "Supprimer") est lui-même sujet à des timeouts et ajoute de la complexité
@@ -59,6 +62,7 @@ Nous utilisons le pattern **Page Object Model (POM)** pour structurer nos tests 
 ### Page Object Model (tests UI)
 
 **Principe** :
+
 - Chaque page de l'application est représentée par une classe dédiée
 - Les interactions avec l'UI sont encapsulées dans des méthodes
 - Les sélecteurs sont centralisés dans les classes de page
@@ -66,6 +70,7 @@ Nous utilisons le pattern **Page Object Model (POM)** pour structurer nos tests 
 - Les actions transversales (login, switch user) sont regroupées dans des classes d'actions
 
 **Structure du dossier `tests/` :**
+
 ```
 tests/
 ├── e2e-test-context.ts       # Context d'isolation des données
@@ -107,6 +112,7 @@ tests/
 **Implémentation :**
 
 1. **Classe de base** :
+
 ```typescript
 // tests/pages/base.page.ts
 export abstract class BasePage {
@@ -118,6 +124,7 @@ export abstract class BasePage {
 ```
 
 2. **Page Object** :
+
 ```typescript
 // tests/pages/page-login.ts
 export class PageLogin extends BasePage {
@@ -142,6 +149,7 @@ export class PageLogin extends BasePage {
 ```
 
 3. **Composant réutilisable** :
+
 ```typescript
 // tests/components/header.component.ts
 export class HeaderComponent {
@@ -172,6 +180,7 @@ export class HeaderComponent {
 ```
 
 4. **Composition des pages avec composants** :
+
 ```typescript
 // tests/pages/page-accueil.ts
 export class PageAccueil extends BasePage {
@@ -186,8 +195,10 @@ export class PageAccueil extends BasePage {
 
   async selectChantier(chantierName: string): Promise<PageChantier> {
     await this.page.waitForLoadState("networkidle");
-    await this.page.getByRole("table")
-      .getByRole("cell", { name: chantierName }).click();
+    await this.page
+      .getByRole("table")
+      .getByRole("cell", { name: chantierName })
+      .click();
     await this.page.waitForURL("**/chantier/**");
     await expect(
       this.page.getByRole("heading", { name: /Avancement du chantier/ }),
@@ -198,6 +209,7 @@ export class PageAccueil extends BasePage {
 ```
 
 5. **Actions transversales** :
+
 ```typescript
 // tests/actions/app.actions.ts
 export class AppActions {
@@ -210,7 +222,10 @@ export class AppActions {
     username = process.env.E2E_USERNAME!,
     password = process.env.DEV_PASSWORD!,
   ): Promise<PageAccueil> {
-    const pageAccueilNonConnecte = new PageAccueilNonConnecte(this.page, this.e2eContext);
+    const pageAccueilNonConnecte = new PageAccueilNonConnecte(
+      this.page,
+      this.e2eContext,
+    );
     await pageAccueilNonConnecte.goto();
     await pageAccueilNonConnecte.header.clickLogin();
 
@@ -236,6 +251,7 @@ export class AppActions {
 ```
 
 **Conventions :**
+
 - Les méthodes de navigation retournent le nouvel objet de page
 - Les assertions sont encapsulées dans des méthodes `expect*`
 - Les sélecteurs sont définis comme getters privés
@@ -243,10 +259,15 @@ export class AppActions {
 - `loginAs()` pour la première connexion d'un test (page vide), `switchUser()` uniquement quand l'utilisateur est déjà connecté
 
 **Exemple de test avec POM** :
+
 ```typescript
 import { test } from "./fixtures";
 
-test("doit pouvoir consulter les données des chantiers", async ({ page, e2eContext, step }) => {
+test("doit pouvoir consulter les données des chantiers", async ({
+  page,
+  e2eContext,
+  step,
+}) => {
   const appActions = new AppActions(page, e2eContext);
   const pageAccueil = await appActions.loginAs();
 
@@ -255,8 +276,13 @@ test("doit pouvoir consulter les données des chantiers", async ({ page, e2eCont
   });
 
   await step("Navigation vers le chantier", async () => {
-    const pageChantier = await pageAccueil.selectChantier("Faciliter l'efficacité opérationnelle");
-    await pageChantier.expectTitle("155", "Faciliter l'efficacité opérationnelle");
+    const pageChantier = await pageAccueil.selectChantier(
+      "Faciliter l'efficacité opérationnelle",
+    );
+    await pageChantier.expectTitle(
+      "155",
+      "Faciliter l'efficacité opérationnelle",
+    );
     await pageChantier.expectStructure();
   });
 });
@@ -269,6 +295,7 @@ test("doit pouvoir consulter les données des chantiers", async ({ page, e2eCont
 Le `E2ETestContext` est un registre d'actions effectuées pendant un test. Il permet de garantir que chaque test (et chaque retry) part d'un état propre, sans dépendre du résultat des tests précédents.
 
 **Principe :**
+
 - Le context est injecté dans les tests via une fixture Playwright personnalisée
 - Les POM reçoivent le context dans leur constructeur et y enregistrent les actions effectuées via l'UI
 - En `afterEach`, la fixture appelle `cleanup()` qui annule les actions trackées via Prisma
@@ -276,19 +303,20 @@ Le `E2ETestContext` est un registre d'actions effectuées pendant un test. Il pe
 
 **Types d'actions supportés :**
 
-| ActionType | Cleanup | Utilisé par |
-|------------|---------|-------------|
-| `PROPOSITION_VALEUR_AVANCEMENT_CREEE` | Suppression des propositions de valeur | `PvaIndicateurComponent` |
-| `EVENEMENT_PROPOSITION_VALEUR_CREE` | Suppression des événements PVA (filtrés par `PROPOSITION_VALEUR_*`) | `PvaIndicateurComponent` |
-| `COMMENTAIRE_CREE` | Suppression des commentaires créés | `PageChantier` |
-| `RAPPORT_IMPORT_CREE` | Suppression en cascade : mesures, temporaires, erreurs, rapport | `PageMiseAJourDonnees` |
-| `MESURE_INDICATEUR_IMPORTEE` | Suppression des mesures importées | Usage direct si nécessaire |
-| `UTILISATEUR_DESACTIVE` | Restauration de `date_desactivation` à `null` | `PageUtilisateurDetail` |
-| `PROFIL_UTILISATEUR_MODIFIE` | Restauration des champs du profil à leur valeur originale | `PageMonProfilUtilisateur` |
+| ActionType                            | Cleanup                                                             | Utilisé par                |
+| ------------------------------------- | ------------------------------------------------------------------- | -------------------------- |
+| `PROPOSITION_VALEUR_AVANCEMENT_CREEE` | Suppression des propositions de valeur                              | `PvaIndicateurComponent`   |
+| `EVENEMENT_PROPOSITION_VALEUR_CREE`   | Suppression des événements PVA (filtrés par `PROPOSITION_VALEUR_*`) | `PvaIndicateurComponent`   |
+| `COMMENTAIRE_CREE`                    | Suppression des commentaires créés                                  | `PageChantier`             |
+| `RAPPORT_IMPORT_CREE`                 | Suppression en cascade : mesures, temporaires, erreurs, rapport     | `PageMiseAJourDonnees`     |
+| `MESURE_INDICATEUR_IMPORTEE`          | Suppression des mesures importées                                   | Usage direct si nécessaire |
+| `UTILISATEUR_DESACTIVE`               | Restauration de `date_desactivation` à `null`                       | `PageUtilisateurDetail`    |
+| `PROFIL_UTILISATEUR_MODIFIE`          | Restauration des champs du profil à leur valeur originale           | `PageMonProfilUtilisateur` |
 
 **Implémentation :**
 
 1. **Le registre d'actions** :
+
 ```typescript
 // tests/e2e-test-context.ts
 import { $Enums, PrismaClient } from "@prisma/client";
@@ -392,6 +420,7 @@ export class E2ETestContext {
 ```
 
 2. **La fixture Playwright** :
+
 ```typescript
 // tests/fixtures.ts
 import { Page, test as base } from "@playwright/test";
@@ -407,19 +436,28 @@ function createStep(page: Page): Step {
   return async (stepName, fn) => {
     await base.step(stepName, async () => {
       if (videoEnabled) {
-        await page.evaluate((text) => {
-          const existing = document.getElementById("e2e-step-banner");
-          if (existing) existing.remove();
-          const banner = document.createElement("div");
-          banner.id = "e2e-step-banner";
-          banner.textContent = text;
-          Object.assign(banner.style, {
-            position: "fixed", top: "0", left: "0", right: "0",
-            zIndex: "99999", background: "#1e1e2e", color: "#fff",
-            padding: "8px 16px", fontSize: "14px", fontFamily: "monospace",
-          });
-          document.body.appendChild(banner);
-        }, stepName).catch(() => {});
+        await page
+          .evaluate((text) => {
+            const existing = document.getElementById("e2e-step-banner");
+            if (existing) existing.remove();
+            const banner = document.createElement("div");
+            banner.id = "e2e-step-banner";
+            banner.textContent = text;
+            Object.assign(banner.style, {
+              position: "fixed",
+              top: "0",
+              left: "0",
+              right: "0",
+              zIndex: "99999",
+              background: "#1e1e2e",
+              color: "#fff",
+              padding: "8px 16px",
+              fontSize: "14px",
+              fontFamily: "monospace",
+            });
+            document.body.appendChild(banner);
+          }, stepName)
+          .catch(() => {});
         await page.waitForTimeout(BANNER_DISPLAY_MS);
       }
       await fn();
@@ -443,6 +481,7 @@ export const test = base.extend<{
 ```
 
 3. **Enregistrement dans les POM — suppression d'entités** :
+
 ```typescript
 // tests/components/pva-indicateur.component.ts
 export class PvaIndicateurComponent {
@@ -522,6 +561,7 @@ async confirmerDesactivation(email: string): Promise<void> {
 ```
 
 5. **Utilisation dans les tests** :
+
 ```typescript
 import { test } from "./fixtures";
 
@@ -549,6 +589,7 @@ test("Coordinateur département propose, Direction accepte", async ({
 ```
 
 **Conventions :**
+
 - Le tracking se fait au moment de l'action UI, pas après confirmation, pour couvrir les cas où le test échoue entre la création et la confirmation
 - Chaque nouveau type d'entité ajoute une entrée dans le `switch` de `cleanup()` et un `EntityType` correspondant
 - Les POM sont responsables d'appeler `track()` ; les tests n'ont pas à gérer le cleanup
@@ -563,15 +604,18 @@ test("Coordinateur département propose, Direction accepte", async ({
 La fixture `step` remplace `test.step` et ajoute, quand `E2E_VIDEO=on`, un bandeau visible en haut de la page avec le nom du step en cours. Cela permet de générer des gifs de démonstration lisibles pour les PR GitHub et les tickets Jira.
 
 **Activation :**
+
 ```bash
 E2E_VIDEO=on pnpm exec playwright test mon-test.spec.ts --project=chromium
 ```
 
 La variable `E2E_VIDEO` active deux comportements dans `playwright.config.ts` et `fixtures.ts` :
+
 - `video: "on"` au lieu de `"retain-on-failure"` (enregistre la vidéo même en cas de succès)
 - Injection d'un bandeau avec le nom du step + pause de 1.5s pour la lisibilité
 
 **Génération du gif :**
+
 ```bash
 ffmpeg -i video.webm -vf "setpts=2*PTS,fps=10,scale=800:-1:flags=lanczos" -y tests/assets/<nom>.gif
 ```
@@ -585,11 +629,13 @@ Les gifs sont stockés dans `tests/assets/` et référencés dans les PR GitHub 
 ### API Object Model (tests API)
 
 Pour les tests de l'API Open API, nous utilisons un pattern similaire avec :
+
 - Un **client API** qui encapsule tous les endpoints
 - Un **contexte de test** qui génère les tokens JWT directement (sans passer par l'UI)
 
 **Principe de génération des tokens** :
 L'API valide la signature JWT ET vérifie l'existence du token en base de données (`token_api_information`). On génère donc :
+
 1. Le JWT directement avec `next-auth/jwt`
 2. L'entrée en base avec Prisma (`upsert`)
 
@@ -598,6 +644,7 @@ Cela évite de passer par l'UI tout en respectant la vérification en base.
 **Implémentation :**
 
 1. **Client API** :
+
 ```typescript
 // tests/open-api/api-client/open-api.client.ts
 export class OpenApiClient {
@@ -611,22 +658,29 @@ export class OpenApiClient {
     return this.apiContext.get(`/api/open-api/chantier/${chantierId}/donnees`);
   }
 
-  async getIndicateurDonnees(chantierId: string, indicateurId: string): Promise<APIResponse> {
+  async getIndicateurDonnees(
+    chantierId: string,
+    indicateurId: string,
+  ): Promise<APIResponse> {
     return this.apiContext.get(
-      `/api/open-api/chantier/${chantierId}/indicateur/${indicateurId}/donnees`
+      `/api/open-api/chantier/${chantierId}/indicateur/${indicateurId}/donnees`,
     );
   }
 
-  async importCommentaires(chantierId: string, commentaires: CommentaireInput[]): Promise<APIResponse> {
+  async importCommentaires(
+    chantierId: string,
+    commentaires: CommentaireInput[],
+  ): Promise<APIResponse> {
     return this.apiContext.post(
       `/api/open-api/chantier/${chantierId}/commentaires`,
-      { data: { commentaires } }
+      { data: { commentaires } },
     );
   }
 }
 ```
 
 2. **Contexte de test avec génération directe des tokens** :
+
 ```typescript
 // tests/open-api/api-client/api-test-context.ts
 import { encode } from "next-auth/jwt";
@@ -669,6 +723,7 @@ export class ApiTestContext {
 ```
 
 3. **Profils utilisateurs prédéfinis** :
+
 ```typescript
 const USER_PROFILES: Record<UserProfile, UserConfig> = {
   DITP_ADMIN: {
@@ -683,11 +738,15 @@ const USER_PROFILES: Record<UserProfile, UserConfig> = {
 ```
 
 **Exemple de test API** :
+
 ```typescript
 test("Quand on a accès au chantier, doit remonter une réponse 200 OK", async ({
   playwright,
 }) => {
-  const apiContext = await ApiTestContext.create(playwright, "EQUIPE_DIR_PROJET");
+  const apiContext = await ApiTestContext.create(
+    playwright,
+    "EQUIPE_DIR_PROJET",
+  );
   const client = apiContext.getClient();
 
   const result = await client.getChantierDonnees(apiContext.chantierId!);
@@ -703,6 +762,7 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK", async (
 ## Conséquences
 
 **Avantages :**
+
 - **Maintenance centralisée** : un changement d'UI ou d'API ne nécessite qu'une modification dans la classe concernée
 - **Réutilisabilité** : les interactions communes sont factorisées et réutilisables
 - **Lisibilité améliorée** : les tests expriment l'intention métier, pas les détails d'implémentation
@@ -715,6 +775,7 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK", async (
 - **Retries fonctionnels** : un retry après échec retrouve un état de base propre
 
 **Comparaison avant/après (UI):**
+
 ```typescript
 // AVANT : sélecteurs répétés, logique mélangée
 await page.getByRole("button", { name: "Se connecter" }).click();
@@ -730,6 +791,7 @@ await pageAccueil.header.expectUserLoggedIn();
 ```
 
 **Comparaison avant/après (API):**
+
 ```typescript
 // AVANT : gestion manuelle des tokens via UI, code répétitif
 const { apiDirProjetToken, apiDirProjetUsername, apiDirProjetChantierAssocie } =
@@ -738,16 +800,24 @@ apiContext = await playwright.request.newContext({
   baseURL: process.env.BASE_URL,
   extraHTTPHeaders: { Authorization: `Bearer ${apiDirProjetToken}` },
 });
-result = await apiContext.get(`/api/open-api/chantier/${apiDirProjetChantierAssocie}/donnees`);
-await suppressionAuthentificationApiFn({ page, apiUsername: apiDirProjetUsername }); // Cleanup UI
+result = await apiContext.get(
+  `/api/open-api/chantier/${apiDirProjetChantierAssocie}/donnees`,
+);
+await suppressionAuthentificationApiFn({
+  page,
+  apiUsername: apiDirProjetUsername,
+}); // Cleanup UI
 
 // APRÈS : génération directe du JWT, pas d'UI, pas de cleanup
 const apiContext = await ApiTestContext.create(playwright, "EQUIPE_DIR_PROJET");
-const result = await apiContext.getClient().getChantierDonnees(apiContext.chantierId!);
+const result = await apiContext
+  .getClient()
+  .getChantierDonnees(apiContext.chantierId!);
 await apiContext.dispose();
 ```
 
 **Inconvénients :**
+
 - **Courbe d'apprentissage** : nécessite de comprendre la structure des pages, composants, clients API et le mécanisme de tracking
 - **Effort initial** : création des classes et du context avant d'écrire les premiers tests
 - **Indirection** : le code de test est séparé des sélecteurs/endpoints, ce qui peut compliquer le débogage
@@ -755,6 +825,7 @@ await apiContext.dispose();
 - **Discipline requise** : les POM doivent systématiquement appeler `track()` pour chaque entité créée, sous peine de laisser des données résiduelles
 
 **Impact sur l'équipe :**
+
 - Les tests E2E deviennent plus accessibles aux nouveaux développeurs
 - Les agents IA peuvent générer des tests de meilleure qualité en utilisant les pages/clients existants
 - L'effort de maintenance est transféré des tests individuels vers les classes partagées

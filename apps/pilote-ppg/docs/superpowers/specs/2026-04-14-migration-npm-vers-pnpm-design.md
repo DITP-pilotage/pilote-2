@@ -32,6 +32,7 @@ aucun changement d'arborescence, aucun déplacement de fichier, aucun impact run
 ## Décisions
 
 ### Gestionnaire et version
+
 - **pnpm 10** (dernière stable), pinnée via le champ `"packageManager": "pnpm@10.x.y"` dans
   `package.json`.
 - **Pas de Corepack** : les devs installent pnpm globalement eux-mêmes. Le champ
@@ -39,17 +40,20 @@ aucun changement d'arborescence, aucun déplacement de fichier, aucun impact run
   en CI et comme documentation pour les devs), mais n'active pas Corepack.
 
 ### Stratégie de linker
+
 - **`node-linker=isolated`** (défaut pnpm) : symlinks stricts, détection des phantom deps.
-- `public-hoist-pattern[]` réservé aux cas où une lib est *réellement* cassée en isolated
+- `public-hoist-pattern[]` réservé aux cas où une lib est _réellement_ cassée en isolated
   (typiquement `@prisma/client`, Next.js standalone dans certains cas). Pas utilisé pour
   masquer nos propres oublis.
 
 ### Phantom deps
+
 - Toute erreur `Cannot find module X` révélée par le passage en `isolated` est corrigée
   **proprement** : ajout explicite de `X` dans `dependencies` / `devDependencies` de
   `package.json`. Pas de contournement via `public-hoist-pattern`.
 
 ### Docker
+
 - Aucun changement dans ce ticket. Les Dockerfiles (`docker/Dockerfile.webapp.prod`,
   `docker/Dockerfile.webapp.dev`, `docker/entrypoint.webapp.*.sh`) gardent leurs commandes
   `npm install` / `npm run`. Ils sont considérés inutilisés en pratique et seront supprimés
@@ -58,6 +62,7 @@ aucun changement d'arborescence, aucun déplacement de fichier, aucun impact run
 ## Composants impactés
 
 ### 1. Racine du repo
+
 - **Ajouts**
   - `pnpm-lock.yaml` (généré par `pnpm install`)
   - `.npmrc` :
@@ -72,30 +77,36 @@ aucun changement d'arborescence, aucun déplacement de fichier, aucun impact run
   - `package-lock.json`
 
 ### 2. Scripts `package.json`
+
 - `npm run X` imbriqués → `pnpm X` dans : `lint`, `lint:fix`, `test:e2e:server`,
   `test:e2e:database:init`, `test:database:init`
 - `npx` → `pnpm exec` dans : `build`, `build:dev`, `lint:tsc`, `test:e2e`, `test:e2e:ui`
 
 Exemples ciblés :
+
 - `"lint": "prisma generate && pnpm lint:eslint && pnpm lint:tsc"`
 - `"lint:tsc": "pnpm exec tsc"`
 - `"test:e2e": "pnpm exec playwright test --workers=1"`
 - `"test:e2e:server": "dotenv -e .env.e2e pnpm dev"`
 
 ### 3. CI GitHub Actions
+
 Fichiers à modifier :
+
 - `.github/workflows/testAndLint.yml`
 - `.github/workflows/e2e.yml`
 
 Pattern appliqué dans chaque job qui installait auparavant des dépendances :
+
 ```yaml
 - uses: pnpm/action-setup@v4
 - uses: actions/setup-node@v4
   with:
-    node-version-file: 'package.json'
-    cache: 'pnpm'
+    node-version-file: "package.json"
+    cache: "pnpm"
 - run: pnpm install --frozen-lockfile
 ```
+
 Tous les `npm ci` et `npm run X` restants sont remplacés par leur équivalent pnpm.
 
 Les autres workflows (`pr-merged-dev.yml`, `pr-review-requested.yml`,
@@ -103,10 +114,12 @@ Les autres workflows (`pr-merged-dev.yml`, `pr-review-requested.yml`,
 exécutent du npm.
 
 ### 4. Documentation
+
 - `CLAUDE.md` : section "Development Commands" migrée de `npm run X` vers `pnpm X`
 - Ajout d'une note setup : "installer `pnpm@10` globalement avant le premier `pnpm install`"
 
 ### 5. Nettoyage
+
 - Suppression de `package-lock.json`
 - Vérification de l'absence de références à `package-lock.json` dans `.dockerignore`,
   `.gitignore`, `.slugignore` et les scripts shell.

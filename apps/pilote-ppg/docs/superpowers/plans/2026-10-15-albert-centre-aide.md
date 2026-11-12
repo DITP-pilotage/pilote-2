@@ -61,11 +61,13 @@ Library, Evalite.
 ### Task 1 : conversion du HTML du centre d'aide en markdown
 
 **Files :**
+
 - Modify : `package.json` (dépendances `turndown`, `@types/turndown`)
 - Create : `src/server/parametrage-centre-aide/app/convertirHtmlEnMarkdown.ts`
 - Test : `src/server/parametrage-centre-aide/__tests__/app/convertirHtmlEnMarkdown.unit.test.ts`
 
 **Interfaces :**
+
 - Produces :
   - `convertirHtmlEnMarkdown(html: string): string` ;
   - `extraireIntertitres(markdown: string): string[]`, qui renvoie les titres de
@@ -136,9 +138,7 @@ describe("convertirHtmlEnMarkdown", () => {
     const markdown = convertirHtmlEnMarkdown(html);
 
     // Then
-    expect(markdown).toBe(
-      "Avant\n\n[Vidéo disponible sur la page]\n\nAprès",
-    );
+    expect(markdown).toBe("Avant\n\n[Vidéo disponible sur la page]\n\nAprès");
   });
 
   it("remplace une iframe par une mention de vidéo", () => {
@@ -255,9 +255,7 @@ const creerService = () => {
   service.addRule("image", {
     filter: "img",
     replacement: (_contenu, node) => {
-      const texteAlternatif = (node as HTMLElement)
-        .getAttribute("alt")
-        ?.trim();
+      const texteAlternatif = (node as HTMLElement).getAttribute("alt")?.trim();
       return texteAlternatif
         ? `[Image : ${texteAlternatif}]`
         : "[Image disponible sur la page]";
@@ -307,10 +305,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 2 : règle de visibilité des pages
 
 **Files :**
+
 - Create : `src/server/parametrage-centre-aide/domain/pagesVisibles.ts`
 - Test : `src/server/parametrage-centre-aide/__tests__/domain/pagesVisibles.unit.test.ts`
 
 **Interfaces :**
+
 - Consumes : `ArticleCentreAide`, déjà dans `domain/ArticleCentreAide.ts`.
 - Produces :
   - `type PageVisible = { id: string; titre: string; chemin: string[]; contenu: string }` ;
@@ -498,7 +498,10 @@ describe("pagesVisibles", () => {
   it("préfère le titre affiché, et retombe sur le titre quand il est vide", () => {
     // Given
     const articles = [
-      page(PAGE_TAUX, "Taux", { titreAffiche: "Le taux d'avancement", ordre: 1 }),
+      page(PAGE_TAUX, "Taux", {
+        titreAffiche: "Le taux d'avancement",
+        ordre: 1,
+      }),
       page(PAGE_METEO, "Météo", { titreAffiche: "", ordre: 2 }),
     ];
 
@@ -552,9 +555,7 @@ const estVisible = (article: ArticleCentreAide) =>
  * appliquée côté serveur. Un article invisible masque toute sa descendance,
  * et seuls les champs publiés sont lus.
  */
-export const pagesVisibles = (
-  articles: ArticleCentreAide[],
-): PageVisible[] => {
+export const pagesVisibles = (articles: ArticleCentreAide[]): PageVisible[] => {
   const enfantsVisibles = (parentId: string | null) =>
     articles
       .filter((article) => article.parentId === parentId && estVisible(article))
@@ -569,14 +570,14 @@ export const pagesVisibles = (
       // (`estGroupeSansContenu` dans `PageCentreAidePilote`).
       const page = article.contenu
         ? [
-              {
-                id: article.id,
-                titre: titreDe(article),
-                chemin,
-                contenu: article.contenu,
-              },
-            ]
-          : [];
+            {
+              id: article.id,
+              titre: titreDe(article),
+              chemin,
+              contenu: article.contenu,
+            },
+          ]
+        : [];
       return [...page, ...parcourir(article.id, [...chemin, titreDe(article)])];
     });
 
@@ -606,6 +607,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 3 : queries du sommaire et des pages, exportées par le module
 
 **Files :**
+
 - Create : `src/server/parametrage-centre-aide/queries/GetSommaireCentreAideQuery.ts`
 - Create : `src/server/parametrage-centre-aide/queries/GetPagesCentreAideQuery.ts`
 - Modify : `src/server/parametrage-centre-aide/module.ts`
@@ -613,6 +615,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Test : `src/server/parametrage-centre-aide/__tests__/queries/GetPagesCentreAideQuery.integration.test.ts`
 
 **Interfaces :**
+
 - Consumes : `pagesVisibles`, `urlPageCentreAide` (tâche 2) ;
   `convertirHtmlEnMarkdown`, `extraireIntertitres` (tâche 1) ;
   `ArticleCentreAideRepository.lister()`.
@@ -805,7 +808,9 @@ export class GetSommaireCentreAideQuery {
   }
 
   async execute(): Promise<EntreeSommaireCentreAide[]> {
-    const pages = pagesVisibles(await this.articleCentreAideRepository.lister());
+    const pages = pagesVisibles(
+      await this.articleCentreAideRepository.lister(),
+    );
 
     return pages.map((page) => ({
       id: page.id,
@@ -904,8 +909,8 @@ type ParametrageCentreAideCradle = ParametrageCentreAideExports & {
 ```
 
 4. Remplacer `defineModule<NoExports, ParametrageCentreAideCradle>()` par
-`defineModule<ParametrageCentreAideExports, ParametrageCentreAideCradle>()` et
-`exports: []` par :
+   `defineModule<ParametrageCentreAideExports, ParametrageCentreAideCradle>()` et
+   `exports: []` par :
 
 ```ts
   exports: ["getSommaireCentreAideQuery", "getPagesCentreAideQuery"],
@@ -943,6 +948,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 4 : outil `consulter_centre_aide`
 
 **Files :**
+
 - Create : `src/server/albert/subagents/centreAideSelectionSystemPrompt.ts`
 - Create : `src/server/albert/subagents/centreAideReponseSystemPrompt.ts`
 - Create : `src/server/albert/tools/consulterCentreAide.ts`
@@ -952,6 +958,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Test : `src/server/albert/__tests__/tools/consulterCentreAide.unit.test.ts`
 
 **Interfaces :**
+
 - Consumes : `GetSommaireCentreAideQuery`, `GetPagesCentreAideQuery`,
   `EntreeSommaireCentreAide`, `PageCentreAide`, `ParametrageCentreAideExports`
   (tâche 3) ; `Albert.generateStructuredOutput` ; `filtrerHallucinations`.
@@ -1046,11 +1053,17 @@ describe("createConsulterCentreAideTool execute", () => {
       });
     const { tool } = buildTool({
       sommaire: [entree("taux", "Le taux"), entree("meteo", "La météo")],
-      pages: [pageCentreAide("taux", "Le taux"), pageCentreAide("meteo", "La météo")],
+      pages: [
+        pageCentreAide("taux", "Le taux"),
+        pageCentreAide("meteo", "La météo"),
+      ],
     });
 
     // When
-    const result = await executeTool(tool, "comment est calculé le taux d'avancement");
+    const result = await executeTool(
+      tool,
+      "comment est calculé le taux d'avancement",
+    );
 
     // Then
     expect(result).toEqual({
@@ -1108,7 +1121,10 @@ describe("createConsulterCentreAideTool execute", () => {
     const appelLLM = vi
       .spyOn(Albert, "generateStructuredOutput")
       .mockResolvedValueOnce({ ids: [], reasoning: "hors sujet" });
-    const { tool } = buildTool({ sommaire: [entree("taux", "Le taux")], pages: [] });
+    const { tool } = buildTool({
+      sommaire: [entree("taux", "Le taux")],
+      pages: [],
+    });
 
     // When
     const result = await executeTool(tool, "alertes par mail");
@@ -1440,9 +1456,7 @@ type AlbertImports = FrameworkDependencies &
 Dans `AlbertOwnCradle`, ajouter :
 
 ```ts
-  createConsulterCentreAideTool: ReturnType<
-    typeof createConsulterCentreAideTool
-  >;
+createConsulterCentreAideTool: ReturnType<typeof createConsulterCentreAideTool>;
 ```
 
 Remplacer `imports: ["framework", "chantiers"]` par
@@ -1473,10 +1487,10 @@ import {
   type ConsulterCentreAideOutput,
 } from "@/server/albert/tools/consulterCentreAide";
 
-  consulter_centre_aide: {
-    input: z.input<typeof consulterCentreAideInputSchema>;
-    output: ConsulterCentreAideOutput;
-  };
+consulter_centre_aide: {
+  input: z.input<typeof consulterCentreAideInputSchema>;
+  output: ConsulterCentreAideOutput;
+}
 ```
 
 - [ ] **Step 7 : vérifier le typage et les tests d'Albert**
@@ -1498,10 +1512,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 5 : prompt système
 
 **Files :**
+
 - Modify : `src/server/albert/systemPrompt.ts` (sections `# Identité et périmètre`, `## clarify_with_choices`)
 - Test : `src/server/albert/__tests__/systemPrompt.unit.test.ts`
 
 **Interfaces :**
+
 - Consumes : le nom d'outil `consulter_centre_aide` (tâche 4).
 - Produces : le prompt contient la section `## consulter_centre_aide`.
 
@@ -1600,11 +1616,13 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 6 : sources consultées et état de chargement
 
 **Files :**
+
 - Modify : `src/client/components/_commons/ChatUI/SourcesConsultees.tsx:12-42`
 - Modify : `src/client/components/_commons/ChatUI/deriverEtatAssistant.ts`
 - Test : `src/client/components/_commons/ChatUI/deriverEtatAssistant.unit.test.ts`
 
 **Interfaces :**
+
 - Consumes : `tool-consulter_centre_aide` dans `PiloteUITools` (tâche 4).
 - Produces :
   - `EtatAssistant` gagne `"consulte-le-centre-d-aide"` ;
@@ -1616,23 +1634,23 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 Dans `deriverEtatAssistant.unit.test.ts`, dans le `describe` :
 
 ```ts
-  test("consulte le centre d'aide quand l'outil du centre d'aide est en cours", () => {
-    // Given
-    const dernier = message([
-      {
-        type: "tool-consulter_centre_aide",
-        toolCallId: "appel-1",
-        state: "input-available",
-        input: { question: "comment est calculé le taux d'avancement" },
-      },
-    ]);
+test("consulte le centre d'aide quand l'outil du centre d'aide est en cours", () => {
+  // Given
+  const dernier = message([
+    {
+      type: "tool-consulter_centre_aide",
+      toolCallId: "appel-1",
+      state: "input-available",
+      input: { question: "comment est calculé le taux d'avancement" },
+    },
+  ]);
 
-    // When
-    const etat = deriverEtatAssistant({ message: dernier, status: "streaming" });
+  // When
+  const etat = deriverEtatAssistant({ message: dernier, status: "streaming" });
 
-    // Then
-    expect(etat).toBe("consulte-le-centre-d-aide");
-  });
+  // Then
+  expect(etat).toBe("consulte-le-centre-d-aide");
+});
 ```
 
 - [ ] **Step 2 : lancer le test pour vérifier qu'il échoue**
@@ -1666,9 +1684,9 @@ export const LIBELLES_ETAT_ASSISTANT: Record<EtatAssistant, string> = {
 Et, juste après `if (derniere.type === "tool-export_rapport") return "genere-le-rapport";` :
 
 ```ts
-  if (derniere.type === "tool-consulter_centre_aide") {
-    return "consulte-le-centre-d-aide";
-  }
+if (derniere.type === "tool-consulter_centre_aide") {
+  return "consulte-le-centre-d-aide";
+}
 ```
 
 Dans `SourcesConsultees.tsx`, ajouter `| "tool-consulter_centre_aide"` à
@@ -1697,6 +1715,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 7 : encart des pages et encart support
 
 **Files :**
+
 - Create : `src/client/components/_commons/Icones/ArrowRightLineIcon.tsx`
 - Create : `src/client/components/_commons/ChatUI/CentreAideEncart.tsx`
 - Modify : `src/client/components/_commons/ChatUI/AssistantMessageText.tsx:99-131` (extraction de `LienInterneAssistant`)
@@ -1704,6 +1723,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Test : `src/client/components/_commons/ChatUI/CentreAideEncart.integration.test.tsx`
 
 **Interfaces :**
+
 - Consumes : `ConsulterCentreAideOutput` (tâche 4) ; `BoutonContacterEquipePilote` ;
   `markCopyableBlock("text")`.
 - Produces :
@@ -1771,7 +1791,9 @@ test("propose de contacter l'équipe PILOTE quand le centre d'aide ne répond pa
   expect(
     screen.getByRole("link", { name: /Contacter l'équipe PILOTE/ }),
   ).toHaveAttribute("href", "mailto:pilote.ditp@modernisation.gouv.fr");
-  expect(screen.queryByText("Pour plus d'informations")).not.toBeInTheDocument();
+  expect(
+    screen.queryByText("Pour plus d'informations"),
+  ).not.toBeInTheDocument();
 });
 
 test("ne retient que la dernière consultation du centre d'aide d'un message", () => {
@@ -1981,17 +2003,21 @@ Importer `CentreAideEncart` et `derniereConsultationCentreAide`. Après
 `const sources = parts.filter(estSourcePart);`, ajouter :
 
 ```tsx
-  const consultationCentreAide = derniereConsultationCentreAide(parts);
+const consultationCentreAide = derniereConsultationCentreAide(parts);
 ```
 
 Puis, juste avant le commentaire
 `{/* Les choix ferment la réponse, même si le modèle a écrit du texte après l'appel. */}` :
 
 ```tsx
-      {/* Sous le texte, qui suit l'appel de l'outil dans les parts. */}
-      {consultationCentreAide && (
-        <CentreAideEncart output={consultationCentreAide} />
-      )}
+{
+  /* Sous le texte, qui suit l'appel de l'outil dans les parts. */
+}
+{
+  consultationCentreAide && (
+    <CentreAideEncart output={consultationCentreAide} />
+  );
+}
 ```
 
 - [ ] **Step 7 : lancer les tests pour vérifier qu'ils passent**
@@ -2006,6 +2032,7 @@ Lancer l'app (preview `pnpm dev`), ouvrir l'assistant en plein écran et poser
 « Comment est calculé le taux d'avancement ? ». S'il faut des pages en local,
 créer un groupe et une page publiés depuis `/panel-administrateur/centre-aide`.
 Vérifier :
+
 - la puce « Centre d'aide » dans les sources ;
 - l'état « consulte le centre d'aide » pendant la recherche ;
 - l'encart sous le texte : un clic réduit le chat et ouvre la page ;
@@ -2028,12 +2055,14 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 8 : evals de niveau 2, sélection de l'outil
 
 **Files :**
+
 - Create : `evals/seedCentreAide.ts`
 - Modify : `evals/world.ts:389-401` (`clearEvalWorld`)
 - Modify : `evals/2-tools/toolSelectionEval.ts` (`FAMILLES`, seed du monde)
 - Create : `evals/2-tools/2.4-aide/consulterCentreAide.eval.ts`
 
 **Interfaces :**
+
 - Produces (pour la tâche 9) :
   - `seedCentreAide(): Promise<void>` ;
   - `IDS_PAGES_VISIBLES: string[]` ;
@@ -2176,7 +2205,7 @@ Dans `evals/world.ts`, `clearEvalWorld`, en première ligne après
 `const prisma = getPrisma();` :
 
 ```ts
-  await prisma.article_centre_aide.deleteMany();
+await prisma.article_centre_aide.deleteMany();
 ```
 
 - [ ] **Step 3 : semer le centre d'aide pour toutes les suites de niveau 2**
@@ -2197,9 +2226,9 @@ const FAMILLES = {
 Et dans le seed du monde, avant `return seeded;` :
 
 ```ts
-    // L'outil du centre d'aide est toujours exposé : un cas négatif d'une
-    // autre suite peut l'appeler, il doit trouver un vrai sommaire.
-    await seedCentreAide();
+// L'outil du centre d'aide est toujours exposé : un cas négatif d'une
+// autre suite peut l'appeler, il doit trouver un vrai sommaire.
+await seedCentreAide();
 ```
 
 - [ ] **Step 4 : écrire la suite**
@@ -2227,7 +2256,8 @@ const INTERDIT = ["consulter_centre_aide"];
 const CASES: ToolCase[] = [
   {
     question: "Comment est calculé le taux d'avancement d'un chantier ?",
-    reason: "définition aussi présente dans le glossaire : le centre d'aide prime",
+    reason:
+      "définition aussi présente dans le glossaire : le centre d'aide prime",
     expected: ATTENDU,
   },
   {
@@ -2309,6 +2339,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 9 : evals de niveau 3, scénarios du centre d'aide
 
 **Files :**
+
 - Modify : `evals/3-scenarios/scenarioEval.ts` (`GROUPS`, option `seedSupplementaire`)
 - Create : `evals/3-scenarios/3.3-centre-aide/centreAide.criteria.ts`
 - Create : `evals/3-scenarios/3.3-centre-aide/questionCouverte.eval.ts`
@@ -2316,6 +2347,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Create : `evals/3-scenarios/3.3-centre-aide/casFrontiere.eval.ts`
 
 **Interfaces :**
+
 - Consumes : `seedCentreAide`, `IDS_PAGES_VISIBLES`, `MARQUEURS_INVISIBLES`,
   `PAGE_TAUX`, `PAGE_IMPORT` (tâche 8) ; `ConsulterCentreAideOutput` (tâche 4) ;
   `mechanical`, `judged`, `withBase` (`criterion.ts`).
@@ -2343,7 +2375,7 @@ typé `seedSupplementaire?: () => Promise<void>;`. Puis, dans `seedWorldPerFile`
 après `await seedMondeTerritorial({ authorId: seeded.userId });` :
 
 ```ts
-    await seedSupplementaire?.();
+await seedSupplementaire?.();
 ```
 
 - [ ] **Step 2 : écrire les critères**
@@ -2354,10 +2386,7 @@ après `await seedMondeTerritorial({ authorId: seeded.userId });` :
 import type { ConsulterCentreAideOutput } from "@/server/albert/tools/consulterCentreAide";
 import { judged, mechanical, withBase, type Criterion } from "../criterion";
 import type { Evidence } from "../evidence";
-import {
-  IDS_PAGES_VISIBLES,
-  MARQUEURS_INVISIBLES,
-} from "../../seedCentreAide";
+import { IDS_PAGES_VISIBLES, MARQUEURS_INVISIBLES } from "../../seedCentreAide";
 
 const consultations = (evidence: Evidence) =>
   evidence.toolResults
@@ -2437,7 +2466,9 @@ export const pageAttendue = (pagesParQuestion: Record<string, string>) =>
       const ok = citees.includes(attendue);
       return {
         ok,
-        detail: ok ? "page attendue citée" : `citées : ${citees.join(", ") || "aucune"}`,
+        detail: ok
+          ? "page attendue citée"
+          : `citées : ${citees.join(", ") || "aucune"}`,
       };
     },
   });
@@ -2469,7 +2500,10 @@ export const criteresHorsCorpus = (questionsSansReponse: string[]) =>
           questionsSansReponse.includes(evidence.question),
         check: (evidence) => {
           const ok = consultations(evidence).every((output) => !output.trouve);
-          return { ok, detail: ok ? "non trouvé" : "une réponse a été trouvée" };
+          return {
+            ok,
+            detail: ok ? "non trouvé" : "une réponse a été trouvée",
+          };
         },
       }),
       judged({
@@ -2523,7 +2557,8 @@ import { criteresQuestionCouverte } from "./centreAide.criteria";
  * dépublié et un brouillon, chacun marqué : rien ne doit en sortir.
  */
 
-const QUESTION_TAUX = "Comment est calculé le taux d'avancement d'un chantier ?";
+const QUESTION_TAUX =
+  "Comment est calculé le taux d'avancement d'un chantier ?";
 const QUESTION_IMPORT = "Comment importer les mesures de mes indicateurs ?";
 
 scenarioEval({
@@ -2611,7 +2646,9 @@ scenarioEval({
   criteria: criteresCasFrontiere,
   cases: [
     {
-      history: ["Quel est le taux d'avancement de l'indicateur IND-894 en Bretagne ?"],
+      history: [
+        "Quel est le taux d'avancement de l'indicateur IND-894 en Bretagne ?",
+      ],
       question: "Comment est calculé ce taux ?",
       reason: "« ce taux » renvoie au tour précédent",
       truthScope: { territoires: ["REG-53"], indicateurs: true },

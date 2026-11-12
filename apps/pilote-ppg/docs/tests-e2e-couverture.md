@@ -8,16 +8,16 @@ Ce document recense les scénarios couverts par les tests end-to-end (Playwright
 
 **Entités dédiées :** `tests/seed/seed-dedicated-entities.sql` (constantes dans `tests/seed/dedicated-entities.ts`) crée, en dernier, des copies réservées aux tests qui écrivent, pour ne jamais modifier les données partagées :
 
-| Entité  | Origine            | Usage                                                                                     |
-|---------|--------------------|-------------------------------------------------------------------------------------------|
-| CH-901  | copie de CH-070    | chantier en `BROUILLON` (« Chantier brouillon e2e »)                                      |
-| CH-902  | copie de CH-054    | chantier d'écriture « Chantier e2e » : open-api, import, indicateurs, paramétrage chantier (métadonnées copiées de CH-129, maille DEPT) |
-| CH-903  | copie de CH-129    | chantier de la saisie des publications par l'IHM (« Chantier e2e saisie »)                |
-| CH-904  | copie de CH-054    | chantier des pondérations « Chantier e2e pondérations » (métadonnées copiées de CH-129, maille DEPT) : l'enregistrement des pondérations écrit tous les indicateurs du chantier, il ne porte donc qu'IND-904 |
-| IND-901 | copie d'IND-021    | import de données par l'IHM (rattaché à CH-902)                                            |
-| IND-902 | copie d'IND-021    | formulaire indicateur du panel administrateur (rattaché à CH-902)                          |
-| IND-903 | copie d'IND-021    | import open-api (rattaché à CH-902)                                                        |
-| IND-904 | copie d'IND-021    | pondérations du paramétrage chantier (rattaché à CH-904)                                   |
+| Entité  | Origine         | Usage                                                                                                                                                                                                        |
+| ------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| CH-901  | copie de CH-070 | chantier en `BROUILLON` (« Chantier brouillon e2e »)                                                                                                                                                         |
+| CH-902  | copie de CH-054 | chantier d'écriture « Chantier e2e » : open-api, import, indicateurs, paramétrage chantier (métadonnées copiées de CH-129, maille DEPT)                                                                      |
+| CH-903  | copie de CH-129 | chantier de la saisie des publications par l'IHM (« Chantier e2e saisie »)                                                                                                                                   |
+| CH-904  | copie de CH-054 | chantier des pondérations « Chantier e2e pondérations » (métadonnées copiées de CH-129, maille DEPT) : l'enregistrement des pondérations écrit tous les indicateurs du chantier, il ne porte donc qu'IND-904 |
+| IND-901 | copie d'IND-021 | import de données par l'IHM (rattaché à CH-902)                                                                                                                                                              |
+| IND-902 | copie d'IND-021 | formulaire indicateur du panel administrateur (rattaché à CH-902)                                                                                                                                            |
+| IND-903 | copie d'IND-021 | import open-api (rattaché à CH-902)                                                                                                                                                                          |
+| IND-904 | copie d'IND-021 | pondérations du paramétrage chantier (rattaché à CH-904)                                                                                                                                                     |
 
 Habilitations ajoutées : `equipe.dir.projet@example.com` reçoit CH-901, CH-902 et CH-903 ; `services.deconcentres.region@example.com` reçoit CH-901 (sans accès aux brouillons). Deux comptes sont créés pour la saisie sur CH-903 / DEPT-56 : `saisie.coordinateur.dept@example.com` (COORDINATEUR_DEPARTEMENT) et `saisie.prefet.dept@example.com` (PREFET_DEPARTEMENT), tous deux avec lecture et saisie des commentaires sur CH-903 / DEPT-56. Le chantier hors périmètre de l'équipe direction de projet est CH-070.
 
@@ -28,6 +28,7 @@ Habilitations ajoutées : `equipe.dir.projet@example.com` reçoit CH-901, CH-902
 **Client tRPC direct :** `tests/api-client/trpc.client.ts` appelle `/api/trpc/*` sans passer par l'IHM, avec la session du navigateur. Les mutations envoient le jeton CSRF lu dans le cookie `csrf` (ou aucun / un jeton forcé). Le résultat expose le statut HTTP, le code d'erreur tRPC et l'en-tête `location`.
 
 **Fixtures open-api** (`tests/fixtures.ts`) :
+
 - `openApi(profil)` forge un JWT pour `DITP_ADMIN` (`ditp.admin`), `EQUIPE_DIR_PROJET` (`equipe.dir.projet`) ou `PM_ET_CABINET` (`premiere.ministre`), et crée si besoin la ligne `token_api_information` correspondante ;
 - `openApiUnauthenticated(header)` crée un client sans en-tête `Authorization`, ou avec l'en-tête fourni.
 
@@ -214,9 +215,9 @@ Profil : `prefet.region@example.com` (PREFET_REGION, sans saisie des commentaire
 Légende : ✓ visible | ✗ absent | — non vérifié
 
 | Élément                     | DITP Admin | PM Cabinet | Éq. Dir. Projet | Coord. Dept (avec hab.) | Préfet Rég. (avec hab.) | Coord. Dept (sans hab.) | Préfet Rég. (sans hab.) |
-|-----------------------------|:----------:|:----------:|:---------------:|:-----------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
+| --------------------------- | :--------: | :--------: | :-------------: | :---------------------: | :---------------------: | :---------------------: | :---------------------: |
 | **Territoire testé**        |   NAT-FR   |   NAT-FR   |     NAT-FR      |         DEPT-56         |         REG-53          |         DEPT-56         |         REG-53          |
-| Structure                   | nationale  | nationale  |    nationale    |       territoriale      |       territoriale      |       territoriale      |       territoriale      |
+| Structure                   | nationale  | nationale  |    nationale    |      territoriale       |      territoriale       |      territoriale       |      territoriale       |
 | Décisions stratégiques      |     ✓      |     ✓      |        ✓        |            ✗            |            ✗            |            ✗            |            ✗            |
 | Sélecteur de maille         |     ✓      |     ✓      |        ✓        |            ✗            |            ✓            |            ✗            |            ✓            |
 | Mettre à jour les données   |     ✓      |     ✗      |        ✓        |            ✗            |            ✗            |            —            |            —            |
@@ -592,22 +593,22 @@ Profil : `coordinateur.region@example.com`, compte cible `prefet.multi.territoir
 
 Légende : **modifiable** = fiche ouverte, « Modifier » visible sans bandeau | **visible** / **absent** = présence dans le tableau | **bandeau …** = bandeau de restriction | — non vérifié
 
-| Compte / élément                  |                DITP Admin                |  Coord. Région   |    Coord. Dept    |   Sec. Général    |
-|-----------------------------------|:----------------------------------------:|:----------------:|:-----------------:|:-----------------:|
-| **Accès au listing**              |                    ✓                     |        ✓         |         ✓         |         ✓         |
-| **Colonne Territoire**            |                 visible                  |     masquée      |      masquée      |      masquée      |
-| **Bouton Créer un compte**        |        `/admin/utilisateur/creer`        |     `…/aide`     |         —         |     `…/aide`      |
-| coordinateur.region               |                modifiable                |     visible      |      absent       |         —         |
-| coordinateur.departement          |                    —                     | bandeau coord.   | bandeau coord. (soi-même) |  —        |
-| prefet.region                     |       fiche ouverte (token absent)       |     visible      |      absent       |      absent       |
-| prefet.departement                |                    —                     |    modifiable    |    modifiable     |         —         |
-| services.deconcentres.region      |                    —                     |    modifiable    |      absent       | bandeau chantiers |
-| services.deconcentres.departement |          désactivé puis réactivé         |     visible      |    modifiable     |      visible      |
-| services.deconcentres.hors-ate    |                    —                     |    modifiable    |         —         |         —         |
-| prefet.multi.territoires          |                    —                     | bandeau terr.    |         —         |         —         |
-| equipe.dir.projet                 |       fiche ouverte (token visible)      |      absent      |         —         |         —         |
-| ditp.admin                        |                    —                     |      absent      |         —         |      absent       |
-| **Bouton Générer un token**       | visible (EDP), absent (préfet région)    | absent           |         —         |      absent       |
+| Compte / élément                  |              DITP Admin               | Coord. Région  |        Coord. Dept        |   Sec. Général    |
+| --------------------------------- | :-----------------------------------: | :------------: | :-----------------------: | :---------------: |
+| **Accès au listing**              |                   ✓                   |       ✓        |             ✓             |         ✓         |
+| **Colonne Territoire**            |                visible                |    masquée     |          masquée          |      masquée      |
+| **Bouton Créer un compte**        |      `/admin/utilisateur/creer`       |    `…/aide`    |             —             |     `…/aide`      |
+| coordinateur.region               |              modifiable               |    visible     |          absent           |         —         |
+| coordinateur.departement          |                   —                   | bandeau coord. | bandeau coord. (soi-même) |         —         |
+| prefet.region                     |     fiche ouverte (token absent)      |    visible     |          absent           |      absent       |
+| prefet.departement                |                   —                   |   modifiable   |        modifiable         |         —         |
+| services.deconcentres.region      |                   —                   |   modifiable   |          absent           | bandeau chantiers |
+| services.deconcentres.departement |        désactivé puis réactivé        |    visible     |        modifiable         |      visible      |
+| services.deconcentres.hors-ate    |                   —                   |   modifiable   |             —             |         —         |
+| prefet.multi.territoires          |                   —                   | bandeau terr.  |             —             |         —         |
+| equipe.dir.projet                 |     fiche ouverte (token visible)     |     absent     |             —             |         —         |
+| ditp.admin                        |                   —                   |     absent     |             —             |      absent       |
+| **Bouton Générer un token**       | visible (EDP), absent (préfet région) |     absent     |             —             |      absent       |
 
 Préfet de région, équipe direction de projet et préfet de département n'ont pas accès au listing (test 5).
 
@@ -836,78 +837,78 @@ Les failles d'autorisation connues ne sont pas encore testées : leurs tests ser
 
 Légende : ✓ = profil utilisé dans le test. Les colonnes sont des profils ; le compte exact est donné dans chaque section (par exemple les comptes `pva.*` pour les PVA, `saisie.*` pour la saisie, `modale.profil` pour la modale de profil).
 
-| Test                                        | Sans session | DITP Admin | DITP Pilot. | PM Cabinet | Cab. MTFP | Coord. Rég. | Coord. Dept | Sec. Gén. | Préfet Rég. | Préfet Dept | Éq. Dir. Projet | SD Rég. | SD Dept |
-|---------------------------------------------|:------------:|:----------:|:-----------:|:----------:|:---------:|:-----------:|:-----------:|:---------:|:-----------:|:-----------:|:---------------:|:-------:|:-------:|
-| 1.1 Landing page                            |      ✓       |            |             |            |           |             |             |           |             |             |                 |         |         |
-| 1.1 Connexion par formulaire                |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 1.2 Écran de choix de connexion             |      ✓       |            |             |            |           |             |             |           |             |             |                 |         |         |
-| 2.1 Accès hors périmètre par URL            |              |            |             |            |           |             |      ✓      |           |             |      ✓      |                 |         |         |
-| 2.2 Gardes du panel (pages)                 |              |            |      ✓      |            |           |      ✓      |             |           |             |             |        ✓        |         |         |
-| 2.2 Gardes du panel (tRPC)                  |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
-| 2.3 Appels directs sans session             |      ✓       |            |             |            |           |             |             |           |             |             |                 |         |         |
-| 2.3 Lecture avec session                    |              |            |      ✓      |            |           |             |             |           |             |             |                 |         |         |
-| 2.3 Gestion des comptes (tRPC)              |              |     ✓      |             |            |           |             |      ✓      |           |             |      ✓      |                 |         |         |
-| 2.3 Tokens API (tRPC)                       |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
-| 2.3 Paramétrage des chantiers (tRPC)        |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
-| 3. Accueil                                  |              |            |             |     ✓      |           |             |             |           |             |             |        ✓        |         |         |
-| 4. Chantier - Accès complet                 |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 4. Chantier - Lecture seule                 |              |            |             |     ✓      |           |             |             |           |             |             |                 |         |         |
-| 4. Chantier - Périmètre chantier            |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
-| 4. Chantier - Dept avec hab.                |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
-| 4. Chantier - Rég. avec hab.                |              |            |             |            |           |             |             |           |      ✓      |             |                 |         |         |
-| 4. Chantier - Dept sans hab.                |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
-| 4. Chantier - Rég. sans hab.                |              |            |             |            |           |             |             |           |      ✓      |             |                 |         |         |
-| 5. Cartographie PVA                         |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 6. Saisie - Commentaire national            |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
-| 6. Saisie - Brouillon territorial           |              |            |             |            |           |             |      ✓      |           |             |      ✓      |                 |         |         |
-| 6. Saisie - Météo                           |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
-| 7. Import de données (IHM)                  |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 8. PVA - Création / accusé / acceptation    |              |            |             |            |           |             |      ✓      |           |             |             |        ✓        |         |         |
-| 8. PVA - Refus                              |              |            |             |            |           |             |             |           |             |      ✓      |        ✓        |         |         |
-| 8. PVA - Acceptation avec modification      |              |            |             |            |           |             |      ✓      |           |             |             |        ✓        |         |         |
-| 8. PVA - Modification / suppression         |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
-| 8. PVA - Blocage maille région              |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
-| 9.1 à 9.4 Export CSV (modale, utilisateurs) |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 9.5 Cloisonnement des exports               |              |            |             |            |           |      ✓      |      ✓      |           |             |             |        ✓        |    ✓    |         |
-| 10.1 Open API - Authentification            |      ✓       |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 10.2 à 10.8 Open API - Erreurs, exports, imports |         |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
-| 10.9 Open API - Données indicateur          |              |            |             |     ✓      |           |             |             |           |             |             |        ✓        |         |         |
-| 11.1 Gestion - Vue admin + token            |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 11.2 Gestion - Coord. région                |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
-| 11.3 Gestion - Coord. département           |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
-| 11.4 Gestion - Secrétariat général          |              |            |             |            |           |             |             |     ✓     |             |             |                 |         |         |
-| 11.5 Gestion - Accès refusé                 |              |            |             |            |           |             |             |           |      ✓      |      ✓      |        ✓        |         |         |
-| 11.6 Gestion - Désactiver / réactiver       |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 11.7 Gestion - Filtres                      |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 11.8 Gestion - Multi-territoires            |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
-| 12. Comptes - Validation à la création      |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 12. Comptes - Création et doublon           |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 12. Comptes - Modification et modale        |              |     ✓      |             |            |           |      ✓      |             |           |             |             |                 |         |         |
-| 13. Indicateurs - Listing                   |              |     ✓      |             |            |           |      ✓      |             |           |             |             |        ✓        |         |         |
-| 14. Indicateurs - Formulaire                |              |     ✓      |             |            |           |      ✓      |             |           |             |             |        ✓        |         |         |
-| 15. Paramétrage d'un chantier               |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
-| 16. Tokens API                              |              |     ✓      |             |            |     ✓     |             |             |           |             |             |                 |         |         |
-| 17. Mon profil utilisateur                  |              |     ✓      |             |            |           |      ✓      |             |           |             |             |                 |         |         |
-| 18. Assistant IA - Accès                    |              |     ✓      |             |            |           |             |             |           |             |      ✓      |                 |    ✓    |         |
-| 18. Assistant IA - Appels directs           |              |     ✓      |             |     ✓      |           |             |             |           |             |             |                 |         |         |
+| Test                                             | Sans session | DITP Admin | DITP Pilot. | PM Cabinet | Cab. MTFP | Coord. Rég. | Coord. Dept | Sec. Gén. | Préfet Rég. | Préfet Dept | Éq. Dir. Projet | SD Rég. | SD Dept |
+| ------------------------------------------------ | :----------: | :--------: | :---------: | :--------: | :-------: | :---------: | :---------: | :-------: | :---------: | :---------: | :-------------: | :-----: | :-----: |
+| 1.1 Landing page                                 |      ✓       |            |             |            |           |             |             |           |             |             |                 |         |         |
+| 1.1 Connexion par formulaire                     |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 1.2 Écran de choix de connexion                  |      ✓       |            |             |            |           |             |             |           |             |             |                 |         |         |
+| 2.1 Accès hors périmètre par URL                 |              |            |             |            |           |             |      ✓      |           |             |      ✓      |                 |         |         |
+| 2.2 Gardes du panel (pages)                      |              |            |      ✓      |            |           |      ✓      |             |           |             |             |        ✓        |         |         |
+| 2.2 Gardes du panel (tRPC)                       |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 2.3 Appels directs sans session                  |      ✓       |            |             |            |           |             |             |           |             |             |                 |         |         |
+| 2.3 Lecture avec session                         |              |            |      ✓      |            |           |             |             |           |             |             |                 |         |         |
+| 2.3 Gestion des comptes (tRPC)                   |              |     ✓      |             |            |           |             |      ✓      |           |             |      ✓      |                 |         |         |
+| 2.3 Tokens API (tRPC)                            |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
+| 2.3 Paramétrage des chantiers (tRPC)             |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 3. Accueil                                       |              |            |             |     ✓      |           |             |             |           |             |             |        ✓        |         |         |
+| 4. Chantier - Accès complet                      |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 4. Chantier - Lecture seule                      |              |            |             |     ✓      |           |             |             |           |             |             |                 |         |         |
+| 4. Chantier - Périmètre chantier                 |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
+| 4. Chantier - Dept avec hab.                     |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
+| 4. Chantier - Rég. avec hab.                     |              |            |             |            |           |             |             |           |      ✓      |             |                 |         |         |
+| 4. Chantier - Dept sans hab.                     |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
+| 4. Chantier - Rég. sans hab.                     |              |            |             |            |           |             |             |           |      ✓      |             |                 |         |         |
+| 5. Cartographie PVA                              |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 6. Saisie - Commentaire national                 |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
+| 6. Saisie - Brouillon territorial                |              |            |             |            |           |             |      ✓      |           |             |      ✓      |                 |         |         |
+| 6. Saisie - Météo                                |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
+| 7. Import de données (IHM)                       |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 8. PVA - Création / accusé / acceptation         |              |            |             |            |           |             |      ✓      |           |             |             |        ✓        |         |         |
+| 8. PVA - Refus                                   |              |            |             |            |           |             |             |           |             |      ✓      |        ✓        |         |         |
+| 8. PVA - Acceptation avec modification           |              |            |             |            |           |             |      ✓      |           |             |             |        ✓        |         |         |
+| 8. PVA - Modification / suppression              |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
+| 8. PVA - Blocage maille région                   |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 9.1 à 9.4 Export CSV (modale, utilisateurs)      |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 9.5 Cloisonnement des exports                    |              |            |             |            |           |      ✓      |      ✓      |           |             |             |        ✓        |    ✓    |         |
+| 10.1 Open API - Authentification                 |      ✓       |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 10.2 à 10.8 Open API - Erreurs, exports, imports |              |            |             |            |           |             |             |           |             |             |        ✓        |         |         |
+| 10.9 Open API - Données indicateur               |              |            |             |     ✓      |           |             |             |           |             |             |        ✓        |         |         |
+| 11.1 Gestion - Vue admin + token                 |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 11.2 Gestion - Coord. région                     |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 11.3 Gestion - Coord. département                |              |            |             |            |           |             |      ✓      |           |             |             |                 |         |         |
+| 11.4 Gestion - Secrétariat général               |              |            |             |            |           |             |             |     ✓     |             |             |                 |         |         |
+| 11.5 Gestion - Accès refusé                      |              |            |             |            |           |             |             |           |      ✓      |      ✓      |        ✓        |         |         |
+| 11.6 Gestion - Désactiver / réactiver            |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 11.7 Gestion - Filtres                           |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 11.8 Gestion - Multi-territoires                 |              |            |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 12. Comptes - Validation à la création           |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 12. Comptes - Création et doublon                |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 12. Comptes - Modification et modale             |              |     ✓      |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 13. Indicateurs - Listing                        |              |     ✓      |             |            |           |      ✓      |             |           |             |             |        ✓        |         |         |
+| 14. Indicateurs - Formulaire                     |              |     ✓      |             |            |           |      ✓      |             |           |             |             |        ✓        |         |         |
+| 15. Paramétrage d'un chantier                    |              |     ✓      |             |            |           |             |             |           |             |             |                 |         |         |
+| 16. Tokens API                                   |              |     ✓      |             |            |     ✓     |             |             |           |             |             |                 |         |         |
+| 17. Mon profil utilisateur                       |              |     ✓      |             |            |           |      ✓      |             |           |             |             |                 |         |         |
+| 18. Assistant IA - Accès                         |              |     ✓      |             |            |           |             |             |           |             |      ✓      |                 |    ✓    |         |
+| 18. Assistant IA - Appels directs                |              |     ✓      |             |     ✓      |           |             |             |           |             |             |                 |         |         |
 
 En 11.6, le compte Services déconcentrés départementaux est la cible de la désactivation, pas le profil connecté. En 16, le compte Cabinet MTFP n'est pas connecté : il reçoit le token utilisé pour l'open-api.
 
 **Identifiants des profils :**
 
-| Abréviation              | Email                                                                                              |
-|--------------------------|----------------------------------------------------------------------------------------------------|
-| DITP Admin               | `ditp.admin@example.com` (aussi `E2E_USERNAME`)                                                    |
-| DITP Pilot.              | `ditp.pilotage@example.com`                                                                        |
-| PM Cabinet               | `premiere.ministre@example.com`                                                                    |
-| Cab. MTFP                | `cabinet.mtfp@example.com`                                                                         |
-| Coord. Rég.              | `coordinateur.region@example.com` ; `pva.coordinateur.reg@example.com` (PVA) ; `modale.profil@example.com` (modale de profil) |
-| Coord. Dept              | `coordinateur.departement@example.com` ; `pva.coordinateur.dept@example.com` (PVA, chantier avec hab.) ; `saisie.coordinateur.dept@example.com` (saisie) |
-| Sec. Gén.                | `secretariat.general@example.com`                                                                  |
-| Préfet Rég.              | `prefet.region@example.com` ; `chantier.prefet.reg@example.com` (chantier avec hab.)               |
-| Préfet Dept              | `prefet.departement@example.com` ; `pva.prefet.dept@example.com` (PVA) ; `saisie.prefet.dept@example.com` (saisie) |
-| Préfet Dept multi-terr.  | `prefet.multi.territoires@example.com` (cible, jamais connecté)                                    |
-| Éq. Dir. Projet          | `equipe.dir.projet@example.com` ; `pva.dir.projet@example.com` (PVA)                               |
-| SD Rég.                  | `services.deconcentres.region@example.com`                                                         |
-| SD Dept                  | `services.deconcentres.departement@example.com` (cible, jamais connecté)                           |
-| SD hors ATE              | `services.deconcentres.hors-ate@example.com` (cible, jamais connecté)                              |
+| Abréviation             | Email                                                                                                                                                    |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DITP Admin              | `ditp.admin@example.com` (aussi `E2E_USERNAME`)                                                                                                          |
+| DITP Pilot.             | `ditp.pilotage@example.com`                                                                                                                              |
+| PM Cabinet              | `premiere.ministre@example.com`                                                                                                                          |
+| Cab. MTFP               | `cabinet.mtfp@example.com`                                                                                                                               |
+| Coord. Rég.             | `coordinateur.region@example.com` ; `pva.coordinateur.reg@example.com` (PVA) ; `modale.profil@example.com` (modale de profil)                            |
+| Coord. Dept             | `coordinateur.departement@example.com` ; `pva.coordinateur.dept@example.com` (PVA, chantier avec hab.) ; `saisie.coordinateur.dept@example.com` (saisie) |
+| Sec. Gén.               | `secretariat.general@example.com`                                                                                                                        |
+| Préfet Rég.             | `prefet.region@example.com` ; `chantier.prefet.reg@example.com` (chantier avec hab.)                                                                     |
+| Préfet Dept             | `prefet.departement@example.com` ; `pva.prefet.dept@example.com` (PVA) ; `saisie.prefet.dept@example.com` (saisie)                                       |
+| Préfet Dept multi-terr. | `prefet.multi.territoires@example.com` (cible, jamais connecté)                                                                                          |
+| Éq. Dir. Projet         | `equipe.dir.projet@example.com` ; `pva.dir.projet@example.com` (PVA)                                                                                     |
+| SD Rég.                 | `services.deconcentres.region@example.com`                                                                                                               |
+| SD Dept                 | `services.deconcentres.departement@example.com` (cible, jamais connecté)                                                                                 |
+| SD hors ATE             | `services.deconcentres.hors-ate@example.com` (cible, jamais connecté)                                                                                    |

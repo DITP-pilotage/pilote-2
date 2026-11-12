@@ -29,12 +29,12 @@ prioritaire. Elles sont partiellement couvertes par le juge du niveau 3.
 
 ## Les quatre niveaux
 
-| Niveau | Ce qu'il mesure | Setup | Scoring |
-|---|---|---|---|
-| 1 — Déterministe | `detecterCapacities` : la détection par mots-clés qui conditionne l'exposition de `create_dashboard` et `export_rapport` | Aucun. Ni base, ni réseau | Déterministe, une note par capacity |
-| 2 — Par outil | Chaque outil est-il déclenché par les formulations qui doivent le déclencher — et pas par les autres | Monde de base + tour d'agent | Déterministe sur les tool calls, arguments compris quand ils portent du sens |
-| 3 — Scénarios | Les parcours réellement proposés à l'utilisateur dans l'interface, de bout en bout | Monde de base + fixtures du cas + tour d'agent + juge | Deux scorers : tool calls (déterministe) et rédaction (juge LLM) |
-| 4 — Cas limites | Abréviations, formulations ambiguës, demandes sous-spécifiées, hors-sujet | Monde de base + tour d'agent | Déterministe sur les tool calls |
+| Niveau           | Ce qu'il mesure                                                                                                          | Setup                                                 | Scoring                                                                      |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 1 — Déterministe | `detecterCapacities` : la détection par mots-clés qui conditionne l'exposition de `create_dashboard` et `export_rapport` | Aucun. Ni base, ni réseau                             | Déterministe, une note par capacity                                          |
+| 2 — Par outil    | Chaque outil est-il déclenché par les formulations qui doivent le déclencher — et pas par les autres                     | Monde de base + tour d'agent                          | Déterministe sur les tool calls, arguments compris quand ils portent du sens |
+| 3 — Scénarios    | Les parcours réellement proposés à l'utilisateur dans l'interface, de bout en bout                                       | Monde de base + fixtures du cas + tour d'agent + juge | Deux scorers : tool calls (déterministe) et rédaction (juge LLM)             |
+| 4 — Cas limites  | Abréviations, formulations ambiguës, demandes sous-spécifiées, hors-sujet                                                | Monde de base + tour d'agent                          | Déterministe sur les tool calls                                              |
 
 ### Niveau 1 — Déterministe
 

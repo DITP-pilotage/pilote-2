@@ -1,6 +1,7 @@
 # LLM Dashboard — Plan d'itération 2
 
 > Ce document prépare la seconde itération du POC `compose_dashboard` en se fondant sur :
+>
 > - le PRD révisé `prd/LLM_DASHBOARD.md` (commit `ffb7ea72d`, sections §5bis, §7.2, §7.3, §7.4, §7.6 et §8),
 > - l'implémentation actuelle issue du commit `843404375` (« feat: prototype »),
 > - le diff `dev...proto-llm-dashboard` (≈ 2 480 lignes, 12 fichiers).
@@ -89,20 +90,20 @@ Le Pattern (g) actuel du `systemPrompt.ts` impose 5 étapes : identifier paramè
 
 Colonnes : **widget** · **intention métier** · **paramètres (références uniquement)** · **composant client réutilisé** · **source de données (tRPC)**.
 
-| # | Widget | Intention | Paramètres | Composant `_commons` réutilisé | Query tRPC |
-|---|---|---|---|---|---|
-| 1 | `widget_taux_avancement_territoire` | « Le TA agrégé d'un territoire, en gros » | `territoire_code`, `jalon` | `DashboardJaugeCard` (jauge bleue) | `chantier.recupererTauxAvancementTerritoire` (NOUVEAU) |
-| 2 | `widget_mediane_avancement_territoire` | « La médiane de répartition sur un territoire » | `territoire_code`, `jalon` | `DashboardJaugeCard` (jauge violette) | `chantier.recupererStatistiquesAvancementTousChantiersPublies` (NOUVEAU) |
-| 3 | `widget_nombre_chantiers_en_retard` | « Combien de chantiers sont en retard » | `territoire_code`, `jalon` | `DashboardKpiCard` (grand chiffre) | `chantier.recupererChantiersEnRetard` (NOUVEAU, on lit `.length`) |
-| 4 | `widget_nombre_chantiers_en_difficulte` | « Combien de chantiers sont en difficulté (météo ORAGE/NUAGE) » | `territoire_code`, `jalon` | `DashboardKpiCard` (grand chiffre) | `chantier.recupererChantiersEnDifficulte` (NOUVEAU, on lit `.length`) |
-| 5 | `widget_valeurs_remarquables_avancement` | « Distribution du TA sur les sous-territoires : min / médiane / max » | `territoire_code`, `jalon` | `ValeursRemarquables` | `chantier.recupererStatistiquesAvancementTousChantiersPublies` (NOUVEAU) |
-| 6 | `widget_tableau_indicateurs_chantier` | « Les indicateurs VI/VA/VC/TA d'un chantier sur un territoire » | `chantier_id`, `territoire_code`, `jalon` | `ChantierIndicateursTable` (déjà utilisé dans ChatUI) | `chantier.recupererIndicateursChantier` (NOUVEAU) |
-| 7 | `widget_liste_chantiers_en_retard` | « Liste compacte des chantiers en retard » | `territoire_code`, `jalon` | `DashboardChantiersListe` (nouveau) | `chantier.recupererChantiersEnRetard` (NOUVEAU) |
-| 8 | `widget_liste_chantiers_en_difficulte` | « Liste compacte des chantiers en difficulté » | `territoire_code`, `jalon` | `DashboardChantiersListe` (nouveau) | `chantier.recupererChantiersEnDifficulte` (NOUVEAU) |
-| 9 | `widget_cartographie_taux_avancement` | « Carte de France du TA par territoire pour un ensemble de chantiers » | `maille` (`regionale` \| `departementale`), `territoire_code`, `jalon`, `chantier_ids` | `WidgetCartographieTA` (mode `chantiers`) | déjà câblé dans le composant |
-| 10 | `widget_cartographie_meteo` | « Carte des météos par territoire pour un chantier » | `maille`, `territoire_code`, `chantier_id`, `jalon` | `WidgetCartographieMeteo` | déjà câblé dans le composant |
-| 11 | `widget_cartographie_propositions_valeur_avancement` | « Carte des propositions de valeurs d'avancement (PVA) d'un chantier » | `maille`, `territoire_code`, `chantier_id`, `jalon` | `WidgetCartographiePVA` (mode `chantier`) | endpoint `recupererPVAChantierTerritoires` (existant) |
-| 12 | `widget_titre_section` | Titre + description courte pour structurer le dashboard (aucun chiffre) | `titre`, `description?` | (nouveau, purement présentationnel) | — |
+| #   | Widget                                               | Intention                                                               | Paramètres                                                                             | Composant `_commons` réutilisé                        | Query tRPC                                                               |
+| --- | ---------------------------------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------ |
+| 1   | `widget_taux_avancement_territoire`                  | « Le TA agrégé d'un territoire, en gros »                               | `territoire_code`, `jalon`                                                             | `DashboardJaugeCard` (jauge bleue)                    | `chantier.recupererTauxAvancementTerritoire` (NOUVEAU)                   |
+| 2   | `widget_mediane_avancement_territoire`               | « La médiane de répartition sur un territoire »                         | `territoire_code`, `jalon`                                                             | `DashboardJaugeCard` (jauge violette)                 | `chantier.recupererStatistiquesAvancementTousChantiersPublies` (NOUVEAU) |
+| 3   | `widget_nombre_chantiers_en_retard`                  | « Combien de chantiers sont en retard »                                 | `territoire_code`, `jalon`                                                             | `DashboardKpiCard` (grand chiffre)                    | `chantier.recupererChantiersEnRetard` (NOUVEAU, on lit `.length`)        |
+| 4   | `widget_nombre_chantiers_en_difficulte`              | « Combien de chantiers sont en difficulté (météo ORAGE/NUAGE) »         | `territoire_code`, `jalon`                                                             | `DashboardKpiCard` (grand chiffre)                    | `chantier.recupererChantiersEnDifficulte` (NOUVEAU, on lit `.length`)    |
+| 5   | `widget_valeurs_remarquables_avancement`             | « Distribution du TA sur les sous-territoires : min / médiane / max »   | `territoire_code`, `jalon`                                                             | `ValeursRemarquables`                                 | `chantier.recupererStatistiquesAvancementTousChantiersPublies` (NOUVEAU) |
+| 6   | `widget_tableau_indicateurs_chantier`                | « Les indicateurs VI/VA/VC/TA d'un chantier sur un territoire »         | `chantier_id`, `territoire_code`, `jalon`                                              | `ChantierIndicateursTable` (déjà utilisé dans ChatUI) | `chantier.recupererIndicateursChantier` (NOUVEAU)                        |
+| 7   | `widget_liste_chantiers_en_retard`                   | « Liste compacte des chantiers en retard »                              | `territoire_code`, `jalon`                                                             | `DashboardChantiersListe` (nouveau)                   | `chantier.recupererChantiersEnRetard` (NOUVEAU)                          |
+| 8   | `widget_liste_chantiers_en_difficulte`               | « Liste compacte des chantiers en difficulté »                          | `territoire_code`, `jalon`                                                             | `DashboardChantiersListe` (nouveau)                   | `chantier.recupererChantiersEnDifficulte` (NOUVEAU)                      |
+| 9   | `widget_cartographie_taux_avancement`                | « Carte de France du TA par territoire pour un ensemble de chantiers »  | `maille` (`regionale` \| `departementale`), `territoire_code`, `jalon`, `chantier_ids` | `WidgetCartographieTA` (mode `chantiers`)             | déjà câblé dans le composant                                             |
+| 10  | `widget_cartographie_meteo`                          | « Carte des météos par territoire pour un chantier »                    | `maille`, `territoire_code`, `chantier_id`, `jalon`                                    | `WidgetCartographieMeteo`                             | déjà câblé dans le composant                                             |
+| 11  | `widget_cartographie_propositions_valeur_avancement` | « Carte des propositions de valeurs d'avancement (PVA) d'un chantier »  | `maille`, `territoire_code`, `chantier_id`, `jalon`                                    | `WidgetCartographiePVA` (mode `chantier`)             | endpoint `recupererPVAChantierTerritoires` (existant)                    |
+| 12  | `widget_titre_section`                               | Titre + description courte pour structurer le dashboard (aucun chiffre) | `titre`, `description?`                                                                | (nouveau, purement présentationnel)                   | —                                                                        |
 
 ### 3.1. Widgets supprimés par rapport au prototype
 
@@ -113,20 +114,20 @@ Colonnes : **widget** · **intention métier** · **paramètres (références un
 
 ### 3.2. Tailles (grille 12 colonnes)
 
-| Widget | `default_width` | `allowed_widths` | Justification |
-|---|---|---|---|
-| `widget_taux_avancement_territoire` | 3 | `[3, 4, 6]` | KPI court (jauge) |
-| `widget_mediane_avancement_territoire` | 3 | `[3, 4, 6]` | idem (jauge) |
-| `widget_nombre_chantiers_en_retard` | 3 | `[3, 4, 6]` | KPI court (chiffre) |
-| `widget_nombre_chantiers_en_difficulte` | 3 | `[3, 4, 6]` | KPI court (chiffre) |
-| `widget_valeurs_remarquables_avancement` | 6 | `[4, 6, 8]` | Trio min/médiane/max |
-| `widget_tableau_indicateurs_chantier` | 12 | `[12]` | Beaucoup de colonnes |
-| `widget_liste_chantiers_en_retard` | 6 | `[6, 12]` | Liste verticale |
-| `widget_liste_chantiers_en_difficulte` | 6 | `[6, 12]` | idem |
-| `widget_cartographie_taux_avancement` | 6 | `[6, 8, 12]` | SVG, par défaut en demi-largeur pour permettre la juxtaposition |
-| `widget_cartographie_meteo` | 6 | `[6, 8, 12]` | idem |
-| `widget_cartographie_propositions_valeur_avancement` | 6 | `[6, 8, 12]` | idem |
-| `widget_titre_section` | 12 | `[6, 12]` | Séparateur sémantique |
+| Widget                                               | `default_width` | `allowed_widths` | Justification                                                   |
+| ---------------------------------------------------- | --------------- | ---------------- | --------------------------------------------------------------- |
+| `widget_taux_avancement_territoire`                  | 3               | `[3, 4, 6]`      | KPI court (jauge)                                               |
+| `widget_mediane_avancement_territoire`               | 3               | `[3, 4, 6]`      | idem (jauge)                                                    |
+| `widget_nombre_chantiers_en_retard`                  | 3               | `[3, 4, 6]`      | KPI court (chiffre)                                             |
+| `widget_nombre_chantiers_en_difficulte`              | 3               | `[3, 4, 6]`      | KPI court (chiffre)                                             |
+| `widget_valeurs_remarquables_avancement`             | 6               | `[4, 6, 8]`      | Trio min/médiane/max                                            |
+| `widget_tableau_indicateurs_chantier`                | 12              | `[12]`           | Beaucoup de colonnes                                            |
+| `widget_liste_chantiers_en_retard`                   | 6               | `[6, 12]`        | Liste verticale                                                 |
+| `widget_liste_chantiers_en_difficulte`               | 6               | `[6, 12]`        | idem                                                            |
+| `widget_cartographie_taux_avancement`                | 6               | `[6, 8, 12]`     | SVG, par défaut en demi-largeur pour permettre la juxtaposition |
+| `widget_cartographie_meteo`                          | 6               | `[6, 8, 12]`     | idem                                                            |
+| `widget_cartographie_propositions_valeur_avancement` | 6               | `[6, 8, 12]`     | idem                                                            |
+| `widget_titre_section`                               | 12              | `[6, 12]`        | Séparateur sémantique                                           |
 
 > Note : la version initiale planifiait `default_width=12` pour les cartographies. Le tweak vers `default_width=6` (commit `65d609efb`) permet au LLM de poser deux cartes côte à côte (TA + météo, ou TA + PVA) sans avoir à spécifier la largeur explicitement, ce qui est devenu le pattern courant.
 
@@ -188,132 +189,175 @@ src/server/albert/tools/composeDashboard/
 #### 4.2.1. Références partagées
 
 ```ts
-const jalonSchema = z.number().int().min(2022).max(new Date().getFullYear())
+const jalonSchema = z
+  .number()
+  .int()
+  .min(2022)
+  .max(new Date().getFullYear())
   .describe("Année du jalon (ex: 2024, 2025)");
 
-const territoireCodeSchema = z.string()
+const territoireCodeSchema = z
+  .string()
   .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)");
 
-const chantierIdSchema = z.string()
+const chantierIdSchema = z
+  .string()
   .describe("Identifiant du chantier (ex: CH-001)");
 
-const mailleSchema = z.enum(["regionale", "departementale"])
-  .describe("Maille cartographique — enum de périmètre (zoom), pas de nature sémantique.");
+const mailleSchema = z
+  .enum(["regionale", "departementale"])
+  .describe(
+    "Maille cartographique — enum de périmètre (zoom), pas de nature sémantique.",
+  );
 ```
 
 #### 4.2.2. Widgets KPI atomiques
 
 ```ts
-const widgetTauxAvancementTerritoire = z.object({
-  type: z.literal("widget_taux_avancement_territoire"),
-  territoire_code: territoireCodeSchema,
-  jalon: jalonSchema,
-  width: z.union([z.literal(3), z.literal(4), z.literal(6)]).optional()
-    .describe("default_width=3, allowed_widths=[3,4,6]"),
-}).strict();
+const widgetTauxAvancementTerritoire = z
+  .object({
+    type: z.literal("widget_taux_avancement_territoire"),
+    territoire_code: territoireCodeSchema,
+    jalon: jalonSchema,
+    width: z
+      .union([z.literal(3), z.literal(4), z.literal(6)])
+      .optional()
+      .describe("default_width=3, allowed_widths=[3,4,6]"),
+  })
+  .strict();
 
-const widgetMedianeAvancementTerritoire = z.object({
-  type: z.literal("widget_mediane_avancement_territoire"),
-  territoire_code: territoireCodeSchema,
-  jalon: jalonSchema,
-  width: z.union([z.literal(3), z.literal(4), z.literal(6)]).optional(),
-}).strict();
+const widgetMedianeAvancementTerritoire = z
+  .object({
+    type: z.literal("widget_mediane_avancement_territoire"),
+    territoire_code: territoireCodeSchema,
+    jalon: jalonSchema,
+    width: z.union([z.literal(3), z.literal(4), z.literal(6)]).optional(),
+  })
+  .strict();
 
-const widgetNombreChantiersEnRetard = z.object({
-  type: z.literal("widget_nombre_chantiers_en_retard"),
-  territoire_code: territoireCodeSchema,
-  jalon: jalonSchema,
-  width: z.union([z.literal(3), z.literal(4), z.literal(6)]).optional(),
-}).strict();
+const widgetNombreChantiersEnRetard = z
+  .object({
+    type: z.literal("widget_nombre_chantiers_en_retard"),
+    territoire_code: territoireCodeSchema,
+    jalon: jalonSchema,
+    width: z.union([z.literal(3), z.literal(4), z.literal(6)]).optional(),
+  })
+  .strict();
 
-const widgetNombreChantiersEnDifficulte = z.object({
-  type: z.literal("widget_nombre_chantiers_en_difficulte"),
-  territoire_code: territoireCodeSchema,
-  jalon: jalonSchema,
-  width: z.union([z.literal(3), z.literal(4), z.literal(6)]).optional(),
-}).strict();
+const widgetNombreChantiersEnDifficulte = z
+  .object({
+    type: z.literal("widget_nombre_chantiers_en_difficulte"),
+    territoire_code: territoireCodeSchema,
+    jalon: jalonSchema,
+    width: z.union([z.literal(3), z.literal(4), z.literal(6)]).optional(),
+  })
+  .strict();
 ```
 
 #### 4.2.3. Widget distribution
 
 ```ts
-const widgetValeursRemarquablesAvancement = z.object({
-  type: z.literal("widget_valeurs_remarquables_avancement"),
-  territoire_code: territoireCodeSchema,
-  jalon: jalonSchema,
-  width: z.union([z.literal(4), z.literal(6), z.literal(8)]).optional(),
-}).strict();
+const widgetValeursRemarquablesAvancement = z
+  .object({
+    type: z.literal("widget_valeurs_remarquables_avancement"),
+    territoire_code: territoireCodeSchema,
+    jalon: jalonSchema,
+    width: z.union([z.literal(4), z.literal(6), z.literal(8)]).optional(),
+  })
+  .strict();
 ```
 
 #### 4.2.4. Widgets listes et tableau
 
 ```ts
-const widgetTableauIndicateursChantier = z.object({
-  type: z.literal("widget_tableau_indicateurs_chantier"),
-  chantier_id: chantierIdSchema,
-  territoire_code: territoireCodeSchema,
-  jalon: jalonSchema,
-  width: z.literal(12).optional(),
-}).strict();
+const widgetTableauIndicateursChantier = z
+  .object({
+    type: z.literal("widget_tableau_indicateurs_chantier"),
+    chantier_id: chantierIdSchema,
+    territoire_code: territoireCodeSchema,
+    jalon: jalonSchema,
+    width: z.literal(12).optional(),
+  })
+  .strict();
 
-const widgetListeChantiersEnRetard = z.object({
-  type: z.literal("widget_liste_chantiers_en_retard"),
-  territoire_code: territoireCodeSchema,
-  jalon: jalonSchema,
-  width: z.union([z.literal(6), z.literal(12)]).optional(),
-}).strict();
+const widgetListeChantiersEnRetard = z
+  .object({
+    type: z.literal("widget_liste_chantiers_en_retard"),
+    territoire_code: territoireCodeSchema,
+    jalon: jalonSchema,
+    width: z.union([z.literal(6), z.literal(12)]).optional(),
+  })
+  .strict();
 
-const widgetListeChantiersEnDifficulte = z.object({
-  type: z.literal("widget_liste_chantiers_en_difficulte"),
-  territoire_code: territoireCodeSchema,
-  jalon: jalonSchema,
-  width: z.union([z.literal(6), z.literal(12)]).optional(),
-}).strict();
+const widgetListeChantiersEnDifficulte = z
+  .object({
+    type: z.literal("widget_liste_chantiers_en_difficulte"),
+    territoire_code: territoireCodeSchema,
+    jalon: jalonSchema,
+    width: z.union([z.literal(6), z.literal(12)]).optional(),
+  })
+  .strict();
 ```
 
 #### 4.2.5. Widgets cartographie
 
 ```ts
-const widgetCartographieTauxAvancement = z.object({
-  type: z.literal("widget_cartographie_taux_avancement"),
-  maille: mailleSchema,
-  territoire_code: territoireCodeSchema,
-  jalon: jalonSchema,
-  chantier_ids: z.array(chantierIdSchema).min(1)
-    .describe("Sous-ensemble de chantiers à agréger sur la carte."),
-  width: z.union([z.literal(6), z.literal(8), z.literal(12)]).optional(),
-}).strict();
+const widgetCartographieTauxAvancement = z
+  .object({
+    type: z.literal("widget_cartographie_taux_avancement"),
+    maille: mailleSchema,
+    territoire_code: territoireCodeSchema,
+    jalon: jalonSchema,
+    chantier_ids: z
+      .array(chantierIdSchema)
+      .min(1)
+      .describe("Sous-ensemble de chantiers à agréger sur la carte."),
+    width: z.union([z.literal(6), z.literal(8), z.literal(12)]).optional(),
+  })
+  .strict();
 
-const widgetCartographieMeteo = z.object({
-  type: z.literal("widget_cartographie_meteo"),
-  maille: mailleSchema,
-  territoire_code: territoireCodeSchema,
-  chantier_id: chantierIdSchema,
-  jalon: jalonSchema,
-  width: z.union([z.literal(6), z.literal(8), z.literal(12)]).optional(),
-}).strict();
+const widgetCartographieMeteo = z
+  .object({
+    type: z.literal("widget_cartographie_meteo"),
+    maille: mailleSchema,
+    territoire_code: territoireCodeSchema,
+    chantier_id: chantierIdSchema,
+    jalon: jalonSchema,
+    width: z.union([z.literal(6), z.literal(8), z.literal(12)]).optional(),
+  })
+  .strict();
 
-const widgetCartographiePropositionsValeurAvancement = z.object({
-  type: z.literal("widget_cartographie_propositions_valeur_avancement"),
-  maille: mailleSchema,
-  territoire_code: territoireCodeSchema,
-  chantier_id: chantierIdSchema,
-  jalon: jalonSchema,
-  width: z.union([z.literal(6), z.literal(8), z.literal(12)]).optional(),
-}).strict();
+const widgetCartographiePropositionsValeurAvancement = z
+  .object({
+    type: z.literal("widget_cartographie_propositions_valeur_avancement"),
+    maille: mailleSchema,
+    territoire_code: territoireCodeSchema,
+    chantier_id: chantierIdSchema,
+    jalon: jalonSchema,
+    width: z.union([z.literal(6), z.literal(8), z.literal(12)]).optional(),
+  })
+  .strict();
 ```
 
 #### 4.2.6. Widget titre
 
 ```ts
-const widgetTitreSection = z.object({
-  type: z.literal("widget_titre_section"),
-  titre: z.string().min(1).max(120)
-    .describe("Titre de section — AUCUN chiffre (ni %, ni points)."),
-  description: z.string().max(500).optional()
-    .describe("Description facultative — AUCUN chiffre."),
-  width: z.union([z.literal(6), z.literal(12)]).optional(),
-}).strict();
+const widgetTitreSection = z
+  .object({
+    type: z.literal("widget_titre_section"),
+    titre: z
+      .string()
+      .min(1)
+      .max(120)
+      .describe("Titre de section — AUCUN chiffre (ni %, ni points)."),
+    description: z
+      .string()
+      .max(500)
+      .optional()
+      .describe("Description facultative — AUCUN chiffre."),
+    width: z.union([z.literal(6), z.literal(12)]).optional(),
+  })
+  .strict();
 ```
 
 #### 4.2.7. Union et racine
@@ -334,14 +378,18 @@ const widgetInputSchema = z.discriminatedUnion("type", [
   widgetTitreSection,
 ]);
 
-const containerInputSchema = z.object({
-  widgets: z.array(widgetInputSchema).min(1).max(12),
-}).strict();
+const containerInputSchema = z
+  .object({
+    widgets: z.array(widgetInputSchema).min(1).max(12),
+  })
+  .strict();
 
-export const composeDashboardInputSchema = z.object({
-  titre: z.string().min(1).max(120),
-  containers: z.array(containerInputSchema).min(1).max(30),
-}).strict();
+export const composeDashboardInputSchema = z
+  .object({
+    titre: z.string().min(1).max(120),
+    containers: z.array(containerInputSchema).min(1).max(30),
+  })
+  .strict();
 ```
 
 **Ce qui disparaît par rapport au prototype** :
@@ -435,11 +483,11 @@ Cinq queries sont déjà utilisables, quatre sont à créer.
 
 ### 5.1. Déjà disponibles (rien à faire)
 
-| Endpoint | Signature | Utilisé par |
-|---|---|---|
-| `api.chantier.recupererStatistiquesAvancement` | `{ chantierIds, maille, jalon } → { médiane, minimum, maximum, … }` | `widget_mediane_avancement_territoire`, `widget_valeurs_remarquables_avancement`, `widget_cartographie_taux_avancement` |
-| `api.chantier.recupererTauxAvancementTerritoires` | `{ chantierIds, jalon } → TauxAvancementComparaisonTerritoireViewModel[]` | `widget_valeurs_remarquables_avancement`, `widget_cartographie_taux_avancement` |
-| `api.chantier.recupererMeteosTerritoires` | `{ chantierId, jalon } → …` | `widget_cartographie_meteo` |
+| Endpoint                                          | Signature                                                                 | Utilisé par                                                                                                             |
+| ------------------------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `api.chantier.recupererStatistiquesAvancement`    | `{ chantierIds, maille, jalon } → { médiane, minimum, maximum, … }`       | `widget_mediane_avancement_territoire`, `widget_valeurs_remarquables_avancement`, `widget_cartographie_taux_avancement` |
+| `api.chantier.recupererTauxAvancementTerritoires` | `{ chantierIds, jalon } → TauxAvancementComparaisonTerritoireViewModel[]` | `widget_valeurs_remarquables_avancement`, `widget_cartographie_taux_avancement`                                         |
+| `api.chantier.recupererMeteosTerritoires`         | `{ chantierId, jalon } → …`                                               | `widget_cartographie_meteo`                                                                                             |
 
 ### 5.2. À créer — route `src/server/infrastructure/api/trpc/routes/chantier.ts`
 
@@ -623,8 +671,16 @@ Cas facile — on ne fait que passer les props :
 import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 
 export const DashboardWidgetCartographieTauxAvancement = ({
-  maille, territoireCode, jalon, chantierIds,
-}: { maille: "regionale" | "departementale"; territoireCode: string; jalon: number; chantierIds: string[] }) => (
+  maille,
+  territoireCode,
+  jalon,
+  chantierIds,
+}: {
+  maille: "regionale" | "departementale";
+  territoireCode: string;
+  jalon: number;
+  chantierIds: string[];
+}) => (
   <WidgetCartographieTA
     mode="chantiers"
     chantierIds={chantierIds}
@@ -653,17 +709,22 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { DashboardChantiersListe } from "./DashboardChantiersListe";
 
 export const DashboardWidgetListeChantiersEnRetard = ({
-  territoireCode, jalon,
-}: { territoireCode: string; jalon: number }) => {
+  territoireCode,
+  jalon,
+}: {
+  territoireCode: string;
+  jalon: number;
+}) => {
   const [data] = api.chantier.recupererChantiersEnRetard.useSuspenseQuery({
-    territoireCode, jalon,
+    territoireCode,
+    jalon,
   });
 
   return (
     <DashboardChantiersListe
       titre="Chantiers en retard"
       territoireCode={territoireCode}
-      lignes={data.chantiers_en_retard.map(c => ({
+      lignes={data.chantiers_en_retard.map((c) => ({
         id: c.chantier.id,
         nom: c.chantier.nom,
         ecart: c.ecart,
@@ -682,63 +743,103 @@ C'est la seule pièce qui connaît l'union complète. On évite un gros `switch`
 // DashboardWidgetRegistry.tsx
 import type { WidgetDefinition } from "@/server/albert/tools/composeDashboard";
 
-export const DashboardWidgetRegistry = ({ widget }: { widget: WidgetDefinition }) => {
+export const DashboardWidgetRegistry = ({
+  widget,
+}: {
+  widget: WidgetDefinition;
+}) => {
   switch (widget.type) {
     case "widget_taux_avancement_territoire":
-      return <DashboardWidgetTauxAvancementTerritoire
-        territoireCode={widget.territoire_code}
-        jalon={widget.jalon} />;
+      return (
+        <DashboardWidgetTauxAvancementTerritoire
+          territoireCode={widget.territoire_code}
+          jalon={widget.jalon}
+        />
+      );
     case "widget_mediane_avancement_territoire":
-      return <DashboardWidgetMedianeAvancementTerritoire
-        territoireCode={widget.territoire_code}
-        jalon={widget.jalon} />;
+      return (
+        <DashboardWidgetMedianeAvancementTerritoire
+          territoireCode={widget.territoire_code}
+          jalon={widget.jalon}
+        />
+      );
     case "widget_nombre_chantiers_en_retard":
-      return <DashboardWidgetNombreChantiersEnRetard
-        territoireCode={widget.territoire_code}
-        jalon={widget.jalon} />;
+      return (
+        <DashboardWidgetNombreChantiersEnRetard
+          territoireCode={widget.territoire_code}
+          jalon={widget.jalon}
+        />
+      );
     case "widget_nombre_chantiers_en_difficulte":
-      return <DashboardWidgetNombreChantiersEnDifficulte
-        territoireCode={widget.territoire_code}
-        jalon={widget.jalon} />;
+      return (
+        <DashboardWidgetNombreChantiersEnDifficulte
+          territoireCode={widget.territoire_code}
+          jalon={widget.jalon}
+        />
+      );
     case "widget_valeurs_remarquables_avancement":
-      return <DashboardWidgetValeursRemarquablesAvancement
-        territoireCode={widget.territoire_code}
-        jalon={widget.jalon} />;
+      return (
+        <DashboardWidgetValeursRemarquablesAvancement
+          territoireCode={widget.territoire_code}
+          jalon={widget.jalon}
+        />
+      );
     case "widget_tableau_indicateurs_chantier":
-      return <DashboardWidgetTableauIndicateursChantier
-        chantierId={widget.chantier_id}
-        territoireCode={widget.territoire_code}
-        jalon={widget.jalon} />;
+      return (
+        <DashboardWidgetTableauIndicateursChantier
+          chantierId={widget.chantier_id}
+          territoireCode={widget.territoire_code}
+          jalon={widget.jalon}
+        />
+      );
     case "widget_liste_chantiers_en_retard":
-      return <DashboardWidgetListeChantiersEnRetard
-        territoireCode={widget.territoire_code}
-        jalon={widget.jalon} />;
+      return (
+        <DashboardWidgetListeChantiersEnRetard
+          territoireCode={widget.territoire_code}
+          jalon={widget.jalon}
+        />
+      );
     case "widget_liste_chantiers_en_difficulte":
-      return <DashboardWidgetListeChantiersEnDifficulte
-        territoireCode={widget.territoire_code}
-        jalon={widget.jalon} />;
+      return (
+        <DashboardWidgetListeChantiersEnDifficulte
+          territoireCode={widget.territoire_code}
+          jalon={widget.jalon}
+        />
+      );
     case "widget_cartographie_taux_avancement":
-      return <DashboardWidgetCartographieTauxAvancement
-        maille={widget.maille}
-        territoireCode={widget.territoire_code}
-        jalon={widget.jalon}
-        chantierIds={widget.chantier_ids} />;
+      return (
+        <DashboardWidgetCartographieTauxAvancement
+          maille={widget.maille}
+          territoireCode={widget.territoire_code}
+          jalon={widget.jalon}
+          chantierIds={widget.chantier_ids}
+        />
+      );
     case "widget_cartographie_meteo":
-      return <DashboardWidgetCartographieMeteo
-        maille={widget.maille}
-        territoireCode={widget.territoire_code}
-        chantierId={widget.chantier_id}
-        jalon={widget.jalon} />;
+      return (
+        <DashboardWidgetCartographieMeteo
+          maille={widget.maille}
+          territoireCode={widget.territoire_code}
+          chantierId={widget.chantier_id}
+          jalon={widget.jalon}
+        />
+      );
     case "widget_cartographie_propositions_valeur_avancement":
-      return <DashboardWidgetCartographiePropositionsValeurAvancement
-        maille={widget.maille}
-        territoireCode={widget.territoire_code}
-        chantierId={widget.chantier_id}
-        jalon={widget.jalon} />;
+      return (
+        <DashboardWidgetCartographiePropositionsValeurAvancement
+          maille={widget.maille}
+          territoireCode={widget.territoire_code}
+          chantierId={widget.chantier_id}
+          jalon={widget.jalon}
+        />
+      );
     case "widget_titre_section":
-      return <DashboardWidgetTitreSection
-        titre={widget.titre}
-        description={widget.description} />;
+      return (
+        <DashboardWidgetTitreSection
+          titre={widget.titre}
+          description={widget.description}
+        />
+      );
   }
 };
 ```
@@ -748,6 +849,7 @@ Le `switch` est exhaustif sur la discriminated union : TypeScript rejettera tout
 ### 6.6. `DashboardRender.tsx` — refonte
 
 Le fichier actuel (412 lignes) fait trois choses :
+
 1. Mise en page grille 12 colonnes (à garder).
 2. Dispatch sur `ResolvedWidget.kind` avec lecture de `.data` (**à supprimer**).
 3. `DashboardSkeleton` pour le streaming (**à simplifier**).
@@ -782,9 +884,15 @@ const resolveWidgetWidth = (widget: WidgetDefinition): number => {
   return DEFAULT_WIDTHS[widget.type] ?? 12;
 };
 
-export const DashboardRender = ({ output }: { output: ComposeDashboardOutput }) => (
+export const DashboardRender = ({
+  output,
+}: {
+  output: ComposeDashboardOutput;
+}) => (
   <div className="my-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-    <h3 className="text-base font-semibold text-gray-900 mb-3">{output.titre}</h3>
+    <h3 className="text-base font-semibold text-gray-900 mb-3">
+      {output.titre}
+    </h3>
     <Suspense fallback={<DashboardLoader />}>
       <div className="space-y-3">
         {output.containers.map((container, containerIndex) => (
@@ -874,7 +982,7 @@ On garde ainsi les anciens endpoints intacts et on expose des endpoints « haute
 Trois raisons cumulées :
 
 1. **DRY** — la version planifiée demandait de dupliquer le tableau du catalogue, les heuristiques de mise en page et les règles JSON dans deux endroits visibles par le LLM (le system prompt **et** la description du tool). À chaque évolution du catalogue il aurait fallu maintenir les deux en parallèle, avec un risque permanent de désynchronisation.
-2. **Localité** — le SDK AI propage le `description` d'un tool au modèle au moment où il décide d'appeler ce tool. Mettre les règles d'usage *dans le tool lui-même* est l'endroit le plus pertinent pour qu'elles soient lues et appliquées au bon moment, plutôt que perdues parmi les autres patterns du system prompt.
+2. **Localité** — le SDK AI propage le `description` d'un tool au modèle au moment où il décide d'appeler ce tool. Mettre les règles d'usage _dans le tool lui-même_ est l'endroit le plus pertinent pour qu'elles soient lues et appliquées au bon moment, plutôt que perdues parmi les autres patterns du system prompt.
 3. **Allègement** — le system prompt est envoyé à chaque tour de la conversation. Sortir 60 lignes de spécifications dashboard de la version envoyée à chaque tour réduit la pression sur le contexte (et la facture tokens), pour un savoir qui n'est pertinent que quand l'utilisateur évoque un dashboard.
 
 ### 7.2. Où vit le savoir dashboard maintenant
@@ -1154,13 +1262,22 @@ Un ordre qui permet de valider chaque étape indépendamment sans casser la bran
 ```json
 {
   "titre": "Cockpit Bretagne",
-  "containers": [{
-    "widgets": [{
-      "kind": "kpi_card",
-      "definition": { "type": "kpi_card", "metric": "ta_global", "territoire_code": "REG-53", "jalon": 2025 },
-      "data": { "label": "Taux d'avancement", "value": "67%" }
-    }]
-  }],
+  "containers": [
+    {
+      "widgets": [
+        {
+          "kind": "kpi_card",
+          "definition": {
+            "type": "kpi_card",
+            "metric": "ta_global",
+            "territoire_code": "REG-53",
+            "jalon": 2025
+          },
+          "data": { "label": "Taux d'avancement", "value": "67%" }
+        }
+      ]
+    }
+  ],
   "_output_instructions": "..."
 }
 ```
@@ -1170,13 +1287,17 @@ Un ordre qui permet de valider chaque étape indépendamment sans casser la bran
 ```json
 {
   "titre": "Cockpit Bretagne",
-  "containers": [{
-    "widgets": [{
-      "type": "widget_taux_avancement_territoire",
-      "territoire_code": "REG-53",
-      "jalon": 2025
-    }]
-  }],
+  "containers": [
+    {
+      "widgets": [
+        {
+          "type": "widget_taux_avancement_territoire",
+          "territoire_code": "REG-53",
+          "jalon": 2025
+        }
+      ]
+    }
+  ],
   "_output_instructions": "..."
 }
 ```

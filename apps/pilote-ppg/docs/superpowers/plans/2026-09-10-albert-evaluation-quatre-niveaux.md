@@ -47,6 +47,7 @@ Les tâches 1 à 3 écrivent du code non-LLM et suivent le cycle habituel : test
 ### Tâche 1 : Arborescence, juge, et nettoyage du POC
 
 **Fichiers :**
+
 - Créer : `evals/1-keywords/.gitkeep`, `evals/2-tools/.gitkeep`, `evals/3-scenarios/.gitkeep`, `evals/4-edge-cases/.gitkeep`
 - Renommer : `evals/jugeAlbert.ts` → `evals/judge.ts`
 - Déplacer : `evals/calibrationJuge.eval.ts` → `evals/3-scenarios/judgeCalibration.eval.ts`
@@ -54,6 +55,7 @@ Les tâches 1 à 3 écrivent du code non-LLM et suivent le cycle habituel : test
 - Modifier : `package.json`
 
 **Interfaces :**
+
 - Consomme : rien.
 - Produit : `evals/judge.ts` exportant `JUDGE_MODEL: string` et `createJudgeScorer<TInput extends { question: string }>({ name, criterion })`, dont la sortie attendue est `{ text: string }`.
 
@@ -97,7 +99,9 @@ export function createJudgeScorer<TInput extends { question: string }>({
       // Le tableau du terminal n'affiche que le score, pas les metadata. Sans
       // ce log, impossible de calibrer le juge en ligne de commande.
       // eslint-disable-next-line no-console
-      console.error(`    [juge:${name}] ${verdict.note} — ${verdict.justification}`);
+      console.error(
+        `    [juge:${name}] ${verdict.note} — ${verdict.justification}`,
+      );
 
       return { score: verdict.note, metadata: verdict.justification };
     },
@@ -150,10 +154,12 @@ git commit -m "refactor(ppg): arborescence des evals en quatre niveaux"
 Le monde de base perd `withEvalWorld` (enveloppe) et gagne ce qui manquait : `est_applicable`, et une région peuplable.
 
 **Fichiers :**
+
 - Modifier : `evals/world.ts`
 - Créer : `evals/seeds.ts`
 
 **Interfaces :**
+
 - Consomme : `fixtures` de `@/server/infrastructure/test/fixtures`, `getPrisma` de `@/server/db/PrismaTransaction`.
 - Produit, depuis `evals/world.ts` :
   - `type EvalWorld = { userId: string; habilitations: Habilitations; chantiers: { id: string; nom: string }[] }`
@@ -198,14 +204,14 @@ export const EVAL_TIMEOUT_MS = 400_000;
 Dans `seedChantierDetaille` de `evals/world.ts`, ajouter `est_applicable: true` à l'appel `fixtures.chantierTerritoire` :
 
 ```ts
-  await fixtures.chantierTerritoire({
-    id: chantierId,
-    territoire_code: NATIONAL_TERRITORY,
-    code_insee: "FR",
-    maille: "NAT",
-    zone_id: "FRANCE",
-    est_applicable: true,
-  });
+await fixtures.chantierTerritoire({
+  id: chantierId,
+  territoire_code: NATIONAL_TERRITORY,
+  code_insee: "FR",
+  maille: "NAT",
+  zone_id: "FRANCE",
+  est_applicable: true,
+});
 ```
 
 Sans ce champ, `GetChantiersQuery.buildWhere` écarte la ligne — `est_applicable` est `Boolean?` sans défaut, donc `NULL`, et le filtre est `est_applicable: true`.
@@ -340,10 +346,12 @@ git commit -m "feat(ppg): monde d'eval corrige et fixtures reutilisables"
 Deux briques pures, appelées depuis les `task` et les `scorers`. Aucune ne prend de callback ni n'enveloppe quoi que ce soit.
 
 **Fichiers :**
+
 - Créer : `evals/types.ts`, `evals/scoreExpectedTools.ts`, `evals/scoreExpectedTools.unit.test.ts`
 - Modifier : `vitest.projects/vitest.config.server-unit.ts`
 
 **Interfaces :**
+
 - Produit, depuis `evals/types.ts` :
   - `type ObservedToolCall = { toolName: string; input?: unknown }`
   - `type AgentTurn = { toolCalls: ObservedToolCall[]; text: string; stepCount: number }`
@@ -567,10 +575,12 @@ git commit -m "feat(ppg): scorer de selection d'outils en sous-ensemble"
 Aucun appel réseau, aucune base : la suite tourne en quelques millisecondes.
 
 **Fichiers :**
+
 - Créer : `evals/1-keywords/capacities.eval.ts`
 - Supprimer : `evals/1-keywords/.gitkeep`
 
 **Interfaces :**
+
 - Consomme : `detecterCapacities`, `type Capacities` de `@/server/albert/detecteurIntention`.
 
 - [ ] **Étape 1 : Écrire la suite**
@@ -744,9 +754,11 @@ git commit -m "feat(ppg): niveau 1 des evals, detection par mots-cles"
 `get_chantiers` en premier : c'est le fichier que les onze suivants recopient. Sa `task` est le patron.
 
 **Fichiers :**
+
 - Créer : `evals/2-tools/getChantiers.eval.ts`
 
 **Interfaces :**
+
 - Consomme : `seedEvalWorld`, `BRETAGNE`, `EVAL_TIMEOUT_MS` de `evals/world.ts` ; `seedChantierEnRetard`, `seedChantierEnDifficulte` de `evals/seeds.ts` ; `scoreExpectedTools` de `evals/scoreExpectedTools.ts` ; `type AgentTurn`, `type ObservedToolCall` de `evals/types.ts` ; `AssistantIA`, `createIntegrationTest`.
 - Produit : la forme de `task` que les tâches 6 à 8 et 11 à 12 recopient à l'identique.
 
@@ -916,9 +928,11 @@ git commit -m "feat(ppg): niveau 2, get_chantiers"
 Cinq suites qui recopient la `task` de la tâche 5 à l'identique, en changeant les fixtures du cas et les `CASES`.
 
 **Fichiers :**
+
 - Créer : `evals/2-tools/getTauxAvancementTerritoire.eval.ts`, `evals/2-tools/getChantiersSignales.eval.ts`, `evals/2-tools/getIndicateurs.eval.ts`, `evals/2-tools/getChantierCommentaires.eval.ts`, `evals/2-tools/getChantierObjectifs.eval.ts`
 
 **Interfaces :**
+
 - Consomme : identique à la tâche 5.
 
 `CH-001`, `CH-004` et `CH-007` sont les chantiers que `seedEvalWorld` dote d'un indicateur, d'un commentaire et d'un objectif : les trois suites de détail n'ont pas besoin de fixtures supplémentaires et leur `task` omet donc les appels `seedChantierEnRetard` / `seedChantierEnDifficulte`.
@@ -948,7 +962,10 @@ const CASES: Case[] = [
     question: "Donne-moi les commentaires du chantier CH-004",
     reason: "CAS NÉGATIF : détail d'un chantier, pas de taux territorial",
     expected: [
-      { toolName: "get_chantier_commentaires", input: { chantier_id: "CH-004" } },
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-004" },
+      },
     ],
   },
 ];
@@ -996,14 +1013,19 @@ Même `task`, sans fixtures de cas. `CASES` :
 ```ts
 const CASES: Case[] = [
   {
-    question: "Donne-moi les indicateurs du chantier CH-004 pour la France entière",
+    question:
+      "Donne-moi les indicateurs du chantier CH-004 pour la France entière",
     reason: "identifiant et territoire explicites",
-    expected: [{ toolName: "get_indicateurs", input: { chantier_id: "CH-004" } }],
+    expected: [
+      { toolName: "get_indicateurs", input: { chantier_id: "CH-004" } },
+    ],
   },
   {
     question: "Quelles sont les valeurs des indicateurs de CH-007 ?",
     reason: "identifiant sans le mot « chantier », toujours résoluble",
-    expected: [{ toolName: "get_indicateurs", input: { chantier_id: "CH-007" } }],
+    expected: [
+      { toolName: "get_indicateurs", input: { chantier_id: "CH-007" } },
+    ],
   },
   {
     question: "Donne-moi les objectifs du chantier CH-004",
@@ -1025,20 +1047,29 @@ const CASES: Case[] = [
     question: "Quels sont les commentaires les plus récents sur le CH-004 ?",
     reason: "accès aux commentaires par identifiant",
     expected: [
-      { toolName: "get_chantier_commentaires", input: { chantier_id: "CH-004" } },
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-004" },
+      },
     ],
   },
   {
-    question: "Quelles difficultés sont remontées dans les commentaires du CH-001 ?",
+    question:
+      "Quelles difficultés sont remontées dans les commentaires du CH-001 ?",
     reason: "formulation métier : « difficultés remontées » = commentaires",
     expected: [
-      { toolName: "get_chantier_commentaires", input: { chantier_id: "CH-001" } },
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-001" },
+      },
     ],
   },
   {
     question: "Donne-moi les indicateurs du chantier CH-001",
     reason: "CAS NÉGATIF : les indicateurs relèvent de get_indicateurs",
-    expected: [{ toolName: "get_indicateurs", input: { chantier_id: "CH-001" } }],
+    expected: [
+      { toolName: "get_indicateurs", input: { chantier_id: "CH-001" } },
+    ],
   },
 ];
 ```
@@ -1067,7 +1098,10 @@ const CASES: Case[] = [
     question: "Quels sont les commentaires les plus récents sur le CH-007 ?",
     reason: "CAS NÉGATIF : commentaires, pas objectifs",
     expected: [
-      { toolName: "get_chantier_commentaires", input: { chantier_id: "CH-007" } },
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-007" },
+      },
     ],
   },
 ];
@@ -1095,6 +1129,7 @@ git commit -m "feat(ppg): niveau 2, situation territoriale et detail chantier"
 Trois suites. Les cas négatifs vérifient surtout que ces outils **ne** sont **pas** appelés quand l'identifiant est déjà fourni — le prompt système l'interdit.
 
 **Fichiers :**
+
 - Créer : `evals/2-tools/searchChantiers.eval.ts`, `evals/2-tools/searchIndicateurs.eval.ts`, `evals/2-tools/searchTerritoires.eval.ts`
 
 - [ ] **Étape 1 : `searchChantiers.eval.ts`**
@@ -1130,7 +1165,9 @@ const CASES: Case[] = [
     question: "Donne-moi les indicateurs du chantier CH-004",
     reason:
       "CAS NÉGATIF : identifiant déjà fourni, le prompt interdit de rechercher",
-    expected: [{ toolName: "get_indicateurs", input: { chantier_id: "CH-004" } }],
+    expected: [
+      { toolName: "get_indicateurs", input: { chantier_id: "CH-004" } },
+    ],
   },
 ];
 ```
@@ -1140,7 +1177,8 @@ const CASES: Case[] = [
 ```ts
 const CASES: Case[] = [
   {
-    question: "Quel indicateur mesure la rénovation énergétique des logements ?",
+    question:
+      "Quel indicateur mesure la rénovation énergétique des logements ?",
     reason: "libellé d'indicateur en langage naturel, sans identifiant",
     expected: [{ toolName: "search_indicateurs" }],
   },
@@ -1150,10 +1188,13 @@ const CASES: Case[] = [
     expected: [{ toolName: "search_indicateurs" }],
   },
   {
-    question: "Donne-moi les indicateurs du chantier CH-007 pour la France entière",
+    question:
+      "Donne-moi les indicateurs du chantier CH-007 pour la France entière",
     reason:
       "CAS NÉGATIF : chantier identifié, on récupère ses indicateurs sans recherche",
-    expected: [{ toolName: "get_indicateurs", input: { chantier_id: "CH-007" } }],
+    expected: [
+      { toolName: "get_indicateurs", input: { chantier_id: "CH-007" } },
+    ],
   },
 ];
 ```
@@ -1168,7 +1209,8 @@ const CASES: Case[] = [
     expected: [{ toolName: "search_territoires" }],
   },
   {
-    question: "Quel est le taux d'avancement du territoire où se trouve Brest ?",
+    question:
+      "Quel est le taux d'avancement du territoire où se trouve Brest ?",
     reason: "territoire désigné indirectement : à résoudre avant d'interroger",
     expected: [
       { toolName: "search_territoires" },
@@ -1209,6 +1251,7 @@ git commit -m "feat(ppg): niveau 2, outils de recherche"
 `display_choices`, `create_dashboard`, `export_rapport`. Les deux derniers ne sont exposés que si la capacity est détectée : leurs suites vérifient de bout en bout ce que le niveau 1 vérifie isolément.
 
 **Fichiers :**
+
 - Créer : `evals/2-tools/displayChoices.eval.ts`, `evals/2-tools/createDashboard.eval.ts`, `evals/2-tools/exportRapport.eval.ts`
 - Supprimer : `evals/2-tools/.gitkeep`
 
@@ -1227,7 +1270,10 @@ const CASES: Case[] = [
   {
     question: "Fais-moi la synthèse du chantier sur le logement",
     reason: "trois chantiers logement dans le monde de base : ambiguïté réelle",
-    expected: [{ toolName: "search_chantiers" }, { toolName: "display_choices" }],
+    expected: [
+      { toolName: "search_chantiers" },
+      { toolName: "display_choices" },
+    ],
   },
   {
     question: "Bonjour, tu peux m'aider ?",
@@ -1260,7 +1306,8 @@ const CASES: Case[] = [
   },
   {
     question: "Quel est le taux d'avancement de la Bretagne ?",
-    reason: "CAS NÉGATIF : question factuelle, aucune intention de visualisation",
+    reason:
+      "CAS NÉGATIF : question factuelle, aucune intention de visualisation",
     expected: [{ toolName: "get_taux_avancement_territoire" }],
   },
 ];
@@ -1322,9 +1369,11 @@ git commit -m "feat(ppg): niveau 2, interaction et livrables"
 Les scénarios de `src/client/components/PageAccueil/scenariosTerritoire.ts` en `mode: "send"`. Ce niveau ajoute deux scorers de juge, et exige donc un territoire peuplé — sans données, la réponse est vide et le juge note le vide.
 
 **Fichiers :**
+
 - Créer : `evals/3-scenarios/sentScenarios.eval.ts`
 
 **Interfaces :**
+
 - Consomme : les mêmes briques que la tâche 5, plus `createJudgeScorer` de `evals/judge.ts`.
 
 - [ ] **Étape 1 : Écrire la suite**
@@ -1513,6 +1562,7 @@ git commit -m "feat(ppg): niveau 3, scenarios envoyes depuis l'interface"
 Les scénarios `mode: "fill"` sont des templates à trous que l'utilisateur complète. Le cas joue son rôle : il remplit le trou avec une valeur du monde semé.
 
 **Fichiers :**
+
 - Créer : `evals/3-scenarios/filledScenarios.eval.ts`
 - Supprimer : `evals/3-scenarios/.gitkeep`
 
@@ -1550,7 +1600,10 @@ const CASES: Case[] = [
       "Synthèse d'un chantier sur un territoire — trous : CH-XXX et NOM_TERRITOIRE. Question en trois volets",
     expected: [
       { toolName: "get_chantiers" },
-      { toolName: "get_chantier_commentaires", input: { chantier_id: "CH-001" } },
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-001" },
+      },
     ],
   },
   {
@@ -1559,16 +1612,20 @@ const CASES: Case[] = [
     reason:
       "Synthèse des commentaires de plusieurs chantiers (coordinateur) — trous : les identifiants",
     expected: [
-      { toolName: "get_chantier_commentaires", input: { chantier_id: "CH-001" } },
-      { toolName: "get_chantier_commentaires", input: { chantier_id: "CH-004" } },
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-001" },
+      },
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-004" },
+      },
     ],
   },
   {
     question: "Fais moi la synthèse des difficultés du territoire Bretagne",
     reason: "Synthèse des difficultés (coordinateur) — trou : le territoire",
-    expected: [
-      { toolName: "get_chantiers", input: { view: "en_difficulte" } },
-    ],
+    expected: [{ toolName: "get_chantiers", input: { view: "en_difficulte" } }],
   },
 ];
 ```
@@ -1598,6 +1655,7 @@ git commit -m "feat(ppg): niveau 3, scenarios a completer"
 Source : la table « Comprendre les demandes utilisateur » du prompt système. Chacune de ses lignes est un contrat entre une expression de terrain et un appel d'outil.
 
 **Fichiers :**
+
 - Créer : `evals/4-edge-cases/vocabulary.eval.ts`
 
 - [ ] **Étape 1 : Écrire la suite**
@@ -1684,6 +1742,7 @@ git commit -m "feat(ppg): niveau 4, vocabulaire et ambiguites"
 La défaillance prioritaire du spec : Albert devine au lieu de demander.
 
 **Fichiers :**
+
 - Créer : `evals/4-edge-cases/underspecified.eval.ts`
 - Supprimer : `evals/4-edge-cases/.gitkeep`
 - Modifier : `docs/superpowers/specs/2026-09-10-albert-strategie-evaluation-design.md`
@@ -1735,7 +1794,8 @@ const CASES: Case[] = [
   },
   {
     question: "Merci, c'est parfait",
-    reason: "CAS NÉGATIF : clôture de conversation, ni outil ni display_choices",
+    reason:
+      "CAS NÉGATIF : clôture de conversation, ni outil ni display_choices",
     expected: [],
   },
 ];

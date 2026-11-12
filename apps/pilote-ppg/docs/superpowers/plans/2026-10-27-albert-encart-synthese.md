@@ -33,11 +33,13 @@
 ### Task 1: Extraire la collecte des outils de données
 
 **Files:**
+
 - Modify: `src/server/albert/tools/getChantiers.ts`
 - Modify: `src/server/albert/tools/getTauxAvancementTerritoire.ts`
 - Test: `src/server/albert/__tests__/tools/getChantiers.unit.test.ts`, `src/server/albert/__tests__/tools/getTauxAvancementTerritoire.unit.test.ts` (existants, inchangés)
 
 **Interfaces:**
+
 - Produces:
   - `export async function collecterChantiers({ input, getChantiersQuery, territoireResolver, territoiresAccessibles, chantiersAccessibles }: { input: GetChantiersInput; getChantiersQuery: GetChantiersQuery; territoireResolver: TerritoireResolver; territoiresAccessibles: string[]; chantiersAccessibles: string[] }): Promise<GetChantiersOutput>` — le corps actuel de `execute` de `get_chantiers` (NAT-FR, accès refusé, résolution, masquage).
   - `export async function collecterTauxAvancement({ input, territoireResolver, getTerritoiresIdentiteQuery, habilitations }: { input: { territoire_code: string; jalon: number; include_sous_territoires?: boolean }; territoireResolver: TerritoireResolver; getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery; habilitations: Habilitations }): Promise<GetTauxAvancementTerritoireOutput>` — le corps actuel de `execute` de `get_taux_avancement_territoire`.
@@ -50,9 +52,11 @@
 ### Task 2: Streaming d'un sous-agent et historique avec `toModelOutput`
 
 **Files:**
+
 - Modify: `src/server/albert/Albert.ts`
 
 **Interfaces:**
+
 - Produces: `static streamSubagentText({ systemPrompt, prompt, abortSignal }: { systemPrompt: string; prompt: string; abortSignal?: AbortSignal }): AsyncIterable<string>` — `aiStreamText` avec `createModel(DEFAULT_MODEL)`, `temperature: TEMPERATURE_STREAM_TEXT`, sans outils ni persistance ; renvoie `result.textStream`.
 - Change: dans `Albert.streamText` et `Albert.generateText`, `convertToModelMessages(messages, { tools })` (aujourd'hui sans `tools`) : c'est ce qui applique `toModelOutput` à l'historique.
 
@@ -63,10 +67,12 @@
 ### Task 3: Les gabarits du sous-agent
 
 **Files:**
+
 - Create: `src/server/albert/subagents/encartSystemPrompts.ts`
 - Test: `src/server/albert/__tests__/subagents/encartSystemPrompts.unit.test.ts`
 
 **Interfaces:**
+
 - Produces: `export function buildSyntheseTerritoireSystemPrompt(): string` et `export function buildComparaisonTerritoiresSystemPrompt(): string`.
 
 Source du contenu : `GABARIT_SYNTHESE_TERRITORIALE` de `git show dev:apps/pilote-ppg/src/server/albert/systemPrompt.ts` (balises `<mono_territoire>` et `<comparaison>`), adapté selon les Global Constraints. Chaque prompt commence par « Reasoning: medium », dit au sous-agent qu'il reçoit les données en JSON dans le message et ne doit citer qu'elles, reprend les règles « français ; pas d'opinion, de recommandation ni de causalité absente des données », et explique : NAT-FR sans analyse « en retard » (`non_applicable`) → l'écrire au lieu de lister ; vue vide → « aucun chantier » ; `acces_restreint` → commentaire non accessible ; maille → « du département », « de la région », « national ». La comparaison sépare chantiers communs à au moins 2 territoires et chantiers propres à chacun.
@@ -96,7 +102,9 @@ describe.each([
     // When
     const prompt = build();
     // Then
-    expect(prompt).toContain("Commentaire non accessible (restriction d'accès)");
+    expect(prompt).toContain(
+      "Commentaire non accessible (restriction d'accès)",
+    );
     expect(prompt).toContain("Pas de commentaire disponible");
   });
 });
@@ -112,12 +120,14 @@ Plus, pour la comparaison : `toContain("Communs à plusieurs territoires")` et `
 ### Task 4: Les deux outils
 
 **Files:**
+
 - Create: `src/server/albert/tools/encart.ts` (types + générateur partagés)
 - Create: `src/server/albert/tools/redigerSyntheseTerritoire.ts`
 - Create: `src/server/albert/tools/redigerComparaisonTerritoires.ts`
 - Test: `src/server/albert/__tests__/tools/redigerEncart.unit.test.ts`
 
 **Interfaces:**
+
 - Consumes: `collecterChantiers`, `collecterTauxAvancement` (Task 1), `Albert.streamSubagentText` (Task 2), les deux `build…SystemPrompt` (Task 3).
 - Produces, dans `encart.ts` :
 
@@ -153,8 +163,8 @@ export const encartVersModele: ({ output }: { output: EncartOutput }) =>
   { type: "text"; value: string };
 ```
 
-  - `redigerEncart` : si les deux vues de chantiers ont `acces_refuse`, un seul `yield { …, markdown: "", termine: true, acces_refuse: true }`. Sinon un premier `yield` avec `markdown: ""`, puis un `yield` du markdown accumulé à chaque morceau de `streamSubagentText` (prompt = `JSON.stringify(donnees)`), puis un dernier avec `termine: true` et `donnees`.
-  - `encartVersModele` : le markdown ; en cas d'accès refusé, « Accès refusé : l'utilisateur n'a accès à aucun chantier. ».
+- `redigerEncart` : si les deux vues de chantiers ont `acces_refuse`, un seul `yield { …, markdown: "", termine: true, acces_refuse: true }`. Sinon un premier `yield` avec `markdown: ""`, puis un `yield` du markdown accumulé à chaque morceau de `streamSubagentText` (prompt = `JSON.stringify(donnees)`), puis un dernier avec `termine: true` et `donnees`.
+- `encartVersModele` : le markdown ; en cas d'accès refusé, « Accès refusé : l'utilisateur n'a accès à aucun chantier. ».
 - `export function createRedigerSyntheseTerritoireTool({ getChantiersQuery, territoireResolver, getTerritoiresIdentiteQuery })` → `({ habilitations }: { habilitations: Habilitations }) => Tool`. Entrée `{ territoire_code: string; jalon: number }` (`jalon` borné comme `get_taux_avancement_territoire`). Collecte le taux et les vues `en_retard` / `en_difficulte` sans sous-territoires, `chantiersAccessibles = habilitations.lecture.chantiers`, `territoiresAccessibles = habilitations.lecture.territoires`. `execute` est un `async function*` qui délègue à `redigerEncart` ; `toModelOutput: encartVersModele`.
 - `export function createRedigerComparaisonTerritoiresTool({ … mêmes dépendances })`, même forme. Entrée `{ jalon; territoire_codes?: string[] (2 à 5); territoire_code?: string; include_sous_territoires?: boolean }`, avec un `.refine` : exactement une des deux formes. Avec `territoire_codes`, une collecte par code puis concaténation des `resultats` ; avec `territoire_code`, une seule collecte avec `include_sous_territoires: true`.
 - Descriptions selon le modèle de la refonte, avec les exemples du tableau de déclenchement de la spec. « Utilise-le pour » : synthèse ou comparaison générique (dont « la synthèse des difficultés de X », « où en est X », « compare X avec ses départements » pour la comparaison). « Ne l'utilise pas pour » : un critère ciblé, un chantier ou un indicateur précis, « où en sont X et ses départements » → `get_taux_avancement_territoire` ; un rapport → `export_rapport` ; un graphique → `create_dashboard`. Dire que l'interface affiche l'encart : écrire ensuite une seule phrase.
@@ -176,6 +186,7 @@ export const encartVersModele: ({ output }: { output: EncartOutput }) =>
 ### Task 5: Brancher les outils et adapter le prompt principal
 
 **Files:**
+
 - Modify: `src/server/albert/module.ts` (enregistrer `createRedigerSyntheseTerritoireTool`, `createRedigerComparaisonTerritoiresTool` avec `asModuleFunction`)
 - Modify: `src/server/albert/AssistantIA.ts` (`rediger_synthese_territoire`, `rediger_comparaison_territoires`, construits avec `{ habilitations }`)
 - Modify: `src/server/albert/PiloteUIMessage.ts` (les deux outils : `input` via `z.input<…>`, `output: EncartOutput`)
@@ -183,6 +194,7 @@ export const encartVersModele: ({ output }: { output: EncartOutput }) =>
 - Test: `src/server/albert/__tests__/systemPrompt.unit.test.ts`
 
 Changements du prompt, tels que décidés dans la spec :
+
 - Lexique : remplacer la ligne « « les difficultés » ou « la situation » d'un territoire… » par : une synthèse ou une comparaison sur des critères génériques (« la synthèse du Nord », « où en est la Gironde », « la synthèse des difficultés de la Bretagne », « compare le Nord et la Gironde », « compare la Bretagne avec ses départements ») → `rediger_synthese_territoire` ou `rediger_comparaison_territoires` ; une demande précise (un critère, un chantier, un indicateur, « où en sont X et ses départements ») → les outils de données.
 - Collecter les données : supprimer « Une synthèse de territoire couvre son taux d'avancement, ses chantiers en retard et ses chantiers en difficulté. »
 - Exemples : « Compare le Nord et la Gironde » → une seule recherche (DEPT-59, DEPT-33) puis `rediger_comparaison_territoires` ; ajouter « Fais-moi la synthèse du Nord » → `search_territoires` (DEPT-59) puis `rediger_synthese_territoire`.
@@ -197,6 +209,7 @@ Changements du prompt, tels que décidés dans la spec :
 ### Task 6: L'encart côté client
 
 **Files:**
+
 - Create: `src/client/components/_commons/ChatUI/EncartSynthese.tsx`
 - Create: `src/client/components/_commons/ChatUI/texteEncarts.ts`
 - Modify: `src/client/components/_commons/ChatUI/AssistantMessage.tsx`
@@ -205,6 +218,7 @@ Changements du prompt, tels que décidés dans la spec :
 - Test: `src/client/components/_commons/ChatUI/EncartSynthese.integration.test.tsx`, `texteEncarts.unit.test.ts`, `deriverEtatAssistant.unit.test.ts`
 
 **Interfaces:**
+
 - Consumes: `EncartOutput` (Task 4), `PiloteUIMessage` (Task 5).
 - Produces:
   - `export const EncartSynthese = ({ output }: { output: EncartOutput }) => JSX.Element | null` — `null` si `acces_refuse`. Rend l'en-tête (type, « Jalon {jalon} », date en `fr-FR` « 27 octobre 2026 », « À partir des données publiées dans PILOTE »), « Rédaction en cours… » tant que `!termine`, puis le markdown via `AssistantMessageText` (`streaming={!termine}`), dans un conteneur `albert-encart`.
@@ -228,6 +242,7 @@ Dans `AssistantMessage.tsx` : les parts `tool-rediger_synthese_territoire` et `t
 ### Task 7: Evals de l'encart
 
 **Files:**
+
 - Create: `evals/2-tools/2.3-rendu/redigerEncart.eval.ts`
 - Modify: `evals/2-tools/2.2-donnees/getTauxAvancementTerritoire.eval.ts` (« Où en est la France sur l'ensemble des chantiers ? » sort de cette suite)
 - Modify: `evals/2-tools/2.2-donnees/getChantiers.eval.ts` (« Compare les chantiers de la Corse et ses départements » sort de cette suite)
@@ -238,11 +253,13 @@ Dans `AssistantMessage.tsx` : les parts `tool-rediger_synthese_territoire` et `t
 - Test: `evals/3-scenarios/evidence.unit.test.ts`, `evals/3-scenarios/mechanicalChecks.unit.test.ts`
 
 **N2** (`redigerEncart.eval.ts`, format `ToolCase`) :
+
 - attendu `rediger_synthese_territoire` : « Fais-moi la synthèse du Nord », « Où en est la Gironde ? », « La situation en Bretagne », « Fais-moi la synthèse des difficultés de la Bretagne », « Où en est la France sur l'ensemble des chantiers ? » (`territoire_code: "NAT-FR"`) ;
 - attendu `rediger_comparaison_territoires` : « Compare le Nord et la Gironde », « Bretagne ou Normandie, qui avance le mieux ? », « Compare la Bretagne avec ses départements » (`include_sous_territoires: true`), « Compare les chantiers de la Corse et ses départements » ;
 - `forbidden` des deux outils : « Les chantiers en retard du Nord », « Le taux d'avancement de la Gironde », « Les difficultés en Hauts-de-France », « Compare le CH-062 entre le Nord et la Gironde », « Où en sont l'Occitanie et ses départements ? », « Fais-moi un rapport sur la Gironde », « Trace la courbe de l'indicateur 1023 dans le Nord ».
 
 **N3** : `expected` = `search_territoires` si le territoire est désigné par un nom ou un numéro (comme aujourd'hui), puis l'outil d'encart avec le bon `territoire_code` / `territoire_codes` / `include_sous_territoires`. Les grilles existantes restent ; `ENCART_CRITERIA` (groupe `encart`, rapporté à part) s'ajoute à ces cinq scénarios :
+
 - `checkEncartChantiers` : chaque chantier des `donnees` apparaît dans l'encart avec son identifiant, son écart arrondi et son niveau de confiance ;
 - `checkMailleNommee` : un département n'est jamais dit « la région », une région jamais « le département » ;
 - `checkRestrictionEncart` : si une vue a `acces_restreint` avec des commentaires masqués, l'encart contient « Commentaire non accessible (restriction d'accès) » ;

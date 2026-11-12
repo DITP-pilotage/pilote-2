@@ -6,6 +6,7 @@
 réécriture minimale de la spec et la mesurer de la même façon (étape 1).
 
 **Architecture :**
+
 - L'étape 0 (tâches 1 à 6) ne touche que les evals : on aligne les critères
   sur les décisions D1 à D3, on ajoute les cas manquants et on lance le run de
   référence.
@@ -85,6 +86,7 @@ réécriture minimale de la spec et la mesurer de la même façon (étape 1).
 ## Points de vigilance
 
 Étape 0 :
+
 1. `checkFrench` sur un mot français qui contient un mot anglais (« thé »,
    « thème ») : doit passer. Test en tâche 3.
 2. `checkVerbatim` quand l'agent restitue un commentaire sur plusieurs
@@ -96,18 +98,13 @@ réécriture minimale de la spec et la mesurer de la même façon (étape 1).
 5. `checkDashboardNonVide` sur un dashboard de titres et de paragraphes
    répartis en plusieurs conteneurs : doit échouer. Test en tâche 5.
 
-Étape 1 :
-6. Territoire hors périmètre : après la mise en forme des libellés, le
-   masquage doit toujours vider `tendance` et les commentaires, et garder
-   `niveau_de_confiance`. Test en tâche 8.
-7. Météo `NON_RENSEIGNEE` ou `null` : le libellé vaut « Non renseignée » ou
-   `null`, jamais le code. Test en tâche 8.
-8. `mailles_applicables` vide : `maille_de_pilotage` vaut `null`. Test en
-   tâche 8.
-9. `create_dashboard` reçoit un libellé hors des quatre niveaux (« Non
-   renseignée ») : le sous-agent ne reçoit pas de météo. Test en tâche 8.
-10. Prompt sans `agentContext` : jalon 2025 et aucun bloc de contexte
-    utilisateur. Test en tâche 10.
+Étape 1 : 6. Territoire hors périmètre : après la mise en forme des libellés, le
+masquage doit toujours vider `tendance` et les commentaires, et garder
+`niveau_de_confiance`. Test en tâche 8. 7. Météo `NON_RENSEIGNEE` ou `null` : le libellé vaut « Non renseignée » ou
+`null`, jamais le code. Test en tâche 8. 8. `mailles_applicables` vide : `maille_de_pilotage` vaut `null`. Test en
+tâche 8. 9. `create_dashboard` reçoit un libellé hors des quatre niveaux (« Non
+renseignée ») : le sous-agent ne reçoit pas de météo. Test en tâche 8. 10. Prompt sans `agentContext` : jalon 2025 et aucun bloc de contexte
+utilisateur. Test en tâche 10.
 
 ## Prérequis d'environnement
 
@@ -124,6 +121,7 @@ réécriture minimale de la spec et la mesurer de la même façon (étape 1).
 ### Tâche 1 : des synthèses sans gabarit (D1, D2)
 
 **Fichiers :**
+
 - Modifier : `evals/3-scenarios/criteria/commentaires.ts`
 - Modifier : `evals/3-scenarios/3.1-synthese/syntheseTerritoire.criteria.ts`
 - Modifier : `evals/3-scenarios/3.1-synthese/syntheseDepartements.criteria.ts`
@@ -134,6 +132,7 @@ réécriture minimale de la spec et la mesurer de la même façon (étape 1).
   (existant), `evals/3-scenarios/mechanicalChecks.unit.test.ts`
 
 **Interfaces :**
+
 - Produit : `COMMENTAIRES_FIDELES`, critère jugé d'id `"Commentaires fidèles"`,
   exporté par `criteria/commentaires.ts`. `PAS_DE_RECOPIE` reste exporté.
 - Supprime : `COMMENTAIRES_DU_GABARIT`, `ABSENCE_SIGNALEE`,
@@ -208,6 +207,7 @@ réécriture minimale de la spec et la mesurer de la même façon (étape 1).
 ### Tâche 2 : « le 84 » désigne le département (D3)
 
 **Fichiers :**
+
 - Modifier : `evals/2-tools/2.3-rendu/clarifyWithChoices.eval.ts`
 - Modifier : `evals/2-tools/2.1-recherche/searchTerritoires.eval.ts`
 
@@ -250,11 +250,13 @@ Le ticket l'exige (« les réponses, y compris après un appel d'outil, sont en
 français »), et aucune eval ne le mesure aujourd'hui.
 
 **Fichiers :**
+
 - Modifier : `evals/3-scenarios/mechanicalChecks.ts`
 - Modifier : `evals/3-scenarios/criterion.ts`
 - Tests : `evals/3-scenarios/mechanicalChecks.unit.test.ts`
 
 **Interfaces :**
+
 - Produit : `checkFrench({ text }: { text: string }): CheckResult` ;
   `BASE_IDS.french = "Réponse en français"`.
 
@@ -338,6 +340,7 @@ chantiers, et des commentaires demandés sans demande de synthèse. Le résumé
 demandé est déjà couvert par le scénario « Synthèse des commentaires ».
 
 **Fichiers :**
+
 - Modifier : `evals/3-scenarios/mechanicalChecks.ts`
 - Modifier : `evals/3-scenarios/criteria/commentaires.ts`
 - Modifier : `evals/3-scenarios/scenarioEval.ts` (`GROUPS`)
@@ -348,6 +351,7 @@ demandé est déjà couvert par le scénario « Synthèse des commentaires ».
 - Tests : `evals/3-scenarios/mechanicalChecks.unit.test.ts`
 
 **Interfaces :**
+
 - Produit :
   - `checkTableChantiers({ text, chantierIds }: { text: string; chantierIds: string[] }): CheckResult`
   - `checkVerbatim({ text, sources }: { text: string; sources: string[] }): CheckResult`
@@ -358,7 +362,8 @@ demandé est déjà couvert par le scénario « Synthèse des commentaires ».
 
   ```ts
   describe("checkTableChantiers", () => {
-    const tableau = "| Chantier | Écart |\n|---|---|\n| CH‑005 — Urgences | -14 |";
+    const tableau =
+      "| Chantier | Écart |\n|---|---|\n| CH‑005 — Urgences | -14 |";
 
     test("trouve un chantier dans une ligne du tableau, quel que soit le tiret", () => {
       expect(
@@ -495,12 +500,14 @@ demandé est déjà couvert par le scénario « Synthèse des commentaires ».
 ### Tâche 5 : un dashboard sans chantier (critère d'acceptation)
 
 **Fichiers :**
+
 - Modifier : `evals/3-scenarios/mechanicalChecks.ts`
 - Créer : `evals/3-scenarios/3.1-synthese/dashboardSansChantier.criteria.ts`
 - Créer : `evals/3-scenarios/3.1-synthese/dashboardSansChantier.eval.ts`
 - Tests : `evals/3-scenarios/mechanicalChecks.unit.test.ts`
 
 **Interfaces :**
+
 - Produit : `checkDashboardNonVide({ dashboard }: { dashboard: { containers: DashboardContainer[] } | null }): CheckResult`
 
 - [ ] **Étape 1 : écrire les tests, qui doivent échouer**
@@ -595,6 +602,7 @@ demandé est déjà couvert par le scénario « Synthèse des commentaires ».
 ### Tâche 6 : le run de référence et le journal
 
 **Fichiers :**
+
 - Modifier : `.gitignore` (celui de `apps/pilote-ppg`)
 - Modifier : `docs/superpowers/specs/2026-10-27-albert-refonte-system-prompt-design.md`
 
@@ -657,6 +665,7 @@ demandé est déjà couvert par le scénario « Synthèse des commentaires ».
 ### Tâche 7 : tous les tools sont toujours exposés (D4)
 
 **Fichiers :**
+
 - Modifier : `src/server/albert/AssistantIA.ts`
 - Modifier : `src/server/albert/systemPrompt.ts`
 - Supprimer : `src/server/albert/detecteurIntention.ts`
@@ -669,6 +678,7 @@ demandé est déjà couvert par le scénario « Synthèse des commentaires ».
   `evals/2-tools/2.3-rendu/exportRapport.eval.ts` (commentaires d'en-tête)
 
 **Interfaces :**
+
 - Produit : `buildChatSystemPrompt({ territoiresAccessibles, agentContext }: { territoiresAccessibles: string[]; agentContext?: Record<string, unknown> | null }): string`,
   sans `capacities`.
 - Supprime : `Capacities`, `detecterCapacities`, `dashboardDejaCompose`,
@@ -719,6 +729,7 @@ demandé est déjà couvert par le scénario « Synthèse des commentaires ».
 ### Tâche 8 : les tools renvoient des libellés (D1)
 
 **Fichiers :**
+
 - Créer : `src/server/albert/tools/libelles.ts`
 - Tests : `src/server/albert/__tests__/tools/libelles.unit.test.ts`
 - Modifier : `src/server/albert/tools/getChantiers.ts` (+ son test)
@@ -726,6 +737,7 @@ demandé est déjà couvert par le scénario « Synthèse des commentaires ».
 - Modifier : `src/server/albert/tools/createDashboard.ts`
 
 **Interfaces :**
+
 - Produit, dans `libelles.ts` :
   - `libelleNiveauDeConfiance(meteo: string | null): string | null`, qui
     réutilise `libellesMeteos` (`src/shared/meteo/Meteo.interface.ts`) ;
@@ -759,14 +771,14 @@ demandé est déjà couvert par le scénario « Synthèse des commentaires ».
 
 Libellés des catégories de signalement :
 
-| Code | Libellé |
-|---|---|
-| `estEnAlerteÉcart` | Retard par rapport à la médiane |
-| `estEnAlerteBaisse` | Tendance en baisse |
-| `estEnAlerteTauxAvancementNonCalculé` | Taux d'avancement non calculé |
+| Code                                             | Libellé                                    |
+| ------------------------------------------------ | ------------------------------------------ |
+| `estEnAlerteÉcart`                               | Retard par rapport à la médiane            |
+| `estEnAlerteBaisse`                              | Tendance en baisse                         |
+| `estEnAlerteTauxAvancementNonCalculé`            | Taux d'avancement non calculé              |
 | `estEnAlerteAbscenceTauxAvancementDepartemental` | Absence de taux d'avancement départemental |
-| `estEnAlerteMétéoNonRenseignée` | Météo et synthèse non renseignées |
-| `estEnAlertePossedePropositionsValeurAvancement` | Proposition de valeur d'avancement |
+| `estEnAlerteMétéoNonRenseignée`                  | Météo et synthèse non renseignées          |
+| `estEnAlertePossedePropositionsValeurAvancement` | Proposition de valeur d'avancement         |
 
 - [ ] **Étape 1 : écrire les tests de `libelles.ts`, qui doivent échouer**
 
@@ -848,6 +860,7 @@ Libellés des catégories de signalement :
 ### Tâche 9 : plus d'`_output_instructions`, des descriptions au modèle commun
 
 **Fichiers :**
+
 - Modifier : les 16 tools de `src/server/albert/tools/`, plus
   `composeDashboard.ts` (`ComposeDashboardOutput`)
 - Modifier : leurs tests dans `src/server/albert/__tests__/tools/`
@@ -857,6 +870,7 @@ Libellés des catégories de signalement :
   et `evals/3-scenarios/3.0-calibration/references.ts`
 
 **Interfaces :**
+
 - Chaque type `*Output` perd son champ `_output_instructions`, de même que
   `ComposeDashboardOutput`.
 
@@ -890,22 +904,22 @@ Libellés des catégories de signalement :
   dans le `.describe` du paramètre), et le mot « météo » (sauf dans le
   libellé officiel de la catégorie de signalement).
 
-  | Tool | Ne l'utilise pas pour → | Champs et faits à décrire |
-  |---|---|---|
-  | `get_taux_avancement_territoire` | TA d'un chantier → `get_chantiers` | médiane de la maille ; pour NAT-FR, médiane des départements ; « - % » = pas de donnée à ce jalon |
-  | `get_chantiers` | plusieurs catégories de signalement ou une catégorie sans équivalent → `get_chantiers_signales` ; valeurs des indicateurs → `get_indicateurs` ; fraîcheur des données → `get_indicateurs_non_a_jour` | vues `en_retard` / `en_difficulte`, filtre `tendance` ; `non_applicable.raison` |
-  | `get_indicateurs` | situation d'un chantier → `get_chantiers` ; évolution → `get_evolution_indicateur` ; historique → `get_historique_indicateur` | — |
-  | `get_evolution_indicateur` | historique des actions → `get_historique_indicateur` | `introuvable` ; `construction_valeur_affichee` |
-  | `get_historique_indicateur` | courbe → `get_evolution_indicateur` | `type_filtre: "PROPOSITIONS"` pour les PVA ; `introuvable`, `agrege_bloque` ; `besoin_precision` (rappeler avec `date_debut` / `date_fin` ISO) ; `date_valeur` ≠ `date_creation` ; valeurs importées ≠ valeur affichée |
-  | `get_chantier_commentaires` | objectifs → `get_chantier_objectifs` | types de commentaires (liste actuelle) ; `territoire_nom` ; `types_non_accessibles` = relèvent de la vue nationale, pas une absence |
-  | `get_chantier_objectifs` | commentaires d'un territoire → `get_chantier_commentaires` | objectifs nationaux ; `null` = aucun objectif publié |
-  | `get_chantiers_signales` | une seule catégorie, retard ou baisse → `get_chantiers` | correspondance codes / libellés (tableau de la tâche 8) ; catégories applicables par maille ; jalon en cours seulement ; `acces_refuse`, `categories_non_applicables` |
-  | `get_indicateurs_non_a_jour` | chantiers en retard (avancement) → `get_chantiers` | liste vide ≠ données à jour ; détail par territoire seulement avec `indicateur_ids` ou `territoire_code` ; `dateDerniereValeur: null` = jamais renseignée ; `miseAJourAttendueDepuis: null` = non calculable ; `acces_refuse` |
-  | `search_chantiers`, `search_indicateurs`, `search_territoires` | identifiant déjà fourni → outil de données | au plus 10 candidats triés par pertinence |
-  | `consulter_centre_aide` | valeurs d'un chantier, d'un indicateur ou d'un territoire → outils de données | `reponse` à restituer sans la compléter ; `trouve: false` = question non couverte, un bouton de contact s'affiche sous la réponse ; sources affichées sous la réponse ; `question` autonome |
-  | `clarify_with_choices` | — | encart affiché ; 2 à 4 options réalisables ; pas de texte avant l'appel ; terminer par la seule phrase « Choisissez une option pour continuer. » |
-  | `create_dashboard` | rendu hors catalogue → `clarify_with_choices` avec des alternatives | catalogue (repris de la section dashboard du prompt actuel) ; cartes et tableau des indicateurs exigent des chantiers |
-  | `export_rapport` | — | données de la conversation (appeler les outils manquants) ; indicateurs en tableau ; répondre « Votre rapport est disponible au téléchargement. » sans lien |
+  | Tool                                                           | Ne l'utilise pas pour →                                                                                                                                                                              | Champs et faits à décrire                                                                                                                                                                                                     |
+  | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `get_taux_avancement_territoire`                               | TA d'un chantier → `get_chantiers`                                                                                                                                                                   | médiane de la maille ; pour NAT-FR, médiane des départements ; « - % » = pas de donnée à ce jalon                                                                                                                             |
+  | `get_chantiers`                                                | plusieurs catégories de signalement ou une catégorie sans équivalent → `get_chantiers_signales` ; valeurs des indicateurs → `get_indicateurs` ; fraîcheur des données → `get_indicateurs_non_a_jour` | vues `en_retard` / `en_difficulte`, filtre `tendance` ; `non_applicable.raison`                                                                                                                                               |
+  | `get_indicateurs`                                              | situation d'un chantier → `get_chantiers` ; évolution → `get_evolution_indicateur` ; historique → `get_historique_indicateur`                                                                        | —                                                                                                                                                                                                                             |
+  | `get_evolution_indicateur`                                     | historique des actions → `get_historique_indicateur`                                                                                                                                                 | `introuvable` ; `construction_valeur_affichee`                                                                                                                                                                                |
+  | `get_historique_indicateur`                                    | courbe → `get_evolution_indicateur`                                                                                                                                                                  | `type_filtre: "PROPOSITIONS"` pour les PVA ; `introuvable`, `agrege_bloque` ; `besoin_precision` (rappeler avec `date_debut` / `date_fin` ISO) ; `date_valeur` ≠ `date_creation` ; valeurs importées ≠ valeur affichée        |
+  | `get_chantier_commentaires`                                    | objectifs → `get_chantier_objectifs`                                                                                                                                                                 | types de commentaires (liste actuelle) ; `territoire_nom` ; `types_non_accessibles` = relèvent de la vue nationale, pas une absence                                                                                           |
+  | `get_chantier_objectifs`                                       | commentaires d'un territoire → `get_chantier_commentaires`                                                                                                                                           | objectifs nationaux ; `null` = aucun objectif publié                                                                                                                                                                          |
+  | `get_chantiers_signales`                                       | une seule catégorie, retard ou baisse → `get_chantiers`                                                                                                                                              | correspondance codes / libellés (tableau de la tâche 8) ; catégories applicables par maille ; jalon en cours seulement ; `acces_refuse`, `categories_non_applicables`                                                         |
+  | `get_indicateurs_non_a_jour`                                   | chantiers en retard (avancement) → `get_chantiers`                                                                                                                                                   | liste vide ≠ données à jour ; détail par territoire seulement avec `indicateur_ids` ou `territoire_code` ; `dateDerniereValeur: null` = jamais renseignée ; `miseAJourAttendueDepuis: null` = non calculable ; `acces_refuse` |
+  | `search_chantiers`, `search_indicateurs`, `search_territoires` | identifiant déjà fourni → outil de données                                                                                                                                                           | au plus 10 candidats triés par pertinence                                                                                                                                                                                     |
+  | `consulter_centre_aide`                                        | valeurs d'un chantier, d'un indicateur ou d'un territoire → outils de données                                                                                                                        | `reponse` à restituer sans la compléter ; `trouve: false` = question non couverte, un bouton de contact s'affiche sous la réponse ; sources affichées sous la réponse ; `question` autonome                                   |
+  | `clarify_with_choices`                                         | —                                                                                                                                                                                                    | encart affiché ; 2 à 4 options réalisables ; pas de texte avant l'appel ; terminer par la seule phrase « Choisissez une option pour continuer. »                                                                              |
+  | `create_dashboard`                                             | rendu hors catalogue → `clarify_with_choices` avec des alternatives                                                                                                                                  | catalogue (repris de la section dashboard du prompt actuel) ; cartes et tableau des indicateurs exigent des chantiers                                                                                                         |
+  | `export_rapport`                                               | —                                                                                                                                                                                                    | données de la conversation (appeler les outils manquants) ; indicateurs en tableau ; répondre « Votre rapport est disponible au téléchargement. » sans lien                                                                   |
 
   `.describe` de `include_sous_territoires` (trois tools), en une phrase :
   « `true` pour un territoire ET ses sous-territoires : un seul appel sur le
@@ -933,10 +947,12 @@ Libellés des catégories de signalement :
 ### Tâche 10 : le prompt système réécrit
 
 **Fichiers :**
+
 - Modifier (réécriture complète) : `src/server/albert/systemPrompt.ts`
 - Créer : `src/server/albert/__tests__/systemPrompt.unit.test.ts`
 
 **Interfaces :**
+
 - Consomme : la signature de la tâche 7.
 - `JALON_PAR_DEFAUT = 2025` reste (A25 hors périmètre).
 
@@ -946,36 +962,56 @@ Libellés des catégories de signalement :
   describe("buildChatSystemPrompt", () => {
     it("commence par la directive de raisonnement", () => {
       // when
-      const prompt = buildChatSystemPrompt({ territoiresAccessibles: [], agentContext: null });
+      const prompt = buildChatSystemPrompt({
+        territoiresAccessibles: [],
+        agentContext: null,
+      });
       // then
       expect(prompt.startsWith("Reasoning: high\n")).toBe(true);
     });
 
     it("ne parle pas de météo (D1)", () => {
-      const prompt = buildChatSystemPrompt({ territoiresAccessibles: [], agentContext: null });
+      const prompt = buildChatSystemPrompt({
+        territoiresAccessibles: [],
+        agentContext: null,
+      });
       expect(prompt).not.toMatch(/m[ée]t[ée]o|SOLEIL|COUVERT|NUAGE|ORAGE/i);
     });
 
     it("ne documente pas les outils", () => {
-      const prompt = buildChatSystemPrompt({ territoiresAccessibles: [], agentContext: null });
+      const prompt = buildChatSystemPrompt({
+        territoiresAccessibles: [],
+        agentContext: null,
+      });
       expect(prompt).not.toContain("include_sous_territoires");
       expect(prompt).not.toContain("_output_instructions");
     });
 
     it("donne le jalon du contexte d'accueil", () => {
-      const prompt = buildChatSystemPrompt({ territoiresAccessibles: [], agentContext: { jalon: 2026 } });
+      const prompt = buildChatSystemPrompt({
+        territoiresAccessibles: [],
+        agentContext: { jalon: 2026 },
+      });
       expect(prompt).toContain("- Jalon courant : 2026");
     });
 
     it("prend 2025 comme jalon sans contexte", () => {
-      const prompt = buildChatSystemPrompt({ territoiresAccessibles: [], agentContext: null });
+      const prompt = buildChatSystemPrompt({
+        territoiresAccessibles: [],
+        agentContext: null,
+      });
       expect(prompt).toContain("- Jalon courant : 2025");
       expect(prompt).not.toContain("<contexte_utilisateur>");
     });
 
     it("liste les territoires à accès complet", () => {
-      const prompt = buildChatSystemPrompt({ territoiresAccessibles: ["REG-53", "DEPT-35"], agentContext: null });
-      expect(prompt).toContain("- Territoires à accès complet : REG-53, DEPT-35");
+      const prompt = buildChatSystemPrompt({
+        territoiresAccessibles: ["REG-53", "DEPT-35"],
+        agentContext: null,
+      });
+      expect(prompt).toContain(
+        "- Territoires à accès complet : REG-53, DEPT-35",
+      );
     });
 
     it("termine par les instructions du contexte utilisateur", () => {
@@ -983,7 +1019,11 @@ Libellés des catégories de signalement :
         territoiresAccessibles: [],
         agentContext: { instructions: "Territoire par défaut : Bretagne" },
       });
-      expect(prompt.endsWith("<contexte_utilisateur>\nTerritoire par défaut : Bretagne\n</contexte_utilisateur>")).toBe(true);
+      expect(
+        prompt.endsWith(
+          "<contexte_utilisateur>\nTerritoire par défaut : Bretagne\n</contexte_utilisateur>",
+        ),
+      ).toBe(true);
     });
   });
   ```
@@ -1081,6 +1121,7 @@ Libellés des catégories de signalement :
 
     Une synthèse de territoire couvre le TA, les chantiers en retard et les
     chantiers en difficulté.
+
   - E. Une définition, un mode de calcul ou une procédure de PILOTE → centre
     d'aide, jamais de mémoire, même juste après l'affichage d'une donnée.
 
@@ -1138,6 +1179,7 @@ Libellés des catégories de signalement :
 ### Tâche 11 : relecture, mesure et journal
 
 **Fichiers :**
+
 - Modifier : les `.criteria.ts` dont la `rule` cite une section disparue
   (`evals/3-scenarios/**`)
 - Modifier : `docs/superpowers/specs/2026-10-27-albert-refonte-system-prompt-design.md`

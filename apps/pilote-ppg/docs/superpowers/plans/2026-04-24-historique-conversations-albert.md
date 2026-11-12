@@ -9,6 +9,7 @@
 **Tech Stack:** Prisma 6 + PostgreSQL (JSONB) + tRPC + NextAuth + Vercel AI SDK (`streamText`, `toUIMessageStreamResponse`, `useChat`) + pattern cron existant (`scripts/run_rapport_*.sh`).
 
 **Décisions clés :**
+
 - **Un seul blob `messages` JSONB** par conversation (option la plus simple, cf. discussion produit). Pas de table `chat_message` normalisée tant qu'il n'y a pas besoin de recherche full-text.
 - `llm_calls` **reste en place** (audit LLM brut) et on ne modifie pas sa politique de rétention dans ce plan.
 - Rétention **14 jours** sur `chat_conversation` (assez court pour du POC, confortable côté volume : steady state ≈ 25-45 MB).
@@ -58,6 +59,7 @@
 ## Task 1: Migration Prisma `chat_conversation`
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/database/prisma/schema.prisma`
 
 - [ ] **Step 1: Ajouter le modèle Prisma**
@@ -103,6 +105,7 @@ git commit -m "feat(llm): ajoute la table chat_conversation (historique)"
 ## Task 2: Domaine et repository
 
 **Files:**
+
 - Create: `apps/pilote-ppg/src/server/albert/domain/ChatConversation.ts`
 - Create: `apps/pilote-ppg/src/server/albert/domain/ChatConversationRepository.ts`
 
@@ -132,7 +135,9 @@ export function deriverTitre(messages: PiloteUIMessage[]): string {
   if (!premierUser) return "Nouvelle conversation";
 
   const texte = (premierUser.parts ?? [])
-    .filter((part): part is { type: "text"; text: string } => part.type === "text")
+    .filter(
+      (part): part is { type: "text"; text: string } => part.type === "text",
+    )
     .map((part) => part.text)
     .join(" ")
     .trim();
@@ -148,7 +153,10 @@ export function deriverTitre(messages: PiloteUIMessage[]): string {
 
 ```typescript
 // ChatConversationRepository.ts
-import type { ChatConversation, ChatConversationResume } from "./ChatConversation";
+import type {
+  ChatConversation,
+  ChatConversationResume,
+} from "./ChatConversation";
 
 export interface ChatConversationRepository {
   upsert(params: {
@@ -193,6 +201,7 @@ git commit -m "feat(llm): ajoute le domaine ChatConversation"
 ## Task 3: Implémentation Prisma du repository
 
 **Files:**
+
 - Create: `apps/pilote-ppg/src/server/albert/infrastructure/PrismaChatConversationRepository.ts`
 - Create: `apps/pilote-ppg/src/server/albert/__tests__/infrastructure/PrismaChatConversationRepository.integration.test.ts`
 
@@ -216,20 +225,27 @@ describe("PrismaChatConversationRepository", () => {
         id,
         utilisateurId: utilisateur.id,
         titre: "Synthèse Bretagne",
-        messages: [{ id: "m1", role: "user", parts: [{ type: "text", text: "hello" }] }],
+        messages: [
+          { id: "m1", role: "user", parts: [{ type: "text", text: "hello" }] },
+        ],
         territoireCode: "REG-53",
         jalon: 2025,
       });
 
       // When
-      const result = await repository.recupererParId({ id, utilisateurId: utilisateur.id });
+      const result = await repository.recupererParId({
+        id,
+        utilisateurId: utilisateur.id,
+      });
 
       // Then
       expect(result).toEqual({
         id,
         utilisateurId: utilisateur.id,
         titre: "Synthèse Bretagne",
-        messages: [{ id: "m1", role: "user", parts: [{ type: "text", text: "hello" }] }],
+        messages: [
+          { id: "m1", role: "user", parts: [{ type: "text", text: "hello" }] },
+        ],
         territoireCode: "REG-53",
         jalon: 2025,
         createdAt: expect.any(Date),
@@ -246,12 +262,36 @@ describe("PrismaChatConversationRepository", () => {
       const utilB = await fixtures.utilisateur({});
       const repository = new PrismaChatConversationRepository({ prisma: tx });
 
-      await repository.upsert({ id: crypto.randomUUID(), utilisateurId: utilA.id, titre: "A-1", messages: [], territoireCode: null, jalon: null });
-      await repository.upsert({ id: crypto.randomUUID(), utilisateurId: utilA.id, titre: "A-2", messages: [], territoireCode: null, jalon: null });
-      await repository.upsert({ id: crypto.randomUUID(), utilisateurId: utilB.id, titre: "B-1", messages: [], territoireCode: null, jalon: null });
+      await repository.upsert({
+        id: crypto.randomUUID(),
+        utilisateurId: utilA.id,
+        titre: "A-1",
+        messages: [],
+        territoireCode: null,
+        jalon: null,
+      });
+      await repository.upsert({
+        id: crypto.randomUUID(),
+        utilisateurId: utilA.id,
+        titre: "A-2",
+        messages: [],
+        territoireCode: null,
+        jalon: null,
+      });
+      await repository.upsert({
+        id: crypto.randomUUID(),
+        utilisateurId: utilB.id,
+        titre: "B-1",
+        messages: [],
+        territoireCode: null,
+        jalon: null,
+      });
 
       // When
-      const resultats = await repository.listerPourUtilisateur({ utilisateurId: utilA.id, limite: 10 });
+      const resultats = await repository.listerPourUtilisateur({
+        utilisateurId: utilA.id,
+        limite: 10,
+      });
 
       // Then
       expect(resultats).toEqual([
@@ -270,13 +310,24 @@ describe("PrismaChatConversationRepository", () => {
       const repository = new PrismaChatConversationRepository({ prisma: tx });
       const id = crypto.randomUUID();
 
-      await repository.upsert({ id, utilisateurId: utilA.id, titre: "X", messages: [], territoireCode: null, jalon: null });
+      await repository.upsert({
+        id,
+        utilisateurId: utilA.id,
+        titre: "X",
+        messages: [],
+        territoireCode: null,
+        jalon: null,
+      });
 
       await repository.supprimer({ id, utilisateurId: utilB.id });
-      expect(await repository.recupererParId({ id, utilisateurId: utilA.id })).not.toBeNull();
+      expect(
+        await repository.recupererParId({ id, utilisateurId: utilA.id }),
+      ).not.toBeNull();
 
       await repository.supprimer({ id, utilisateurId: utilA.id });
-      expect(await repository.recupererParId({ id, utilisateurId: utilA.id })).toBeNull();
+      expect(
+        await repository.recupererParId({ id, utilisateurId: utilA.id }),
+      ).toBeNull();
     }),
   );
 
@@ -287,20 +338,46 @@ describe("PrismaChatConversationRepository", () => {
       const repository = new PrismaChatConversationRepository({ prisma: tx });
 
       const idAncien = crypto.randomUUID();
-      await repository.upsert({ id: idAncien, utilisateurId: utilisateur.id, titre: "ancien", messages: [], territoireCode: null, jalon: null });
+      await repository.upsert({
+        id: idAncien,
+        utilisateurId: utilisateur.id,
+        titre: "ancien",
+        messages: [],
+        territoireCode: null,
+        jalon: null,
+      });
       await tx.chat_conversation.update({
         where: { id: idAncien },
         data: { updated_at: new Date("2025-01-01") },
       });
 
       const idRecent = crypto.randomUUID();
-      await repository.upsert({ id: idRecent, utilisateurId: utilisateur.id, titre: "recent", messages: [], territoireCode: null, jalon: null });
+      await repository.upsert({
+        id: idRecent,
+        utilisateurId: utilisateur.id,
+        titre: "recent",
+        messages: [],
+        territoireCode: null,
+        jalon: null,
+      });
 
-      const nombre = await repository.supprimerExpirees({ anterieurA: new Date("2025-06-01") });
+      const nombre = await repository.supprimerExpirees({
+        anterieurA: new Date("2025-06-01"),
+      });
 
       expect(nombre).toEqual(1);
-      expect(await repository.recupererParId({ id: idAncien, utilisateurId: utilisateur.id })).toBeNull();
-      expect(await repository.recupererParId({ id: idRecent, utilisateurId: utilisateur.id })).not.toBeNull();
+      expect(
+        await repository.recupererParId({
+          id: idAncien,
+          utilisateurId: utilisateur.id,
+        }),
+      ).toBeNull();
+      expect(
+        await repository.recupererParId({
+          id: idRecent,
+          utilisateurId: utilisateur.id,
+        }),
+      ).not.toBeNull();
     }),
   );
 });
@@ -321,9 +398,7 @@ import type {
 } from "@/server/albert/domain/ChatConversation";
 import type { ChatConversationRepository } from "@/server/albert/domain/ChatConversationRepository";
 
-export class PrismaChatConversationRepository
-  implements ChatConversationRepository
-{
+export class PrismaChatConversationRepository implements ChatConversationRepository {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
 
   private db() {
@@ -406,7 +481,10 @@ export class PrismaChatConversationRepository
     }));
   }
 
-  async supprimer(params: { id: string; utilisateurId: string }): Promise<void> {
+  async supprimer(params: {
+    id: string;
+    utilisateurId: string;
+  }): Promise<void> {
     await this.db().chat_conversation.deleteMany({
       where: { id: params.id, utilisateur_id: params.utilisateurId },
     });
@@ -438,6 +516,7 @@ git commit -m "feat(llm): PrismaChatConversationRepository"
 ## Task 4: Use cases
 
 **Files:**
+
 - Create: `apps/pilote-ppg/src/server/albert/usecases/EnregistrerConversationUseCase.ts`
 - Create: `apps/pilote-ppg/src/server/albert/usecases/ListerConversationsUseCase.ts`
 - Create: `apps/pilote-ppg/src/server/albert/usecases/RecupererConversationUseCase.ts`
@@ -494,7 +573,9 @@ export class ListerConversationsUseCase {
     },
   ) {}
 
-  async run(params: { utilisateurId: string }): Promise<ChatConversationResume[]> {
+  async run(params: {
+    utilisateurId: string;
+  }): Promise<ChatConversationResume[]> {
     return this.deps.chatConversationRepository.listerPourUtilisateur({
       utilisateurId: params.utilisateurId,
       limite: LIMITE_PAR_DEFAUT,
@@ -516,7 +597,10 @@ export class RecupererConversationUseCase {
     },
   ) {}
 
-  async run(params: { id: string; utilisateurId: string }): Promise<ChatConversation | null> {
+  async run(params: {
+    id: string;
+    utilisateurId: string;
+  }): Promise<ChatConversation | null> {
     return this.deps.chatConversationRepository.recupererParId(params);
   }
 }
@@ -554,14 +638,17 @@ export class PurgerConversationsExpireesUseCase {
     },
   ) {}
 
-  async run(params: { maintenant?: Date } = {}): Promise<{ supprimees: number; anterieurA: Date }> {
+  async run(
+    params: { maintenant?: Date } = {},
+  ): Promise<{ supprimees: number; anterieurA: Date }> {
     const maintenant = params.maintenant ?? new Date();
     const anterieurA = new Date(
       maintenant.getTime() - RETENTION_JOURS * 24 * 60 * 60 * 1000,
     );
-    const supprimees = await this.deps.chatConversationRepository.supprimerExpirees({
-      anterieurA,
-    });
+    const supprimees =
+      await this.deps.chatConversationRepository.supprimerExpirees({
+        anterieurA,
+      });
     return { supprimees, anterieurA };
   }
 }
@@ -647,6 +734,7 @@ git commit -m "feat(llm): use cases historique conversations"
 ## Task 5: Enregistrement DI + intégration route `/api/albert/chat`
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/server/albert/module.ts`
 - Modify: `apps/pilote-ppg/src/app/api/albert/chat/route.ts`
 
@@ -723,9 +811,11 @@ Expected: OK.
 
 Run: `cd apps/pilote-ppg && pnpm dev`
 Envoyer un message via le chat, puis requêter en DB :
+
 ```sql
 SELECT id, titre, jsonb_array_length(messages), updated_at FROM chat_conversation ORDER BY updated_at DESC LIMIT 5;
 ```
+
 Expected: une ligne par conversation, `jsonb_array_length` croît à chaque tour.
 
 - [ ] **Step 5: Commit**
@@ -740,6 +830,7 @@ git commit -m "feat(llm): persistance des conversations via onFinish"
 ## Task 6: Routeur tRPC `albert.conversations`
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/server/infrastructure/api/trpc/routes/albert.ts` (ou nouveau sous-fichier `albert/conversations.ts`)
 
 - [ ] **Step 1: Ajouter 3 procédures**
@@ -751,14 +842,18 @@ import { getContainer } from "@/server/dependances";
 
 export const conversationsRouter = createTRPCRouter({
   lister: procedureUtilisateurAuthentifie.query(async ({ ctx }) => {
-    const useCase = getContainer("albert").resolve("listerConversationsUseCase");
+    const useCase = getContainer("albert").resolve(
+      "listerConversationsUseCase",
+    );
     return useCase.run({ utilisateurId: ctx.session.user.id });
   }),
 
   recuperer: procedureUtilisateurAuthentifie
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      const useCase = getContainer("albert").resolve("recupererConversationUseCase");
+      const useCase = getContainer("albert").resolve(
+        "recupererConversationUseCase",
+      );
       const conversation = await useCase.run({
         id: input.id,
         utilisateurId: ctx.session.user.id,
@@ -772,7 +867,9 @@ export const conversationsRouter = createTRPCRouter({
   supprimer: procedureUtilisateurAuthentifie
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      const useCase = getContainer("albert").resolve("supprimerConversationUseCase");
+      const useCase = getContainer("albert").resolve(
+        "supprimerConversationUseCase",
+      );
       await useCase.run({ id: input.id, utilisateurId: ctx.session.user.id });
       return { ok: true };
     }),
@@ -805,6 +902,7 @@ git commit -m "feat(llm): routeur tRPC albert.conversations"
 ## Task 7: Front — `ChatUI` contrôlable par conversationId
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/client/components/_commons/ChatUI/ChatUI.tsx`
 
 - [ ] **Step 1: Accepter `conversationId` + `initialMessages` + signal de fin de tour**
@@ -870,6 +968,7 @@ git commit -m "feat(llm): ChatUI accepte conversationId + initialMessages"
 ## Task 8: Front — tiroir d'historique
 
 **Files:**
+
 - Create: `apps/pilote-ppg/src/client/components/_commons/ChatUI/ConversationHistoryDrawer.tsx`
 
 - [ ] **Step 1: Composant tiroir**
@@ -971,6 +1070,7 @@ git commit -m "feat(llm): tiroir historique des conversations"
 ## Task 9: Front — intégration dans `BoutonSyntheseTerritoire`
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/client/components/PageAccueil/BoutonSyntheseTerritoire.tsx`
 
 > **⚠️ État initial** : le fichier a déjà été modifié par PIL-1488. Il contient déjà la prop `estDITPAdmin: boolean`, les scenarios groupés (Synthèse + Comparaison), et un `agentContext` avec `jalon` + `instructions`. **Préserver tout cela** — on ajoute uniquement le drawer et la gestion du `conversationId`. Ne pas réécrire le fichier en partant de zéro.
@@ -991,17 +1091,23 @@ import { ConversationHistoryDrawer } from "@/components/_commons/ChatUI/Conversa
 ```tsx
 const ffHistorique = useEnv("NEXT_PUBLIC_FF_HISTORIQUE_ALBERT");
 const utilsTrpc = api.useUtils();
-const [conversationId, setConversationId] = useState<string>(() => crypto.randomUUID());
+const [conversationId, setConversationId] = useState<string>(() =>
+  crypto.randomUUID(),
+);
 const [conversationIdAVouloirCharger, setConversationIdAVouloirCharger] =
   useState<string | null>(null);
 
-const { data: conversationChargee } = api.albert.conversations.recuperer.useQuery(
-  { id: conversationIdAVouloirCharger ?? "" },
-  { enabled: conversationIdAVouloirCharger !== null },
-);
+const { data: conversationChargee } =
+  api.albert.conversations.recuperer.useQuery(
+    { id: conversationIdAVouloirCharger ?? "" },
+    { enabled: conversationIdAVouloirCharger !== null },
+  );
 
 useEffect(() => {
-  if (conversationChargee && conversationChargee.id === conversationIdAVouloirCharger) {
+  if (
+    conversationChargee &&
+    conversationChargee.id === conversationIdAVouloirCharger
+  ) {
     setConversationId(conversationChargee.id);
     setConversationIdAVouloirCharger(null);
   }
@@ -1063,6 +1169,7 @@ Note : on passe aussi `territoireCode` dans `agentContext` pour que la persistan
 Run: `cd apps/pilote-ppg && pnpm dev`
 
 Scénarios :
+
 1. `NEXT_PUBLIC_FF_HISTORIQUE_ALBERT=false` : pas de tiroir, comportement actuel.
 2. `true` : tiroir visible, bouton "Nouvelle conversation" remet un chat vide, clic sur une entrée → charge les messages précédents.
 3. Envoi d'un message → la conversation apparaît dans le tiroir après un refetch.
@@ -1080,6 +1187,7 @@ git commit -m "feat(llm): tiroir historique dans BoutonSyntheseTerritoire"
 ## Task 10: Script cron de purge
 
 **Files:**
+
 - Create: `apps/pilote-ppg/scripts/purgerConversationsAlbert.ts`
 - Create: `apps/pilote-ppg/scripts/run_purge_conversations_albert.sh`
 - Modify: `apps/pilote-ppg/cron.json`
@@ -1091,7 +1199,9 @@ import "dotenv/config";
 import { getContainer } from "@/server/dependances";
 
 async function main() {
-  const useCase = getContainer("albert").resolve("purgerConversationsExpireesUseCase");
+  const useCase = getContainer("albert").resolve(
+    "purgerConversationsExpireesUseCase",
+  );
   const { supprimees, anterieurA } = await useCase.run();
   // eslint-disable-next-line no-console
   console.log(
@@ -1146,6 +1256,7 @@ git commit -m "feat(llm): cron quotidien de purge des conversations >14j"
 ## Task 11: Feature flag + config
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/config.ts`
 - Modify: `apps/pilote-ppg/src/server/gestion-contenu/domain/VariableContenuDisponible.ts`
 
@@ -1170,6 +1281,7 @@ git commit -m "feat(llm): feature flag NEXT_PUBLIC_FF_HISTORIQUE_ALBERT"
 ## Task 12: ADR — choix du blob JSONB unique
 
 **Files:**
+
 - Create: `apps/pilote-ppg/docs/architecture/decisions/000X-stockage-blob-conversations-albert.md`
 
 - [ ] **Step 1: Numéroter l'ADR**

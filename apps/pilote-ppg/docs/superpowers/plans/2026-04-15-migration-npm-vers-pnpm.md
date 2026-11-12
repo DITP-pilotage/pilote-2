@@ -17,11 +17,13 @@
 ## File Structure
 
 **Créés :**
+
 - `.npmrc` — config pnpm (linker isolated, peers auto-install)
 - `pnpm-lock.yaml` — généré par `pnpm install`
 - `docs/superpowers/plans/2026-04-15-migration-npm-vers-pnpm.md` — ce plan
 
 **Modifiés :**
+
 - `package.json` — champ `packageManager`, scripts migrés, éventuelles deps explicites
 - `.github/actions/setupNodeAndPackages/action.yml` — composite action CI migrée pnpm
 - `.github/workflows/testAndLint.yml` — step `npm ci` remplacé, scripts pnpm
@@ -29,6 +31,7 @@
 - `CLAUDE.md` — section "Development Commands" passée à pnpm + note install
 
 **Supprimés :**
+
 - `package-lock.json`
 
 ---
@@ -36,6 +39,7 @@
 ## Task 1 : Créer `.npmrc`
 
 **Files:**
+
 - Create: `.npmrc`
 
 - [ ] **Step 1 : Écrire `.npmrc`**
@@ -73,6 +77,7 @@ Expected : quelque chose comme `10.x.y` (ex. `10.15.0`). Noter cette version pou
 ## Task 3 : Ajouter `packageManager` dans `package.json`
 
 **Files:**
+
 - Modify: `package.json` (après `"private": true,`)
 
 - [ ] **Step 1 : Ajouter le champ**
@@ -106,6 +111,7 @@ Expected : `"packageManager": "pnpm@10.x.y",`
 ## Task 4 : Migrer les scripts `package.json` de npm vers pnpm
 
 **Files:**
+
 - Modify: `package.json` (bloc `scripts`)
 
 - [ ] **Step 1 : Réécrire le bloc `scripts`**
@@ -149,6 +155,7 @@ Remplacer le bloc `scripts` intégralement par :
 ```
 
 Modifications par rapport à la version actuelle :
+
 - `build` : `npx pagefind` → `pnpm exec pagefind`
 - `build:dev` : idem
 - `lint` : `npm run lint:eslint && npm run lint:tsc` → `pnpm lint:eslint && pnpm lint:tsc`
@@ -170,6 +177,7 @@ Expected : aucun résultat.
 ## Task 5 : Supprimer `package-lock.json` et générer `pnpm-lock.yaml`
 
 **Files:**
+
 - Delete: `package-lock.json`
 - Create: `pnpm-lock.yaml` (généré)
 
@@ -192,6 +200,7 @@ Expected : affichage du fichier puis `OK`.
 ## Task 6 : Vérifier qu'aucun ignore ne référence `package-lock.json`
 
 **Files:**
+
 - Read (verify): `.dockerignore`, `.gitignore`, `.slugignore`
 
 - [ ] **Step 1 : Vérifier**
@@ -218,6 +227,7 @@ Expected : pas d'erreur `Cannot find module ...`. Les warnings ESLint habituels 
 - [ ] **Step 2 : Si phantom dep révélée (ex. `Cannot find module 'foo'`)**
 
 Pour chaque dep manquante :
+
 1. Identifier si c'est une `dependency` ou une `devDependency` (test / build / runtime ?).
 2. Ajouter explicitement : `pnpm add foo` ou `pnpm add -D foo`.
 3. Relancer `pnpm lint`.
@@ -322,6 +332,7 @@ Run : `git add package.json pnpm-lock.yaml && git commit -m "fix: ajouter dépen
 ## Task 12 : Migrer la composite action CI `setupNodeAndPackages`
 
 **Files:**
+
 - Modify: `.github/actions/setupNodeAndPackages/action.yml`
 
 - [ ] **Step 1 : Réécrire `action.yml`**
@@ -343,7 +354,7 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        cache: 'pnpm'
+        cache: "pnpm"
 
     - name: Install dependencies
       shell: bash
@@ -351,6 +362,7 @@ runs:
 ```
 
 Changements clés :
+
 - `pnpm/action-setup@v4` ajouté en amont (lit `packageManager` de `package.json`).
 - `actions/setup-node@v3` → `@v4`, `cache: 'npm'` → `cache: 'pnpm'`.
 - Cache manuel `actions/cache@v3` sur `node_modules` supprimé : `setup-node` gère le cache du store pnpm via l'option `cache`.
@@ -366,6 +378,7 @@ Expected : occurrences de `pnpm`, aucune occurrence de `npm ci` / `npm install`.
 ## Task 13 : Migrer `.github/workflows/testAndLint.yml`
 
 **Files:**
+
 - Modify: `.github/workflows/testAndLint.yml`
 
 - [ ] **Step 1 : Réécrire le fichier**
@@ -432,6 +445,7 @@ jobs:
 ```
 
 Changements :
+
 - Job `install` supprimé : l'install est désormais dans la composite action, et GitHub Actions ne partage pas `node_modules` entre jobs de toute façon (chaque job ré-installait via la composite). Les `needs: install` deviennent inutiles.
 - `actions/checkout@v3` → `@v4` (cohérence avec le job ci-dessus, évite warnings runner).
 - `npm run test:database:init` → `pnpm test:database:init`.
@@ -448,6 +462,7 @@ Expected : aucun résultat.
 ## Task 14 : Migrer `.github/workflows/e2e.yml`
 
 **Files:**
+
 - Modify: `.github/workflows/e2e.yml`
 
 - [ ] **Step 1 : Remplacer le bloc setup + install**
@@ -455,51 +470,52 @@ Expected : aucun résultat.
 Dans `e2e.yml`, remplacer :
 
 ```yaml
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
+- name: Setup Node.js
+  uses: actions/setup-node@v4
+  with:
+    node-version: "20"
+    cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
+- name: Install dependencies
+  run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
+- name: Install Playwright browsers
+  run: npx playwright install chromium --with-deps
 
-      - name: Run E2E tests
-        id: playwright-tests
-        run: |
-          set -e
-          npx playwright test --workers=1
+- name: Run E2E tests
+  id: playwright-tests
+  run: |
+    set -e
+    npx playwright test --workers=1
 ```
 
 par :
 
 ```yaml
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+- name: Setup pnpm
+  uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-          cache: 'pnpm'
+- name: Setup Node.js
+  uses: actions/setup-node@v4
+  with:
+    node-version-file: "package.json"
+    cache: "pnpm"
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+- name: Install dependencies
+  run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install chromium --with-deps
+- name: Install Playwright browsers
+  run: pnpm exec playwright install chromium --with-deps
 
-      - name: Run E2E tests
-        id: playwright-tests
-        run: |
-          set -e
-          pnpm exec playwright test --workers=1
+- name: Run E2E tests
+  id: playwright-tests
+  run: |
+    set -e
+    pnpm exec playwright test --workers=1
 ```
 
 Notes :
+
 - `node-version: "20"` → `node-version-file: 'package.json'` pour lire `engines.node` (24.9.0) et rester aligné avec `testAndLint.yml`. Si ça pose problème (test ancien sur Node 20 explicitement), revert à `node-version: "24.9.0"`.
 - `cache: "npm"` → `cache: "pnpm"`.
 - `npm ci` → `pnpm install --frozen-lockfile`.
@@ -528,22 +544,27 @@ Si grep remonte quelque chose : ajouter un step de migration ad-hoc ici, même p
 ## Task 16 : Mettre à jour `CLAUDE.md`
 
 **Files:**
+
 - Modify: `CLAUDE.md` (section "Development Commands")
 
 - [ ] **Step 1 : Réécrire la section "Development Commands"**
 
 Remplacer le bloc sous `## Development Commands` par :
 
-```markdown
+````markdown
 ## Development Commands
 
 ### Prérequis
+
 Installer pnpm 10 globalement avant le premier install :
+
 ```bash
 npm install -g pnpm@10
 ```
+````
 
 ### Essential Commands
+
 ```bash
 # Development server with pretty logging
 pnpm dev
@@ -562,6 +583,7 @@ pnpm database:migration
 ```
 
 ### Testing Commands
+
 ```bash
 # Run all tests
 pnpm test
@@ -577,6 +599,7 @@ pnpm test:e2e
 ```
 
 ### Code Quality Commands
+
 ```bash
 # Run all linters (ESLint, TypeScript, Stylelint)
 pnpm lint
@@ -587,7 +610,8 @@ pnpm lint:fix
 # Format code with Prettier
 pnpm format
 ```
-```
+
+````
 
 - [ ] **Step 2 : Vérifier qu'il ne reste pas de `npm run` dans le fichier**
 
@@ -637,7 +661,7 @@ git add .npmrc pnpm-lock.yaml package.json CLAUDE.md \
   docs/superpowers/plans/2026-04-15-migration-npm-vers-pnpm.md
 git rm package-lock.json
 git commit -m "feat: migrer de npm vers pnpm 10 (isolated, sans workspaces)"
-```
+````
 
 (Les éventuels commits intermédiaires des tasks 7/8/9/11 sont déjà faits et n'ont pas besoin d'être refaits ici — ce commit final regroupe le reste.)
 
