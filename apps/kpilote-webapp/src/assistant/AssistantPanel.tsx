@@ -1,11 +1,10 @@
 import { analyticsEvents, type QuestionSendContext } from '@pilote/kpilote-shared/analytics/events'
 import type { PageContext } from '@pilote/kpilote-shared/assistant/chat'
 import { Button } from '@pilote/kpilote-ui/Button'
-import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
 import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { clsxm } from '@pilote/kpilote-ui/clsxm'
 import { useQueryClient } from '@tanstack/react-query'
-import { ArrowDown, Mic, Square } from 'lucide-react'
+import { ArrowDown, ArrowUp, Mic, Square } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 
 import { analytics } from '@/analytics/tracker'
@@ -263,33 +262,31 @@ export function AssistantPanel({
       </div>
 
       <form
-        className="flex items-end gap-2"
+        className="flex items-end gap-1 rounded-3xl border border-border bg-surface py-2 pr-2 pl-4 shadow-sm transition-colors focus-within:border-primary"
         onSubmit={(event) => {
           event.preventDefault()
           submit()
         }}
       >
-        <div className="flex-1">
-          <FieldTextarea
-            ref={field}
-            label="Votre question"
-            hideLabel
-            autoFocus
-            rows={2}
-            value={input}
-            placeholder={busy ? "L'assistant prépare sa réponse…" : 'Posez votre question…'}
-            onChange={(event) => {
-              if (event.target.value.trim() === '') setPrefill(conversationId, null)
-              setInput(event.target.value)
-            }}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault()
-                submit()
-              }
-            }}
-          />
-        </div>
+        <textarea
+          ref={field}
+          aria-label="Votre question"
+          autoFocus
+          rows={1}
+          value={input}
+          placeholder={busy ? "L'assistant prépare sa réponse…" : 'Posez votre question…'}
+          className="max-h-48 min-h-9 flex-1 resize-none bg-transparent py-1.5 text-sm leading-6 field-sizing-content placeholder:text-text-subtle focus:outline-none"
+          onChange={(event) => {
+            if (event.target.value.trim() === '') setPrefill(conversationId, null)
+            setInput(event.target.value)
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+              event.preventDefault()
+              submit()
+            }
+          }}
+        />
         {speech.isSupported && (
           <IconButton
             label={speech.state === 'listening' ? "Arrêter l'écoute" : 'Dicter un message'}
@@ -302,6 +299,7 @@ export function AssistantPanel({
               speech.toggle()
             }}
             className={clsxm(
+              'shrink-0 rounded-full',
               speech.state === 'listening' &&
                 'animate-pulse bg-error text-surface hover:bg-error hover:text-surface motion-reduce:animate-none',
             )}
@@ -312,19 +310,27 @@ export function AssistantPanel({
         {busy ? (
           <Button
             type="button"
+            aria-label="Arrêter"
+            title="Arrêter"
             onClick={() => {
               analytics.trackEvent(
                 analyticsEvents.assistant.answerStop({ conversation_id: conversationId }),
               )
               void stop()
             }}
+            className="size-9 shrink-0 rounded-full p-0 [&_svg]:size-3.5"
           >
-            <Square className="size-3.5" />
-            Arrêter
+            <Square className="fill-current" />
           </Button>
         ) : (
-          <Button type="submit" disabled={input.trim().length === 0}>
-            Envoyer
+          <Button
+            type="submit"
+            aria-label="Envoyer"
+            title="Envoyer"
+            disabled={input.trim().length === 0}
+            className="size-9 shrink-0 rounded-full p-0"
+          >
+            <ArrowUp />
           </Button>
         )}
       </form>
