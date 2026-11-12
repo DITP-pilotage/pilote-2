@@ -12,7 +12,7 @@ import {
 } from '@pilote/kpilote-shared/axe'
 
 import { deleteModalite } from '@/axe/commands/deleteModalite'
-import { upsertAxe } from '@/axe/commands/upsertAxe'
+import { type UpsertAxeError, upsertAxe } from '@/axe/commands/upsertAxe'
 import { type UpsertModaliteError, upsertModalite } from '@/axe/commands/upsertModalite'
 import { getAxeByPublicId } from '@/axe/queries/getAxeByPublicId'
 import { getModaliteByPublicId } from '@/axe/queries/getModaliteByPublicId'
@@ -174,6 +174,23 @@ const deleteModaliteRoute = createRoute({
 
 // --- Erreurs métier ------------------------------------------------------------
 
+const describeUpsertAxeError = (
+  error: UpsertAxeError,
+): { message: string; details: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'NIVEAU_PORTE_MODALITES':
+      return {
+        message: `Ces niveaux portent des modalités et ne peuvent pas être supprimés : ${error.ordres.join(', ')}.`,
+        details: { ordres: error.ordres },
+      }
+    case 'AXE_UTILISE':
+      return {
+        message: `Cet axe est déclaré par des indicateurs (${error.indicateurs.join(', ')}) : on ne peut plus ajouter ni retirer de niveau. Le renommage reste possible.`,
+        details: { indicateurs: error.indicateurs },
+      }
+  }
+}
+
 const describeUpsertModaliteError = (
   error: UpsertModaliteError,
 ): { status: 400 | 409; message: string; details?: Record<string, unknown> } => {
@@ -239,18 +256,7 @@ axeRoutes.openapi(upsertAxeRoute, async (context) => {
     (error) =>
       jsonResponseError({
         context,
-        error:
-          error.type === 'AXE_UTILISE'
-            ? {
-                code: error.type,
-                message: `Cet axe est déclaré par des indicateurs (${error.indicateurs.join(', ')}) : on ne peut plus ajouter ni retirer de niveau. Le renommage reste possible.`,
-                details: { indicateurs: error.indicateurs },
-              }
-            : {
-                code: error.type,
-                message: `Ces niveaux portent des modalités et ne peuvent pas être supprimés : ${error.ordres.join(', ')}.`,
-                details: { ordres: error.ordres },
-              },
+        error: { code: error.type, ...describeUpsertAxeError(error) },
         schema: ErrorApiModelSchema,
         status: 409,
       }),
