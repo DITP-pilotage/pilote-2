@@ -68,6 +68,10 @@
       "types": "./src/assistant/dashboard.ts",
       "default": "./src/assistant/dashboard.ts"
     },
+    "./assistant/admin": {
+      "types": "./src/assistant/admin.ts",
+      "default": "./src/assistant/admin.ts"
+    },
     "./assistant/feedback": {
       "types": "./src/assistant/feedback.ts",
       "default": "./src/assistant/feedback.ts"
