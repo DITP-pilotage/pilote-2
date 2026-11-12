@@ -273,7 +273,9 @@ const getValeursRemarquablesForIndicateurRoute = createRoute({
     "Retourne, pour chaque référentiel demandé existant, les stats `min`/`max`/`mediane` calculées sur la valeur la plus récente de chaque individu du référentiel ayant au moins une valeur pour l'indicateur. " +
     'Le paramètre `referentiels` est obligatoire (1..N identifiants séparés par une virgule, ex. `REF-DEPT,REF-REG`). ' +
     'Les référentiels inexistants sont omis de la réponse. ' +
-    "Si un référentiel n'a aucun individu avec valeur pour l'indicateur, les trois champs sont à `null` mais l'item est présent.",
+    "Si un référentiel n'a aucun individu avec valeur pour l'indicateur, les trois champs sont à `null` mais l'item est présent." +
+    'Indicateur à axes : sans `modalites`, les valeurs sont « Tous » sur chaque axe ; avec `modalites` (publicIds séparés par une virgule, au plus un par axe), la comparaison porte sur ces modalités, et un individu où elles n’ont jamais été observées n’a pas de valeur. ' +
+    'Erreurs 400 : `MODALITE_INCONNUE`, `AXE_NON_DECLARE`, `MODALITES_MEME_AXE`.',
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -302,7 +304,9 @@ const getSyntheseIndividusRoute = createRoute({
     'La variation est calculée sur la base de la date de la valeur (pas de la date de saisie) : null si aucune valeur, ' +
     'égale à la valeur la plus récente si une seule (comparée à 0), sinon différence avec la valeur précédente. ' +
     "L'écart à la médiane est calculé par rapport à la médiane des valeurs récentes des individus du même référentiel " +
-    "ayant au moins une valeur pour l'indicateur ; null si l'individu n'a aucune valeur.",
+    "ayant au moins une valeur pour l'indicateur ; null si l'individu n'a aucune valeur." +
+    'Indicateur à axes : sans `modalites`, les valeurs sont « Tous » sur chaque axe ; avec `modalites` (publicIds séparés par une virgule, au plus un par axe), la comparaison porte sur ces modalités, et un individu où elles n’ont jamais été observées n’a pas de valeur. ' +
+    'Erreurs 400 : `MODALITE_INCONNUE`, `AXE_NON_DECLARE`, `MODALITES_MEME_AXE`.',
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -580,9 +584,9 @@ valeurAvancementRoutes.openapi(getIndividusWithValeursRoute, async (context) => 
 
 valeurAvancementRoutes.openapi(getValeursRemarquablesForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { referentiels, dateTrunc } = context.req.valid('query')
+  const { referentiels, dateTrunc, modalites } = context.req.valid('query')
 
-  return listValeursRemarquablesForIndicateur(id, { referentiels, dateTrunc }).match(
+  return listValeursRemarquablesForIndicateur(id, { referentiels, dateTrunc, modalites }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -590,15 +594,25 @@ valeurAvancementRoutes.openapi(getValeursRemarquablesForIndicateurRoute, async (
         schema: ValeursRemarquablesListApiModelSchema,
         status: 200,
       }),
-    never,
+    (error) =>
+      jsonResponseError({
+        context,
+        error: {
+          code: error.type,
+          message: messageResoudreSelectionError(error),
+          details: { modalites: error.modalites },
+        },
+        schema: ErrorApiModelSchema,
+        status: 400,
+      }),
   )
 })
 
 valeurAvancementRoutes.openapi(getSyntheseIndividusRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { individus, dateTrunc } = context.req.valid('query')
+  const { individus, dateTrunc, modalites } = context.req.valid('query')
 
-  return listSyntheseIndividus(id, { individus, dateTrunc }).match(
+  return listSyntheseIndividus(id, { individus, dateTrunc, modalites }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -606,7 +620,17 @@ valeurAvancementRoutes.openapi(getSyntheseIndividusRoute, async (context) => {
         schema: SyntheseIndividusListApiModelSchema,
         status: 200,
       }),
-    never,
+    (error) =>
+      jsonResponseError({
+        context,
+        error: {
+          code: error.type,
+          message: messageResoudreSelectionError(error),
+          details: { modalites: error.modalites },
+        },
+        schema: ErrorApiModelSchema,
+        status: 400,
+      }),
   )
 })
 
