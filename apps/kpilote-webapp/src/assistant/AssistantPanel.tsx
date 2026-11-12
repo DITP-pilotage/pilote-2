@@ -1,3 +1,4 @@
+import { analyticsEvents, type QuestionSendContext } from '@pilote/kpilote-shared/analytics/events'
 import type { PageContext } from '@pilote/kpilote-shared/assistant/chat'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
@@ -7,6 +8,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ArrowDown, Mic, Square } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 
+import { analytics } from '@/analytics/tracker'
+
 import { AssistantMessage, UserMessage } from './AssistantMessage'
 import { assistantAccessQueryOptions } from './assistantApi'
 import { AssistantSignature } from './AssistantSignature'
@@ -15,9 +18,14 @@ import { EmptyState } from './emptyState/EmptyState'
 import { propositionsFor, type Proposition } from './emptyState/propositions'
 import { isNearBottom } from './followResponse'
 import { questionToSend, type PendingQuestion } from './pendingQuestion'
+import { pageType, propositionViewKey, questionOrigin, questionType } from './tracking'
 import { appendTranscript } from './transcript'
-import { readDraft, useAssistant, writeDraft } from './useAssistant'
+import { prefillOf, readDraft, setPrefill, useAssistant, writeDraft } from './useAssistant'
 import { useSpeechRecognition } from './useSpeechRecognition'
+
+// Un affichage de l'accueil par conversation et par page : changer de vue remonte le
+// panneau sans compter un nouvel affichage.
+const propositionsShown = new Set<string>()
 
 export function AssistantPanel({
   conversationId,
@@ -52,18 +60,46 @@ export function AssistantPanel({
     onTranscript: (text) => setInput(appendTranscript(input, text)),
   })
   const { cancel: cancelSpeech } = speech
+  // Lus à l'envoi sans rendre `send` instable à chaque morceau de réponse.
+  const messagesRef = useRef(messages)
+  useEffect(() => {
+    messagesRef.current = messages
+  }, [messages])
   // Quelle que soit la façon d'envoyer, la dictée s'arrête : elle remplirait sinon le champ
   // pendant la réponse.
   const send = useCallback(
-    (text: string) => {
+    (text: string, origin: QuestionSendContext['origine']) => {
       cancelSpeech()
+      analytics.trackEvent(
+        analyticsEvents.assistant.questionSend({
+          conversation_id: conversationId,
+          origine: origin,
+          type_question: questionType({
+            messages: messagesRef.current,
+            fromProposition: origin === 'proposition',
+          }),
+        }),
+      )
       void sendMessage({ text })
     },
-    [cancelSpeech, sendMessage],
+    [cancelSpeech, conversationId, sendMessage],
   )
   // Stables : un message déjà affiché ne se re-rend pas à chaque frappe ni à chaque morceau.
-  const choose = useCallback((label: string) => send(label), [send])
-  const writeOther = useCallback(() => field.current?.focus(), [])
+  const choose = useCallback(
+    (label: string) => {
+      analytics.trackEvent(
+        analyticsEvents.assistant.responseChoice({ conversation_id: conversationId }),
+      )
+      send(label, 'choix')
+    },
+    [conversationId, send],
+  )
+  const writeOther = useCallback(() => {
+    analytics.trackEvent(
+      analyticsEvents.assistant.responseChoiceOther({ conversation_id: conversationId }),
+    )
+    field.current?.focus()
+  }, [conversationId])
   // Le fil suit la réponse, sauf si l'on remonte pour relire ; une nouvelle question
   // le raccroche.
   const following = useRef(true)
@@ -85,7 +121,7 @@ export function AssistantPanel({
     })
     if (!question) return
     lastSentId.current = question.id
-    send(question.text)
+    send(question.text, 'palette')
     onPendingQuestionSent?.(question.id)
   }, [pendingQuestion, onPendingQuestionSent, send, status])
 
@@ -110,6 +146,9 @@ export function AssistantPanel({
   const followResponse = () => {
     const element = thread.current
     if (!element) return
+    analytics.trackEvent(
+      analyticsEvents.assistant.answerFollow({ conversation_id: conversationId }),
+    )
     following.current = true
     element.scrollTop = element.scrollHeight
   }
@@ -121,20 +160,42 @@ export function AssistantPanel({
   const submit = () => {
     const text = input.trim()
     if (text.length === 0 || busy) return
-    send(text)
+    send(text, questionOrigin({ text, prefill: prefillOf(conversationId) }))
+    setPrefill(conversationId, null)
     setInput('')
   }
 
   const chooseProposition = (proposition: Proposition) => {
+    analytics.trackEvent(
+      analyticsEvents.assistant.propositionClick({
+        proposition_id: proposition.id,
+        proposition_mode: proposition.mode === 'send' ? 'envoi_direct' : 'preremplissage',
+      }),
+    )
     if (proposition.mode === 'send') {
-      send(proposition.message)
+      setPrefill(conversationId, null)
+      send(proposition.message, 'proposition')
       return
     }
+    setPrefill(conversationId, proposition.message)
     setInput(proposition.message)
     field.current?.focus()
   }
 
   const empty = messages.length === 0 && !pendingQuestion && !busy
+  const propositions = propositionsFor(pageContext)
+
+  useEffect(() => {
+    const key = propositionViewKey({ conversationId, pageContext })
+    if (!empty || propositionsShown.has(key)) return
+    propositionsShown.add(key)
+    analytics.trackEvent(
+      analyticsEvents.assistant.propositionView({
+        nombre_choix: propositions.length,
+        page_type: pageType(pageContext),
+      }),
+    )
+  }, [conversationId, empty, pageContext, propositions.length])
 
   return (
     <div
@@ -153,9 +214,7 @@ export function AssistantPanel({
           onScroll={onThreadScroll}
           className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto pr-1"
         >
-          {empty && (
-            <EmptyState propositions={propositionsFor(pageContext)} onChoose={chooseProposition} />
-          )}
+          {empty && <EmptyState propositions={propositions} onChoose={chooseProposition} />}
           {messages.map((message) =>
             message.role === 'user' ? (
               <UserMessage key={message.id} message={message} />
@@ -167,6 +226,7 @@ export function AssistantPanel({
                 showChoices={message === last && status === 'ready'}
                 onChoose={choose}
                 onWriteOther={writeOther}
+                conversationId={conversationId}
                 actions={message === last && status === 'ready' ? renderActions?.(message) : null}
               />
             ),
@@ -175,7 +235,16 @@ export function AssistantPanel({
           {error && (
             <div className="flex items-center gap-3 border-l-4 border-error bg-error-tinted p-3 text-sm text-text">
               <span>La réponse n&apos;a pas pu aboutir.</span>
-              <Button variant="tertiary" size="sm" onClick={() => void regenerate()}>
+              <Button
+                variant="tertiary"
+                size="sm"
+                onClick={() => {
+                  analytics.trackEvent(
+                    analyticsEvents.assistant.answerRetry({ conversation_id: conversationId }),
+                  )
+                  void regenerate()
+                }}
+              >
                 Réessayer
               </Button>
             </div>
@@ -209,7 +278,10 @@ export function AssistantPanel({
             rows={2}
             value={input}
             placeholder={busy ? "L'assistant prépare sa réponse…" : 'Posez votre question…'}
-            onChange={(event) => setInput(event.target.value)}
+            onChange={(event) => {
+              if (event.target.value.trim() === '') setPrefill(conversationId, null)
+              setInput(event.target.value)
+            }}
             onKeyDown={(event) => {
               if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault()
@@ -223,7 +295,12 @@ export function AssistantPanel({
             label={speech.state === 'listening' ? "Arrêter l'écoute" : 'Dicter un message'}
             aria-pressed={speech.state === 'listening'}
             disabled={busy}
-            onClick={speech.toggle}
+            onClick={() => {
+              if (speech.state === 'inactive') {
+                analytics.trackEvent(analyticsEvents.assistant.speechStart())
+              }
+              speech.toggle()
+            }}
             className={clsxm(
               speech.state === 'listening' &&
                 'animate-pulse bg-error text-surface hover:bg-error hover:text-surface motion-reduce:animate-none',
@@ -233,7 +310,15 @@ export function AssistantPanel({
           </IconButton>
         )}
         {busy ? (
-          <Button type="button" onClick={() => void stop()}>
+          <Button
+            type="button"
+            onClick={() => {
+              analytics.trackEvent(
+                analyticsEvents.assistant.answerStop({ conversation_id: conversationId }),
+              )
+              void stop()
+            }}
+          >
             <Square className="size-3.5" />
             Arrêter
           </Button>
