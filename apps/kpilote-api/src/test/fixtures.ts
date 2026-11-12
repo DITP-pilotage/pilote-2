@@ -608,10 +608,11 @@ async function indicateurAxe(
 
 // --- ValeurAvancement (deps requises) ----------------------------------------
 
+// Sans `combinaison` : la combinaison vide (indicateur sans axe).
 type ValeurAvancementOverrides = {
   indicateur: IndicateurOverrides
   individu: IndividuOverrides
-} & Partial<{ id: string; date: string; valeur: number }>
+} & Partial<{ id: string; date: string; valeur: number; combinaison: CombinaisonOverrides }>
 
 const DEFAULT_VALEUR_AVANCEMENT_DATE = '2024-01-01'
 const DEFAULT_VALEUR_AVANCEMENT_VALEUR = 10
@@ -619,7 +620,9 @@ const DEFAULT_VALEUR_AVANCEMENT_VALEUR = 10
 const upsertValeurAvancement = async (o: ValeurAvancementOverrides) => {
   const indicateurRow = await upsertIndicateur(o.indicateur)
   const individuRow = await upsertIndividu(o.individu)
-  const combinaisonId = await trouverCombinaisonVideId()
+  const combinaisonId = o.combinaison
+    ? (await upsertCombinaison(o.combinaison)).id
+    : await trouverCombinaisonVideId()
   const date = o.date ?? DEFAULT_VALEUR_AVANCEMENT_DATE
   const valeur = o.valeur ?? DEFAULT_VALEUR_AVANCEMENT_VALEUR
   return db().valeurAvancement.upsert({

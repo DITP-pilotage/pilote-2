@@ -7,7 +7,7 @@ import { db } from '@/framework/persistence/dbStore'
 
 export type DeleteModaliteError =
   | { type: 'MODALITE_A_DES_ENFANTS'; enfants: string[] }
-  | { type: 'MODALITE_UTILISEE'; combinaisons: number }
+  | { type: 'MODALITE_UTILISEE'; valeurs: number }
 
 const performDelete = async ({
   axePublicId,
@@ -20,10 +20,7 @@ const performDelete = async ({
 
   const modalite = await db().modalite.findFirst({
     where: { publicId, axe: { publicId: axePublicId } },
-    include: {
-      enfants: { orderBy: { publicId: 'asc' } },
-      _count: { select: { combinaisons: true } },
-    },
+    include: { enfants: { orderBy: { publicId: 'asc' } } },
   })
   if (!modalite) {
     throw new NotFoundError('Modalité introuvable dans cet axe.', { axe: axePublicId, publicId })
@@ -32,12 +29,19 @@ const performDelete = async ({
     return err({ type: 'MODALITE_A_DES_ENFANTS', enfants: modalite.enfants.map((e) => e.publicId) })
   }
 
-  // Une modalité utilisée par une combinaison précise des valeurs : la
-  // supprimer les rendrait orphelines.
-  if (modalite._count.combinaisons > 0) {
-    return err({ type: 'MODALITE_UTILISEE', combinaisons: modalite._count.combinaisons })
-  }
+  // Supprimer une modalité qui précise des valeurs les rendrait orphelines.
+  const valeurs = await db().valeurAvancement.count({
+    where: { combinaison: { modalites: { some: { modaliteId: modalite.id } } } },
+  })
+  if (valeurs > 0) return err({ type: 'MODALITE_UTILISEE', valeurs })
 
+  // Les combinaisons de la modalité ne portent aucune valeur : elles
+  // disparaissent avec elle (le cascade retire leurs lignes, y compris celles
+  // des autres axes). Si une valeur arrivait entre-temps, la clé étrangère
+  // `Restrict` de `valeur_avancement` fait échouer la suppression.
+  await db().combinaison.deleteMany({
+    where: { modalites: { some: { modaliteId: modalite.id } } },
+  })
   await db().modalite.delete({ where: { id: modalite.id } })
   return ok()
 }

@@ -470,6 +470,8 @@ model ValeurAvancement {
   @@unique([indicateurId, individuId, combinaisonId, date], name: "valeur_avancement_cellule_unique")
   @@index([indicateurId, date])
   @@index([individuId, date])
+  // Valeurs d'une combinaison : suppression d'une modalité, clé étrangère `Restrict`.
+  @@index([combinaisonId])
   @@map("valeur_avancement")
 }
 

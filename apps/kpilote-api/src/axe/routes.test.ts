@@ -6,7 +6,13 @@ import { ApiKeyRole } from '@/generated/prisma/enums'
 import { buildTestApp } from '@/test/buildTestApp'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testApiKeyRawKey, testAxeId, testIndicateurId, testModaliteId } from '@/test/randomIds'
+import {
+  testApiKeyRawKey,
+  testAxeId,
+  testIndicateurId,
+  testIndividuId,
+  testModaliteId,
+} from '@/test/randomIds'
 
 // La route ouvre sa propre transaction (`withTransaction`), qui ne verrait pas les
 // fixtures de la transaction de test : ici elle rejoint la transaction courante
@@ -446,10 +452,14 @@ describe.concurrent('DELETE /axes/{id}/modalites/{modaliteId}', () => {
   )
 
   it(
-    'refuse (409) de supprimer une modalité utilisée par une combinaison',
+    'refuse (409) de supprimer une modalité qui précise des valeurs',
     integrationTest(async () => {
       const { axeId, type } = await axeImbrique()
-      await fixtures.combinaison({ modalites: [{ publicId: type.publicId }] })
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: testIndicateurId() },
+        individu: { publicId: testIndividuId() },
+        combinaison: { modalites: [{ publicId: type.publicId }] },
+      })
       const cle = await cleApi(ApiKeyRole.ADMIN)
 
       const response = await requete({
@@ -461,7 +471,7 @@ describe.concurrent('DELETE /axes/{id}/modalites/{modaliteId}', () => {
       expect(response.status).toBe(409)
       expect(await response.json()).toMatchObject({
         code: 'MODALITE_UTILISEE',
-        details: { combinaisons: 1 },
+        details: { valeurs: 1 },
       })
     }),
   )
