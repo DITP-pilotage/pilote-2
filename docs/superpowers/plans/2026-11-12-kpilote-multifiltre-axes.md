@@ -52,13 +52,13 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 | T0    | PIL-1979 | Snapshot des lectures et non-régression des écritures  | ✅ fait (#2674) |
 | —     | PIL-1980 | ~~Feature flag~~ : abandonné (D12), ticket à supprimer | abandonné       |
 | T1.1  | PIL-1981 | Migration : axes, niveaux et modalités                 | ✅ fait (#2675) |
-| T1.2  | PIL-1982 | API : CRUD des axes, niveaux et modalités              | 🔄 en cours     |
-| T1.3  | PIL-1983 | Admin : pages Axes                                     | 🔄 en cours     |
-| T2.1  | PIL-1984 | Migration : axes d'un indicateur                       | 🔄 en cours     |
-| T2.2  | PIL-1985 | API : déclarer les axes d'un indicateur                | 🔄 en cours     |
-| T2.3  | PIL-1986 | Admin : section Axes d'un indicateur                   | 🔄 en cours     |
-| T3.1  | PIL-1987 | Migration : combinaisons de modalités sur les valeurs  | 🔄 en cours     |
-| T3.2  | PIL-1988 | Upserts de valeurs sur la nouvelle clé unique          | 🔄 en cours     |
+| T1.2  | PIL-1982 | API : CRUD des axes, niveaux et modalités              | ✅ fait (#2676) |
+| T1.3  | PIL-1983 | Admin : pages Axes                                     | ✅ fait (#2677) |
+| T2.1  | PIL-1984 | Migration : axes d'un indicateur                       | ✅ fait (#2678) |
+| T2.2  | PIL-1985 | API : déclarer les axes d'un indicateur                | ✅ fait (#2679) |
+| T2.3  | PIL-1986 | Admin : section Axes d'un indicateur                   | ✅ fait (#2680) |
+| T3.1  | PIL-1987 | Migration : combinaisons de modalités sur les valeurs  | ✅ fait (#2683) |
+| T3.2  | PIL-1988 | Écritures sur la nouvelle clé unique                   | ✅ fait (#2684) |
 | T3.3  | PIL-1989 | Suppression de l'ancien index unique des valeurs       | 🔄 en cours     |
 | T4.1  | PIL-1993 | Lectures de valeurs : paramètre combinaison optionnel  | à faire         |
 | T5.1  | PIL-1990 | Calcul de la marginale sur les axes (fonctions pures)  | à faire         |
@@ -128,6 +128,8 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** gérer les axes par l'API.
 
+> ✅ **Fait** (#2676).
+>
 > **Écarts validés (2026-11-12) :**
 >
 > - Lectures ouvertes à tout utilisateur authentifié (la fiche indicateur en aura besoin, T7.1) ; écritures réservées aux clés API ADMIN.
@@ -142,17 +144,17 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Étapes :**
 
-- [ ] Schémas partagés : `AxeApiModel` (avec niveaux), `ModaliteApiModel` (avec `parent`), payloads d'écriture.
-- [ ] Routes : `GET /axes`, `GET /axes/{id}`, `PUT /axes/{id}` (axe + niveaux), gestion des modalités (`GET` sous `/axes/{id}/modalites`, `PUT/DELETE` sous `/axes/{id}/modalites/{modaliteId}`). Lectures : tout utilisateur authentifié ; écritures : clés API ADMIN.
-- [ ] Contrôles : parent d'une modalité du même axe ; niveau déduit du parent (premier niveau sans parent) ; parent fixé à la création ; suppression d'une modalité qui a des enfants refusée ; suppression d'un niveau qui porte des modalités refusée.
-- [ ] Inspiration : `apps/kpilote-api/src/dimension/{routes,commands/upsertDimension,queries/*}.ts` du POC.
-- [ ] Descriptions OpenAPI.
+- [x] Schémas partagés : `AxeApiModel` (avec niveaux), `ModaliteApiModel` (avec `parent`), payloads d'écriture.
+- [x] Routes : `GET /axes`, `GET /axes/{id}`, `PUT /axes/{id}` (axe + niveaux), gestion des modalités (`GET` sous `/axes/{id}/modalites`, `PUT/DELETE` sous `/axes/{id}/modalites/{modaliteId}`). Lectures : tout utilisateur authentifié ; écritures : clés API ADMIN.
+- [x] Contrôles : parent d'une modalité du même axe ; niveau déduit du parent (premier niveau sans parent) ; parent fixé à la création ; suppression d'une modalité qui a des enfants refusée ; suppression d'un niveau qui porte des modalités refusée.
+- [x] Inspiration : `apps/kpilote-api/src/dimension/{routes,commands/upsertDimension,queries/*}.ts` du POC.
+- [x] Descriptions OpenAPI.
 
 **DoD :**
 
-- [ ] Commune.
-- [ ] Tests de routes sur chaque erreur métier.
-- [ ] `/openapi.json` liste `/axes`.
+- [x] Commune.
+- [x] Tests de routes sur chaque erreur métier.
+- [x] `/openapi.json` liste `/axes`.
 
 ---
 
@@ -160,19 +162,21 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** gérer les axes depuis la console d'administration.
 
+> ✅ **Fait** (#2677).
+
 **Fichiers :** Create `apps/kpilote-admin/src/api/axes.ts`, `apps/kpilote-admin/src/queries/axes.ts`, `apps/kpilote-admin/src/components/AxeForm.tsx`, `apps/kpilote-admin/src/routes/_authed/axes/{index,nouveau,$id}.tsx` ; Modify `apps/kpilote-admin/src/server/api/router.ts` (`axes` dans `SAFE_PATH`, + test), `apps/kpilote-admin/src/routes/_authed/fonctionnalites.tsx` (carte « Gérer les axes »).
 
 **Étapes :**
 
-- [ ] Liste, création, édition d'un axe ; gestion de ses niveaux (ordre).
-- [ ] Arbre des modalités : ajout (sous un parent), renommage, suppression. Pas de déplacement ; publicId saisi à la main.
-- [ ] Inspiration : `DimensionForm.tsx`, `routes/_authed/dimensions/*` du POC.
+- [x] Liste, création, édition d'un axe ; gestion de ses niveaux (ordre).
+- [x] Arbre des modalités : ajout (sous un parent), renommage, suppression. Pas de déplacement ; publicId saisi à la main.
+- [x] Inspiration : `DimensionForm.tsx`, `routes/_authed/dimensions/*` du POC.
 
 **DoD :**
 
-- [ ] Commune.
-- [ ] Les pages existantes de l'admin sont inchangées.
-- [ ] Parcours vérifié dans le navigateur (création d'un axe imbriqué à 2 niveaux).
+- [x] Commune.
+- [x] Les pages existantes de l'admin sont inchangées.
+- [x] Parcours vérifié dans le navigateur (création d'un axe imbriqué à 2 niveaux).
 
 ---
 
@@ -180,19 +184,21 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** stocker quels axes découpent un indicateur et comment calculer « Tous ».
 
+> ✅ **Fait** (#2678).
+>
 > **Écarts validés (2026-11-12) :** une seule fonction par axe (spec D14), plus de table `indicateur_niveau_axe` ; enum dédié `fonction_agregation_axe_enum` (SUM, AVG), sans NONE.
 
 **Fichiers :** Modify `apps/kpilote-api/prisma/schema.prisma` ; migration `<ts>_indicateur_axes` ; fixtures.
 
 **Étapes :**
 
-- [ ] `IndicateurAxe` (`indicateur_axe` : indicateur, axe, `ordre` = ordre de déclaration à partir de 1, `fonction` de type `FonctionAgregationAxe`) ; PK(indicateur, axe), UNIQUE(indicateur, ordre). Suppression de l'indicateur en cascade ; un axe déclaré ne peut pas être supprimé.
-- [ ] Fixture `fixtures.indicateurAxe(...)`.
+- [x] `IndicateurAxe` (`indicateur_axe` : indicateur, axe, `ordre` = ordre de déclaration à partir de 1, `fonction` de type `FonctionAgregationAxe`) ; PK(indicateur, axe), UNIQUE(indicateur, ordre). Suppression de l'indicateur en cascade ; un axe déclaré ne peut pas être supprimé.
+- [x] Fixture `fixtures.indicateurAxe(...)`.
 
 **DoD :**
 
-- [ ] Commune.
-- [ ] Rien ne lit encore cette table.
+- [x] Commune.
+- [x] Rien ne lit encore cette table.
 
 ---
 
@@ -200,22 +206,24 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** attacher des axes à un indicateur.
 
+> ✅ **Fait** (#2679).
+>
 > **Écarts validés (2026-11-12) :** champ `axes` dans `PUT /indicateurs/{id}` au lieu d'une route dédiée (spec D13) ; une fonction par axe (D14).
 
 **Fichiers :** Modify `apps/kpilote-api/src/indicateur/{routes.ts,utils.ts,commands/upsertIndicateur.ts,queries/getIndicateurByPublicId.ts,queries/listIndicateurs.ts}` (+ tests), `apps/kpilote-api/src/axe/commands/upsertAxe.ts` ; Modify `packages/kpilote-shared/src/indicateur.ts`, `packages/kpilote-shared/src/axe.ts`.
 
 **Étapes :**
 
-- [ ] Lectures d'indicateur : champ `axes: [{ id, nom, fonction }]`, dans l'ordre de déclaration. Vide pour tous les indicateurs existants.
-- [ ] `PUT /indicateurs/{id}` : champ optionnel `axes: [{ id, fonction }]`, la position donne l'ordre ; absent = inchangé (comme `responsables`), présent = remplace la déclaration complète.
-- [ ] Erreurs : axe inconnu, axe en double (400) ; ajout ou retrait d'un axe refusé (409) si l'indicateur a des valeurs, avec la raison en commentaire. Changer une fonction ou l'ordre reste permis.
-- [ ] `PUT /axes/{id}` : changer le nombre de niveaux d'un axe déclaré par un indicateur est refusé (409 `AXE_UTILISE`) ; le renommage reste permis.
+- [x] Lectures d'indicateur : champ `axes: [{ id, nom, fonction }]`, dans l'ordre de déclaration. Vide pour tous les indicateurs existants.
+- [x] `PUT /indicateurs/{id}` : champ optionnel `axes: [{ id, fonction }]`, la position donne l'ordre ; absent = inchangé (comme `responsables`), présent = remplace la déclaration complète.
+- [x] Erreurs : axe inconnu, axe en double (400) ; ajout ou retrait d'un axe refusé (409) si l'indicateur a des valeurs, avec la raison en commentaire. Changer une fonction ou l'ordre reste permis.
+- [x] `PUT /axes/{id}` : changer le nombre de niveaux d'un axe déclaré par un indicateur est refusé (409 `AXE_UTILISE`) ; le renommage reste permis.
 
 **DoD :**
 
-- [ ] Commune ; snapshot : seul le champ `axes` s'ajoute aux réponses d'indicateur.
-- [ ] Un `PUT /indicateurs` sans `axes` se comporte exactement comme avant.
-- [ ] Tests de la route, dont les refus 409.
+- [x] Commune ; snapshot : seul le champ `axes` s'ajoute aux réponses d'indicateur.
+- [x] Un `PUT /indicateurs` sans `axes` se comporte exactement comme avant.
+- [x] Tests de la route, dont les refus 409.
 
 ---
 
@@ -223,19 +231,21 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** déclarer les axes d'un indicateur depuis l'admin.
 
+> ✅ **Fait** (#2680).
+
 **Fichiers :** Create `apps/kpilote-admin/src/components/indicateurs/AdminAxes.tsx` ; Modify `IndicateurForm.tsx`, `indicateurFormSchema.ts`.
 
 **Étapes :**
 
-- [ ] Section « Axes » : ajouter ou retirer un axe, choisir sa fonction (somme ou moyenne), réordonner (monter / descendre) avec une explication de l'effet de l'ordre (point n°2 de PIL-1963).
-- [ ] Enregistrement avec l'indicateur, via `PUT /indicateurs/{id}`.
-- [ ] Message clair sur les refus 409.
+- [x] Section « Axes » : ajouter ou retirer un axe, choisir sa fonction (somme ou moyenne), réordonner (monter / descendre) avec une explication de l'effet de l'ordre (point n°2 de PIL-1963).
+- [x] Enregistrement avec l'indicateur, via `PUT /indicateurs/{id}`.
+- [x] Message clair sur les refus 409.
 
 **DoD :**
 
-- [ ] Commune.
-- [ ] Un indicateur sans axe s'édite comme avant (référentiels et valeurs conservés).
-- [ ] Parcours vérifié dans le navigateur.
+- [x] Commune.
+- [x] Un indicateur sans axe s'édite comme avant (référentiels et valeurs conservés).
+- [x] Parcours vérifié dans le navigateur.
 
 ---
 
@@ -243,24 +253,26 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** permettre à une valeur d'être précisée par des modalités ; toutes les valeurs existantes prennent la combinaison vide.
 
+> ✅ **Fait** (#2683).
+>
 > **Écarts validés (2026-11-12) :** pas de valeur par défaut ni d'uuid figé pour la combinaison vide (retrouvée par `cle = ''`) ; colonne ajoutée en 3 étapes ; clé étrangère composite pour la cohérence modalité / axe ; les écritures fournissent la combinaison vide dès cette tâche (la colonne est `NOT NULL` sans défaut).
 
 **Fichiers :** Modify `apps/kpilote-api/prisma/schema.prisma` ; migration `<ts>_combinaisons` (écrite à la main) ; Create `apps/kpilote-api/src/axe/combinaison.ts` ; Modify `prisma/sql/upsertValeursAvancementBatch.sql`, `src/valeurAvancement/commands/upsertValeurAvancement.ts`, `prisma/seed.ts`, `src/test/fixtures.ts`, `src/axe/commands/deleteModalite.ts`, `src/axe/routes.ts`.
 
 **Étapes :**
 
-- [ ] `Combinaison` (`combinaison` : id uuid, `cle` UNIQUE = uuids des modalités triés joints par `,`). La migration insère la combinaison vide (`gen_random_uuid()`, `cle = ''`).
-- [ ] `CombinaisonModalite` (`combinaison_modalite` : combinaison, axe, modalité ; PK(combinaison, axe)) ; clé étrangère composite `(modalite_id, axe_id) → modalite(id, axe_id)`, d'où un UNIQUE(id, axe_id) sur `modalite`.
-- [ ] `valeur_avancement.combinaison_id` en 3 étapes : colonne nullable, `UPDATE` vers la combinaison vide, `SET NOT NULL` ; clé étrangère.
-- [ ] Nouvel index unique `(indicateur_id, individu_id, combinaison_id, date)` **en plus** de l'ancien.
-- [ ] Toutes les écritures fournissent la combinaison vide (batch SQL, upsert unitaire, seed, fixtures), encore sur l'ancienne clé de conflit.
-- [ ] `src/axe/combinaison.ts` : `cleCombinaison`, `trouverCombinaisonVideId` ; fixture `fixtures.combinaison({ modalites })`.
-- [ ] `DELETE /axes/{id}/modalites/{modaliteId}` : refus 409 `MODALITE_UTILISEE` si la modalité est utilisée par une combinaison (reporté depuis T1.2).
-- [ ] Ne pas toucher à `objectif_indicateur_individu` ni à `indicateur_individu_commentaire` (D5).
+- [x] `Combinaison` (`combinaison` : id uuid, `cle` UNIQUE = uuids des modalités triés joints par `,`). La migration insère la combinaison vide (`gen_random_uuid()`, `cle = ''`).
+- [x] `CombinaisonModalite` (`combinaison_modalite` : combinaison, axe, modalité ; PK(combinaison, axe)) ; clé étrangère composite `(modalite_id, axe_id) → modalite(id, axe_id)`, d'où un UNIQUE(id, axe_id) sur `modalite`.
+- [x] `valeur_avancement.combinaison_id` en 3 étapes : colonne nullable, `UPDATE` vers la combinaison vide, `SET NOT NULL` ; clé étrangère.
+- [x] Nouvel index unique `(indicateur_id, individu_id, combinaison_id, date)` **en plus** de l'ancien.
+- [x] Toutes les écritures fournissent la combinaison vide (batch SQL, upsert unitaire, seed, fixtures), encore sur l'ancienne clé de conflit.
+- [x] `src/axe/combinaison.ts` : `cleCombinaison`, `trouverCombinaisonVideId` ; fixture `fixtures.combinaison({ modalites })`.
+- [x] `DELETE /axes/{id}/modalites/{modaliteId}` : refus 409 `MODALITE_UTILISEE` si la modalité est utilisée par une combinaison (reporté depuis T1.2).
+- [x] Ne pas toucher à `objectif_indicateur_individu` ni à `indicateur_individu_commentaire` (D5).
 
 **DoD :**
 
-- [ ] Commune ; snapshot : 0 différence.
+- [x] Commune ; snapshot : 0 différence.
 
 ---
 
@@ -268,19 +280,21 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** écrire les valeurs sur `(indicateur, individu, combinaison, date)`.
 
+> ✅ **Fait** (#2684).
+
 **Fichiers :** Modify `prisma/sql/upsertValeursAvancementBatch.sql`, `src/valeurAvancement/commands/{upsertValeurAvancement,deleteValeurAvancement}.ts`, `prisma/seed.ts`, `src/test/fixtures.ts`.
 
 **Étapes :**
 
-- [ ] `ON CONFLICT (indicateur_id, individu_id, combinaison_id, date)` dans le SQL batch et dans le seed.
-- [ ] Upsert unitaire sur la clé composite `valeur_avancement_cellule_unique`.
-- [ ] Suppression unitaire filtrée sur la combinaison vide (sinon, une fois l'ancien index retiré, elle effacerait toutes les combinaisons de la cellule).
-- [ ] Seed : `supprimerHorsJeu` limité à la combinaison vide.
-- [ ] Fixture `valeurAvancement` : nouvelle clé, paramètre `combinaison` optionnel (vide par défaut).
+- [x] `ON CONFLICT (indicateur_id, individu_id, combinaison_id, date)` dans le SQL batch et dans le seed.
+- [x] Upsert unitaire sur la clé composite `valeur_avancement_cellule_unique`.
+- [x] Suppression unitaire filtrée sur la combinaison vide (sinon, une fois l'ancien index retiré, elle effacerait toutes les combinaisons de la cellule).
+- [x] Seed : `supprimerHorsJeu` limité à la combinaison vide.
+- [x] Fixture `valeurAvancement` : nouvelle clé, paramètre `combinaison` optionnel (vide par défaut).
 
 **DoD :**
 
-- [ ] Commune ; non-régression des écritures identique (compteurs, erreurs).
+- [x] Commune ; non-régression des écritures identique (compteurs, erreurs).
 
 ---
 
