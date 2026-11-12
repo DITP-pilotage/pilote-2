@@ -7,6 +7,14 @@ export { axePublicIdSchema, modalitePublicIdSchema } from './publicIds'
 
 // --- Axe ---------------------------------------------------------------------
 
+export const FONCTIONS_AGREGATION_AXE = ['SUM', 'AVG'] as const
+export const fonctionAgregationAxeSchema = z
+  .enum(FONCTIONS_AGREGATION_AXE)
+  .describe(
+    'Fonction d’un axe pour un indicateur : `SUM` (somme) ou `AVG` (moyenne). Elle calcule une modalité parente à partir de ses enfants, à chaque niveau, puis « Tous » à partir du premier niveau.',
+  )
+export type FonctionAgregationAxe = z.infer<typeof fonctionAgregationAxeSchema>
+
 export const niveauAxeApiModelSchema = z.object({
   ordre: z
     .number()

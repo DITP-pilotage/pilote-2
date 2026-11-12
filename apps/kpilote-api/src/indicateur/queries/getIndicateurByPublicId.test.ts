@@ -59,6 +59,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
         jourMiseAJour: null,
         delaiMiseADisposition: null,
         referentiels: referentielsTries,
+        axes: [],
         responsables: [],
         dateDerniereValeur: null,
         dateProchaineValeur: null,

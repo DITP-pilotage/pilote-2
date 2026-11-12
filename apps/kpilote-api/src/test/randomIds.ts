@@ -44,6 +44,10 @@ export const testModaliteId = (): string => `MOD-${randomToken(12).toUpperCase()
 // identifiants du seed, ce qui rend les tests de génération déterministes.
 export const testCollectionNumericId = (): string => `COL-9${randomDigits(11)}`
 
+// Même logique pour les routes `/indicateurs/{id}`, dont le paramètre n'accepte
+// que `IND-<chiffres>`.
+export const testIndicateurNumericId = (): string => `IND-9${randomDigits(11)}`
+
 // Suffixe aléatoire (et non un code INSEE tiré d'un petit pool) : avec jusqu'à
 // 10 transactions concurrentes, piocher parmi 18 régions / ~100 départements
 // provoquait des collisions de publicId entre tests → contention de row-locks.

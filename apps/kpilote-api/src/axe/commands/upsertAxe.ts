@@ -6,10 +6,9 @@ import { MESSAGE_ADMIN } from '@/axe/utils'
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
-export type UpsertAxeError = {
-  type: 'NIVEAU_PORTE_MODALITES'
-  ordres: number[]
-}
+export type UpsertAxeError =
+  | { type: 'NIVEAU_PORTE_MODALITES'; ordres: number[] }
+  | { type: 'AXE_UTILISE'; indicateurs: string[] }
 
 // Les niveaux sont identifiés par leur position : `niveaux[i]` devient le
 // niveau d'ordre i + 1 (créé ou renommé). Les niveaux au-delà de la liste sont
@@ -24,6 +23,22 @@ const performUpsert = async ({
   ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
 
   const existing = await db().axe.findUnique({ where: { publicId }, include: { niveaux: true } })
+
+  // Un indicateur qui déclare l'axe s'appuie sur ses niveaux pour calculer les
+  // totaux : ajouter ou retirer un niveau changerait ses résultats. Renommer
+  // reste permis.
+  if (existing && existing.niveaux.length !== body.niveaux.length) {
+    const declarations = await db().indicateurAxe.findMany({
+      where: { axeId: existing.id },
+      include: { indicateur: true },
+    })
+    if (declarations.length > 0) {
+      return err({
+        type: 'AXE_UTILISE',
+        indicateurs: declarations.map((d) => d.indicateur.publicId).sort(),
+      })
+    }
+  }
   const niveauxEnTrop = (existing?.niveaux ?? []).filter((n) => n.ordre > body.niveaux.length)
   if (niveauxEnTrop.length > 0) {
     // `modalites: { some: {} }` : niveaux qui portent au moins une modalité (EXISTS).

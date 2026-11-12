@@ -1,8 +1,9 @@
 import { z } from 'zod'
 
 import { dateSchema } from './dates'
+import { fonctionAgregationAxeSchema } from './axe'
 import { createPaginatedApiListSchema, idsFilterSchema, listQuerySchema } from './pagination'
-import { indicateurPublicIdSchema, referentielPublicIdSchema } from './publicIds'
+import { axePublicIdSchema, indicateurPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 import { responsableApiModelSchema } from './responsable'
 
 export const indicateurVisibiliteSchema = z
@@ -134,6 +135,23 @@ export type ConfigurationIndicateurReferentiel = z.infer<
   typeof configurationIndicateurReferentielSchema
 >
 
+// --- Axes d'un indicateur ----------------------------------------------------
+
+export const declarationAxeIndicateurSchema = z
+  .object({
+    id: axePublicIdSchema,
+    fonction: fonctionAgregationAxeSchema,
+  })
+  .describe('Déclaration d’un axe sur un indicateur.')
+export type DeclarationAxeIndicateur = z.infer<typeof declarationAxeIndicateurSchema>
+
+export const declarationAxeIndicateurApiModelSchema = declarationAxeIndicateurSchema.extend({
+  nom: z.string().describe('Nom lisible de l’axe.'),
+})
+export type DeclarationAxeIndicateurApiModel = z.infer<
+  typeof declarationAxeIndicateurApiModelSchema
+>
+
 export const configurationIndicateurReferentielApiModelSchema =
   configurationIndicateurReferentielSchema.extend({
     nom: z.string().describe('Nom lisible du référentiel associé.'),
@@ -233,6 +251,11 @@ export const indicateurApiModelSchema = z.object({
       'Configurations de cet indicateur sur chaque référentiel associé, triées par `id` ASC. ' +
         'Tableau vide si aucun référentiel.',
     ),
+  axes: z
+    .array(declarationAxeIndicateurApiModelSchema)
+    .describe(
+      'Axes qui découpent l’indicateur en plus du territoire, dans l’ordre de déclaration (ordre dans lequel les axes se combinent entre eux). Vide pour un indicateur sans axe.',
+    ),
   responsables: z
     .array(responsableApiModelSchema)
     .describe(
@@ -290,6 +313,15 @@ export const upsertIndicateurBodySchema = z.object({
     .describe(
       'UUIDs des utilisateurs responsables (replace-all quand présent). ' +
         'Champ optionnel : absent = inchangé ; `[]` = aucun responsable. Doublons dédupliqués.',
+    ),
+  axes: z
+    .array(declarationAxeIndicateurSchema)
+    .refine((axes) => new Set(axes.map((axe) => axe.id)).size === axes.length, {
+      message: 'Un axe ne peut être déclaré qu’une fois.',
+    })
+    .optional()
+    .describe(
+      'Liste complète des axes de l’indicateur (replace-all quand présent). La position donne l’ordre de déclaration. Champ optionnel : absent = inchangé ; `[]` = aucun axe. Ajouter ou retirer un axe est refusé (409) si l’indicateur a déjà des valeurs.',
     ),
 })
 export type UpsertIndicateurBody = z.infer<typeof upsertIndicateurBodySchema>
