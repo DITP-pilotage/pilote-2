@@ -35,20 +35,24 @@ d'arborescence interne à l'app.
 ## Décisions
 
 ### Structure minimale
+
 Un seul package workspace dans ce ticket : `apps/pilote-ppg/`. Rien d'autre n'est
 créé. Les packages futurs viendront dans leurs propres tickets quand ils auront
 un besoin concret.
 
 ### Nom du package
+
 `@pilote/ppg` (scope `@pilote/*`). Pose la convention pour tous les futurs packages
 du monorepo (`@pilote/shared`, `@pilote/pilote`, etc.).
 
 ### Principe "tout dans l'app, on remontera"
+
 Racine minimale. Uniquement ce qui est strictement obligatoire au niveau monorepo
 reste à la racine. Tout le reste descend dans `apps/pilote-ppg/`, quitte à remonter
 plus tard au fur et à mesure que les besoins de partage apparaîtront.
 
 ### Path aliases TypeScript
+
 Les alias `@/client/*`, `@/server/*`, `@/components/*`, `@/validation/*`, `@/config`
 restent internes à `@pilote/ppg` (redéfinis dans
 `apps/pilote-ppg/tsconfig.json` comme `./src/*`). Pas de ré-écriture d'imports
@@ -63,12 +67,14 @@ L'entrée `include` correspondante dans le `tsconfig.json` doit suivre le même
 ajustement.
 
 ### Orchestration des commandes
+
 Scripts d'alias dans le `package.json` racine qui filtrent vers
 `@pilote/ppg` (`pnpm dev`, `pnpm test`, `pnpm lint`, etc.). DX inchangée pour
 les devs : toutes les commandes usuelles continuent de fonctionner depuis la
 racine, comme aujourd'hui.
 
 ### Historique Git
+
 Déplacement via `git mv` pour préserver `git blame` et `git log --follow`.
 
 ## Structure cible
@@ -122,12 +128,14 @@ pilote/
 ## Fichiers à créer
 
 ### `pnpm-workspace.yaml` (racine)
+
 ```yaml
 packages:
   - "apps/*"
 ```
 
 ### `package.json` (racine, minimal)
+
 ```json
 {
   "name": "pilote-monorepo",
@@ -150,6 +158,7 @@ packages:
 ```
 
 ### `apps/pilote-ppg/package.json`
+
 Le `package.json` actuel, renommé en `"name": "@pilote/ppg"`, avec toutes les
 deps et tous les scripts inchangés.
 
@@ -187,6 +196,7 @@ Stratégie retenue : garder les jobs à la racine et utiliser les commandes
 etc.). Pas de `working-directory` implicite.
 
 Fichiers à adapter :
+
 - **`testAndLint.yml`** :
   - Jobs `test` et `lint` : commandes déjà en `pnpm` (alias racine), aucune
     modification nécessaire si on garde les alias
@@ -241,10 +251,12 @@ Trois applications Scalingo déployées depuis le même repo Git :
 ### Actions à faire
 
 1. **Variables d'environnement Scalingo** (manuel, AVANT merge, sur dev ET prod) :
+
    ```
    scalingo --app <auth-app>         env-set PROJECT_DIR=apps/pilote-ppg/auth
    scalingo --app <data-mgmt-app>    env-set PROJECT_DIR=apps/pilote-ppg/data_management
    ```
+
    (Idempotent, sans effet sur le déploiement en cours.)
 
 2. **`.slugignore`** : mise à jour des chemins racine → `apps/pilote-ppg/...`.
@@ -348,6 +360,7 @@ Exécuté depuis la racine du monorepo :
 - `scripts/clone_centre_aide.sh` vérifié (chemins)
 
 **Actions manuelles à documenter dans la PR (checklist pré-merge)** :
+
 - [ ] `PROJECT_DIR` défini sur l'app Scalingo auth (dev + prod)
 - [ ] `PROJECT_DIR` défini sur l'app Scalingo data_management (dev + prod)
 - [ ] Déploiement dev validé sur les 3 apps

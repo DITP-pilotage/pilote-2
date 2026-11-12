@@ -34,10 +34,12 @@
 ### Task 1: Filtre `indicateurIds` de `GetIndicateursIdentiteQuery`
 
 **Files:**
+
 - Modify: `src/server/chantiers/query/GetIndicateursIdentiteQuery.ts`
 - Create: `src/server/chantiers/__tests__/query/GetIndicateursIdentiteQuery.integration.test.ts`
 
 **Interfaces:**
+
 - Produces: `GetIndicateursIdentiteParams = { chantierIds?: string[]; indicateurIds?: string[] }`. Type de retour inchangé.
 
 - [ ] **Step 1: Créer la branche et mesurer l'existant.** Depuis `dev`, créer la branche. Run: `pnpm eval evals/2-tools/2.2-donnees/getIndicateursNonAJour.eval.ts`. Expected: un score par cas, à noter pour Task 4. Rejouer la suite seule en cas de 503 ou 429. Si l'API reste indisponible, le dire et continuer : la mesure « avant » sera refaite depuis `dev`.
@@ -58,11 +60,13 @@
 ### Task 2: Mode `detail` et contrat de sortie
 
 **Files:**
+
 - Modify: `src/server/albert/tools/libelles.ts`
 - Modify: `src/server/albert/tools/getIndicateursNonAJour.ts`
 - Test: `src/server/albert/__tests__/tools/libelles.unit.test.ts`, `src/server/albert/__tests__/tools/getIndicateursNonAJour.unit.test.ts`
 
 **Interfaces:**
+
 - Produces: `libelleMaille({ maille }: { maille: $Enums.Maille }): "nationale" | "régionale" | "départementale"`, qui réutilise la table de `mailleDePilotage`.
 - Produces, dans l'outil :
 
@@ -119,12 +123,14 @@ export type GetIndicateursNonAJourOutput = {
 ### Task 3: Périmètre, résolution des accès et introuvables
 
 **Files:**
+
 - Modify: `src/server/albert/tools/getIndicateursNonAJour.ts`
 - Test: `src/server/albert/__tests__/tools/getIndicateursNonAJour.unit.test.ts`
 
 Le câblage Awilix résout les dépendances par nom : `getIndicateursIdentiteQuery` et `territoireResolver` sont déjà disponibles dans le module `albert`, `module.ts` ne change pas.
 
 **Interfaces:**
+
 - Consumes: `GetIndicateursIdentiteQuery.execute({ indicateurIds })` (Task 1), `GetIndicateursNonAJourOutput` (Task 2).
 - Produces: `createGetIndicateursNonAJourTool({ getIndicateursNonAJourQuery, getIndicateursIdentiteQuery, territoireResolver })`, puis `({ territoiresAccessibles, chantiersAccessibles })`. `GetIndicateurContexteQuery` n'est plus une dépendance.
 
@@ -169,10 +175,12 @@ Le câblage Awilix résout les dépendances par nom : `getIndicateursIdentiteQue
 ### Task 4: Prompt système, eval N2 et mesure
 
 **Files:**
+
 - Modify: `src/server/albert/systemPrompt.ts`
 - Modify: `evals/2-tools/2.2-donnees/getIndicateursNonAJour.eval.ts`
 
 **Interfaces:**
+
 - Consumes: le schéma d'entrée de Task 2 et Task 3.
 
 - [ ] **Step 1: Ajouter l'exemple au prompt.** Dans « Exemples » : « Sur quels territoires le CH-018 a des indicateurs non à jour ? » → get_indicateurs_non_a_jour sur CH-018 avec le détail par territoires, sans périmètre.

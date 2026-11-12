@@ -11,6 +11,7 @@ Accepté
 L'écriture de tests d'intégration avec une configuration manuelle des données entraînait plusieurs problèmes :
 
 **Boilerplate excessif :**
+
 ```typescript
 // Ancien pattern : configuration verbose
 await prisma.utilisateur.create({
@@ -46,6 +47,7 @@ await prisma.fiche_evaluation.create({
 ```
 
 **Problèmes identifiés :**
+
 - **Charge cognitive élevée** : le développeur doit connaître tout le modèle de données et ses relations
 - **Tests illisibles** : les préconditions du test sont noyées dans le bruit de la configuration
 - **Code répétitif** : chaque test recrée les mêmes entités avec les mêmes valeurs par défaut
@@ -59,6 +61,7 @@ Cette approche rend l'écriture de tests pénible et décourage la création de 
 Nous utilisons un pattern de **fixtures** pour simplifier la création de données de test.
 
 **Principe** :
+
 - Chaque fixture fournit des valeurs par défaut sensées pour toutes les propriétés non essentielles
 - Seules les propriétés pertinentes pour le test (préconditions) doivent être spécifiées
 - Les fixtures gèrent automatiquement la création des entités liées (clés étrangères)
@@ -113,6 +116,7 @@ export const fixtures = {
 **Deux patterns de composition :**
 
 1. **Auto-création des dépendances** : la fixture crée automatiquement les entités liées si elles ne sont pas fournies
+
    ```typescript
    // Crée automatiquement fiche + rattachement + groupe
    const etape = await fixtures.etapeEvaluation({ type: "CONSOLIDATION" });
@@ -130,6 +134,7 @@ export const fixtures = {
 
 **Surcharges imbriquées :**
 Les fixtures supportent les surcharges d'entités imbriquées :
+
 ```typescript
 const etape = await fixtures.etapeEvaluation({
   type: "AUTO_EVALUATION",
@@ -138,6 +143,7 @@ const etape = await fixtures.etapeEvaluation({
 ```
 
 **Exemple de test avec fixtures** :
+
 ```typescript
 it(
   "doit créer de nouvelles évaluations de critères",
@@ -186,6 +192,7 @@ it(
 ## Conséquences
 
 **Avantages :**
+
 - **Réduction drastique du boilerplate** : 3 lignes au lieu de 50+ pour une configuration complexe
 - **Lisibilité améliorée** : le test se concentre sur la logique métier, pas sur la plomberie des données
 - **Charge cognitive minimale** : pas besoin de connaître tout le graphe de dépendances
@@ -195,6 +202,7 @@ it(
 - **Composition flexible** : création automatique des dépendances ou contrôle explicite selon les besoins
 
 **Comparaison avant/après :**
+
 ```typescript
 // AVANT : 20+ lignes de configuration manuelle
 await prisma.utilisateur.create({ data: {...} });
@@ -208,12 +216,14 @@ const etape = await fixtures.etapeEvaluation({ type: "AUTO_EVALUATION" });
 ```
 
 **Inconvénients :**
+
 - **Courbe d'apprentissage** : nécessite de comprendre l'API des fixtures et les patterns de composition
 - **Complexité cachée** : peut masquer les dépendances, rendant difficile la compréhension du graphe complet
 - **Effort initial** : création et maintenance des fixtures demande du temps
 - **Debugging** : en cas d'erreur, il faut comprendre ce que les fixtures créent automatiquement
 
 **Impact sur l'équipe :**
+
 - Les tests deviennent plus accessibles aux nouveaux développeurs
 - Les agents IA peuvent générer des tests de meilleure qualité avec moins d'effort
 - L'effort de maintenance est transféré des tests individuels vers les fixtures partagées

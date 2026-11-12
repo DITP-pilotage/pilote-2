@@ -14,24 +14,24 @@
 
 ## Vue d'ensemble des tâches
 
-| # | Tâche | Parallélisable |
-|---|-------|----------------|
-| 1 | Scaffolding workspace (racine) | non |
-| 2 | `git mv` de l'app vers `apps/pilote-ppg/` | non (dépend 1) |
-| 3 | Adapter `apps/pilote-ppg/package.json` | non (dépend 2) |
-| 4 | Adapter `apps/pilote-ppg/tsconfig.json` | oui (dépend 2) |
-| 5 | Adapter `next.config.js` + `copy-assets.js` (standalone paths) | oui (dépend 2) |
-| 6 | Adapter `.gitmodules` | oui (dépend 2) |
-| 7 | Adapter `.gitignore` (racine + app) | oui (dépend 2) |
-| 8 | Adapter `.slugignore` | oui (dépend 2) |
-| 9 | Adapter `apps/pilote-ppg/eslint.config.mjs` | oui (dépend 2) |
-| 10 | Adapter les workflows CI | oui (dépend 2) |
-| 11 | Validation `pnpm install` | non (dépend 1-10) |
-| 12 | Validation `pnpm lint` | non (dépend 11) |
-| 13 | Validation `pnpm test` | non (dépend 11) |
-| 14 | Validation E2E | non (dépend 11) |
-| 15 | Validation `pnpm build` + `pnpm dev` | non (dépend 11) |
-| 16 | Commit final + push | non (dépend 12-15) |
+| #   | Tâche                                                          | Parallélisable     |
+| --- | -------------------------------------------------------------- | ------------------ |
+| 1   | Scaffolding workspace (racine)                                 | non                |
+| 2   | `git mv` de l'app vers `apps/pilote-ppg/`                      | non (dépend 1)     |
+| 3   | Adapter `apps/pilote-ppg/package.json`                         | non (dépend 2)     |
+| 4   | Adapter `apps/pilote-ppg/tsconfig.json`                        | oui (dépend 2)     |
+| 5   | Adapter `next.config.js` + `copy-assets.js` (standalone paths) | oui (dépend 2)     |
+| 6   | Adapter `.gitmodules`                                          | oui (dépend 2)     |
+| 7   | Adapter `.gitignore` (racine + app)                            | oui (dépend 2)     |
+| 8   | Adapter `.slugignore`                                          | oui (dépend 2)     |
+| 9   | Adapter `apps/pilote-ppg/eslint.config.mjs`                    | oui (dépend 2)     |
+| 10  | Adapter les workflows CI                                       | oui (dépend 2)     |
+| 11  | Validation `pnpm install`                                      | non (dépend 1-10)  |
+| 12  | Validation `pnpm lint`                                         | non (dépend 11)    |
+| 13  | Validation `pnpm test`                                         | non (dépend 11)    |
+| 14  | Validation E2E                                                 | non (dépend 11)    |
+| 15  | Validation `pnpm build` + `pnpm dev`                           | non (dépend 11)    |
+| 16  | Commit final + push                                            | non (dépend 12-15) |
 
 ---
 
@@ -40,6 +40,7 @@
 Créer la structure workspace à la racine : `pnpm-workspace.yaml` et le `package.json` minimal.
 
 **Files:**
+
 - Create: `pnpm-workspace.yaml`
 - Create: `apps/` (dossier vide, existera après `git mv` en task 2)
 - Modify: `package.json` (sera remplacé par la version minimale racine — l'actuel sera déplacé en task 2)
@@ -62,6 +63,7 @@ mkdir -p apps
 Ne pas écrire ce fichier maintenant — il sera créé en task 3 après le `git mv` (sinon conflit avec le `package.json` actuel qui doit être déplacé).
 
 Contenu prévu (à écrire en task 3) :
+
 ```json
 {
   "name": "pilote-monorepo",
@@ -100,6 +102,7 @@ Contenu prévu (à écrire en task 3) :
 Déplacer TOUS les fichiers et dossiers de l'app dans `apps/pilote-ppg/` via `git mv` pour préserver l'historique. Seuls restent à la racine les fichiers strictement monorepo.
 
 **Files:**
+
 - Move: tout sauf `.github/`, `.claude/`, `.idea/`, `.git/`, `.gitignore`, `.gitmodules`, `.editorconfig`, `.slugignore`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `apps/`, `node_modules/`
 
 **Principe** : tout ce qui fait partie de l'app descend. Ce qui est outillage repo/IDE reste.
@@ -166,6 +169,7 @@ git mv .eslintrc.json.backup apps/pilote-ppg/
 
 **Note :** le fichier `.env` (secrets locaux) est dans `.gitignore` donc pas
 tracké. Les devs devront le déplacer manuellement :
+
 ```bash
 mv .env apps/pilote-ppg/.env
 ```
@@ -188,6 +192,7 @@ Attendu : que des `renamed:` (pas de `deleted:` ni `new file:` non voulus).
 ### Task 3: Adapter `apps/pilote-ppg/package.json` + créer root `package.json`
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/package.json`
 - Create: `package.json` (racine)
 
@@ -258,6 +263,7 @@ Tout le reste (autres scripts, deps, prisma, etc.) reste inchangé.
 ### Task 4: Adapter `apps/pilote-ppg/tsconfig.json`
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/tsconfig.json`
 
 Le `baseUrl` est `./src` (relatif au package, OK). Mais deux entrées utilisent des chemins absolus filesystem qui pointaient vers `/data_management/...` — ils doivent devenir relatifs.
@@ -294,6 +300,7 @@ L'`include` est résolu depuis le dossier du tsconfig (= `apps/pilote-ppg/`), do
 ### Task 5: Adapter `apps/pilote-ppg/next.config.js` + `copy-assets.js`
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/next.config.js`
 - Modify: `apps/pilote-ppg/copy-assets.js`
 
@@ -305,11 +312,13 @@ assets seront à `.next/standalone/apps/pilote-ppg/` au lieu de `.next/standalon
 - [ ] **Step 1: Changer `outputFileTracingRoot` dans `next.config.js`**
 
 Ligne 23 actuelle :
+
 ```js
 outputFileTracingRoot: __dirname,
 ```
 
 Remplacer par :
+
 ```js
 outputFileTracingRoot: path.join(__dirname, '../..'),
 ```
@@ -322,21 +331,29 @@ Le script copie `static/` et `public/` dans le dossier standalone. Avec le nouve
 `outputFileTracingRoot`, la structure interne du standalone change.
 
 Fichier actuel :
-```js
-const staticSrcPath = path.join(__dirname, '.next/static');
-const staticDestPath = path.join(__dirname, '.next/standalone/.next/static');
 
-const publicSrcPath = path.join(__dirname, 'public');
-const publicDestPath = path.join(__dirname, '.next/standalone/public');
+```js
+const staticSrcPath = path.join(__dirname, ".next/static");
+const staticDestPath = path.join(__dirname, ".next/standalone/.next/static");
+
+const publicSrcPath = path.join(__dirname, "public");
+const publicDestPath = path.join(__dirname, ".next/standalone/public");
 ```
 
 Remplacer par :
-```js
-const staticSrcPath = path.join(__dirname, '.next/static');
-const staticDestPath = path.join(__dirname, '.next/standalone/apps/pilote-ppg/.next/static');
 
-const publicSrcPath = path.join(__dirname, 'public');
-const publicDestPath = path.join(__dirname, '.next/standalone/apps/pilote-ppg/public');
+```js
+const staticSrcPath = path.join(__dirname, ".next/static");
+const staticDestPath = path.join(
+  __dirname,
+  ".next/standalone/apps/pilote-ppg/.next/static",
+);
+
+const publicSrcPath = path.join(__dirname, "public");
+const publicDestPath = path.join(
+  __dirname,
+  ".next/standalone/apps/pilote-ppg/public",
+);
 ```
 
 Le `__dirname` vaut `apps/pilote-ppg/` (car le fichier y vit), donc les sources
@@ -348,6 +365,7 @@ structure standalone.
 ### Task 6: Adapter `.gitmodules`
 
 **Files:**
+
 - Modify: `.gitmodules` (à la racine du repo)
 
 - [ ] **Step 1: Mettre à jour le chemin du submodule**
@@ -370,6 +388,7 @@ git submodule sync
 ### Task 7: Adapter `.gitignore`
 
 **Files:**
+
 - Modify: `.gitignore` (racine) — garder uniquement les patterns globaux
 - Create: `apps/pilote-ppg/.gitignore` — patterns spécifiques à l'app
 
@@ -456,6 +475,7 @@ src/content/
 ### Task 8: Adapter `.slugignore`
 
 **Files:**
+
 - Modify: `.slugignore` (racine)
 
 Le `.slugignore` est lu par Scalingo depuis la racine du repo. Tous les chemins doivent être préfixés par `apps/pilote-ppg/`.
@@ -506,6 +526,7 @@ pnpm-workspace.yaml
 ### Task 9: Adapter `apps/pilote-ppg/eslint.config.mjs`
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/eslint.config.mjs`
 
 Les ignores globaux utilisent des chemins relatifs qui restent valides car ESLint sera lancé depuis le dossier du package (pnpm `-F` exécute dans le CWD du package). Pas de modification nécessaire.
@@ -519,6 +540,7 @@ Les patterns `".next/**"`, `"node_modules/**"`, `"auth/**"`, `"data_management/*
 ### Task 10: Adapter les workflows CI
 
 **Files:**
+
 - Modify: `.github/workflows/testAndLint.yml`
 - Modify: `.github/workflows/e2e.yml`
 - Modify: `.github/workflows/pr-merged-dev.yml`
@@ -714,6 +736,7 @@ Si cette commande échoue, vérifier que le `package.json` racine est correct.
 - [ ] **Step 1: Lancer le lint**
 
 L'utilisateur lance :
+
 ```bash
 pnpm lint
 ```
@@ -721,6 +744,7 @@ pnpm lint
 Attendu : passe sans erreurs. Si des erreurs de résolution de modules apparaissent, c'est probablement un problème de `tsconfig.json` paths ou de `baseUrl`.
 
 Problèmes possibles :
+
 - `@/ppg_metadata/*` non résolu → vérifier task 4
 - Prisma types non trouvés → peut nécessiter un `.npmrc` avec `public-hoist-pattern[]=*prisma*` à la racine
 - `Cannot find module` → vérifier que `pnpm install` a bien hoisted les deps
@@ -732,6 +756,7 @@ Problèmes possibles :
 - [ ] **Step 1: Lancer les tests unitaires et d'intégration**
 
 L'utilisateur lance :
+
 ```bash
 pnpm test
 ```
@@ -739,6 +764,7 @@ pnpm test
 Attendu : vitest se lance depuis `apps/pilote-ppg/`, résout les paths via `vitest.config.ts` local et les sous-projets `vitest.projects/`. Tous les tests passent.
 
 Problèmes possibles :
+
 - `vitest.config.ts` paths → les chemins `./vitest.projects/...` sont relatifs au package, OK
 - `tsconfig-paths` dans vitest → vérifie les aliases depuis le `tsconfig.json` local, OK
 - Intégration tests DB → la connection string dans `.env.test` doit être dans `apps/pilote-ppg/.env.test`
@@ -750,6 +776,7 @@ Problèmes possibles :
 - [ ] **Step 1: Lancer les tests E2E**
 
 L'utilisateur lance :
+
 ```bash
 E2E_VIDEO=on pnpm test:e2e
 ```
@@ -760,6 +787,7 @@ exécute les tests. Les artifacts (`test-results/`, `playwright-report/`) sont
 générés dans `apps/pilote-ppg/`.
 
 Problèmes possibles :
+
 - `.env.e2e` introuvable → doit être dans `apps/pilote-ppg/.env.e2e`
 - `tests/seed/seed.sh` non trouvé → vérifier les chemins dans `global-setup.ts` (relatifs, OK)
 - WebServer timeout → le `pnpm dev` filtré peut être plus lent au premier lancement
@@ -771,11 +799,13 @@ Problèmes possibles :
 - [ ] **Step 1: Lancer le build**
 
 L'utilisateur lance :
+
 ```bash
 pnpm build
 ```
 
 Attendu : le build Next.js standalone se complète. Les points à risque :
+
 - `outputFileTracingRoot` doit pointer vers la racine monorepo (task 5)
 - `prisma generate` doit fonctionner depuis le CWD du package
 - `scripts/clone_centre_aide.sh` s'exécute avec CWD = `apps/pilote-ppg/`, les chemins relatifs `src/content` restent valides
@@ -785,6 +815,7 @@ Attendu : le build Next.js standalone se complète. Les points à risque :
 - [ ] **Step 2: Lancer le dev server**
 
 L'utilisateur lance :
+
 ```bash
 pnpm dev
 ```
@@ -827,12 +858,13 @@ git push -u origin <branch-name>
 
 Description PR à inclure :
 
-```markdown
+````markdown
 ## Migration pnpm workspaces
 
 Déplace l'application dans `apps/pilote-ppg/` et configure pnpm workspaces.
 
 ### Changements
+
 - `pnpm-workspace.yaml` créé
 - `package.json` racine minimal avec scripts d'alias `pnpm -F @pilote/ppg`
 - App déplacée via `git mv` (historique préservé)
@@ -844,12 +876,14 @@ Déplace l'application dans `apps/pilote-ppg/` et configure pnpm workspaces.
 - CI workflows : chemins artifacts et data_management mis à jour
 
 ### Checklist pré-merge
+
 - [ ] `PROJECT_DIR=apps/pilote-ppg/auth` défini sur l'app Scalingo auth (dev + prod)
 - [ ] `PROJECT_DIR=apps/pilote-ppg/data_management` défini sur l'app Scalingo data_management (dev + prod)
 - [ ] Déploiement dev validé sur les 3 apps Scalingo
 - [ ] Communiquer aux devs : déplacer vos `.env*` locaux dans `apps/pilote-ppg/`
 
 ### Pour les développeurs
+
 Après le pull :
 \```bash
 mv .env apps/pilote-ppg/.env
@@ -858,31 +892,31 @@ mv .env.test apps/pilote-ppg/.env.test
 rm -rf node_modules
 pnpm install
 \```
-```
+````
 
 ---
 
 ## Résumé des fichiers impactés
 
-| Action | Fichier |
-|--------|---------|
-| **Create** | `pnpm-workspace.yaml` |
-| **Create** | `package.json` (racine) |
-| **Create** | `apps/pilote-ppg/.gitignore` |
-| **Move** | Tous les fichiers app → `apps/pilote-ppg/` |
-| **Modify** | `apps/pilote-ppg/package.json` (name → `@pilote/ppg`, start script path) |
-| **Modify** | `apps/pilote-ppg/tsconfig.json` (paths ppg_metadata + include) |
-| **Modify** | `apps/pilote-ppg/next.config.js` (outputFileTracingRoot) |
-| **Modify** | `apps/pilote-ppg/copy-assets.js` (standalone dest paths) |
-| **Modify** | `.gitmodules` (chemin submodule) |
-| **Modify** | `.gitignore` (nettoyé, patterns globaux uniquement) |
-| **Modify** | `.slugignore` (chemins préfixés) |
-| **Modify** | `.github/workflows/testAndLint.yml` (working-directory) |
-| **Modify** | `.github/workflows/e2e.yml` (artifacts paths) |
-| **Modify** | `.github/workflows/pr-merged-dev.yml` (data_management paths) |
-| **Inchangé** | `apps/pilote-ppg/eslint.config.mjs` |
-| **Inchangé** | `apps/pilote-ppg/playwright.config.ts` |
-| **Inchangé** | `apps/pilote-ppg/vitest.config.ts` |
-| **Inchangé** | `apps/pilote-ppg/scripts/clone_centre_aide.sh` |
-| **Inchangé** | `.github/workflows/trigger-dj-dev.yml` |
-| **Inchangé** | `.github/workflows/pr-review-requested.yml` |
+| Action       | Fichier                                                                  |
+| ------------ | ------------------------------------------------------------------------ |
+| **Create**   | `pnpm-workspace.yaml`                                                    |
+| **Create**   | `package.json` (racine)                                                  |
+| **Create**   | `apps/pilote-ppg/.gitignore`                                             |
+| **Move**     | Tous les fichiers app → `apps/pilote-ppg/`                               |
+| **Modify**   | `apps/pilote-ppg/package.json` (name → `@pilote/ppg`, start script path) |
+| **Modify**   | `apps/pilote-ppg/tsconfig.json` (paths ppg_metadata + include)           |
+| **Modify**   | `apps/pilote-ppg/next.config.js` (outputFileTracingRoot)                 |
+| **Modify**   | `apps/pilote-ppg/copy-assets.js` (standalone dest paths)                 |
+| **Modify**   | `.gitmodules` (chemin submodule)                                         |
+| **Modify**   | `.gitignore` (nettoyé, patterns globaux uniquement)                      |
+| **Modify**   | `.slugignore` (chemins préfixés)                                         |
+| **Modify**   | `.github/workflows/testAndLint.yml` (working-directory)                  |
+| **Modify**   | `.github/workflows/e2e.yml` (artifacts paths)                            |
+| **Modify**   | `.github/workflows/pr-merged-dev.yml` (data_management paths)            |
+| **Inchangé** | `apps/pilote-ppg/eslint.config.mjs`                                      |
+| **Inchangé** | `apps/pilote-ppg/playwright.config.ts`                                   |
+| **Inchangé** | `apps/pilote-ppg/vitest.config.ts`                                       |
+| **Inchangé** | `apps/pilote-ppg/scripts/clone_centre_aide.sh`                           |
+| **Inchangé** | `.github/workflows/trigger-dj-dev.yml`                                   |
+| **Inchangé** | `.github/workflows/pr-review-requested.yml`                              |

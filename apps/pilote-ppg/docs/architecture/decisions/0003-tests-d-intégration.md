@@ -23,17 +23,20 @@ Cette approche rendait les tests lents, fragiles et difficiles à maintenir.
 Nous utilisons un pattern basé sur les transactions avec rollback automatique pour isoler chaque test d'intégration.
 
 **Principe** :
+
 - Chaque test s'exécute dans une transaction Prisma
 - La transaction est automatiquement annulée (rollback) à la fin du test
 - Aucune donnée de test n'est persistée en base de données
 
 **Implémentation** :
+
 1. Utiliser le helper `createIntegrationTest` pour envelopper chaque test
 2. Le helper utilise `AsyncLocalStorage` de Node.js pour propager le contexte transactionnel
 3. Toutes les requêtes Prisma dans le test utilisent automatiquement la transaction
 4. À la fin du test, un symbole `ROLLBACK` force l'annulation de la transaction
 
 **Pattern de test** :
+
 ```typescript
 describe("MonHandler", () => {
   let handler: MonHandler;
@@ -66,6 +69,7 @@ describe("MonHandler", () => {
 ## Conséquences
 
 **Avantages :**
+
 - **Exécution parallèle** : les tests peuvent s'exécuter en parallèle sans interférences
 - **Pas de nettoyage manuel** : plus besoin de logique `beforeEach`/`afterEach` pour nettoyer la base
 - **Isolation complète** : chaque test est totalement isolé des autres
@@ -74,6 +78,7 @@ describe("MonHandler", () => {
 - **Code de test plus lisible** : focus sur la logique métier plutôt que sur la gestion de l'état
 
 **Inconvénients :**
+
 - **Courbe d'apprentissage** : nécessite de comprendre le pattern et `AsyncLocalStorage`
 - **Migration progressive** : les anciens tests doivent être migrés vers ce pattern
 - **Debugging** : les transactions rollback peuvent compliquer l'inspection de l'état de la base pendant le debug

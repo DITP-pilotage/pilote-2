@@ -17,6 +17,7 @@ Sans documentation claire des décisions architecturales, chaque développeur pe
 Nous utiliserons les Architecture Decision Records (ADR) pour documenter les décisions d'architecture et aligner les pratiques dans la codebase.
 
 Chaque décision architecturale significative sera documentée dans un ADR qui explicitera :
+
 - Le contexte de la décision
 - La décision prise
 - Les conséquences et compromis
@@ -24,6 +25,7 @@ Chaque décision architecturale significative sera documentée dans un ADR qui e
 ## Conséquences
 
 **Avantages :**
+
 - Plus de documentation pour les outils d'assistance au développement (comme Claude Code) qui pourront être aiguillés vers les manières de faire établies
 - Meilleure cohérence architecturale à travers la codebase
 - Facilitation de l'onboarding des nouveaux développeurs
@@ -31,5 +33,6 @@ Chaque décision architecturale significative sera documentée dans un ADR qui e
 - Réduction de la dette technique en évitant la répétition d'erreurs passées
 
 **Inconvénients :**
+
 - Nécessite un effort initial pour documenter les décisions
 - Demande de la discipline pour maintenir la documentation à jour

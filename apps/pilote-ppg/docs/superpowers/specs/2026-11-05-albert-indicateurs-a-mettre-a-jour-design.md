@@ -154,12 +154,12 @@ Les points 4 et 5 restent des règles de rédaction ; les points 1, 2, 6, 7, 8 e
 
 ### Entrée
 
-| Paramètre | Type | Défaut | Rôle |
-|---|---|---|---|
-| `motifs` | `("va" \| "vi" \| "vc")[]`, 1 à 3, sans doublon | obligatoire | Les types de valeurs nommés par la demande ou établis plus tôt dans la conversation ; à défaut, les trois. |
-| `chantier_ids` | `chantierIdsIndicateursSchema` | `[]` | Inchangé. |
-| `indicateur_ids` | `indicateurIdsSchema` | `[]` | Inchangé. |
-| `perimetre` | `perimetreIndicateursSchema` | `TOUS_TERRITOIRES` | Inchangé (six variantes). |
+| Paramètre        | Type                                            | Défaut             | Rôle                                                                                                       |
+| ---------------- | ----------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `motifs`         | `("va" \| "vi" \| "vc")[]`, 1 à 3, sans doublon | obligatoire        | Les types de valeurs nommés par la demande ou établis plus tôt dans la conversation ; à défaut, les trois. |
+| `chantier_ids`   | `chantierIdsIndicateursSchema`                  | `[]`               | Inchangé.                                                                                                  |
+| `indicateur_ids` | `indicateurIdsSchema`                           | `[]`               | Inchangé.                                                                                                  |
+| `perimetre`      | `perimetreIndicateursSchema`                    | `TOUS_TERRITOIRES` | Inchangé (six variantes).                                                                                  |
 
 Il n'y a plus de `detail`, ni de `valeurs`, ni de `"non_precise"`.
 
@@ -199,6 +199,7 @@ anciens : un type établi par un autre outil ne compte pas (voir Reculs
 acceptés).
 
 **Liste de départ** (à enrichir au fil des retours) :
+
 - VA : « VA », « valeur d'avancement », « valeur actuelle », « dernière valeur »,
   « données périmées », « périmé », « retard de mise à jour », « saisie en
   retard », « fraîcheur » ;
@@ -206,6 +207,7 @@ acceptés).
 - VC : « VC », « cible », « valeur cible ».
 
 **Lecture** :
+
 - accents et majuscules ignorés, singulier et pluriel confondus ;
 - pour un mot de 5 lettres ou plus, une erreur tolérée (lettre inversée, en trop,
   en moins ou fausse) : « avnacement », « avencement », « initale », « cilbe » ;
@@ -218,8 +220,12 @@ acceptés).
 ```ts
 {
   clarification: {
-    question: string;   // « Quelles valeurs voulez-vous vérifier sur le CH-018 ? »
-    choices: { label: string; value: string }[]; // trois, toujours
+    question: string; // « Quelles valeurs voulez-vous vérifier sur le CH-018 ? »
+    choices: {
+      label: string;
+      value: string;
+    }
+    []; // trois, toujours
   }
   // + champs d'accès s'ils s'appliquent
 }
@@ -227,6 +233,7 @@ acceptés).
 
 Les trois libellés, dans cet ordre, avec le périmètre de l'appel (repris de la
 branche) :
+
 1. « Valeurs d'avancement non à jour {périmètre} »
 2. « Valeurs initiales et cibles manquantes {périmètre} »
 3. « Valeurs d'avancement non à jour, valeurs initiales et cibles manquantes
@@ -276,6 +283,7 @@ modèle revoit le résumé, jamais les lignes.
 ```
 
 Champs :
+
 - `perimetre` : le libellé du périmètre interrogé (chantiers ou indicateurs
   demandés, puis territoires en noms), le même que le titre du tableau.
 - `jalon_vc` : présent dès que `vc` est demandé.
@@ -311,10 +319,11 @@ branche). Suggestion : `{ resume, detail }`, `toModelOutput` renvoyant `resume`.
 ### Description de l'outil
 
 Une seule description. Elle porte :
+
 - le rôle de l'outil et les définitions des trois motifs :
   - VA non à jour : sa date de prochaine mise à jour (date de la dernière valeur
-    + périodicité + délai de disponibilité) est dépassée, ou aucune valeur n'a
-    jamais été renseignée ;
+    - périodicité + délai de disponibilité) est dépassée, ou aucune valeur n'a
+      jamais été renseignée ;
   - VI manquante : aucune valeur initiale n'est renseignée ; une valeur à 0 est
     renseignée ;
   - VC manquante : aucune valeur cible n'est renseignée pour le jalon `jalon_vc`,
@@ -362,6 +371,7 @@ Une seule description. Elle porte :
 ### Prompt système
 
 Dans `systemPrompt.ts` :
+
 - retirer la ligne « « non à jour », « à mettre à jour » : ambigu… » et la ligne
   qui route vers `get_valeurs_initiales_cibles_manquantes` ;
 - retirer le paragraphe « Pour une demande sur la mise à jour des indicateurs… »
@@ -402,14 +412,14 @@ mettre à jour.
 
 ## Ce qu'on reprend de la branche
 
-| Élément | Fichiers de la branche | Adaptation |
-|---|---|---|
-| Fusion des deux requêtes, comptages distincts | `tools/indicateursACompleter.ts` | garder la fusion et `versLigneACompleter` ; remplacer la sortie par le résumé ci-dessus ; supprimer `par_territoire`, `definitions`, `nb_lignes`, `SEUIL_LIGNES_MODELE` |
-| Outil | `tools/getIndicateursACompleter.ts` | retirer `"non_precise"` et `detail_affiche_dans_tableau` ; ajouter la décision de précision ; garder `clarification()` |
-| Nom affiché des territoires | `GetIndicateursNonAJourQuery`, `GetIndicateursSansViVcQuery` (+ tests d'intégration) | tel quel |
-| Tableau et export | `TableauIndicateursACompleter.tsx`, `useTableauIndicateursACompleter.tsx`, `detailIndicateursACompleter.ts`, `csvIndicateursACompleter.ts`, déplacements de `MultiSelectFiltre` et `SelecteurGroupement` (+ tests) | lire la nouvelle sortie complète ; titre avec le périmètre |
-| Choix et événements | `assistantEvents.ts` (`choixPresentes`), `AssistantMessage.tsx`, `AssistantMessageText.tsx` (+ tests) | sur la version `dev` |
-| Evals | `getIndicateursACompleter.eval.ts`, scénario N3 `3.4-forme/valeursACompleter.*` et `seedValeursACompleter.ts`, `scoreExpectedTools.ts` (+ test), retouches de `getChantiers`, `getChantiersSignales`, `getIndicateurs`, `clarifyWithChoices` | attentes revues (section Evals) |
+| Élément                                       | Fichiers de la branche                                                                                                                                                                                                                       | Adaptation                                                                                                                                                              |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fusion des deux requêtes, comptages distincts | `tools/indicateursACompleter.ts`                                                                                                                                                                                                             | garder la fusion et `versLigneACompleter` ; remplacer la sortie par le résumé ci-dessus ; supprimer `par_territoire`, `definitions`, `nb_lignes`, `SEUIL_LIGNES_MODELE` |
+| Outil                                         | `tools/getIndicateursACompleter.ts`                                                                                                                                                                                                          | retirer `"non_precise"` et `detail_affiche_dans_tableau` ; ajouter la décision de précision ; garder `clarification()`                                                  |
+| Nom affiché des territoires                   | `GetIndicateursNonAJourQuery`, `GetIndicateursSansViVcQuery` (+ tests d'intégration)                                                                                                                                                         | tel quel                                                                                                                                                                |
+| Tableau et export                             | `TableauIndicateursACompleter.tsx`, `useTableauIndicateursACompleter.tsx`, `detailIndicateursACompleter.ts`, `csvIndicateursACompleter.ts`, déplacements de `MultiSelectFiltre` et `SelecteurGroupement` (+ tests)                           | lire la nouvelle sortie complète ; titre avec le périmètre                                                                                                              |
+| Choix et événements                           | `assistantEvents.ts` (`choixPresentes`), `AssistantMessage.tsx`, `AssistantMessageText.tsx` (+ tests)                                                                                                                                        | sur la version `dev`                                                                                                                                                    |
+| Evals                                         | `getIndicateursACompleter.eval.ts`, scénario N3 `3.4-forme/valeursACompleter.*` et `seedValeursACompleter.ts`, `scoreExpectedTools.ts` (+ test), retouches de `getChantiers`, `getChantiersSignales`, `getIndicateurs`, `clarifyWithChoices` | attentes revues (section Evals)                                                                                                                                         |
 
 ## Ce qui disparaît sur `dev`
 

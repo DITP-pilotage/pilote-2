@@ -124,17 +124,17 @@ une conversation ne peut exister que si l'utilisateur a pu ouvrir Albert, ce que
 L'affichage n'a pas d'état « fermé » : c'est `conversation === null` qui signifie qu'il n'y
 a rien à montrer. Cela évite un état incohérent (fermé mais avec une conversation vivante).
 
-| Déclencheur | Effet |
-|---|---|
+| Déclencheur                                | Effet                                                                          |
+| ------------------------------------------ | ------------------------------------------------------------------------------ |
 | `open()` depuis `BoutonSyntheseTerritoire` | Crée une conversation si `null`, sinon réutilise celle en cours → `fullscreen` |
-| Clic sur un lien interne dans une réponse | `minimize()` puis `router.push(url)` |
-| Clic sur le corps du dock | `restore()` → `fullscreen` |
-| Clic sur la croix du dock | `close()` |
-| Bouton « Réduire » de la modale | `minimize()` |
-| Échap ou clic hors de la modale | `minimize()` |
-| Bouton « Fermer » de la modale | `close()` |
-| « + Nouvelle conversation » du drawer | `startNewConversation()` |
-| Sélection dans le drawer | `selectConversation(id)` |
+| Clic sur un lien interne dans une réponse  | `minimize()` puis `router.push(url)`                                           |
+| Clic sur le corps du dock                  | `restore()` → `fullscreen`                                                     |
+| Clic sur la croix du dock                  | `close()`                                                                      |
+| Bouton « Réduire » de la modale            | `minimize()`                                                                   |
+| Échap ou clic hors de la modale            | `minimize()`                                                                   |
+| Bouton « Fermer » de la modale             | `close()`                                                                      |
+| « + Nouvelle conversation » du drawer      | `startNewConversation()`                                                       |
+| Sélection dans le drawer                   | `selectConversation(id)`                                                       |
 
 **Le bouton « Fermer » de la modale ferme bien la conversation**, il ne la minimized pas.
 C'est le critère « le parcours standard d'ouverture/fermeture sans clic sur un lien reste
@@ -143,7 +143,7 @@ inchangé » de PIL-1690.
 **En revanche, Échap et le clic hors de la modale réduisent au lieu de fermer.** Radix
 déclenche `onOpenChange(false)` sur ces deux gestes comme sur le bouton « Fermer » ; une
 touche Échap réflexe détruisait donc la conversation, récupérable seulement si le flag
-d'historique est actif *et* qu'un tour s'est terminé. `ModalePleinEcran` reçoit une prop
+d'historique est actif _et_ qu'un tour s'est terminé. `ModalePleinEcran` reçoit une prop
 requise `onMinimize` : elle affiche un bouton « Réduire » à côté de « Fermer » et
 intercepte `onEscapeKeyDown` / `onInteractOutside` pour réduire. La prop est requise et
 non optionnelle : la modale n'a qu'un consommateur, et une option non utilisée serait du
@@ -185,7 +185,10 @@ contient ne suspende que le contenu de la modale ouverte, jamais l'application.
 Le sessionStorage porte le strict minimum, sous la clé `albert:conversation` :
 
 ```ts
-{ id: string; agentContext: Record<string, unknown> }
+{
+  id: string;
+  agentContext: Record<string, unknown>;
+}
 ```
 
 Il est écrit par `minimize()` et purgé par `close()`. Les messages ne sont **pas**
@@ -293,27 +296,27 @@ nouvel onglet » continuent de fonctionner, et seul le clic simple est intercept
 
 **Créés**
 
-| Fichier | Rôle |
-|---|---|
-| `client/components/_commons/ChatUI/AlbertConversationProvider.tsx` | Provider : instance `Chat`, état d'affichage, sessionStorage |
-| `client/components/_commons/ChatUI/AlbertOverlay.tsx` | Rendu modale ou dock selon l'affichage |
-| `client/components/_commons/ChatUI/AlbertDock.tsx` | Composant minimisé bas-droite |
-| `client/components/_commons/ChatUI/remarkChantierLinks.ts` | Plugin remark de linkification |
-| `client/components/_commons/ChatUI/buildChantierUrl.ts` | URL depuis id canonique + agentContext |
-| `client/components/_commons/ChatUI/createAlbertConversation.ts` | Fabrique l'instance `Chat` et son corps de requête |
-| `client/components/_commons/ChatUI/minimizedConversationStorage.ts` | Lecture/écriture sessionStorage, validée par zod |
-| `client/components/_commons/ChatUI/ChantierLinksContext.tsx` | Contexte dédié aux options de linkification |
+| Fichier                                                             | Rôle                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `client/components/_commons/ChatUI/AlbertConversationProvider.tsx`  | Provider : instance `Chat`, état d'affichage, sessionStorage |
+| `client/components/_commons/ChatUI/AlbertOverlay.tsx`               | Rendu modale ou dock selon l'affichage                       |
+| `client/components/_commons/ChatUI/AlbertDock.tsx`                  | Composant minimisé bas-droite                                |
+| `client/components/_commons/ChatUI/remarkChantierLinks.ts`          | Plugin remark de linkification                               |
+| `client/components/_commons/ChatUI/buildChantierUrl.ts`             | URL depuis id canonique + agentContext                       |
+| `client/components/_commons/ChatUI/createAlbertConversation.ts`     | Fabrique l'instance `Chat` et son corps de requête           |
+| `client/components/_commons/ChatUI/minimizedConversationStorage.ts` | Lecture/écriture sessionStorage, validée par zod             |
+| `client/components/_commons/ChatUI/ChantierLinksContext.tsx`        | Contexte dédié aux options de linkification                  |
 
 **Modifiés**
 
-| Fichier | Modification |
-|---|---|
-| `ChatUI.tsx` | L'instance `Chat` devient une prop ; options de linkification ; `onModelChange` mute `requestBody` |
-| `ModalePleinEcran.tsx` | Prop `onMinimize` ; Échap et clic extérieur réduisent |
-| `AssistantMessageText.tsx` | Plugin remark + `components.a` |
-| `BoutonSyntheseTerritoire.tsx` | Réduit à un déclencheur appelant `open()` ; le flag ne pilote plus que le drawer |
-| `MiseEnPage.tsx` | Monte le provider et l'overlay ; place le dock hors du loader |
-| `app/api/albert/chat/route.ts` | Persistance inconditionnelle |
+| Fichier                        | Modification                                                                                       |
+| ------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `ChatUI.tsx`                   | L'instance `Chat` devient une prop ; options de linkification ; `onModelChange` mute `requestBody` |
+| `ModalePleinEcran.tsx`         | Prop `onMinimize` ; Échap et clic extérieur réduisent                                              |
+| `AssistantMessageText.tsx`     | Plugin remark + `components.a`                                                                     |
+| `BoutonSyntheseTerritoire.tsx` | Réduit à un déclencheur appelant `open()` ; le flag ne pilote plus que le drawer                   |
+| `MiseEnPage.tsx`               | Monte le provider et l'overlay ; place le dock hors du loader                                      |
+| `app/api/albert/chat/route.ts` | Persistance inconditionnelle                                                                       |
 
 ## 4. Stratégie de test
 

@@ -31,11 +31,13 @@
 Extrait des tool-outputs d'une conversation la liste des chantiers réellement remontés par le backend. C'est la pièce qui garantit qu'aucun identifiant halluciné ni aucun chantier hors habilitation ne devienne un lien.
 
 **Files:**
+
 - Create: `src/client/components/_commons/ChatUI/extraireChantiersCites.ts`
 - Create: `src/client/components/_commons/ChatUI/extraireChantiersCites.unit.test.ts`
 - Modify: `src/server/chantiers/query/GetChantiersQuery.ts:10`
 
 **Interfaces:**
+
 - Consumes: `PiloteUIMessage` de `@/server/albert/PiloteUIMessage`.
 - Produces:
   - `type ChantierCite = { id: string; nom: string; maillesApplicables?: $Enums.Maille[] }`
@@ -71,7 +73,9 @@ Expected: PASS. En cas d'erreur d'assignation ailleurs, c'est que la valeur ne v
 import { extraireChantiersCites } from "@/components/_commons/ChatUI/extraireChantiersCites";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
-const messageAssistant = (parts: PiloteUIMessage["parts"]): PiloteUIMessage => ({
+const messageAssistant = (
+  parts: PiloteUIMessage["parts"],
+): PiloteUIMessage => ({
   id: "message-1",
   role: "assistant",
   parts,
@@ -353,10 +357,12 @@ git commit -m "feat(ppg): extrait les chantiers cités des tool-outputs Albert (
 Construit la destination à partir de l'identifiant canonique et du contexte de la conversation, avec repli national quand la maille du territoire n'est pas applicable au chantier.
 
 **Files:**
+
 - Create: `src/client/components/_commons/ChatUI/construireUrlChantier.ts`
 - Create: `src/client/components/_commons/ChatUI/construireUrlChantier.unit.test.ts`
 
 **Interfaces:**
+
 - Consumes: `ChantierCite` de `extraireChantiersCites.ts` (Task 1).
 - Produces:
   - `type ContexteChantier = { territoireCode?: string; jalon?: number }`
@@ -504,10 +510,12 @@ git commit -m "feat(ppg): construit l'URL de fiche chantier depuis le contexte d
 Transforme les `CH-XXX` en nœuds `link` dans l'AST markdown, uniquement pour les identifiants présents dans la whitelist. Travailler à l'AST écarte gratuitement les blocs de code, les liens existants et l'échappement des noms contenant des caractères markdown.
 
 **Files:**
+
 - Create: `src/client/components/_commons/ChatUI/remarkLiensChantiers.ts`
 - Create: `src/client/components/_commons/ChatUI/remarkLiensChantiers.unit.test.ts`
 
 **Interfaces:**
+
 - Consumes: `ChantierCite` (Task 1).
 - Produces:
   - `type OptionsLiensChantiers = { chantiers: Map<string, ChantierCite>; construireUrl: (chantier: ChantierCite) => string }`
@@ -530,7 +538,8 @@ const chantiers = new Map<string, ChantierCite>([
   ["CH-012", { id: "CH-012", nom: "Handicap [phase 2]" }],
 ]);
 
-const construireUrl = (chantier: ChantierCite) => `/chantier/${chantier.id}/NAT-FR`;
+const construireUrl = (chantier: ChantierCite) =>
+  `/chantier/${chantier.id}/NAT-FR`;
 
 const appliquer = (tree: NoeudMarkdown): NoeudMarkdown => {
   remarkLiensChantiers({ chantiers, construireUrl })(tree);
@@ -539,7 +548,9 @@ const appliquer = (tree: NoeudMarkdown): NoeudMarkdown => {
 
 const paragraphe = (valeur: string): NoeudMarkdown => ({
   type: "root",
-  children: [{ type: "paragraph", children: [{ type: "text", value: valeur }] }],
+  children: [
+    { type: "paragraph", children: [{ type: "text", value: valeur }] },
+  ],
 });
 
 const enfantsDuParagraphe = (tree: NoeudMarkdown) =>
@@ -868,12 +879,14 @@ Refactor sans changement fonctionnel : l'instance `Chat` et le corps de requête
 `ChatUI` a deux consommateurs — `BoutonSyntheseTerritoire` (accueil) et `AlbertChat` (panel admin). Les deux passent par la factory ; il n'y a pas de chemin de repli dans `ChatUI`.
 
 **Files:**
+
 - Create: `src/client/components/_commons/ChatUI/creerConversationAlbert.ts`
 - Modify: `src/client/components/_commons/ChatUI/ChatUI.tsx`
 - Modify: `src/client/components/PageAccueil/BoutonSyntheseTerritoire.tsx`
 - Modify: `src/client/components/PagePanelAdministrateur/Albert/AlbertChat.tsx`
 
 **Interfaces:**
+
 - Consumes: `PiloteUIMessage`, `AlbertModel` de `ChatInputForm.tsx`.
 - Produces:
   - `type CorpsRequeteAlbert = { agentContext?: AgentContextAlbert; model: AlbertModel }`
@@ -1029,9 +1042,10 @@ export const AlbertChat = () => {
 Remplacer la construction inline des props de `ChatUI` par la factory. L'état local `conversation` de type `ConversationActive` cède la place à une instance mémorisée, recréée quand l'identifiant change :
 
 ```tsx
-const conversationRef = useRef<{ id: string; valeur: ConversationAlbert } | null>(
-  null,
-);
+const conversationRef = useRef<{
+  id: string;
+  valeur: ConversationAlbert;
+} | null>(null);
 if (conversationRef.current?.id !== conversation.id) {
   conversationRef.current = {
     id: conversation.id,
@@ -1075,6 +1089,7 @@ git commit -m "refactor(ppg): l'instance Chat d'Albert devient une prop de ChatU
 Le cœur de PIL-1690. La conversation remonte au niveau de `MiseEnPage`, donc elle survit à toute navigation client. `BoutonSyntheseTerritoire` se réduit à un déclencheur.
 
 **Files:**
+
 - Create: `src/client/components/_commons/ChatUI/AlbertConversationProvider.tsx`
 - Create: `src/client/components/_commons/ChatUI/AlbertOverlay.tsx`
 - Create: `src/client/components/_commons/ChatUI/AlbertDock.tsx`
@@ -1082,6 +1097,7 @@ Le cœur de PIL-1690. La conversation remonte au niveau de `MiseEnPage`, donc el
 - Modify: `src/client/components/PageAccueil/BoutonSyntheseTerritoire.tsx`
 
 **Interfaces:**
+
 - Consumes: `creerConversationAlbert`, `ConversationAlbert`, `AgentContextAlbert` (Task 4) ; `ChatScenarios` de `ChatEmptyState.tsx` ; `deriverTitre` de `@/server/albert/domain/ChatConversation`.
 - Produces:
   - `useAlbertConversation(): AlbertConversationContextValue` avec `{ conversation, affichage, ouvrir, minimiser, restaurer, fermer, demarrerNouvelleConversation, selectionnerConversation }`
@@ -1276,7 +1292,10 @@ export const AlbertDock = ({
         onClick={restaurer}
         type="button"
       >
-        <Icone className="h-4 w-4 shrink-0 !text-primary" icone={SparklingIcon} />
+        <Icone
+          className="h-4 w-4 shrink-0 !text-primary"
+          icone={SparklingIcon}
+        />
         <span className="min-w-0">
           <span className="block text-sm font-medium text-primary">
             Reprendre la conversation
@@ -1312,7 +1331,11 @@ import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConver
 
 // Isolé dans son propre composant : useEnv s'appuie sur useSuspenseQuery et ne
 // doit suspendre que le contenu de la modale ouverte, jamais l'application.
-const HistoriqueConversations = ({ chatIdCourant }: { chatIdCourant: string }) => {
+const HistoriqueConversations = ({
+  chatIdCourant,
+}: {
+  chatIdCourant: string;
+}) => {
   const ffHistorique = useEnv("NEXT_PUBLIC_FF_HISTORIQUE_ALBERT");
   const { selectionnerConversation, demarrerNouvelleConversation } =
     useAlbertConversation();
@@ -1454,9 +1477,11 @@ git commit -m "feat(ppg): la conversation Albert vit au niveau applicatif (PIL-1
 Le feature flag ne pilote plus que l'affichage de l'historique. La persistance devient la règle, condition nécessaire à la restauration après rechargement (Task 7).
 
 **Files:**
+
 - Modify: `src/app/api/albert/chat/route.ts:168-190`
 
 **Interfaces:**
+
 - Consumes: rien de nouveau.
 - Produces: la route répond toujours avec `originalMessages` et le `onFinish` d'enregistrement.
 
@@ -1514,11 +1539,13 @@ git commit -m "feat(ppg): persiste les conversations Albert indépendamment du f
 Le sessionStorage porte l'identifiant et le contexte ; les messages sont relus depuis la base. En cas d'échec, le dock ne réapparaît simplement pas.
 
 **Files:**
+
 - Create: `src/client/components/_commons/ChatUI/conversationMinimiseeStockage.ts`
 - Create: `src/client/components/_commons/ChatUI/conversationMinimiseeStockage.unit.test.ts`
 - Modify: `src/client/components/_commons/ChatUI/AlbertConversationProvider.tsx`
 
 **Interfaces:**
+
 - Consumes: `AgentContextAlbert` (Task 4).
 - Produces:
   - `type ConversationMinimisee = { id: string; agentContext: AgentContextAlbert }`
@@ -1677,7 +1704,9 @@ Dans `AlbertConversationProvider.tsx` :
     affichageCible: AffichageAlbert;
   };
 
-  const [chargement, setChargement] = useState<ChargementConversation | null>(null);
+  const [chargement, setChargement] = useState<ChargementConversation | null>(
+    null,
+  );
 
   useEffect(() => {
     const stockee = lireConversationMinimisee();
@@ -1769,12 +1798,14 @@ git commit -m "feat(ppg): restaure la conversation minimisée après un recharge
 La jonction entre les deux tickets : les réponses affichent des liens, et cliquer minimise la conversation avant de naviguer.
 
 **Files:**
+
 - Modify: `src/client/components/_commons/ChatUI/ChatContext.tsx`
 - Modify: `src/client/components/_commons/ChatUI/ChatUI.tsx`
 - Modify: `src/client/components/_commons/ChatUI/AssistantMessageText.tsx`
 - Create: `src/client/components/_commons/ChatUI/AssistantMessageText.integration.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `extraireChantiersCites` (Task 1), `construireUrlChantier` (Task 2), `remarkLiensChantiers` + `OptionsLiensChantiers` (Task 3), `useAlbertConversation` (Task 5).
 - Produces: `ChatContext` expose `optionsLiensChantiers: OptionsLiensChantiers`.
 
@@ -1983,10 +2014,12 @@ git commit -m "feat(ppg): liens internes vers les chantiers cités par Albert (P
 Couvre les critères d'acceptation comportementaux de PIL-1690 sans dépendre du LLM : la route de chat est interceptée et renvoie un flux figé.
 
 **Files:**
+
 - Modify: `.env.e2e`
 - Create: `tests/albert-liens-chantiers.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `AppActions.loginAs()` de `tests/actions/app.actions.ts`.
 - Produces: rien.
 
@@ -2083,7 +2116,9 @@ test.describe("Albert — liens vers les chantiers et conversation minimisée", 
       page.getByRole("button", { name: "Reprendre la conversation" }),
     ).toBeVisible();
 
-    await page.getByRole("button", { name: "Reprendre la conversation" }).click();
+    await page
+      .getByRole("button", { name: "Reprendre la conversation" })
+      .click();
     await expect(lien).toBeVisible();
   });
 });

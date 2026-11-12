@@ -9,6 +9,7 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
 ### Composants génériques (réutilisables)
 
 #### 1. **Select** (Radix UI)
+
 - **Localisation** : `src/client/components/shared/Select.tsx`
 - **Type** : Sélection simple (single select)
 - **Technologie** : Radix UI Select primitive
@@ -20,9 +21,11 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
   - Portal pour le positionnement du dropdown
 
 **Utilisations** :
+
 - `src/client/components/_commons/SelecteurNew/SelecteurNew.tsx`
 
 **Exemple d'utilisation** :
+
 ```tsx
 <Select.Root value={value} onValueChange={onChange}>
   <Select.Trigger>
@@ -38,6 +41,7 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
 ---
 
 #### 2. **MultiSelectNew**
+
 - **Localisation** : `src/client/components/_commons/MultiSelectNew/MultiSelect.tsx`
 - **Type** : Multi-sélection avec recherche
 - **Technologie** : Composant custom avec DSFR
@@ -50,12 +54,14 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
   - Hook `useMultiSelect` pour la logique
 
 **Composants spécialisés basés sur MultiSelectNew** :
+
 - `MultiSelectChantier` : Sélection de chantiers
 - `MultiSelectTerritoire` : Sélection de territoires
 - `MultiSelectPérimètreMinistériel` : Sélection de périmètres ministériels
 - `MultiSelectProfil` : Sélection de profils utilisateur
 
 **Exemple d'utilisation** :
+
 ```tsx
 <MultiSelect
   label="Sélectionner des options"
@@ -64,9 +70,9 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
       label: "Groupe 1",
       options: [
         { value: "opt1", label: "Option 1" },
-        { value: "opt2", label: "Option 2" }
-      ]
-    }
+        { value: "opt2", label: "Option 2" },
+      ],
+    },
   ]}
   valeursSélectionnéesParDéfaut={[]}
   changementValeursSélectionnéesCallback={(values) => onChange(values)}
@@ -77,6 +83,7 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
 ---
 
 #### 3. **MultiSelect** (ancien)
+
 - **Localisation** : `src/client/components/_commons/MultiSelect/MultiSelect.tsx`
 - **Type** : Multi-sélection avec recherche
 - **Technologie** : Composant custom avec DSFR
@@ -86,6 +93,7 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
   - Semble être la version précédente de MultiSelectNew
 
 **Composants spécialisés basés sur MultiSelect** :
+
 - `MultiSelectChantier` : Sélection de chantiers (version ancienne)
 - `MultiSelectTerritoire` : Sélection de territoires (version ancienne)
 - `MultiSelectPérimètreMinistériel` : Sélection de périmètres ministériels (version ancienne)
@@ -95,6 +103,7 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
 ---
 
 #### 4. **MultiSelectFiltre**
+
 - **Localisation** : `src/client/components/_commons/MultiSelectFiltre/MultiSelectFiltre.tsx`
 - **Type** : Multi-sélection avec recherche et groupes
 - **Technologie** : Radix Dropdown + Checkbox custom
@@ -108,10 +117,12 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
   - getOptionLabel et getPlaceholder personnalisables
 
 **Utilisations** :
+
 - `src/client/components/PageUtilisateurPiloteEval/FormulaireConfigurationDroits.tsx`
 - `src/client/components/Evaluation/FiltresTableauEvaluation.tsx`
 
 **Exemple d'utilisation** :
+
 ```tsx
 <MultiSelectFiltre
   label="Filtrer par"
@@ -119,8 +130,8 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
   optionGroups={[
     {
       label: "Groupe 1",
-      options: ["option1", "option2"]
-    }
+      options: ["option1", "option2"],
+    },
   ]}
   onChange={(values) => setSelectedValues(values)}
   suffixLabel="éléments"
@@ -135,6 +146,7 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
 ### Composants spécifiques (non réutilisables)
 
 #### 5. **FiltresSelectionUnique**
+
 - **Localisation** : `src/client/components/PageAccueil/Filtres/FiltresSelectionUnique/FiltresSelectionUnique.tsx`
 - **Type** : Sélection simple avec tags
 - **Usage** : Filtres de statut sur la page d'accueil
@@ -152,6 +164,7 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
 ---
 
 #### 6. **FiltresSelectionMultiple**
+
 - **Localisation** : `src/client/components/PageAccueil/Filtres/FiltresSelectionMultiple/FiltresSelectionMultiple.tsx`
 - **Type** : Multi-sélection avec checkboxes
 - **Usage** : Filtres d'axes et territorialisation sur la page d'accueil
@@ -169,21 +182,25 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
 ## Problèmes identifiés
 
 ### 1. Duplication importante
+
 - **MultiSelect** et **MultiSelectNew** sont quasiment identiques
 - Les composants spécialisés existent en double (MultiSelectChantier, MultiSelectTerritoire, etc.)
 - Code de recherche et filtrage dupliqué entre MultiSelect et MultiSelectFiltre
 
 ### 2. Manque de cohérence
+
 - 3 technologies différentes : Radix Select, Radix Dropdown, composants custom
 - Patterns d'API inconsistants entre les composants
 - Nommage incohérent (Select vs Selecteur, anglais/français mélangés)
 
 ### 3. Architecture non scalable
+
 - FiltresSelectionUnique et FiltresSelectionMultiple sont trop couplés à la page d'accueil
 - Logique métier (nuqs, store) mélangée avec l'UI
 - Difficile d'ajouter de nouveaux types de filtres
 
 ### 4. Accessibilité variable
+
 - Radix offre une bonne accessibilité native
 - Les composants custom (MultiSelect, MultiSelectNew) ont une accessibilité manuelle
 - Pas de tests d'accessibilité uniformes
@@ -191,29 +208,32 @@ Le projet contient **6 approches différentes** pour gérer les composants de s�
 ## Recommandations
 
 ### Court terme
+
 1. **Supprimer la duplication** : Choisir entre MultiSelect et MultiSelectNew, supprimer l'autre
 2. **Documenter les cas d'usage** : Clarifier quand utiliser quel composant
 3. **Ajouter des tests** : Particulièrement pour l'accessibilité
 
 ### Moyen terme
+
 1. **Unifier sur Radix UI** : Migrer tous les select vers Radix pour la cohérence
 2. **Extraire la logique** : Séparer la logique des filtres (nuqs, store) de l'UI
 3. **Créer des variantes** : Utiliser un composant de base avec des variantes (single, multi, avec recherche, etc.)
 
 ### Long terme
+
 1. **Design system** : Intégrer dans un vrai système de design
 2. **Storybook** : Documenter visuellement tous les composants
 3. **Tests E2E** : Ajouter des tests Playwright pour les interactions complexes
 
 ## Matrice de décision
 
-| Besoin | Composant recommandé | Alternative |
-|--------|---------------------|-------------|
-| Sélection simple générique | `Select` (Radix) | - |
-| Multi-sélection avec recherche | `MultiSelectNew` | `MultiSelectFiltre` |
-| Filtres spécifiques page d'accueil | `FiltresSelectionUnique` / `FiltresSelectionMultiple` | À refactorer |
-| Sélection avec groupes complexes | `MultiSelectFiltre` | `MultiSelectNew` |
-| Nouveau composant | `Select` (Radix) ou dérivé | Éviter les composants custom |
+| Besoin                             | Composant recommandé                                  | Alternative                  |
+| ---------------------------------- | ----------------------------------------------------- | ---------------------------- |
+| Sélection simple générique         | `Select` (Radix)                                      | -                            |
+| Multi-sélection avec recherche     | `MultiSelectNew`                                      | `MultiSelectFiltre`          |
+| Filtres spécifiques page d'accueil | `FiltresSelectionUnique` / `FiltresSelectionMultiple` | À refactorer                 |
+| Sélection avec groupes complexes   | `MultiSelectFiltre`                                   | `MultiSelectNew`             |
+| Nouveau composant                  | `Select` (Radix) ou dérivé                            | Éviter les composants custom |
 
 ## Prochaines étapes
 

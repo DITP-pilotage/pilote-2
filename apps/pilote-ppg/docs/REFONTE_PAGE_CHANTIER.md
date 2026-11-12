@@ -8,8 +8,8 @@ Refondre la page chantier (`/chantier/[id]/[territoireCode]`) de manière incré
 
 ## Feature flag
 
-| Clé config | Env var | Default |
-|---|---|---|
+| Clé config                        | Env var                                | Default |
+| --------------------------------- | -------------------------------------- | ------- |
 | `featureFlip.refontePageChantier` | `NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER` | `false` |
 
 ### Consommation du feature flag
@@ -35,7 +35,9 @@ const NextPageChantier = (props) => {
   return (
     <pageChantier.ServerSidePropsProvider value={props}>
       <Head>...</Head>
-      {estTerritoireNational && estUnProfilDROM && !chantierInformations.estUnChantierDROM ? (
+      {estTerritoireNational &&
+      estUnProfilDROM &&
+      !chantierInformations.estUnChantierDROM ? (
         <ChoixTerritoire />
       ) : ffRefontePageChantier ? (
         <PageChantier />
@@ -74,6 +76,7 @@ interface BasePageChantierLayoutProps {
 ```
 
 Contient :
+
 - `<div className="flex bg-dsfr-contrast-grey ...">` (wrapper principal)
 - `<BarreLatérale>` avec `<BarreLatéraleEncart>` + `<PageChantierEnTête>` + `<Sommaire>`
 - `<main>` avec :
@@ -101,10 +104,21 @@ interface BasePageChantierSectionProps {
 ```
 
 Produit :
+
 ```tsx
-<section className={clsx("grid grid-rows-[auto_1fr] print:block", className)} id={id}>
+<section
+  className={clsx("grid grid-rows-[auto_1fr] print:block", className)}
+  id={id}
+>
   <TitreInfobulleConteneur className="...">
-    <Titre baliseHtml="h2" className={clsx("fr-h4 ...", { "text-primary": !estArchive, "!text-dsfr-grey-50": estArchive })} estInline>
+    <Titre
+      baliseHtml="h2"
+      className={clsx("fr-h4 ...", {
+        "text-primary": !estArchive,
+        "!text-dsfr-grey-50": estArchive,
+      })}
+      estInline
+    >
       {titre}
     </Titre>
     {infobulle ? <Infobulle>{infobulle}</Infobulle> : null}
@@ -119,15 +133,15 @@ Note : certaines sections ont des className légèrement différents (ex. `[grid
 
 Chaque section est extraite dans son propre fichier. Ces composants encapsulent la logique de rendu de chaque bloc.
 
-| Section | Fichier | Utilisé par |
-|---|---|---|
-| Météo et synthèse des résultats | `SectionSyntheseDesResultats.tsx` | Legacy + Nouveau |
-| Responsables | `SectionResponsables.tsx` | Legacy + Nouveau |
-| Répartition géographique | `SectionRepartitionGeographique.tsx` | Legacy + Nouveau |
-| Objectifs | `SectionObjectifs.tsx` | Legacy + Nouveau |
-| Indicateurs | `SectionIndicateurs.tsx` | Legacy + Nouveau |
-| Décisions stratégiques | `SectionDecisionsStrategiques.tsx` | Legacy + Nouveau |
-| Commentaires du chantier | `SectionCommentaires.tsx` | Legacy + Nouveau |
+| Section                         | Fichier                              | Utilisé par      |
+| ------------------------------- | ------------------------------------ | ---------------- |
+| Météo et synthèse des résultats | `SectionSyntheseDesResultats.tsx`    | Legacy + Nouveau |
+| Responsables                    | `SectionResponsables.tsx`            | Legacy + Nouveau |
+| Répartition géographique        | `SectionRepartitionGeographique.tsx` | Legacy + Nouveau |
+| Objectifs                       | `SectionObjectifs.tsx`               | Legacy + Nouveau |
+| Indicateurs                     | `SectionIndicateurs.tsx`             | Legacy + Nouveau |
+| Décisions stratégiques          | `SectionDecisionsStrategiques.tsx`   | Legacy + Nouveau |
+| Commentaires du chantier        | `SectionCommentaires.tsx`            | Legacy + Nouveau |
 
 Chaque composant est placé dans `src/client/components/PageChantier/sections/`.
 

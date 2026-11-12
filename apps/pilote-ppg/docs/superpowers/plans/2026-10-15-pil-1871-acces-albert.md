@@ -40,10 +40,12 @@
 ### Task 1: Règle d'accès pure `checkAlbertAccess`
 
 **Files:**
+
 - Create: `apps/pilote-ppg/src/server/albert-access/domain/checkAlbertAccess.ts`
 - Test: `apps/pilote-ppg/src/server/albert-access/__tests__/domain/checkAlbertAccess.unit.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `type AlbertScenarios = "ditp" | "coordinateur"`
   - `interface AlbertAccess { peutUtiliser: boolean; scenarios: AlbertScenarios }`
@@ -198,6 +200,7 @@ git commit  # titre : [DITP-pilotage/pilote-2] feature(PIL-1871): règle d'accè
 ### Task 2: Tables, port et repository Prisma
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/database/prisma/schema.prisma` (modèles `profil`, `utilisateur` + 2 nouveaux modèles)
 - Create: `apps/pilote-ppg/src/database/prisma/migrations/20261015000000_albert_access/migration.sql`
 - Create: `apps/pilote-ppg/src/server/albert-access/domain/ports/AlbertAccessRepository.ts`
@@ -205,6 +208,7 @@ git commit  # titre : [DITP-pilotage/pilote-2] feature(PIL-1871): règle d'accè
 - Test: `apps/pilote-ppg/src/server/albert-access/__tests__/infrastructure/adapters/PrismaAlbertAccessRepository.integration.test.ts`
 
 **Interfaces:**
+
 - Produces (port) :
 
 ```ts
@@ -232,11 +236,17 @@ export interface AlbertAccessRepository {
   listProfils(): Promise<ProfilAccess[]>;
   setProfilActive(profilCode: string, active: boolean): Promise<void>;
   listUtilisateurs(): Promise<UtilisateurAccess[]>;
-  searchUtilisateurs(email: string, limit: number): Promise<UtilisateurSearchResult[]>;
+  searchUtilisateurs(
+    email: string,
+    limit: number,
+  ): Promise<UtilisateurSearchResult[]>;
   findUtilisateurProfil(utilisateurId: string): Promise<string | null>;
   addUtilisateur(utilisateurId: string): Promise<void>;
   removeUtilisateur(utilisateurId: string): Promise<void>;
-  getAccessFlags(utilisateurId: string, profil: string | null): Promise<{ profilActive: boolean; utilisateurAutorise: boolean }>;
+  getAccessFlags(
+    utilisateurId: string,
+    profil: string | null,
+  ): Promise<{ profilActive: boolean; utilisateurAutorise: boolean }>;
 }
 ```
 
@@ -390,14 +400,16 @@ describe("PrismaAlbertAccessRepository", () => {
 
         let profils = await repository.listProfils();
         expect(
-          profils.find((p) => p.code === ProfilEnum.COORDINATEUR_REGION)?.active,
+          profils.find((p) => p.code === ProfilEnum.COORDINATEUR_REGION)
+            ?.active,
         ).toBe(true);
 
         await repository.setProfilActive(ProfilEnum.COORDINATEUR_REGION, false);
 
         profils = await repository.listProfils();
         expect(
-          profils.find((p) => p.code === ProfilEnum.COORDINATEUR_REGION)?.active,
+          profils.find((p) => p.code === ProfilEnum.COORDINATEUR_REGION)
+            ?.active,
         ).toBe(false);
       }),
     );
@@ -574,7 +586,10 @@ const UTILISATEUR_SELECT = {
   prenom: true,
   profilCode: true,
   profil: {
-    select: { nom: true, albert_access_profil: { select: { profil_code: true } } },
+    select: {
+      nom: true,
+      albert_access_profil: { select: { profil_code: true } },
+    },
   },
 } as const;
 
@@ -587,7 +602,9 @@ type UtilisateurRow = {
   profil: { nom: string; albert_access_profil: { profil_code: string } | null };
 };
 
-const toUtilisateurAccess = (utilisateur: UtilisateurRow): UtilisateurAccess => ({
+const toUtilisateurAccess = (
+  utilisateur: UtilisateurRow,
+): UtilisateurAccess => ({
   utilisateurId: utilisateur.id,
   email: utilisateur.email,
   nom: utilisateur.nom,
@@ -724,6 +741,7 @@ Expected: PASS.
 ### Task 3: Use cases et module `albertAccess`
 
 **Files:**
+
 - Create: `apps/pilote-ppg/src/server/albert-access/module.ts`
 - Create: `apps/pilote-ppg/src/server/albert-access/usecases/{ListProfilsUseCase,SetProfilActiveUseCase,ListUtilisateursUseCase,SearchUtilisateursUseCase,AddUtilisateurUseCase,RemoveUtilisateurUseCase,CheckAlbertAccessUseCase}.ts`
 - Modify: `apps/pilote-ppg/src/server/module-system/moduleNames.ts` (ajouter `"albertAccess"`)
@@ -731,6 +749,7 @@ Expected: PASS.
 - Test: `apps/pilote-ppg/src/server/albert-access/__tests__/usecases/{SetProfilActiveUseCase,AddUtilisateurUseCase,SearchUtilisateursUseCase}.unit.test.ts`
 
 **Interfaces:**
+
 - Consumes: `AlbertAccessRepository` (Task 2), `checkAlbertAccess` / `AlbertAccess` (Task 1), `recupererToutesLesVariablesContenuUseCase` (export du module `gestionContenu`, type `GestionContenuExports`).
 - Produces (cradle `albertAccess`) :
   - `listProfilsUseCase.execute(): Promise<ProfilAccess[]>`
@@ -908,28 +927,27 @@ type AlbertAccessCradle = GestionContenuExports & {
   checkAlbertAccessUseCase: CheckAlbertAccessUseCase;
 };
 
-export const albertAccessModule = defineModule<
-  NoExports,
-  AlbertAccessCradle
->()({
-  name: "albertAccess",
-  imports: ["framework", "gestionContenu"],
-  exports: [],
-  register: (container, { asModuleClass }) => {
-    container.register({
-      albertAccessRepository: asModuleClass(PrismaAlbertAccessRepository),
-      listProfilsUseCase: asModuleClass(ListProfilsUseCase),
-      setProfilActiveUseCase: asModuleClass(SetProfilActiveUseCase),
-      listUtilisateursUseCase: asModuleClass(ListUtilisateursUseCase),
-      searchUtilisateursUseCase: asModuleClass(SearchUtilisateursUseCase),
-      addUtilisateurUseCase: asModuleClass(AddUtilisateurUseCase),
-      removeUtilisateurUseCase: asModuleClass(RemoveUtilisateurUseCase),
-      checkAlbertAccessUseCase: asModuleClass(CheckAlbertAccessUseCase),
-    } satisfies VerifyCradle<
-      Omit<AlbertAccessCradle, keyof GestionContenuExports>
-    >);
+export const albertAccessModule = defineModule<NoExports, AlbertAccessCradle>()(
+  {
+    name: "albertAccess",
+    imports: ["framework", "gestionContenu"],
+    exports: [],
+    register: (container, { asModuleClass }) => {
+      container.register({
+        albertAccessRepository: asModuleClass(PrismaAlbertAccessRepository),
+        listProfilsUseCase: asModuleClass(ListProfilsUseCase),
+        setProfilActiveUseCase: asModuleClass(SetProfilActiveUseCase),
+        listUtilisateursUseCase: asModuleClass(ListUtilisateursUseCase),
+        searchUtilisateursUseCase: asModuleClass(SearchUtilisateursUseCase),
+        addUtilisateurUseCase: asModuleClass(AddUtilisateurUseCase),
+        removeUtilisateurUseCase: asModuleClass(RemoveUtilisateurUseCase),
+        checkAlbertAccessUseCase: asModuleClass(CheckAlbertAccessUseCase),
+      } satisfies VerifyCradle<
+        Omit<AlbertAccessCradle, keyof GestionContenuExports>
+      >);
+    },
   },
-});
+);
 
 type Scope = ExtractScope<typeof albertAccessModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;
@@ -944,7 +962,10 @@ Enregistrement : ajouter `"albertAccess"` à `moduleNames.ts`, puis dans `depend
 `ListProfilsUseCase.ts` :
 
 ```ts
-import { AlbertAccessRepository, ProfilAccess } from "@/server/albert-access/domain/ports/AlbertAccessRepository";
+import {
+  AlbertAccessRepository,
+  ProfilAccess,
+} from "@/server/albert-access/domain/ports/AlbertAccessRepository";
 import type { Inject } from "@/server/albert-access/module";
 
 export class ListProfilsUseCase {
@@ -999,7 +1020,10 @@ export class SetProfilActiveUseCase {
 `SearchUtilisateursUseCase.ts` :
 
 ```ts
-import { AlbertAccessRepository, UtilisateurSearchResult } from "@/server/albert-access/domain/ports/AlbertAccessRepository";
+import {
+  AlbertAccessRepository,
+  UtilisateurSearchResult,
+} from "@/server/albert-access/domain/ports/AlbertAccessRepository";
 import type { Inject } from "@/server/albert-access/module";
 
 const LONGUEUR_MIN_RECHERCHE = 3;
@@ -1012,7 +1036,11 @@ export class SearchUtilisateursUseCase {
     this.albertAccessRepository = albertAccessRepository;
   }
 
-  async execute({ email }: { email: string }): Promise<UtilisateurSearchResult[]> {
+  async execute({
+    email,
+  }: {
+    email: string;
+  }): Promise<UtilisateurSearchResult[]> {
     const recherche = email.trim();
     if (recherche.length < LONGUEUR_MIN_RECHERCHE) {
       return [];
@@ -1061,7 +1089,10 @@ export class AddUtilisateurUseCase {
 
 ```ts
 import { AlbertAccessRepository } from "@/server/albert-access/domain/ports/AlbertAccessRepository";
-import { AlbertAccess, checkAlbertAccess } from "@/server/albert-access/domain/checkAlbertAccess";
+import {
+  AlbertAccess,
+  checkAlbertAccess,
+} from "@/server/albert-access/domain/checkAlbertAccess";
 import type { Inject } from "@/server/albert-access/module";
 import type { RecupererToutesLesVariablesContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererToutesLesVariablesContenuUseCase";
 
@@ -1087,7 +1118,8 @@ export class CheckAlbertAccessUseCase {
     utilisateurId: string;
     profil: string | null;
   }): Promise<AlbertAccess> {
-    const variables = await this.recupererToutesLesVariablesContenuUseCase.run();
+    const variables =
+      await this.recupererToutesLesVariablesContenuUseCase.run();
     const flags = await this.albertAccessRepository.getAccessFlags(
       utilisateurId,
       profil,
@@ -1115,11 +1147,13 @@ Expected: PASS, tsc sans erreur.
 ### Task 4: Router tRPC `albertAccess`
 
 **Files:**
+
 - Create: `apps/pilote-ppg/src/server/albert-access/infrastructure/trpc/albertAccess.ts`
 - Modify: `apps/pilote-ppg/src/server/app/trpc/appRouter.ts` (import + `albertAccess: albertAccessRouter`)
 - Modify: `apps/pilote-ppg/src/server/framework/trpc/categorieLogRouteurTRPC.ts` (`albertAccess: "albert"`)
 
 **Interfaces:**
+
 - Consumes: use cases de Task 3.
 - Produces (client `api.albertAccess.*`) : `listProfils` (query), `setProfilActive` (mutation `{ profilCode: string; active: boolean }`), `listUtilisateurs` (query), `searchUtilisateurs` (query `{ email: string }`), `addUtilisateur` (mutation `{ utilisateurId: string (uuid) }`), `removeUtilisateur` (mutation `{ utilisateurId: string (uuid) }`).
 
@@ -1209,6 +1243,7 @@ export const albertAccessRouter = createTRPCRouter({
 ### Task 5: Brancher la règle en base et supprimer les variables d'environnement
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/pages/accueil/chantier/[territoireCode]/index.tsx` (~l.18 import, ~l.226 calcul, ~l.253 prop)
 - Modify: `apps/pilote-ppg/src/client/components/PageAccueil/PageAccueil.tsx:39`
 - Modify: `apps/pilote-ppg/src/client/components/PageAccueil/BasePageAccueilLayout.tsx` (import l.6, props l.68/84, l.89-90, l.185-198)
@@ -1220,6 +1255,7 @@ export const albertAccessRouter = createTRPCRouter({
 - Delete: `apps/pilote-ppg/src/server/albert/accesAskAI.ts`, `apps/pilote-ppg/src/server/albert/__tests__/accesAskAI.unit.test.ts`, `apps/pilote-ppg/src/server/albert/emailsAutorisesAskAITerritoire.ts`, `apps/pilote-ppg/src/client/components/PageAccueil/useAskAIAccess.ts`
 
 **Interfaces:**
+
 - Consumes: `checkAlbertAccessUseCase` (Task 3), type `AlbertAccess` (Task 1).
 - Produces: prop de page `accesAlbert: AlbertAccess` (remplace `emailAutoriseAskAITerritoire`).
 
@@ -1285,11 +1321,13 @@ Expected: PASS ; si `RecupererFeatureFlipsUseCase.unit.test.ts` échoue sur des 
 ### Task 6: Composant `SearchPicker` (Radix Popover + cmdk) et `useDebouncedValue`
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/package.json` + `pnpm-lock.yaml` (via `pnpm -C apps/pilote-ppg add cmdk@^1.1.1`)
 - Create: `apps/pilote-ppg/src/client/components/shared/SearchPicker.tsx`
 - Create: `apps/pilote-ppg/src/client/hooks/useDebouncedValue.ts`
 
 **Interfaces:**
+
 - Produces:
   - `SearchPicker<T>(props: SearchPickerProps<T>)` avec `SearchPickerProps<T> = { items: T[]; search: string; onSearchChange: (search: string) => void; onSelect: (item: T) => void; getKey: (item: T) => string; renderItem: (item: T) => ReactNode; isItemDisabled?: (item: T) => boolean; isLoading?: boolean; triggerLabel: ReactNode; searchPlaceholder?: string; emptyLabel?: string }`
   - `useDebouncedValue<T>(value: T, delayMs: number): T`
@@ -1369,7 +1407,10 @@ export const SearchPicker = <T,>({
           FOCUS,
         )}
       >
-        <Icone className="w-5 h-5 shrink-0 text-primary" icone={LoupeContourIcon} />
+        <Icone
+          className="w-5 h-5 shrink-0 text-primary"
+          icone={LoupeContourIcon}
+        />
         <span className="truncate">{triggerLabel}</span>
       </Popover.Trigger>
       <Popover.Portal>
@@ -1435,21 +1476,20 @@ export const SearchPicker = <T,>({
 ### Task 7: Onglets « Permissions profils » et « Permissions emails »
 
 **Files:**
+
 - Modify: `apps/pilote-ppg/src/client/components/PagePanelAdministrateur/Albert/AlbertPanel.tsx`
 - Create: `apps/pilote-ppg/src/client/components/PagePanelAdministrateur/Albert/AlbertProfilPermissions.tsx`
 - Create: `apps/pilote-ppg/src/client/components/PagePanelAdministrateur/Albert/AlbertUtilisateurPermissions.tsx`
 
 **Interfaces:**
+
 - Consumes: `api.albertAccess.*` (Task 4), `SearchPicker` + `useDebouncedValue` (Task 6), `Tabs`, `Table`, `Switch`, `Notice`, `Badge`, `Button` (shared), `toast` (sonner), `api` (`@/server/framework/trpc/api`).
 
 - [ ] **Step 1: `AlbertPanel.tsx`**
 
 ```tsx
 type Onglet =
-  | "discussion"
-  | "dashboard"
-  | "permissions-profils"
-  | "permissions-emails";
+  "discussion" | "dashboard" | "permissions-profils" | "permissions-emails";
 
 const ITEMS: { value: Onglet; label: string }[] = [
   { value: "discussion", label: "Discussion" },

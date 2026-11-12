@@ -90,14 +90,14 @@ Structure calquée sur `src/server/parametrage-nouveautes/` :
 
 `src/server/albert-access/infrastructure/trpc/albertAccess.ts`, ajouté à `src/server/app/trpc/appRouter.ts` et à `src/server/framework/trpc/categorieLogRouteurTRPC.ts`. Chaque procédure (`protectedProcedure`) vérifie `ctx.session.profil === DITP_ADMIN`, sinon `UnauthorizedError`.
 
-| Procédure | Entrée | Sortie / effet |
-|---|---|---|
-| `listProfils` | — | `[{ code, nom, active }]` |
-| `setProfilActive` | `{ profilCode, active }` | refuse `DITP_ADMIN` |
-| `listUtilisateurs` | — | liste des autorisés individuellement |
+| Procédure            | Entrée                         | Sortie / effet                                       |
+| -------------------- | ------------------------------ | ---------------------------------------------------- |
+| `listProfils`        | —                              | `[{ code, nom, active }]`                            |
+| `setProfilActive`    | `{ profilCode, active }`       | refuse `DITP_ADMIN`                                  |
+| `listUtilisateurs`   | —                              | liste des autorisés individuellement                 |
 | `searchUtilisateurs` | `{ query }` (min 3 caractères) | max 10 résultats, recherche sur email, prénom et nom |
-| `addUtilisateur` | `{ utilisateurId }` | refuse inconnu ou `DITP_ADMIN` ; idempotent |
-| `removeUtilisateur` | `{ utilisateurId }` | supprime la ligne |
+| `addUtilisateur`     | `{ utilisateurId }`            | refuse inconnu ou `DITP_ADMIN` ; idempotent          |
+| `removeUtilisateur`  | `{ utilisateurId }`            | supprime la ligne                                    |
 
 ## Interface
 
@@ -122,18 +122,18 @@ Ajout de la dépendance `cmdk` (^1.1.1, même version que kpilote) à `apps/pilo
 
 ```ts
 type SearchPickerProps<T> = {
-  items: T[]
-  search: string
-  onSearchChange: (search: string) => void
-  onSelect: (item: T) => void
-  getKey: (item: T) => string
-  renderItem: (item: T) => ReactNode
-  isItemDisabled?: (item: T) => boolean
-  isLoading?: boolean
-  triggerLabel: ReactNode
-  searchPlaceholder?: string
-  emptyLabel?: string
-}
+  items: T[];
+  search: string;
+  onSearchChange: (search: string) => void;
+  onSelect: (item: T) => void;
+  getKey: (item: T) => string;
+  renderItem: (item: T) => ReactNode;
+  isItemDisabled?: (item: T) => boolean;
+  isLoading?: boolean;
+  triggerLabel: ReactNode;
+  searchPlaceholder?: string;
+  emptyLabel?: string;
+};
 ```
 
 Radix `Popover` (Trigger bouton, Content en portail) + `Command` de `cmdk` avec `shouldFilter={false}` (filtrage fait par le serveur). Accessibilité combobox/listbox et navigation clavier fournies par `cmdk`. Style Tailwind avec les tokens ppg, pas de classes `fr-*`, pas de couleurs en dur.

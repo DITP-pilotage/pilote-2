@@ -41,11 +41,13 @@ Branche : `feat/albert-indicateurs-a-mettre-a-jour` (depuis `origin/dev`). Rése
 On écrit le scénario dans sa version finale et on le mesure sur `dev`, avec les anciens outils.
 
 **Files:**
+
 - Create: `evals/3-scenarios/3.4-forme/seedValeursACompleter.ts` (copie de la branche, telle quelle)
 - Create: `evals/3-scenarios/3.4-forme/valeursACompleter.criteria.ts`
 - Create: `evals/3-scenarios/3.4-forme/valeursACompleter.eval.ts`
 
 **Interfaces:**
+
 - Consumes: `scenarioEval` (`evals/3-scenarios/scenarioEval.ts`), `withBase`, `judged`, `BASE_IDS` (`evals/3-scenarios/criterion.ts`).
 - Produces: `VALEURS_A_COMPLETER_CRITERIA`, rejoué tel quel à la tâche 8.
 
@@ -54,6 +56,7 @@ On écrit le scénario dans sa version finale et on le mesure sur `dev`, avec le
 - [ ] **Step 2: Écrire les critères**
 
 Partir de `valeursACompleter.criteria.ts` de la branche (`omit: [BASE_IDS.chantierFormat]`). Critères `judged`, dans cet ordre :
+
 - `Périmètre cité` : la réponse dit sur quel périmètre portent ses chiffres.
 - `Pas de somme entre indicateurs` : repris de la branche ; tout nombre de territoires annoncé figure dans la sortie de l'outil.
 - `Mailles à zéro` : repris de la branche.
@@ -112,25 +115,33 @@ git commit -m "test(albert): scénario N3 des indicateurs à mettre à jour et m
 ### Task 2: Décision de demander la précision
 
 **Files:**
+
 - Create: `src/server/albert/tools/precisionTypeDeValeurs.ts`
 - Test: `src/server/albert/__tests__/tools/precisionTypeDeValeurs.unit.test.ts`
 
 **Interfaces:**
+
 - Consumes: `ModelMessage` (`ai`).
 - Produces:
 
 ```ts
 export function nommeUnTypeDeValeurs({ texte }: { texte: string }): boolean;
-export function doitDemanderPrecision({ messages }: { messages: ModelMessage[] }): boolean;
+export function doitDemanderPrecision({
+  messages,
+}: {
+  messages: ModelMessage[];
+}): boolean;
 ```
 
 Règles de `nommeUnTypeDeValeurs` :
+
 - Sigles, sur les mots du texte brut : `VA` seulement en majuscules ; `VI`, `VC` sans distinction de casse.
 - Expressions, sur le texte en minuscules, sans accents (`normaliserChaîneDeCaractères` de `@/client/utils/strings`), découpé sur tout ce qui n'est pas une lettre, sans les mots de moins de 3 lettres, et sans le `s` final de chaque mot. Une expression est trouvée si ses mots apparaissent consécutivement.
 - Comparaison d'un mot : exacte sous 5 lettres ; à partir de 5 lettres, une erreur tolérée (insertion, suppression, substitution ou inversion de deux lettres voisines).
 - Expressions VA : « valeur d'avancement », « valeur actuelle », « dernière valeur », « périmé », « retard de mise à jour », « saisie en retard », « fraîcheur ». VI : « valeur initiale ». VC : « cible ».
 
 Règles de `doitDemanderPrecision` (dans cet ordre) :
+
 1. Texte du dernier message `role: "user"` : une chaîne, ou la concaténation de ses parts `type: "text"`. S'il nomme un type → `false`.
 2. Avant ce message, une part `type: "tool-result"` avec `toolName: "get_indicateurs_a_completer"`, `output.type: "json"`, et une valeur qui contient `en_bref` ou `precision_demandee` → `false`.
 3. Sinon → `true`.
@@ -165,6 +176,7 @@ describe("nommeUnTypeDeValeurs", () => {
 ```
 
 `doitDemanderPrecision`, un test par cas, avec des `ModelMessage[]` écrits à la main :
+
 - `[user "Quels indicateurs sont non à jour sur le CH-018 ?"]` → `true`
 - `[user { content: [{ type: "text", text: "Quelles VA ne sont pas à jour ?" }] }]` → `false`
 - tour précédent clos par une demande de précision : `[user "Quels sont les chantiers à mettre à jour ?", assistant tool-call, tool tool-result { type: "json", value: { precision_demandee: true } }, assistant "Choisissez une option pour continuer.", user "les trois"]` → `false`
@@ -188,11 +200,13 @@ Expected : FAIL, module introuvable.
 ### Task 3: Fusion des motifs et lignes du détail
 
 **Files:**
+
 - Modify: `src/server/chantiers/infrastructure/queries/GetIndicateursNonAJourQuery.ts`, `GetIndicateursSansViVcQuery.ts` et leurs tests d'intégration (`src/server/chantiers/__tests__/infrastructure/queries/`) : reprendre le diff de la branche (`territoireNomAffiche`, lu dans `territoire.nom_affiche`).
 - Create: `src/server/albert/tools/indicateursACompleter.ts`
 - Test: `src/server/albert/__tests__/tools/indicateursACompleter.unit.test.ts`
 
 **Interfaces:**
+
 - Consumes: `LigneIndicateurNonAJour`, `LigneIndicateurSansViVc` (avec `territoireNomAffiche`), `libelleMaille`.
 - Produces:
 
@@ -204,26 +218,36 @@ export const MOTIFS_ORDER: Motif[]; // ["va", "vi", "vc"]
 export const LIBELLES_MOTIF: Record<Motif, LibelleMotif>;
 
 export type LigneFusionnee = {
-  chantierId: string; chantierNom: string;
-  indicateurId: string; indicateurNom: string;
+  chantierId: string;
+  chantierNom: string;
+  indicateurId: string;
+  indicateurNom: string;
   maille: $Enums.Maille;
-  territoireCode: string; territoireNom: string | null; territoireNomAffiche: string;
+  territoireCode: string;
+  territoireNom: string | null;
+  territoireNomAffiche: string;
   motifs: Set<Motif>;
   va?: LigneIndicateurNonAJour;
   viVc?: LigneIndicateurSansViVc;
 };
 export type LigneACompleter = {
-  chantier_id: string; chantier_nom: string;
-  indicateur_id: string; indicateur_nom: string;
-  territoire_code: string; territoire_nom: string | null; territoire_nom_affiche: string;
+  chantier_id: string;
+  chantier_nom: string;
+  indicateur_id: string;
+  indicateur_nom: string;
+  territoire_code: string;
+  territoire_nom: string | null;
+  territoire_nom_affiche: string;
   maille: LibelleMaille;
   motifs: LibelleMotif[];
-  date_derniere_valeur?: string | null;         // si motif VA
-  mise_a_jour_attendue_depuis?: string | null;  // si motif VA
+  date_derniere_valeur?: string | null; // si motif VA
+  mise_a_jour_attendue_depuis?: string | null; // si motif VA
   derniere_vc_connue?: { valeur: number; jalon: number } | null; // si motif VC
 };
 export function fusionnerLignes(params: {
-  motifs: Motif[]; lignesVa: LigneIndicateurNonAJour[]; lignesViVc: LigneIndicateurSansViVc[];
+  motifs: Motif[];
+  lignesVa: LigneIndicateurNonAJour[];
+  lignesViVc: LigneIndicateurSansViVc[];
 }): LigneFusionnee[]; // triées par chantier, indicateur, territoire
 export function versLigneACompleter(ligne: LigneFusionnee): LigneACompleter;
 ```
@@ -249,10 +273,12 @@ export function versLigneACompleter(ligne: LigneFusionnee): LigneACompleter;
 ### Task 4: Résumé envoyé au modèle
 
 **Files:**
+
 - Create: `src/server/albert/tools/resumeIndicateursACompleter.ts`
 - Test: `src/server/albert/__tests__/tools/resumeIndicateursACompleter.unit.test.ts`
 
 **Interfaces:**
+
 - Consumes: `LigneFusionnee`, `Motif`, `LibelleMotif`, `LIBELLES_MOTIF`, `MOTIFS_ORDER` (tâche 3).
 - Produces:
 
@@ -261,7 +287,10 @@ export const SEUIL_INDICATEURS_RESUME = 20;
 export type CleResume = LibelleMotif | "tous motifs confondus";
 export type PhrasesParMotif = Partial<Record<CleResume, string>>;
 export type IndicateurResume = { indicateur: string } & PhrasesParMotif;
-export type ChantierResume = { chantier: string; indicateurs?: IndicateurResume[] } & PhrasesParMotif;
+export type ChantierResume = {
+  chantier: string;
+  indicateurs?: IndicateurResume[];
+} & PhrasesParMotif;
 export type ResumeIndicateursACompleter = {
   en_bref: string;
   jalon_vc?: number;
@@ -271,16 +300,17 @@ export type ResumeIndicateursACompleter = {
 };
 export function resumerIndicateursACompleter(params: {
   lignes: LigneFusionnee[];
-  motifs: Motif[];              // dédoublonnés, ordre va, vi, vc
-  mailles: $Enums.Maille[];     // mailles interrogées, ordre NAT, REG, DEPT
+  motifs: Motif[]; // dédoublonnés, ordre va, vi, vc
+  mailles: $Enums.Maille[]; // mailles interrogées, ordre NAT, REG, DEPT
   unSeulTerritoire: boolean;
-  perimetre: string;            // ex. "Bretagne et ses départements"
-  jalon?: number;               // présent si "vc" est demandé
+  perimetre: string; // ex. "Bretagne et ses départements"
+  jalon?: number; // présent si "vc" est demandé
   demandesExplicites: string[]; // CH-… et IND-… nommés par l'utilisateur et accessibles
 }): ResumeIndicateursACompleter;
 ```
 
 Textes fixés (les tests les vérifient mot pour mot) :
+
 - Mailles, toutes celles de `mailles`, dans l'ordre, séparées par « , » : NAT « 1 territoire national » / « aucun territoire national » ; REG « 1 région » / « n régions » / « aucune région » ; DEPT « 1 département » / « n départements » / « aucun département ». Des territoires distincts.
 - Comptes : « 1 chantier » / « n chantiers », « 1 indicateur » / « n indicateurs ».
 - Plusieurs territoires : `ensemble` « {chantiers}, {indicateurs} · {mailles} » ; chantier « {indicateurs} · {mailles} » ; indicateur « {mailles} ».
@@ -313,21 +343,29 @@ Textes fixés (les tests les vérifient mot pour mot) :
 ### Task 5: L'outil `get_indicateurs_a_completer`
 
 **Files:**
+
 - Create: `src/server/albert/tools/getIndicateursACompleter.ts`
 - Test: `src/server/albert/__tests__/tools/getIndicateursACompleter.unit.test.ts` (harnais `buildTool` repris de la branche, avec un mock de `GetTerritoiresIdentiteQuery`)
 
 **Interfaces:**
+
 - Consumes: `doitDemanderPrecision` (tâche 2) ; `fusionnerLignes`, `versLigneACompleter`, `Motif`, `MOTIFS_ORDER`, `LigneACompleter` (tâche 3) ; `resumerIndicateursACompleter`, `ResumeIndicateursACompleter` (tâche 4) ; `resoudreAccesIndicateurs`, `chantierIdsIndicateursSchema`, `indicateurIdsSchema`, `perimetreIndicateursSchema`, `CONSIGNE_ACCES_REFUSE`, `ChampsAcces` (`socleValeursIndicateurs.ts`) ; `GetTerritoiresIdentiteQuery` ; `ClarifyWithChoicesOutput`.
 - Produces:
 
 ```ts
 export const getIndicateursACompleterInputSchema; // motifs: z.array(z.enum(["va","vi","vc"])).min(1).max(3), + chantier_ids, indicateur_ids, perimetre du socle
 export type DetailIndicateursACompleter = {
-  motifs: Motif[]; jalon?: number; perimetre: string; lignes: LigneACompleter[];
+  motifs: Motif[];
+  jalon?: number;
+  perimetre: string;
+  lignes: LigneACompleter[];
 };
 export type GetIndicateursACompleterOutput =
   | (ChampsAcces & { clarification: ClarifyWithChoicesOutput })
-  | (ChampsAcces & { resume: ResumeIndicateursACompleter; detail: DetailIndicateursACompleter })
+  | (ChampsAcces & {
+      resume: ResumeIndicateursACompleter;
+      detail: DetailIndicateursACompleter;
+    })
   | ChampsAcces;
 export function indicateursACompleterVersModele(params: {
   output: GetIndicateursACompleterOutput;
@@ -338,10 +376,14 @@ export function createGetIndicateursACompleterTool(deps: {
   getIndicateursIdentiteQuery: GetIndicateursIdentiteQuery;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
   territoireResolver: TerritoireResolver;
-}): (habilitations: { territoiresAccessibles: string[]; chantiersAccessibles: string[] }) => Tool;
+}): (habilitations: {
+  territoiresAccessibles: string[];
+  chantiersAccessibles: string[];
+}) => Tool;
 ```
 
 Comportement de `execute(input, { messages })` :
+
 1. `resoudreAccesIndicateurs` ; `sans_resultat` → les champs d'accès seuls.
 2. `doitDemanderPrecision({ messages })` → `{ clarification, ...champsAcces }`. `clarification()` et `libellePerimetre()` sont repris de la branche (libellés avec les codes : « sur le CH-018 en REG-53 »).
 3. Jalon (`getAnneeDateDeBascule`), puis les deux requêtes en parallèle selon les motifs, comme sur la branche (`valeursRecherchees`).
@@ -373,6 +415,7 @@ Description : le contenu de la section « Description de l'outil » de la spec, 
 ### Task 6: Branchement, retrait des anciens outils, prompt système
 
 **Files:**
+
 - Modify: `src/server/albert/module.ts` (imports l. 13-14, types l. 75-80, enregistrement l. 137-142)
 - Modify: `src/server/albert/AssistantIA.ts:77-82`
 - Modify: `src/server/albert/PiloteUIMessage.ts` (imports l. 50-57, types l. 100-107)
@@ -385,6 +428,7 @@ Description : le contenu de la section « Description de l'outil » de la spec, 
 - Delete: `src/server/albert/tools/getValeursAvancementNonAJour.ts`, `getValeursInitialesCiblesManquantes.ts` et leurs tests dans `src/server/albert/__tests__/tools/`
 
 **Interfaces:**
+
 - Consumes: `createGetIndicateursACompleterTool`, `getIndicateursACompleterInputSchema`, `GetIndicateursACompleterOutput` (tâche 5).
 - Produces: `PiloteUITools["get_indicateurs_a_completer"]`, utilisé par l'interface (tâche 7).
 
@@ -415,6 +459,7 @@ Expected : une réponse, sans erreur de `convertToModelMessages` ni de l'API Alb
 ### Task 7: Interface — choix et tableau du détail
 
 **Files:**
+
 - Move: `src/client/components/PageAnnuaire/SelecteurGroupement.tsx` → `src/client/components/_commons/SelecteurGroupement/SelecteurGroupement.tsx`, et ses imports dans `PageAnnuaire/TableauCoordinateurs.tsx` et `TableauResponsables.tsx` (diff de la branche)
 - Modify: `src/client/components/_commons/MultiSelectFiltre/MultiSelectFiltre.tsx` (`classNameContenu`, diff de la branche)
 - Create, depuis la branche : `src/client/components/_commons/ChatUI/TableauIndicateursACompleter.tsx`, `useTableauIndicateursACompleter.tsx`, `detailIndicateursACompleter.ts`, `csvIndicateursACompleter.ts`, et leurs tests (`TableauIndicateursACompleter.integration.test.tsx`, `detailIndicateursACompleter.unit.test.ts`, `csvIndicateursACompleter.unit.test.ts`)
@@ -422,15 +467,21 @@ Expected : une réponse, sans erreur de `convertToModelMessages` ni de l'API Alb
 - Modify: `src/client/components/_commons/ChatUI/AssistantMessage.tsx` (bloc des choix l. 213-225, rendu du tableau après `CentreAideEncart`) et `AssistantMessage.integration.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `DetailIndicateursACompleter`, `GetIndicateursACompleterOutput` (tâche 5) ; `LigneACompleter`, `LibelleMotif` (tâche 3).
 - Produces:
 
 ```ts
-export const TableauIndicateursACompleter: (props: { detail: DetailIndicateursACompleter }) => JSX.Element;
-export const choixPresentes: (part: PiloteUIMessage["parts"][number]) => ClarifyWithChoicesOutput | null;
+export const TableauIndicateursACompleter: (props: {
+  detail: DetailIndicateursACompleter;
+}) => JSX.Element;
+export const choixPresentes: (
+  part: PiloteUIMessage["parts"][number],
+) => ClarifyWithChoicesOutput | null;
 ```
 
 Adaptations par rapport à la branche :
+
 - les composants lisent `detail` au lieu de la sortie entière ; `lignesDetail({ lignes })` prend `chantier_nom` sur la ligne ;
 - titre : « Détail par territoire · {detail.perimetre} · {motifs} · {n} lignes · {n} chantier(s) », où `{motifs}` reprend les libellés séparés par « , », la VC écrite « VC manquante (jalon {jalon}) » ;
 - `choixPresentes` : `tool-clarify_with_choices`, ou `tool-get_indicateurs_a_completer` dont la sortie contient `clarification` ;
@@ -468,12 +519,14 @@ Expected : une réponse qui reprend `en_bref`, puis le tableau replié avec le t
 ### Task 8: Evals N2 et mesure après
 
 **Files:**
+
 - Create: `evals/2-tools/2.2-donnees/getIndicateursACompleter.eval.ts` (depuis la branche)
 - Delete: `evals/2-tools/2.2-donnees/getValeursAvancementNonAJour.eval.ts`, `getValeursInitialesCiblesManquantes.eval.ts`
 - Modify: `evals/2-tools/2.3-rendu/clarifyWithChoices.eval.ts`, `evals/2-tools/2.2-donnees/getChantiers.eval.ts`, `getChantiersSignales.eval.ts`, `getIndicateurs.eval.ts` (diffs de la branche, adaptés)
 - Modify: `evals/scoreExpectedTools.ts` et `evals/scoreExpectedTools.unit.test.ts` (`CLES_ENSEMBLE_EXACT = ["motifs"]`, diff de la branche)
 
 **Interfaces:**
+
 - Consumes: `toolSelectionEval`, `ToolCase` ; `VALEURS_A_COMPLETER_CRITERIA` et le scénario de la tâche 1.
 
 - [ ] **Step 1: `scoreExpectedTools`**
@@ -493,6 +546,7 @@ Expected : aucun résultat.
 - [ ] **Step 3: Mesure après**, mêmes commandes qu'à la tâche 1, avec `apres` dans `--outputPath`. Les deux suites supprimées sont remplacées par `evals/2-tools/2.2-donnees/getIndicateursACompleter.eval.ts`.
 
 Expected :
+
 - `valeursACompleter` (N3) : chaque critère au moins au niveau avant ; `Un seul territoire`, `Aucun territoire hors demande` et `Tableau introduit` à 2/3 au moins par cas.
 - `clarifyWithChoices`, `getIndicateurs`, `getChantiers`, `getChantiersSignales` : pas de baisse au-delà du bruit (un essai sur trois).
 
@@ -513,16 +567,21 @@ Contraintes ajoutées : les clés de maille sont les libellés de `libelleMaille
 ### Task 9: Résumé simplifié
 
 **Files:**
+
 - Modify (réécriture): `src/server/albert/tools/resumeIndicateursACompleter.ts`
 - Test (réécriture): `src/server/albert/__tests__/tools/resumeIndicateursACompleter.unit.test.ts`
 
 **Interfaces:**
+
 - Consumes: `LigneFusionnee`, `Motif`, `LibelleMotif`, `LibelleMaille`, `LIBELLES_MOTIF`, `MOTIFS_ORDER` (tâche 3) ; `libelleMaille`.
 - Produces (remplace l'API de la tâche 4) :
 
 ```ts
 export type NombresParMaille = Partial<Record<LibelleMaille, number>>;
-export type IndicateurResume = { chantier: string; indicateur: string } & Partial<Record<LibelleMotif, NombresParMaille>>;
+export type IndicateurResume = {
+  chantier: string;
+  indicateur: string;
+} & Partial<Record<LibelleMotif, NombresParMaille>>;
 export type ResumeIndicateursACompleter = {
   perimetre: string;
   jalon_vc?: number;
@@ -531,10 +590,10 @@ export type ResumeIndicateursACompleter = {
 };
 export function resumerIndicateursACompleter(params: {
   lignes: LigneFusionnee[];
-  motifs: Motif[];              // dédoublonnés, ordre va, vi, vc
-  mailles: $Enums.Maille[];     // mailles interrogées, ordre NAT, REG, DEPT
+  motifs: Motif[]; // dédoublonnés, ordre va, vi, vc
+  mailles: $Enums.Maille[]; // mailles interrogées, ordre NAT, REG, DEPT
   perimetre: string;
-  jalon?: number;               // présent si "vc" est demandé
+  jalon?: number; // présent si "vc" est demandé
   demandesExplicites: string[];
 }): ResumeIndicateursACompleter;
 ```
@@ -557,10 +616,12 @@ Règles : une entrée par indicateur qui a au moins une ligne, triée par identi
 ### Task 10: Outil — sortie modèle, description, marqueur d'historique
 
 **Files:**
+
 - Modify: `src/server/albert/tools/getIndicateursACompleter.ts` et son test
 - Modify: `src/server/albert/tools/precisionTypeDeValeurs.ts` et son test (règle 2 : `perimetre` remplace `en_bref`)
 
 **Interfaces:**
+
 - Consumes: `resumerIndicateursACompleter`, `ResumeIndicateursACompleter` (tâche 9).
 - Produces: `indicateursACompleterVersModele` : clarification → `{ precision_demandee: true, consigne: CONSIGNE_PRECISION, ...champsAcces }` ; données → `{ ...resume, ...champsAcces }`.
 
@@ -581,6 +642,7 @@ Description : réécrire les puces de rédaction et ajouter le routage du « pou
 ### Task 11: Evals et nouvelle mesure après
 
 **Files:**
+
 - Modify: `evals/3-scenarios/3.4-forme/valeursACompleter.criteria.ts`, `valeursACompleter.eval.ts` (en-tête)
 - Modify: `evals/2-tools/2.2-donnees/getIndicateursACompleter.eval.ts` (en-tête)
 
@@ -602,17 +664,24 @@ Expected : mêmes seuils qu'à la tâche 8. Sous les seuils, notez les cas en é
 Décision 16 de la spec (Triko, après la mesure finale) : le résumé regroupe les indicateurs par chantier, sans aucun nombre au niveau du chantier.
 
 **Files:**
+
 - Modify: `src/server/albert/tools/resumeIndicateursACompleter.ts` et son test
 - Modify: `src/server/albert/tools/getIndicateursACompleter.ts` (description, si elle nomme la liste `indicateurs` au premier niveau) et son test
 - Modify: `src/client/components/_commons/ChatUI/AssistantMessage.integration.test.tsx` (fixture de `resume`, si elle en dépend)
 - Modify: `evals/3-scenarios/3.4-forme/valeursACompleter.eval.ts`, `evals/2-tools/2.2-donnees/getIndicateursACompleter.eval.ts` (en-têtes : bloc « après (4) »)
 
 **Interfaces:**
+
 - Produces (remplace celle de la tâche 9) :
 
 ```ts
-export type IndicateurResume = { indicateur: string } & Partial<Record<LibelleMotif, NombresParMaille>>;
-export type ChantierResume = { chantier: string; indicateurs: IndicateurResume[] };
+export type IndicateurResume = { indicateur: string } & Partial<
+  Record<LibelleMotif, NombresParMaille>
+>;
+export type ChantierResume = {
+  chantier: string;
+  indicateurs: IndicateurResume[];
+};
 export type ResumeIndicateursACompleter = {
   perimetre: string;
   jalon_vc?: number;
@@ -634,13 +703,16 @@ Règles : chantiers triés par identifiant, indicateurs de chaque chantier trié
 Décision 17 de la spec (PR #2654).
 
 **Files:**
+
 - Modify: `src/server/albert/tools/getIndicateursACompleter.ts` (sortie modèle des données, description) et son test
 - Modify: `evals/3-scenarios/3.4-forme/valeursACompleter.eval.ts`, `evals/2-tools/2.2-donnees/getIndicateursACompleter.eval.ts` (en-têtes : bloc « après (5) »)
 
 **Interfaces:**
+
 - Produces: `indicateursACompleterVersModele` : données → `{ ...resume, ...(resume.chantiers.length > 0 && { consigne: CONSIGNE_TABLEAU }), ...champsAcces }` ; clarification inchangée.
 
 Textes fixés :
+
 - `CONSIGNE_TABLEAU` = « Le détail par territoire est affiché dans un tableau sous ta réponse. Termine ta réponse par une phrase qui y renvoie. »
 - Puce VC de la description : ajouter « y compris si la demande vise une autre année : réponds sur ce jalon, sans clarifier ni rappeler l'outil » (voir la spec, « Description de l'outil »).
 

@@ -85,6 +85,7 @@ vitest.projects/vitest.config.server-integration.ts  (modifié) inclut evals/**/
 ### Task 1 : Contexte agent partagé et retrait du niveau 3 du spike
 
 **Files:**
+
 - Create: `src/client/components/PageAccueil/agentContextTerritoire.ts`
 - Test: `src/client/components/PageAccueil/agentContextTerritoire.unit.test.ts`
 - Modify: `src/client/components/PageAccueil/BoutonSyntheseTerritoire.tsx:22-33`
@@ -92,6 +93,7 @@ vitest.projects/vitest.config.server-integration.ts  (modifié) inclut evals/**/
 - Modify: `evals/seeds.ts` (retire `seedChantierWithTaux`)
 
 **Interfaces:**
+
 - Produces: `construireAgentContextTerritoire({ territoireCode, jalon }): AlbertAgentContext` où `AlbertAgentContext = { territoireCode: string; jalon: number; instructions: string }` (type existant de `createAlbertConversation.ts`).
 
 - [ ] **Step 1 : Écrire le test**
@@ -210,6 +212,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 2 : Modèle d'eval partagé et deux profils dans le monde
 
 **Files:**
+
 - Create: `evals/evalModel.ts`
 - Modify: `evals/setup.ts`
 - Modify: `evals/world.ts`
@@ -218,6 +221,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Test: `evals/world.integration.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `createEvalModel(modelId: string): LanguageModelV4` et `wrapEvalModel(model: LanguageModelV4): LanguageModelV4` (même limiteur que l'agent).
   - `type EvalProfile = "ditp" | "coordinateur"`, `type EvalUser = { userId: string; habilitations: Habilitations }`, `EvalWorld.users: Record<EvalProfile, EvalUser>` ; `userId` et `habilitations` restent au premier niveau (DITP) pour le niveau 2.
@@ -252,9 +256,9 @@ describe("seedEvalWorld", () => {
       const world = await seedEvalWorld();
 
       // Then
-      expect(world.users.coordinateur.habilitations.lecture.territoires).toEqual(
-        PERIMETRE_COORDINATEUR,
-      );
+      expect(
+        world.users.coordinateur.habilitations.lecture.territoires,
+      ).toEqual(PERIMETRE_COORDINATEUR);
       expect(world.users.coordinateur.habilitations.lecture.chantiers).toEqual(
         world.chantiers.map((chantier) => chantier.id),
       );
@@ -338,38 +342,38 @@ function habilitationsSur({
 et, dans `seedEvalWorld`, à la place du bloc qui construit `fullPerimetre` et du `return` :
 
 ```ts
-  const chantiersAccessibles = CHANTIERS.map((chantier) => chantier.id);
+const chantiersAccessibles = CHANTIERS.map((chantier) => chantier.id);
 
-  // Les territoires ne sont pas semés : le référentiel est chargé dans la base
-  // de test par `prisma db seed` (`pnpm test:database:init`).
-  const territoires = await getPrisma().territoire.findMany();
+// Les territoires ne sont pas semés : le référentiel est chargé dans la base
+// de test par `prisma db seed` (`pnpm test:database:init`).
+const territoires = await getPrisma().territoire.findMany();
 
-  const ditp: EvalUser = {
-    userId: user.id,
-    habilitations: habilitationsSur({
-      chantiers: chantiersAccessibles,
-      territoires: territoires.map((territoire) => territoire.code),
-    }),
-  };
+const ditp: EvalUser = {
+  userId: user.id,
+  habilitations: habilitationsSur({
+    chantiers: chantiersAccessibles,
+    territoires: territoires.map((territoire) => territoire.code),
+  }),
+};
 
-  const coordinateurUser = await fixtures.utilisateur({
-    profilCode: "COORDINATEUR_REGION",
-  });
+const coordinateurUser = await fixtures.utilisateur({
+  profilCode: "COORDINATEUR_REGION",
+});
 
-  const coordinateur: EvalUser = {
-    userId: coordinateurUser.id,
-    habilitations: habilitationsSur({
-      chantiers: chantiersAccessibles,
-      territoires: PERIMETRE_COORDINATEUR,
-    }),
-  };
+const coordinateur: EvalUser = {
+  userId: coordinateurUser.id,
+  habilitations: habilitationsSur({
+    chantiers: chantiersAccessibles,
+    territoires: PERIMETRE_COORDINATEUR,
+  }),
+};
 
-  return {
-    userId: ditp.userId,
-    habilitations: ditp.habilitations,
-    chantiers: CHANTIERS,
-    users: { ditp, coordinateur },
-  };
+return {
+  userId: ditp.userId,
+  habilitations: ditp.habilitations,
+  chantiers: CHANTIERS,
+  users: { ditp, coordinateur },
+};
 ```
 
 Garder le commentaire existant sur `llm_calls.utilisateur_id` au-dessus de `seedEvalWorld`.
@@ -517,12 +521,14 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 3 : Semer le monde territorial
 
 **Files:**
+
 - Create: `evals/3-scenarios/seedTerritoire.ts`
 - Create: `evals/3-scenarios/dataTools.ts`
 - Create: `evals/3-scenarios/mondeTerritorial.ts`
 - Test: `evals/3-scenarios/mondeTerritorial.integration.test.ts`
 
 **Interfaces:**
+
 - Consumes: `TERRITOIRES`, `JALON_COURANT` (tâche 2), `fixtures`, `indicateurDuChantier` (`evals/world.ts`), `EvalUser` (tâche 2).
 - Produces:
   - `seedTerritoire({ territoire, jalon, chantiers, authorId }): Promise<void>` avec `chantiers: SeededChantier[]`.
@@ -623,7 +629,11 @@ describe("seedMondeTerritorial", () => {
       });
       const enDifficulte = await executeTool<GetChantiersOutput>({
         tool: tools.getChantiers,
-        input: { territoire_code: "REG-53", jalon: 2025, view: "en_difficulte" },
+        input: {
+          territoire_code: "REG-53",
+          jalon: 2025,
+          view: "en_difficulte",
+        },
       });
 
       // Then
@@ -647,9 +657,9 @@ describe("seedMondeTerritorial", () => {
       });
 
       // Then
-      expect(taux.resultats.map((resultat) => resultat.position_mediane)).toEqual(
-        ["EN_RETARD"],
-      );
+      expect(
+        taux.resultats.map((resultat) => resultat.position_mediane),
+      ).toEqual(["EN_RETARD"]);
     }),
   );
 
@@ -664,7 +674,11 @@ describe("seedMondeTerritorial", () => {
       // When
       const indicateurs = await executeTool<GetChantierIndicateursOutput>({
         tool: tools.getIndicateurs,
-        input: { chantier_id: "CH-005", territoire_code: "REG-53", jalon: 2025 },
+        input: {
+          chantier_id: "CH-005",
+          territoire_code: "REG-53",
+          jalon: 2025,
+        },
       });
 
       // Then
@@ -877,7 +891,11 @@ Chaque territoire porte un chantier à l'heure avec commentaire, un en retard av
 ```ts
 // evals/3-scenarios/mondeTerritorial.ts
 import type { TerritoireRef } from "../seeds";
-import { seedJalon, seedTerritoire, type SeededChantier } from "./seedTerritoire";
+import {
+  seedJalon,
+  seedTerritoire,
+  type SeededChantier,
+} from "./seedTerritoire";
 import { JALON_COURANT, TERRITOIRES } from "./territoires";
 
 const aLHeure = ({
@@ -1056,7 +1074,10 @@ const departement = ({
   },
 ];
 
-const PEUPLEMENT_2025: { territoire: TerritoireRef; chantiers: SeededChantier[] }[] = [
+const PEUPLEMENT_2025: {
+  territoire: TerritoireRef;
+  chantiers: SeededChantier[];
+}[] = [
   { territoire: TERRITOIRES.bretagne, chantiers: BRETAGNE_2025 },
   { territoire: TERRITOIRES.paysDeLaLoire, chantiers: PAYS_DE_LA_LOIRE_2025 },
   {
@@ -1065,19 +1086,39 @@ const PEUPLEMENT_2025: { territoire: TerritoireRef; chantiers: SeededChantier[] 
   },
   {
     territoire: TERRITOIRES.cotesDArmor,
-    chantiers: departement({ tauxCh001: 45, tauxCh005: 38, ecartCh005: -12, tauxCh006: 55 }),
+    chantiers: departement({
+      tauxCh001: 45,
+      tauxCh005: 38,
+      ecartCh005: -12,
+      tauxCh006: 55,
+    }),
   },
   {
     territoire: TERRITOIRES.finistere,
-    chantiers: departement({ tauxCh001: 70, tauxCh005: 28, ecartCh005: -22, tauxCh006: 60 }),
+    chantiers: departement({
+      tauxCh001: 70,
+      tauxCh005: 28,
+      ecartCh005: -22,
+      tauxCh006: 60,
+    }),
   },
   {
     territoire: TERRITOIRES.illeEtVilaine,
-    chantiers: departement({ tauxCh001: 58, tauxCh005: 30, ecartCh005: -18, tauxCh006: 50 }),
+    chantiers: departement({
+      tauxCh001: 58,
+      tauxCh005: 30,
+      ecartCh005: -18,
+      tauxCh006: 50,
+    }),
   },
   {
     territoire: TERRITOIRES.morbihan,
-    chantiers: departement({ tauxCh001: 66, tauxCh005: 52, ecartCh005: -11, tauxCh006: 57 }),
+    chantiers: departement({
+      tauxCh001: 66,
+      tauxCh005: 52,
+      ecartCh005: -11,
+      tauxCh006: 57,
+    }),
   },
   {
     territoire: TERRITOIRES.vaucluse,
@@ -1162,17 +1203,19 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 4 : La fiche de vérité
 
 **Files:**
+
 - Create: `evals/3-scenarios/groundTruth.ts`
 - Test: `evals/3-scenarios/groundTruth.integration.test.ts`
 
 **Interfaces:**
+
 - Consumes: `createDataTools`, `executeTool` (tâche 3), `EvalUser` (tâche 2).
 - Produces:
 
 ```ts
 export type TruthScope = {
   territoires: string[];
-  jalons?: number[];                 // défaut [JALON_COURANT]
+  jalons?: number[]; // défaut [JALON_COURANT]
   includeSousTerritoires?: boolean;
   /** Chantiers dont la fiche lit les commentaires, sur territoires[0]. */
   chantiersCommentes?: string[];
@@ -1189,8 +1232,20 @@ export type GroundTruth = {
   commentaires: GetChantierCommentairesOutput[];
 };
 
-export async function readGroundTruth({ scope, user }: { scope: TruthScope; user: EvalUser }): Promise<GroundTruth>;
-export function chantiersAttendus({ truth, view }: { truth: GroundTruth; view: "en_retard" | "en_difficulte" | "tous" }): { id: string; nom: string }[];
+export async function readGroundTruth({
+  scope,
+  user,
+}: {
+  scope: TruthScope;
+  user: EvalUser;
+}): Promise<GroundTruth>;
+export function chantiersAttendus({
+  truth,
+  view,
+}: {
+  truth: GroundTruth;
+  view: "en_retard" | "en_difficulte" | "tous";
+}): { id: string; nom: string }[];
 ```
 
 - [ ] **Step 1 : Écrire le test**
@@ -1241,13 +1296,9 @@ describe("readGroundTruth", () => {
       });
 
       // Then
-      expect(truth.territoires.map((territoire) => territoire.code).sort()).toEqual([
-        "DEPT-22",
-        "DEPT-29",
-        "DEPT-35",
-        "DEPT-56",
-        "REG-53",
-      ]);
+      expect(
+        truth.territoires.map((territoire) => territoire.code).sort(),
+      ).toEqual(["DEPT-22", "DEPT-29", "DEPT-35", "DEPT-56", "REG-53"]);
     }),
   );
 
@@ -1265,10 +1316,9 @@ describe("readGroundTruth", () => {
       });
 
       // Then
-      expect(truth.indicateurs.map((resultat) => resultat.chantier_id)).toEqual([
-        "CH-005",
-        "CH-006",
-      ]);
+      expect(truth.indicateurs.map((resultat) => resultat.chantier_id)).toEqual(
+        ["CH-005", "CH-006"],
+      );
     }),
   );
 });
@@ -1284,9 +1334,7 @@ Expected: FAIL, module introuvable.
 ```ts
 // evals/3-scenarios/groundTruth.ts
 import { getPrisma } from "@/server/db/PrismaTransaction";
-import type {
-  GetChantiersOutput,
-} from "@/server/albert/tools/getChantiers";
+import type { GetChantiersOutput } from "@/server/albert/tools/getChantiers";
 import type {
   GetTauxAvancementTerritoireOutput,
   GetTauxAvancementTerritoireResult,
@@ -1399,7 +1447,10 @@ export async function readGroundTruth({
     commentaires.push(
       await executeTool<GetChantierCommentairesOutput>({
         tool: tools.getChantierCommentaires,
-        input: { chantier_id: chantierId, territoire_code: territoirePrincipal },
+        input: {
+          chantier_id: chantierId,
+          territoire_code: territoirePrincipal,
+        },
       }),
     );
   }
@@ -1476,10 +1527,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 5 : Les vérifications mécaniques
 
 **Files:**
+
 - Create: `evals/3-scenarios/mechanicalChecks.ts`
 - Test: `evals/3-scenarios/mechanicalChecks.unit.test.ts`
 
 **Interfaces:**
+
 - Produces (toutes pures, `CheckResult = { ok: boolean; detail: string }`) :
   - `checkNoToolName({ text })`, `checkNoMeteoCode({ text })`, `checkOfficialCodes({ text })`
   - `checkHeadings({ text, titles }: { text: string; titles: string[] })`
@@ -1555,12 +1608,17 @@ describe("checkOfficialCodes", () => {
 
 describe("checkHeadings", () => {
   test("accepte un titre à un autre niveau, sans accent ni casse", () => {
-    const text = "# Synthese pour Bretagne\n\n### chantiers en retard\n\n## Chantiers en difficulté";
+    const text =
+      "# Synthese pour Bretagne\n\n### chantiers en retard\n\n## Chantiers en difficulté";
 
     expect(
       checkHeadings({
         text,
-        titles: ["Synthèse pour", "Chantiers en retard", "Chantiers en difficulté"],
+        titles: [
+          "Synthèse pour",
+          "Chantiers en retard",
+          "Chantiers en difficulté",
+        ],
       }).ok,
     ).toBe(true);
   });
@@ -1598,7 +1656,9 @@ describe("checkChantiersCited", () => {
   });
 
   test("signale un chantier absent ou sans son nom", () => {
-    expect(checkChantiersCited({ text: "CH-005 et CH-006", chantiers })).toEqual({
+    expect(
+      checkChantiersCited({ text: "CH-005 et CH-006", chantiers }),
+    ).toEqual({
       ok: false,
       detail: "chantiers absents du format CH-XXX — Nom : CH-005, CH-006",
     });
@@ -1606,7 +1666,8 @@ describe("checkChantiersCited", () => {
 });
 
 describe("tableaux", () => {
-  const tableau = "| Territoire | TA |\n|---|---|\n| Bretagne | 51% |\n| 35 - Ille-et-Vilaine | 45% |";
+  const tableau =
+    "| Territoire | TA |\n|---|---|\n| Bretagne | 51% |\n| 35 - Ille-et-Vilaine | 45% |";
 
   test("checkHasTable repère un tableau markdown", () => {
     expect(checkHasTable({ text: tableau }).ok).toBe(true);
@@ -1614,7 +1675,9 @@ describe("tableaux", () => {
 
   test("checkNoChantierTable signale un tableau qui liste des chantiers", () => {
     expect(
-      checkNoChantierTable({ text: "| Chantier | Écart |\n|---|---|\n| CH-005 | -15 |" }).ok,
+      checkNoChantierTable({
+        text: "| Chantier | Écart |\n|---|---|\n| CH-005 | -15 |",
+      }).ok,
     ).toBe(false);
   });
 
@@ -1624,24 +1687,37 @@ describe("tableaux", () => {
 
   test("checkTableTerritories cherche les noms dans les lignes du tableau", () => {
     expect(
-      checkTableTerritories({ text: tableau, noms: ["Bretagne", "Ille-et-Vilaine", "Finistère"] }),
-    ).toEqual({ ok: false, detail: "territoires absents du tableau : Finistère" });
+      checkTableTerritories({
+        text: tableau,
+        noms: ["Bretagne", "Ille-et-Vilaine", "Finistère"],
+      }),
+    ).toEqual({
+      ok: false,
+      detail: "territoires absents du tableau : Finistère",
+    });
   });
 });
 
 describe("checkNoFigure", () => {
   test("signale un pourcentage ou des points", () => {
-    expect(checkNoFigure({ text: "Le taux atteint 51 % en Bretagne." }).ok).toBe(false);
+    expect(
+      checkNoFigure({ text: "Le taux atteint 51 % en Bretagne." }).ok,
+    ).toBe(false);
   });
 
   test("laisse passer une phrase d'introduction", () => {
-    expect(checkNoFigure({ text: "Voici le tableau de bord de la Bretagne." }).ok).toBe(true);
+    expect(
+      checkNoFigure({ text: "Voici le tableau de bord de la Bretagne." }).ok,
+    ).toBe(true);
   });
 });
 
 describe("checkNoLink et checkExactAnswer", () => {
   test("checkNoLink signale une URL", () => {
-    expect(checkNoLink({ text: "Téléchargez-le ici : https://pilote.gouv.fr/r.md" }).ok).toBe(false);
+    expect(
+      checkNoLink({ text: "Téléchargez-le ici : https://pilote.gouv.fr/r.md" })
+        .ok,
+    ).toBe(false);
   });
 
   test("checkExactAnswer ignore les espaces en trop", () => {
@@ -1703,7 +1779,8 @@ export function checkNoToolName({ text }: { text: string }): CheckResult {
     : { ok: false, detail: `noms d'outils cités : ${cites.join(", ")}` };
 }
 
-const METEO_CODE = /\b(?:SOLEIL|COUVERT|NUAGE|ORAGE|NON_RENSEIGNEE|NON_NECESSAIRE)\b/g;
+const METEO_CODE =
+  /\b(?:SOLEIL|COUVERT|NUAGE|ORAGE|NON_RENSEIGNEE|NON_NECESSAIRE)\b/g;
 
 export function checkNoMeteoCode({ text }: { text: string }): CheckResult {
   const cites = unique(text.match(METEO_CODE) ?? []);
@@ -1713,7 +1790,8 @@ export function checkNoMeteoCode({ text }: { text: string }): CheckResult {
 }
 
 // CH-XXX exige trois chiffres et le tiret ; REG-XX et DEPT-XX le tiret.
-const MALFORMED_CODE = /\bCH-\d{1,2}\b|\bCH\s?\d{2,4}\b|\bREG\s?\d{2}\b|\bDEPT\s?\d{2}\b/g;
+const MALFORMED_CODE =
+  /\bCH-\d{1,2}\b|\bCH\s?\d{2,4}\b|\bREG\s?\d{2}\b|\bDEPT\s?\d{2}\b/g;
 
 export function checkOfficialCodes({ text }: { text: string }): CheckResult {
   const malformes = unique(text.match(MALFORMED_CODE) ?? []);
@@ -1791,10 +1869,15 @@ export function checkHasTable({ text }: { text: string }): CheckResult {
 }
 
 export function checkNoChantierTable({ text }: { text: string }): CheckResult {
-  const lignesChantier = tableRows(text).filter((row) => /\bCH-\d{3}\b/.test(row));
+  const lignesChantier = tableRows(text).filter((row) =>
+    /\bCH-\d{3}\b/.test(row),
+  );
   return lignesChantier.length === 0
     ? { ok: true, detail: "pas de tableau de chantiers" }
-    : { ok: false, detail: `${lignesChantier.length} ligne(s) de chantier en tableau` };
+    : {
+        ok: false,
+        detail: `${lignesChantier.length} ligne(s) de chantier en tableau`,
+      };
 }
 
 export function checkTableTerritories({
@@ -1810,7 +1893,10 @@ export function checkTableTerritories({
   );
   return absents.length === 0
     ? { ok: true, detail: "tous les territoires dans le tableau" }
-    : { ok: false, detail: `territoires absents du tableau : ${absents.join(", ")}` };
+    : {
+        ok: false,
+        detail: `territoires absents du tableau : ${absents.join(", ")}`,
+      };
 }
 
 // Même motif que la validation des titres de widget de `composeDashboard.ts`.
@@ -1862,6 +1948,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 6 : Critères, grilles et juge
 
 **Files:**
+
 - Create: `evals/3-scenarios/evidence.ts` (types seulement dans cette tâche : `Evidence`)
 - Create: `evals/3-scenarios/grid.ts`
 - Create: `evals/3-scenarios/judge.ts` (fonctions pures : prompt, lecture du verdict)
@@ -1869,6 +1956,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Test: `evals/3-scenarios/judge.unit.test.ts`
 
 **Interfaces:**
+
 - Consumes: `GroundTruth` (tâche 4), `CheckResult` (tâche 5), `ObservedToolCall` (`evals/types.ts`), `createEvalModel` (tâche 2), `ComposeDashboardOutput`.
 - Produces:
 
@@ -1895,23 +1983,78 @@ export type Evidence = {
 
 // grid.ts
 export type MatterKind = "text" | "dashboard" | "rapport";
-export type MechanicalCriterion = { kind: "mechanical"; id: string; rule: string; check: (evidence: Evidence) => CheckResult; applicable?: (evidence: Evidence) => boolean };
-export type JudgedCriterion = { kind: "judged"; id: string; rule: string; instruction: string; applicable?: (evidence: Evidence) => boolean };
+export type MechanicalCriterion = {
+  kind: "mechanical";
+  id: string;
+  rule: string;
+  check: (evidence: Evidence) => CheckResult;
+  applicable?: (evidence: Evidence) => boolean;
+};
+export type JudgedCriterion = {
+  kind: "judged";
+  id: string;
+  rule: string;
+  instruction: string;
+  applicable?: (evidence: Evidence) => boolean;
+};
 export type Criterion = MechanicalCriterion | JudgedCriterion;
-export type Grid = { family: string; matter: MatterKind; criteria: Criterion[] };
-export function mechanical(criterion: Omit<MechanicalCriterion, "kind">): MechanicalCriterion;
-export function judged(criterion: Omit<JudgedCriterion, "kind">): JudgedCriterion;
-export function grid({ family, matter, criteria, omit }: { family: string; matter: MatterKind; criteria: Criterion[]; omit?: string[] }): Grid;
-export const BASE_IDS: { noToolName: "Pas de nom d'outil"; noMeteoCode: "Libellés météo"; officialCodes: "Codes officiels"; noOpinion: "Pas d'opinion"; exactFigures: "Chiffres exacts"; restriction: "Restriction signalée" };
+export type Grid = {
+  family: string;
+  matter: MatterKind;
+  criteria: Criterion[];
+};
+export function mechanical(
+  criterion: Omit<MechanicalCriterion, "kind">,
+): MechanicalCriterion;
+export function judged(
+  criterion: Omit<JudgedCriterion, "kind">,
+): JudgedCriterion;
+export function grid({
+  family,
+  matter,
+  criteria,
+  omit,
+}: {
+  family: string;
+  matter: MatterKind;
+  criteria: Criterion[];
+  omit?: string[];
+}): Grid;
+export const BASE_IDS: {
+  noToolName: "Pas de nom d'outil";
+  noMeteoCode: "Libellés météo";
+  officialCodes: "Codes officiels";
+  noOpinion: "Pas d'opinion";
+  exactFigures: "Chiffres exacts";
+  restriction: "Restriction signalée";
+};
 
 // judge.ts
 export const JUDGE_MODEL = "deepseek-v4-flash";
 export type Verdict = Record<string, { conforme: boolean; preuve: string }>;
-export function buildJudgePrompt({ evidence, criteria }: { evidence: Evidence; criteria: JudgedCriterion[] }): string;
-export function toVerdict({ criteria, raw }: { criteria: JudgedCriterion[]; raw: { verdicts: { critere: string; conforme: boolean; preuve: string }[] } }): Verdict;
+export function buildJudgePrompt({
+  evidence,
+  criteria,
+}: {
+  evidence: Evidence;
+  criteria: JudgedCriterion[];
+}): string;
+export function toVerdict({
+  criteria,
+  raw,
+}: {
+  criteria: JudgedCriterion[];
+  raw: { verdicts: { critere: string; conforme: boolean; preuve: string }[] };
+}): Verdict;
 
 // askJudge.ts
-export async function askJudge({ evidence, criteria }: { evidence: Evidence; criteria: JudgedCriterion[] }): Promise<Verdict>;
+export async function askJudge({
+  evidence,
+  criteria,
+}: {
+  evidence: Evidence;
+  criteria: JudgedCriterion[];
+}): Promise<Verdict>;
 ```
 
 - [ ] **Step 1 : Écrire les tests du juge**
@@ -1962,7 +2105,13 @@ describe("toVerdict", () => {
     const verdict = toVerdict({
       criteria: CRITERES,
       raw: {
-        verdicts: [{ critere: "Pas d'opinion", conforme: true, preuve: "aucune recommandation" }],
+        verdicts: [
+          {
+            critere: "Pas d'opinion",
+            conforme: true,
+            preuve: "aucune recommandation",
+          },
+        ],
       },
     });
 
@@ -1979,7 +2128,11 @@ describe("toVerdict", () => {
       criteria: CRITERES.slice(0, 1),
       raw: {
         verdicts: [
-          { critere: "Pas d'opinion", conforme: false, preuve: "« il conviendrait »" },
+          {
+            critere: "Pas d'opinion",
+            conforme: false,
+            preuve: "« il conviendrait »",
+          },
           { critere: "Ton", conforme: true, preuve: "neutre" },
         ],
       },
@@ -1998,7 +2151,9 @@ describe("buildJudgePrompt", () => {
     const prompt = buildJudgePrompt({ evidence: EVIDENCE, criteria: CRITERES });
 
     // Then
-    expect(prompt).toContain("« Pas d'opinion » (règle : Identité : aucune opinion, recommandation ni jugement)");
+    expect(prompt).toContain(
+      "« Pas d'opinion » (règle : Identité : aucune opinion, recommandation ni jugement)",
+    );
     expect(prompt).toContain("« Résumés condensés »");
     expect(prompt).toContain("# Synthèse pour Bretagne");
     expect(prompt).toContain('"toolName": "get_chantiers"');
@@ -2161,11 +2316,16 @@ export function grid({
   criteria: Criterion[];
   omit?: string[];
 }): Grid {
-  const all = [...BASE.filter((criterion) => !omit.includes(criterion.id)), ...criteria];
+  const all = [
+    ...BASE.filter((criterion) => !omit.includes(criterion.id)),
+    ...criteria,
+  ];
   const ids = all.map((criterion) => criterion.id);
   const doublons = ids.filter((id, index) => ids.indexOf(id) !== index);
   if (doublons.length > 0) {
-    throw new Error(`Critères en double dans la grille ${family} : ${doublons.join(", ")}`);
+    throw new Error(
+      `Critères en double dans la grille ${family} : ${doublons.join(", ")}`,
+    );
   }
   return { family, matter, criteria: all };
 }
@@ -2199,7 +2359,9 @@ export const rawVerdictSchema = z.object({
       conforme: z.boolean(),
       preuve: z
         .string()
-        .describe("Extrait cité de la réponse, ou ce qui manque, en une phrase."),
+        .describe(
+          "Extrait cité de la réponse, ou ce qui manque, en une phrase.",
+        ),
     }),
   ),
 });
@@ -2276,7 +2438,9 @@ export function toVerdict({
 }): Verdict {
   return Object.fromEntries(
     criteria.map((criterion) => {
-      const found = raw.verdicts.find((verdict) => verdict.critere === criterion.id);
+      const found = raw.verdicts.find(
+        (verdict) => verdict.critere === criterion.id,
+      );
       return [
         criterion.id,
         found
@@ -2286,7 +2450,6 @@ export function toVerdict({
     }),
   );
 }
-
 ```
 
 L'appel au modèle vit dans son propre fichier : `evalModel` importe `Albert`, qui lit la configuration au chargement, ce que les tests unitaires n'ont pas à fournir.
@@ -2347,11 +2510,13 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 7 : La factory `scenarioEval`
 
 **Files:**
+
 - Modify: `evals/3-scenarios/evidence.ts` (ajoute `extractMatter`, `maskedTerritories`, `buildEvidence`)
 - Test: `evals/3-scenarios/evidence.unit.test.ts`
 - Create: `evals/3-scenarios/scenarioEval.ts`
 
 **Interfaces:**
+
 - Consumes: tout ce qui précède, `construireAgentContextTerritoire` (tâche 1), `AssistantIA.generateText`, `scoreExpectedTools`, `seedEvalWorld`, `seedMondeTerritorial`.
 - Produces:
 
@@ -2360,11 +2525,11 @@ export type ScenarioCase = {
   question: string;
   reason: string;
   profile?: EvalProfile;
-  currentTerritory?: string;               // code, défaut de la suite
+  currentTerritory?: string; // code, défaut de la suite
   truthScope: TruthScope;
   expected?: ObservedToolCall[];
   forbidden?: string[];
-  tableTerritories?: string[];             // codes
+  tableTerritories?: string[]; // codes
 };
 
 export type ScenarioTurn = AgentTurn & {
@@ -2378,11 +2543,30 @@ export type ScenarioTurn = AgentTurn & {
   tableTerritories: string[];
 };
 
-export function extractMatter({ kind, text, toolCalls, toolResults }): { matter: string; dashboard: ComposeDashboardOutput | null };
+export function extractMatter({ kind, text, toolCalls, toolResults }): {
+  matter: string;
+  dashboard: ComposeDashboardOutput | null;
+};
 export function maskedTerritories({ toolResults, userTerritories }): string[];
-export function buildEvidence({ turn, grid }: { turn: ScenarioTurn; grid: Grid }): Evidence;
-export function scenarioEval({ suite, group, grid, cases, profile, currentTerritory }): void;
-export const GROUPS = { synthese: "3.1 · Synthèse", comparaison: "3.2 · Comparaison" };
+export function buildEvidence({
+  turn,
+  grid,
+}: {
+  turn: ScenarioTurn;
+  grid: Grid;
+}): Evidence;
+export function scenarioEval({
+  suite,
+  group,
+  grid,
+  cases,
+  profile,
+  currentTerritory,
+}): void;
+export const GROUPS = {
+  synthese: "3.1 · Synthèse",
+  comparaison: "3.2 · Comparaison",
+};
 ```
 
 - [ ] **Step 1 : Écrire les tests de la matière et du masquage**
@@ -2394,7 +2578,12 @@ import { extractMatter, maskedTerritories } from "./evidence";
 describe("extractMatter", () => {
   test("texte : la réponse telle quelle", () => {
     expect(
-      extractMatter({ kind: "text", text: "Voici la synthèse.", toolCalls: [], toolResults: [] }),
+      extractMatter({
+        kind: "text",
+        text: "Voici la synthèse.",
+        toolCalls: [],
+        toolResults: [],
+      }),
     ).toEqual({ matter: "Voici la synthèse.", dashboard: null });
   });
 
@@ -2424,7 +2613,12 @@ describe("extractMatter", () => {
             date: "30/09/2026",
             resume: "Résumé.",
             format: "markdown",
-            sections: [{ titre: "Chantiers en retard", parties: [{ type: "paragraphe", contenu: "CH-005" }] }],
+            sections: [
+              {
+                titre: "Chantiers en retard",
+                parties: [{ type: "paragraphe", contenu: "CH-005" }],
+              },
+            ],
           },
         },
       ],
@@ -2433,15 +2627,34 @@ describe("extractMatter", () => {
 
     expect(matter).toContain("Synthèse Bretagne");
     expect(matter).toContain("Chantiers en retard");
-    expect(matter).toContain("RÉPONSE DU CHAT :\nVotre rapport est disponible au téléchargement.");
+    expect(matter).toContain(
+      "RÉPONSE DU CHAT :\nVotre rapport est disponible au téléchargement.",
+    );
   });
 
   test("dashboard : décrit chaque section et ses widgets, puis le texte", () => {
     const dashboard = {
       titre: "Bretagne",
       containers: [
-        { widgets: [{ type: "widget_taux_avancement_territoire", territoire_code: "REG-53", jalon: 2025 }] },
-        { widgets: [{ type: "widget_titre_section", titre: "CH-005 — Urgences" }, { type: "widget_cartographie_meteo", chantier_id: "CH-005", maille: "departementale" }] },
+        {
+          widgets: [
+            {
+              type: "widget_taux_avancement_territoire",
+              territoire_code: "REG-53",
+              jalon: 2025,
+            },
+          ],
+        },
+        {
+          widgets: [
+            { type: "widget_titre_section", titre: "CH-005 — Urgences" },
+            {
+              type: "widget_cartographie_meteo",
+              chantier_id: "CH-005",
+              maille: "departementale",
+            },
+          ],
+        },
       ],
       _output_instructions: "",
     };
@@ -2450,7 +2663,9 @@ describe("extractMatter", () => {
       kind: "dashboard",
       text: "Voici le tableau de bord.",
       toolCalls: [],
-      toolResults: [{ toolName: "create_dashboard", input: {}, output: dashboard }],
+      toolResults: [
+        { toolName: "create_dashboard", input: {}, output: dashboard },
+      ],
     });
 
     expect(result.dashboard).toEqual(dashboard);
@@ -2471,8 +2686,15 @@ describe("extractMatter", () => {
 
   test("dashboard absent : le dit au juge", () => {
     expect(
-      extractMatter({ kind: "dashboard", text: "Voici…", toolCalls: [], toolResults: [] }).matter,
-    ).toBe("AUCUN TABLEAU DE BORD COMPOSÉ : l'assistant n'a pas appelé l'outil de dashboard.\n\nTEXTE D'ACCOMPAGNEMENT :\nVoici…");
+      extractMatter({
+        kind: "dashboard",
+        text: "Voici…",
+        toolCalls: [],
+        toolResults: [],
+      }).matter,
+    ).toBe(
+      "AUCUN TABLEAU DE BORD COMPOSÉ : l'assistant n'a pas appelé l'outil de dashboard.\n\nTEXTE D'ACCOMPAGNEMENT :\nVoici…",
+    );
   });
 });
 
@@ -2482,9 +2704,26 @@ describe("maskedTerritories", () => {
       maskedTerritories({
         userTerritories: ["REG-53", "DEPT-35"],
         toolResults: [
-          { toolName: "get_chantiers", input: {}, output: { resultats: [{ territoire_code: "REG-53" }, { territoire_code: "REG-52" }] } },
-          { toolName: "get_chantier_commentaires", input: {}, output: { resultats: [{ territoire_code: "REG-84" }] } },
-          { toolName: "get_taux_avancement_territoire", input: {}, output: { resultats: [{ territoire_code: "REG-93" }] } },
+          {
+            toolName: "get_chantiers",
+            input: {},
+            output: {
+              resultats: [
+                { territoire_code: "REG-53" },
+                { territoire_code: "REG-52" },
+              ],
+            },
+          },
+          {
+            toolName: "get_chantier_commentaires",
+            input: {},
+            output: { resultats: [{ territoire_code: "REG-84" }] },
+          },
+          {
+            toolName: "get_taux_avancement_territoire",
+            input: {},
+            output: { resultats: [{ territoire_code: "REG-93" }] },
+          },
         ],
       }),
     ).toEqual(["REG-52", "REG-84"]);
@@ -2540,20 +2779,33 @@ export function extractMatter({
   toolResults: ToolResult[];
 }): { matter: string; dashboard: ComposeDashboardOutput | null } {
   if (kind === "rapport") {
-    const exportCall = toolCalls.find((call) => call.toolName === "export_rapport");
+    const exportCall = toolCalls.find(
+      (call) => call.toolName === "export_rapport",
+    );
     const rapport = exportCall
-      ? buildRapportMarkdown(exportCall.input as Parameters<typeof buildRapportMarkdown>[0])
+      ? buildRapportMarkdown(
+          exportCall.input as Parameters<typeof buildRapportMarkdown>[0],
+        )
       : "AUCUN RAPPORT EXPORTÉ : l'assistant n'a pas appelé l'outil d'export.";
-    return { matter: `${rapport}\n\nRÉPONSE DU CHAT :\n${text}`, dashboard: null };
+    return {
+      matter: `${rapport}\n\nRÉPONSE DU CHAT :\n${text}`,
+      dashboard: null,
+    };
   }
 
   if (kind === "dashboard") {
-    const result = toolResults.find((toolResult) => toolResult.toolName === "create_dashboard");
-    const dashboard = (result?.output as ComposeDashboardOutput | undefined) ?? null;
+    const result = toolResults.find(
+      (toolResult) => toolResult.toolName === "create_dashboard",
+    );
+    const dashboard =
+      (result?.output as ComposeDashboardOutput | undefined) ?? null;
     const description = dashboard
       ? describeDashboard(dashboard)
       : "AUCUN TABLEAU DE BORD COMPOSÉ : l'assistant n'a pas appelé l'outil de dashboard.";
-    return { matter: `${description}\n\nTEXTE D'ACCOMPAGNEMENT :\n${text}`, dashboard };
+    return {
+      matter: `${description}\n\nTEXTE D'ACCOMPAGNEMENT :\n${text}`,
+      dashboard,
+    };
   }
 
   return { matter: text, dashboard: null };
@@ -2570,11 +2822,11 @@ export function maskedTerritories({
 }): string[] {
   const codes = toolResults
     .filter((result) => OUTILS_QUI_MASQUENT.includes(result.toolName))
-    .flatMap(
-      (result) =>
-        ((result.output as { resultats?: { territoire_code: string }[] }).resultats ?? []).map(
-          (resultat) => resultat.territoire_code,
-        ),
+    .flatMap((result) =>
+      (
+        (result.output as { resultats?: { territoire_code: string }[] })
+          .resultats ?? []
+      ).map((resultat) => resultat.territoire_code),
     )
     .filter((code) => !userTerritories.includes(code));
   return [...new Set(codes)].sort();
@@ -2602,7 +2854,11 @@ import { scoreExpectedTools } from "../scoreExpectedTools";
 import type { AgentTurn, ObservedToolCall } from "../types";
 import { extractMatter, maskedTerritories, type Evidence } from "./evidence";
 import type { Criterion, Grid, JudgedCriterion } from "./grid";
-import { readGroundTruth, type GroundTruth, type TruthScope } from "./groundTruth";
+import {
+  readGroundTruth,
+  type GroundTruth,
+  type TruthScope,
+} from "./groundTruth";
 import { askJudge } from "./askJudge";
 import type { Verdict } from "./judge";
 import { seedMondeTerritorial } from "./mondeTerritorial";
@@ -2646,7 +2902,13 @@ export type ScenarioTurn = AgentTurn & {
   tableTerritories: string[];
 };
 
-export function buildEvidence({ turn, grid }: { turn: ScenarioTurn; grid: Grid }): Evidence {
+export function buildEvidence({
+  turn,
+  grid,
+}: {
+  turn: ScenarioTurn;
+  grid: Grid;
+}): Evidence {
   const { matter, dashboard } = extractMatter({
     kind: grid.matter,
     text: turn.text,
@@ -2662,7 +2924,10 @@ export function buildEvidence({ turn, grid }: { turn: ScenarioTurn; grid: Grid }
     matter,
     dashboard,
     toolCalls: turn.toolCalls,
-    toolResults: turn.toolResults.map(({ toolName, output }) => ({ toolName, output })),
+    toolResults: turn.toolResults.map(({ toolName, output }) => ({
+      toolName,
+      output,
+    })),
     maskedTerritories: maskedTerritories({
       toolResults: turn.toolResults,
       userTerritories: turn.userTerritories,
@@ -2693,7 +2958,13 @@ function verdictFor({ turn, grid }: { turn: ScenarioTurn; grid: Grid }) {
   return verdict;
 }
 
-function criterionScorer({ criterion, grid }: { criterion: Criterion; grid: Grid }) {
+function criterionScorer({
+  criterion,
+  grid,
+}: {
+  criterion: Criterion;
+  grid: Grid;
+}) {
   return createScorer<ScenarioCase, ScenarioTurn, unknown>({
     name: criterion.id,
     description: `${criterion.kind === "judged" ? "Jugé" : "Mécanique"} — ${criterion.rule}`,
@@ -2742,7 +3013,11 @@ export function scenarioEval({
   evalite<ScenarioCase, ScenarioTurn, ObservedToolCall[] | undefined>(
     `${GROUPS[group]} · ${suite}`,
     {
-      data: () => cases.map((testCase) => ({ input: testCase, expected: testCase.expected })),
+      data: () =>
+        cases.map((testCase) => ({
+          input: testCase,
+          expected: testCase.expected,
+        })),
 
       task: async (input) => {
         let turn: ScenarioTurn | undefined;
@@ -2755,7 +3030,10 @@ export function scenarioEval({
             await seedMondeTerritorial({ authorId: world.userId });
             const user = world.users[caseProfile];
 
-            const truth = await readGroundTruth({ scope: input.truthScope, user });
+            const truth = await readGroundTruth({
+              scope: input.truthScope,
+              user,
+            });
 
             const result = await AssistantIA.generateText({
               chatId: randomUUID(),
@@ -2774,7 +3052,10 @@ export function scenarioEval({
               profile: caseProfile,
               currentTerritory: caseTerritory,
               toolCalls: result.steps.flatMap((step) =>
-                step.toolCalls.map((call) => ({ toolName: call.toolName, input: call.input })),
+                step.toolCalls.map((call) => ({
+                  toolName: call.toolName,
+                  input: call.input,
+                })),
               ),
               toolResults: result.steps.flatMap((step) =>
                 step.toolResults.map((toolResult) => ({
@@ -2804,9 +3085,15 @@ export function scenarioEval({
           description:
             "L'appel doit porter au moins les arguments attendus, et aucun outil interdit ne doit être appelé.",
           scorer: ({ input, output, expected }) =>
-            scoreExpectedTools({ output, expected, forbidden: input.forbidden }),
+            scoreExpectedTools({
+              output,
+              expected,
+              forbidden: input.forbidden,
+            }),
         },
-        ...grid.criteria.map((criterion) => criterionScorer({ criterion, grid })),
+        ...grid.criteria.map((criterion) =>
+          criterionScorer({ criterion, grid }),
+        ),
       ],
 
       columns: ({ input, output }) => [
@@ -2827,8 +3114,8 @@ export function scenarioEval({
                     text: "",
                     toolCalls: output.toolCalls,
                     toolResults: output.toolResults,
-                  }).dashboard?.containers
-                    .map(
+                  })
+                    .dashboard?.containers.map(
                       (container, index) =>
                         `${index + 1}. ${container.widgets.map((widget) => widget.type.replace("widget_", "")).join(", ")}`,
                     )
@@ -2861,9 +3148,11 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 8 : Les grilles des familles
 
 **Files:**
+
 - Create: `evals/3-scenarios/grids.ts`
 
 **Interfaces:**
+
 - Consumes: `grid`, `mechanical`, `judged`, `BASE_IDS` (tâche 6), vérifications (tâche 5), `chantiersAttendus` (tâche 4).
 - Produces: `GRIDS` avec les clés `syntheseTerritoire`, `syntheseChantier`, `syntheseSousTerritoires`, `chantiersEnRetard`, `rapport`, `dashboard`, `commentaires`, `comparaisonTerritoires`, `comparaisonJalons`, `comparaisonSousTerritoires`, `comparaisonQuantitative`.
 
@@ -2890,7 +3179,9 @@ import {
 
 const nomsDuTableau = (evidence: Evidence) =>
   evidence.tableTerritories.map(
-    (code) => evidence.truth.territoires.find((territoire) => territoire.code === code)?.nom ?? code,
+    (code) =>
+      evidence.truth.territoires.find((territoire) => territoire.code === code)
+        ?.nom ?? code,
   );
 
 const territoirePrincipalEstUnDepartement = (evidence: Evidence) =>
@@ -2913,7 +3204,10 @@ const TERRITOIRES_DU_TABLEAU = mechanical({
   id: "Territoires du tableau",
   rule: "Format : codes et noms officiels des territoires",
   check: (evidence) =>
-    checkTableTerritories({ text: evidence.matter, noms: nomsDuTableau(evidence) }),
+    checkTableTerritories({
+      text: evidence.matter,
+      noms: nomsDuTableau(evidence),
+    }),
 });
 
 const ANALYSE_DES_ECARTS = judged({
@@ -2941,10 +3235,17 @@ export const GRIDS = {
         check: (evidence) => {
           const titres = checkHeadings({
             text: evidence.matter,
-            titles: ["Synthèse pour", "Chantiers en retard", "Chantiers en difficulté"],
+            titles: [
+              "Synthèse pour",
+              "Chantiers en retard",
+              "Chantiers en difficulté",
+            ],
           });
           return titres.ok
-            ? checkContains({ text: evidence.matter, fragments: ["Sources analysées"] })
+            ? checkContains({
+                text: evidence.matter,
+                fragments: ["Sources analysées"],
+              })
             : titres;
         },
       }),
@@ -2954,7 +3255,10 @@ export const GRIDS = {
         check: (evidence) =>
           checkChantiersCited({
             text: evidence.matter,
-            chantiers: chantiersAttendus({ truth: evidence.truth, view: "tous" }),
+            chantiers: chantiersAttendus({
+              truth: evidence.truth,
+              view: "tous",
+            }),
           }),
       }),
       mechanical({
@@ -2963,7 +3267,10 @@ export const GRIDS = {
         check: (evidence) =>
           checkContains({
             text: evidence.matter.replace(/[*_]/g, ""),
-            fragments: ["Synthèse — chantiers en retard", "Synthèse — chantiers en difficulté"],
+            fragments: [
+              "Synthèse — chantiers en retard",
+              "Synthèse — chantiers en difficulté",
+            ],
           }),
       }),
       mechanical({
@@ -3001,7 +3308,10 @@ export const GRIDS = {
             titles: ["Chantiers en retard", "Chantiers en difficulté"],
           });
           return gabarit.ok
-            ? { ok: false, detail: "la réponse suit le gabarit de synthèse territoriale" }
+            ? {
+                ok: false,
+                detail: "la réponse suit le gabarit de synthèse territoriale",
+              }
             : { ok: true, detail: "réponse centrée sur le chantier" };
         },
       }),
@@ -3036,7 +3346,12 @@ export const GRIDS = {
         check: (evidence) =>
           checkHeadings({
             text: evidence.matter,
-            titles: ["Comparaison", "Analyse des écarts", "Chantiers en retard", "Chantiers en difficulté"],
+            titles: [
+              "Comparaison",
+              "Analyse des écarts",
+              "Chantiers en retard",
+              "Chantiers en difficulté",
+            ],
           }),
       }),
       TABLEAU_COMPARATIF,
@@ -3062,7 +3377,10 @@ export const GRIDS = {
         check: (evidence) =>
           checkChantiersCited({
             text: evidence.matter,
-            chantiers: chantiersAttendus({ truth: evidence.truth, view: "en_retard" }),
+            chantiers: chantiersAttendus({
+              truth: evidence.truth,
+              view: "en_retard",
+            }),
           }),
       }),
       judged({
@@ -3088,9 +3406,12 @@ export const GRIDS = {
         id: "Export appelé",
         rule: "Workflow c : appelle export_rapport avec les données structurées",
         check: (evidence) => {
-          const call = evidence.toolCalls.find((toolCall) => toolCall.toolName === "export_rapport");
+          const call = evidence.toolCalls.find(
+            (toolCall) => toolCall.toolName === "export_rapport",
+          );
           if (!call) return { ok: false, detail: "export non appelé" };
-          const format = (call.input as { format?: string }).format ?? "markdown";
+          const format =
+            (call.input as { format?: string }).format ?? "markdown";
           return format === "markdown"
             ? { ok: true, detail: "export markdown" }
             : { ok: false, detail: `format ${format} au lieu de markdown` };
@@ -3133,25 +3454,40 @@ export const GRIDS = {
         id: "Sections dans l'ordre",
         rule: "Demande : une première section territoire, puis une section par chantier en retard ou en difficulté",
         check: (evidence) => {
-          if (!evidence.dashboard) return { ok: false, detail: "aucun dashboard" };
-          const chantiersParSection = evidence.dashboard.containers.map((container) => [
-            ...new Set(
-              container.widgets
-                .filter((widget) => "chantier_id" in widget)
-                .map((widget) => (widget as { chantier_id: string }).chantier_id),
-            ),
-          ]);
-          const [premiere, ...suivantes] = chantiersParSection;
-          const attendus = chantiersAttendus({ truth: evidence.truth, view: "tous" }).map(
-            (chantier) => chantier.id,
+          if (!evidence.dashboard)
+            return { ok: false, detail: "aucun dashboard" };
+          const chantiersParSection = evidence.dashboard.containers.map(
+            (container) => [
+              ...new Set(
+                container.widgets
+                  .filter((widget) => "chantier_id" in widget)
+                  .map(
+                    (widget) => (widget as { chantier_id: string }).chantier_id,
+                  ),
+              ),
+            ],
           );
+          const [premiere, ...suivantes] = chantiersParSection;
+          const attendus = chantiersAttendus({
+            truth: evidence.truth,
+            view: "tous",
+          }).map((chantier) => chantier.id);
           const obtenus = suivantes.map((ids) => ids.join("+")).sort();
           if (premiere.length > 0) {
-            return { ok: false, detail: "la première section porte sur un chantier" };
+            return {
+              ok: false,
+              detail: "la première section porte sur un chantier",
+            };
           }
           return JSON.stringify(obtenus) === JSON.stringify(attendus)
-            ? { ok: true, detail: `une section par chantier : ${attendus.join(", ")}` }
-            : { ok: false, detail: `sections chantier : ${obtenus.join(", ") || "aucune"}, attendu ${attendus.join(", ")}` };
+            ? {
+                ok: true,
+                detail: `une section par chantier : ${attendus.join(", ")}`,
+              }
+            : {
+                ok: false,
+                detail: `sections chantier : ${obtenus.join(", ") || "aucune"}, attendu ${attendus.join(", ")}`,
+              };
         },
       }),
       mechanical({
@@ -3196,7 +3532,12 @@ export const GRIDS = {
   comparaisonTerritoires: grid({
     family: "Comparer avec un autre territoire",
     matter: "text",
-    criteria: [TABLEAU_COMPARATIF, TERRITOIRES_DU_TABLEAU, ANALYSE_DES_ECARTS, POSITION_MEDIANE],
+    criteria: [
+      TABLEAU_COMPARATIF,
+      TERRITOIRES_DU_TABLEAU,
+      ANALYSE_DES_ECARTS,
+      POSITION_MEDIANE,
+    ],
   }),
 
   comparaisonJalons: grid({
@@ -3223,14 +3564,24 @@ export const GRIDS = {
     family: "Comparer une région avec ses départements",
     matter: "text",
     omit: [BASE_IDS.restriction],
-    criteria: [TABLEAU_COMPARATIF, TERRITOIRES_DU_TABLEAU, ANALYSE_DES_ECARTS, POSITION_MEDIANE],
+    criteria: [
+      TABLEAU_COMPARATIF,
+      TERRITOIRES_DU_TABLEAU,
+      ANALYSE_DES_ECARTS,
+      POSITION_MEDIANE,
+    ],
   }),
 
   comparaisonQuantitative: grid({
     family: "Comparaison quantitative des territoires",
     matter: "text",
     omit: [BASE_IDS.restriction],
-    criteria: [TABLEAU_COMPARATIF, TERRITOIRES_DU_TABLEAU, ANALYSE_DES_ECARTS, POSITION_MEDIANE],
+    criteria: [
+      TABLEAU_COMPARATIF,
+      TERRITOIRES_DU_TABLEAU,
+      ANALYSE_DES_ECARTS,
+      POSITION_MEDIANE,
+    ],
   }),
 };
 ```
@@ -3256,11 +3607,13 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 9 : La calibration du juge
 
 **Files:**
+
 - Create: `evals/3-scenarios/3.0-calibration/references.ts`
 - Test: `evals/3-scenarios/3.0-calibration/references.unit.test.ts`
 - Create: `evals/3-scenarios/3.0-calibration/calibration.eval.ts`
 
 **Interfaces:**
+
 - Consumes: `GRIDS` (tâche 8), `Evidence`, `askJudge`, `Verdict`.
 - Produces: `CALIBRATION_CASES: CalibrationCase[]` avec `CalibrationCase = { family: keyof typeof GRIDS; label: string; broken: string | null; evidence: Evidence }`.
 
@@ -3282,7 +3635,10 @@ export type CalibrationCase = {
   evidence: Evidence;
 };
 
-const CH_005 = { id: "CH-005", nom: "Réduire les délais de passage aux urgences" };
+const CH_005 = {
+  id: "CH-005",
+  nom: "Réduire les délais de passage aux urgences",
+};
 const CH_006 = { id: "CH-006", nom: "Développer la prévention en santé" };
 
 const chantier = ({
@@ -3298,7 +3654,14 @@ const chantier = ({
   meteo: string;
   commentaire: string | null;
 }) => ({
-  chantier: { id, nom, axe: "non renseigné", ppg: "non renseignée", ministeres: [], mailles_applicables: ["NAT", "REG", "DEPT"] },
+  chantier: {
+    id,
+    nom,
+    axe: "non renseigné",
+    ppg: "non renseignée",
+    ministeres: [],
+    mailles_applicables: ["NAT", "REG", "DEPT"],
+  },
   meteo,
   tendance: null,
   ecart,
@@ -3313,7 +3676,13 @@ const chantier = ({
 const FICHE_BRETAGNE: GroundTruth = {
   territoires: [{ code: "REG-53", nom: "Bretagne", maille: "reg" }],
   tauxAvancement: [
-    { territoire_code: "REG-53", jalon: 2025, taux_avancement_global: "51%", mediane_repartition: "65%", position_mediane: "EN_RETARD" },
+    {
+      territoire_code: "REG-53",
+      jalon: 2025,
+      taux_avancement_global: "51%",
+      mediane_repartition: "65%",
+      position_mediane: "EN_RETARD",
+    },
   ],
   chantiersEnRetard: [
     {
@@ -3336,7 +3705,9 @@ const FICHE_BRETAGNE: GroundTruth = {
       territoire_code: "REG-53",
       territoire_nom: "Bretagne",
       jalon: 2025,
-      chantiers: [chantier({ ...CH_006, ecart: 2, meteo: "ORAGE", commentaire: null })],
+      chantiers: [
+        chantier({ ...CH_006, ecart: 2, meteo: "ORAGE", commentaire: null }),
+      ],
     },
   ],
   indicateurs: [
@@ -3344,7 +3715,18 @@ const FICHE_BRETAGNE: GroundTruth = {
       territoire_code: "REG-53",
       chantier_id: "CH-005",
       indicateurs: [
-        { indicateur_id: "IND-005", nom: "Délai médian de passage aux urgences", unite_mesure: null, valeur_initiale: 280, date_valeur_initiale: null, valeur_actuelle: 250, date_valeur_actuelle: null, valeur_cible: 180, date_valeur_cible: null, taux_avancement: 30 },
+        {
+          indicateur_id: "IND-005",
+          nom: "Délai médian de passage aux urgences",
+          unite_mesure: null,
+          valeur_initiale: 280,
+          date_valeur_initiale: null,
+          valeur_actuelle: 250,
+          date_valeur_actuelle: null,
+          valeur_cible: 180,
+          date_valeur_cible: null,
+          taux_avancement: 30,
+        },
       ],
     },
   ],
@@ -3352,10 +3734,22 @@ const FICHE_BRETAGNE: GroundTruth = {
 };
 
 const TOOL_RESULTS_BRETAGNE = [
-  { toolName: "get_taux_avancement_territoire", output: { resultats: FICHE_BRETAGNE.tauxAvancement } },
-  { toolName: "get_chantiers", output: { resultats: FICHE_BRETAGNE.chantiersEnRetard } },
-  { toolName: "get_chantiers", output: { resultats: FICHE_BRETAGNE.chantiersEnDifficulte } },
-  { toolName: "get_indicateurs", output: { resultats: FICHE_BRETAGNE.indicateurs[0] } },
+  {
+    toolName: "get_taux_avancement_territoire",
+    output: { resultats: FICHE_BRETAGNE.tauxAvancement },
+  },
+  {
+    toolName: "get_chantiers",
+    output: { resultats: FICHE_BRETAGNE.chantiersEnRetard },
+  },
+  {
+    toolName: "get_chantiers",
+    output: { resultats: FICHE_BRETAGNE.chantiersEnDifficulte },
+  },
+  {
+    toolName: "get_indicateurs",
+    output: { resultats: FICHE_BRETAGNE.indicateurs[0] },
+  },
 ];
 
 const evidence = ({
@@ -3433,12 +3827,26 @@ const mute = ({ from, to }: { from: string; to: string }) => {
 const QUESTION_SYNTHESE = "Fais moi la synthèse du territoire Bretagne";
 
 const SYNTHESE: CalibrationCase[] = [
-  { family: "syntheseTerritoire", label: "Référence", broken: null, evidence: evidence({ question: QUESTION_SYNTHESE, matter: SYNTHESE_REFERENCE }) },
+  {
+    family: "syntheseTerritoire",
+    label: "Référence",
+    broken: null,
+    evidence: evidence({
+      question: QUESTION_SYNTHESE,
+      matter: SYNTHESE_REFERENCE,
+    }),
+  },
   {
     family: "syntheseTerritoire",
     label: "Médiane inventée",
     broken: "Chiffres exacts",
-    evidence: evidence({ question: QUESTION_SYNTHESE, matter: mute({ from: "médiane des régions à 65%", to: "médiane des régions à 58%" }) }),
+    evidence: evidence({
+      question: QUESTION_SYNTHESE,
+      matter: mute({
+        from: "médiane des régions à 65%",
+        to: "médiane des régions à 58%",
+      }),
+    }),
   },
   {
     family: "syntheseTerritoire",
@@ -3456,7 +3864,10 @@ const SYNTHESE: CalibrationCase[] = [
     family: "syntheseTerritoire",
     label: "Commentaire manquant non signalé",
     broken: "Résumés condensés",
-    evidence: evidence({ question: QUESTION_SYNTHESE, matter: mute({ from: "> Pas de commentaire disponible\n\n", to: "" }) }),
+    evidence: evidence({
+      question: QUESTION_SYNTHESE,
+      matter: mute({ from: "> Pas de commentaire disponible\n\n", to: "" }),
+    }),
   },
   {
     family: "syntheseTerritoire",
@@ -3474,7 +3885,10 @@ const SYNTHESE: CalibrationCase[] = [
     family: "syntheseTerritoire",
     label: "Écart omis",
     broken: "Écart et météo",
-    evidence: evidence({ question: QUESTION_SYNTHESE, matter: mute({ from: "**Écart** : -15 points\\\n", to: "" }) }),
+    evidence: evidence({
+      question: QUESTION_SYNTHESE,
+      matter: mute({ from: "**Écart** : -15 points\\\n", to: "" }),
+    }),
   },
 ];
 
@@ -3488,7 +3902,12 @@ const RETARD_REFERENCE = `**CH-005 — Réduire les délais de passage aux urgen
 Indicateur IND-005 — Délai médian de passage aux urgences : valeur initiale 280, valeur actuelle 250, valeur cible 180, taux d'avancement 30 %.`;
 
 const RETARD: CalibrationCase[] = [
-  { family: "chantiersEnRetard", label: "Référence", broken: null, evidence: evidence({ question: RETARD_QUESTION, matter: RETARD_REFERENCE }) },
+  {
+    family: "chantiersEnRetard",
+    label: "Référence",
+    broken: null,
+    evidence: evidence({ question: RETARD_QUESTION, matter: RETARD_REFERENCE }),
+  },
   {
     family: "chantiersEnRetard",
     label: "Renvoi vers un tableau de bord",
@@ -3505,7 +3924,13 @@ const RETARD: CalibrationCase[] = [
     family: "chantiersEnRetard",
     label: "Valeur actuelle fausse",
     broken: "Chiffres exacts",
-    evidence: evidence({ question: RETARD_QUESTION, matter: RETARD_REFERENCE.replace("valeur actuelle 250", "valeur actuelle 210") }),
+    evidence: evidence({
+      question: RETARD_QUESTION,
+      matter: RETARD_REFERENCE.replace(
+        "valeur actuelle 250",
+        "valeur actuelle 210",
+      ),
+    }),
   },
 ];
 
@@ -3517,7 +3942,13 @@ const FICHE_COMPARAISON: GroundTruth = {
   ],
   tauxAvancement: [
     ...FICHE_BRETAGNE.tauxAvancement,
-    { territoire_code: "REG-52", jalon: 2025, taux_avancement_global: "70%", mediane_repartition: "65%", position_mediane: "DANS_LA_MEDIANE" },
+    {
+      territoire_code: "REG-52",
+      jalon: 2025,
+      taux_avancement_global: "70%",
+      mediane_repartition: "65%",
+      position_mediane: "DANS_LA_MEDIANE",
+    },
   ],
 };
 
@@ -3535,12 +3966,22 @@ const COMPARAISON_EVIDENCE = (matter: string) =>
     question: COMPARAISON_QUESTION,
     matter,
     truth: FICHE_COMPARAISON,
-    toolResults: [{ toolName: "get_taux_avancement_territoire", output: { resultats: FICHE_COMPARAISON.tauxAvancement } }],
+    toolResults: [
+      {
+        toolName: "get_taux_avancement_territoire",
+        output: { resultats: FICHE_COMPARAISON.tauxAvancement },
+      },
+    ],
     tableTerritories: ["REG-53", "REG-52"],
   });
 
 const COMPARAISON: CalibrationCase[] = [
-  { family: "comparaisonTerritoires", label: "Référence", broken: null, evidence: COMPARAISON_EVIDENCE(COMPARAISON_REFERENCE) },
+  {
+    family: "comparaisonTerritoires",
+    label: "Référence",
+    broken: null,
+    evidence: COMPARAISON_EVIDENCE(COMPARAISON_REFERENCE),
+  },
   {
     family: "comparaisonTerritoires",
     label: "Sens de l'écart inversé",
@@ -3557,7 +3998,10 @@ const COMPARAISON: CalibrationCase[] = [
     label: "Position face à la médiane fausse",
     broken: "Position face à la médiane",
     evidence: COMPARAISON_EVIDENCE(
-      COMPARAISON_REFERENCE.replace("| Bretagne | 51% | 65% | En retard |", "| Bretagne | 51% | 65% | Dans la médiane |").replace(
+      COMPARAISON_REFERENCE.replace(
+        "| Bretagne | 51% | 65% | En retard |",
+        "| Bretagne | 51% | 65% | Dans la médiane |",
+      ).replace(
         "La Bretagne se situe 14 points sous la médiane des régions, les Pays de la Loire 5 points au-dessus.",
         "Les deux régions se situent dans la médiane.",
       ),
@@ -3577,7 +4021,13 @@ const COMMENTAIRES_RESULTS = [
           territoire_nom: "Bretagne",
           chantier_id: "CH-005",
           commentaires: [
-            { id: "c1", date_publication: "2026-09-15", type: "autres_resultats_obtenus", contenu: "<p>Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.</p>" },
+            {
+              id: "c1",
+              date_publication: "2026-09-15",
+              type: "autres_resultats_obtenus",
+              contenu:
+                "<p>Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.</p>",
+            },
           ],
         },
       ],
@@ -3586,7 +4036,17 @@ const COMMENTAIRES_RESULTS = [
   },
   {
     toolName: "get_chantier_commentaires",
-    output: { resultats: [{ territoire_code: "REG-53", territoire_nom: "Bretagne", chantier_id: "CH-012", commentaires: [] }], types_non_accessibles: ["actions_a_venir", "actions_a_valoriser"] },
+    output: {
+      resultats: [
+        {
+          territoire_code: "REG-53",
+          territoire_nom: "Bretagne",
+          chantier_id: "CH-012",
+          commentaires: [],
+        },
+      ],
+      types_non_accessibles: ["actions_a_venir", "actions_a_valoriser"],
+    },
   },
 ];
 
@@ -3602,10 +4062,21 @@ Aucun commentaire n'est publié pour ce chantier en Bretagne.
 Les actions à venir et à valoriser relèvent de la vue nationale, à laquelle vous n'avez pas accès.`;
 
 const COMMENTAIRES_EVIDENCE = (matter: string) =>
-  evidence({ question: COMMENTAIRES_QUESTION, matter, truth: FICHE_COMMENTAIRES, toolResults: COMMENTAIRES_RESULTS, profile: "coordinateur" });
+  evidence({
+    question: COMMENTAIRES_QUESTION,
+    matter,
+    truth: FICHE_COMMENTAIRES,
+    toolResults: COMMENTAIRES_RESULTS,
+    profile: "coordinateur",
+  });
 
 const COMMENTAIRES: CalibrationCase[] = [
-  { family: "commentaires", label: "Référence", broken: null, evidence: COMMENTAIRES_EVIDENCE(COMMENTAIRES_REFERENCE) },
+  {
+    family: "commentaires",
+    label: "Référence",
+    broken: null,
+    evidence: COMMENTAIRES_EVIDENCE(COMMENTAIRES_REFERENCE),
+  },
   {
     family: "commentaires",
     label: "Commentaire inventé pour CH-012",
@@ -3647,9 +4118,25 @@ const DASHBOARD_QUESTION =
 const sectionChantier = (id: string, nom: string) => ({
   widgets: [
     { type: "widget_titre_section" as const, titre: `${id} — ${nom}` },
-    { type: "widget_paragraph" as const, contenu: ["Météo : Appuis nécessaires", "Deux postes d'urgentistes sont vacants."] },
-    { type: "widget_cartographie_meteo" as const, chantier_id: id, maille: "departementale" as const, width: 4 as const },
-    { type: "widget_tableau_indicateurs_chantier" as const, chantier_id: id, territoire_code: "REG-53", jalon: 2025 },
+    {
+      type: "widget_paragraph" as const,
+      contenu: [
+        "Météo : Appuis nécessaires",
+        "Deux postes d'urgentistes sont vacants.",
+      ],
+    },
+    {
+      type: "widget_cartographie_meteo" as const,
+      chantier_id: id,
+      maille: "departementale" as const,
+      width: 4 as const,
+    },
+    {
+      type: "widget_tableau_indicateurs_chantier" as const,
+      chantier_id: id,
+      territoire_code: "REG-53",
+      jalon: 2025,
+    },
   ],
 });
 
@@ -3658,10 +4145,26 @@ const DASHBOARD_REFERENCE = {
   containers: [
     {
       widgets: [
-        { type: "widget_taux_avancement_territoire" as const, territoire_code: "REG-53", jalon: 2025 },
-        { type: "widget_nombre_chantiers_en_retard" as const, territoire_code: "REG-53", jalon: 2025 },
-        { type: "widget_nombre_chantiers_en_difficulte" as const, territoire_code: "REG-53", jalon: 2025 },
-        { type: "widget_cartographie_taux_avancement" as const, maille: "departementale" as const, jalon: 2025 },
+        {
+          type: "widget_taux_avancement_territoire" as const,
+          territoire_code: "REG-53",
+          jalon: 2025,
+        },
+        {
+          type: "widget_nombre_chantiers_en_retard" as const,
+          territoire_code: "REG-53",
+          jalon: 2025,
+        },
+        {
+          type: "widget_nombre_chantiers_en_difficulte" as const,
+          territoire_code: "REG-53",
+          jalon: 2025,
+        },
+        {
+          type: "widget_cartographie_taux_avancement" as const,
+          maille: "departementale" as const,
+          jalon: 2025,
+        },
       ],
     },
     sectionChantier(CH_005.id, CH_005.nom),
@@ -3675,7 +4178,9 @@ const describeForCalibration = (dashboard: typeof DASHBOARD_REFERENCE) =>
     `TABLEAU DE BORD « ${dashboard.titre} »`,
     ...dashboard.containers.flatMap((container, index) => [
       `Section ${index + 1} :`,
-      ...container.widgets.map(({ type, ...rest }) => `- ${type} ${JSON.stringify(rest)}`),
+      ...container.widgets.map(
+        ({ type, ...rest }) => `- ${type} ${JSON.stringify(rest)}`,
+      ),
     ]),
     "",
     "TEXTE D'ACCOMPAGNEMENT :",
@@ -3691,7 +4196,12 @@ const DASHBOARD_EVIDENCE = (dashboard: typeof DASHBOARD_REFERENCE) =>
   });
 
 const DASHBOARD: CalibrationCase[] = [
-  { family: "dashboard", label: "Référence", broken: null, evidence: DASHBOARD_EVIDENCE(DASHBOARD_REFERENCE) },
+  {
+    family: "dashboard",
+    label: "Référence",
+    broken: null,
+    evidence: DASHBOARD_EVIDENCE(DASHBOARD_REFERENCE),
+  },
   {
     family: "dashboard",
     label: "Cartographie du taux absente",
@@ -3714,7 +4224,11 @@ const DASHBOARD: CalibrationCase[] = [
         {
           widgets: [
             ...DASHBOARD_REFERENCE.containers[0].widgets,
-            { type: "widget_cartographie_propositions_valeur_avancement" as never, maille: "departementale" as const, jalon: 2025 },
+            {
+              type: "widget_cartographie_propositions_valeur_avancement" as never,
+              maille: "departementale" as const,
+              jalon: 2025,
+            },
           ],
         },
         ...DASHBOARD_REFERENCE.containers.slice(1),
@@ -3753,7 +4267,12 @@ const RAPPORT_EVIDENCE = (matter: string) =>
   });
 
 const RAPPORT: CalibrationCase[] = [
-  { family: "rapport", label: "Référence", broken: null, evidence: RAPPORT_EVIDENCE(RAPPORT_REFERENCE) },
+  {
+    family: "rapport",
+    label: "Référence",
+    broken: null,
+    evidence: RAPPORT_EVIDENCE(RAPPORT_REFERENCE),
+  },
   {
     family: "rapport",
     label: "Indicateurs en texte, sans tableau",
@@ -3769,7 +4288,9 @@ const RAPPORT: CalibrationCase[] = [
     family: "rapport",
     label: "Chantiers en difficulté absents",
     broken: "Sections demandées",
-    evidence: RAPPORT_EVIDENCE(RAPPORT_REFERENCE.replace(/## Chantiers en difficulté\n[^\n]+\n/, "")),
+    evidence: RAPPORT_EVIDENCE(
+      RAPPORT_REFERENCE.replace(/## Chantiers en difficulté\n[^\n]+\n/, ""),
+    ),
   },
 ];
 
@@ -3797,16 +4318,25 @@ const estMecanique = (criterion: Criterion): criterion is MechanicalCriterion =>
   criterion.kind === "mechanical";
 
 describe("références de calibration", () => {
-  const references = CALIBRATION_CASES.filter((testCase) => testCase.broken === null);
+  const references = CALIBRATION_CASES.filter(
+    (testCase) => testCase.broken === null,
+  );
 
-  test.each(references.map((reference) => [reference.family, reference] as const))(
+  test.each(
+    references.map((reference) => [reference.family, reference] as const),
+  )(
     "la référence %s passe tous ses critères mécaniques",
     (_family, reference) => {
       // When
       const echecs = GRIDS[reference.family].criteria
         .filter(estMecanique)
-        .filter((criterion) => criterion.applicable?.(reference.evidence) ?? true)
-        .map((criterion) => ({ id: criterion.id, result: criterion.check(reference.evidence) }))
+        .filter(
+          (criterion) => criterion.applicable?.(reference.evidence) ?? true,
+        )
+        .map((criterion) => ({
+          id: criterion.id,
+          result: criterion.check(reference.evidence),
+        }))
         .filter(({ result }) => !result.ok);
 
       // Then
@@ -3816,11 +4346,14 @@ describe("références de calibration", () => {
 
   test("chaque mutant casse un critère jugé de sa grille", () => {
     // When
-    const orphelins = CALIBRATION_CASES.filter((testCase) => testCase.broken !== null)
+    const orphelins = CALIBRATION_CASES.filter(
+      (testCase) => testCase.broken !== null,
+    )
       .filter(
         (testCase) =>
           !GRIDS[testCase.family].criteria.some(
-            (criterion) => criterion.kind === "judged" && criterion.id === testCase.broken,
+            (criterion) =>
+              criterion.kind === "judged" && criterion.id === testCase.broken,
           ),
       )
       .map((testCase) => `${testCase.family} · ${testCase.label}`);
@@ -3866,62 +4399,72 @@ const judgedCriteria = (family: CalibrationCase["family"]) =>
     (criterion): criterion is JudgedCriterion => criterion.kind === "judged",
   );
 
-for (const family of [...new Set(CALIBRATION_CASES.map((testCase) => testCase.family))]) {
-  evalite<CalibrationCase, Verdict>(`3.0 · Calibration du juge · ${GRIDS[family].family}`, {
-    data: () =>
-      CALIBRATION_CASES.filter((testCase) => testCase.family === family).map((testCase) => ({
-        input: testCase,
-      })),
-
-    task: (input) =>
-      askJudge({
-        evidence: input.evidence,
-        criteria: judgedCriteria(input.family).filter(
-          (criterion) => criterion.applicable?.(input.evidence) ?? true,
+for (const family of [
+  ...new Set(CALIBRATION_CASES.map((testCase) => testCase.family)),
+]) {
+  evalite<CalibrationCase, Verdict>(
+    `3.0 · Calibration du juge · ${GRIDS[family].family}`,
+    {
+      data: () =>
+        CALIBRATION_CASES.filter((testCase) => testCase.family === family).map(
+          (testCase) => ({
+            input: testCase,
+          }),
         ),
-      }),
 
-    trialCount: 3,
+      task: (input) =>
+        askJudge({
+          evidence: input.evidence,
+          criteria: judgedCriteria(input.family).filter(
+            (criterion) => criterion.applicable?.(input.evidence) ?? true,
+          ),
+        }),
 
-    scorers: [
-      {
-        name: "Détecte le défaut",
-        description: `Juge ${JUDGE_MODEL} : le critère cassé est jugé non conforme. Sans objet pour la référence.`,
-        scorer: ({ input, output }) => {
-          if (input.broken === null) return { score: 1, metadata: "sans objet" };
-          const verdict = output[input.broken];
-          return {
-            score: verdict && !verdict.conforme ? 1 : 0,
-            metadata: verdict?.preuve ?? "absent du verdict",
-          };
+      trialCount: 3,
+
+      scorers: [
+        {
+          name: "Détecte le défaut",
+          description: `Juge ${JUDGE_MODEL} : le critère cassé est jugé non conforme. Sans objet pour la référence.`,
+          scorer: ({ input, output }) => {
+            if (input.broken === null)
+              return { score: 1, metadata: "sans objet" };
+            const verdict = output[input.broken];
+            return {
+              score: verdict && !verdict.conforme ? 1 : 0,
+              metadata: verdict?.preuve ?? "absent du verdict",
+            };
+          },
         },
-      },
-      {
-        name: "Laisse passer le reste",
-        description: "Tous les critères intacts sont jugés conformes.",
-        scorer: ({ input, output }) => {
-          const faux = Object.entries(output)
-            .filter(([id, verdict]) => id !== input.broken && !verdict.conforme)
-            .map(([id, verdict]) => `${id} : ${verdict.preuve}`);
-          return {
-            score: faux.length === 0 ? 1 : 0,
-            metadata: faux.length === 0 ? "aucun faux signalement" : faux,
-          };
+        {
+          name: "Laisse passer le reste",
+          description: "Tous les critères intacts sont jugés conformes.",
+          scorer: ({ input, output }) => {
+            const faux = Object.entries(output)
+              .filter(
+                ([id, verdict]) => id !== input.broken && !verdict.conforme,
+              )
+              .map(([id, verdict]) => `${id} : ${verdict.preuve}`);
+            return {
+              score: faux.length === 0 ? 1 : 0,
+              metadata: faux.length === 0 ? "aucun faux signalement" : faux,
+            };
+          },
         },
-      },
-    ],
+      ],
 
-    columns: ({ input, output }) => [
-      { label: "Cas", value: input.label },
-      { label: "Critère cassé", value: input.broken ?? "—" },
-      {
-        label: "Verdicts",
-        value: Object.entries(output)
-          .map(([id, verdict]) => `${verdict.conforme ? "✓" : "✗"} ${id}`)
-          .join("\n"),
-      },
-    ],
-  });
+      columns: ({ input, output }) => [
+        { label: "Cas", value: input.label },
+        { label: "Critère cassé", value: input.broken ?? "—" },
+        {
+          label: "Verdicts",
+          value: Object.entries(output)
+            .map(([id, verdict]) => `${verdict.conforme ? "✓" : "✗"} ${id}`)
+            .join("\n"),
+        },
+      ],
+    },
+  );
 }
 ```
 
@@ -3944,6 +4487,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 10 : Les suites du groupe Synthèse
 
 **Files:**
+
 - Create: `evals/3-scenarios/3.1-synthese/syntheseTerritoire.eval.ts`
 - Create: `evals/3-scenarios/3.1-synthese/syntheseChantier.eval.ts`
 - Create: `evals/3-scenarios/3.1-synthese/syntheseDepartements.eval.ts`
@@ -3954,6 +4498,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Create: `evals/3-scenarios/3.1-synthese/syntheseCommentaires.eval.ts`
 
 **Interfaces:**
+
 - Consumes: `scenarioEval` (tâche 7), `GRIDS` (tâche 8).
 
 Chaque fichier porte un en-tête qui cite le scénario source, les choix faits en revue, et une ligne « Référence observée : à compléter au premier run. » que la tâche 12 remplit. Les messages sont recopiés de `scenariosTerritoire.ts` avec le `nomAffiché` du territoire courant.
@@ -3980,7 +4525,10 @@ import { scenarioEval } from "../scenarioEval";
 const workflowSynthese = (territoire_code: string) => [
   { toolName: "get_taux_avancement_territoire", input: { territoire_code } },
   { toolName: "get_chantiers", input: { territoire_code, view: "en_retard" } },
-  { toolName: "get_chantiers", input: { territoire_code, view: "en_difficulte" } },
+  {
+    toolName: "get_chantiers",
+    input: { territoire_code, view: "en_difficulte" },
+  },
 ];
 
 scenarioEval({
@@ -4002,7 +4550,8 @@ scenarioEval({
     },
     {
       question: "Fais moi la synthèse du territoire 35",
-      reason: "Trou complété par un numéro de département seul : DEPT-35, pas le territoire courant",
+      reason:
+        "Trou complété par un numéro de département seul : DEPT-35, pas le territoire courant",
       truthScope: { territoires: ["DEPT-35"] },
       expected: workflowSynthese("DEPT-35"),
     },
@@ -4039,8 +4588,14 @@ Comment se situe ce chantier par rapport aux autres territoires ?
 Quelles sont les principales difficultés remontées dans les commentaires ?`;
 
 const OUTILS = [
-  { toolName: "get_chantiers", input: { territoire_code: "REG-53", chantier_ids: ["CH-005"] } },
-  { toolName: "get_chantier_commentaires", input: { chantier_id: "CH-005", territoire_code: "REG-53" } },
+  {
+    toolName: "get_chantiers",
+    input: { territoire_code: "REG-53", chantier_ids: ["CH-005"] },
+  },
+  {
+    toolName: "get_chantier_commentaires",
+    input: { chantier_id: "CH-005", territoire_code: "REG-53" },
+  },
 ];
 
 scenarioEval({
@@ -4086,7 +4641,10 @@ import { scenarioEval } from "../scenarioEval";
  * Référence observée : à compléter au premier run.
  */
 
-const avecSousTerritoires = { territoire_code: "REG-53", include_sous_territoires: true };
+const avecSousTerritoires = {
+  territoire_code: "REG-53",
+  include_sous_territoires: true,
+};
 
 scenarioEval({
   suite: "Synthèse de Bretagne et ses départements",
@@ -4098,9 +4656,18 @@ scenarioEval({
       reason: "Message envoyé tel quel",
       truthScope: { territoires: ["REG-53"], includeSousTerritoires: true },
       expected: [
-        { toolName: "get_taux_avancement_territoire", input: avecSousTerritoires },
-        { toolName: "get_chantiers", input: { ...avecSousTerritoires, view: "en_retard" } },
-        { toolName: "get_chantiers", input: { ...avecSousTerritoires, view: "en_difficulte" } },
+        {
+          toolName: "get_taux_avancement_territoire",
+          input: avecSousTerritoires,
+        },
+        {
+          toolName: "get_chantiers",
+          input: { ...avecSousTerritoires, view: "en_retard" },
+        },
+        {
+          toolName: "get_chantiers",
+          input: { ...avecSousTerritoires, view: "en_difficulte" },
+        },
       ],
       tableTerritories: ["REG-53", "DEPT-22", "DEPT-29", "DEPT-35", "DEPT-56"],
     },
@@ -4131,8 +4698,14 @@ const MESSAGE =
   "Analyse les chantiers en retard sur Bretagne. Pour chaque chantier en retard, récupère également les valeurs de ses indicateurs.";
 
 const OUTILS = [
-  { toolName: "get_chantiers", input: { territoire_code: "REG-53", view: "en_retard" } },
-  { toolName: "get_indicateurs", input: { chantier_id: "CH-005", territoire_code: "REG-53" } },
+  {
+    toolName: "get_chantiers",
+    input: { territoire_code: "REG-53", view: "en_retard" },
+  },
+  {
+    toolName: "get_indicateurs",
+    input: { chantier_id: "CH-005", territoire_code: "REG-53" },
+  },
 ];
 
 const SCOPE = { territoires: ["REG-53"], indicateurs: true };
@@ -4142,8 +4715,20 @@ scenarioEval({
   group: "synthese",
   grid: GRIDS.chantiersEnRetard,
   cases: [
-    { question: MESSAGE, reason: "DITP", profile: "ditp", truthScope: SCOPE, expected: OUTILS },
-    { question: MESSAGE, reason: "Coordinateur", profile: "coordinateur", truthScope: SCOPE, expected: OUTILS },
+    {
+      question: MESSAGE,
+      reason: "DITP",
+      profile: "ditp",
+      truthScope: SCOPE,
+      expected: OUTILS,
+    },
+    {
+      question: MESSAGE,
+      reason: "Coordinateur",
+      profile: "coordinateur",
+      truthScope: SCOPE,
+      expected: OUTILS,
+    },
   ],
 });
 ```
@@ -4179,8 +4764,14 @@ scenarioEval({
       truthScope: { territoires: ["REG-53"], indicateurs: true },
       expected: [
         { toolName: "get_taux_avancement_territoire", input: territoire },
-        { toolName: "get_chantiers", input: { ...territoire, view: "en_retard" } },
-        { toolName: "get_chantiers", input: { ...territoire, view: "en_difficulte" } },
+        {
+          toolName: "get_chantiers",
+          input: { ...territoire, view: "en_retard" },
+        },
+        {
+          toolName: "get_chantiers",
+          input: { ...territoire, view: "en_difficulte" },
+        },
         { toolName: "get_indicateurs", input: { chantier_id: "CH-005" } },
         { toolName: "get_indicateurs", input: { chantier_id: "CH-006" } },
         { toolName: "export_rapport", input: { format: "markdown" } },
@@ -4220,9 +4811,18 @@ scenarioEval({
       reason: "Message envoyé tel quel",
       truthScope: { territoires: ["REG-53"] },
       expected: [
-        { toolName: "get_chantiers", input: { territoire_code: "REG-53", view: "en_retard" } },
-        { toolName: "get_chantiers", input: { territoire_code: "REG-53", view: "en_difficulte" } },
-        { toolName: "create_dashboard", input: { territoire_codes: ["REG-53"] } },
+        {
+          toolName: "get_chantiers",
+          input: { territoire_code: "REG-53", view: "en_retard" },
+        },
+        {
+          toolName: "get_chantiers",
+          input: { territoire_code: "REG-53", view: "en_difficulte" },
+        },
+        {
+          toolName: "create_dashboard",
+          input: { territoire_codes: ["REG-53"] },
+        },
       ],
     },
   ],
@@ -4254,7 +4854,10 @@ import { scenarioEval } from "../scenarioEval";
 const workflowSynthese = (territoire_code: string) => [
   { toolName: "get_taux_avancement_territoire", input: { territoire_code } },
   { toolName: "get_chantiers", input: { territoire_code, view: "en_retard" } },
-  { toolName: "get_chantiers", input: { territoire_code, view: "en_difficulte" } },
+  {
+    toolName: "get_chantiers",
+    input: { territoire_code, view: "en_difficulte" },
+  },
 ];
 
 scenarioEval({
@@ -4276,7 +4879,8 @@ scenarioEval({
       expected: workflowSynthese("DEPT-29"),
     },
     {
-      question: "Fais moi la synthèse des difficultés du territoire Pays de la Loire",
+      question:
+        "Fais moi la synthèse des difficultés du territoire Pays de la Loire",
       reason: "Hors périmètre : commentaires masqués, restriction à signaler",
       truthScope: { territoires: ["REG-52"] },
       expected: workflowSynthese("REG-52"),
@@ -4326,7 +4930,10 @@ scenarioEval({
       question:
         "Synthétise les commentaires des chantiers suivants CH-005, CH-006, notamment les principales actions identifiées",
       reason: "Deux chantiers commentés",
-      truthScope: { territoires: ["REG-53"], chantiersCommentes: ["CH-005", "CH-006"] },
+      truthScope: {
+        territoires: ["REG-53"],
+        chantiersCommentes: ["CH-005", "CH-006"],
+      },
       expected: [commentairesDe("CH-005"), commentairesDe("CH-006")],
     },
     {
@@ -4339,8 +4946,12 @@ scenarioEval({
     {
       question:
         "Synthétise les commentaires des chantiers suivants CH-005, CH-012, notamment les principales actions identifiées",
-      reason: "CH-012 n'a aucun commentaire en Bretagne : à dire, sans inventer",
-      truthScope: { territoires: ["REG-53"], chantiersCommentes: ["CH-005", "CH-012"] },
+      reason:
+        "CH-012 n'a aucun commentaire en Bretagne : à dire, sans inventer",
+      truthScope: {
+        territoires: ["REG-53"],
+        chantiersCommentes: ["CH-005", "CH-012"],
+      },
       expected: [commentairesDe("CH-005"), commentairesDe("CH-012")],
     },
   ],
@@ -4371,6 +4982,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 11 : Les suites du groupe Comparaison
 
 **Files:**
+
 - Create: `evals/3-scenarios/3.2-comparaison/comparerTerritoires.eval.ts`
 - Create: `evals/3-scenarios/3.2-comparaison/comparerJalons.eval.ts`
 - Create: `evals/3-scenarios/3.2-comparaison/comparerDepartements.eval.ts`
@@ -4378,6 +4990,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Create: `evals/3-scenarios/3.2-comparaison/comparaisonQuantitative.eval.ts`
 
 **Interfaces:**
+
 - Consumes: `scenarioEval`, `GRIDS`.
 
 Le gabarit comparaison n'est chargé sur aucun de ces messages (aucun mot-clé de synthèse). Les grilles jugent ce qu'Albert reçoit : tableau, écarts, position, noms. Chaque en-tête le rappelle.
@@ -4431,7 +5044,8 @@ scenarioEval({
     },
     {
       question: "Compare Bretagne avec 35 - Ille-et-Vilaine",
-      reason: "Une région face à son département : deux médianes de mailles différentes",
+      reason:
+        "Une région face à son département : deux médianes de mailles différentes",
       truthScope: { territoires: ["REG-53", "DEPT-35"] },
       expected: [tauxDe("REG-53"), tauxDe("DEPT-35")],
       tableTerritories: ["REG-53", "DEPT-35"],
@@ -4565,7 +5179,8 @@ scenarioEval({
   currentTerritory: "DEPT-35",
   cases: [
     {
-      question: "Compare 35 - Ille-et-Vilaine avec les autres départements de Bretagne",
+      question:
+        "Compare 35 - Ille-et-Vilaine avec les autres départements de Bretagne",
       reason: "Message envoyé tel quel",
       truthScope: { territoires: ["REG-53"], includeSousTerritoires: true },
       expected: [{ toolName: "get_taux_avancement_territoire" }],
@@ -4600,7 +5215,8 @@ const tauxDe = (territoire_code: string) => ({
   input: { territoire_code },
 });
 
-const MESSAGE = (autre: string) => `Compare les taux d'avancement de Bretagne avec ${autre}`;
+const MESSAGE = (autre: string) =>
+  `Compare les taux d'avancement de Bretagne avec ${autre}`;
 
 scenarioEval({
   suite: "Comparaison quantitative des territoires",
@@ -4652,6 +5268,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 12 : Runs, consignation et livrable
 
 **Files:**
+
 - Modify: l'en-tête de chaque `*.eval.ts` de `evals/3-scenarios` (ligne « Référence observée »)
 - Modify: `evals/3-scenarios/3.0-calibration/references.ts` (désaccords réels, le cas échéant)
 - Create (scratchpad, non versionné) : brouillons du commentaire PIL-1814 et des points PIL-1833
@@ -4721,6 +5338,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ## Auto-revue
 
 **Couverture de la spec.**
+
 - Jeté : tâche 1. Juge `deepseek-v4-flash` : tâche 6.
 - Deux profils, contexte agent partagé : tâches 1 et 2. Territoires peuplés, indicateurs au jalon, chantier sans commentaire : tâche 3. Fiche de vérité par les outils : tâche 4.
 - Factory, cas, tour, scorers, colonnes à 500 caractères, `trialCount: 3` : tâche 7.

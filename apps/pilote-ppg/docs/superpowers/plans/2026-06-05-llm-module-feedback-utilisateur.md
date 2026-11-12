@@ -15,6 +15,7 @@
 ## File Structure
 
 **Backend :**
+
 - `src/database/prisma/schema.prisma` — ajout enum + colonne (modifier)
 - `src/database/prisma/migrations/<timestamp>_add_categories_probleme_llm_calls/migration.sql` — migration (créer)
 - `src/server/albert/usecases/EvaluerChatUseCase.ts` — ajout `categories` (modifier)
@@ -26,6 +27,7 @@
 - `src/server/albert/__tests__/queries/ListerConversationsAdminQuery.integration.test.ts` — test (modifier)
 
 **Front utilisateur (`src/client/components/_commons/ChatUI/`) :**
+
 - `feedbackCategories.ts` — constantes catégories (libellés, sous-titres, icônes) (créer)
 - `FeedbackCategorieCard.tsx` — carte sélectionnable (créer)
 - `FeedbackPositiveModale.tsx` — modale positive (créer)
@@ -33,6 +35,7 @@
 - `FeedbackBar.tsx` — câblage des deux modales (modifier)
 
 **Front admin (`src/client/components/PagePanelAdministrateur/Albert/`) :**
+
 - `ConversationTranscript.tsx` — badges catégories (modifier)
 - `AlbertDashboardFilters.tsx` — filtre catégories (modifier)
 - `AlbertDashboard.tsx` — passage du filtre `categories` à la query (modifier)
@@ -42,6 +45,7 @@
 ## Task 1 : Modèle de données (enum + colonne)
 
 **Files:**
+
 - Modify: `src/database/prisma/schema.prisma` (enum après `llm_call_evaluation` ~ligne 805, et model `llm_calls` ~ligne 807-823)
 - Create: `src/database/prisma/migrations/<timestamp>_add_categories_probleme_llm_calls/migration.sql`
 
@@ -101,6 +105,7 @@ git commit -m "[DITP-pilotage/pilote-2] feature(PIL-1549): ajout enum et colonne
 ## Task 2 : Use case `EvaluerChatUseCase` + mutation tRPC
 
 **Files:**
+
 - Create: `src/server/albert/__tests__/usecases/EvaluerChatUseCase.integration.test.ts`
 - Modify: `src/server/albert/usecases/EvaluerChatUseCase.ts`
 - Modify: `src/server/infrastructure/api/trpc/routes/albert.ts:90-115`
@@ -144,7 +149,9 @@ describe("EvaluerChatUseCase", () => {
       });
 
       // Then
-      const ligne = await tx.llm_calls.findFirst({ where: { chat_id: chatId } });
+      const ligne = await tx.llm_calls.findFirst({
+        where: { chat_id: chatId },
+      });
       expect(ligne).toEqual(
         expect.objectContaining({
           evaluation: "NEGATIVE",
@@ -178,7 +185,9 @@ describe("EvaluerChatUseCase", () => {
       });
 
       // Then
-      const ligne = await tx.llm_calls.findFirst({ where: { chat_id: chatId } });
+      const ligne = await tx.llm_calls.findFirst({
+        where: { chat_id: chatId },
+      });
       expect(ligne).toEqual(
         expect.objectContaining({
           evaluation: "POSITIVE",
@@ -315,6 +324,7 @@ git commit -m "[DITP-pilotage/pilote-2] feature(PIL-1549): evaluer porte les cat
 ## Task 3 : Queries admin (détail + filtre)
 
 **Files:**
+
 - Modify: `src/server/albert/queries/RecupererConversationAdminQuery.ts`
 - Modify: `src/server/albert/queries/ListerConversationsAdminQuery.ts`
 - Modify: `src/server/albert/__tests__/queries/RecupererConversationAdminQuery.integration.test.ts`
@@ -328,45 +338,45 @@ git commit -m "[DITP-pilotage/pilote-2] feature(PIL-1549): evaluer porte les cat
 Dans `src/server/albert/__tests__/queries/RecupererConversationAdminQuery.integration.test.ts`, ajouter un test (adapter le `describe`/`buildQuery` existant) :
 
 ```ts
-  it(
-    "expose les categories_probleme du dernier tour",
-    createIntegrationTest(async (tx) => {
-      // Given
-      const utilisateur = await fixtures.utilisateur({});
-      const idConv = randomUUID();
-      await tx.chat_conversation.create({
-        data: {
-          id: idConv,
-          utilisateur_id: utilisateur.id,
-          titre: "Conv",
-          messages: [],
-        },
-      });
-      await tx.llm_calls.create({
-        data: {
-          chat_id: idConv,
-          utilisateur_id: utilisateur.id,
-          transcript: {},
-          model: "openweight-large",
-          evaluation: "NEGATIVE",
-          commentaire: "bof",
-          categories_probleme: ["INCOMPREHENSION", "SUGGESTION"],
-        },
-      });
+it(
+  "expose les categories_probleme du dernier tour",
+  createIntegrationTest(async (tx) => {
+    // Given
+    const utilisateur = await fixtures.utilisateur({});
+    const idConv = randomUUID();
+    await tx.chat_conversation.create({
+      data: {
+        id: idConv,
+        utilisateur_id: utilisateur.id,
+        titre: "Conv",
+        messages: [],
+      },
+    });
+    await tx.llm_calls.create({
+      data: {
+        chat_id: idConv,
+        utilisateur_id: utilisateur.id,
+        transcript: {},
+        model: "openweight-large",
+        evaluation: "NEGATIVE",
+        commentaire: "bof",
+        categories_probleme: ["INCOMPREHENSION", "SUGGESTION"],
+      },
+    });
 
-      // When
-      const detail = await buildQuery().run({ id: idConv });
+    // When
+    const detail = await buildQuery().run({ id: idConv });
 
-      // Then
-      expect(detail?.llmCalls).toEqual([
-        expect.objectContaining({
-          evaluation: "NEGATIVE",
-          commentaire: "bof",
-          categoriesProbleme: ["INCOMPREHENSION", "SUGGESTION"],
-        }),
-      ]);
-    }),
-  );
+    // Then
+    expect(detail?.llmCalls).toEqual([
+      expect.objectContaining({
+        evaluation: "NEGATIVE",
+        commentaire: "bof",
+        categoriesProbleme: ["INCOMPREHENSION", "SUGGESTION"],
+      }),
+    ]);
+  }),
+);
 ```
 
 - [ ] **Step 2 : Lancer le test (par l'utilisateur)**
@@ -379,18 +389,25 @@ Expected : ÉCHEC (champ `categoriesProbleme` absent).
 Dans `src/server/albert/queries/RecupererConversationAdminQuery.ts` :
 
 1. Type `ConversationAdminDetail.llmCalls[]` : ajouter le champ
+
 ```ts
     categoriesProbleme: $Enums.llm_call_categorie_probleme[];
 ```
+
 2. Type `LigneLlmCall` : ajouter
+
 ```ts
   categories_probleme: $Enums.llm_call_categorie_probleme[];
 ```
+
 3. Requête SQL des llm_calls : remplacer `SELECT id, evaluation, commentaire, created_at` par
+
 ```ts
       SELECT id, evaluation, commentaire, categories_probleme, created_at
 ```
+
 4. Mapping `llmCalls`: ajouter
+
 ```ts
         categoriesProbleme: row.categories_probleme,
 ```
@@ -407,53 +424,63 @@ Expected : SUCCÈS.
 Dans `src/server/albert/__tests__/queries/ListerConversationsAdminQuery.integration.test.ts`, ajouter :
 
 ```ts
-  it(
-    "filtre par categories : ne garde que les conversations dont un tour a une des categories demandées",
-    createIntegrationTest(async (tx) => {
-      // Given
-      const utilisateur = await fixtures.utilisateur({});
-      const idAvec = randomUUID();
-      const idSans = randomUUID();
-      await tx.chat_conversation.createMany({
-        data: [
-          { id: idAvec, utilisateur_id: utilisateur.id, titre: "avec", messages: [] },
-          { id: idSans, utilisateur_id: utilisateur.id, titre: "sans", messages: [] },
-        ],
-      });
-      await tx.llm_calls.createMany({
-        data: [
-          {
-            chat_id: idAvec,
-            utilisateur_id: utilisateur.id,
-            transcript: {},
-            model: "openweight-large",
-            evaluation: "NEGATIVE",
-            categories_probleme: ["PROBLEME_TECHNIQUE"],
-          },
-          {
-            chat_id: idSans,
-            utilisateur_id: utilisateur.id,
-            transcript: {},
-            model: "openweight-large",
-            evaluation: "NEGATIVE",
-            categories_probleme: ["SUGGESTION"],
-          },
-        ],
-      });
+it(
+  "filtre par categories : ne garde que les conversations dont un tour a une des categories demandées",
+  createIntegrationTest(async (tx) => {
+    // Given
+    const utilisateur = await fixtures.utilisateur({});
+    const idAvec = randomUUID();
+    const idSans = randomUUID();
+    await tx.chat_conversation.createMany({
+      data: [
+        {
+          id: idAvec,
+          utilisateur_id: utilisateur.id,
+          titre: "avec",
+          messages: [],
+        },
+        {
+          id: idSans,
+          utilisateur_id: utilisateur.id,
+          titre: "sans",
+          messages: [],
+        },
+      ],
+    });
+    await tx.llm_calls.createMany({
+      data: [
+        {
+          chat_id: idAvec,
+          utilisateur_id: utilisateur.id,
+          transcript: {},
+          model: "openweight-large",
+          evaluation: "NEGATIVE",
+          categories_probleme: ["PROBLEME_TECHNIQUE"],
+        },
+        {
+          chat_id: idSans,
+          utilisateur_id: utilisateur.id,
+          transcript: {},
+          model: "openweight-large",
+          evaluation: "NEGATIVE",
+          categories_probleme: ["SUGGESTION"],
+        },
+      ],
+    });
 
-      // When
-      const result = await buildQuery().run({
-        categories: ["PROBLEME_TECHNIQUE"],
-        tri: { champ: "updatedAt", direction: "desc" },
-        page: 1,
-        taillePage: 25,
-      });
+    // When
+    const result = await buildQuery().run({
+      categories: ["PROBLEME_TECHNIQUE"],
+      tri: { champ: "updatedAt", direction: "desc" },
+      page: 1,
+      taillePage: 25,
+    });
 
-      // Then
-      expect(result.total).toEqual(1);
-      expect(result.items).toEqual([expect.objectContaining({ id: idAvec })]);
-    }),
-  );
+    // Then
+    expect(result.total).toEqual(1);
+    expect(result.items).toEqual([expect.objectContaining({ id: idAvec })]);
+  }),
+);
 ```
 
 - [ ] **Step 6 : Lancer le test (par l'utilisateur)**
@@ -467,17 +494,20 @@ Dans `src/server/albert/queries/ListerConversationsAdminQuery.ts` :
 
 1. Importer l'enum en tête : `import { $Enums, Prisma } from "@prisma/client";`
 2. Type `ListerConversationsAdminParams` : ajouter
+
 ```ts
   categories?: $Enums.llm_call_categorie_probleme[];
 ```
+
 3. Avant le `$queryRaw`, calculer le tableau (null si vide) :
+
 ```ts
-    const categoriesArray =
-      params.categories && params.categories.length > 0
-        ? params.categories
-        : null;
+const categoriesArray =
+  params.categories && params.categories.length > 0 ? params.categories : null;
 ```
+
 4. Dans le `WHERE` final (après la condition `avecCommentaire`), ajouter une condition d'existence avec overlap. On ne touche **pas** au CTE `compteurs` : on filtre via un `EXISTS` sur `llm_calls`, en castant la colonne enum en `text[]` pour la comparer au tableau de strings sérialisé par `Prisma.sql` :
+
 ```ts
         AND (
           ${categoriesArray}::text[] IS NULL
@@ -499,12 +529,15 @@ Expected : SUCCÈS (anciens tests + nouveau).
 - [ ] **Step 9 : Brancher le filtre dans la route tRPC**
 
 Dans `src/server/infrastructure/api/trpc/routes/albert.ts`, dans l'input de `listerToutes`, ajouter après `avecCommentaire` :
+
 ```ts
         categories: z
           .array(z.nativeEnum($Enums.llm_call_categorie_probleme))
           .optional(),
 ```
+
 et dans l'appel `query.run({ ... })`, ajouter :
+
 ```ts
         categories: input.categories,
 ```
@@ -526,6 +559,7 @@ git commit -m "[DITP-pilotage/pilote-2] feature(PIL-1549): expose et filtre les 
 ## Task 4 : Front utilisateur (ChatUI)
 
 **Files:**
+
 - Create: `src/client/components/_commons/ChatUI/feedbackCategories.ts`
 - Create: `src/client/components/_commons/ChatUI/FeedbackCategorieCard.tsx`
 - Create: `src/client/components/_commons/ChatUI/FeedbackPositiveModale.tsx`
@@ -743,7 +777,10 @@ export const FeedbackNegatifModale = ({
       </fieldset>
 
       <div className="mt-6">
-        <label className="font-medium text-gray-900" htmlFor="feedback-negatif-commentaire">
+        <label
+          className="font-medium text-gray-900"
+          htmlFor="feedback-negatif-commentaire"
+        >
           Décrivez le problème{" "}
           <span className="font-normal text-gray-500">(optionnel)</span>
         </label>
@@ -824,7 +861,10 @@ export const FeedbackPositiveModale = ({
       title="Merci pour votre retour !"
     >
       <div>
-        <label className="font-medium text-gray-900" htmlFor="feedback-positif-commentaire">
+        <label
+          className="font-medium text-gray-900"
+          htmlFor="feedback-positif-commentaire"
+        >
           Qu'avez-vous particulièrement apprécié ?{" "}
           <span className="font-normal text-gray-500">(optionnel)</span>
         </label>
@@ -919,6 +959,7 @@ git commit -m "[DITP-pilotage/pilote-2] feature(PIL-1549): modale feedback posit
 ## Task 5 : Front admin (affichage + filtre)
 
 **Files:**
+
 - Modify: `src/client/components/PagePanelAdministrateur/Albert/ConversationTranscript.tsx`
 - Modify: `src/client/components/PagePanelAdministrateur/Albert/AlbertDashboardFilters.tsx`
 - Modify: `src/client/components/PagePanelAdministrateur/Albert/AlbertDashboard.tsx`
@@ -936,19 +977,21 @@ import { LIBELLES_CATEGORIES } from "@/components/_commons/ChatUI/feedbackCatego
 Puis, dans le rendu d'un `tour`, juste après le bloc commentaire `{tour.llmCall?.commentaire && (...)}` (vers la ligne 142), ajouter :
 
 ```tsx
-          {tour.llmCall?.categoriesProbleme &&
-            tour.llmCall.categoriesProbleme.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-3">
-                {tour.llmCall.categoriesProbleme.map((categorie) => (
-                  <span
-                    className="inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-medium bg-dsfr-warning-950 text-dsfr-warning-425"
-                    key={categorie}
-                  >
-                    {LIBELLES_CATEGORIES[categorie]}
-                  </span>
-                ))}
-              </div>
-            )}
+{
+  tour.llmCall?.categoriesProbleme &&
+    tour.llmCall.categoriesProbleme.length > 0 && (
+      <div className="flex flex-wrap gap-2 mt-3">
+        {tour.llmCall.categoriesProbleme.map((categorie) => (
+          <span
+            className="inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-medium bg-dsfr-warning-950 text-dsfr-warning-425"
+            key={categorie}
+          >
+            {LIBELLES_CATEGORIES[categorie]}
+          </span>
+        ))}
+      </div>
+    );
+}
 ```
 
 > Le type `LlmCall` est dérivé de la sortie tRPC `recupererPourAdmin` ; après la Task 3, `categoriesProbleme` est présent automatiquement dans ce type — aucune déclaration de type supplémentaire ici.
@@ -958,53 +1001,60 @@ Puis, dans le rendu d'un `tour`, juste après le bloc commentaire `{tour.llmCall
 Dans `src/client/components/PagePanelAdministrateur/Albert/AlbertDashboardFilters.tsx` :
 
 1. Imports :
+
 ```tsx
 import { $Enums } from "@prisma/client";
-import {
-  FEEDBACK_CATEGORIES,
-} from "@/components/_commons/ChatUI/feedbackCategories";
+import { FEEDBACK_CATEGORIES } from "@/components/_commons/ChatUI/feedbackCategories";
 ```
+
 2. Type `FiltresDashboard` : ajouter
+
 ```ts
   categories: $Enums.llm_call_categorie_probleme[];
 ```
+
 3. `FILTRES_VIDES` : ajouter
+
 ```ts
   categories: [],
 ```
+
 4. Ajouter une fonction de toggle :
+
 ```tsx
-  const toggleCategorie = (valeur: $Enums.llm_call_categorie_probleme) => {
-    const actuelles = filtres.categories;
-    const suivantes = actuelles.includes(valeur)
-      ? actuelles.filter((categorie) => categorie !== valeur)
-      : [...actuelles, valeur];
-    onChange({ ...filtres, categories: suivantes });
-  };
+const toggleCategorie = (valeur: $Enums.llm_call_categorie_probleme) => {
+  const actuelles = filtres.categories;
+  const suivantes = actuelles.includes(valeur)
+    ? actuelles.filter((categorie) => categorie !== valeur)
+    : [...actuelles, valeur];
+  onChange({ ...filtres, categories: suivantes });
+};
 ```
+
 5. Dans le JSX, après le bloc `<details>` des profils, ajouter un second `<details>` :
+
 ```tsx
-      <details className="!relative">
-        <summary className="!cursor-pointer !px-3 !py-2 !text-sm !rounded-md !border !border-dsfr-grey-900 !list-none">
-          Catégories{" "}
-          {filtres.categories.length > 0 && `(${filtres.categories.length})`}
-        </summary>
-        <div className="!absolute !z-10 !mt-1 !p-3 !bg-white !border !border-dsfr-grey-925 !rounded-md !shadow-md !w-64">
-          {FEEDBACK_CATEGORIES.map((categorie) => (
-            <label
-              className="!flex !items-center !gap-2 !text-sm !py-1"
-              key={categorie.valeur}
-            >
-              <input
-                checked={filtres.categories.includes(categorie.valeur)}
-                onChange={() => toggleCategorie(categorie.valeur)}
-                type="checkbox"
-              />
-              {categorie.titre}
-            </label>
-          ))}
-        </div>
-      </details>
+<details className="!relative">
+  <summary className="!cursor-pointer !px-3 !py-2 !text-sm !rounded-md !border !border-dsfr-grey-900 !list-none">
+    Catégories{" "}
+    {filtres.categories.length > 0 && `(${filtres.categories.length})`}
+  </summary>
+  <div className="!absolute !z-10 !mt-1 !p-3 !bg-white !border !border-dsfr-grey-925 !rounded-md !shadow-md !w-64">
+    {FEEDBACK_CATEGORIES.map((categorie) => (
+      <label
+        className="!flex !items-center !gap-2 !text-sm !py-1"
+        key={categorie.valeur}
+      >
+        <input
+          checked={filtres.categories.includes(categorie.valeur)}
+          onChange={() => toggleCategorie(categorie.valeur)}
+          type="checkbox"
+        />
+        {categorie.titre}
+      </label>
+    ))}
+  </div>
+</details>
 ```
 
 - [ ] **Step 3 : Passer le filtre `categories` à la query dans `AlbertDashboard.tsx`**

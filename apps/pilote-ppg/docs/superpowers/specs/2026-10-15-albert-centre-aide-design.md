@@ -33,6 +33,7 @@ Critères d'acceptation du ticket :
   Le sous-agent ne voit que le centre d'aide, ce qui en fait sa seule source de
   vérité. L'agent principal garde la conversation et peut combiner la réponse
   avec les données.
+
 - **Pas d'embeddings ni d'index.** Le corpus compte 53 articles, dont 43
   pages avec contenu (export du 2026-10-15). Le
   sous-agent choisit ses pages à partir d'un sommaire, puis les lit.
@@ -102,13 +103,13 @@ compare.
 dépendance) et des règles pour les blocs de l'éditeur
 (`EditeurRiche/extensions/`) :
 
-| Bloc | HTML | Markdown |
-|---|---|---|
-| Accordéon | `div[data-type="accordion-item"][data-title]` | titre `####` (texte de `data-title`) suivi du contenu, déplié |
-| Callout | `div[data-type="callout"]` | citation `>` |
-| Vidéo | `div[data-type="video"]`, `iframe` | `[Vidéo disponible sur la page]` |
-| Image | `img` | `[Image : <alt>]`, ou `[Image disponible sur la page]` sans `alt` |
-| Icône | `span[data-type="icone"]` | supprimée |
+| Bloc      | HTML                                          | Markdown                                                          |
+| --------- | --------------------------------------------- | ----------------------------------------------------------------- |
+| Accordéon | `div[data-type="accordion-item"][data-title]` | titre `####` (texte de `data-title`) suivi du contenu, déplié     |
+| Callout   | `div[data-type="callout"]`                    | citation `>`                                                      |
+| Vidéo     | `div[data-type="video"]`, `iframe`            | `[Vidéo disponible sur la page]`                                  |
+| Image     | `img`                                         | `[Image : <alt>]`, ou `[Image disponible sur la page]` sans `alt` |
+| Icône     | `span[data-type="icone"]`                     | supprimée                                                         |
 
 Les deux queries lisent la table à chaque appel, via le repository existant
 (`lister()`). Pour une trentaine de lignes, ça ne pose pas de problème.

@@ -59,18 +59,18 @@ Règle validée : une demande de **synthèse ou de comparaison sur des critères
 génériques** appelle ces outils ; une demande précise reste une réponse dans le
 fil.
 
-| Demande | Traitement |
-|---|---|
-| « Fais-moi la synthèse du Nord » | `rediger_synthese_territoire` |
-| « Où en est la Gironde ? », « La situation en Bretagne » | `rediger_synthese_territoire` |
-| « Compare le Nord et la Gironde », « Bretagne ou Normandie, qui avance le mieux ? » | `rediger_comparaison_territoires` |
-| « Fais-moi la synthèse des difficultés de la Bretagne » | `rediger_synthese_territoire` |
+| Demande                                                                                              | Traitement                                                        |
+| ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| « Fais-moi la synthèse du Nord »                                                                     | `rediger_synthese_territoire`                                     |
+| « Où en est la Gironde ? », « La situation en Bretagne »                                             | `rediger_synthese_territoire`                                     |
+| « Compare le Nord et la Gironde », « Bretagne ou Normandie, qui avance le mieux ? »                  | `rediger_comparaison_territoires`                                 |
+| « Fais-moi la synthèse des difficultés de la Bretagne »                                              | `rediger_synthese_territoire`                                     |
 | « Fais-moi la synthèse de Bretagne et ses départements », « Compare Bretagne avec ses départements » | `rediger_comparaison_territoires` avec `include_sous_territoires` |
-| « Les chantiers en retard du Nord », « Le taux d'avancement de la Gironde » | outils de données, dans le fil |
-| « Les difficultés en Hauts-de-France » | outils de données (vues en retard et en difficulté), dans le fil |
-| « Compare le CH-062 entre le Nord et la Gironde » | outils de données, dans le fil |
-| « Où en sont l'Occitanie et ses départements ? » | taux avec `include_sous_territoires`, dans le fil |
-| « Fais-moi un rapport sur la Gironde » | inchangé (`export_rapport`) |
+| « Les chantiers en retard du Nord », « Le taux d'avancement de la Gironde »                          | outils de données, dans le fil                                    |
+| « Les difficultés en Hauts-de-France »                                                               | outils de données (vues en retard et en difficulté), dans le fil  |
+| « Compare le CH-062 entre le Nord et la Gironde »                                                    | outils de données, dans le fil                                    |
+| « Où en sont l'Occitanie et ses départements ? »                                                     | taux avec `include_sous_territoires`, dans le fil                 |
+| « Fais-moi un rapport sur la Gironde »                                                               | inchangé (`export_rapport`)                                       |
 
 Un territoire désigné par son nom ou son numéro passe d'abord par
 `search_territoires`, comme pour tous les outils (règle de l'étape 2).

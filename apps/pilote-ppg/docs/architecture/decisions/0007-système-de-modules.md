@@ -111,11 +111,18 @@ export const rapportsHebdomadairesModule = defineModule<
   RapportsHebdomadairesCradle
 >()({
   name: "rapportsHebdomadaires",
-  imports: ["shared", "gestionUtilisateur", "chantiers", "indicateurTerritoireValeurEvenement"],
+  imports: [
+    "shared",
+    "gestionUtilisateur",
+    "chantiers",
+    "indicateurTerritoireValeurEvenement",
+  ],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({
-      activiteComptesGateway: asModuleClass(GestionUtilisateurActiviteComptesGateway),
+      activiteComptesGateway: asModuleClass(
+        GestionUtilisateurActiviteComptesGateway,
+      ),
       rapportRepository: asModuleClass(PrismaRapportRepository),
       // ...
     });
@@ -255,6 +262,7 @@ Chaque scope hérite automatiquement des dépendances de shared
 ```
 
 **Phase 1 — Création des conteneurs** :
+
 - Le module racine (`imports: []`) obtient un conteneur Awilix dédié. Il s'agit du module `shared` qui fournit les dépendances transversales
 - Tous les autres modules obtiennent un **scope** du conteneur racine (`createScope()`), héritant ainsi automatiquement des dépendances transversales
 - Chaque module enregistre ses propres dépendances via sa fonction `register`
@@ -267,6 +275,7 @@ gestionUtilisateur.exports ───asValue()──> rapportsHebdomadaires
 ```
 
 **Phase 2 — Câblage inter-modules** :
+
 - Pour chaque module ayant des imports autres que le module racine, les exports des modules importés sont résolus eagerly puis enregistrés via `asValue()` dans le conteneur du module importateur
 
 ### Résolution eager (`asValue`)

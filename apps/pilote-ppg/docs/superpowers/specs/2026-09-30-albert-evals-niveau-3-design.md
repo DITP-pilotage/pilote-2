@@ -73,13 +73,13 @@ Chaque territoire peuplé porte au moins : un chantier à l'heure avec
 commentaire, un chantier en retard avec commentaire, un chantier en difficulté
 **sans** commentaire (force la règle « Pas de commentaire disponible »).
 
-| Territoire | Rôle |
-|---|---|
-| Bretagne REG-53 | territoire courant par défaut ; jalons 2025 et 2024 |
-| DEPT-22, 29, 35, 56 | « et ses départements », comparaisons région / départements |
-| Ille-et-Vilaine DEPT-35 | territoire courant du scénario « autres départements de la région » |
-| Pays de la Loire REG-52 | cible de comparaison, hors périmètre du coordinateur |
-| Auvergne-Rhône-Alpes REG-84, Vaucluse DEPT-84 | piège de résolution « 84 » |
+| Territoire                                    | Rôle                                                                |
+| --------------------------------------------- | ------------------------------------------------------------------- |
+| Bretagne REG-53                               | territoire courant par défaut ; jalons 2025 et 2024                 |
+| DEPT-22, 29, 35, 56                           | « et ses départements », comparaisons région / départements         |
+| Ille-et-Vilaine DEPT-35                       | territoire courant du scénario « autres départements de la région » |
+| Pays de la Loire REG-52                       | cible de comparaison, hors périmètre du coordinateur                |
+| Auvergne-Rhône-Alpes REG-84, Vaucluse DEPT-84 | piège de résolution « 84 »                                          |
 
 Les valeurs sont franchement de part et d'autre des seuils (écart <= -10,
 météo ORAGE/NUAGE) et placent la Bretagne sous la médiane des régions semées,
@@ -127,12 +127,12 @@ préfixe range par niveau puis par groupe.
 
 ```ts
 type ScenarioCase = {
-  question: string;            // le message tel qu'il part, trou complété
-  reason: string;              // comment le trou a été complété, ou le piège visé
+  question: string; // le message tel qu'il part, trou complété
+  reason: string; // comment le trou a été complété, ou le piège visé
   profile?: "ditp" | "coordinateur";
   currentTerritory?: TerritoireRef;
   seed: () => Promise<void>;
-  truthScope: TruthScope;      // territoires, jalons, chantiers à lire pour la fiche
+  truthScope: TruthScope; // territoires, jalons, chantiers à lire pour la fiche
   expected?: ObservedToolCall[];
   forbidden?: string[];
 };
@@ -170,11 +170,11 @@ tour.
 
 ### Matière jugée
 
-| Famille | Matière |
-|---|---|
-| Synthèses, comparaisons, commentaires, chantiers en retard | le texte de la réponse |
-| Tableau de bord | la structure rendue par `create_dashboard` puis le texte d'accompagnement |
-| Rapport | le contenu passé à `export_rapport` |
+| Famille                                                    | Matière                                                                   |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Synthèses, comparaisons, commentaires, chantiers en retard | le texte de la réponse                                                    |
+| Tableau de bord                                            | la structure rendue par `create_dashboard` puis le texte d'accompagnement |
+| Rapport                                                    | le contenu passé à `export_rapport`                                       |
 
 ### Entrée et sortie
 

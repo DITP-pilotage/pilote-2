@@ -66,22 +66,29 @@ Quatre gains attendus :
 ### Entrée
 
 ```ts
-chantier_ids: chantierIdsSchema.optional().default([])
-  // inchangé : absent = tous les chantiers accessibles (« mes chantiers »)
-indicateur_ids: z.array(z.string()).optional().default([])
-  // inchangé
-perimetre: z.discriminatedUnion("type", [SELECTION, REGION_ET_SES_DEPARTEMENTS,
-    FRANCE_ET_SES_REGIONS, TOUTES_REGIONS, TOUS_DEPARTEMENTS, TOUS_TERRITOIRES])
-    .optional().default({ type: "TOUS_TERRITOIRES" })
-  // description : descriptionPerimetre({ types }) suivie de :
-  // « Par défaut, TOUS_TERRITOIRES. N'y mets pas le territoire courant de la
-  //  session, sauf si la demande le nomme. »
-detail: z.enum(["compteurs", "territoires"]).optional().default("compteurs")
-  // « compteurs : par chantier, indicateur et maille, le nombre de territoires
-  //  en retard. territoires : en plus, chaque
-  //  territoire en retard avec ses dates. Choisis territoires seulement quand
-  //  la demande nomme les territoires ou le détail (« sur quels territoires »,
-  //  « les départements non à jour », « le détail par territoire »). »
+chantier_ids: chantierIdsSchema.optional().default([]);
+// inchangé : absent = tous les chantiers accessibles (« mes chantiers »)
+indicateur_ids: z.array(z.string()).optional().default([]);
+// inchangé
+perimetre: z.discriminatedUnion("type", [
+  SELECTION,
+  REGION_ET_SES_DEPARTEMENTS,
+  FRANCE_ET_SES_REGIONS,
+  TOUTES_REGIONS,
+  TOUS_DEPARTEMENTS,
+  TOUS_TERRITOIRES,
+])
+  .optional()
+  .default({ type: "TOUS_TERRITOIRES" });
+// description : descriptionPerimetre({ types }) suivie de :
+// « Par défaut, TOUS_TERRITOIRES. N'y mets pas le territoire courant de la
+//  session, sauf si la demande le nomme. »
+detail: z.enum(["compteurs", "territoires"]).optional().default("compteurs");
+// « compteurs : par chantier, indicateur et maille, le nombre de territoires
+//  en retard. territoires : en plus, chaque
+//  territoire en retard avec ses dates. Choisis territoires seulement quand
+//  la demande nomme les territoires ou le détail (« sur quels territoires »,
+//  « les départements non à jour », « le détail par territoire »). »
 ```
 
 `territoire_code` disparaît. Le périmètre est **orthogonal au mode** : il
@@ -92,7 +99,7 @@ le détail.
 
 ```jsonc
 {
-  "detail": "compteurs",                       // le mode effectivement appliqué
+  "detail": "compteurs", // le mode effectivement appliqué
   "resultats": [
     {
       "chantier": { "id": "CH-018", "nom": "…" },
@@ -100,30 +107,31 @@ le détail.
         {
           "id": "IND-894",
           "nom": "…",
-          "periodicite": "Trimestrielle",       // tel qu'en base, déjà un libellé
+          "periodicite": "Trimestrielle", // tel qu'en base, déjà un libellé
           "delai_disponibilite_mois": 1,
           "mailles": [
             {
-              "maille": "départementale",       // nationale | régionale | départementale
+              "maille": "départementale", // nationale | régionale | départementale
               "nb_territoires_en_retard": 37,
-              "territoires_en_retard": [        // mode territoires seulement
+              "territoires_en_retard": [
+                // mode territoires seulement
                 {
                   "code": "DEPT-29",
                   "nom": "Finistère",
                   "date_derniere_valeur": "2025-06-30",
-                  "mise_a_jour_attendue_depuis": "2025-11-30"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
+                  "mise_a_jour_attendue_depuis": "2025-11-30",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
   ],
-  "acces_refuse": true,                        // optionnel
-  "chantiers_non_accessibles": ["CH-999"],     // optionnel, seulement si non vide
-  "indicateurs_non_accessibles": ["IND-003"],  // idem
-  "indicateurs_introuvables": ["IND-9999"]     // idem
+  "acces_refuse": true, // optionnel
+  "chantiers_non_accessibles": ["CH-999"], // optionnel, seulement si non vide
+  "indicateurs_non_accessibles": ["IND-003"], // idem
+  "indicateurs_introuvables": ["IND-9999"], // idem
 }
 ```
 
@@ -167,7 +175,7 @@ territoires et celles de l'outil actuel pour les chantiers, en sortie souple
    `acces_refuse` ; demandés en partie → `chantiers_non_accessibles` ; aucun
    demandé → `chantiersAccessibles`, vide → `acces_refuse`.
 4. **Indicateurs** : un seul appel à `GetIndicateursIdentiteQuery.execute({
-   indicateurIds })` (la query est étendue d'un filtre `indicateurIds`,
+indicateurIds })` (la query est étendue d'un filtre `indicateurIds`,
    voir plus bas), à la place des N appels à `GetIndicateurContexteQuery`,
    dont l'outil ne dépend plus. Pour chaque identifiant demandé :
    - absent du résultat → `indicateurs_introuvables` (inexistant, ou non
@@ -176,9 +184,9 @@ territoires et celles de l'outil actuel pour les chantiers, en sortie souple
    - présent, chantier hors de `chantiersAccessibles` →
      `indicateurs_non_accessibles`, sans révéler le chantier ;
    - sinon → interrogé.
-   Indicateurs demandés mais aucun interrogeable : `acces_refuse` si au moins
-   un est non accessible ; sinon (tous introuvables) `resultats: []` avec la
-   seule liste `indicateurs_introuvables`, sans appeler la query principale.
+     Indicateurs demandés mais aucun interrogeable : `acces_refuse` si au moins
+     un est non accessible ; sinon (tous introuvables) `resultats: []` avec la
+     seule liste `indicateurs_introuvables`, sans appeler la query principale.
 5. **Un indicateur nommé prime sur le filtre de chantiers.** Si un indicateur
    interrogé appartient à un chantier accessible absent des `chantier_ids`
    demandés, son chantier est ajouté aux chantiers interrogés. Sans cela,
