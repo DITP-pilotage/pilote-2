@@ -107,6 +107,16 @@ describe('apiRouter served by @hono/node-server', () => {
     expect(await status('assistant')).toBe(403)
   })
 
+  it('relays the axes and their modalities', async () => {
+    const status = async (path: string) =>
+      (await fetch(`${proxyUrl}/api/${path}`, { headers: { cookie } })).status
+
+    expect(await status('axes')).toBe(200)
+    expect(await status('axes/AXE-OPERATEUR')).toBe(200)
+    expect(await status('axes/AXE-OPERATEUR/modalites/OP-ORANGE')).toBe(200)
+    expect(await status('axesx')).toBe(403)
+  })
+
   it('relays the Matomo dimensions', async () => {
     const status = async (path: string) =>
       (await fetch(`${proxyUrl}/api/${path}`, { headers: { cookie } })).status
