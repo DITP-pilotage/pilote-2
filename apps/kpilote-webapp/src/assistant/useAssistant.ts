@@ -12,11 +12,13 @@ const chats = new Map<string, Chat<KpiloteUIMessage>>()
 // Le contexte part avec chaque message : celui de la page affichée au moment de l'envoi.
 const contexts = new Map<string, PageContext | undefined>()
 
-const chatFor = (conversationId: string) => {
-  const existing = chats.get(conversationId)
-  if (existing) return existing
+// Ce qui est saisi survit au changement de vue, qui remonte le panneau.
+const drafts = new Map<string, string>()
+
+const createChat = (conversationId: string, messages: KpiloteUIMessage[] = []) => {
   const chat = new Chat<KpiloteUIMessage>({
     id: conversationId,
+    messages,
     transport: new DefaultChatTransport<KpiloteUIMessage>({
       api: `${env.apiUrl}/assistant/chat`,
       // Le serveur possède l'historique : seul le nouveau message part.
@@ -37,6 +39,28 @@ const chatFor = (conversationId: string) => {
   chats.set(conversationId, chat)
   return chat
 }
+
+const chatFor = (conversationId: string) => chats.get(conversationId) ?? createChat(conversationId)
+
+/** Reprend une conversation enregistrée : ses messages remplacent ceux gardés en mémoire. */
+export const loadChat = (conversationId: string, messages: KpiloteUIMessage[]): void => {
+  createChat(conversationId, messages)
+}
+
+/** Arrête la réponse en cours, avant de quitter une conversation pour une autre. */
+export const stopChat = (conversationId: string): void => {
+  void chats.get(conversationId)?.stop()
+}
+
+export const readDraft = (conversationId: string): string => drafts.get(conversationId) ?? ''
+
+export const writeDraft = (conversationId: string, text: string): void => {
+  drafts.set(conversationId, text)
+}
+
+/** L'état d'une conversation sans l'envoyer : pour l'en-tête et la pastille. */
+export const useConversationState = (conversationId: string) =>
+  useChat<KpiloteUIMessage>({ chat: chatFor(conversationId), experimental_throttle: 250 })
 
 export const useAssistant = ({
   conversationId,
