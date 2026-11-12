@@ -32,6 +32,10 @@
 - [ ] Changement visible (admin, webapp) : parcours vérifié dans le navigateur, capture dans la PR.
 - [ ] Le ticket Jira est cité dans le titre de la PR.
 
+## Suivi
+
+Le tableau ci-dessous suit l'avancement : statut par tâche, et cases cochées dans chaque tâche une fois sa PR mergée. Les écarts au plan décidés en cours de route sont consignés dans la tâche concernée (« Écarts validés »).
+
 ## Séquence
 
 ```
@@ -43,29 +47,29 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
                                                   └──► T6.1 ──► T6.2 ──► T6.3 ──┘
 ```
 
-| Tâche | Ticket   | Titre                                                  |
-| ----- | -------- | ------------------------------------------------------ |
-| T0    | PIL-1979 | Snapshot des lectures et non-régression des écritures  |
-| —     | PIL-1980 | ~~Feature flag~~ : abandonné (D12), ticket à supprimer |
-| T1.1  | PIL-1981 | Migration : axes, niveaux et modalités                 |
-| T1.2  | PIL-1982 | API : CRUD des axes, niveaux et modalités              |
-| T1.3  | PIL-1983 | Admin : pages Axes                                     |
-| T2.1  | PIL-1984 | Migration : axes d'un indicateur                       |
-| T2.2  | PIL-1985 | API : déclarer les axes d'un indicateur                |
-| T2.3  | PIL-1986 | Admin : section Axes d'un indicateur                   |
-| T3.1  | PIL-1987 | Migration : combinaisons de modalités sur les valeurs  |
-| T3.2  | PIL-1988 | Upserts de valeurs sur la nouvelle clé unique          |
-| T3.3  | PIL-1989 | Suppression de l'ancien index unique des valeurs       |
-| T4.1  | PIL-1993 | Lectures de valeurs : paramètre combinaison optionnel  |
-| T5.1  | PIL-1990 | Calcul de la marginale sur les axes (fonctions pures)  |
-| T5.2  | PIL-1991 | Lectures : marginale et sélection de modalités         |
-| T5.3  | PIL-1992 | Comparaison et carte pour une modalité                 |
-| T6.1  | PIL-1994 | Saisie de valeurs avec modalités                       |
-| T6.2  | PIL-1995 | Import Albert : colonnes d'axe                         |
-| T6.3  | PIL-1996 | Webapp : import avec colonnes d'axe                    |
-| T7.1  | PIL-1997 | Fiche indicateur : un sélecteur par axe                |
-| T7.2  | PIL-1998 | Graphique « Décomposer par »                           |
-| T8.1  | PIL-1999 | Mise en service des axes                               |
+| Tâche | Ticket   | Titre                                                  | Statut          |
+| ----- | -------- | ------------------------------------------------------ | --------------- |
+| T0    | PIL-1979 | Snapshot des lectures et non-régression des écritures  | ✅ fait (#2674) |
+| —     | PIL-1980 | ~~Feature flag~~ : abandonné (D12), ticket à supprimer | abandonné       |
+| T1.1  | PIL-1981 | Migration : axes, niveaux et modalités                 | ✅ fait (#2675) |
+| T1.2  | PIL-1982 | API : CRUD des axes, niveaux et modalités              | 🔄 en cours     |
+| T1.3  | PIL-1983 | Admin : pages Axes                                     | 🔄 en cours     |
+| T2.1  | PIL-1984 | Migration : axes d'un indicateur                       | à faire         |
+| T2.2  | PIL-1985 | API : déclarer les axes d'un indicateur                | à faire         |
+| T2.3  | PIL-1986 | Admin : section Axes d'un indicateur                   | à faire         |
+| T3.1  | PIL-1987 | Migration : combinaisons de modalités sur les valeurs  | à faire         |
+| T3.2  | PIL-1988 | Upserts de valeurs sur la nouvelle clé unique          | à faire         |
+| T3.3  | PIL-1989 | Suppression de l'ancien index unique des valeurs       | à faire         |
+| T4.1  | PIL-1993 | Lectures de valeurs : paramètre combinaison optionnel  | à faire         |
+| T5.1  | PIL-1990 | Calcul de la marginale sur les axes (fonctions pures)  | à faire         |
+| T5.2  | PIL-1991 | Lectures : marginale et sélection de modalités         | à faire         |
+| T5.3  | PIL-1992 | Comparaison et carte pour une modalité                 | à faire         |
+| T6.1  | PIL-1994 | Saisie de valeurs avec modalités                       | à faire         |
+| T6.2  | PIL-1995 | Import Albert : colonnes d'axe                         | à faire         |
+| T6.3  | PIL-1996 | Webapp : import avec colonnes d'axe                    | à faire         |
+| T7.1  | PIL-1997 | Fiche indicateur : un sélecteur par axe                | à faire         |
+| T7.2  | PIL-1998 | Graphique « Décomposer par »                           | à faire         |
+| T8.1  | PIL-1999 | Mise en service des axes                               | à faire         |
 
 ---
 
@@ -73,7 +77,7 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** un filet de sécurité avant de toucher au code. Il sert à toutes les PR suivantes.
 
-> ⚠️ **Point ouvert (spec §9.1).** La synchro pilote-ppg → kpilote a été supprimée de `dev` (#2668). Le ticket parle de « rejeu pilote-ppg » : les tests restent utiles comme non-régression des écritures existantes, mais sans référence à pilote-ppg. Faire confirmer ce point par Antoine avant de commencer.
+> ✅ **Fait** (#2674). Point §9.1 tranché : les tests sont des tests de non-régression des écritures, sans référence à pilote-ppg. Usage du snapshot : section « Snapshot des lectures » du README de kpilote-api.
 
 **Fichiers :**
 
@@ -83,17 +87,17 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Étapes :**
 
-- [ ] Adapter le script du POC à `dev` : monter les routes de lecture réelles in-process (`valeurAvancement`, `indicateur`, `objectifIndicateurIndividu`, `individu`, `referentiel`, `relation`, `collection`), dans une transaction annulée, avec un utilisateur dédié qui a READ partout. Modes `capture <fichier.json>` et `compare <fichier.json>`.
-- [ ] Garder la classification des écarts du POC : identique / champs ajoutés seulement / listes globales avec entités ajoutées / même contenu dans un autre ordre (requêtes sans `ORDER BY`) / différence réelle.
-- [ ] Tests de non-régression de `PUT /indicateurs/{id}/valeurs:batch` au format `{ items: [{ individu, date, valeur }] }` : compteurs créées/mises à jour exacts sur deux envois successifs ; individu inconnu → code HTTP et corps d'erreur exacts.
-- [ ] Tests de non-régression de `PUT /indicateurs/{id}` avec `referentiels: [{ id, fonctionAgregation }]` : remplacement complet des référentiels, valeurs conservées.
-- [ ] Écrire ces tests **contre le code actuel**, sans le modifier.
+- [x] Adapter le script du POC à `dev` : monter les routes de lecture réelles in-process (`valeurAvancement`, `indicateur`, `objectifIndicateurIndividu`, `individu`, `referentiel`, `relation`, `collection`), dans une transaction annulée, avec un utilisateur dédié qui a READ partout. Modes `capture <fichier.json>` et `compare <fichier.json>`.
+- [x] Garder la classification des écarts du POC : identique / champs ajoutés seulement / listes globales avec entités ajoutées / même contenu dans un autre ordre (requêtes sans `ORDER BY`) / différence réelle.
+- [x] Tests de non-régression de `PUT /indicateurs/{id}/valeurs:batch` au format `{ items: [{ individu, date, valeur }] }` : compteurs créées/mises à jour exacts sur deux envois successifs ; individu inconnu → code HTTP et corps d'erreur exacts.
+- [x] Tests de non-régression de `PUT /indicateurs/{id}` avec `referentiels: [{ id, fonctionAgregation }]` : remplacement complet des référentiels, valeurs conservées.
+- [x] Écrire ces tests **contre le code actuel**, sans le modifier.
 
 **DoD :**
 
-- [ ] `tsx scripts/snapshotLecture.ts capture` puis `compare` sur `dev` donne 0 différence.
-- [ ] Les nouveaux tests passent sur `dev` sans aucune modification du code applicatif.
-- [ ] Usage documenté.
+- [x] `tsx scripts/snapshotLecture.ts capture` puis `compare` sur `dev` donne 0 différence.
+- [x] Les nouveaux tests passent sur `dev` sans aucune modification du code applicatif.
+- [x] Usage documenté.
 
 ---
 
@@ -101,20 +105,22 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** créer le référentiel des axes, sans toucher aux tables existantes.
 
+> ✅ **Fait** (#2675). Écarts validés : `created_at`/`updated_at` aussi sur `niveau_axe` et `modalite` ; clés étrangères vers le niveau et le parent en `NO ACTION` (la suppression d'un axe cascade) ; publicId de modalité unique tous axes confondus ; ordre des niveaux à partir de 1. Le snapshot n'existait pas encore à cette PR (seules des tables neuves, non lues).
+
 **Fichiers :** Modify `apps/kpilote-api/prisma/schema.prisma` ; Create migration `<ts>_axes_modalites` ; Modify `apps/kpilote-api/src/test/fixtures.ts` ; Modify `apps/kpilote-api/prisma/seed.ts` (+ `prisma/seedData/axes.ts`).
 
 **Étapes :**
 
-- [ ] Modèles `Axe` (`axe` : id uuid, `public_id` unique `AXE-…`, nom, description, timestamps), `NiveauAxe` (`niveau_axe` : axe, nom, ordre ; UNIQUE(axe, ordre)), `Modalite` (`modalite` : id, `public_id` unique, axe, niveau, nom, `parent_id` nullable vers `modalite`).
-- [ ] Regex des publicIds : vérifier `packages/kpilote-shared/src/publicIds.ts` et y ajouter les préfixes si nécessaire.
-- [ ] Migration écrite pour `migrate deploy`, sans toucher aux tables existantes.
-- [ ] Fixtures `fixtures.axe(...)`, `fixtures.niveauAxe(...)`, `fixtures.modalite(...)` (variadiques, upsert, valeurs par défaut codées en dur).
-- [ ] Seed de démo : AXE-OPERATEUR (plat), AXE-FRAUDE (Famille → Type), cf. exemple spec §4.
+- [x] Modèles `Axe` (`axe` : id uuid, `public_id` unique `AXE-…`, nom, description, timestamps), `NiveauAxe` (`niveau_axe` : axe, nom, ordre ; UNIQUE(axe, ordre)), `Modalite` (`modalite` : id, `public_id` unique, axe, niveau, nom, `parent_id` nullable vers `modalite`).
+- [x] Regex des publicIds : vérifier `packages/kpilote-shared/src/publicIds.ts` et y ajouter les préfixes si nécessaire.
+- [x] Migration écrite pour `migrate deploy`, sans toucher aux tables existantes.
+- [x] Fixtures `fixtures.axe(...)`, `fixtures.niveauAxe(...)`, `fixtures.modalite(...)` (variadiques, upsert, valeurs par défaut codées en dur).
+- [x] Seed de démo : AXE-OPERATEUR (plat), AXE-FRAUDE (Famille → Type), cf. exemple spec §4.
 
 **DoD :**
 
-- [ ] Commune.
-- [ ] `git diff` de la migration : seulement des `CREATE TABLE` / index / clés étrangères sur les nouvelles tables.
+- [x] Commune.
+- [x] `git diff` de la migration : seulement des `CREATE TABLE` / index / clés étrangères sur les nouvelles tables.
 
 ---
 
@@ -122,13 +128,22 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** gérer les axes par l'API.
 
+> **Écarts validés (2026-11-12) :**
+>
+> - Lectures ouvertes à tout utilisateur authentifié (la fiche indicateur en aura besoin, T7.1) ; écritures réservées aux clés API ADMIN.
+> - Le niveau d'une modalité se déduit de son parent : pas de champ niveau dans l'API, l'erreur « niveau incohérent » n'existe pas.
+> - Le parent est fixé à la création : pas de déplacement, on supprime puis on recrée (409 `CHANGEMENT_PARENT_INTERDIT`).
+> - Niveaux d'un axe identifiés par leur position dans `PUT /axes/{id}` ; raccourcir la liste supprime les derniers (409 `NIVEAU_PORTE_MODALITES` s'ils portent des modalités).
+> - Pas de suppression d'axe en v1.
+> - Le refus de supprimer une modalité utilisée par des valeurs passe dans T3.1 (PIL-1987).
+
 **Fichiers :** Create `apps/kpilote-api/src/axe/{routes.ts,utils.ts,commands/*,queries/*}` (+ tests) ; Modify `apps/kpilote-api/tsconfig.json` (`@/axe/*`), `apps/kpilote-api/src/app.ts` ; Create `packages/kpilote-shared/src/axe.ts` (+ entrée `./axe` dans `package.json`).
 
 **Étapes :**
 
 - [ ] Schémas partagés : `AxeApiModel` (avec niveaux), `ModaliteApiModel` (avec `parent`), payloads d'écriture.
-- [ ] Routes : `GET /axes`, `GET /axes/{id}`, `PUT /axes/{id}` (axe + niveaux), gestion des modalités (`GET/PUT/DELETE` sous `/axes/{id}/modalites`). Réservé aux ADMIN.
-- [ ] Contrôles : parent d'une modalité du même axe et du niveau d'ordre précédent ; modalité racine au premier niveau ; suppression d'une modalité utilisée par une combinaison refusée (409, à activer quand T3.1 existe) ; suppression d'un niveau qui porte des modalités refusée.
+- [ ] Routes : `GET /axes`, `GET /axes/{id}`, `PUT /axes/{id}` (axe + niveaux), gestion des modalités (`GET` sous `/axes/{id}/modalites`, `PUT/DELETE` sous `/axes/{id}/modalites/{modaliteId}`). Lectures : tout utilisateur authentifié ; écritures : clés API ADMIN.
+- [ ] Contrôles : parent d'une modalité du même axe ; niveau déduit du parent (premier niveau sans parent) ; parent fixé à la création ; suppression d'une modalité qui a des enfants refusée ; suppression d'un niveau qui porte des modalités refusée.
 - [ ] Inspiration : `apps/kpilote-api/src/dimension/{routes,commands/upsertDimension,queries/*}.ts` du POC.
 - [ ] Descriptions OpenAPI.
 
@@ -149,7 +164,7 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 **Étapes :**
 
 - [ ] Liste, création, édition d'un axe ; gestion de ses niveaux (ordre).
-- [ ] Arbre des modalités : ajout, renommage, rattachement à un parent.
+- [ ] Arbre des modalités : ajout (sous un parent), renommage, suppression. Pas de déplacement ; publicId saisi à la main.
 - [ ] Inspiration : `DimensionForm.tsx`, `routes/_authed/dimensions/*` du POC.
 
 **DoD :**
@@ -233,6 +248,7 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 - [ ] `valeur_avancement.combinaison_id UUID NOT NULL DEFAULT '<uuid vide>'` + clé étrangère. La valeur par défaut est constante : ajout instantané, l'ancien code continue d'écrire sans la connaître.
 - [ ] Nouvel index unique `(indicateur_id, individu_id, combinaison_id, date)` **en plus** de `valeur_avancement_unique`.
 - [ ] Ne pas toucher à `objectif_indicateur_individu` ni à `indicateur_individu_commentaire` (D5).
+- [ ] `DELETE /axes/{id}/modalites/{modaliteId}` : refuser (409) la suppression d'une modalité utilisée par une combinaison (reporté depuis T1.2).
 
 **DoD :**
 

@@ -158,7 +158,9 @@ Vaucluse (84) et Bouches-du-Rhône (13). Valeurs : 84 × France Travail = 1, 84 
 
 ## 6. API (cible)
 
-- `GET/PUT /axes`, niveaux et modalités (ADMIN).
+- `GET/PUT /axes`, niveaux et modalités : lectures ouvertes à tout utilisateur authentifié, écritures réservées aux
+  clés API ADMIN. Le niveau d'une modalité se déduit de son parent, et le parent est fixé à la création (pas de
+  déplacement : suppression puis recréation).
 - `PUT /indicateurs/{id}/axes` ; champ `axes: []` ajouté aux lectures d'indicateur.
 - Lectures de valeurs : paramètre optionnel `modalites=<publicIds séparés par des virgules>`, au plus une par
   axe ; absent = marginale sur tous les axes. Format exact à figer dans PIL-1991.
