@@ -75,7 +75,7 @@ export const tauxProgressionPointApiModelSchema = z.object({
     .nullable()
     .describe(
       'Taux de progression en pourcentage : min(100, valeur / valeurCible × 100). ' +
-        'null si valeurCible vaut 0.',
+        "null si valeurCible vaut 0 ou si l'indicateur est à la baisse (sensSouhaite = BAISSE).",
     ),
 })
 export type TauxProgressionPointApiModel = z.infer<typeof tauxProgressionPointApiModelSchema>

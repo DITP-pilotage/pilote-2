@@ -1,4 +1,5 @@
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
+import { type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
 import {
   type ListTauxProgressionQuery,
   type TauxProgressionListApiModel,
@@ -29,7 +30,7 @@ export const listTauxProgressionForIndicateur = (
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({
       where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
-      select: { id: true, publicId: true },
+      select: { id: true, publicId: true, sensSouhaite: true },
     }),
   ).andThen((indicateur) => ResultAsync.fromSafePromise(buildList({ indicateur, params })))
 }
@@ -38,7 +39,7 @@ const buildList = async ({
   indicateur,
   params,
 }: {
-  indicateur: { id: string; publicId: string }
+  indicateur: { id: string; publicId: string; sensSouhaite: SensSouhaite }
   params: ListTauxProgressionQuery
 }): Promise<TauxProgressionListApiModel> => {
   const individusCibles = await loadIndividusParPublicId(params.individus)
@@ -50,6 +51,7 @@ const buildList = async ({
 
   const points = await computeTauxProgressionPoints({
     indicateurId: indicateur.id,
+    sensSouhaite: indicateur.sensSouhaite,
     individusCibles: individusCibles,
     dateTruncValeur,
     dateTruncObjectif,

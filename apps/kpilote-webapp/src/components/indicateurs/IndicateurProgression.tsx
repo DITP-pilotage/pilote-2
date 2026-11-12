@@ -4,13 +4,16 @@ import { ProgressBar } from '@pilote/kpilote-ui/ProgressBar'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { formatMonthYearNumericFr, formatNumberAvecUniteFr, formatNumberFr } from '@/lib/format'
 
+// `taux` vaut null quand l'API ne calcule pas de taux alors qu'un objectif existe
+// (indicateur à la baisse, cible à 0) : on garde le bloc et l'objectif, avec « — »
+// et sans barre — une barre vide se lirait « 0 % ».
 export function IndicateurProgression({
   taux,
   valeurCible,
   dateCible,
   unite,
 }: {
-  taux: number
+  taux: number | null
   valeurCible: number
   dateCible: string
   unite: UniteIndicateurApiModel | null
@@ -21,16 +24,25 @@ export function IndicateurProgression({
         <Text variant="kicker" tone="muted" as="p">
           Progression
         </Text>
-        <span className="text-sm font-bold tabular-nums text-text-muted">
-          {formatNumberFr(taux)} %
-        </span>
+        {taux === null ? (
+          <span className="text-sm font-bold tabular-nums text-text-muted">
+            <span aria-hidden="true">—</span>
+            <span className="sr-only">Progression non disponible</span>
+          </span>
+        ) : (
+          <span className="text-sm font-bold tabular-nums text-text-muted">
+            {formatNumberFr(taux)} %
+          </span>
+        )}
       </div>
-      <ProgressBar
-        value={taux}
-        tone="neutral"
-        label={`Progression vers l'objectif : ${formatNumberFr(taux)} %`}
-        className="mt-2"
-      />
+      {taux !== null && (
+        <ProgressBar
+          value={taux}
+          tone="neutral"
+          label={`Progression vers l'objectif : ${formatNumberFr(taux)} %`}
+          className="mt-2"
+        />
+      )}
       <div className="mt-2 text-right">
         <Text variant="caption" tone="muted">
           Objectif :{' '}

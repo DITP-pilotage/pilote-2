@@ -41,8 +41,8 @@ export const collectionTauxProgressionSummaryApiModelSchema = z.object({
     .nullable()
     .describe(
       'Moyenne pondérée des taux de progression des indicateurs de la collection, tronquée à 2 décimales. ' +
-        "null si au moins un indicateur de la collection n'est pas calculable (règle tout-ou-rien) ou si " +
-        'la collection est vide.',
+        "null si au moins un indicateur pondéré de la collection n'est pas calculable (règle tout-ou-rien, " +
+        'y compris un indicateur à la baisse) ou si la collection est vide.',
     ),
 })
 export type CollectionTauxProgressionSummaryApiModel = z.infer<
@@ -78,7 +78,7 @@ export const collectionTauxProgressionContributionApiModelSchema = z.object({
     .describe(
       'Dernier taux de progression connu pour cet indicateur et cet individu. ' +
         "null si l'indicateur n'a aucun point calculable (pas d'objectif, pas de valeur, " +
-        'ou dernier point avec valeurCible = 0).',
+        'dernier point avec valeurCible = 0, ou indicateur à la baisse).',
     ),
   date: dateSchema
     .nullable()
@@ -103,8 +103,8 @@ export const collectionTauxProgressionApiModelSchema = z.object({
     .nullable()
     .describe(
       'Moyenne pondérée des taux de progression des indicateurs de la collection, tronquée à 2 décimales. ' +
-        "null si au moins un indicateur de la collection n'est pas calculable (règle tout-ou-rien) ou si " +
-        'la collection est vide.',
+        "null si au moins un indicateur pondéré de la collection n'est pas calculable (règle tout-ou-rien, " +
+        'y compris un indicateur à la baisse) ou si la collection est vide.',
     ),
   contributions: z
     .array(collectionTauxProgressionContributionApiModelSchema)

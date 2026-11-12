@@ -52,6 +52,17 @@ Le `≥` (et non `>`) est volontaire : sans cette inclusivité, une valeur et un
 | `valeurCible = 0` | `tauxProgression = null` |
 | `valeur > valeurCible` | Plafonné à `100` |
 | Individu sans aucun objectif | Exclu des `items` |
+| Indicateur à la baisse (`sensSouhaite = BAISSE`) | `tauxProgression = null` |
+
+### Indicateurs à la baisse
+
+Le rapport `valeur / valeurCible` n'a de sens que pour un indicateur à la hausse. Pour un indicateur à la baisse (`sensSouhaite = BAISSE`, PIL-1776), un chômage à 10 % visé à 7 % donnerait 100 %. Le taux n'est donc pas calculé :
+
+- `resolveTauxProgression` construit les points comme pour un indicateur à la hausse (même objectif applicable, même `valeurCible` et même `dateCible`), avec `tauxProgression = null` ;
+- les points restent renvoyés : la courbe garde sa série « Objectif », et la webapp affiche le bloc « Progression » avec « — » et l'objectif ;
+- côté collection, la règle tout-ou-rien s'applique : un indicateur à la baisse avec une pondération > 0 rend le taux de la collection `null`. Avec une pondération à 0, il est ignoré.
+
+Le sens arrive à `computeTauxProgressionPoints` par ses appelants, qui le lisent dans leur `select` d'indicateur.
 
 ---
 
@@ -90,7 +101,7 @@ Les filtres `dateDebut`/`dateFin` sont appliqués **en sortie** pour ne pas pert
     valeur: number           // valeur d'avancement (saisie directe ou agrégée)
     valeurCible: number      // valeurCible de l'objectif applicable (saisie ou agrégée)
     dateCible: string        // bucket mensuel de la dateCible de l'objectif applicable
-    tauxProgression: number | null  // min(100, valeur/valeurCible×100), null si valeurCible=0
+    tauxProgression: number | null  // min(100, valeur/valeurCible×100), null si valeurCible=0 ou sensSouhaite=BAISSE
   }>
 }
 ```
@@ -117,13 +128,13 @@ L'implémentation suit le pattern établi : **chargement bulk en amont, résolut
    b. Trouver l'objectif applicable :
       - Premier objectif avec dateCible ≥ date
       - Si aucun (D > tous les dateCible) → dernier objectif
-   c. Si valeurCible = 0 → tauxProgression = null
+   c. Si valeurCible = 0, ou si l'indicateur est à la baisse (sensSouhaite = BAISSE) → tauxProgression = null
       Sinon → tauxProgression = Math.min(100, (valeur / valeurCible) × 100)
 6. Appliquer les filtres dateDebut / dateFin **en sortie** (pas en DB)
 7. Trier par individu publicId asc, puis date asc
 ```
 
-`resolveTauxProgression(valeurs, objectifsParIndividu)` reste pur et n'est jamais conscient
+`resolveTauxProgression({ valeurs, objectifsParIndividu, sensSouhaite })` reste pur et n'est jamais conscient
 du fait que les valeurs ou les objectifs proviennent d'une saisie directe ou d'une agrégation.
 Les deux contextes partagent `dateTrunc='month'` pour aligner les buckets de valeurs et
 d'objectifs sur une grille mensuelle commune.
@@ -153,14 +164,16 @@ d'objectifs sur une grille mensuelle commune.
    │                              │   resolveObjectifIndividu → ObjectifBrut[] (triés dateCible asc) │
    │                              ├──────────────────────────────────▶│                              │
    │                              │                                                                  │
-   │                              │ resolveTauxProgression({ valeurs, objectifsParIndividu })        │
+   │                              │ resolveTauxProgression({ valeurs, objectifsParIndividu,          │
+   │                              │   sensSouhaite })                                                │
    │                              ├─────────────────────────────────────────────────────────────────▶│
    │                              │                                                                  │ pour chaque valeur :
    │                              │                                                                  │   obj = 1er objectif avec
    │                              │                                                                  │     dateCible ≥ date
    │                              │                                                                  │   sinon dernier objectif
    │                              │                                                                  │     (carry-forward)
-   │                              │                                                                  │   si valeurCible = 0 → null
+   │                              │                                                                  │   si valeurCible = 0 ou
+   │                              │                                                                  │     sensSouhaite = BAISSE → null
    │                              │                                                                  │   sinon taux = min(100,
    │                              │                                                                  │     valeur / cible × 100)
    │                              │                                                                  │   tronqué à 2 décimales
@@ -221,7 +234,7 @@ sequenceDiagram
     loop chaque valeur
         T->>T: obj = 1er objectif tel que dateCible ≥ date
         Note over T: sinon dernier objectif (carry-forward)
-        T->>T: si valeurCible = 0 → null<br/>sinon taux = min(100, valeur / valeurCible × 100)<br/>tronqué à 2 décimales
+        T->>T: si valeurCible = 0 ou sensSouhaite = BAISSE → null<br/>sinon taux = min(100, valeur / valeurCible × 100)<br/>tronqué à 2 décimales
     end
     T-->>Q: TauxProgressionPoint[]
 
@@ -504,7 +517,7 @@ sequenceDiagram
 
 **Fichier** : `apps/mb-api/src/tauxProgression/resolveTauxProgression.ts` (nouveau)
 
-- Fonction pure `resolveTauxProgression(valeurs, objectifsParIndividu)` → `TauxProgressionPoint[]`
+- Fonction pure `resolveTauxProgression({ valeurs, objectifsParIndividu, sensSouhaite })` → `TauxProgressionPoint[]`
 - Implémenter la recherche d'objectif applicable (`findObjectifApplicable`)
 - Implémenter le calcul du taux avec cap à 100 et gestion de la division par zéro
 - Couvrir par des tests unitaires

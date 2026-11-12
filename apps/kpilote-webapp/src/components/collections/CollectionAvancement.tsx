@@ -29,7 +29,11 @@ export function CollectionAvancement({
     collectionTauxProgressionIndividuQueryOptions(individuId, collectionId),
   )
 
-  if (data == null || data.tauxProgression == null) return null
+  if (data == null) return null
+
+  // Sans taux (règle tout-ou-rien, ou collection vide : l'API ne les distingue pas),
+  // on garde le bloc avec « — » et sans barre, comme pour un indicateur.
+  const taux = data.tauxProgression
 
   return (
     <div>
@@ -37,16 +41,25 @@ export function CollectionAvancement({
         <Text variant="kicker" tone="muted" as="p">
           Progression
         </Text>
-        <span className="text-sm font-bold tabular-nums text-text-muted">
-          {formatNumberFr(data.tauxProgression)} %
-        </span>
+        {taux == null ? (
+          <span className="text-sm font-bold tabular-nums text-text-muted">
+            <span aria-hidden="true">—</span>
+            <span className="sr-only">Progression de la collection non disponible</span>
+          </span>
+        ) : (
+          <span className="text-sm font-bold tabular-nums text-text-muted">
+            {formatNumberFr(taux)} %
+          </span>
+        )}
       </div>
-      <ProgressBar
-        value={data.tauxProgression}
-        tone="neutral"
-        label={`Progression de la collection : ${formatNumberFr(data.tauxProgression)} %`}
-        className="mt-2"
-      />
+      {taux != null && (
+        <ProgressBar
+          value={taux}
+          tone="neutral"
+          label={`Progression de la collection : ${formatNumberFr(taux)} %`}
+          className="mt-2"
+        />
+      )}
     </div>
   )
 }

@@ -36,7 +36,7 @@ const build = async (
 
   const indicateurs = await db().indicateur.findMany({
     where: withIndicateurReadPermission({ publicId: { in: [...params.indicateurs] } }, principalId),
-    select: { id: true, publicId: true },
+    select: { id: true, publicId: true, sensSouhaite: true },
   })
   if (indicateurs.length === 0) return { items: [] }
 
@@ -46,6 +46,7 @@ const build = async (
     indicateurs.map(async (indicateur) => {
       const points = await computeTauxProgressionPoints({
         indicateurId: indicateur.id,
+        sensSouhaite: indicateur.sensSouhaite,
         individusCibles: [individu],
         dateTruncValeur: dateTrunc,
         dateTruncObjectif: dateTrunc,
