@@ -466,7 +466,6 @@ model ValeurAvancement {
   individu    Individu    @relation(fields: [individuId], references: [id], onDelete: Restrict)
   combinaison Combinaison @relation(fields: [combinaisonId], references: [id], onDelete: Restrict)
 
-  @@unique([indicateurId, individuId, date], name: "valeur_avancement_unique")
   @@unique([indicateurId, individuId, combinaisonId, date], name: "valeur_avancement_cellule_unique")
   @@index([indicateurId, date])
   @@index([individuId, date])
