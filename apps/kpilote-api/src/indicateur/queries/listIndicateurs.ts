@@ -19,12 +19,15 @@ export const listIndicateurs = (
   if (params.recherche) {
     filters.nom = { contains: params.recherche, mode: 'insensitive' }
   }
+  const publicId: Prisma.StringFilter<'Indicateur'> = {}
   if (params.rechercheIdentifiant) {
-    filters.publicId = { contains: params.rechercheIdentifiant, mode: 'insensitive' }
+    publicId.contains = params.rechercheIdentifiant
+    publicId.mode = 'insensitive'
   }
   if (params.ids && params.ids.length > 0) {
-    filters.publicId = { in: params.ids }
+    publicId.in = params.ids
   }
+  if (Object.keys(publicId).length > 0) filters.publicId = publicId
   // Le bypass ADMIN (administre PUBLIC + PRIVÉ) est géré dans withIndicateurReadPermission.
   const where = withIndicateurReadPermission(filters, principalId, {
     isAdmin: isAdminPrincipal(),

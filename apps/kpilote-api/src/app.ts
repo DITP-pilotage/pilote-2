@@ -4,6 +4,7 @@ import { cors } from 'hono/cors'
 
 import { acmeRoutes } from '@/acme/routes'
 import { apiKeyRoutes } from '@/apiKey/routes'
+import { assistantRoutes } from '@/assistant/routes'
 import { centreAideRoutes } from '@/centreAide/routes'
 import { commentaireRoutes } from '@/commentaire/routes'
 import { featureRoutes } from '@/feature/routes'
@@ -45,6 +46,7 @@ app.openAPIRegistry.registerComponent('securitySchemes', 'bearer', {
 
 app.get('/', (context) => context.json({ hello: 'world' }))
 app.route('/', health)
+app.route('/', assistantRoutes)
 app.route('/', indicateurRoutes)
 app.route('/', valeurAvancementRoutes)
 app.route('/', valeurImportRoutes)

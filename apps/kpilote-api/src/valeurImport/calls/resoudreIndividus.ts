@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 import { logger } from '@/framework/logger/logger'
 import { startTimer } from '@/framework/timer'
-import { ALBERT_TEMPERATURE, createAlbertModel } from '@/valeurImport/helpers/albert'
+import { createAlbertModel, STRUCTURED_TEMPERATURE } from '@/framework/llm/albert'
 import { type IndividuPourImport } from '@/valeurImport/queries/listIndividusForIndicateur'
 
 const MAX_STEPS = 3
@@ -233,7 +233,7 @@ export const resoudreIndividus = ({
         }),
       },
       stopWhen: stepCountIs(MAX_STEPS),
-      temperature: ALBERT_TEMPERATURE,
+      temperature: STRUCTURED_TEMPERATURE,
     }).then((result) => {
       const durationMs = elapsed()
       logger.info(
