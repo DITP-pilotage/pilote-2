@@ -3,6 +3,7 @@ import type { GetChantiersOutput } from "@/server/albert/tools/getChantiers";
 import type { GetTauxAvancementTerritoireOutput } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChantierIndicateurs";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
+import { PERSONNES, referenceDe } from "../personnes";
 import { seedEvalWorld } from "../world";
 import { createDataTools, executeTool } from "./dataTools";
 import { seedMondeTerritorial } from "./mondeTerritorial";
@@ -158,6 +159,136 @@ describe("seedMondeTerritorial", () => {
           .map((commentaire) => commentaire.type)
           .sort(),
       ).toEqual(["autres_resultats_obtenus", "commentaires_sur_les_donnees"]);
+    }),
+  );
+
+  it(
+    "rend les personnes de CH-005 en Bretagne, sans le responsable local des Pays de la Loire pour le coordinateur",
+    createIntegrationTest(async () => {
+      // Given
+      const world = await seedEvalWorld();
+      await seedMondeTerritorial({ authorId: world.userId });
+      const tools = createDataTools({ user: world.users.coordinateur });
+
+      // When
+      const chantiers = await executeTool<GetChantiersOutput>({
+        tool: tools.getChantiers,
+        input: {
+          perimetre: {
+            type: "SELECTION",
+            territoire_codes: ["REG-53", "REG-52"],
+          },
+          jalon: 2025,
+          chantier_ids: ["CH-005"],
+        },
+      });
+
+      // Then
+      expect(
+        chantiers.resultats.map((resultat) => ({
+          territoire: resultat.territoire_code,
+          directeurs: resultat.chantiers[0]?.chantier.directeurs_projet,
+          responsables: resultat.chantiers[0]?.responsables_locaux,
+          coordinateurs: resultat.chantiers[0]?.coordinateurs_territoriaux,
+          auteur: resultat.chantiers[0]?.synthese?.auteur,
+          modifiePar: resultat.chantiers[0]?.synthese?.modifie_par,
+        })),
+      ).toEqual([
+        {
+          territoire: "REG-53",
+          directeurs: [
+            referenceDe(PERSONNES.directriceUrgences),
+            referenceDe(PERSONNES.directeurUrgences),
+          ],
+          responsables: [referenceDe(PERSONNES.responsableLocalBretagne)],
+          coordinateurs: [
+            referenceDe(PERSONNES.coordinatriceTerritorialeBretagne),
+          ],
+          auteur: referenceDe(PERSONNES.auteurSynthese),
+          modifiePar: referenceDe(PERSONNES.modificatriceSynthese),
+        },
+        {
+          territoire: "REG-52",
+          directeurs: [
+            referenceDe(PERSONNES.directriceUrgences),
+            referenceDe(PERSONNES.directeurUrgences),
+          ],
+          responsables: [],
+          coordinateurs: [],
+          auteur: undefined,
+          modifiePar: undefined,
+        },
+      ]);
+    }),
+  );
+
+  it(
+    "rend le seul responsable des données d'IND-005 qui a un compte",
+    createIntegrationTest(async () => {
+      // Given
+      const world = await seedEvalWorld();
+      await seedMondeTerritorial({ authorId: world.userId });
+      const tools = createDataTools({ user: world.users.ditp });
+
+      // When
+      const indicateurs = await executeTool<GetChantierIndicateursOutput>({
+        tool: tools.getIndicateurs,
+        input: {
+          chantier_id: "CH-005",
+          territoire_code: "REG-53",
+          jalon: 2025,
+        },
+      });
+
+      // Then
+      expect(
+        indicateurs.resultats.indicateurs.map(
+          (indicateur) => indicateur.responsables_donnees,
+        ),
+      ).toEqual([[referenceDe(PERSONNES.responsableDonnees)]]);
+    }),
+  );
+
+  it(
+    "rend l'auteur de chaque commentaire de CH-005 en Bretagne, synthèse comprise",
+    createIntegrationTest(async () => {
+      // Given
+      const world = await seedEvalWorld();
+      await seedMondeTerritorial({ authorId: world.userId });
+      const tools = createDataTools({ user: world.users.ditp });
+
+      // When
+      const commentaires = await executeTool<GetChantierCommentairesOutput>({
+        tool: tools.getChantierCommentaires,
+        input: {
+          chantier_id: "CH-005",
+          perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+        },
+      });
+
+      // Then
+      expect(
+        commentaires.resultats
+          .flatMap((resultat) => resultat.commentaires)
+          .map((commentaire) => ({
+            type: commentaire.type,
+            auteurs: commentaire.versions.map((version) => version.auteur),
+          }))
+          .sort((left, right) => left.type.localeCompare(right.type)),
+      ).toEqual([
+        {
+          type: "autres_resultats_obtenus",
+          auteurs: [referenceDe(PERSONNES.auteurCommentaire)],
+        },
+        {
+          type: "commentaires_sur_les_donnees",
+          auteurs: [referenceDe(PERSONNES.agentDitp)],
+        },
+        {
+          type: "synthese_des_resultats",
+          auteurs: [referenceDe(PERSONNES.auteurSynthese)],
+        },
+      ]);
     }),
   );
 });

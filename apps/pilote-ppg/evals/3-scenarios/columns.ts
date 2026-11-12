@@ -1,3 +1,4 @@
+import { avecNoms } from "../personnes";
 import type { ObservedToolCall } from "../types";
 import { extractMatter } from "./evidence";
 import type { Verdict } from "./judge";
@@ -5,7 +6,8 @@ import type { Verdict } from "./judge";
 /**
  * Les colonnes de l'interface Evalite. Le message et la réponse y figurent
  * en entier : un score ne se comprend qu'en lisant ce qu'Albert a reçu et ce
- * qu'il a répondu, sans ouvrir la trace.
+ * qu'il a répondu, sans ouvrir la trace. Chaque personne citée y porte le
+ * nom que l'interface afficherait (PIL-1860).
  */
 
 type Column = { label: string; value: string };
@@ -65,7 +67,7 @@ export function scenarioColumns({
       label: "Outils appelés",
       value: toolCalls.map(decrireAppel).join("\n→ ") || "—",
     },
-    { label: "Réponse", value: text },
+    { label: "Réponse", value: avecNoms(text) },
     ...(withWidgets
       ? [
           {
@@ -94,7 +96,7 @@ export function calibrationColumns({
     { label: "Cas", value: label },
     { label: "Critère cassé", value: broken ?? "—" },
     { label: "Message", value: question },
-    { label: "Réponse jugée", value: matter },
+    { label: "Réponse jugée", value: avecNoms(matter) },
     {
       label: "Verdicts",
       value: Object.entries(verdict)

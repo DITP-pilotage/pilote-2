@@ -4,6 +4,7 @@ import {
   seedTerritoire,
   type SeededChantier,
 } from "./seedTerritoire";
+import { seedPersonnes } from "./seedPersonnes";
 import { JALON_COURANT, TERRITOIRES } from "./territoires";
 
 /**
@@ -22,6 +23,9 @@ import { JALON_COURANT, TERRITOIRES } from "./territoires";
  * Les commentaires typés sont territoriaux : « actions à venir » et « actions
  * à valoriser » sont des types nationaux, invisibles sur une région. En
  * Bretagne, CH-006 porte deux commentaires qui disent la même chose.
+ *
+ * Les personnes de CH-005 et d'IND-005 sont semées ensuite
+ * (`seedPersonnes`) : chaque rôle qu'un outil renvoie en a au moins une.
  */
 
 const aLHeure = ({
@@ -314,4 +318,6 @@ export async function seedMondeTerritorial({ authorId }: { authorId: string }) {
   for (const { territoire, chantiers } of PEUPLEMENT_2024) {
     await seedJalon({ territoire, jalon: 2024, chantiers });
   }
+
+  await seedPersonnes();
 }

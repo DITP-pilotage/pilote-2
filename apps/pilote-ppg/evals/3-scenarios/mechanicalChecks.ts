@@ -7,6 +7,12 @@
  * casse ou un accent différent, un tiret court à la place du tiret cadratin.
  */
 
+import {
+  normalizePersonId,
+  PERSON_REFERENCE_PATTERN,
+  personReference,
+} from "@/shared/personne/personReference";
+
 export type CheckResult = { ok: boolean; detail: string };
 
 /**
@@ -429,6 +435,114 @@ function passagesDuChantier({ texte, id }: { texte: string; id: string }) {
  * revient par territoire : on cherche dans toutes ses mentions, le bloc des
  * chantiers communs ne donnant pas tout.
  */
+/**
+ * Le texte sans ses références de personnes : les chiffres d'un UUID ne sont
+ * pas des données, et une référence qui contient « -14 » faisait passer un
+ * écart absent (PIL-1860).
+ */
+export function sansReferencesDePersonnes(text: string): string {
+  return text.replace(PERSON_REFERENCE_PATTERN, "@personne");
+}
+
+const ids = (text: string) =>
+  [...text.matchAll(PERSON_REFERENCE_PATTERN)].map((match) =>
+    normalizePersonId(match[1]),
+  );
+
+const REFERENCE = PERSON_REFERENCE_PATTERN.source;
+const ENTRE_BACKTICKS = new RegExp(`\`[^\`\n]*${REFERENCE}[^\`\n]*\``, "i");
+const DANS_UN_LIEN = new RegExp(
+  `${REFERENCE}\\(|\\[[^\\]\\n]*${REFERENCE}[^\\[\\n]*\\]\\(`,
+  "i",
+);
+const FRAGMENT = /@\[|personne\s*:/i;
+const UUID_NU =
+  /(?<![0-9a-f])[0-9a-f]{8}(?:[-‐-―−][0-9a-f]{4}){3}[-‐-―−][0-9a-f]{12}(?![0-9a-f])/gi;
+const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+
+/**
+ * PIL-1860 : une personne se cite par la référence que les outils ont
+ * renvoyée, recopiée hors backticks et hors lien, et jamais par un nom ou une
+ * adresse, qu'Albert ne reçoit pas (une adresse qu'un outil renvoie, celle
+ * du support par exemple, se cite). Une référence absente de toutes les
+ * sorties d'outils est inventée, altérée, ou masquée hors du périmètre.
+ * Casse et tirets typographiques sont tolérés : l'interface les affiche.
+ */
+export function checkPersonReferences({
+  text,
+  toolResults,
+}: {
+  text: string;
+  toolResults: { toolName: string; output: unknown }[];
+}): CheckResult {
+  const sorties = JSON.stringify(toolResults.map((result) => result.output));
+  const recues = new Set(ids(sorties));
+  const inventees = unique(
+    [...text.matchAll(PERSON_REFERENCE_PATTERN)]
+      .filter((match) => !recues.has(normalizePersonId(match[1])))
+      .map((match) => match[0]),
+  );
+  const reste = sansReferencesDePersonnes(text);
+
+  const defauts = [
+    ...(inventees.length > 0
+      ? [`référence absente des données : ${inventees.join(", ")}`]
+      : []),
+    ...(ENTRE_BACKTICKS.test(text) ? ["référence entre backticks"] : []),
+    ...(DANS_UN_LIEN.test(text) ? ["référence dans un lien"] : []),
+    ...(FRAGMENT.test(reste) ? ["référence mal formée"] : []),
+    ...unique(reste.match(UUID_NU) ?? []).map(
+      (uuid) => `identifiant nu : ${uuid}`,
+    ),
+    ...unique(reste.match(EMAIL) ?? [])
+      .filter((email) => !sorties.includes(email))
+      .map((email) => `adresse e-mail : ${email}`),
+  ];
+
+  return defauts.length === 0
+    ? { ok: true, detail: "personnes citées par leur référence" }
+    : { ok: false, detail: defauts.join(" ; ") };
+}
+
+/**
+ * Une question « qui » : la réponse cite exactement les personnes attendues,
+ * sans en ajouter (PIL-1860). Les références comparées une fois ramenées à
+ * la forme que lit l'interface.
+ */
+export function checkExpectedPersons({
+  text,
+  expected,
+}: {
+  text: string;
+  expected: string[];
+}): CheckResult {
+  const citees = new Set(ids(text));
+  const attendues = new Set(expected.flatMap(ids));
+  const absentes = [...attendues].filter((id) => !citees.has(id));
+  const enTrop = [...citees].filter((id) => !attendues.has(id));
+
+  if (absentes.length === 0 && enTrop.length === 0) {
+    return {
+      ok: true,
+      detail:
+        attendues.size === 0
+          ? "aucune personne citée"
+          : `${attendues.size} personne(s) attendue(s) citée(s)`,
+    };
+  }
+  return {
+    ok: false,
+    detail: [
+      ...(absentes.length > 0
+        ? [`absente : ${absentes.map(personReference).join(", ")}`]
+        : []),
+      ...(enTrop.length > 0
+        ? [`en trop : ${enTrop.map(personReference).join(", ")}`]
+        : []),
+    ].join(" ; "),
+  };
+}
+
 export function checkEncartChantiers({
   text,
   chantiers,
@@ -438,9 +552,9 @@ export function checkEncartChantiers({
   chantiers: ChantierDeLEncart[];
   avecEcart: boolean;
 }): CheckResult {
-  const texte = typographie(text);
-  const ids = unique(chantiers.map((chantier) => chantier.chantier.id));
-  const erreurs = ids.flatMap((id) => {
+  const texte = typographie(sansReferencesDePersonnes(text));
+  const chantierIds = unique(chantiers.map((chantier) => chantier.chantier.id));
+  const erreurs = chantierIds.flatMap((id) => {
     const passages = passagesDuChantier({ texte, id });
     if (passages.length === 0) return [`${id} : absent`];
     return chantiers
@@ -467,7 +581,7 @@ export function checkEncartChantiers({
       });
   });
   return erreurs.length === 0
-    ? { ok: true, detail: `${ids.length} chantier(s) conforme(s)` }
+    ? { ok: true, detail: `${chantierIds.length} chantier(s) conforme(s)` }
     : { ok: false, detail: unique(erreurs).join(" ; ") };
 }
 

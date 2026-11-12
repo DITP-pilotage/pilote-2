@@ -37,6 +37,11 @@ export type Evidence = {
   /** Codes des territoires que le tableau doit contenir, pour les comparaisons. */
   tableTerritories: string[];
   /**
+   * Les références des personnes que la réponse doit citer, et elles seules ;
+   * `[]` : aucune personne à citer. `null` : le cas n'attend rien (PIL-1860).
+   */
+  expectedPersons: string[] | null;
+  /**
    * Les tours qui précèdent la demande, dans l'ordre : une question de suivi
    * se juge contre la conversation qu'elle reprend. Vide pour un tour isolé.
    */

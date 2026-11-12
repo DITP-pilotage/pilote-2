@@ -117,6 +117,21 @@ const CASES: ToolCase[] = [
     ],
   },
   {
+    question: "Qui est le directeur de projet du CH-004 ?",
+    reason: "les directeurs de projet sont portés par le chantier (PIL-1860)",
+    expected: [
+      { toolName: "get_chantiers", input: { chantier_ids: ["CH-004"] } },
+    ],
+  },
+  {
+    question: "Qui est le responsable local du CH-005 en Bretagne ?",
+    reason:
+      "les responsables locaux sont portés par le chantier sur le territoire (PIL-1860)",
+    expected: [
+      { toolName: "get_chantiers", input: { chantier_ids: ["CH-005"] } },
+    ],
+  },
+  {
     question:
       "Le tableau des taux d'avancement de chaque chantier dans la Sarthe",
     reason:

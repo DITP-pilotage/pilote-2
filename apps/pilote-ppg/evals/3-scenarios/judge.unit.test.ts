@@ -46,6 +46,7 @@ const EVIDENCE: Evidence = {
     commentaires: [],
   },
   tableTerritories: [],
+  expectedPersons: null,
   conversation: [],
   suites: [],
 };

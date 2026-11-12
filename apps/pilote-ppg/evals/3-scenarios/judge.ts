@@ -53,6 +53,8 @@ Deux sortes de blocs, à ne jamais confondre :
 - La MATIÈRE À JUGER, entre « DÉBUT DE LA MATIÈRE » et « FIN DE LA MATIÈRE » : ce qu'Albert a produit. C'est la seule chose que tu juges.
 - Les RÉFÉRENCES (demande, outils appelés, données reçues, territoires masqués, territoires attendus, fiche de vérité) : ce qu'Albert savait ou devait couvrir. Elles servent à comparer, jamais à prouver qu'un élément figure dans la réponse. Un élément présent dans les références mais absent de la matière est ABSENT. Une absence n'est un défaut que si le critère exige cet élément : condenser, résumer, ne pas tout reprendre est conforme, sauf si le critère dit le contraire.
 
+Les personnes : dans les références comme dans la matière, une personne apparaît sous la forme @[personne:<identifiant>]. L'utilisateur voit son nom à la place, et Albert ne connaît pas ce nom : recopier cette référence est la seule façon correcte de citer une personne. Une référence n'est ni un code interne, ni un nom de champ, ni une donnée chiffrée : ses chiffres ne sont pas des nombres de la réponse.
+
 Règles :
 - Juge chaque critère indépendamment des autres. Un défaut ne compte que pour le critère qu'il concerne.
 - Appuie-toi sur les références, jamais sur tes propres connaissances.

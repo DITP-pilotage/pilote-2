@@ -1,6 +1,7 @@
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { fixtures } from "@/test/fixtures";
 import type { Habilitations } from "@/shared/utilisateur/habilitation/Habilitation.interface";
+import { PERSONNES, type EvalPerson } from "./personnes";
 
 /**
  * Le monde sur lequel les evals raisonnent.
@@ -387,12 +388,26 @@ async function seedDetailedChantier({
   });
 }
 
+/** Le compte d'une personne du monde, à son identifiant fixe. */
+export function seedPersonne({
+  personne,
+  profilCode,
+}: {
+  personne: EvalPerson;
+  profilCode?: string;
+}) {
+  return fixtures.utilisateur({
+    ...personne,
+    ...(profilCode && { profilCode }),
+  });
+}
+
 /**
  * L'utilisateur n'est pas décoratif : `llm_calls.utilisateur_id` porte une clé
  * étrangère, et l'assistant y écrit à chaque tour comme en production.
  */
 export async function seedEvalWorld(): Promise<EvalWorld> {
-  const user = await fixtures.utilisateur({});
+  const user = await seedPersonne({ personne: PERSONNES.agentDitp });
 
   for (const chantier of CHANTIERS) {
     await fixtures.chantierIdentite(chantier);
@@ -422,7 +437,8 @@ export async function seedEvalWorld(): Promise<EvalWorld> {
     }),
   };
 
-  const coordinateurUser = await fixtures.utilisateur({
+  const coordinateurUser = await seedPersonne({
+    personne: PERSONNES.coordinateurBretagne,
     profilCode: "COORDINATEUR_REGION",
   });
 

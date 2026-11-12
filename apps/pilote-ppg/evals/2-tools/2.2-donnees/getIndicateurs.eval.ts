@@ -75,6 +75,15 @@ const CASES: ToolCase[] = [
     forbidden: ["get_indicateurs"],
   },
   {
+    question:
+      "Qui sont les responsables des données des indicateurs du CH-004 au national ?",
+    reason:
+      "les responsables des données sont portés par les indicateurs (PIL-1860)",
+    expected: [
+      { toolName: "get_indicateurs", input: { chantier_id: "CH-004" } },
+    ],
+  },
+  {
     question: "Les indicateurs du CH-004 sont-ils à jour au national ?",
     reason: "CAS NÉGATIF : fraîcheur des données → get_indicateurs_a_completer",
     forbidden: ["get_indicateurs"],
