@@ -3,6 +3,10 @@
 // l'existant (PIL-1979). Monte les routes réelles in-process et appelle chaque
 // endpoint de lecture sur un échantillon fixe du seed.
 //
+// TEMPORAIRE : outil du chantier multifiltre (PIL-1963). À supprimer, avec le
+// script `snapshot:lecture` du package.json et sa section du README, une fois la
+// feature mergée.
+//
 // Tout s'exécute dans une transaction annulée à la fin : on y crée un utilisateur
 // dédié qui a READ sur tous les indicateurs et collections (les routes de lecture
 // filtrent par permission), sans rien laisser en base.

@@ -108,6 +108,8 @@ pnpm feature:creer --key=<KEY> --nom="<nom>" [--etat=DESACTIVE|ACTIVE|ACTIVE_POU
 
 ### Snapshot des lectures (non-régression)
 
+> **Temporaire** : outil du chantier multifiltre (PIL-1963). À supprimer (script, entrée `snapshot:lecture` du `package.json` et cette section) une fois la feature mergée.
+
 Pour prouver qu'une PR ne change rien pour l'existant, `snapshot:lecture` rejoue les routes de lecture (valeurs, objectifs, taux de progression, synthèse, valeurs remarquables, dernières valeurs, collections, référentiels…) sur un échantillon fixe du seed, soit 785 requêtes, puis compare les réponses à une capture de référence.
 
 ```bash
