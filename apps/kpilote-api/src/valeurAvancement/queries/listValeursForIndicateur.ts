@@ -15,7 +15,7 @@ import { db } from '@/framework/persistence/dbStore'
 import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import { type PointInterne, resolveSerieIndividu } from '@/valeurAvancement/resolveSerieIndividu'
+import { type PointInterne, resolveSerieNoeud } from '@/valeurAvancement/resolveSerieIndividu'
 
 // Cap par défaut à la granularité mensuelle : sans troncature, une série France
 // avec saisies quotidiennes par département explose (cf. design doc D11).
@@ -59,7 +59,7 @@ const buildSeries = async ({
   const startedAt = performance.now()
   // Indicateur sans axe : la combinaison vide. PIL-1991 passera la combinaison sélectionnée.
   const combinaisonId = await trouverCombinaisonVideId()
-  const { ctx, allNodes } = await loadResolveSerieContext({
+  const { graphe, noeud, allNodes } = await loadResolveSerieContext({
     indicateurId,
     individusCibles: individusCibles,
     dateTrunc,
@@ -71,11 +71,7 @@ const buildSeries = async ({
   const dateFin = params.dateFin ? parseBucket(params.dateFin) : null
   const items: ValeurAvancementApiModel[] = []
   for (const individuCible of individusCibles) {
-    const serie = await resolveSerieIndividu(
-      { individuId: individuCible.id, combinaisonId },
-      ctx,
-      cache,
-    )
+    const serie = await resolveSerieNoeud(noeud(individuCible), graphe, cache)
     for (const point of serie) {
       if (dateDebut && compareBuckets(point.bucket, dateDebut) < 0) continue
       if (dateFin && compareBuckets(point.bucket, dateFin) > 0) continue
