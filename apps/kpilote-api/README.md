@@ -106,6 +106,23 @@ pnpm feature:creer --key=<KEY> --nom="<nom>" [--etat=DESACTIVE|ACTIVE|ACTIVE_POU
 - `api-key:generate` imprime une clé en clair et le SQL d'insertion à exécuter manuellement ; il ne touche pas la base.
 - `feature:creer` scaffolde une migration Prisma qui insère un feature flag.
 
+### Snapshot des lectures (non-régression)
+
+Pour prouver qu'une PR ne change rien pour l'existant, `snapshot:lecture` rejoue les routes de lecture (valeurs, objectifs, taux de progression, synthèse, valeurs remarquables, dernières valeurs, collections, référentiels…) sur un échantillon fixe du seed, soit 785 requêtes, puis compare les réponses à une capture de référence.
+
+```bash
+# 1. Sur dev (ou avant de modifier le code) : capture de référence
+pnpm snapshot:lecture capture /tmp/snapshot-avant.json
+# 2. Sur la branche : comparaison
+pnpm snapshot:lecture compare /tmp/snapshot-avant.json
+```
+
+- Le script lit la base de `DATABASE_URL`, qui doit être migrée et seedée (`pnpm db:seed`). Tout s'exécute dans une transaction annulée : rien n'est écrit en base.
+- `createdAt` et `updatedAt` sont ignorés. Les écarts sont classés : identique, champs ajoutés seulement, liste avec seulement des entités ajoutées, mêmes éléments dans un autre ordre (requête sans `ORDER BY`), ou différence réelle.
+- Le code de sortie vaut 1 s'il reste une différence réelle.
+- `LOG_LEVEL=warn` coupe les logs de timing des routes.
+- Garder le fichier de capture hors du dépôt.
+
 ## Tests
 
 Les tests d'intégration tournent sur la base `postgres_test` (port 5435). Le `globalSetup` applique les migrations, puis chaque test enveloppé dans `integrationTest(...)` s'exécute dans une transaction annulée à la fin. Les tests sont lancés en parallèle.
