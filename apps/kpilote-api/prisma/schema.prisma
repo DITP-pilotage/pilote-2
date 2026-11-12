@@ -332,6 +332,7 @@ model Axe {
   niveaux     NiveauAxe[]
   modalites   Modalite[]
   indicateurs IndicateurAxe[]
+  combinaisons CombinaisonModalite[]
 
   @@map("axe")
 }
@@ -377,10 +378,45 @@ model Modalite {
   parent    Modalite?  @relation("modaliteParent", fields: [parentId], references: [id], onDelete: NoAction)
   enfants   Modalite[] @relation("modaliteParent")
 
+  combinaisons CombinaisonModalite[]
+
+  // Cible de la clé étrangère composite de `combinaison_modalite` : garantit
+  // en base qu'une modalité de combinaison appartient à l'axe de la ligne.
+  @@unique([id, axeId])
   @@index([axeId])
   @@index([niveauAxeId])
   @@index([parentId])
   @@map("modalite")
+}
+
+// Ensemble de modalités qui précise une valeur, au plus une par axe. Partagé
+// entre indicateurs. `cle` est son identité textuelle (uuids des modalités
+// triés, joints par `,`) : elle permet de retrouver ou de créer une
+// combinaison par ses modalités en une requête (`ON CONFLICT (cle)`). La
+// combinaison vide (`cle = ''`) porte les valeurs des indicateurs sans axe.
+model Combinaison {
+  id        String   @id @db.Uuid
+  cle       String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  modalites CombinaisonModalite[]
+  valeurs   ValeurAvancement[]
+
+  @@map("combinaison")
+}
+
+model CombinaisonModalite {
+  combinaisonId String @map("combinaison_id") @db.Uuid
+  axeId         String @map("axe_id") @db.Uuid
+  modaliteId    String @map("modalite_id") @db.Uuid
+
+  combinaison Combinaison @relation(fields: [combinaisonId], references: [id], onDelete: Cascade)
+  axe         Axe         @relation(fields: [axeId], references: [id], onDelete: Restrict)
+  modalite    Modalite    @relation(fields: [modaliteId, axeId], references: [id, axeId], onDelete: Restrict)
+
+  @@id([combinaisonId, axeId])
+  @@index([modaliteId])
+  @@map("combinaison_modalite")
 }
 
 // Fonction d'un axe pour un indicateur. Pas de NONE (« saisi à ce niveau ») :
@@ -416,17 +452,22 @@ model IndicateurAxe {
 
 model ValeurAvancement {
   id           String   @id @db.Uuid
-  indicateurId String   @map("indicateur_id") @db.Uuid
-  individuId   String   @map("individu_id") @db.Uuid
-  date         String
-  valeur       Decimal  @db.Decimal(20, 2)
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  indicateurId  String   @map("indicateur_id") @db.Uuid
+  individuId    String   @map("individu_id") @db.Uuid
+  // Modalités qui précisent la valeur ; la combinaison vide (`cle = ''`) pour
+  // un indicateur sans axe.
+  combinaisonId String   @map("combinaison_id") @db.Uuid
+  date          String
+  valeur        Decimal  @db.Decimal(20, 2)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
-  individu   Individu   @relation(fields: [individuId], references: [id], onDelete: Restrict)
+  indicateur  Indicateur  @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+  individu    Individu    @relation(fields: [individuId], references: [id], onDelete: Restrict)
+  combinaison Combinaison @relation(fields: [combinaisonId], references: [id], onDelete: Restrict)
 
   @@unique([indicateurId, individuId, date], name: "valeur_avancement_unique")
+  @@unique([indicateurId, individuId, combinaisonId, date], name: "valeur_avancement_cellule_unique")
   @@index([indicateurId, date])
   @@index([individuId, date])
   @@map("valeur_avancement")

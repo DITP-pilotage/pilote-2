@@ -161,7 +161,7 @@ const deleteModaliteRoute = createRoute({
   path: '/axes/{id}/modalites/{modaliteId}',
   tags: ['Axe', 'Admin'],
   summary: 'Supprimer une modalité',
-  description: `${ADMIN} Supprime une modalité de l’axe. Refusé (409 \`MODALITE_A_DES_ENFANTS\`) si elle a des modalités enfants : les supprimer d’abord.`,
+  description: `${ADMIN} Supprime une modalité de l’axe. Refusé (409 \`MODALITE_A_DES_ENFANTS\`) si elle a des modalités enfants : les supprimer d’abord. Refusé (409 \`MODALITE_UTILISEE\`) si elle précise des valeurs (utilisée par une combinaison).`,
   middleware: [requireAuthentication],
   request: { params: modaliteParamsSchema },
   responses: {
@@ -304,11 +304,18 @@ axeRoutes.openapi(deleteModaliteRoute, async (context) => {
     (error) =>
       jsonResponseError({
         context,
-        error: {
-          code: error.type,
-          message: `Cette modalité a des enfants : les supprimer d’abord (${error.enfants.join(', ')}).`,
-          details: { enfants: error.enfants },
-        },
+        error:
+          error.type === 'MODALITE_UTILISEE'
+            ? {
+                code: error.type,
+                message: 'Cette modalité précise des valeurs : elle ne peut pas être supprimée.',
+                details: { combinaisons: error.combinaisons },
+              }
+            : {
+                code: error.type,
+                message: `Cette modalité a des enfants : les supprimer d’abord (${error.enfants.join(', ')}).`,
+                details: { enfants: error.enfants },
+              },
         schema: ErrorApiModelSchema,
         status: 409,
       }),

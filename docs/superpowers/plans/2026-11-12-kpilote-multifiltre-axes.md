@@ -14,8 +14,8 @@
 
 ## Global Constraints
 
-- Chaque PR part en prod telle quelle, **sans feature flag**. Tant qu'aucun indicateur n'a d'axe, aucun comportement existant ne change.
-- Toute migration fonctionne avec le code de la version précédente (`prisma migrate deploy` tourne au build, avant le nouveau code).
+- Chaque PR part telle quelle, **sans feature flag**. Tant qu'aucun indicateur n'a d'axe, aucun comportement existant ne change.
+- Pas de vraie prod : pas de compatibilité à garder avec le code précédent ni d'ordre de déploiement imposé ; les migrations migrent correctement les données existantes (spec §8).
 - Chaque PR fait tourner le snapshot des lectures (Task 0) : **0 différence réelle**. Seuls des champs peuvent s'ajouter.
 - Objectifs, commentaires et niveaux de confiance ne sont **jamais** modifiés par ce plan.
 - Vocabulaire : axe, modalité, niveau, combinaison, cellule, marginale. Jamais « dimension » (collision avec les dimensions Matomo de l'admin et le POC), ni « maille », ni « membre ».
@@ -57,9 +57,9 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 | T2.1  | PIL-1984 | Migration : axes d'un indicateur                       | 🔄 en cours     |
 | T2.2  | PIL-1985 | API : déclarer les axes d'un indicateur                | 🔄 en cours     |
 | T2.3  | PIL-1986 | Admin : section Axes d'un indicateur                   | 🔄 en cours     |
-| T3.1  | PIL-1987 | Migration : combinaisons de modalités sur les valeurs  | à faire         |
-| T3.2  | PIL-1988 | Upserts de valeurs sur la nouvelle clé unique          | à faire         |
-| T3.3  | PIL-1989 | Suppression de l'ancien index unique des valeurs       | à faire         |
+| T3.1  | PIL-1987 | Migration : combinaisons de modalités sur les valeurs  | 🔄 en cours     |
+| T3.2  | PIL-1988 | Upserts de valeurs sur la nouvelle clé unique          | 🔄 en cours     |
+| T3.3  | PIL-1989 | Suppression de l'ancien index unique des valeurs       | 🔄 en cours     |
 | T4.1  | PIL-1993 | Lectures de valeurs : paramètre combinaison optionnel  | à faire         |
 | T5.1  | PIL-1990 | Calcul de la marginale sur les axes (fonctions pures)  | à faire         |
 | T5.2  | PIL-1991 | Lectures : marginale et sélection de modalités         | à faire         |
@@ -241,39 +241,42 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 ### T3.1 — Migration : combinaisons de modalités sur les valeurs (PIL-1987)
 
-**Objectif :** préparer `valeur_avancement` à porter une combinaison, sans changer les valeurs existantes.
+**Objectif :** permettre à une valeur d'être précisée par des modalités ; toutes les valeurs existantes prennent la combinaison vide.
 
-**Fichiers :** Modify `apps/kpilote-api/prisma/schema.prisma` ; migration `<ts>_combinaisons` ; Create `apps/kpilote-api/src/axe/combinaison.ts` (constante de la combinaison vide, calcul de `cle`).
+> **Écarts validés (2026-11-12) :** pas de valeur par défaut ni d'uuid figé pour la combinaison vide (retrouvée par `cle = ''`) ; colonne ajoutée en 3 étapes ; clé étrangère composite pour la cohérence modalité / axe ; les écritures fournissent la combinaison vide dès cette tâche (la colonne est `NOT NULL` sans défaut).
+
+**Fichiers :** Modify `apps/kpilote-api/prisma/schema.prisma` ; migration `<ts>_combinaisons` (écrite à la main) ; Create `apps/kpilote-api/src/axe/combinaison.ts` ; Modify `prisma/sql/upsertValeursAvancementBatch.sql`, `src/valeurAvancement/commands/upsertValeurAvancement.ts`, `prisma/seed.ts`, `src/test/fixtures.ts`, `src/axe/commands/deleteModalite.ts`, `src/axe/routes.ts`.
 
 **Étapes :**
 
-- [ ] `Combinaison` (`combinaison` : id uuid, `cle` UNIQUE = uuids des modalités triés joints par `,`).
-- [ ] `CombinaisonModalite` (`combinaison_modalite` : combinaison, axe, modalité ; PK(combinaison, axe) ; clés étrangères vers `combinaison`, `axe`, `modalite`).
-- [ ] Insérer la ligne « combinaison vide » avec un uuid fixe, `cle = ''`.
-- [ ] `valeur_avancement.combinaison_id UUID NOT NULL DEFAULT '<uuid vide>'` + clé étrangère. La valeur par défaut est constante : ajout instantané, l'ancien code continue d'écrire sans la connaître.
-- [ ] Nouvel index unique `(indicateur_id, individu_id, combinaison_id, date)` **en plus** de `valeur_avancement_unique`.
+- [ ] `Combinaison` (`combinaison` : id uuid, `cle` UNIQUE = uuids des modalités triés joints par `,`). La migration insère la combinaison vide (`gen_random_uuid()`, `cle = ''`).
+- [ ] `CombinaisonModalite` (`combinaison_modalite` : combinaison, axe, modalité ; PK(combinaison, axe)) ; clé étrangère composite `(modalite_id, axe_id) → modalite(id, axe_id)`, d'où un UNIQUE(id, axe_id) sur `modalite`.
+- [ ] `valeur_avancement.combinaison_id` en 3 étapes : colonne nullable, `UPDATE` vers la combinaison vide, `SET NOT NULL` ; clé étrangère.
+- [ ] Nouvel index unique `(indicateur_id, individu_id, combinaison_id, date)` **en plus** de l'ancien.
+- [ ] Toutes les écritures fournissent la combinaison vide (batch SQL, upsert unitaire, seed, fixtures), encore sur l'ancienne clé de conflit.
+- [ ] `src/axe/combinaison.ts` : `cleCombinaison`, `trouverCombinaisonVideId` ; fixture `fixtures.combinaison({ modalites })`.
+- [ ] `DELETE /axes/{id}/modalites/{modaliteId}` : refus 409 `MODALITE_UTILISEE` si la modalité est utilisée par une combinaison (reporté depuis T1.2).
 - [ ] Ne pas toucher à `objectif_indicateur_individu` ni à `indicateur_individu_commentaire` (D5).
-- [ ] `DELETE /axes/{id}/modalites/{modaliteId}` : refuser (409) la suppression d'une modalité utilisée par une combinaison (reporté depuis T1.2).
-- [ ] Revoir le refus de supprimer une modalité qui a des enfants (T1.2) : garder le 409 ou supprimer en cascade, en vérifiant alors toute la sous-arborescence.
 
 **DoD :**
 
-- [ ] Commune.
-- [ ] La suite de tests passe **sans modifier le code applicatif** (preuve que l'ancien code est compatible).
+- [ ] Commune ; snapshot : 0 différence.
 
 ---
 
-### T3.2 — Upserts de valeurs sur la nouvelle clé unique (PIL-1988)
+### T3.2 — Écritures sur la nouvelle clé unique (PIL-1988)
 
 **Objectif :** écrire les valeurs sur `(indicateur, individu, combinaison, date)`.
 
-**Fichiers :** Modify `apps/kpilote-api/prisma/sql/upsertValeursAvancementBatch.sql`, `apps/kpilote-api/src/valeurAvancement/commands/{upsertValeurAvancement,upsertValeursAvancementBatch,deleteValeurAvancement}.ts`, `apps/kpilote-api/src/test/fixtures.ts`, `prisma/schema.prisma` (nom de la nouvelle contrainte composite).
+**Fichiers :** Modify `prisma/sql/upsertValeursAvancementBatch.sql`, `src/valeurAvancement/commands/{upsertValeurAvancement,deleteValeurAvancement}.ts`, `prisma/seed.ts`, `src/test/fixtures.ts`.
 
 **Étapes :**
 
-- [ ] `ON CONFLICT (indicateur_id, individu_id, combinaison_id, date)` dans le SQL batch ; colonne `combinaison_id` passée explicitement.
-- [ ] Upsert unitaire et suppression sur la nouvelle clé composite.
-- [ ] Toutes les écritures actuelles visent la combinaison vide.
+- [ ] `ON CONFLICT (indicateur_id, individu_id, combinaison_id, date)` dans le SQL batch et dans le seed.
+- [ ] Upsert unitaire sur la clé composite `valeur_avancement_cellule_unique`.
+- [ ] Suppression unitaire filtrée sur la combinaison vide (sinon, une fois l'ancien index retiré, elle effacerait toutes les combinaisons de la cellule).
+- [ ] Seed : `supprimerHorsJeu` limité à la combinaison vide.
+- [ ] Fixture `valeurAvancement` : nouvelle clé, paramètre `combinaison` optionnel (vide par défaut).
 
 **DoD :**
 
@@ -283,19 +286,19 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 ### T3.3 — Suppression de l'ancien index unique des valeurs (PIL-1989)
 
-**Objectif :** retirer `valeur_avancement_unique (indicateur, individu, date)`, qui empêcherait plusieurs combinaisons pour un même individu.
+**Objectif :** retirer l'index `(indicateur, individu, date)`, qui empêcherait plusieurs combinaisons pour un même individu.
 
 **Fichiers :** migration `<ts>_drop_valeur_avancement_unique` ; `prisma/schema.prisma`.
 
 **Étapes :**
 
-- [ ] Livrer **une version après** T3.2 (plus aucun code en prod ne s'appuie sur l'ancienne contrainte).
+- [ ] Supprimer `valeur_avancement_indicateur_id_individu_id_date_key` et le `@@unique` `valeur_avancement_unique`.
 - [ ] Vérifier qu'aucun `ON CONFLICT` ni clé Prisma ne la référence.
 
 **DoD :**
 
 - [ ] Commune.
-- [ ] `grep valeur_avancement_unique` ne trouve plus que la nouvelle contrainte (si elle reprend ce nom) ou rien.
+- [ ] `grep valeur_avancement_unique` ne trouve plus rien.
 
 ---
 

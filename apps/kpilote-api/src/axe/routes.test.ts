@@ -446,6 +446,27 @@ describe.concurrent('DELETE /axes/{id}/modalites/{modaliteId}', () => {
   )
 
   it(
+    'refuse (409) de supprimer une modalité utilisée par une combinaison',
+    integrationTest(async () => {
+      const { axeId, type } = await axeImbrique()
+      await fixtures.combinaison({ modalites: [{ publicId: type.publicId }] })
+      const cle = await cleApi(ApiKeyRole.ADMIN)
+
+      const response = await requete({
+        cle,
+        method: 'DELETE',
+        path: `/axes/${axeId}/modalites/${type.publicId}`,
+      })
+
+      expect(response.status).toBe(409)
+      expect(await response.json()).toMatchObject({
+        code: 'MODALITE_UTILISEE',
+        details: { combinaisons: 1 },
+      })
+    }),
+  )
+
+  it(
     'refuse (409) de supprimer une modalité qui a des enfants',
     integrationTest(async () => {
       const { axeId, famille, type } = await axeImbrique()

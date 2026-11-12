@@ -56,6 +56,21 @@ describe.concurrent('deleteModalite', () => {
   )
 
   it(
+    'refuse de supprimer une modalité utilisée par une combinaison',
+    integrationTest(async () => {
+      const { axePublicId, tva } = await familleEtTypes()
+      await fixtures.combinaison({ modalites: [{ publicId: tva.publicId }] })
+
+      const result = await runAsAdmin('principal-delete-modalite-utilisee', () =>
+        deleteModalite({ axePublicId, publicId: tva.publicId }),
+      )
+
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'MODALITE_UTILISEE', combinaisons: 1 })
+      expect(await existe(tva.publicId)).toBe(true)
+    }),
+  )
+
+  it(
     'ne trouve pas une modalité d’un autre axe',
     integrationTest(async () => {
       const { tva } = await familleEtTypes()

@@ -360,14 +360,16 @@ const upsertValeurs = async (
   }>,
 ): Promise<{ ecrites: number; supprimees: number }> => {
   if (rows.length === 0) return { ecrites: 0, supprimees: 0 }
+  // Les valeurs du seed visent la combinaison vide (indicateurs sans axe).
+  const combinaisonVide = await prisma.combinaison.findUniqueOrThrow({ where: { cle: '' } })
   let ecrites = 0
   for (const lot of parLots(rows)) {
     const tuples = lot.map(
       (row) =>
-        Prisma.sql`(${row.id}::uuid, ${row.indicateurId}::uuid, ${row.individuId}::uuid, ${row.date}, ${row.valeur.toString()}::decimal, NOW())`,
+        Prisma.sql`(${row.id}::uuid, ${row.indicateurId}::uuid, ${row.individuId}::uuid, ${combinaisonVide.id}::uuid, ${row.date}, ${row.valeur.toString()}::decimal, NOW())`,
     )
     ecrites += await prisma.$executeRaw`
-      INSERT INTO valeur_avancement (id, indicateur_id, individu_id, "date", valeur, updated_at)
+      INSERT INTO valeur_avancement (id, indicateur_id, individu_id, combinaison_id, "date", valeur, updated_at)
       VALUES ${Prisma.join(tuples)}
       ON CONFLICT (indicateur_id, individu_id, "date") DO UPDATE
         SET valeur = EXCLUDED.valeur, updated_at = NOW()
