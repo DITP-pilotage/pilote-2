@@ -9,7 +9,7 @@ describe('TOOLS', () => {
       TOOL_NAMES.filter(
         (name) =>
           TOOLS[name].label.length === 0 ||
-          !['source', 'interface', 'help', 'report'].includes(TOOLS[name].kind),
+          !['source', 'interface', 'help', 'report', 'dashboard'].includes(TOOLS[name].kind),
       ),
     ).toEqual([])
   })
@@ -47,5 +47,11 @@ describe('encarts', () => {
         perimetre: { type: 'SELECTION', individuIds: ['DEPT-01', 'DEPT-02'] },
       }).success,
     ).toBe(true)
+  })
+})
+
+describe('create_dashboard', () => {
+  it('compose un tableau de bord, hors des sources', () => {
+    expect(TOOLS.create_dashboard.kind).toBe('dashboard')
   })
 })

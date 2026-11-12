@@ -11,6 +11,7 @@ type WidgetRendererProps = {
   widget: WidgetApiModel
   indicateurId: string
   referentielId: string
+  interactive?: boolean
 }
 
 const RENDERERS: Record<string, (props: WidgetRendererProps) => React.ReactNode> = {

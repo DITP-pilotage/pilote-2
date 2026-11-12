@@ -10,11 +10,13 @@ import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
 import { Modale } from '@pilote/kpilote-ui/Modale'
 import { MultiToggle } from '@pilote/kpilote-ui/MultiToggle'
 import { useToast } from '@pilote/kpilote-ui/Toast'
-import { Copy, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { Copy, Image, ThumbsDown, ThumbsUp } from 'lucide-react'
 import { useId, useState } from 'react'
 
 import { rateCall } from './assistantApi'
 import { copyableText } from './copyResponse'
+import { copyDashboardImage } from './dashboard/copyImage'
+import { findDashboardElement, firstDashboard } from './dashboard/dashboardParts'
 
 const CATEGORY_OPTIONS = ISSUE_CATEGORIES.map((category) => ({
   value: category,
@@ -109,6 +111,16 @@ export function ResponseActions({ message }: { message: KpiloteUIMessage }) {
       .catch(() => toast({ title: "Le texte n'a pas pu être copié", variant: 'error' }))
   }
 
+  const dashboard = firstDashboard(message)
+
+  const copyImage = () => {
+    const element = dashboard ? findDashboardElement(dashboard.toolCallId) : null
+    if (!element) return
+    copyDashboardImage(element)
+      .then(() => toast({ title: 'Image copiée dans le presse-papiers' }))
+      .catch(() => toast({ title: "L'image n'a pas pu être copiée", variant: 'error' }))
+  }
+
   const rate = (body: RateBody) => {
     if (!llmCallId) return
     setSending(true)
@@ -128,6 +140,12 @@ export function ResponseActions({ message }: { message: KpiloteUIMessage }) {
         <Copy className="size-3.5" />
         Copier le texte
       </Button>
+      {dashboard && (
+        <Button variant="tertiary" size="sm" onClick={copyImage}>
+          <Image className="size-3.5" />
+          Copier l&apos;image
+        </Button>
+      )}
       {llmCallId && !rated && (
         <>
           <Button
