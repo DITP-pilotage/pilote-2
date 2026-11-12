@@ -1,6 +1,9 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 
-import { fetchAxeById, fetchAxes, fetchModalites } from '@/api/axes'
+import { fetchAllAxes, fetchAxeById, fetchAxes, fetchModalites } from '@/api/axes'
+
+export const axesAllQueryOptions = () =>
+  queryOptions({ queryKey: ['axes', 'all'], queryFn: () => fetchAllAxes() })
 
 export const axesInfiniteQueryOptions = (recherche: string) =>
   infiniteQueryOptions({

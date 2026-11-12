@@ -9,6 +9,7 @@ import {
   UNITES_DUREE,
 } from '@pilote/kpilote-shared/indicateur'
 
+import { AdminAxes } from '@/components/indicateurs/AdminAxes'
 import { AdminReferentiels } from '@/components/indicateurs/AdminReferentiels'
 import { AdminResponsables } from '@/components/indicateurs/AdminResponsables'
 import { UnitePicker } from '@/components/indicateurs/UnitePicker'
@@ -222,6 +223,8 @@ export function IndicateurForm({
           </div>
 
           <AdminReferentiels />
+
+          <AdminAxes />
 
           <AdminResponsables />
         </div>

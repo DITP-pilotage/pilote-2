@@ -3,6 +3,7 @@ import { z } from 'zod'
 import type { IndicateurApiModel, UpsertIndicateurBody } from '@pilote/kpilote-shared/indicateur'
 import {
   configurationIndicateurReferentielSchema,
+  declarationAxeIndicateurSchema,
   indicateurSourceUrlSchema,
   indicateurVisibiliteSchema,
   periodeMiseAJourSchema,
@@ -44,6 +45,7 @@ export const buildIndicateurFormSchema = (mode: 'create' | 'edit') =>
         ),
       delaiUnite: z.union([z.literal(''), uniteDureeSchema]),
       referentiels: z.array(configurationIndicateurReferentielSchema),
+      axes: z.array(declarationAxeIndicateurSchema),
       responsables: z.array(
         z.object({
           id: z.string(),
@@ -88,6 +90,7 @@ export function buildInitialValues(indicateur?: IndicateurApiModel): IndicateurF
         : '',
     delaiUnite: indicateur?.delaiMiseADisposition?.unite ?? '',
     referentiels: indicateur?.referentiels ?? [],
+    axes: indicateur?.axes.map((axe) => ({ id: axe.id, fonction: axe.fonction })) ?? [],
     responsables:
       indicateur?.responsables.map((responsable) => ({
         id: responsable.id,
@@ -117,6 +120,7 @@ export function toUpsertBody(values: IndicateurFormValues): UpsertIndicateurBody
         ? null
         : { nombre: Number(values.delaiNombre), unite: values.delaiUnite },
     referentiels: values.referentiels,
+    axes: values.axes,
     responsables: values.responsables.map((responsable) => responsable.id),
   }
 }
