@@ -65,21 +65,22 @@ Termes à **ne pas** employer :
 
 ## 3. Décisions
 
-| #   | Décision                                                                                                                                                                                                                                                                                                    |
-| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| D1  | Les **référentiels, individus et la hiérarchie territoriale** (`Relation`) restent **tels qu'ils sont**. Les axes s'ajoutent à côté. L'individu n'est pas un axe comme les autres.                                                                                                                          |
-| D2  | **Tout indicateur garde un individu** : l'individu est obligatoire dans chaque cellule.                                                                                                                                                                                                                     |
-| D3  | Les axes sont **dynamiques**, définis par l'utilisateur, stockés en base.                                                                                                                                                                                                                                   |
-| D4  | Les axes peuvent être **imbriqués dès la v1**, sur une profondeur libre (niveaux ordonnés + modalités en arbre).                                                                                                                                                                                            |
-| D5  | **Seules les valeurs** portent une combinaison. **Objectifs, commentaires et niveaux de confiance restent sur l'individu.**                                                                                                                                                                                 |
-| D6  | Le taux de progression d'un indicateur à axes se calcule sur la **marginale** (tous les axes à « Tous ») divisée par l'objectif de l'individu. Pas de taux pour une modalité.                                                                                                                               |
-| D7  | **Combinaisons partagées** entre indicateurs, identifiant **uuid**, **clés étrangères** vers les modalités (pas de clé texte), une **ligne « combinaison vide » globale**.                                                                                                                                  |
-| D8  | **Ordre d'agrégation : chemin 1** (arbitrage du point n°1, commentaire de PIL-1963). On combine d'abord les axes au grain territorial le plus fin, puis on remonte la hiérarchie territoriale existante. Entre plusieurs axes : l'ordre de déclaration sur l'indicateur. Pas d'ordre réglable dans l'admin. |
-| D9  | On ne **saisit** que sur des modalités **feuilles**. Les niveaux parents et la marginale se calculent.                                                                                                                                                                                                      |
-| D10 | Fiche indicateur : un sélecteur par axe, **comparaison** (médiane, min, max) et **carte** pour une modalité, graphique « **Décomposer par** ».                                                                                                                                                              |
-| D11 | **Hors périmètre** : sélecteur de modalité sur les tableaux de bord `/indicateurs` et les collections (donc pas de `nonApplicable`), cloisonnement des droits par modalité, commentaires et confiance par modalité.                                                                                         |
-| D12 | **Pas de feature flag.** Chaque PR part en prod telle quelle. Tant qu'aucun indicateur n'a d'axe, rien ne change pour l'existant. La prod kpilote ne contient que des données fictives manipulées par l'équipe.                                                                                             |
-| D13 | Déclaration des axes d'un indicateur par une **route dédiée** `PUT /indicateurs/{id}/axes`. `PUT /indicateurs` n'est pas modifié.                                                                                                                                                                           |
+| #   | Décision                                                                                                                                                                                                                                                                                                                               |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | Les **référentiels, individus et la hiérarchie territoriale** (`Relation`) restent **tels qu'ils sont**. Les axes s'ajoutent à côté. L'individu n'est pas un axe comme les autres.                                                                                                                                                     |
+| D2  | **Tout indicateur garde un individu** : l'individu est obligatoire dans chaque cellule.                                                                                                                                                                                                                                                |
+| D3  | Les axes sont **dynamiques**, définis par l'utilisateur, stockés en base.                                                                                                                                                                                                                                                              |
+| D4  | Les axes peuvent être **imbriqués dès la v1**, sur une profondeur libre (niveaux ordonnés + modalités en arbre).                                                                                                                                                                                                                       |
+| D5  | **Seules les valeurs** portent une combinaison. **Objectifs, commentaires et niveaux de confiance restent sur l'individu.**                                                                                                                                                                                                            |
+| D6  | Le taux de progression d'un indicateur à axes se calcule sur la **marginale** (tous les axes à « Tous ») divisée par l'objectif de l'individu. Pas de taux pour une modalité.                                                                                                                                                          |
+| D7  | **Combinaisons partagées** entre indicateurs, identifiant **uuid**, **clés étrangères** vers les modalités (pas de clé texte), une **ligne « combinaison vide » globale**.                                                                                                                                                             |
+| D8  | **Ordre d'agrégation : chemin 1** (arbitrage du point n°1, commentaire de PIL-1963). On combine d'abord les axes au grain territorial le plus fin, puis on remonte la hiérarchie territoriale existante. Entre plusieurs axes : l'ordre de déclaration sur l'indicateur, réglable dans l'admin (proposition du point n°2 de PIL-1963). |
+| D9  | On ne **saisit** que sur des modalités **feuilles**. Les niveaux parents et la marginale se calculent.                                                                                                                                                                                                                                 |
+| D10 | Fiche indicateur : un sélecteur par axe, **comparaison** (médiane, min, max) et **carte** pour une modalité, graphique « **Décomposer par** ».                                                                                                                                                                                         |
+| D11 | **Hors périmètre** : sélecteur de modalité sur les tableaux de bord `/indicateurs` et les collections (donc pas de `nonApplicable`), cloisonnement des droits par modalité, commentaires et confiance par modalité.                                                                                                                    |
+| D12 | **Pas de feature flag.** Chaque PR part en prod telle quelle. Tant qu'aucun indicateur n'a d'axe, rien ne change pour l'existant. La prod kpilote ne contient que des données fictives manipulées par l'équipe.                                                                                                                        |
+| D13 | Déclaration des axes d'un indicateur par un champ `axes` optionnel de `PUT /indicateurs/{id}` (absent = inchangé). La route dédiée envisagée au départ protégeait le contrat de pilote-ppg, dont la synchronisation a été supprimée (#2668).                                                                                           |
+| D14 | **Une fonction par axe et par indicateur** (SUM ou AVG), appliquée à chaque niveau de l'axe puis à « Tous ». Pas de fonction par niveau : les niveaux d'un axe découpent la même population, aucun cas réaliste ne demande de les mélanger. Pas de NONE : on ne saisit que sur des feuilles (D9).                                      |
 
 ---
 
@@ -92,9 +93,9 @@ modalite       (id uuid, public_id, axe_id → axe, niveau_axe_id → niveau_axe
                 parent_id → modalite NULL)
                -- règle applicative : le parent est du même axe et du niveau d'ordre précédent
 
-indicateur_axe        (indicateur_id, axe_id, ordre, fonction_marginale)  PK(indicateur_id, axe_id)
-                      -- ordre = ordre de déclaration (sert entre axes, D8)
-indicateur_niveau_axe (indicateur_id, niveau_axe_id, fonction_agregation) PK(indicateur_id, niveau_axe_id)
+indicateur_axe        (indicateur_id, axe_id, ordre, fonction SUM|AVG)     PK(indicateur_id, axe_id)
+                      UNIQUE(indicateur_id, ordre)
+                      -- ordre = ordre de déclaration (sert entre axes, D8) ; fonction : D14
 
 combinaison           (id uuid, cle UNIQUE)   -- cle = uuids des modalités triés ; ligne fixe « vide »
 combinaison_modalite  (combinaison_id → combinaison, axe_id → axe, modalite_id → modalite)
@@ -130,8 +131,8 @@ Les indicateurs **sans axe** suivent le chemin de calcul actuel, inchangé (`loa
 
 1. **Chemin 1 (D8).** Pour une cellule « individu I, combinaison partielle » :
    - si I est une feuille territoriale (ou son niveau est saisi, fonction NONE) : on agrège les axes
-     **à ce niveau**, axe par axe dans l'ordre de déclaration, avec la fonction de chaque niveau d'axe puis la
-     fonction de la marginale ;
+     **à ce niveau**, axe par axe dans l'ordre de déclaration, avec la fonction de l'axe (D14) à chaque
+     niveau de l'axe puis pour « Tous » ;
    - sinon : on calcule la même cellule pour chaque enfant territorial, puis on remonte avec la fonction du
      référentiel (chemin existant).
 2. **Modalité parente** (ex. Fraude fiscale) : agrégat de ses enfants avec la fonction de leur niveau.
@@ -161,7 +162,8 @@ Vaucluse (84) et Bouches-du-Rhône (13). Valeurs : 84 × France Travail = 1, 84 
 - `GET/PUT /axes`, niveaux et modalités : lectures ouvertes à tout utilisateur authentifié, écritures réservées aux
   clés API ADMIN. Le niveau d'une modalité se déduit de son parent, et le parent est fixé à la création (pas de
   déplacement : suppression puis recréation).
-- `PUT /indicateurs/{id}/axes` ; champ `axes: []` ajouté aux lectures d'indicateur.
+- `PUT /indicateurs/{id}` accepte `axes: [{ id, fonction }]` (optionnel, la position donne l'ordre) ; champ
+  `axes: [{ id, nom, fonction }]` ajouté aux lectures d'indicateur.
 - Lectures de valeurs : paramètre optionnel `modalites=<publicIds séparés par des virgules>`, au plus une par
   axe ; absent = marginale sur tous les axes. Format exact à figer dans PIL-1991.
 - Écritures `PUT /indicateurs/{id}/valeurs` et `valeurs:batch` : champ optionnel `modalites` en plus de
@@ -188,7 +190,7 @@ Vaucluse (84) et Bouches-du-Rhône (13). Valeurs : 84 × France Travail = 1, 84 
 | Tableaux de bord           | Sélecteur restreint aux dimensions partagées                                                                             | Hors périmètre (affichent la marginale)                                        |
 | Cloisonnement              | Périmètre par membre, fail-closed (4 migrations)                                                                         | Hors périmètre                                                                 |
 | Relations                  | Erreurs `DIMENSIONS_DIFFERENTES`, `FAITS_MASQUES`                                                                        | Sans objet                                                                     |
-| `PUT /indicateurs`         | Étendu avec `dimensions[]`                                                                                               | Inchangé ; route dédiée `/axes`                                                |
+| `PUT /indicateurs`         | Étendu avec `dimensions[]`                                                                                               | Champ `axes` optionnel ajouté                                                  |
 | Activation                 | —                                                                                                                        | Pas de feature flag (D12)                                                      |
 
 ### Ce qu'on reprend du POC (comme point de départ, à adapter à `dev`)

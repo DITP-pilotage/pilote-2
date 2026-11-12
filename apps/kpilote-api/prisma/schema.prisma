@@ -118,6 +118,7 @@ model Indicateur {
   collections          CollectionIndicateur[]
   individuCommentaires IndicateurIndividuCommentaire[]
   responsables         IndicateurResponsable[]
+  axes                 IndicateurAxe[]
 
   @@map("indicateur")
 }
@@ -328,8 +329,9 @@ model Axe {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  niveaux   NiveauAxe[]
-  modalites Modalite[]
+  niveaux     NiveauAxe[]
+  modalites   Modalite[]
+  indicateurs IndicateurAxe[]
 
   @@map("axe")
 }
@@ -379,6 +381,37 @@ model Modalite {
   @@index([niveauAxeId])
   @@index([parentId])
   @@map("modalite")
+}
+
+// Fonction d'un axe pour un indicateur. Pas de NONE (« saisi à ce niveau ») :
+// on ne saisit que sur des modalités feuilles, tout le reste se calcule.
+enum FonctionAgregationAxe {
+  SUM
+  AVG
+
+  @@map("fonction_agregation_axe_enum")
+}
+
+// Axes qui découpent un indicateur. `fonction` calcule une modalité parente à
+// partir de ses enfants, à chaque niveau de l'axe, puis « Tous » à partir du
+// premier niveau. `ordre` (ordre de déclaration, à partir de 1) fixe l'ordre
+// dans lequel les axes se combinent entre eux : il change le résultat dès
+// qu'une moyenne intervient et que des cases manquent (point à arbitrer n°2
+// de PIL-1963).
+model IndicateurAxe {
+  indicateurId String                @map("indicateur_id") @db.Uuid
+  axeId        String                @map("axe_id") @db.Uuid
+  ordre        Int
+  fonction     FonctionAgregationAxe
+  createdAt    DateTime              @default(now()) @map("created_at")
+
+  indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+  axe        Axe        @relation(fields: [axeId], references: [id], onDelete: Restrict)
+
+  @@id([indicateurId, axeId])
+  @@unique([indicateurId, ordre])
+  @@index([axeId])
+  @@map("indicateur_axe")
 }
 
 model ValeurAvancement {
