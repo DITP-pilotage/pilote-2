@@ -11,6 +11,7 @@ import {
 } from '@pilote/kpilote-shared/axe'
 
 import { bffClient } from '@/api/client'
+import { fetchAllPages } from '@/lib/fetchAllPages'
 
 export const fetchAxes = async (
   params: { recherche?: string | undefined; cursor?: string | undefined } = {},
@@ -20,6 +21,9 @@ export const fetchAxes = async (
   if (params.cursor) searchParams.cursor = params.cursor
   return axeListApiModelSchema.parse(await bffClient.get('axes', { searchParams }).json())
 }
+
+export const fetchAllAxes = (): Promise<AxeApiModel[]> =>
+  fetchAllPages((cursor) => fetchAxes({ cursor }))
 
 export const fetchAxeById = async (id: string): Promise<AxeApiModel> =>
   axeApiModelSchema.parse(await bffClient.get(`axes/${id}`).json())
