@@ -1,8 +1,9 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 
+// Défaut d'Intl : les nombres s'affichent avec au plus 3 décimales.
 const numberFr = new Intl.NumberFormat('fr-FR')
-const variationFr = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })
+const differenceFr = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })
 const dateFr = new Intl.DateTimeFormat('fr-FR')
 const heureFr = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' })
 const monthYearShortOptions = { month: 'short', year: '2-digit' } as const
@@ -11,8 +12,6 @@ const monthYearNumericOptions = { month: '2-digit', year: 'numeric' } as const
 const monthYearNumericFr = new Intl.DateTimeFormat('fr-FR', monthYearNumericOptions)
 
 const toDate = (value: Date | string): Date => (typeof value === 'string' ? new Date(value) : value)
-
-export const formatNumberFr = (value: number): string => numberFr.format(value)
 
 // Espace fine insécable (U+202F) entre la valeur et l'abréviation, conforme
 // à la typographie fr-FR (`70 %`, `82 ans`).
@@ -27,17 +26,26 @@ const formatAvecUnite = (
     ? `${format.format(value)}${NBSP_FINE}${unite.abbreviation}`
     : format.format(value)
 
-export const formatNumberAvecUniteFr = (
+export const formatNumberFr = (
   value: number,
-  unite: UniteIndicateurApiModel | null,
+  unite: UniteIndicateurApiModel | null = null,
 ): string => formatAvecUnite(numberFr, value, unite)
 
-export const formatVariationFr = (value: number): string => variationFr.format(value)
-
-export const formatVariationAvecUniteFr = (
+// Différence signée (variation, écart à la médiane) : « + » devant une valeur positive.
+export const formatDifferenceFr = (
   value: number,
-  unite: UniteIndicateurApiModel | null,
-): string => formatAvecUnite(variationFr, value, unite)
+  unite: UniteIndicateurApiModel | null = null,
+): string => formatAvecUnite(differenceFr, value, unite)
+
+// Signe de la différence telle que formatDifferenceFr l'affiche, donc après arrondi :
+// une différence affichée « 0 » n'a pas de signe et se lit comme nulle. La couleur,
+// « STABLE » et « à la médiane » suivent ainsi le nombre lu.
+export const displayedDifferenceSign = (value: number): -1 | 0 | 1 => {
+  const types = differenceFr.formatToParts(value).map((part) => part.type)
+  if (types.includes('minusSign')) return -1
+  if (types.includes('plusSign')) return 1
+  return 0
+}
 
 export const formatDateFr = (value: Date | string): string => dateFr.format(toDate(value))
 

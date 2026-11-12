@@ -73,7 +73,8 @@ const buildSynthese = async (
     const serie = await resolveSerieIndividu(individu.id, ctx, cache)
     items.push({
       individu: individu.publicId,
-      variation: computeVariation(extractDeuxDerniers(serie)),
+      // computeVariation attend [recente, precedente] ; la série est ASC par bucket.
+      variation: computeVariation(serie.slice(-2).reverse()),
       ecartMediane: computeEcartMediane(
         serie.at(-1)?.valeur,
         medianeParReferentiel.get(individu.referentielId) ?? null,
@@ -96,19 +97,6 @@ const buildSynthese = async (
   return { items }
 }
 
-// computeVariation attend [recente, precedente] ; nos séries sont ASC par
-// bucket → on inverse les deux derniers points.
-const extractDeuxDerniers = (
-  serie: ReadonlyArray<PointInterne>,
-): ReadonlyArray<{ valeur: Decimal }> => {
-  const dernier = serie.at(-1)
-  if (!dernier) return []
-  const precedent = serie.at(-2)
-  return precedent
-    ? [{ valeur: dernier.valeur }, { valeur: precedent.valeur }]
-    : [{ valeur: dernier.valeur }]
-}
-
 const computeMedianeParReferentiel = async ({
   population,
   ctx,
@@ -117,7 +105,7 @@ const computeMedianeParReferentiel = async ({
   population: ReadonlyArray<IndividuRef>
   ctx: Awaited<ReturnType<typeof loadResolveSerieContext>>['ctx']
   cache: Map<string, ReadonlyArray<PointInterne>>
-}): Promise<Map<string, number | null>> => {
+}): Promise<Map<string, Decimal | null>> => {
   const valeursParReferentiel = new Map<string, Decimal[]>()
   for (const individu of population) {
     const dernier = (await resolveSerieIndividu(individu.id, ctx, cache)).at(-1)
@@ -126,7 +114,7 @@ const computeMedianeParReferentiel = async ({
     liste.push(dernier.valeur)
     valeursParReferentiel.set(individu.referentielId, liste)
   }
-  const result = new Map<string, number | null>()
+  const result = new Map<string, Decimal | null>()
   for (const [referentielId, valeurs] of valeursParReferentiel) {
     result.set(referentielId, computeMediane(valeurs))
   }
