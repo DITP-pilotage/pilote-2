@@ -1,19 +1,35 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo } from 'react'
+import { useFieldArray, useForm } from 'react-hook-form'
+import { z } from 'zod'
+
+import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
+import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 
 import { Button } from '@pilote/kpilote-ui/Button'
+import { Field } from '@pilote/kpilote-ui/Field'
+import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
+import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
 import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { Subtitle } from '@pilote/kpilote-ui/Subtitle'
 import { clsxm } from '@/lib/clsxm'
 
-type IndividuItem = { publicId: string; nom: string }
+// En édition l'identifiant est verrouillé : on ne le valide qu'à la création.
+const buildReferentielFormSchema = (mode: 'create' | 'edit') =>
+  z.object({
+    id: mode === 'create' ? referentielPublicIdSchema : z.string(),
+    nom: z.string().trim().min(1, 'Le nom est requis'),
+    description: z.string(),
+    individus: z.array(
+      z.object({
+        publicId: individuPublicIdSchema,
+        nom: z.string().trim().min(1, "Le nom de l'individu est requis"),
+      }),
+    ),
+  })
 
-export type ReferentielFormValues = {
-  id: string
-  nom: string
-  description: string
-  individus: IndividuItem[]
-}
+export type ReferentielFormValues = z.infer<ReturnType<typeof buildReferentielFormSchema>>
 
 export function ReferentielForm({
   mode,
@@ -30,65 +46,54 @@ export function ReferentielForm({
   onSubmit: (values: ReferentielFormValues) => void
   onCancel: () => void
 }) {
-  const [values, setValues] = useState<ReferentielFormValues>(initial)
-
-  const update = (patch: Partial<ReferentielFormValues>) =>
-    setValues((prev) => ({ ...prev, ...patch }))
-  const updateIndividu = (index: number, patch: Partial<IndividuItem>) =>
-    setValues((prev) => ({
-      ...prev,
-      individus: prev.individus.map((item, i) => (i === index ? { ...item, ...patch } : item)),
-    }))
-  const addIndividu = () => update({ individus: [...values.individus, { publicId: '', nom: '' }] })
-  const removeIndividu = (index: number) =>
-    update({ individus: values.individus.filter((_, i) => i !== index) })
-
-  const canSubmit =
-    values.nom.trim().length > 0 &&
-    (mode === 'edit' || /^REF-[A-Z0-9-]{1,16}$/.test(values.id)) &&
-    values.individus.every(
-      (item) => /^[A-Z][A-Z0-9-]{0,19}$/.test(item.publicId) && item.nom.trim().length > 0,
-    )
+  const schema = useMemo(() => buildReferentielFormSchema(mode), [mode])
+  const {
+    register,
+    control,
+    setValue,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<ReferentielFormValues>({
+    resolver: zodResolver(schema),
+    mode: 'onChange',
+    defaultValues: initial,
+  })
+  const { fields, append, remove } = useFieldArray({ control, name: 'individus' })
 
   return (
-    <div>
+    <form onSubmit={(event) => void handleSubmit(onSubmit)(event)}>
       <div className="rounded-xl border border-border bg-surface p-6">
         <div className="mb-5">
-          <label className="mb-1.5 block text-xs font-semibold">Identifiant</label>
           {mode === 'edit' ? (
-            <span className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-surface-tinted px-3 py-2 font-mono text-sm text-primary">
-              {values.id}{' '}
-              <span className="font-sans text-xs text-text-subtle">🔒 non modifiable</span>
-            </span>
+            <Field label="Identifiant">
+              <span className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-surface-tinted px-3 py-2 font-mono text-sm text-primary">
+                {initial.id}{' '}
+                <span className="font-sans text-xs text-text-subtle">🔒 non modifiable</span>
+              </span>
+            </Field>
           ) : (
-            <input
-              value={values.id}
-              onChange={(event) => update({ id: event.target.value.toUpperCase() })}
+            <FieldInput
+              label="Identifiant"
               placeholder="REF-DEPT"
-              className="w-56 rounded-md border border-border px-3 py-2 font-mono text-sm focus:border-primary focus:outline-none"
+              className="w-56 py-2 font-mono"
+              error={errors.id?.message}
+              {...register('id')}
+              onChange={(event) =>
+                setValue('id', event.target.value.toUpperCase(), {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
             />
           )}
         </div>
 
         <div className="mb-5">
-          <label className="mb-1.5 block text-xs font-semibold">
-            Nom <span className="text-red-marianne">*</span>
-          </label>
-          <input
-            value={values.nom}
-            onChange={(event) => update({ nom: event.target.value })}
-            className="w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none"
-          />
+          <FieldInput label="Nom" required error={errors.nom?.message} {...register('nom')} />
         </div>
 
         <div className="mb-6">
-          <label className="mb-1.5 block text-xs font-semibold">Description</label>
-          <textarea
-            value={values.description}
-            onChange={(event) => update({ description: event.target.value })}
-            rows={2}
-            className="w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none"
-          />
+          <FieldTextarea label="Description" rows={2} {...register('description')} />
         </div>
 
         <div className="border-t border-border pt-5">
@@ -96,7 +101,7 @@ export function ReferentielForm({
             <span className="text-sm font-bold">Individus</span>
             <button
               type="button"
-              onClick={addIndividu}
+              onClick={() => append({ publicId: '', nom: '' })}
               className="flex items-center gap-1 text-sm font-semibold text-primary"
             >
               <Plus className="size-4" /> Ajouter
@@ -106,26 +111,38 @@ export function ReferentielForm({
             Un individu ne peut appartenir qu'à un seul référentiel. En ajouter un déjà rattaché
             ailleurs sera refusé (409).
           </Subtitle>
-          {values.individus.map((item, index) => (
+          {fields.map((field, index) => (
             <div
-              key={index}
-              className="mb-2.5 flex items-center gap-2.5 rounded-lg border border-border bg-surface-muted px-3 py-2.5"
+              key={field.id}
+              className="mb-2.5 flex items-start gap-2.5 rounded-lg border border-border bg-surface-muted px-3 py-2.5"
             >
-              <input
-                value={item.publicId}
-                onChange={(event) =>
-                  updateIndividu(index, { publicId: event.target.value.toUpperCase() })
-                }
-                placeholder="DEPT-75"
-                className="flex-1 rounded-md border border-border bg-surface px-2.5 py-2 font-mono text-sm focus:border-primary focus:outline-none"
-              />
-              <input
-                value={item.nom}
-                onChange={(event) => updateIndividu(index, { nom: event.target.value })}
-                placeholder="Paris"
-                className="flex-[2] rounded-md border border-border bg-surface px-2.5 py-2 text-sm focus:border-primary focus:outline-none"
-              />
-              <IconButton variant="danger" label="Retirer" onClick={() => removeIndividu(index)}>
+              <div className="flex-1">
+                <FieldInput
+                  label={`Identifiant de l'individu ${index + 1}`}
+                  hideLabel
+                  placeholder="DEPT-75"
+                  className="bg-surface px-2.5 py-2 font-mono"
+                  error={errors.individus?.[index]?.publicId?.message}
+                  {...register(`individus.${index}.publicId`)}
+                  onChange={(event) =>
+                    setValue(`individus.${index}.publicId`, event.target.value.toUpperCase(), {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
+                />
+              </div>
+              <div className="flex-[2]">
+                <FieldInput
+                  label={`Nom de l'individu ${index + 1}`}
+                  hideLabel
+                  placeholder="Paris"
+                  className="bg-surface px-2.5 py-2"
+                  error={errors.individus?.[index]?.nom?.message}
+                  {...register(`individus.${index}.nom`)}
+                />
+              </div>
+              <IconButton variant="danger" label="Retirer" onClick={() => remove(index)}>
                 <Trash2 />
               </IconButton>
             </div>
@@ -138,14 +155,13 @@ export function ReferentielForm({
           Annuler
         </Button>
         <Button
-          type="button"
-          disabled={!canSubmit || pending}
-          onClick={() => onSubmit(values)}
+          type="submit"
+          disabled={!isValid || pending}
           className={clsxm(isProd && 'bg-red-marianne hover:bg-red-marianne')}
         >
           {pending ? 'Enregistrement…' : isProd ? '🚨 Enregistrer en Prod' : 'Enregistrer'}
         </Button>
       </div>
-    </div>
+    </form>
   )
 }
