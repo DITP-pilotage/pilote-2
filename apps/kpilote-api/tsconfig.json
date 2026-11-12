@@ -17,6 +17,7 @@
       "@/apiKey/*": ["./src/apiKey/*"],
       "@/analytics/*": ["./src/analytics/*"],
       "@/assistant/*": ["./src/assistant/*"],
+      "@/axe/*": ["./src/axe/*"],
       "@/framework/*": ["./src/framework/*"],
       "@/authentication/*": ["./src/authentication/*"],
       "@/commentaire/*": ["./src/commentaire/*"],

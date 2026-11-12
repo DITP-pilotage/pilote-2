@@ -5,6 +5,7 @@ import { cors } from 'hono/cors'
 import { acmeRoutes } from '@/acme/routes'
 import { apiKeyRoutes } from '@/apiKey/routes'
 import { analyticsRoutes } from '@/analytics/routes'
+import { axeRoutes } from '@/axe/routes'
 import { assistantAdminRoutes } from '@/assistant/admin/routes'
 import { assistantRoutes } from '@/assistant/routes'
 import { centreAideRoutes } from '@/centreAide/routes'
@@ -51,6 +52,7 @@ app.route('/', health)
 app.route('/', assistantRoutes)
 app.route('/', assistantAdminRoutes)
 app.route('/', analyticsRoutes)
+app.route('/', axeRoutes)
 app.route('/', indicateurRoutes)
 app.route('/', valeurAvancementRoutes)
 app.route('/', valeurImportRoutes)
