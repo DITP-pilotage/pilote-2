@@ -31,6 +31,7 @@ import {
   collectionTauxProgressionSummaryListApiModelSchema,
 } from '@pilote/kpilote-shared/collectionTauxProgression'
 
+import { messageResoudreSelectionError } from '@/axe/resoudreSelection'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
@@ -119,7 +120,13 @@ const getValeursForIndicateurRoute = createRoute({
     "combineLatest permissive : un point dérivé est émis dès qu'au moins un enfant a une valeur " +
     'connue au bucket courant ; les enfants sans valeur sont marqués `manquante`. ' +
     'Profondeur d’agrégation supportée : France → Régions → Départements (~100 feuilles). ' +
-    'Au-delà la requête est acceptée mais peut être lente.',
+    'Au-delà la requête est acceptée mais peut être lente. ' +
+    'Indicateur à axes : sans `modalites`, chaque point vaut « Tous » sur chaque axe (axes ' +
+    'combinés dans chaque territoire le plus fin, puis remontée territoriale) ; `modalites` ' +
+    '(publicIds séparés par une virgule, au plus un par axe, modalité parente acceptée) précise ' +
+    'la lecture, un axe non cité valant « Tous ». Les contributions calculées à partir de ' +
+    'modalités portent un champ `modalites`. Erreurs 400 : `MODALITE_INCONNUE`, ' +
+    '`AXE_NON_DECLARE` (dont un indicateur sans axe), `MODALITES_MEME_AXE`.',
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -439,9 +446,15 @@ export const valeurAvancementRoutes = createOpenApiHono()
 
 valeurAvancementRoutes.openapi(getValeursForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { individus, dateDebut, dateFin, dateTrunc } = context.req.valid('query')
+  const { individus, dateDebut, dateFin, dateTrunc, modalites } = context.req.valid('query')
 
-  return listValeursForIndicateur(id, { individus, dateDebut, dateFin, dateTrunc }).match(
+  return listValeursForIndicateur(id, {
+    individus,
+    dateDebut,
+    dateFin,
+    dateTrunc,
+    modalites,
+  }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -449,7 +462,17 @@ valeurAvancementRoutes.openapi(getValeursForIndicateurRoute, async (context) => 
         schema: ValeurAvancementListApiModelSchema,
         status: 200,
       }),
-    never,
+    (error) =>
+      jsonResponseError({
+        context,
+        error: {
+          code: error.type,
+          message: messageResoudreSelectionError(error),
+          details: { modalites: error.modalites },
+        },
+        schema: ErrorApiModelSchema,
+        status: 400,
+      }),
   )
 })
 

@@ -165,8 +165,10 @@ Vaucluse (84) et Bouches-du-Rhône (13). Valeurs : 84 × France Travail = 1, 84 
   déplacement : suppression puis recréation).
 - `PUT /indicateurs/{id}` accepte `axes: [{ id, fonction }]` (optionnel, la position donne l'ordre) ; champ
   `axes: [{ id, nom, fonction }]` ajouté aux lectures d'indicateur.
-- Lectures de valeurs : paramètre optionnel `modalites=<publicIds séparés par des virgules>`, au plus une par
-  axe ; absent = marginale sur tous les axes. Format exact à figer dans PIL-1991.
+- Lectures de valeurs : paramètre optionnel `modalites=OP-ORANGE,FR-FISCALE` (publicIds séparés par une virgule),
+  au plus un par axe, modalité parente acceptée ; un axe non cité vaut « Tous ». Erreurs 400 : `MODALITE_INCONNUE`,
+  `AXE_NON_DECLARE`, `MODALITES_MEME_AXE`. Les contributions calculées à partir de modalités portent un champ
+  `modalites`.
 - Écritures `PUT /indicateurs/{id}/valeurs` et `valeurs:batch` : champ optionnel `modalites` en plus de
   `individu`. Format historique `{individu, date, valeur}` inchangé pour un indicateur sans axe.
 - Nouvelles erreurs : `MODALITE_MANQUANTE`, `MODALITE_INCONNUE`, `AXE_NON_DECLARE`, saisie sur une modalité non

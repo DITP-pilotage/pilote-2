@@ -62,6 +62,21 @@ export type UpsertAxeBody = z.infer<typeof upsertAxeBodySchema>
 
 // --- Modalité ----------------------------------------------------------------
 
+// Sélection de modalités dans une lecture de valeurs : publicIds séparés par une
+// virgule, au plus un par axe de l'indicateur ; un axe non cité vaut « Tous ».
+export const modalitesCsvSchema = z
+  .string()
+  .transform((value) =>
+    value
+      .split(',')
+      .map((segment) => segment.trim())
+      .filter((segment) => segment.length > 0),
+  )
+  .pipe(z.array(modalitePublicIdSchema))
+  .describe(
+    'Modalités qui précisent la lecture, séparées par une virgule (ex. OP-ORANGE ou OP-ORANGE,FR-FISCALE) : au plus une par axe de l’indicateur, modalité parente acceptée. Un axe non cité vaut « Tous » (son total). Absent : « Tous » sur chaque axe.',
+  )
+
 export const modaliteApiModelSchema = z.object({
   id: modalitePublicIdSchema,
   nom: z.string().describe('Nom lisible de la modalité (ex. Orange, Fraude à la TVA).'),
