@@ -22,6 +22,8 @@ vi.mock("@/server/albert/Albert", () => ({
 // Le conteneur tire next-auth, que les tests unitaires ne chargent pas
 vi.mock("@/server/dependances", () => ({ getContainer: vi.fn() }));
 
+const AUTEUR_ID = "5d0c9e2a-7b31-4c8e-a1f4-0e6b2d9c3a71";
+
 const CH_071: ChantierResult = {
   chantier: {
     id: "CH-071",
@@ -30,7 +32,10 @@ const CH_071: ChantierResult = {
     ppg: "PPG",
     ministeres: [],
     mailles_applicables: ["NAT", "DEPT"],
+    directeurs_projet_ids: [],
   },
+  responsables_locaux_ids: [],
+  coordinateurs_territoriaux_ids: [],
   meteo: "ORAGE",
   tendance: "BAISSE",
   ecart: -14.4,
@@ -42,6 +47,8 @@ const CH_071: ChantierResult = {
     commentaire: "<p>Deux postes restent vacants.</p>",
     date_meteo: "2026-01-10",
     date_commentaire: "2026-01-12",
+    auteur_creation_id: AUTEUR_ID,
+    auteur_modification_id: AUTEUR_ID,
   },
   commentaires: { donnees: null, autresResultats: null },
 };
@@ -82,6 +89,7 @@ const getChantierIndicateursQuery = mock<GetChantierIndicateursQuery>({
         valeur_cible: 60,
         date_valeur_cible: "2026-12-31",
         taux_avancement: 66.25,
+        responsables_donnees_ids: [],
       },
     ],
   })),
@@ -101,12 +109,16 @@ const getChantierCommentairesQuery = () =>
               date_publication: "2026-03-01T10:00:00.000Z",
               contenu: "<p>Les recrutements reprennent.</p>",
               type: "commentaires_sur_les_donnees",
+              auteur_creation_id: AUTEUR_ID,
+              auteur_modification_id: AUTEUR_ID,
             },
             {
               id: "commentaire-1",
               date_publication: "2026-01-01T10:00:00.000Z",
               contenu: "<p>Les recrutements sont gelés.</p>",
               type: "commentaires_sur_les_donnees",
+              auteur_creation_id: AUTEUR_ID,
+              auteur_modification_id: AUTEUR_ID,
             },
           ],
         },

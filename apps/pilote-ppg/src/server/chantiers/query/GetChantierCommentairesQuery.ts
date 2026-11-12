@@ -57,6 +57,8 @@ export type GetChantierCommentairesResult = {
     date_publication: string;
     contenu: string;
     type: string;
+    auteur_creation_id: string;
+    auteur_modification_id: string;
   }[];
 };
 
@@ -174,18 +176,24 @@ export class GetChantierCommentairesQuery {
         date_publication: commentaire.date_modification.toISOString(),
         contenu: commentaire.contenu,
         type: commentaire.type,
+        auteur_creation_id: commentaire.auteur_creation_id,
+        auteur_modification_id: commentaire.auteur_modification_id,
       })),
       ...syntheses.map((synthese) => ({
         id: synthese.id,
         date_publication: synthese.date_modification.toISOString(),
         contenu: synthese.commentaire as string,
         type: "synthese_des_resultats",
+        auteur_creation_id: synthese.auteur_creation_id,
+        auteur_modification_id: synthese.auteur_modification_id,
       })),
       ...decisionsStrategiques.map((decisionStrategique) => ({
         id: decisionStrategique.id,
         date_publication: decisionStrategique.date_modification.toISOString(),
         contenu: decisionStrategique.contenu,
         type: "decision_strategique",
+        auteur_creation_id: decisionStrategique.auteur_creation_id,
+        auteur_modification_id: decisionStrategique.auteur_modification_id,
       })),
     ];
 

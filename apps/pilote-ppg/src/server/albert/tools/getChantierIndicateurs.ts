@@ -3,6 +3,7 @@ import { z } from "zod";
 import { chantierIdSchema } from "@/server/albert/tools/chantierId";
 import { GetChantierIndicateursQuery } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import type { GetChantierIndicateursResult } from "@/server/chantiers/query/GetChantierIndicateursQuery";
+import { personReference } from "@/shared/personne/personReference";
 
 export const getChantierIndicateursInputSchema = z.object({
   chantier_id: chantierIdSchema,
@@ -17,8 +18,15 @@ export const getChantierIndicateursInputSchema = z.object({
     .describe("Année du jalon (ex: 2024, 2025)"),
 });
 
+type IndicateurRenvoye = Omit<
+  GetChantierIndicateursResult["indicateurs"][number],
+  "responsables_donnees_ids"
+> & { responsables_donnees: string[] };
+
 export type GetChantierIndicateursOutput = {
-  resultats: GetChantierIndicateursResult;
+  resultats: Omit<GetChantierIndicateursResult, "indicateurs"> & {
+    indicateurs: IndicateurRenvoye[];
+  };
 };
 
 export function createGetChantierIndicateursTool({
@@ -29,6 +37,7 @@ export function createGetChantierIndicateursTool({
   return ({ chantiersAccessibles }: { chantiersAccessibles: string[] }) => {
     return tool({
       description: `Renvoie les indicateurs d'un chantier sur un territoire à un jalon, avec leurs valeur initiale (VI), valeur d'avancement (VA), valeur cible (VC) et leur taux d'avancement (TA).
+\`responsables_donnees\` : les références des responsables des données de l'indicateur, à recopier telles quelles pour les citer.
 Utilise-le pour : les indicateurs d'un chantier et leurs valeurs, les données d'un rapport.
 Ne l'utilise pas pour :
 - la situation générale d'un chantier (écart, tendance, niveau de confiance) → get_chantiers ;
@@ -48,7 +57,18 @@ Ne l'utilise pas pour :
           jalon: input.jalon,
         });
 
-        return { resultats: result };
+        return {
+          resultats: {
+            ...result,
+            indicateurs: result.indicateurs.map(
+              ({ responsables_donnees_ids, ...indicateur }) => ({
+                ...indicateur,
+                responsables_donnees:
+                  responsables_donnees_ids.map(personReference),
+              }),
+            ),
+          },
+        };
       },
     });
   };

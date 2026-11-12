@@ -13,6 +13,7 @@ import type {
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
 import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
+import { personReference } from "@/shared/personne/personReference";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import {
   descriptionPerimetre,
@@ -51,6 +52,8 @@ export const getChantierCommentairesInputSchema = z.object({
 type VersionCommentaire = {
   date_publication: string;
   contenu: string;
+  auteur: string;
+  modifie_par?: string;
 };
 
 type CommentaireAvecVersions = {
@@ -111,7 +114,15 @@ export function regrouperParType({
       continue;
     }
 
-    versions.push({ date_publication: commentaire.date_publication, contenu });
+    versions.push({
+      date_publication: commentaire.date_publication,
+      contenu,
+      auteur: personReference(commentaire.auteur_creation_id),
+      ...(commentaire.auteur_modification_id !==
+        commentaire.auteur_creation_id && {
+        modifie_par: personReference(commentaire.auteur_modification_id),
+      }),
+    });
     versionsParType.set(commentaire.type, versions);
   }
 
@@ -138,6 +149,7 @@ export function createGetChantierCommentairesTool({
       description: `Renvoie les commentaires publiés d'un chantier sur les territoires du périmètre, un par type, regroupés par territoire (\`territoire_nom\` : le territoire pour lequel ils sont rédigés).
 - \`chantier_nom\` : le nom du chantier, à écrire avec son identifiant (« CH-XXX — Nom »).
 - \`versions\` : l'historique des publications d'un même commentaire, de la plus récente à la plus ancienne ; la première est celle en vigueur. Pour une analyse, décris l'évolution plutôt que de restituer chaque version.
+- \`auteur\` (et \`modifie_par\` quand une autre personne l'a modifiée) : la référence de la personne, à recopier telle quelle pour la citer.
 
 Types de commentaires :
 - \`freins_a_lever\` (maille nationale uniquement) : risques et freins à lever, notamment ceux nécessitant un soutien ou un arbitrage

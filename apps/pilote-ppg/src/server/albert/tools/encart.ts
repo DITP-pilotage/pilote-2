@@ -141,6 +141,10 @@ const vuePourLeSousAgent = (
       niveau_de_confiance: chantier.niveau_de_confiance,
       tendance: chantier.tendance,
       commentaire_de_synthese: chantier.synthese?.commentaire ?? null,
+      auteur_synthese: chantier.synthese?.auteur ?? null,
+      directeurs_projet: chantier.chantier.directeurs_projet,
+      responsables_locaux: chantier.responsables_locaux,
+      coordinateurs_territoriaux: chantier.coordinateurs_territoriaux,
       ...(indicateurs && {
         indicateurs: indicateursPourLeSousAgent(
           indicateurs.find(

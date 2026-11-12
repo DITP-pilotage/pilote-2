@@ -7,6 +7,7 @@ import { ChantierLinksProvider } from "@/components/_commons/ChatUI/ChantierLink
 import { LIBELLES_CATEGORIES } from "@/components/_commons/ChatUI/feedbackCategories";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { clsxm } from "@/utils/clsxm";
+import { TextWithPersons } from "@/components/_commons/ChatUI/persons/TextWithPersons";
 
 type DetailConversation = NonNullable<
   inferRouterOutputs<
@@ -129,7 +130,7 @@ export const ConversationTranscript = ({
             {tour.question !== null && (
               <div className="flex flex-col items-end gap-1.5 mb-5">
                 <div className="max-w-[80%] bg-dsfr-blue-france-sun-113 text-white rounded-lg rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap">
-                  {tour.question}
+                  <TextWithPersons text={tour.question} />
                 </div>
                 {tour.llmCall && (
                   <BadgeEvaluation evaluation={tour.llmCall.evaluation} />

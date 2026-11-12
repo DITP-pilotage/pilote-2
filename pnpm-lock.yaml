@@ -657,6 +657,9 @@ importers:
       '@trpc/server':
         specifier: ^11.19.0
         version: 11.19.0(typescript@7.0.2)
+      '@yornaath/batshit':
+        specifier: 0.14.0
+        version: 0.14.0
       ai:
         specifier: ^7.0.141
         version: 7.0.141(zod@4.6.7)

@@ -23,6 +23,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         ppg: "PPG 1",
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
+        directeurs_projet_ids: ["directeur-projet-id"],
       });
       await fixtures.chantierTerritoire({
         id: "CH-001",
@@ -31,6 +32,8 @@ describe("GetChantiersQuery — view en_retard", () => {
         maille: "NAT",
         zone_id: "FRANCE",
         est_applicable: true,
+        responsables_locaux_ids: ["responsable-local-id"],
+        coordinateurs_territoriaux_ids: ["coordinateur-id"],
       });
       await fixtures.chantierTerritoireJalon({
         id: "CH-001",
@@ -60,7 +63,10 @@ describe("GetChantiersQuery — view en_retard", () => {
             ppg: "PPG 1",
             ministeres: ["MIN-01"],
             mailles_applicables: [],
+            directeurs_projet_ids: ["directeur-projet-id"],
           },
+          responsables_locaux_ids: ["responsable-local-id"],
+          coordinateurs_territoriaux_ids: ["coordinateur-id"],
           ecart: -15,
           taux_avancement: 30,
           meteo: "NON_RENSEIGNEE",
@@ -472,7 +478,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         jalon: 2025,
         ecart: -15,
       });
-      await fixtures.syntheseDesResultats({
+      const syntheseRecente = await fixtures.syntheseDesResultats({
         chantier_id: "CH-001",
         territoire_code: "NAT-FR",
         maille: "NAT",
@@ -506,6 +512,8 @@ describe("GetChantiersQuery — view en_retard", () => {
             commentaire: "Synthèse récente",
             date_meteo: "2025-06-01T00:00:00.000Z",
             date_commentaire: "2025-06-01T00:00:00.000Z",
+            auteur_creation_id: syntheseRecente.auteur_creation_id,
+            auteur_modification_id: syntheseRecente.auteur_modification_id,
           },
         }),
       ]);

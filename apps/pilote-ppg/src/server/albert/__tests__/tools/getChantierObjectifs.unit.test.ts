@@ -5,6 +5,11 @@ import {
   type GetChantierObjectifsOutput,
 } from "@/server/albert/tools/getChantierObjectifs";
 import type { GetChantierObjectifsQuery } from "@/server/chantiers/query/GetChantierObjectifsQuery";
+import { personReference } from "@/shared/personne/personReference";
+
+const AUTEUR_ID = "0b3c1f2e-8a4d-4c6b-9e1f-2a3b4c5d6e7f";
+const MODIFICATEUR_ID = "9f8e7d6c-5b4a-4c3d-8e2f-1a0b9c8d7e6f";
+const REFERENCE_AUTEUR = personReference(AUTEUR_ID);
 
 const buildTool = ({
   queryResult,
@@ -41,14 +46,20 @@ const resultWith3Objectifs = {
     notre_ambition: {
       date_publication: "2025-01-01T00:00:00.000Z",
       contenu: "<p>Ambition</p>",
+      auteur_creation_id: AUTEUR_ID,
+      auteur_modification_id: AUTEUR_ID,
     },
     deja_fait: {
       date_publication: "2025-01-02T00:00:00.000Z",
       contenu: "<p>Fait</p>",
+      auteur_creation_id: AUTEUR_ID,
+      auteur_modification_id: AUTEUR_ID,
     },
     a_faire: {
       date_publication: "2025-01-03T00:00:00.000Z",
       contenu: "<p>À faire</p>",
+      auteur_creation_id: AUTEUR_ID,
+      auteur_modification_id: AUTEUR_ID,
     },
   },
 };
@@ -71,14 +82,17 @@ describe("createGetChantierObjectifsTool execute", () => {
         notre_ambition: {
           date_publication: "2025-01-01T00:00:00.000Z",
           contenu: "Ambition",
+          auteur: REFERENCE_AUTEUR,
         },
         deja_fait: {
           date_publication: "2025-01-02T00:00:00.000Z",
           contenu: "Fait",
+          auteur: REFERENCE_AUTEUR,
         },
         a_faire: {
           date_publication: "2025-01-03T00:00:00.000Z",
           contenu: "À faire",
+          auteur: REFERENCE_AUTEUR,
         },
       },
     });
@@ -93,6 +107,8 @@ describe("createGetChantierObjectifsTool execute", () => {
           notre_ambition: {
             date_publication: "2025-01-01T00:00:00.000Z",
             contenu: "<p>Ambition</p>",
+            auteur_creation_id: AUTEUR_ID,
+            auteur_modification_id: AUTEUR_ID,
           },
           deja_fait: null,
           a_faire: null,
@@ -111,6 +127,7 @@ describe("createGetChantierObjectifsTool execute", () => {
         notre_ambition: {
           date_publication: "2025-01-01T00:00:00.000Z",
           contenu: "Ambition",
+          auteur: REFERENCE_AUTEUR,
         },
         deja_fait: null,
         a_faire: null,
@@ -151,20 +168,34 @@ describe("createGetChantierObjectifsTool execute", () => {
     );
   });
 
-  test("ne retourne pas de données auteur", async () => {
+  test("cite aussi la personne qui a modifié un objectif quand ce n'est pas son auteur", async () => {
     // Given
     const tool = buildTool({
-      queryResult: resultWith3Objectifs,
+      queryResult: {
+        chantier_id: "CH-001",
+        objectifs: {
+          notre_ambition: {
+            date_publication: "2025-01-01T00:00:00.000Z",
+            contenu: "<p>Ambition</p>",
+            auteur_creation_id: AUTEUR_ID,
+            auteur_modification_id: MODIFICATEUR_ID,
+          },
+          deja_fait: null,
+          a_faire: null,
+        },
+      },
       chantiersAccessibles: ["CH-001"],
     });
 
     // When
     const result = await executeTool(tool, "CH-001");
 
-    // Then — aucun champ auteur dans les objectifs
-    const objectifs = Object.values(result.objectifs).filter(Boolean);
-    objectifs.forEach((objectif) => {
-      expect(objectif).not.toHaveProperty("auteur");
+    // Then
+    expect(result.objectifs.notre_ambition).toEqual({
+      date_publication: "2025-01-01T00:00:00.000Z",
+      contenu: "Ambition",
+      auteur: REFERENCE_AUTEUR,
+      modifie_par: personReference(MODIFICATEUR_ID),
     });
   });
 });

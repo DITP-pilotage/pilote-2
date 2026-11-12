@@ -17,6 +17,8 @@ import { FileTextIcon } from "@/components/_commons/Icones/FileTextIcon";
 import { Button } from "@/components/shared/Button";
 import { Dropdown } from "@/components/shared/Dropdown";
 import type { EncartOutput } from "@/server/albert/tools/encart";
+import { useQueryClient } from "@tanstack/react-query";
+import { textWithCachedPersons } from "@/components/_commons/ChatUI/persons/textWithCachedPersons";
 
 const TYPES: Record<EncartOutput["type"], string> = {
   synthese: "Synthèse territoriale",
@@ -43,6 +45,7 @@ export const EncartSynthese = ({
 }) => {
   const track = useChatTracking();
   const encartRef = useRef<HTMLElement>(null);
+  const queryClient = useQueryClient();
   if (output.acces_refuse) return null;
   const enCours = isStreaming && !output.termine;
   const enAttenteDuTexte = enCours && output.markdown.trim() === "";
@@ -68,11 +71,14 @@ export const EncartSynthese = ({
       });
   };
 
+  const markdownAvecPersonnes = () =>
+    textWithCachedPersons({ text: output.markdown, queryClient });
+
   const copier = () =>
     suivreExport({
       name: "export.report_copy",
       exporter: () =>
-        copyText({ text: output.markdown }).then(() => {
+        copyText({ text: markdownAvecPersonnes() }).then(() => {
           toast.success("Texte copié dans le presse-papiers", {
             duration: 3000,
           });
@@ -89,7 +95,7 @@ export const EncartSynthese = ({
         imprimerEncart({
           encart,
           titre: nomEncart({
-            markdown: output.markdown,
+            markdown: markdownAvecPersonnes(),
             type: output.type,
             dateRedaction: output.date_redaction,
           }),

@@ -401,4 +401,30 @@ describe("buildChatSystemPrompt", () => {
       prompt.endsWith("- Territoires à accès complet : REG-53, DEPT-35"),
     ).toBe(true);
   });
+
+  it("fait citer les personnes par leur référence, que l'utilisateur voit comme leur nom, sans jamais inventer de nom", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain("@[personne:");
+    expect(prompt).toMatch(/l'utilisateur voit son nom/i);
+    expect(prompt).toMatch(/ne parle jamais de référence/i);
+    expect(prompt).toMatch(/n'invente/i);
+  });
+
+  it("ne fait ni confirmer un nom proposé par l'utilisateur, ni refuser une demande d'adresse e-mail", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toMatch(/ne le confirme ni ne l'infirme/i);
+    expect(prompt).toMatch(/adresse e-mail .*cite-la/i);
+  });
 });
