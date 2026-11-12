@@ -4,6 +4,7 @@ import { type Bucket, type BucketKey, compareBuckets, formatBucket } from '@/fra
 import { yieldToEventLoop } from '@/framework/concurrency'
 import { Decimal } from '@/framework/decimal'
 import { agreger, getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
+import { type Cellule, cleCellule } from '@/valeurAvancement/cellule'
 
 export type IndividuRef = {
   id: string
@@ -35,10 +36,12 @@ export type PointInterne =
       couverture: { nbEnfantsAvecValeur: number; nbEnfantsTotal: number }
     }
 
+// La hiérarchie territoriale (`enfantsParParent`, `referentielParIndividu`)
+// est indexée par individu ; les saisies, par cellule (`cleCellule`).
 export type ResolveSerieContext = {
   enfantsParParent: ReadonlyMap<string, ReadonlyArray<IndividuRef>>
   fonctionAgregationParReferentiel: ReadonlyMap<string, FonctionAgregation>
-  serieFeuilleParIndividu: ReadonlyMap<string, ReadonlyArray<SaisieTronquee>>
+  serieFeuilleParCellule: ReadonlyMap<string, ReadonlyArray<SaisieTronquee>>
   referentielParIndividu: ReadonlyMap<string, string>
 }
 
@@ -50,28 +53,31 @@ export type ResolveSerieContext = {
 // natifs — et bloque la node pendant plusieurs secondes, gelant les
 // requêtes concurrentes. Le coût micro-task ajouté reste négligeable face
 // au temps de calcul lui-même.
+//
+// Le cache est indexé par cellule (`cleCellule`).
 export const resolveSerieIndividu = async (
-  individuId: string,
+  cellule: Cellule,
   ctx: ResolveSerieContext,
   cache: Map<string, ReadonlyArray<PointInterne>>,
 ): Promise<ReadonlyArray<PointInterne>> => {
-  const cached = cache.get(individuId)
+  const cle = cleCellule(cellule)
+  const cached = cache.get(cle)
   if (cached) return cached
 
-  const fonctionAgregation = getFonctionAgregationActive(individuId, ctx)
+  const fonctionAgregation = getFonctionAgregationActive(cellule.individuId, ctx)
   const serie = fonctionAgregation
-    ? await computeSerieDerivee(individuId, ctx, cache, fonctionAgregation)
-    : computeSerieSaisie(individuId, ctx)
+    ? await computeSerieDerivee(cellule, ctx, cache, fonctionAgregation)
+    : computeSerieSaisie(cellule, ctx)
 
-  cache.set(individuId, serie)
+  cache.set(cle, serie)
   return serie
 }
 
 const computeSerieSaisie = (
-  individuId: string,
+  cellule: Cellule,
   ctx: ResolveSerieContext,
 ): ReadonlyArray<PointInterne> => {
-  const saisies = ctx.serieFeuilleParIndividu.get(individuId) ?? []
+  const saisies = ctx.serieFeuilleParCellule.get(cleCellule(cellule)) ?? []
   return saisies.map(({ bucket, dateOrigine, valeur }) => ({
     type: 'saisie',
     bucket,
@@ -92,13 +98,15 @@ const computeSerieSaisie = (
 // - Récursion + mémoïsation via `resolveSerieIndividu` : la série d'un enfant
 //   intermédiaire (ex. région) n'est calculée qu'une fois même si plusieurs
 //   parents (ou plusieurs cibles dans la même requête) la sollicitent.
+// Les enfants d'une cellule sont les cellules des enfants territoriaux, pour la
+// même combinaison.
 const computeSerieDerivee = async (
-  parentId: string,
+  parent: Cellule,
   ctx: ResolveSerieContext,
   cache: Map<string, ReadonlyArray<PointInterne>>,
   fonctionAgregation: FonctionAgregation,
 ): Promise<ReadonlyArray<PointInterne>> => {
-  const enfants = ctx.enfantsParParent.get(parentId) ?? []
+  const enfants = ctx.enfantsParParent.get(parent.individuId) ?? []
   // Tri stable par publicId pour des contributions déterministes en sortie.
   const enfantsTries = [...enfants].sort((a, b) => a.publicId.localeCompare(b.publicId))
 
@@ -115,7 +123,11 @@ const computeSerieDerivee = async (
   for (const enfant of enfantsTries) {
     states.push({
       enfant,
-      points: await resolveSerieIndividu(enfant.id, ctx, cache),
+      points: await resolveSerieIndividu(
+        { individuId: enfant.id, combinaisonId: parent.combinaisonId },
+        ctx,
+        cache,
+      ),
       estAgrege: getFonctionAgregationActive(enfant.id, ctx) !== null,
       pointer: -1,
     })

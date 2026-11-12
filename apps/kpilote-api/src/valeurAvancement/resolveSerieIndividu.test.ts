@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { parseBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
+import { cleCellule } from '@/valeurAvancement/cellule'
 import {
   type IndividuRef,
   type PointInterne,
@@ -30,6 +31,11 @@ const DEPT_B: IndividuRef = { id: 'i-dept-b', publicId: 'DEPT-B', referentielId:
 const DEPT_C: IndividuRef = { id: 'i-dept-c', publicId: 'DEPT-C', referentielId: REF_DEPT }
 const DEPT_D: IndividuRef = { id: 'i-dept-d', publicId: 'DEPT-D', referentielId: REF_DEPT }
 
+// Toutes les séries de ces tests visent une même combinaison.
+const COMBINAISON = 'combinaison-test'
+const cellule = (individu: IndividuRef) => ({ individuId: individu.id, combinaisonId: COMBINAISON })
+const cle = (individu: IndividuRef) => cleCellule(cellule(individu))
+
 const buildContext = (input: {
   enfantsParParent?: Record<string, IndividuRef[]>
   fonctionAgregationParReferentiel?: Record<string, 'SUM' | 'AVG' | 'NONE'>
@@ -40,7 +46,12 @@ const buildContext = (input: {
   fonctionAgregationParReferentiel: new Map(
     Object.entries(input.fonctionAgregationParReferentiel ?? {}),
   ),
-  serieFeuilleParIndividu: new Map(Object.entries(input.serieFeuilleParIndividu ?? {})),
+  serieFeuilleParCellule: new Map(
+    Object.entries(input.serieFeuilleParIndividu ?? {}).map(([individuId, saisies]) => [
+      cleCellule({ individuId, combinaisonId: COMBINAISON }),
+      saisies,
+    ]),
+  ),
   referentielParIndividu: new Map(Object.entries(input.individusReferentiel ?? {})),
 })
 
@@ -48,7 +59,7 @@ describe('resolveSerieIndividu — feuille', () => {
   it('retourne une série vide pour une feuille sans saisies', async () => {
     const ctx = buildContext({ individusReferentiel: { [DEPT_A.id]: REF_DEPT } })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    expect(await resolveSerieIndividu(DEPT_A.id, ctx, cache)).toEqual([])
+    expect(await resolveSerieIndividu(cellule(DEPT_A), ctx, cache)).toEqual([])
   })
 
   it('retourne la série de saisies tronquée pour une feuille', async () => {
@@ -62,7 +73,7 @@ describe('resolveSerieIndividu — feuille', () => {
       },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    const serie = await resolveSerieIndividu(DEPT_A.id, ctx, cache)
+    const serie = await resolveSerieIndividu(cellule(DEPT_A), ctx, cache)
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toEqual({
@@ -89,7 +100,7 @@ describe('resolveSerieIndividu — feuille', () => {
       },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    const serie = await resolveSerieIndividu(FRANCE.id, ctx, cache)
+    const serie = await resolveSerieIndividu(cellule(FRANCE), ctx, cache)
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({ type: 'saisie', valeur: d(99) })
@@ -112,7 +123,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
@@ -145,7 +156,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
 
     expect(serie).toHaveLength(3)
     // 2025-01 : seul DEPT-A connu → valeur=10, couverture 1/2
@@ -184,7 +195,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
     const contributions = (serie[0] as { contributions: { individuPublicId: string }[] })
       .contributions
 
@@ -202,7 +213,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       fonctionAgregationParReferentiel: { [REF_REG]: 'SUM' },
     })
 
-    expect(await resolveSerieIndividu(REG_S.id, ctx, new Map())).toEqual([])
+    expect(await resolveSerieIndividu(cellule(REG_S), ctx, new Map())).toEqual([])
   })
 
   it('ignore les saisies sur un nœud agrégé (D6 : saisie ignorée si fonctionAgregation)', async () => {
@@ -219,7 +230,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({ type: 'derivee', valeur: d(42) })
@@ -242,7 +253,7 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
@@ -270,7 +281,7 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
 
     expect(serie).toHaveLength(2)
     // 2025-01 : seul DEPT-A → moyenne sur 1 = 10, couverture 1/2
@@ -294,7 +305,7 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
       fonctionAgregationParReferentiel: { [REF_REG]: 'AVG' },
     })
 
-    expect(await resolveSerieIndividu(REG_S.id, ctx, new Map())).toEqual([])
+    expect(await resolveSerieIndividu(cellule(REG_S), ctx, new Map())).toEqual([])
   })
 
   it('produit une moyenne décimale exacte sur des entiers non divisibles', async () => {
@@ -314,7 +325,7 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
 
     // (1 + 2 + 2) / 3 = 1.6666...
     const valeur = (serie[0] as { valeur: Decimal }).valeur
@@ -348,7 +359,7 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(FRANCE.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(cellule(FRANCE), ctx, new Map())
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({
@@ -387,7 +398,7 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(FRANCE.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(cellule(FRANCE), ctx, new Map())
 
     expect(serie).toHaveLength(2)
     // 2025-01 : REG-N = 5, REG-S inconnu → 5
@@ -398,15 +409,15 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
 })
 
 describe('resolveSerieIndividu — mémoïsation', () => {
-  it('retourne la même référence pour un même individuId réinterrogé', async () => {
+  it('retourne la même référence pour une même cellule réinterrogée', async () => {
     const ctx = buildContext({
       individusReferentiel: { [DEPT_A.id]: REF_DEPT },
       serieFeuilleParIndividu: { [DEPT_A.id]: [saisie('2025-01-01', 7)] },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-    const a = await resolveSerieIndividu(DEPT_A.id, ctx, cache)
-    const b = await resolveSerieIndividu(DEPT_A.id, ctx, cache)
+    const a = await resolveSerieIndividu(cellule(DEPT_A), ctx, cache)
+    const b = await resolveSerieIndividu(cellule(DEPT_A), ctx, cache)
     expect(b).toBe(a)
   })
 
@@ -426,14 +437,14 @@ describe('resolveSerieIndividu — mémoïsation', () => {
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-    await resolveSerieIndividu(REG_S.id, ctx, cache)
+    await resolveSerieIndividu(cellule(REG_S), ctx, cache)
     const tailleAvant = cache.size
 
-    await resolveSerieIndividu(FRANCE.id, ctx, cache)
+    await resolveSerieIndividu(cellule(FRANCE), ctx, cache)
     // Cache : REG_S et DEPT_A déjà présents avant l'appel FRANCE, qui n'ajoute que France.
-    expect(cache.has(DEPT_A.id)).toBe(true)
-    expect(cache.has(REG_S.id)).toBe(true)
-    expect(cache.has(FRANCE.id)).toBe(true)
+    expect(cache.has(cle(DEPT_A))).toBe(true)
+    expect(cache.has(cle(REG_S))).toBe(true)
+    expect(cache.has(cle(FRANCE))).toBe(true)
     expect(cache.size).toBe(tailleAvant + 1)
   })
 })

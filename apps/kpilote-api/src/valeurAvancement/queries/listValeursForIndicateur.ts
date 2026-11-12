@@ -7,6 +7,7 @@ import {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { trouverCombinaisonVideId } from '@/axe/combinaison'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { compareBuckets, formatBucket, parseBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
@@ -56,10 +57,13 @@ const buildSeries = async ({
 
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
+  // Indicateur sans axe : la combinaison vide. PIL-1991 passera la combinaison sélectionnée.
+  const combinaisonId = await trouverCombinaisonVideId()
   const { ctx, allNodes } = await loadResolveSerieContext({
     indicateurId,
     individusCibles: individusCibles,
     dateTrunc,
+    combinaisonId,
   })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
@@ -67,7 +71,11 @@ const buildSeries = async ({
   const dateFin = params.dateFin ? parseBucket(params.dateFin) : null
   const items: ValeurAvancementApiModel[] = []
   for (const individuCible of individusCibles) {
-    const serie = await resolveSerieIndividu(individuCible.id, ctx, cache)
+    const serie = await resolveSerieIndividu(
+      { individuId: individuCible.id, combinaisonId },
+      ctx,
+      cache,
+    )
     for (const point of serie) {
       if (dateDebut && compareBuckets(point.bucket, dateDebut) < 0) continue
       if (dateFin && compareBuckets(point.bucket, dateFin) > 0) continue
