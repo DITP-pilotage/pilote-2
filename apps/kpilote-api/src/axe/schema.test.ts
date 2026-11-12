@@ -134,4 +134,22 @@ describe.concurrent('schéma des axes', () => {
       expect(await db().indicateurAxe.count({ where: { axeId: declaration.axeId } })).toBe(0)
     }),
   )
+
+  it(
+    'refuse une modalité de combinaison qui n’appartient pas à l’axe de la ligne',
+    integrationTest(async () => {
+      const operateur = await fixtures.modalite({ niveau: { axe: { publicId: testAxeId() } } })
+      const autreAxe = await fixtures.axe({ publicId: testAxeId() })
+      const combinaison = await fixtures.combinaison({
+        modalites: [{ publicId: operateur.publicId }],
+      })
+      expect(combinaison.cle).toBe(operateur.id)
+
+      await expect(
+        db().combinaisonModalite.create({
+          data: { combinaisonId: combinaison.id, axeId: autreAxe.id, modaliteId: operateur.id },
+        }),
+      ).rejects.toThrow()
+    }),
+  )
 })

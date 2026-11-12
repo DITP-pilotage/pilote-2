@@ -97,11 +97,12 @@ indicateur_axe        (indicateur_id, axe_id, ordre, fonction SUM|AVG)     PK(in
                       UNIQUE(indicateur_id, ordre)
                       -- ordre = ordre de déclaration (sert entre axes, D8) ; fonction : D14
 
-combinaison           (id uuid, cle UNIQUE)   -- cle = uuids des modalités triés ; ligne fixe « vide »
-combinaison_modalite  (combinaison_id → combinaison, axe_id → axe, modalite_id → modalite)
-                      PK(combinaison_id, axe_id)          -- au plus une modalité par axe
+combinaison           (id uuid, cle UNIQUE)   -- cle = uuids des modalités triés, joints par `,`
+                      -- la combinaison vide (cle = '') est créée par la migration, retrouvée par sa clé
+combinaison_modalite  (combinaison_id → combinaison, axe_id → axe, (modalite_id, axe_id) → modalite(id, axe_id))
+                      PK(combinaison_id, axe_id)          -- au plus une modalité par axe, de cet axe
 
-valeur_avancement.combinaison_id NOT NULL DEFAULT <uuid de la combinaison vide> → combinaison
+valeur_avancement.combinaison_id NOT NULL → combinaison   -- les valeurs existantes : la combinaison vide
 UNIQUE(indicateur_id, individu_id, combinaison_id, date)
 ```
 
@@ -213,9 +214,9 @@ Pour lire un fichier du POC : `git show origin/claude/individu-dimension-poc-f01
 
 ## 8. Livraison incrémentale
 
-- Une sous-tâche Jira = une PR, livrable en prod indépendamment.
-- Toute migration doit fonctionner avec le code de la version précédente : `prisma migrate deploy` s'exécute au
-  `build` de kpilote-api, avant que le nouveau code ne tourne (expand puis contract).
+- Une sous-tâche Jira = une PR, empilée avec `gh stack`.
+- kpilote n'a pas de prod avec de vrais utilisateurs : pas de fenêtre de compatibilité avec le code précédent, ni
+  d'expand / contract. Une migration doit seulement migrer correctement les données existantes.
 - Chaque PR fait tourner le **snapshot des lectures** (PIL-1979) : 0 différence réelle pour les indicateurs
   existants.
 - Tant qu'aucun indicateur n'a d'axe, aucun comportement ne change pour l'existant. Les pages et routes neuves

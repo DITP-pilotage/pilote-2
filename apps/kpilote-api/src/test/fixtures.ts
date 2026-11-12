@@ -1,5 +1,6 @@
 import { uuidv7 } from 'uuidv7'
 
+import { cleCombinaison, trouverCombinaisonVideId } from '@/axe/combinaison'
 import { env } from '@/env'
 import { hashApiKey } from '@/framework/auth/apiKey'
 import { db } from '@/framework/persistence/dbStore'
@@ -18,6 +19,7 @@ import {
 import {
   type ApiKeyModel,
   type AxeModel,
+  type CombinaisonModel,
   type ContactUtileModel,
   type IndicateurAxeModel,
   type IndicateurModel,
@@ -526,6 +528,48 @@ async function modalite(
   return results
 }
 
+// --- Combinaison --------------------------------------------------------------
+
+// Combinaison des modalités données (créées au besoin), retrouvée par sa clé.
+// Sans modalité : la combinaison vide, créée par la migration.
+type CombinaisonOverrides = { modalites?: ModaliteOverrides[] }
+
+const upsertCombinaison = async (o: CombinaisonOverrides = {}): Promise<CombinaisonModel> => {
+  const modaliteRows: ModaliteModel[] = []
+  for (const modalite of o.modalites ?? []) modaliteRows.push(await upsertModalite(modalite))
+  const cle = cleCombinaison({ modaliteIds: modaliteRows.map((modalite) => modalite.id) })
+  const existing = await db().combinaison.findUnique({ where: { cle } })
+  if (existing) return existing
+  return db().combinaison.create({
+    data: {
+      id: uuidv7(),
+      cle,
+      modalites: {
+        create: modaliteRows.map((modalite) => ({
+          axeId: modalite.axeId,
+          modaliteId: modalite.id,
+        })),
+      },
+    },
+  })
+}
+
+function combinaison(): Promise<CombinaisonModel>
+function combinaison(override: CombinaisonOverrides): Promise<CombinaisonModel>
+function combinaison(
+  o1: CombinaisonOverrides,
+  o2: CombinaisonOverrides,
+  ...rest: CombinaisonOverrides[]
+): Promise<CombinaisonModel[]>
+async function combinaison(
+  ...overrides: CombinaisonOverrides[]
+): Promise<CombinaisonModel | CombinaisonModel[]> {
+  if (overrides.length <= 1) return upsertCombinaison(overrides[0])
+  const results: CombinaisonModel[] = []
+  for (const o of overrides) results.push(await upsertCombinaison(o))
+  return results
+}
+
 // --- IndicateurAxe (deps requises) -------------------------------------------
 
 type IndicateurAxeOverrides = {
@@ -564,10 +608,11 @@ async function indicateurAxe(
 
 // --- ValeurAvancement (deps requises) ----------------------------------------
 
+// Sans `combinaison` : la combinaison vide (indicateur sans axe).
 type ValeurAvancementOverrides = {
   indicateur: IndicateurOverrides
   individu: IndividuOverrides
-} & Partial<{ id: string; date: string; valeur: number }>
+} & Partial<{ id: string; date: string; valeur: number; combinaison: CombinaisonOverrides }>
 
 const DEFAULT_VALEUR_AVANCEMENT_DATE = '2024-01-01'
 const DEFAULT_VALEUR_AVANCEMENT_VALEUR = 10
@@ -575,6 +620,9 @@ const DEFAULT_VALEUR_AVANCEMENT_VALEUR = 10
 const upsertValeurAvancement = async (o: ValeurAvancementOverrides) => {
   const indicateurRow = await upsertIndicateur(o.indicateur)
   const individuRow = await upsertIndividu(o.individu)
+  const combinaisonId = o.combinaison
+    ? (await upsertCombinaison(o.combinaison)).id
+    : await trouverCombinaisonVideId()
   const date = o.date ?? DEFAULT_VALEUR_AVANCEMENT_DATE
   const valeur = o.valeur ?? DEFAULT_VALEUR_AVANCEMENT_VALEUR
   return db().valeurAvancement.upsert({
@@ -590,6 +638,7 @@ const upsertValeurAvancement = async (o: ValeurAvancementOverrides) => {
       id: o.id ?? uuidv7(),
       indicateurId: indicateurRow.id,
       individuId: individuRow.id,
+      combinaisonId,
       date,
       valeur,
     },
@@ -1245,6 +1294,7 @@ export const fixtures = {
   niveauAxe,
   modalite,
   indicateurAxe,
+  combinaison,
   valeurAvancement,
   objectifIndicateurIndividu,
   collection,

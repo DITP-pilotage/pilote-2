@@ -5,7 +5,7 @@ import { NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testAxeId, testModaliteId } from '@/test/randomIds'
+import { testAxeId, testIndicateurId, testIndividuId, testModaliteId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
 // Une famille et deux types : la famille a des enfants, les types n'en ont pas.
@@ -20,6 +20,9 @@ const familleEtTypes = async () => {
 
 const existe = async (publicId: string) =>
   (await db().modalite.findUnique({ where: { publicId } })) !== null
+
+const combinaisonExiste = async (id: string) =>
+  (await db().combinaison.findUnique({ where: { id } })) !== null
 
 describe.concurrent('deleteModalite', () => {
   it(
@@ -52,6 +55,66 @@ describe.concurrent('deleteModalite', () => {
         enfants: [ir.publicId, tva.publicId].sort(),
       })
       expect(await existe(famille.publicId)).toBe(true)
+    }),
+  )
+
+  it(
+    'refuse de supprimer une modalité qui précise des valeurs',
+    integrationTest(async () => {
+      const { axePublicId, tva } = await familleEtTypes()
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: testIndicateurId() },
+        individu: { publicId: testIndividuId() },
+        combinaison: { modalites: [{ publicId: tva.publicId }] },
+      })
+
+      const result = await runAsAdmin('principal-delete-modalite-utilisee', () =>
+        deleteModalite({ axePublicId, publicId: tva.publicId }),
+      )
+
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'MODALITE_UTILISEE', valeurs: 1 })
+      expect(await existe(tva.publicId)).toBe(true)
+    }),
+  )
+
+  it(
+    'supprime les combinaisons sans valeur de la modalité, pas celles des autres',
+    integrationTest(async () => {
+      const { axePublicId, tva, ir } = await familleEtTypes()
+      const combinaisonTva = await fixtures.combinaison({ modalites: [{ publicId: tva.publicId }] })
+      const valeurIr = await fixtures.valeurAvancement({
+        indicateur: { publicId: testIndicateurId() },
+        individu: { publicId: testIndividuId() },
+        combinaison: { modalites: [{ publicId: ir.publicId }] },
+      })
+
+      const result = await runAsAdmin('principal-delete-modalite-combinaison-vide', () =>
+        deleteModalite({ axePublicId, publicId: tva.publicId }),
+      )
+
+      expect(result.isOk()).toBe(true)
+      expect(await existe(tva.publicId)).toBe(false)
+      expect(await combinaisonExiste(combinaisonTva.id)).toBe(false)
+      expect(await combinaisonExiste(valeurIr.combinaisonId)).toBe(true)
+    }),
+  )
+
+  it(
+    'supprime une combinaison sans valeur sur deux axes, sans toucher l’autre modalité',
+    integrationTest(async () => {
+      const { axePublicId, tva } = await familleEtTypes()
+      const region = await fixtures.modalite({ niveau: { axe: { publicId: testAxeId() } } })
+      const combinaison = await fixtures.combinaison({
+        modalites: [{ publicId: tva.publicId }, { publicId: region.publicId }],
+      })
+
+      const result = await runAsAdmin('principal-delete-modalite-deux-axes', () =>
+        deleteModalite({ axePublicId, publicId: tva.publicId }),
+      )
+
+      expect(result.isOk()).toBe(true)
+      expect(await combinaisonExiste(combinaison.id)).toBe(false)
+      expect(await existe(region.publicId)).toBe(true)
     }),
   )
 

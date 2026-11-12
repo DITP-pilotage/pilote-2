@@ -5,6 +5,7 @@ import {
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
+import { trouverCombinaisonVideId } from '@/axe/combinaison'
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
@@ -27,26 +28,29 @@ export const upsertValeurAvancement = ({
     individuPublicId: body.individu,
   }).andThen(({ indicateur, individu }) =>
     ResultAsync.fromSafePromise(
-      db().valeurAvancement.upsert({
-        where: {
-          valeur_avancement_unique: {
+      trouverCombinaisonVideId().then((combinaisonId) =>
+        db().valeurAvancement.upsert({
+          where: {
+            valeur_avancement_unique: {
+              indicateurId: indicateur.id,
+              individuId: individu.id,
+              date: body.date,
+            },
+          },
+          update: { valeur: new Decimal(body.valeur) },
+          create: {
+            id: uuidv7(),
             indicateurId: indicateur.id,
             individuId: individu.id,
+            combinaisonId,
             date: body.date,
+            valeur: new Decimal(body.valeur),
           },
-        },
-        update: { valeur: new Decimal(body.valeur) },
-        create: {
-          id: uuidv7(),
-          indicateurId: indicateur.id,
-          individuId: individu.id,
-          date: body.date,
-          valeur: new Decimal(body.valeur),
-        },
-        include: {
-          indicateur: { select: { publicId: true } },
-          individu: { select: { publicId: true } },
-        },
-      }),
+          include: {
+            indicateur: { select: { publicId: true } },
+            individu: { select: { publicId: true } },
+          },
+        }),
+      ),
     ).map(toValeurSaisieApiModel),
   )

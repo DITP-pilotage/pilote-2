@@ -11,7 +11,7 @@ import {
   upsertModaliteBodySchema,
 } from '@pilote/kpilote-shared/axe'
 
-import { deleteModalite } from '@/axe/commands/deleteModalite'
+import { type DeleteModaliteError, deleteModalite } from '@/axe/commands/deleteModalite'
 import { type UpsertAxeError, upsertAxe } from '@/axe/commands/upsertAxe'
 import { type UpsertModaliteError, upsertModalite } from '@/axe/commands/upsertModalite'
 import { getAxeByPublicId } from '@/axe/queries/getAxeByPublicId'
@@ -161,7 +161,7 @@ const deleteModaliteRoute = createRoute({
   path: '/axes/{id}/modalites/{modaliteId}',
   tags: ['Axe', 'Admin'],
   summary: 'Supprimer une modalité',
-  description: `${ADMIN} Supprime une modalité de l’axe. Refusé (409 \`MODALITE_A_DES_ENFANTS\`) si elle a des modalités enfants : les supprimer d’abord.`,
+  description: `${ADMIN} Supprime une modalité de l’axe. Refusé (409 \`MODALITE_A_DES_ENFANTS\`) si elle a des modalités enfants : les supprimer d’abord. Refusé (409 \`MODALITE_UTILISEE\`) si elle précise des valeurs. Les combinaisons de la modalité qui ne portent aucune valeur sont supprimées avec elle.`,
   middleware: [requireAuthentication],
   request: { params: modaliteParamsSchema },
   responses: {
@@ -187,6 +187,23 @@ const describeUpsertAxeError = (
       return {
         message: `Cet axe est déclaré par des indicateurs (${error.indicateurs.join(', ')}) : on ne peut plus ajouter ni retirer de niveau. Le renommage reste possible.`,
         details: { indicateurs: error.indicateurs },
+      }
+  }
+}
+
+const describeDeleteModaliteError = (
+  error: DeleteModaliteError,
+): { message: string; details: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'MODALITE_A_DES_ENFANTS':
+      return {
+        message: `Cette modalité a des enfants : les supprimer d’abord (${error.enfants.join(', ')}).`,
+        details: { enfants: error.enfants },
+      }
+    case 'MODALITE_UTILISEE':
+      return {
+        message: `Cette modalité précise ${error.valeurs} valeur(s) : elle ne peut pas être supprimée.`,
+        details: { valeurs: error.valeurs },
       }
   }
 }
@@ -304,11 +321,7 @@ axeRoutes.openapi(deleteModaliteRoute, async (context) => {
     (error) =>
       jsonResponseError({
         context,
-        error: {
-          code: error.type,
-          message: `Cette modalité a des enfants : les supprimer d’abord (${error.enfants.join(', ')}).`,
-          details: { enfants: error.enfants },
-        },
+        error: { code: error.type, ...describeDeleteModaliteError(error) },
         schema: ErrorApiModelSchema,
         status: 409,
       }),

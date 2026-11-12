@@ -5,7 +5,9 @@ import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredic
 import { NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 
-export type DeleteModaliteError = { type: 'MODALITE_A_DES_ENFANTS'; enfants: string[] }
+export type DeleteModaliteError =
+  | { type: 'MODALITE_A_DES_ENFANTS'; enfants: string[] }
+  | { type: 'MODALITE_UTILISEE'; valeurs: number }
 
 const performDelete = async ({
   axePublicId,
@@ -27,6 +29,19 @@ const performDelete = async ({
     return err({ type: 'MODALITE_A_DES_ENFANTS', enfants: modalite.enfants.map((e) => e.publicId) })
   }
 
+  // Supprimer une modalité qui précise des valeurs les rendrait orphelines.
+  const valeurs = await db().valeurAvancement.count({
+    where: { combinaison: { modalites: { some: { modaliteId: modalite.id } } } },
+  })
+  if (valeurs > 0) return err({ type: 'MODALITE_UTILISEE', valeurs })
+
+  // Les combinaisons de la modalité ne portent aucune valeur : elles
+  // disparaissent avec elle (le cascade retire leurs lignes, y compris celles
+  // des autres axes). Si une valeur arrivait entre-temps, la clé étrangère
+  // `Restrict` de `valeur_avancement` fait échouer la suppression.
+  await db().combinaison.deleteMany({
+    where: { modalites: { some: { modaliteId: modalite.id } } },
+  })
   await db().modalite.delete({ where: { id: modalite.id } })
   return ok()
 }
