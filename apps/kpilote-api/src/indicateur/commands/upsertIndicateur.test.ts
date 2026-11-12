@@ -1,13 +1,14 @@
 import { IndicateurPermissionAction } from '@/generated/prisma/enums'
+import { type UpsertIndicateurBody } from '@pilote/kpilote-shared/indicateur'
 import { describe, expect, it } from 'vitest'
 import { uuidv7 } from 'uuidv7'
 
 import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
-import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
+import { AxesVerrouillesError, upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurId, testReferentielId } from '@/test/randomIds'
+import { testAxeId, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor, runAsUser } from '@/test/runAsPrincipal'
 
 const getResponsableUtilisateurIds = async (publicId: string): Promise<string[]> => {
@@ -689,6 +690,174 @@ describe.concurrent('upsertIndicateur — garde ADMIN', () => {
       const result = await runAsUser(utilisateur.id, () => upsertIndicateur(indId, body))
 
       expect(result.isOk()).toBe(true)
+    }),
+  )
+})
+
+describe.concurrent('upsertIndicateur — axes', () => {
+  const axesDe = async (publicId: string) => {
+    const declarations = await db().indicateurAxe.findMany({
+      where: { indicateur: { publicId } },
+      include: { axe: true },
+      orderBy: { ordre: 'asc' },
+    })
+    return declarations.map(({ ordre, fonction, axe }) => ({ id: axe.publicId, ordre, fonction }))
+  }
+
+  // Indicateur créé par la clé, sans axe, et deux axes disponibles.
+  const contexte = async () => {
+    const indId = testIndicateurId()
+    const apiKey = await fixtures.apiKey()
+    const operateur = await fixtures.axe({ publicId: testAxeId(), nom: 'Opérateur' })
+    const fraude = await fixtures.axe({ publicId: testAxeId(), nom: 'Type de fraude' })
+    await runAsAdmin(apiKey.id, () => upsertIndicateur(indId, BODY_BASE))
+    const upsert = (body: Partial<UpsertIndicateurBody>) =>
+      runAsAdmin(apiKey.id, () => upsertIndicateur(indId, { ...BODY_BASE, ...body }))
+    return { indId, operateur, fraude, upsert }
+  }
+
+  it(
+    'déclare les axes dans l’ordre du tableau, à partir de 1',
+    integrationTest(async () => {
+      const { indId, operateur, fraude, upsert } = await contexte()
+
+      const result = await upsert({
+        axes: [
+          { id: fraude.publicId, fonction: 'SUM' },
+          { id: operateur.publicId, fonction: 'AVG' },
+        ],
+      })
+
+      expect(result.isOk()).toBe(true)
+      expect(await axesDe(indId)).toEqual([
+        { id: fraude.publicId, ordre: 1, fonction: 'SUM' },
+        { id: operateur.publicId, ordre: 2, fonction: 'AVG' },
+      ])
+    }),
+  )
+
+  it(
+    'déclare les axes dès la création de l’indicateur',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+      const operateur = await fixtures.axe({ publicId: testAxeId() })
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, {
+          ...BODY_BASE,
+          axes: [{ id: operateur.publicId, fonction: 'AVG' }],
+        }),
+      )
+
+      expect(await axesDe(indId)).toEqual([{ id: operateur.publicId, ordre: 1, fonction: 'AVG' }])
+    }),
+  )
+
+  it(
+    'laisse les axes inchangés quand le champ est absent',
+    integrationTest(async () => {
+      const { indId, operateur, upsert } = await contexte()
+      await upsert({ axes: [{ id: operateur.publicId, fonction: 'SUM' }] })
+
+      await upsert({ nom: 'Renommé' })
+
+      expect(await axesDe(indId)).toEqual([{ id: operateur.publicId, ordre: 1, fonction: 'SUM' }])
+    }),
+  )
+
+  it(
+    'retire tous les axes avec `axes: []`',
+    integrationTest(async () => {
+      const { indId, operateur, upsert } = await contexte()
+      await upsert({ axes: [{ id: operateur.publicId, fonction: 'SUM' }] })
+
+      await upsert({ axes: [] })
+
+      expect(await axesDe(indId)).toEqual([])
+    }),
+  )
+
+  it(
+    'permet de changer l’ordre et la fonction quand l’indicateur a des valeurs',
+    integrationTest(async () => {
+      const { indId, operateur, fraude, upsert } = await contexte()
+      await upsert({
+        axes: [
+          { id: operateur.publicId, fonction: 'SUM' },
+          { id: fraude.publicId, fonction: 'SUM' },
+        ],
+      })
+      await fixtures.valeurAvancement({ indicateur: { publicId: indId }, individu: {} })
+
+      await upsert({
+        axes: [
+          { id: fraude.publicId, fonction: 'AVG' },
+          { id: operateur.publicId, fonction: 'SUM' },
+        ],
+      })
+
+      expect(await axesDe(indId)).toEqual([
+        { id: fraude.publicId, ordre: 1, fonction: 'AVG' },
+        { id: operateur.publicId, ordre: 2, fonction: 'SUM' },
+      ])
+    }),
+  )
+
+  it(
+    'refuse d’ajouter un axe quand l’indicateur a des valeurs',
+    integrationTest(async () => {
+      const { indId, operateur, fraude, upsert } = await contexte()
+      await upsert({ axes: [{ id: operateur.publicId, fonction: 'SUM' }] })
+      await fixtures.valeurAvancement({ indicateur: { publicId: indId }, individu: {} })
+
+      await expect(
+        upsert({
+          axes: [
+            { id: operateur.publicId, fonction: 'SUM' },
+            { id: fraude.publicId, fonction: 'SUM' },
+          ],
+        }),
+      ).rejects.toMatchObject({ constructor: AxesVerrouillesError, details: { nombreValeurs: 1 } })
+      expect(await axesDe(indId)).toEqual([{ id: operateur.publicId, ordre: 1, fonction: 'SUM' }])
+    }),
+  )
+
+  it(
+    'refuse de retirer un axe quand l’indicateur a des valeurs',
+    integrationTest(async () => {
+      const { indId, operateur, upsert } = await contexte()
+      await upsert({ axes: [{ id: operateur.publicId, fonction: 'SUM' }] })
+      await fixtures.valeurAvancement({ indicateur: { publicId: indId }, individu: {} })
+
+      await expect(upsert({ axes: [] })).rejects.toBeInstanceOf(AxesVerrouillesError)
+      expect(await axesDe(indId)).toEqual([{ id: operateur.publicId, ordre: 1, fonction: 'SUM' }])
+    }),
+  )
+
+  it(
+    'échoue avec VALIDATION_ERROR quand un axe est inconnu (aucun indicateur créé)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+      const operateur = await fixtures.axe({ publicId: testAxeId() })
+      const inconnu = testAxeId()
+
+      await expect(
+        runAsAdmin(apiKey.id, () =>
+          upsertIndicateur(indId, {
+            ...BODY_BASE,
+            axes: [
+              { id: inconnu, fonction: 'SUM' },
+              { id: operateur.publicId, fonction: 'SUM' },
+            ],
+          }),
+        ),
+      ).rejects.toMatchObject({
+        constructor: ValidationError,
+        details: { unknownAxeIds: [inconnu] },
+      })
+      expect(await db().indicateur.findUnique({ where: { publicId: indId } })).toBeNull()
     }),
   )
 })

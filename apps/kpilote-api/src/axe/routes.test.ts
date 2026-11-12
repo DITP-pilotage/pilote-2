@@ -208,31 +208,6 @@ describe.concurrent('PUT /axes/{id}', () => {
   )
 
   it(
-    'permet de renommer les niveaux d’un axe déclaré par un indicateur',
-    integrationTest(async () => {
-      const axeId = testAxeId()
-      await fixtures.niveauAxe({ axe: { publicId: axeId }, ordre: 1, nom: 'Opérateur' })
-      await fixtures.indicateurAxe({
-        indicateur: { publicId: testIndicateurId() },
-        axe: { publicId: axeId },
-      })
-      const cle = await cleApi(ApiKeyRole.ADMIN)
-
-      const response = await requete({
-        cle,
-        method: 'PUT',
-        path: `/axes/${axeId}`,
-        body: { nom: 'Opérateurs', description: null, niveaux: [{ nom: 'Marque' }] },
-      })
-
-      expect(response.status).toBe(200)
-      expect(((await response.json()) as AxeApiModel).niveaux).toEqual([
-        { ordre: 1, nom: 'Marque' },
-      ])
-    }),
-  )
-
-  it(
     'refuse (403) une clé qui n’est pas ADMIN',
     integrationTest(async () => {
       const cle = await cleApi(ApiKeyRole.CONTRIBUTOR)

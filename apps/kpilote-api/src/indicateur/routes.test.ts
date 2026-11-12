@@ -102,75 +102,6 @@ describe.concurrent('PUT /indicateurs/{id} : axes', () => {
   )
 
   it(
-    'laisse les axes inchangés quand le champ est absent',
-    integrationTest(async () => {
-      const { cle, indicateurId, operateur } = await contexte()
-      await put(cle, indicateurId, {
-        ...BODY_BASE,
-        axes: [{ id: operateur.publicId, fonction: 'SUM' }],
-      })
-
-      const response = await put(cle, indicateurId, { ...BODY_BASE, nom: 'Renommé' })
-
-      expect(response.status).toBe(200)
-      expect(await response.json()).toMatchObject({
-        nom: 'Renommé',
-        axes: [{ id: operateur.publicId, fonction: 'SUM' }],
-      })
-    }),
-  )
-
-  it(
-    'retire tous les axes avec `axes: []`',
-    integrationTest(async () => {
-      const { cle, indicateurId, operateur } = await contexte()
-      await put(cle, indicateurId, {
-        ...BODY_BASE,
-        axes: [{ id: operateur.publicId, fonction: 'SUM' }],
-      })
-
-      const response = await put(cle, indicateurId, { ...BODY_BASE, axes: [] })
-
-      expect(response.status).toBe(200)
-      expect(((await response.json()) as IndicateurApiModel).axes).toEqual([])
-    }),
-  )
-
-  it(
-    'permet de changer l’ordre et la fonction quand l’indicateur a des valeurs',
-    integrationTest(async () => {
-      const { cle, indicateurId, operateur, fraude } = await contexte()
-      await put(cle, indicateurId, {
-        ...BODY_BASE,
-        axes: [
-          { id: operateur.publicId, fonction: 'SUM' },
-          { id: fraude.publicId, fonction: 'SUM' },
-        ],
-      })
-      await fixtures.valeurAvancement({ indicateur: { publicId: indicateurId }, individu: {} })
-
-      const response = await put(cle, indicateurId, {
-        ...BODY_BASE,
-        axes: [
-          { id: fraude.publicId, fonction: 'AVG' },
-          { id: operateur.publicId, fonction: 'SUM' },
-        ],
-      })
-
-      expect(response.status).toBe(200)
-      expect(
-        ((await response.json()) as IndicateurApiModel).axes.map(({ id, fonction }) => ({
-          id,
-          fonction,
-        })),
-      ).toEqual([
-        { id: fraude.publicId, fonction: 'AVG' },
-        { id: operateur.publicId, fonction: 'SUM' },
-      ])
-    }),
-  )
-
-  it(
     'refuse (409) d’ajouter un axe quand l’indicateur a des valeurs',
     integrationTest(async () => {
       const { cle, indicateurId, operateur } = await contexte()
@@ -185,42 +116,6 @@ describe.concurrent('PUT /indicateurs/{id} : axes', () => {
       expect(await response.json()).toMatchObject({
         code: 'AXES_VERROUILLES',
         details: { nombreValeurs: 1 },
-      })
-    }),
-  )
-
-  it(
-    'refuse (409) de retirer un axe quand l’indicateur a des valeurs',
-    integrationTest(async () => {
-      const { cle, indicateurId, operateur } = await contexte()
-      await put(cle, indicateurId, {
-        ...BODY_BASE,
-        axes: [{ id: operateur.publicId, fonction: 'SUM' }],
-      })
-      await fixtures.valeurAvancement({ indicateur: { publicId: indicateurId }, individu: {} })
-
-      const response = await put(cle, indicateurId, { ...BODY_BASE, axes: [] })
-
-      expect(response.status).toBe(409)
-      expect(await response.json()).toMatchObject({ code: 'AXES_VERROUILLES' })
-    }),
-  )
-
-  it(
-    'refuse (400) un axe inconnu',
-    integrationTest(async () => {
-      const { cle, indicateurId } = await contexte()
-      const inconnu = testAxeId()
-
-      const response = await put(cle, indicateurId, {
-        ...BODY_BASE,
-        axes: [{ id: inconnu, fonction: 'SUM' }],
-      })
-
-      expect(response.status).toBe(400)
-      expect(await response.json()).toMatchObject({
-        code: 'VALIDATION_ERROR',
-        details: { unknownAxeIds: [inconnu] },
       })
     }),
   )
@@ -253,25 +148,6 @@ describe.concurrent('PUT /indicateurs/{id} : axes', () => {
       })
 
       expect(response.status).toBe(400)
-    }),
-  )
-
-  it(
-    'déclare les axes dès la création de l’indicateur',
-    integrationTest(async () => {
-      const cle = await cleAdmin()
-      const indicateurId = testIndicateurNumericId()
-      const operateur = await fixtures.axe({ publicId: testAxeId(), nom: 'Opérateur' })
-
-      const response = await put(cle, indicateurId, {
-        ...BODY_BASE,
-        axes: [{ id: operateur.publicId, fonction: 'AVG' }],
-      })
-
-      expect(response.status).toBe(200)
-      expect(((await response.json()) as IndicateurApiModel).axes).toEqual([
-        { id: operateur.publicId, nom: 'Opérateur', fonction: 'AVG' },
-      ])
     }),
   )
 })

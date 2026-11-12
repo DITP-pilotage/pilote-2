@@ -4,7 +4,7 @@ import { upsertAxe } from '@/axe/commands/upsertAxe'
 import { db } from '@/framework/persistence/dbStore'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testAxeId } from '@/test/randomIds'
+import { testAxeId, testIndicateurId, testIndicateurIds } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor, runAsUser } from '@/test/runAsPrincipal'
 
 const niveauxDe = async (publicId: string) => {
@@ -137,6 +137,58 @@ describe.concurrent('upsertAxe', () => {
         { ordre: 2, nom: 'Type' },
         { ordre: 3, nom: 'Sous-type' },
       ])
+    }),
+  )
+
+  it(
+    'refuse de changer le nombre de niveaux d’un axe déclaré par des indicateurs, sans rien modifier',
+    integrationTest(async () => {
+      const axe = { publicId: testAxeId(), nom: 'Opérateur' }
+      const [premier, second] = testIndicateurIds(2)
+      await fixtures.niveauAxe({ axe, ordre: 1, nom: 'Opérateur' })
+      await fixtures.indicateurAxe(
+        { indicateur: { publicId: second }, axe },
+        { indicateur: { publicId: premier }, axe },
+      )
+
+      const result = await runAsAdmin('principal-upsert-axe-utilise', () =>
+        upsertAxe({
+          publicId: axe.publicId,
+          body: {
+            nom: 'Renommé',
+            description: null,
+            niveaux: [{ nom: 'Groupe' }, { nom: 'Opérateur' }],
+          },
+        }),
+      )
+
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'AXE_UTILISE',
+        indicateurs: [premier, second],
+      })
+      expect(await db().axe.findUnique({ where: { publicId: axe.publicId } })).toMatchObject({
+        nom: 'Opérateur',
+      })
+      expect(await niveauxDe(axe.publicId)).toEqual([{ ordre: 1, nom: 'Opérateur' }])
+    }),
+  )
+
+  it(
+    'renomme les niveaux d’un axe déclaré par un indicateur',
+    integrationTest(async () => {
+      const axe = { publicId: testAxeId() }
+      await fixtures.niveauAxe({ axe, ordre: 1, nom: 'Opérateur' })
+      await fixtures.indicateurAxe({ indicateur: { publicId: testIndicateurId() }, axe })
+
+      const result = await runAsAdmin('principal-upsert-axe-utilise-renommage', () =>
+        upsertAxe({
+          publicId: axe.publicId,
+          body: { nom: 'Opérateurs', description: null, niveaux: [{ nom: 'Marque' }] },
+        }),
+      )
+
+      expect(result.isOk()).toBe(true)
+      expect(await niveauxDe(axe.publicId)).toEqual([{ ordre: 1, nom: 'Marque' }])
     }),
   )
 
