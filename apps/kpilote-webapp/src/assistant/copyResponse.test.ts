@@ -53,4 +53,23 @@ describe('copyableText', () => {
       'Voici.\n\nPages du centre d’aide :\n- Importer : https://kpilote.fr/centre-aide?article=a1',
     )
   })
+
+  it('copie le texte des encarts avant celui de la réponse', () => {
+    const message: KpiloteUIMessage = {
+      id: 'm',
+      role: 'assistant',
+      parts: [
+        {
+          type: 'tool-write_synthese',
+          toolCallId: 't',
+          state: 'output-available',
+          input: { sujet: { type: 'INDICATEUR', indicateurId: 'IND-1' }, individuId: 'D-1' },
+          output: { type: 'synthese', dateRedaction: '', markdown: '# Synthèse', done: true },
+        },
+        { type: 'text', text: 'Voici la synthèse.' },
+      ],
+    }
+
+    expect(copyableText(message, 'https://kpilote.fr')).toBe('# Synthèse\n\nVoici la synthèse.')
+  })
 })

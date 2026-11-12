@@ -6,9 +6,9 @@ import {
   findIndividu,
   findReadableCollection,
 } from '@/assistant/tools/entityLookups'
-import { type ToolDefinition } from '@/assistant/tools/toolDefinition'
+import { type QueryToolDefinition } from '@/assistant/tools/toolDefinition'
 
-export const getSyntheseCollection: ToolDefinition<'get_synthese_collection'> = {
+export const getSyntheseCollection: QueryToolDefinition<'get_synthese_collection'> = {
   description: `Renvoie l'état d'une collection pour un individu : son taux de progression pondéré et, pour chaque indicateur de la collection, sa pondération et son taux de progression.
 - \`notFound\` : identifiants inexistants ou que l'utilisateur ne peut pas consulter ; ne les distingue pas.
 - \`tauxProgression\` à null : pas d'objectif ou pas de valeur pour calculer le taux.

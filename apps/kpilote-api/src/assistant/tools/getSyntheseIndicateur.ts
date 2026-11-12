@@ -8,7 +8,7 @@ import {
 import { type IndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 
 import { resolvePerimetre, type ResolvedPerimetre } from '@/assistant/tools/perimetre'
-import { type ToolDefinition } from '@/assistant/tools/toolDefinition'
+import { type QueryToolDefinition } from '@/assistant/tools/toolDefinition'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import { listObjectifsForIndicateur } from '@/objectifIndicateurIndividu/queries/listObjectifsForIndicateur'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
@@ -85,7 +85,7 @@ const readIndividus = async ({
   })
 }
 
-export const getSyntheseIndicateur: ToolDefinition<'get_synthese_indicateur'> = {
+export const getSyntheseIndicateur: QueryToolDefinition<'get_synthese_indicateur'> = {
   description: `Renvoie l'état d'un indicateur en un appel : identité (nom, unité, référentiels), et pour chaque individu demandé sa dernière valeur, son objectif, son taux de progression, sa variation récente et son écart à la médiane ; plus les valeurs remarquables (min, max, médiane) de chaque référentiel.
 - \`notFound\` : identifiants inexistants ou que l'utilisateur ne peut pas consulter ; ne les distingue pas.
 - \`truncated\` / \`total\` : le périmètre dépassait ${MAX_PERIMETRE_INDIVIDUS} individus ; dis-le.
