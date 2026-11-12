@@ -39,3 +39,23 @@ export const widgetPublicIdSchema = z
   .describe(
     'Identifiant public du widget (format WID-<SLUG>, ex. WID-CARTE-DEPT). Max 20 caractères.',
   )
+
+export const axePublicIdSchema = z
+  .string()
+  .regex(
+    /^AXE-[A-Z0-9-]{1,16}$/,
+    'Identifiant public attendu au format AXE-<SLUG> (max 20 caractères)',
+  )
+  .describe(
+    "Identifiant public de l'axe (format AXE-<SLUG>, ex. AXE-OPERATEUR). Max 20 caractères.",
+  )
+
+export const modalitePublicIdSchema = z
+  .string()
+  .regex(
+    /^[A-Z][A-Z0-9-]{0,19}$/,
+    'Identifiant public de modalité attendu (lettre majuscule suivie de lettres/chiffres/tirets, max 20 caractères)',
+  )
+  .describe(
+    'Identifiant public de modalité, unique tous axes confondus (ex. OP-ORANGE, FR-TVA). Lettre majuscule puis lettres/chiffres/tirets, max 20 caractères.',
+  )

@@ -317,6 +317,70 @@ model Relation {
   @@map("relation")
 }
 
+// Axe : découpage défini par l'utilisateur (Opérateur, Type de fraude…), qui
+// précise une valeur en plus de l'individu. Cf.
+// docs/superpowers/specs/2026-11-12-kpilote-multifiltre-axes-design.md.
+model Axe {
+  id          String   @id @db.Uuid
+  publicId    String   @unique @map("public_id")
+  nom         String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  niveaux   NiveauAxe[]
+  modalites Modalite[]
+
+  @@map("axe")
+}
+
+// Étage d'un axe imbriqué (Famille → Type de fraude), ordonné du plus large au
+// plus fin. Un axe plat a un seul niveau.
+model NiveauAxe {
+  id        String   @id @db.Uuid
+  axeId     String   @map("axe_id") @db.Uuid
+  nom       String
+  ordre     Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  axe       Axe        @relation(fields: [axeId], references: [id], onDelete: Cascade)
+  modalites Modalite[]
+
+  @@unique([axeId, ordre])
+  @@map("niveau_axe")
+}
+
+// Valeur d'un axe (Orange, TVA). Règle applicative : le parent appartient au
+// même axe et au niveau d'ordre précédent ; une modalité du premier niveau n'a
+// pas de parent.
+//
+// NoAction (vérifié en fin d'instruction) et non Restrict : la suppression d'un
+// axe supprime en cascade ses niveaux et ses modalités dans la même
+// instruction, ce que Restrict refuserait selon l'ordre des cascades. Hors de
+// ce cas, un niveau qui porte des modalités et une modalité qui a des enfants
+// restent impossibles à supprimer.
+model Modalite {
+  id          String   @id @db.Uuid
+  publicId    String   @unique @map("public_id")
+  axeId       String   @map("axe_id") @db.Uuid
+  niveauAxeId String   @map("niveau_axe_id") @db.Uuid
+  nom         String
+  parentId    String?  @map("parent_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  axe       Axe        @relation(fields: [axeId], references: [id], onDelete: Cascade)
+  niveauAxe NiveauAxe  @relation(fields: [niveauAxeId], references: [id], onDelete: NoAction)
+  parent    Modalite?  @relation("modaliteParent", fields: [parentId], references: [id], onDelete: NoAction)
+  enfants   Modalite[] @relation("modaliteParent")
+
+  @@index([axeId])
+  @@index([niveauAxeId])
+  @@index([parentId])
+  @@map("modalite")
+}
+
 model ValeurAvancement {
   id           String   @id @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid

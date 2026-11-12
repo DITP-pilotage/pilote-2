@@ -34,6 +34,10 @@ export const testWidgetId = (): string => `WID-${randomToken(12).toUpperCase()}`
 
 export const testCollectionId = (): string => `COL-${randomToken(12)}`
 
+export const testAxeId = (): string => `AXE-${randomToken(12).toUpperCase()}`
+
+export const testModaliteId = (): string => `MOD-${randomToken(12).toUpperCase()}`
+
 // Suffixe numérique, seul format accepté par `collectionPublicIdSchema` (qui
 // valide les réponses de route) et seul format pris en compte par le calcul de
 // l'identifiant suivant. Le préfixe `9` place la valeur au-dessus des

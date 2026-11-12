@@ -12,14 +12,19 @@ import {
   testCollectionId,
   testReferentielId,
   testWidgetId,
+  testAxeId,
+  testModaliteId,
 } from '@/test/randomIds'
 import {
   type ApiKeyModel,
+  type AxeModel,
   type ContactUtileModel,
   type IndicateurModel,
   type IndicateurPermissionModel,
   type IndicateurReferentielModel,
   type IndividuModel,
+  type ModaliteModel,
+  type NiveauAxeModel,
   type ObjectifIndicateurIndividuModel,
   type OrganismeModel,
   type CollectionContactUtileModel,
@@ -369,6 +374,153 @@ async function relation(
   if (overrides.length === 1) return upsertRelation(overrides[0]!)
   const results: RelationModel[] = []
   for (const o of overrides) results.push(await upsertRelation(o))
+  return results
+}
+
+// --- Axe ---------------------------------------------------------------------
+
+type AxeOverrides = Partial<{
+  id: string
+  publicId: string
+  nom: string
+  description: string | null
+}>
+
+const upsertAxe = async (o: AxeOverrides = {}) => {
+  const create = {
+    id: uuidv7(),
+    publicId: testAxeId(),
+    nom: 'Axe de test',
+    description: null,
+    ...o,
+  }
+  const { id: _id, publicId: _pub, ...update } = o
+  if (Object.keys(update).length === 0) {
+    const existing = await db().axe.findUnique({ where: { publicId: create.publicId } })
+    if (existing) return existing
+  }
+  return db().axe.upsert({
+    where: { publicId: create.publicId },
+    update,
+    create,
+  })
+}
+
+function axe(): Promise<AxeModel>
+function axe(override: AxeOverrides): Promise<AxeModel>
+function axe(o1: AxeOverrides, o2: AxeOverrides, ...rest: AxeOverrides[]): Promise<AxeModel[]>
+async function axe(...overrides: AxeOverrides[]): Promise<AxeModel | AxeModel[]> {
+  if (overrides.length <= 1) return upsertAxe(overrides[0])
+  const results: AxeModel[] = []
+  for (const o of overrides) results.push(await upsertAxe(o))
+  return results
+}
+
+// --- NiveauAxe ---------------------------------------------------------------
+
+// Identifié par (axe, ordre). Sans `axe`, un nouvel axe est créé.
+type NiveauAxeOverrides = Partial<{
+  id: string
+  axe: AxeOverrides
+  nom: string
+  ordre: number
+}>
+
+const DEFAULT_NIVEAU_AXE_ORDRE = 1
+
+const upsertNiveauAxe = async (o: NiveauAxeOverrides = {}) => {
+  const axeRow = await upsertAxe(o.axe)
+  const ordre = o.ordre ?? DEFAULT_NIVEAU_AXE_ORDRE
+  const { id: _id, axe: _axe, ordre: _ordre, ...update } = o
+  return db().niveauAxe.upsert({
+    where: { axeId_ordre: { axeId: axeRow.id, ordre } },
+    update,
+    create: {
+      id: o.id ?? uuidv7(),
+      axeId: axeRow.id,
+      nom: o.nom ?? 'Niveau de test',
+      ordre,
+    },
+  })
+}
+
+function niveauAxe(): Promise<NiveauAxeModel>
+function niveauAxe(override: NiveauAxeOverrides): Promise<NiveauAxeModel>
+function niveauAxe(
+  o1: NiveauAxeOverrides,
+  o2: NiveauAxeOverrides,
+  ...rest: NiveauAxeOverrides[]
+): Promise<NiveauAxeModel[]>
+async function niveauAxe(
+  ...overrides: NiveauAxeOverrides[]
+): Promise<NiveauAxeModel | NiveauAxeModel[]> {
+  if (overrides.length <= 1) return upsertNiveauAxe(overrides[0])
+  const results: NiveauAxeModel[] = []
+  for (const o of overrides) results.push(await upsertNiveauAxe(o))
+  return results
+}
+
+// --- Modalite ----------------------------------------------------------------
+
+// L'axe de la modalité est celui de son niveau. Sans `niveau`, un nouvel axe à
+// un niveau est créé. La fixture ne vérifie pas la règle applicative sur le
+// parent (même axe, niveau précédent) : les tests des contrôles en ont besoin.
+type ModaliteOverrides = Partial<{
+  id: string
+  publicId: string
+  nom: string
+  niveau: NiveauAxeOverrides
+  parent: ModaliteOverrides | null
+}>
+
+const upsertModalite = async (o: ModaliteOverrides = {}): Promise<ModaliteModel> => {
+  const publicId = o.publicId ?? testModaliteId()
+  const existing = await db().modalite.findUnique({ where: { publicId } })
+  const { id: _id, publicId: _pub, niveau: _niveau, parent: _parent, ...rest } = o
+
+  const niveauRow = o.niveau || !existing ? await upsertNiveauAxe(o.niveau) : null
+  const parentId =
+    o.parent === undefined
+      ? undefined
+      : o.parent === null
+        ? null
+        : (await upsertModalite(o.parent)).id
+
+  if (existing) {
+    const update = {
+      ...rest,
+      ...(niveauRow ? { axeId: niveauRow.axeId, niveauAxeId: niveauRow.id } : {}),
+      ...(parentId === undefined ? {} : { parentId }),
+    }
+    if (Object.keys(update).length === 0) return existing
+    return db().modalite.update({ where: { id: existing.id }, data: update })
+  }
+
+  return db().modalite.create({
+    data: {
+      id: o.id ?? uuidv7(),
+      publicId,
+      nom: o.nom ?? 'Modalité de test',
+      axeId: niveauRow!.axeId,
+      niveauAxeId: niveauRow!.id,
+      parentId: parentId ?? null,
+    },
+  })
+}
+
+function modalite(): Promise<ModaliteModel>
+function modalite(override: ModaliteOverrides): Promise<ModaliteModel>
+function modalite(
+  o1: ModaliteOverrides,
+  o2: ModaliteOverrides,
+  ...rest: ModaliteOverrides[]
+): Promise<ModaliteModel[]>
+async function modalite(
+  ...overrides: ModaliteOverrides[]
+): Promise<ModaliteModel | ModaliteModel[]> {
+  if (overrides.length <= 1) return upsertModalite(overrides[0])
+  const results: ModaliteModel[] = []
+  for (const o of overrides) results.push(await upsertModalite(o))
   return results
 }
 
@@ -1051,6 +1203,9 @@ export const fixtures = {
   referentielWidget,
   indicateurReferentiel,
   relation,
+  axe,
+  niveauAxe,
+  modalite,
   valeurAvancement,
   objectifIndicateurIndividu,
   collection,
