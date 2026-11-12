@@ -124,6 +124,28 @@ export const uniteIndicateurApiModelSchema = z
   .describe("Unité de mesure d'un indicateur, sérialisée enrichie pour les clients API.")
 export type UniteIndicateurApiModel = z.infer<typeof uniteIndicateurApiModelSchema>
 
+export const SENS_SOUHAITES = ['HAUSSE', 'BAISSE'] as const
+export type SensSouhaite = (typeof SENS_SOUHAITES)[number]
+
+export const SENS_SOUHAITE_LABELS: Record<SensSouhaite, string> = {
+  HAUSSE: 'À la hausse',
+  BAISSE: 'À la baisse',
+}
+
+// Aide affichée avec le libellé (formulaire admin, fiche indicateur).
+export const SENS_SOUHAITE_HINTS: Record<SensSouhaite, string> = {
+  HAUSSE: 'Une valeur plus élevée est favorable',
+  BAISSE: 'Une valeur plus faible est favorable',
+}
+
+export const sensSouhaiteSchema = z
+  .enum(SENS_SOUHAITES)
+  .describe(
+    "Sens d'évolution souhaité de l'indicateur. `HAUSSE` : une valeur plus élevée est favorable. " +
+      '`BAISSE` : une valeur plus faible est favorable. Vaut pour tous les individus et référentiels, ' +
+      "ne dépend pas de l'évolution constatée, et sa modification ne change aucune valeur d'avancement ni cible.",
+  )
+
 export const configurationIndicateurReferentielSchema = z
   .object({
     id: referentielPublicIdSchema,
@@ -226,6 +248,7 @@ export const indicateurApiModelSchema = z.object({
     .describe(
       "Unité de mesure de l'indicateur, ou `null` si non renseignée (valeur brute, sans unité).",
     ),
+  sensSouhaite: sensSouhaiteSchema,
   ...indicateurMetadonneesSchema.shape,
   referentiels: z
     .array(configurationIndicateurReferentielApiModelSchema)
@@ -276,6 +299,7 @@ export const upsertIndicateurBodySchema = z.object({
     .describe(
       "Code de l'unité de mesure de l'indicateur, ou `null` pour effacer / ne pas renseigner (valeur brute, sans unité).",
     ),
+  sensSouhaite: sensSouhaiteSchema,
   ...indicateurMetadonneesSchema.partial().shape,
   referentiels: z
     .array(configurationIndicateurReferentielSchema)
