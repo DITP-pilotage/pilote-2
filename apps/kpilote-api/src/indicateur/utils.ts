@@ -9,8 +9,13 @@ import {
 
 import { computeDatesMiseADisposition } from '@/indicateur/datesMiseADisposition'
 
-import { type FonctionAgregation, type UniteIndicateur } from '@/generated/prisma/enums'
 import {
+  type FonctionAgregation,
+  type FonctionAgregationAxe,
+  type UniteIndicateur,
+} from '@/generated/prisma/enums'
+import {
+  type AxeModel,
   type IndicateurModel,
   type ReferentielModel,
   type UtilisateurModel,
@@ -22,7 +27,18 @@ export type IndicateurWithReferentiels = IndicateurModel & {
     referentiel: ReferentielModel
   }>
   responsables: Array<{ utilisateur: UtilisateurModel }>
+  axes: Array<{ fonction: FonctionAgregationAxe; axe: AxeModel }>
 }
+
+// Relations chargées pour construire un `IndicateurApiModel`.
+export const indicateurApiModelInclude = {
+  referentiels: { include: { referentiel: true } },
+  responsables: {
+    orderBy: { createdAt: 'asc' },
+    include: { utilisateur: true },
+  },
+  axes: { orderBy: { ordre: 'asc' }, include: { axe: true } },
+} as const
 
 // Garde compile-time : l'enum Prisma `UniteIndicateur` et le catalogue mb-shared
 // `UNITES_INDICATEUR` doivent lister exactement les mêmes codes. Si une migration
@@ -101,6 +117,11 @@ export const toIndicateurApiModel = ({
         fonctionAgregation: configuration.fonctionAgregation,
       }))
       .sort((a, b) => a.id.localeCompare(b.id)),
+    axes: indicateur.axes.map(({ axe, fonction }) => ({
+      id: axe.publicId,
+      nom: axe.nom,
+      fonction,
+    })),
     responsables: indicateur.responsables.map(({ utilisateur }) => ({
       id: utilisateur.id,
       email: utilisateur.email,

@@ -6,7 +6,7 @@ import { ApiKeyRole } from '@/generated/prisma/enums'
 import { buildTestApp } from '@/test/buildTestApp'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testApiKeyRawKey, testAxeId, testModaliteId } from '@/test/randomIds'
+import { testApiKeyRawKey, testAxeId, testIndicateurId, testModaliteId } from '@/test/randomIds'
 
 // La route ouvre sa propre transaction (`withTransaction`), qui ne verrait pas les
 // fixtures de la transaction de test : ici elle rejoint la transaction courante
@@ -172,6 +172,37 @@ describe.concurrent('PUT /axes/{id}', () => {
       expect(await response.json()).toMatchObject({
         code: 'NIVEAU_PORTE_MODALITES',
         details: { ordres: [2] },
+      })
+    }),
+  )
+
+  it(
+    'refuse (409) de changer le nombre de niveaux d’un axe déclaré par un indicateur',
+    integrationTest(async () => {
+      const axeId = testAxeId()
+      const indicateurId = testIndicateurId()
+      await fixtures.niveauAxe({ axe: { publicId: axeId }, ordre: 1, nom: 'Opérateur' })
+      await fixtures.indicateurAxe({
+        indicateur: { publicId: indicateurId },
+        axe: { publicId: axeId },
+      })
+      const cle = await cleApi(ApiKeyRole.ADMIN)
+
+      const response = await requete({
+        cle,
+        method: 'PUT',
+        path: `/axes/${axeId}`,
+        body: {
+          nom: 'Opérateur',
+          description: null,
+          niveaux: [{ nom: 'Groupe' }, { nom: 'Opérateur' }],
+        },
+      })
+
+      expect(response.status).toBe(409)
+      expect(await response.json()).toMatchObject({
+        code: 'AXE_UTILISE',
+        details: { indicateurs: [indicateurId] },
       })
     }),
   )

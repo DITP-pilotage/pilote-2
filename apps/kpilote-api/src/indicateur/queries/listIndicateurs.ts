@@ -9,7 +9,7 @@ import { db } from '@/framework/persistence/dbStore'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
 import { type Prisma } from '@/generated/prisma/client'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { toIndicateurApiModel } from '@/indicateur/utils'
+import { indicateurApiModelInclude, toIndicateurApiModel } from '@/indicateur/utils'
 
 export const listIndicateurs = (
   params: ListIndicateursQuery,
@@ -36,13 +36,7 @@ export const listIndicateurs = (
   const fetchPage = db().indicateur.findMany({
     where,
     orderBy: { id: 'asc' },
-    include: {
-      referentiels: { include: { referentiel: true } },
-      responsables: {
-        orderBy: { createdAt: 'asc' },
-        include: { utilisateur: true },
-      },
-    },
+    include: indicateurApiModelInclude,
     ...buildPaginationArgs(params.cursor, params.pageSize),
   })
   const fetchTotal = db().indicateur.count({ where })

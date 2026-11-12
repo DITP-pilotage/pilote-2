@@ -12,7 +12,7 @@ import {
 } from '@pilote/kpilote-shared/axe'
 
 import { deleteModalite } from '@/axe/commands/deleteModalite'
-import { upsertAxe } from '@/axe/commands/upsertAxe'
+import { type UpsertAxeError, upsertAxe } from '@/axe/commands/upsertAxe'
 import { type UpsertModaliteError, upsertModalite } from '@/axe/commands/upsertModalite'
 import { getAxeByPublicId } from '@/axe/queries/getAxeByPublicId'
 import { getModaliteByPublicId } from '@/axe/queries/getModaliteByPublicId'
@@ -89,7 +89,7 @@ const upsertAxeRoute = createRoute({
   path: '/axes/{id}',
   tags: ['Axe', 'Admin'],
   summary: 'Créer ou modifier un axe et ses niveaux',
-  description: `${ADMIN} Crée l’axe s’il n’existe pas, sinon met à jour son nom et sa description. \`niveaux\` est la liste complète des niveaux, du plus large au plus fin : la position donne l’ordre, un niveau existant à cette position est renommé. Raccourcir la liste supprime les derniers niveaux ; c’est refusé (409 \`NIVEAU_PORTE_MODALITES\`) si l’un d’eux porte des modalités. Exécuté dans une transaction.`,
+  description: `${ADMIN} Crée l’axe s’il n’existe pas, sinon met à jour son nom et sa description. \`niveaux\` est la liste complète des niveaux, du plus large au plus fin : la position donne l’ordre, un niveau existant à cette position est renommé. Raccourcir la liste supprime les derniers niveaux ; c’est refusé (409 \`NIVEAU_PORTE_MODALITES\`) si l’un d’eux porte des modalités. Changer le nombre de niveaux d’un axe déclaré par un indicateur est refusé (409 \`AXE_UTILISE\`). Exécuté dans une transaction.`,
   middleware: [requireAuthentication],
   request: {
     params: axeParamsSchema,
@@ -174,6 +174,23 @@ const deleteModaliteRoute = createRoute({
 
 // --- Erreurs métier ------------------------------------------------------------
 
+const describeUpsertAxeError = (
+  error: UpsertAxeError,
+): { message: string; details: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'NIVEAU_PORTE_MODALITES':
+      return {
+        message: `Ces niveaux portent des modalités et ne peuvent pas être supprimés : ${error.ordres.join(', ')}.`,
+        details: { ordres: error.ordres },
+      }
+    case 'AXE_UTILISE':
+      return {
+        message: `Cet axe est déclaré par des indicateurs (${error.indicateurs.join(', ')}) : on ne peut plus ajouter ni retirer de niveau. Le renommage reste possible.`,
+        details: { indicateurs: error.indicateurs },
+      }
+  }
+}
+
 const describeUpsertModaliteError = (
   error: UpsertModaliteError,
 ): { status: 400 | 409; message: string; details?: Record<string, unknown> } => {
@@ -239,11 +256,7 @@ axeRoutes.openapi(upsertAxeRoute, async (context) => {
     (error) =>
       jsonResponseError({
         context,
-        error: {
-          code: error.type,
-          message: `Ces niveaux portent des modalités et ne peuvent pas être supprimés : ${error.ordres.join(', ')}.`,
-          details: { ordres: error.ordres },
-        },
+        error: { code: error.type, ...describeUpsertAxeError(error) },
         schema: ErrorApiModelSchema,
         status: 409,
       }),

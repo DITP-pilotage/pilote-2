@@ -1,5 +1,6 @@
 import {
   type ConfigurationIndicateurReferentiel,
+  type DeclarationAxeIndicateur,
   type UpsertIndicateurBody,
 } from '@pilote/kpilote-shared/indicateur'
 import { ResultAsync } from 'neverthrow'
@@ -7,9 +8,13 @@ import { uuidv7 } from 'uuidv7'
 
 import { ensurePrincipal, isApiKeyAdmin, isOidcUser } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
+import { AppError, ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
-import { type FonctionAgregation, IndicateurPermissionAction } from '@/generated/prisma/enums'
+import {
+  type FonctionAgregation,
+  type FonctionAgregationAxe,
+  IndicateurPermissionAction,
+} from '@/generated/prisma/enums'
 
 type ConfigurationResolue = {
   referentielId: string
@@ -133,6 +138,73 @@ const remplacerResponsables = async (
   }
 }
 
+// --- Axes ----------------------------------------------------------------------
+
+export class AxesVerrouillesError extends AppError {
+  readonly code = 'AXES_VERROUILLES'
+  readonly kind = 'conflict' as const
+}
+
+type DeclarationAxeResolue = { axeId: string; fonction: FonctionAgregationAxe }
+
+const resoudreAxes = async (
+  declarations: ReadonlyArray<DeclarationAxeIndicateur>,
+): Promise<DeclarationAxeResolue[]> => {
+  if (declarations.length === 0) return []
+  const axes = await db().axe.findMany({
+    where: { publicId: { in: declarations.map((declaration) => declaration.id) } },
+  })
+  const axeIdParPublicId = new Map(axes.map((axe) => [axe.publicId, axe.id]))
+  const inconnus = declarations.map((d) => d.id).filter((id) => !axeIdParPublicId.has(id))
+  if (inconnus.length > 0) {
+    throw new ValidationError('Axes inconnus', { unknownAxeIds: inconnus.sort() })
+  }
+  return declarations.map((declaration) => ({
+    axeId: axeIdParPublicId.get(declaration.id)!,
+    fonction: declaration.fonction,
+  }))
+}
+
+// Remplace la déclaration complète ; l'ordre de déclaration suit la position
+// dans le tableau (à partir de 1).
+//
+// Ajouter ou retirer un axe est refusé dès que l'indicateur a des valeurs : une
+// valeur est précisée par une modalité de chaque axe déclaré. Les valeurs déjà
+// saisies ne portent pas de modalité pour un axe ajouté, et en portent une pour
+// un axe retiré : elles deviendraient incohérentes avec la déclaration.
+// Changer la fonction ou l'ordre ne touche pas aux valeurs, seulement au calcul
+// des totaux : c'est permis.
+const remplacerAxes = async (
+  indicateurId: string,
+  declarations: DeclarationAxeResolue[],
+): Promise<void> => {
+  const existantes = await db().indicateurAxe.findMany({ where: { indicateurId } })
+  const avant = new Set(existantes.map((declaration) => declaration.axeId))
+  const apres = new Set(declarations.map((declaration) => declaration.axeId))
+  const axesChangent = avant.size !== apres.size || [...apres].some((axeId) => !avant.has(axeId))
+  if (axesChangent) {
+    const nombreValeurs = await db().valeurAvancement.count({ where: { indicateurId } })
+    if (nombreValeurs > 0) {
+      throw new AxesVerrouillesError(
+        'Cet indicateur a déjà des valeurs : on ne peut plus lui ajouter ni lui retirer d’axe. Changer la fonction ou l’ordre des axes reste possible.',
+        { nombreValeurs },
+      )
+    }
+  }
+  // Suppression puis recréation : réordonner en place heurterait UNIQUE(indicateur, ordre).
+  await db().indicateurAxe.deleteMany({ where: { indicateurId } })
+  if (declarations.length > 0) {
+    await db().indicateurAxe.createMany({
+      data: declarations.map((declaration, index) => ({
+        indicateurId,
+        axeId: declaration.axeId,
+        ordre: index + 1,
+        fonction: declaration.fonction,
+      })),
+    })
+  }
+}
+
 const assertWritePermission = async (indicateurId: string, principalId: string): Promise<void> => {
   const hasWrite = await db().indicateurPermission.findUnique({
     where: {
@@ -173,6 +245,7 @@ const updateIndicateurExistant = async (
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
   const responsablesCibles =
     body.responsables === undefined ? undefined : await resoudreResponsables(body.responsables)
+  const axesCibles = body.axes === undefined ? undefined : await resoudreAxes(body.axes)
   await db().indicateur.update({
     where: { publicId },
     data: {
@@ -185,6 +258,9 @@ const updateIndicateurExistant = async (
   await remplacerConfigurationsReferentiels(indicateurId, configurations)
   if (responsablesCibles !== undefined) {
     await remplacerResponsables(indicateurId, responsablesCibles)
+  }
+  if (axesCibles !== undefined) {
+    await remplacerAxes(indicateurId, axesCibles)
   }
 }
 
@@ -206,6 +282,7 @@ const createIndicateurAvecGrants = async (
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
   const responsablesCibles =
     body.responsables === undefined ? undefined : await resoudreResponsables(body.responsables)
+  const axesCibles = body.axes === undefined ? undefined : await resoudreAxes(body.axes)
   const indicateurId = uuidv7()
   await db().indicateur.create({
     data: {
@@ -229,6 +306,9 @@ const createIndicateurAvecGrants = async (
   }
   if (responsablesCibles !== undefined) {
     await remplacerResponsables(indicateurId, responsablesCibles)
+  }
+  if (axesCibles !== undefined) {
+    await remplacerAxes(indicateurId, axesCibles)
   }
 }
 
