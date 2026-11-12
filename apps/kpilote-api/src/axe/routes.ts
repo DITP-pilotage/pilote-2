@@ -10,15 +10,14 @@ import {
   upsertAxeBodySchema,
   upsertModaliteBodySchema,
 } from '@pilote/kpilote-shared/axe'
-import { ResultAsync } from 'neverthrow'
 
 import { deleteModalite } from '@/axe/commands/deleteModalite'
 import { upsertAxe } from '@/axe/commands/upsertAxe'
 import { type UpsertModaliteError, upsertModalite } from '@/axe/commands/upsertModalite'
 import { getAxeByPublicId } from '@/axe/queries/getAxeByPublicId'
+import { getModaliteByPublicId } from '@/axe/queries/getModaliteByPublicId'
 import { listAxes } from '@/axe/queries/listAxes'
 import { listModalitesForAxe } from '@/axe/queries/listModalitesForAxe'
-import { modaliteInclude, toModaliteApiModel } from '@/axe/utils'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
@@ -30,7 +29,6 @@ import {
   erreur404,
   erreur409,
 } from '@/framework/openapi/responses'
-import { db } from '@/framework/persistence/dbStore'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 
 const AxeApiModelSchema = axeApiModelSchema.openapi('AxeApiModel')
@@ -210,11 +208,6 @@ const describeUpsertModaliteError = (
   }
 }
 
-const getModalite = (publicId: string) =>
-  ResultAsync.fromSafePromise(
-    db().modalite.findUniqueOrThrow({ where: { publicId }, include: modaliteInclude }),
-  ).map(toModaliteApiModel)
-
 // --- App registration ----------------------------------------------------------
 
 export const axeRoutes = createOpenApiHono()
@@ -271,7 +264,7 @@ axeRoutes.openapi(upsertModaliteRoute, async (context) => {
   return (
     await withTransaction(async () =>
       upsertModalite({ axePublicId: id, publicId: modaliteId, body }).andThen(() =>
-        getModalite(modaliteId),
+        getModaliteByPublicId({ publicId: modaliteId }),
       ),
     )
   ).match(
