@@ -60,7 +60,7 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 | T3.1  | PIL-1987 | Migration : combinaisons de modalités sur les valeurs  | ✅ fait (#2683) |
 | T3.2  | PIL-1988 | Écritures sur la nouvelle clé unique                   | ✅ fait (#2684) |
 | T3.3  | PIL-1989 | Suppression de l'ancien index unique des valeurs       | 🔄 en cours     |
-| T4.1  | PIL-1993 | Lectures de valeurs : paramètre combinaison optionnel  | à faire         |
+| T4.1  | PIL-1993 | Lectures de valeurs : combinaison explicite            | 🔄 en cours     |
 | T5.1  | PIL-1990 | Calcul de la marginale sur les axes (fonctions pures)  | à faire         |
 | T5.2  | PIL-1991 | Lectures : marginale et sélection de modalités         | à faire         |
 | T5.3  | PIL-1992 | Comparaison et carte pour une modalité                 | à faire         |
@@ -316,23 +316,28 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 ---
 
-### T4.1 — Lectures de valeurs : paramètre combinaison optionnel (PIL-1993)
+### T4.1 — Lectures de valeurs : combinaison explicite (PIL-1993)
 
-**Objectif :** préparer les fonctions de lecture à recevoir une combinaison, sans changer aucun comportement. Refactor pur.
+**Objectif :** faire viser une combinaison aux lectures de valeurs, sans changer aucun comportement. Refactor pur.
 
-**Fichiers :** Modify `apps/kpilote-api/prisma/sql/getValeursTronqueesPourIndividus.sql` (filtre `combinaison_id`), `src/valeurAvancement/queries/{loadResolveSerieContext,listValeursForIndicateur,listDernieresValeursForIndividu,listValeursRemarquablesForIndicateur,listSyntheseIndividus,computeTauxProgressionPoints}.ts`, `src/valeurAvancement/resolveSerieIndividu.ts`, et les lectures de valeurs des collections (`src/collection/queries/*`).
+> **Écarts validés (2026-11-12) :** pas de paramètre optionnel ni de combinaison par défaut cachée : `loadResolveSerieContext` exige la combinaison, et les 5 lectures passent explicitement la combinaison vide (PIL-1991 passera la combinaison sélectionnée). Clé de cellule uniforme `individuId~combinaisonId`, sans cas particulier pour la combinaison vide.
+
+**Fichiers :** Modify `prisma/sql/getValeursTronqueesPourIndividus.sql`, `src/valeurAvancement/queries/{loadResolveSerieContext,listValeursForIndicateur,listDernieresValeursForIndividu,listValeursRemarquablesForIndicateur,listSyntheseIndividus,computeTauxProgressionPoints}.ts`, `src/valeurAvancement/resolveSerieIndividu.ts` ; Create `src/valeurAvancement/cellule.ts` ; Delete `prisma/sql/getDernieresValeursPourIndividus.sql`.
 
 **Étapes :**
 
-- [ ] Introduire le type `Cellule = { individuId, combinaisonId }` côté API.
-- [ ] Les lectures acceptent une combinaison optionnelle, **vide par défaut**, et filtrent dessus.
-- [ ] Les clés de mémoïsation et de batch passent de l'individu à la cellule ; avec la combinaison vide, la clé reste l'id de l'individu.
-- [ ] `getDernieresValeursPourIndividus.sql` est du code mort (cf. POC) : le supprimer si c'est toujours le cas.
+- [ ] Type `Cellule = { individuId, combinaisonId }` et `cleCellule`.
+- [ ] La requête des séries filtre sur `combinaison_id = $4` ; `loadResolveSerieContext` exige `combinaisonId` ; les saisies sont indexées par cellule.
+- [ ] `resolveSerieIndividu` reçoit une cellule ; cache par cellule ; les enfants sont les cellules des enfants territoriaux pour la même combinaison.
+- [ ] Les 5 lectures (et `computeTauxProgressionPoints`, partagé avec les collections) passent la combinaison vide.
+- [ ] `dateDerniereValeur` d'un indicateur reste calculée sur toutes les combinaisons.
+- [ ] Supprimer `getDernieresValeursPourIndividus.sql` (code mort).
 - [ ] Aucun contrat d'API modifié.
 
 **DoD :**
 
 - [ ] Commune ; snapshot : 0 différence, aucun champ ajouté.
+- [ ] Une valeur sur une autre combinaison est ignorée par les 5 lectures (tests).
 
 ---
 
