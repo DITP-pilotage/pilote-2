@@ -1,12 +1,8 @@
 import { type AxeApiModel, type ModaliteApiModel } from '@pilote/kpilote-shared/axe'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { type AxeModel, type ModaliteModel, type NiveauAxeModel } from '@/generated/prisma/models'
 
-// Les écritures sur les axes sont réservées aux clés API ADMIN ; les lectures
-// sont ouvertes à tout utilisateur authentifié.
-export const requireAdmin = (): void =>
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+export const MESSAGE_ADMIN = 'Cette opération requiert une clé API de rôle ADMIN'
 
 export type AxeAvecNiveaux = AxeModel & {
   niveaux: ReadonlyArray<NiveauAxeModel>

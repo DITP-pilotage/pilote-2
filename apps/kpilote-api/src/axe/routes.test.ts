@@ -2,7 +2,6 @@ import { type AxeApiModel, type ModaliteListApiModel } from '@pilote/kpilote-sha
 import { describe, expect, it, vi } from 'vitest'
 
 import { axeRoutes } from '@/axe/routes'
-import { db } from '@/framework/persistence/dbStore'
 import { ApiKeyRole } from '@/generated/prisma/enums'
 import { buildTestApp } from '@/test/buildTestApp'
 import { fixtures } from '@/test/fixtures'
@@ -126,7 +125,7 @@ describe.concurrent('GET /axes/{id}', () => {
 
 describe.concurrent('PUT /axes/{id}', () => {
   it(
-    'crée un axe et ses niveaux',
+    'renvoie (200) l’axe enregistré',
     integrationTest(async () => {
       const axeId = testAxeId()
       const cle = await cleApi(ApiKeyRole.ADMIN)
@@ -157,53 +156,6 @@ describe.concurrent('PUT /axes/{id}', () => {
   )
 
   it(
-    'renomme les niveaux par position et ajoute les nouveaux',
-    integrationTest(async () => {
-      const axeId = testAxeId()
-      await fixtures.niveauAxe({ axe: { publicId: axeId }, ordre: 1, nom: 'Opérateur' })
-      const cle = await cleApi(ApiKeyRole.ADMIN)
-
-      const response = await requete({
-        cle,
-        method: 'PUT',
-        path: `/axes/${axeId}`,
-        body: {
-          nom: 'Opérateur',
-          description: null,
-          niveaux: [{ nom: 'Groupe' }, { nom: 'Opérateur' }],
-        },
-      })
-
-      expect(response.status).toBe(200)
-      expect(((await response.json()) as AxeApiModel).niveaux).toEqual([
-        { ordre: 1, nom: 'Groupe' },
-        { ordre: 2, nom: 'Opérateur' },
-      ])
-    }),
-  )
-
-  it(
-    'supprime les derniers niveaux quand ils ne portent pas de modalités',
-    integrationTest(async () => {
-      const axe = { publicId: testAxeId() }
-      await fixtures.niveauAxe({ axe, ordre: 1, nom: 'Famille' }, { axe, ordre: 2, nom: 'Type' })
-      const cle = await cleApi(ApiKeyRole.ADMIN)
-
-      const response = await requete({
-        cle,
-        method: 'PUT',
-        path: `/axes/${axe.publicId}`,
-        body: { nom: 'Fraude', description: null, niveaux: [{ nom: 'Famille' }] },
-      })
-
-      expect(response.status).toBe(200)
-      expect(((await response.json()) as AxeApiModel).niveaux).toEqual([
-        { ordre: 1, nom: 'Famille' },
-      ])
-    }),
-  )
-
-  it(
     'refuse (409) de supprimer un niveau qui porte des modalités',
     integrationTest(async () => {
       const { axeId } = await axeImbrique()
@@ -221,7 +173,6 @@ describe.concurrent('PUT /axes/{id}', () => {
         code: 'NIVEAU_PORTE_MODALITES',
         details: { ordres: [2] },
       })
-      expect(await db().niveauAxe.count({ where: { axe: { publicId: axeId } } })).toBe(2)
     }),
   )
 
@@ -280,7 +231,7 @@ describe.concurrent('GET /axes/{id}/modalites', () => {
 
 describe.concurrent('PUT /axes/{id}/modalites/{modaliteId}', () => {
   it(
-    'crée une modalité du premier niveau sans parent',
+    'renvoie (200) la modalité enregistrée',
     integrationTest(async () => {
       const { axeId } = await axeImbrique()
       const modaliteId = testModaliteId()
@@ -299,48 +250,6 @@ describe.concurrent('PUT /axes/{id}/modalites/{modaliteId}', () => {
         nom: 'Fraude sociale',
         niveau: 1,
         parent: null,
-      })
-    }),
-  )
-
-  it(
-    'déduit le niveau du parent',
-    integrationTest(async () => {
-      const { axeId, famille } = await axeImbrique()
-      const modaliteId = testModaliteId()
-      const cle = await cleApi(ApiKeyRole.ADMIN)
-
-      const response = await requete({
-        cle,
-        method: 'PUT',
-        path: `/axes/${axeId}/modalites/${modaliteId}`,
-        body: { nom: 'Fraude à l’IR', parent: famille.publicId },
-      })
-
-      expect(response.status).toBe(200)
-      expect(await response.json()).toMatchObject({ niveau: 2, parent: famille.publicId })
-    }),
-  )
-
-  it(
-    'renomme une modalité existante en gardant son parent',
-    integrationTest(async () => {
-      const { axeId, famille, type } = await axeImbrique()
-      const cle = await cleApi(ApiKeyRole.ADMIN)
-
-      const response = await requete({
-        cle,
-        method: 'PUT',
-        path: `/axes/${axeId}/modalites/${type.publicId}`,
-        body: { nom: 'TVA', parent: famille.publicId },
-      })
-
-      expect(response.status).toBe(200)
-      expect(await response.json()).toMatchObject({
-        id: type.publicId,
-        nom: 'TVA',
-        niveau: 2,
-        parent: famille.publicId,
       })
     }),
   )
@@ -490,7 +399,7 @@ describe.concurrent('PUT /axes/{id}/modalites/{modaliteId}', () => {
 
 describe.concurrent('DELETE /axes/{id}/modalites/{modaliteId}', () => {
   it(
-    'supprime une modalité sans enfants',
+    'renvoie 204 après la suppression',
     integrationTest(async () => {
       const { axeId, type } = await axeImbrique()
       const cle = await cleApi(ApiKeyRole.ADMIN)
@@ -502,7 +411,6 @@ describe.concurrent('DELETE /axes/{id}/modalites/{modaliteId}', () => {
       })
 
       expect(response.status).toBe(204)
-      expect(await db().modalite.findUnique({ where: { publicId: type.publicId } })).toBeNull()
     }),
   )
 

@@ -136,6 +136,7 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 > - Niveaux d'un axe identifiés par leur position dans `PUT /axes/{id}` ; raccourcir la liste supprime les derniers (409 `NIVEAU_PORTE_MODALITES` s'ils portent des modalités).
 > - Pas de suppression d'axe en v1.
 > - Le refus de supprimer une modalité utilisée par des valeurs passe dans T3.1 (PIL-1987).
+> - Supprimer une modalité qui a des enfants est refusé (409 `MODALITE_A_DES_ENFANTS`), pas de suppression en cascade. À revoir dans T3.1 (PIL-1987) avec le refus des modalités utilisées par des valeurs : une cascade obligerait à vérifier toute la sous-arborescence.
 
 **Fichiers :** Create `apps/kpilote-api/src/axe/{routes.ts,utils.ts,commands/*,queries/*}` (+ tests) ; Modify `apps/kpilote-api/tsconfig.json` (`@/axe/*`), `apps/kpilote-api/src/app.ts` ; Create `packages/kpilote-shared/src/axe.ts` (+ entrée `./axe` dans `package.json`).
 
@@ -249,6 +250,7 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 - [ ] Nouvel index unique `(indicateur_id, individu_id, combinaison_id, date)` **en plus** de `valeur_avancement_unique`.
 - [ ] Ne pas toucher à `objectif_indicateur_individu` ni à `indicateur_individu_commentaire` (D5).
 - [ ] `DELETE /axes/{id}/modalites/{modaliteId}` : refuser (409) la suppression d'une modalité utilisée par une combinaison (reporté depuis T1.2).
+- [ ] Revoir le refus de supprimer une modalité qui a des enfants (T1.2) : garder le 409 ou supprimer en cascade, en vérifiant alors toute la sous-arborescence.
 
 **DoD :**
 

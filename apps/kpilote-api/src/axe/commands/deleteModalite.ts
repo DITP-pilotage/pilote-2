@@ -1,6 +1,7 @@
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
-import { requireAdmin } from '@/axe/utils'
+import { MESSAGE_ADMIN } from '@/axe/utils'
+import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 
@@ -13,7 +14,7 @@ const performDelete = async ({
   axePublicId: string
   publicId: string
 }): Promise<Result<void, DeleteModaliteError>> => {
-  requireAdmin()
+  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
 
   const modalite = await db().modalite.findFirst({
     where: { publicId, axe: { publicId: axePublicId } },

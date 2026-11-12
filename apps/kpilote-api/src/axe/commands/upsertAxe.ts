@@ -2,7 +2,8 @@ import { type UpsertAxeBody } from '@pilote/kpilote-shared/axe'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { requireAdmin } from '@/axe/utils'
+import { MESSAGE_ADMIN } from '@/axe/utils'
+import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
 export type UpsertAxeError = {
@@ -20,11 +21,12 @@ const performUpsert = async ({
   publicId: string
   body: UpsertAxeBody
 }): Promise<Result<void, UpsertAxeError>> => {
-  requireAdmin()
+  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
 
   const existing = await db().axe.findUnique({ where: { publicId }, include: { niveaux: true } })
   const niveauxEnTrop = (existing?.niveaux ?? []).filter((n) => n.ordre > body.niveaux.length)
   if (niveauxEnTrop.length > 0) {
+    // `modalites: { some: {} }` : niveaux qui portent au moins une modalité (EXISTS).
     const porteurs = await db().niveauAxe.findMany({
       where: { id: { in: niveauxEnTrop.map((n) => n.id) }, modalites: { some: {} } },
       orderBy: { ordre: 'asc' },

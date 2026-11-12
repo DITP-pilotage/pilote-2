@@ -2,7 +2,8 @@ import { type UpsertModaliteBody } from '@pilote/kpilote-shared/axe'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { requireAdmin } from '@/axe/utils'
+import { MESSAGE_ADMIN } from '@/axe/utils'
+import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
 export type UpsertModaliteError =
@@ -24,7 +25,7 @@ const performUpsert = async ({
   publicId: string
   body: UpsertModaliteBody
 }): Promise<Result<void, UpsertModaliteError>> => {
-  requireAdmin()
+  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
 
   // Axe inconnu : P2025, converti en 404.
   const axe = await db().axe.findUniqueOrThrow({
