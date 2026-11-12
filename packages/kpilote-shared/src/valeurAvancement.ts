@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { modalitePublicIdSchema, modalitesCsvSchema } from './axe'
 import { dateSchema, dateTruncSchema } from './dates'
 import { fonctionAgregationSchema } from './indicateur'
 import { indicateursCsvSchema, MAX_INDICATEURS_PAR_REQUETE } from './indicateursCsv'
@@ -145,6 +146,7 @@ export const listValeursForIndicateurQuerySchema = z
           'de réponse en regroupant les saisies du même mois). Voir `DateTrunc` pour la ' +
           "sémantique des unités. S'applique aux séries saisies comme aux séries dérivées.",
       ),
+    modalites: modalitesCsvSchema.optional(),
   })
   .refine((value) => !value.dateDebut || !value.dateFin || value.dateDebut <= value.dateFin, {
     message: 'dateDebut doit être <= dateFin',
@@ -357,6 +359,12 @@ export const contributionApiModelSchema = z.object({
         '`manquante`.',
     ),
   source: contributionSourceSchema,
+  modalites: z
+    .array(modalitePublicIdSchema)
+    .optional()
+    .describe(
+      'Indicateur à axes : modalités de cette contribution (ex. [OP-ORANGE] quand « Tous » se calcule à partir des opérateurs). Absent pour un indicateur sans axe.',
+    ),
 })
 export type ContributionApiModel = z.infer<typeof contributionApiModelSchema>
 

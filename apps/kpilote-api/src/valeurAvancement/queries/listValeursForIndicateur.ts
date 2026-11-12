@@ -7,7 +7,8 @@ import {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
-import { trouverCombinaisonVideId } from '@/axe/combinaison'
+import { type Selection } from '@/axe/calculMarginale'
+import { type ResoudreSelectionError, resoudreSelection } from '@/axe/resoudreSelection'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { compareBuckets, formatBucket, parseBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
@@ -24,7 +25,7 @@ const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 export const listValeursForIndicateur = (
   indicateurPublicId: string,
   params: ListValeursForIndicateurQuery,
-): ResultAsync<ValeurAvancementListApiModel, never> => {
+): ResultAsync<ValeurAvancementListApiModel, ResoudreSelectionError> => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({
@@ -32,8 +33,13 @@ export const listValeursForIndicateur = (
       select: { id: true },
     }),
   ).andThen((indicateur) =>
-    ResultAsync.fromSafePromise(
-      buildSeries({ indicateurId: indicateur.id, indicateurPublicId, params }),
+    resoudreSelection({
+      indicateurId: indicateur.id,
+      modalitePublicIds: params.modalites ?? [],
+    }).andThen((selection) =>
+      ResultAsync.fromSafePromise(
+        buildSeries({ indicateurId: indicateur.id, indicateurPublicId, params, selection }),
+      ),
     ),
   )
 }
@@ -47,23 +53,22 @@ const buildSeries = async ({
   indicateurId,
   indicateurPublicId,
   params,
+  selection,
 }: {
   indicateurId: string
   indicateurPublicId: string
   params: ListValeursForIndicateurQuery
+  selection: Selection
 }): Promise<ValeurAvancementListApiModel> => {
   const individusCibles = await loadIndividusParPublicId(params.individus)
   if (individusCibles.length === 0) return { items: [] }
 
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  // Indicateur sans axe : la combinaison vide. PIL-1991 passera la combinaison sélectionnée.
-  const combinaisonId = await trouverCombinaisonVideId()
   const { graphe, noeud, allNodes } = await loadResolveSerieContext({
     indicateurId,
     individusCibles: individusCibles,
     dateTrunc,
-    combinaisonId,
   })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
@@ -71,7 +76,7 @@ const buildSeries = async ({
   const dateFin = params.dateFin ? parseBucket(params.dateFin) : null
   const items: ValeurAvancementApiModel[] = []
   for (const individuCible of individusCibles) {
-    const serie = await resolveSerieNoeud(noeud(individuCible), graphe, cache)
+    const serie = await resolveSerieNoeud(noeud(individuCible, selection), graphe, cache)
     for (const point of serie) {
       if (dateDebut && compareBuckets(point.bucket, dateDebut) < 0) continue
       if (dateFin && compareBuckets(point.bucket, dateFin) > 0) continue
@@ -118,6 +123,8 @@ const toApiModel = ({
     valeur: c.valeur === null ? null : c.valeur.toNumber(),
     date: c.dateOrigine === null ? null : formatBucket(c.dateOrigine),
     source: c.source,
+    // Champ absent sans axe : la réponse des indicateurs sans axe ne change pas.
+    ...(c.modalites.length > 0 ? { modalites: [...c.modalites] } : {}),
   }))
   return {
     indicateur: indicateurPublicId,

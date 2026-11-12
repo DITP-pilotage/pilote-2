@@ -369,20 +369,21 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** brancher T5.1 pour les indicateurs à axes.
 
-**Fichiers :** Modify `src/valeurAvancement/queries/loadResolveSerieContext.ts` (aiguillage : indicateur sans axe → chemin actuel ; avec axes → graphe de T5.1), `src/valeurAvancement/routes.ts`, `src/valeurAvancement/utils.ts`, `packages/kpilote-shared/src/valeurAvancement.ts` ; seed de démo (IND à axes, inspiré de IND-101 / IND-102 du POC).
+**Fichiers :** Modify `prisma/sql/getValeursTronqueesPourIndividus.sql` (plusieurs combinaisons), `src/valeurAvancement/queries/loadResolveSerieContext.ts` (aiguillage), `listValeursForIndicateur.ts`, `routes.ts`, et les 5 lectures (plus de combinaison passée à la main) ; Create `src/axe/resoudreSelection.ts` ; Modify `packages/kpilote-shared/src/{axe,valeurAvancement}.ts` ; seed `prisma/seedData/indicateursAxes.ts`.
 
 **Étapes :**
 
-- [ ] Figer le format de `modalites=` (proposition : publicIds séparés par des virgules, au plus un par axe) et le documenter dans l'OpenAPI.
-- [ ] Indicateur à axes, sans `modalites` : la lecture d'un individu renvoie la marginale. Le taux de progression (marginale / objectif de l'individu) et les tableaux de bord fonctionnent donc sans modification.
-- [ ] Avec `modalites` : cellule complète ou partielle, modalité parente comprise.
-- [ ] Contributions et couverture dans les réponses.
-- [ ] Erreurs : modalité inconnue, axe non déclaré sur l'indicateur, deux modalités du même axe.
+- [ ] Aiguillage dans `loadResolveSerieContext` : sans axe déclaré → graphe territorial sur la combinaison vide ; avec axes → combinaisons observées (`groupBy` individu × combinaison), saisies de toutes ces combinaisons, `buildGrapheAxes`.
+- [ ] Sans `modalites`, une lecture d'individu renvoie « Tous » : taux de progression (D6), dernières valeurs et tableaux de bord fonctionnent sans modification.
+- [ ] `modalites=` sur `GET /indicateurs/{id}/valeurs` : publicIds séparés par une virgule, au plus un par axe, modalité parente acceptée ; un axe non cité vaut « Tous ».
+- [ ] Erreurs 400 : `MODALITE_INCONNUE`, `AXE_NON_DECLARE` (dont un indicateur sans axe), `MODALITES_MEME_AXE`.
+- [ ] Contributions : champ `modalites` optionnel, absent pour un indicateur sans axe.
+- [ ] Seed de démo : IND-101 (Territoire × Opérateur) et IND-102 (Territoire × Type de fraude imbriqué), en somme, avec des modalités absentes de certains départements.
 
 **DoD :**
 
 - [ ] Commune ; snapshot : 0 différence sur les indicateurs existants.
-- [ ] Tests : marginale, modalité feuille, modalité parente, taux de progression d'un indicateur à axes.
+- [ ] Tests : « Tous », modalité feuille, modalité parente, modalité jamais vue, taux de progression, chaque erreur.
 
 ---
 
