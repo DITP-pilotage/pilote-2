@@ -14,6 +14,7 @@ import {
   IndicateurPermissionAction,
 } from '../src/generated/prisma/enums.js'
 
+import { type ModaliteSeed, axesSeed } from './seedData/axes.js'
 import {
   buildObjectifsPourIndicateur,
   buildValeursPourIndicateur,
@@ -575,6 +576,69 @@ const main = async () => {
     }
   }
 
+  let niveauxAxeCount = 0
+  let modalitesCount = 0
+  for (const item of axesSeed) {
+    const axe = await prisma.axe.upsert({
+      where: { publicId: item.publicId },
+      update: { nom: item.nom, description: item.description },
+      create: {
+        id: uuidv7(),
+        publicId: item.publicId,
+        nom: item.nom,
+        description: item.description,
+      },
+    })
+    const niveauIds: string[] = []
+    for (const [index, nom] of item.niveaux.entries()) {
+      const ordre = index + 1
+      const niveau = await prisma.niveauAxe.upsert({
+        where: { axeId_ordre: { axeId: axe.id, ordre } },
+        update: { nom },
+        create: { id: uuidv7(), axeId: axe.id, nom, ordre },
+      })
+      niveauIds.push(niveau.id)
+      niveauxAxeCount += 1
+    }
+    const upsertModalites = async ({
+      modalites,
+      profondeur,
+      parentId,
+    }: {
+      modalites: ReadonlyArray<ModaliteSeed>
+      profondeur: number
+      parentId: string | null
+    }): Promise<void> => {
+      const niveauAxeId = niveauIds[profondeur]
+      if (!niveauAxeId) {
+        throw new Error(`Axe ${item.publicId} : aucun niveau de profondeur ${profondeur}.`)
+      }
+      for (const modalite of modalites) {
+        const row = await prisma.modalite.upsert({
+          where: { publicId: modalite.publicId },
+          update: { nom: modalite.nom, axeId: axe.id, niveauAxeId, parentId },
+          create: {
+            id: uuidv7(),
+            publicId: modalite.publicId,
+            nom: modalite.nom,
+            axeId: axe.id,
+            niveauAxeId,
+            parentId,
+          },
+        })
+        modalitesCount += 1
+        if (modalite.enfants) {
+          await upsertModalites({
+            modalites: modalite.enfants,
+            profondeur: profondeur + 1,
+            parentId: row.id,
+          })
+        }
+      }
+    }
+    await upsertModalites({ modalites: item.modalites, profondeur: 0, parentId: null })
+  }
+
   const indicateurReferentielsSeed: ReadonlyArray<{
     indicateurPublicId: string
     referentiels: ReadonlyArray<{
@@ -1091,7 +1155,7 @@ const main = async () => {
 
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs écrites, ${objectifsCount} objectifs écrits (créés ou restaurés ; les lignes déjà conformes ne sont pas réécrites), ${valeursHorsJeuCount} valeurs et ${objectifsHorsJeuCount} objectifs hors jeu supprimés,${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${collectionsSeed.length} collections (${collectionLiaisonsCount} liaisons collection-indicateur, ${collectionPermissionsCount} permissions collection, ${collectionResponsablesCount} responsable collection, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs écrites, ${objectifsCount} objectifs écrits (créés ou restaurés ; les lignes déjà conformes ne sont pas réécrites), ${valeursHorsJeuCount} valeurs et ${objectifsHorsJeuCount} objectifs hors jeu supprimés,${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${axesSeed.length} axes (${niveauxAxeCount} niveaux, ${modalitesCount} modalités), ${collectionsSeed.length} collections (${collectionLiaisonsCount} liaisons collection-indicateur, ${collectionPermissionsCount} permissions collection, ${collectionResponsablesCount} responsable collection, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
   )
 }
 
