@@ -765,3 +765,14 @@ model AssistantAccesUtilisateur {
 
   @@map("assistant_acces_utilisateur")
 }
+
+// Correspondance entre une clé de contexte analytics et une dimension personnalisée de Matomo.
+model AnalyticsDimension {
+  cle       String   @id
+  slot      Int      @unique
+  nom       String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("analytics_dimension")
+}

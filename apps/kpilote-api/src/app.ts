@@ -4,6 +4,7 @@ import { cors } from 'hono/cors'
 
 import { acmeRoutes } from '@/acme/routes'
 import { apiKeyRoutes } from '@/apiKey/routes'
+import { analyticsRoutes } from '@/analytics/routes'
 import { assistantAdminRoutes } from '@/assistant/admin/routes'
 import { assistantRoutes } from '@/assistant/routes'
 import { centreAideRoutes } from '@/centreAide/routes'
@@ -49,6 +50,7 @@ app.get('/', (context) => context.json({ hello: 'world' }))
 app.route('/', health)
 app.route('/', assistantRoutes)
 app.route('/', assistantAdminRoutes)
+app.route('/', analyticsRoutes)
 app.route('/', indicateurRoutes)
 app.route('/', valeurAvancementRoutes)
 app.route('/', valeurImportRoutes)

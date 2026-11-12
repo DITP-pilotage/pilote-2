@@ -15,6 +15,7 @@
     "paths": {
       "@/acme/*": ["./src/acme/*"],
       "@/apiKey/*": ["./src/apiKey/*"],
+      "@/analytics/*": ["./src/analytics/*"],
       "@/assistant/*": ["./src/assistant/*"],
       "@/framework/*": ["./src/framework/*"],
       "@/authentication/*": ["./src/authentication/*"],

@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   BarChart3,
+  ChartColumnBig,
   FolderTree,
   KeyRound,
   Layers,
@@ -103,6 +104,14 @@ function FeaturesComponent() {
             title="Gérer l’assistant IA"
             description="Ouvrir ou couper l’assistant, choisir qui s’en sert, lire les conversations et leurs retours (réservé aux clés ADMIN)."
             onClick={() => void navigate({ to: '/assistant' })}
+          />
+        </FadeIn>
+        <FadeIn delayMs={660}>
+          <BarCard
+            icon={ChartColumnBig}
+            title="Dimensions Matomo"
+            description="Ranger le contexte des événements dans les dimensions personnalisées de Matomo (réservé aux clés ADMIN)."
+            onClick={() => void navigate({ to: '/dimensions-matomo' })}
           />
         </FadeIn>
       </div>
