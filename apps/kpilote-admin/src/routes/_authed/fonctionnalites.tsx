@@ -7,6 +7,7 @@ import {
   Layers,
   LifeBuoy,
   Network,
+  Shapes,
   Sparkles,
   Terminal,
   ToggleLeft,
@@ -48,6 +49,14 @@ function FeaturesComponent() {
             title="Gérer les référentiels"
             description="Créer ou modifier un référentiel et ses individus."
             onClick={() => void navigate({ to: '/referentiels' })}
+          />
+        </FadeIn>
+        <FadeIn delayMs={210}>
+          <BarCard
+            icon={Shapes}
+            title="Gérer les axes"
+            description="Créer ou modifier un axe (Opérateur, Type de fraude…), ses niveaux et ses modalités."
+            onClick={() => void navigate({ to: '/axes' })}
           />
         </FadeIn>
         <FadeIn delayMs={240}>
