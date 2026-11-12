@@ -19,6 +19,7 @@ import {
   type ApiKeyModel,
   type AxeModel,
   type ContactUtileModel,
+  type IndicateurAxeModel,
   type IndicateurModel,
   type IndicateurPermissionModel,
   type IndicateurReferentielModel,
@@ -48,6 +49,7 @@ import {
   Visibilite,
   type FeatureEtat,
   type FonctionAgregation,
+  type FonctionAgregationAxe,
   type PeriodeMiseAJour,
   type UniteDuree,
   type UniteIndicateur,
@@ -521,6 +523,42 @@ async function modalite(
   if (overrides.length <= 1) return upsertModalite(overrides[0])
   const results: ModaliteModel[] = []
   for (const o of overrides) results.push(await upsertModalite(o))
+  return results
+}
+
+// --- IndicateurAxe (deps requises) -------------------------------------------
+
+type IndicateurAxeOverrides = {
+  indicateur: IndicateurOverrides
+  axe: AxeOverrides
+} & Partial<{ ordre: number; fonction: FonctionAgregationAxe }>
+
+const DEFAULT_INDICATEUR_AXE_ORDRE = 1
+
+const upsertIndicateurAxe = async (o: IndicateurAxeOverrides) => {
+  const indicateurRow = await upsertIndicateur(o.indicateur)
+  const axeRow = await upsertAxe(o.axe)
+  const ordre = o.ordre ?? DEFAULT_INDICATEUR_AXE_ORDRE
+  const fonction = o.fonction ?? 'SUM'
+  return db().indicateurAxe.upsert({
+    where: { indicateurId_axeId: { indicateurId: indicateurRow.id, axeId: axeRow.id } },
+    update: { ordre, fonction },
+    create: { indicateurId: indicateurRow.id, axeId: axeRow.id, ordre, fonction },
+  })
+}
+
+function indicateurAxe(override: IndicateurAxeOverrides): Promise<IndicateurAxeModel>
+function indicateurAxe(
+  o1: IndicateurAxeOverrides,
+  o2: IndicateurAxeOverrides,
+  ...rest: IndicateurAxeOverrides[]
+): Promise<IndicateurAxeModel[]>
+async function indicateurAxe(
+  ...overrides: IndicateurAxeOverrides[]
+): Promise<IndicateurAxeModel | IndicateurAxeModel[]> {
+  if (overrides.length === 1) return upsertIndicateurAxe(overrides[0]!)
+  const results: IndicateurAxeModel[] = []
+  for (const o of overrides) results.push(await upsertIndicateurAxe(o))
   return results
 }
 
@@ -1206,6 +1244,7 @@ export const fixtures = {
   axe,
   niveauAxe,
   modalite,
+  indicateurAxe,
   valeurAvancement,
   objectifIndicateurIndividu,
   collection,

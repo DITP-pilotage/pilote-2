@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { db } from '@/framework/persistence/dbStore'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testAxeId, testModaliteId } from '@/test/randomIds'
+import { testAxeId, testIndicateurId, testModaliteId } from '@/test/randomIds'
 
 // Contraintes portées par la base sur le référentiel des axes. Une instruction
 // refusée interrompt la transaction du test : elle est donc toujours la
@@ -93,6 +93,45 @@ describe.concurrent('schéma des axes', () => {
       })
 
       await expect(db().modalite.delete({ where: { id: famille.id } })).rejects.toThrow()
+    }),
+  )
+
+  it(
+    'refuse deux axes de même ordre sur un indicateur',
+    integrationTest(async () => {
+      const indicateur = { publicId: testIndicateurId() }
+      await fixtures.indicateurAxe({ indicateur, axe: { publicId: testAxeId() }, ordre: 1 })
+
+      await expect(
+        fixtures.indicateurAxe({ indicateur, axe: { publicId: testAxeId() }, ordre: 1 }),
+      ).rejects.toThrow()
+    }),
+  )
+
+  it(
+    'refuse de supprimer un axe déclaré par un indicateur',
+    integrationTest(async () => {
+      const axe = { publicId: testAxeId() }
+      await fixtures.indicateurAxe({ indicateur: { publicId: testIndicateurId() }, axe })
+
+      await expect(db().axe.delete({ where: { publicId: axe.publicId } })).rejects.toThrow()
+    }),
+  )
+
+  it(
+    'supprime la déclaration des axes avec l’indicateur',
+    integrationTest(async () => {
+      const indicateur = { publicId: testIndicateurId() }
+      const declaration = await fixtures.indicateurAxe({
+        indicateur,
+        axe: { publicId: testAxeId() },
+        fonction: 'AVG',
+      })
+      expect(declaration).toMatchObject({ ordre: 1, fonction: 'AVG' })
+
+      await db().indicateur.delete({ where: { publicId: indicateur.publicId } })
+
+      expect(await db().indicateurAxe.count({ where: { axeId: declaration.axeId } })).toBe(0)
     }),
   )
 })

@@ -54,9 +54,9 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 | T1.1  | PIL-1981 | Migration : axes, niveaux et modalités                 | ✅ fait (#2675) |
 | T1.2  | PIL-1982 | API : CRUD des axes, niveaux et modalités              | 🔄 en cours     |
 | T1.3  | PIL-1983 | Admin : pages Axes                                     | 🔄 en cours     |
-| T2.1  | PIL-1984 | Migration : axes d'un indicateur                       | à faire         |
-| T2.2  | PIL-1985 | API : déclarer les axes d'un indicateur                | à faire         |
-| T2.3  | PIL-1986 | Admin : section Axes d'un indicateur                   | à faire         |
+| T2.1  | PIL-1984 | Migration : axes d'un indicateur                       | 🔄 en cours     |
+| T2.2  | PIL-1985 | API : déclarer les axes d'un indicateur                | 🔄 en cours     |
+| T2.3  | PIL-1986 | Admin : section Axes d'un indicateur                   | 🔄 en cours     |
 | T3.1  | PIL-1987 | Migration : combinaisons de modalités sur les valeurs  | à faire         |
 | T3.2  | PIL-1988 | Upserts de valeurs sur la nouvelle clé unique          | à faire         |
 | T3.3  | PIL-1989 | Suppression de l'ancien index unique des valeurs       | à faire         |
@@ -180,38 +180,42 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** stocker quels axes découpent un indicateur et comment calculer « Tous ».
 
+> **Écarts validés (2026-11-12) :** une seule fonction par axe (spec D14), plus de table `indicateur_niveau_axe` ; enum dédié `fonction_agregation_axe_enum` (SUM, AVG), sans NONE.
+
 **Fichiers :** Modify `apps/kpilote-api/prisma/schema.prisma` ; migration `<ts>_indicateur_axes` ; fixtures.
 
 **Étapes :**
 
-- [ ] `IndicateurAxe` (`indicateur_axe` : indicateur, axe, `ordre` = ordre de déclaration, `fonction_marginale` de type `FonctionAgregation`) ; PK(indicateur, axe), UNIQUE(indicateur, ordre).
-- [ ] `IndicateurNiveauAxe` (`indicateur_niveau_axe` : indicateur, niveau d'axe, `fonction_agregation`) ; PK(indicateur, niveau).
-- [ ] Fixtures `fixtures.indicateurAxe(...)`.
+- [ ] `IndicateurAxe` (`indicateur_axe` : indicateur, axe, `ordre` = ordre de déclaration à partir de 1, `fonction` de type `FonctionAgregationAxe`) ; PK(indicateur, axe), UNIQUE(indicateur, ordre). Suppression de l'indicateur en cascade ; un axe déclaré ne peut pas être supprimé.
+- [ ] Fixture `fixtures.indicateurAxe(...)`.
 
 **DoD :**
 
 - [ ] Commune.
-- [ ] Rien ne lit encore ces tables.
+- [ ] Rien ne lit encore cette table.
 
 ---
 
 ### T2.2 — API : déclarer les axes d'un indicateur (PIL-1985)
 
-**Objectif :** attacher des axes à un indicateur sans modifier `PUT /indicateurs`.
+**Objectif :** attacher des axes à un indicateur.
 
-**Fichiers :** Modify `apps/kpilote-api/src/indicateur/routes.ts`, `queries/getIndicateurByPublicId.ts`, `queries/listIndicateurs.ts` ; Create `apps/kpilote-api/src/indicateur/commands/upsertIndicateurAxes.ts` (+ test) ; Modify `packages/kpilote-shared/src/indicateur.ts`.
+> **Écarts validés (2026-11-12) :** champ `axes` dans `PUT /indicateurs/{id}` au lieu d'une route dédiée (spec D13) ; une fonction par axe (D14).
+
+**Fichiers :** Modify `apps/kpilote-api/src/indicateur/{routes.ts,utils.ts,commands/upsertIndicateur.ts,queries/getIndicateurByPublicId.ts,queries/listIndicateurs.ts}` (+ tests), `apps/kpilote-api/src/axe/commands/upsertAxe.ts` ; Modify `packages/kpilote-shared/src/indicateur.ts`, `packages/kpilote-shared/src/axe.ts`.
 
 **Étapes :**
 
-- [ ] Champ `axes: []` ajouté aux lectures d'indicateur (axe, ordre, fonction de la marginale, fonction par niveau). Vide pour tous les indicateurs existants.
-- [ ] `PUT /indicateurs/{id}/axes` : remplace la déclaration complète. Permission : celle qui permet aujourd'hui de modifier la structure d'un indicateur (cf. `resolveIndicateurForWrite.ts`).
-- [ ] Ajout ou retrait d'un axe refusé (409) si l'indicateur a des valeurs ; changement de fonction autorisé.
-- [ ] `PUT /indicateurs` : aucun changement.
+- [ ] Lectures d'indicateur : champ `axes: [{ id, nom, fonction }]`, dans l'ordre de déclaration. Vide pour tous les indicateurs existants.
+- [ ] `PUT /indicateurs/{id}` : champ optionnel `axes: [{ id, fonction }]`, la position donne l'ordre ; absent = inchangé (comme `responsables`), présent = remplace la déclaration complète.
+- [ ] Erreurs : axe inconnu, axe en double (400) ; ajout ou retrait d'un axe refusé (409) si l'indicateur a des valeurs, avec la raison en commentaire. Changer une fonction ou l'ordre reste permis.
+- [ ] `PUT /axes/{id}` : changer le nombre de niveaux d'un axe déclaré par un indicateur est refusé (409 `AXE_UTILISE`) ; le renommage reste permis.
 
 **DoD :**
 
 - [ ] Commune ; snapshot : seul le champ `axes` s'ajoute aux réponses d'indicateur.
-- [ ] Tests de la route, dont le refus 409.
+- [ ] Un `PUT /indicateurs` sans `axes` se comporte exactement comme avant.
+- [ ] Tests de la route, dont les refus 409.
 
 ---
 
@@ -219,19 +223,19 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** déclarer les axes d'un indicateur depuis l'admin.
 
-**Fichiers :** Create `apps/kpilote-admin/src/components/indicateurs/AdminAxes.tsx` ; Modify `IndicateurForm.tsx`, `indicateurFormSchema.ts`, `apps/kpilote-admin/src/api/indicateurs.ts`, `routes/_authed/indicateurs/$id.tsx`.
+**Fichiers :** Create `apps/kpilote-admin/src/components/indicateurs/AdminAxes.tsx` ; Modify `IndicateurForm.tsx`, `indicateurFormSchema.ts`.
 
 **Étapes :**
 
-- [ ] Section « Axes » : choisir les axes, leur ordre de déclaration, la fonction de la marginale (libellé « Calcul de « Tous » »), la fonction de chaque niveau.
-- [ ] Enregistrement via `PUT /indicateurs/{id}/axes`, séparé de la sauvegarde de l'indicateur.
-- [ ] Message clair sur le refus 409.
-- [ ] Inspiration : `AdminDimensions.tsx`, `dimensionsIndicateur.ts` du POC (sans l'ordre réglable « Ordre 0, 1… » ni `porteObjectifs`).
+- [ ] Section « Axes » : ajouter ou retirer un axe, choisir sa fonction (somme ou moyenne), réordonner (monter / descendre) avec une explication de l'effet de l'ordre (point n°2 de PIL-1963).
+- [ ] Enregistrement avec l'indicateur, via `PUT /indicateurs/{id}`.
+- [ ] Message clair sur les refus 409.
 
 **DoD :**
 
 - [ ] Commune.
 - [ ] Un indicateur sans axe s'édite comme avant (référentiels et valeurs conservés).
+- [ ] Parcours vérifié dans le navigateur.
 
 ---
 
