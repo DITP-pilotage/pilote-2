@@ -61,9 +61,9 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 | T3.2  | PIL-1988 | Écritures sur la nouvelle clé unique                   | ✅ fait (#2684) |
 | T3.3  | PIL-1989 | Suppression de l'ancien index unique des valeurs       | 🔄 en cours     |
 | T4.1  | PIL-1993 | Lectures de valeurs : combinaison explicite            | 🔄 en cours     |
-| T5.1  | PIL-1990 | Calcul de la marginale sur les axes (fonctions pures)  | à faire         |
-| T5.2  | PIL-1991 | Lectures : marginale et sélection de modalités         | à faire         |
-| T5.3  | PIL-1992 | Comparaison et carte pour une modalité                 | à faire         |
+| T5.1  | PIL-1990 | Calcul de la marginale sur les axes (fonctions pures)  | 🔄 en cours     |
+| T5.2  | PIL-1991 | Lectures : marginale et sélection de modalités         | 🔄 en cours     |
+| T5.3  | PIL-1992 | Comparaison et carte pour une modalité                 | 🔄 en cours     |
 | T6.1  | PIL-1994 | Saisie de valeurs avec modalités                       | à faire         |
 | T6.2  | PIL-1995 | Import Albert : colonnes d'axe                         | à faire         |
 | T6.3  | PIL-1996 | Webapp : import avec colonnes d'axe                    | à faire         |
@@ -345,22 +345,22 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** le calcul de « Tous » et des modalités parentes, testé, non branché.
 
-**Règle (D8, chemin 1) :** axes d'abord au grain territorial le plus fin, puis remontée territoriale existante ; entre axes, ordre de déclaration. Détail : spec §5.
+**Règle (D8, chemin 1) :** pour une case (individu + une modalité ou « Tous » par axe), dans l'ordre : (1) l'individu se calcule à partir d'individus plus petits → mêmes cases pour chacun, fonction du référentiel ; (2) sinon, un axe est à « Tous » ou sur une modalité parente → on détaille le dernier axe déclaré d'un cran, modalités observées pour cet individu seulement, fonction de l'axe ; (3) sinon, saisie. Le premier axe déclaré est donc combiné en premier. Schémas : https://claude.ai/artifact/TduZuyP6atJ4bMZuQoHQQh
 
-**Fichiers :** Create `apps/kpilote-api/src/axe/calculMarginale.ts` (+ `calculMarginale.test.ts`).
+> **Écarts validés (2026-11-12) :** un seul moteur pour tous les indicateurs : `resolveSerieNoeud` calcule sur un graphe générique (`GrapheSerie`), construit par `buildGrapheTerritoire` (calcul historique, inchangé) ou `buildGrapheAxes`. Les contributions internes portent les modalités du nœud enfant.
+
+**Fichiers :** Modify `src/valeurAvancement/resolveSerieIndividu.ts` (moteur sur graphe), `src/valeurAvancement/queries/loadResolveSerieContext.ts` et les 5 lectures ; Create `src/valeurAvancement/buildGrapheTerritoire.ts`, `src/axe/calculMarginale.ts` (+ tests).
 
 **Étapes :**
 
-- [ ] Entrées : topologie des axes de l'indicateur (niveaux, modalités, fonctions par niveau, fonction de la marginale, ordre), topologie territoriale (enfants, fonction par référentiel, niveaux saisis NONE), combinaisons observées par individu (support).
-- [ ] Sortie : pour une cellule cible (individu + combinaison partielle), le graphe de résolution consommable par `resolveSerieIndividu` (même format : `enfantsParParent`, fonction par nœud), comme le fait `buildGrapheCube.ts` du POC.
-- [ ] Cube creux : seules les modalités observées au moins une fois pour l'individu sont attendues.
-- [ ] Niveau territorial saisi (NONE) : la marginale se calcule à ce niveau.
-- [ ] Profondeur d'axe libre.
+- [ ] Moteur : nœud = `{ cle, individuPublicId, modalites }` ; graphe = agrégation (fonction + enfants) ou saisies par nœud.
+- [ ] `buildGrapheTerritoire` : la décision « individu agrégé » sort du moteur ; comportement identique (snapshot).
+- [ ] `buildGrapheAxes` : construction à la demande à partir des nœuds cibles, cube creux, niveau saisi (NONE), profondeur d'axe libre.
 
 **DoD :**
 
-- [ ] Commune.
-- [ ] Tests unitaires : exemple PACA de la spec §5 (résultat **3**) ; moyenne sur les deux ; axe imbriqué à 3 niveaux ; modalité absente ; deux axes (ordre de déclaration) ; niveau territorial saisi.
+- [ ] Commune ; snapshot : 0 différence.
+- [ ] Tests unitaires : PACA (3), moyenne sur les deux (2,25), PACA · France Travail (2), modalité absente, axe imbriqué à 3 niveaux, deux axes (40 / 30 selon l'ordre), sélection partielle, niveau saisi.
 - [ ] Aucun branchement sur les routes.
 
 ---

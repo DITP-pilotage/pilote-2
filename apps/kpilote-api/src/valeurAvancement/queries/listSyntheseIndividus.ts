@@ -17,9 +17,11 @@ import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeVariation } from '@/valeurAvancement/computeVariation'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
 import {
+  type GrapheSerie,
   type IndividuRef,
+  type Noeud,
   type PointInterne,
-  resolveSerieIndividu,
+  resolveSerieNoeud,
 } from '@/valeurAvancement/resolveSerieIndividu'
 
 // Aligné sur listValeursForIndicateur : on raisonne sur les buckets mensuels
@@ -62,7 +64,7 @@ const buildSynthese = async (
   const startedAt = performance.now()
   // Indicateur sans axe : la combinaison vide. PIL-1991 passera la combinaison sélectionnée.
   const combinaisonId = await trouverCombinaisonVideId()
-  const { ctx, allNodes } = await loadResolveSerieContext({
+  const { graphe, noeud, allNodes } = await loadResolveSerieContext({
     indicateurId: indicateur.id,
     individusCibles: population,
     dateTrunc,
@@ -72,14 +74,14 @@ const buildSynthese = async (
 
   const medianeParReferentiel = await computeMedianeParReferentiel({
     population,
-    combinaisonId,
-    ctx,
+    graphe,
+    noeud,
     cache,
   })
 
   const items: SyntheseIndividusListApiModel['items'] = []
   for (const individu of individusDemandes) {
-    const serie = await resolveSerieIndividu({ individuId: individu.id, combinaisonId }, ctx, cache)
+    const serie = await resolveSerieNoeud(noeud(individu), graphe, cache)
     items.push({
       individu: individu.publicId,
       variation: computeVariation(extractDeuxDerniers(serie)),
@@ -120,20 +122,18 @@ const extractDeuxDerniers = (
 
 const computeMedianeParReferentiel = async ({
   population,
-  combinaisonId,
-  ctx,
+  graphe,
+  noeud,
   cache,
 }: {
   population: ReadonlyArray<IndividuRef>
-  combinaisonId: string
-  ctx: Awaited<ReturnType<typeof loadResolveSerieContext>>['ctx']
+  graphe: GrapheSerie
+  noeud: (individu: IndividuRef) => Noeud
   cache: Map<string, ReadonlyArray<PointInterne>>
 }): Promise<Map<string, number | null>> => {
   const valeursParReferentiel = new Map<string, Decimal[]>()
   for (const individu of population) {
-    const dernier = (
-      await resolveSerieIndividu({ individuId: individu.id, combinaisonId }, ctx, cache)
-    ).at(-1)
+    const dernier = (await resolveSerieNoeud(noeud(individu), graphe, cache)).at(-1)
     if (!dernier) continue
     const liste = valeursParReferentiel.get(individu.referentielId) ?? []
     liste.push(dernier.valeur)

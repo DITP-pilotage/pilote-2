@@ -3,8 +3,7 @@ import { type FonctionAgregation } from '@pilote/kpilote-shared/indicateur'
 import { type Bucket, type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
 import { yieldToEventLoop } from '@/framework/concurrency'
 import { Decimal } from '@/framework/decimal'
-import { agreger, getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
-import { type Cellule, cleCellule } from '@/valeurAvancement/cellule'
+import { agreger } from '@/indicateur/resolveAgregation'
 
 export type IndividuRef = {
   id: string
@@ -20,6 +19,8 @@ export type SaisieTronquee = {
 
 export type ContributionInterne = {
   individuPublicId: string
+  // Modalités fixées du nœud enfant ; vide sans axe.
+  modalites: ReadonlyArray<string>
   valeur: Decimal | null
   dateOrigine: Bucket | null
   source: 'saisie' | 'derivee' | 'manquante'
@@ -36,15 +37,31 @@ export type PointInterne =
       couverture: { nbEnfantsAvecValeur: number; nbEnfantsTotal: number }
     }
 
-// La hiérarchie territoriale (`enfantsParParent`, `referentielParIndividu`)
-// est indexée par individu ; les saisies, par cellule (`cleCellule`).
-export type ResolveSerieContext = {
-  enfantsParParent: ReadonlyMap<string, ReadonlyArray<IndividuRef>>
-  fonctionAgregationParReferentiel: ReadonlyMap<string, FonctionAgregation>
-  serieFeuilleParCellule: ReadonlyMap<string, ReadonlyArray<SaisieTronquee>>
-  referentielParIndividu: ReadonlyMap<string, string>
+// Un nœud du graphe de résolution : un individu et, pour un indicateur à axes,
+// les modalités fixées (« Tous » sur les autres axes). `cle` l'identifie dans
+// le graphe et dans le cache.
+export type Noeud = {
+  cle: string
+  individuPublicId: string
+  // publicIds des modalités fixées, dans l'ordre de déclaration des axes.
+  modalites: ReadonlyArray<string>
 }
 
+export type AgregationNoeud = {
+  fonction: FonctionAgregation
+  enfants: ReadonlyArray<Noeud>
+}
+
+// Graphe consommé par le moteur : un nœud agrégé a ses enfants et la fonction
+// qui les combine ; un nœud absent de `agregationParNoeud` est saisi. Construit
+// par `buildGrapheTerritoire` (indicateur sans axe) ou `buildGrapheAxes`.
+export type GrapheSerie = {
+  agregationParNoeud: ReadonlyMap<string, AgregationNoeud>
+  saisiesParNoeud: ReadonlyMap<string, ReadonlyArray<SaisieTronquee>>
+}
+
+// Calcule la série d'un nœud du graphe.
+//
 // Async pour pouvoir yielder l'event loop entre les buckets d'une dérivée
 // (cf. `computeSerieDerivee` + `yieldToEventLoop`). Sans ce yield, une
 // résolution profonde sur un gros arbre (ex. France → ~35k communes) ×
@@ -54,30 +71,26 @@ export type ResolveSerieContext = {
 // requêtes concurrentes. Le coût micro-task ajouté reste négligeable face
 // au temps de calcul lui-même.
 //
-// Le cache est indexé par cellule (`cleCellule`).
-export const resolveSerieIndividu = async (
-  cellule: Cellule,
-  ctx: ResolveSerieContext,
+// Le cache est indexé par `noeud.cle`.
+export const resolveSerieNoeud = async (
+  noeud: Noeud,
+  graphe: GrapheSerie,
   cache: Map<string, ReadonlyArray<PointInterne>>,
 ): Promise<ReadonlyArray<PointInterne>> => {
-  const cle = cleCellule(cellule)
-  const cached = cache.get(cle)
+  const cached = cache.get(noeud.cle)
   if (cached) return cached
 
-  const fonctionAgregation = getFonctionAgregationActive(cellule.individuId, ctx)
-  const serie = fonctionAgregation
-    ? await computeSerieDerivee(cellule, ctx, cache, fonctionAgregation)
-    : computeSerieSaisie(cellule, ctx)
+  const agregation = graphe.agregationParNoeud.get(noeud.cle)
+  const serie = agregation
+    ? await computeSerieDerivee(agregation, graphe, cache)
+    : computeSerieSaisie(noeud, graphe)
 
-  cache.set(cle, serie)
+  cache.set(noeud.cle, serie)
   return serie
 }
 
-const computeSerieSaisie = (
-  cellule: Cellule,
-  ctx: ResolveSerieContext,
-): ReadonlyArray<PointInterne> => {
-  const saisies = ctx.serieFeuilleParCellule.get(cleCellule(cellule)) ?? []
+const computeSerieSaisie = (noeud: Noeud, graphe: GrapheSerie): ReadonlyArray<PointInterne> => {
+  const saisies = graphe.saisiesParNoeud.get(noeud.cle) ?? []
   return saisies.map(({ bucket, dateOrigine, valeur }) => ({
     type: 'saisie',
     bucket,
@@ -95,23 +108,21 @@ const computeSerieSaisie = (
 //   enfants sans valeur connue figurent en `manquante`.
 // - Implémentation linéaire O(N×E) via pointers triés ASC : on n'utilise pas
 //   binary search car les buckets sont déjà parcourus en ordre croissant.
-// - Récursion + mémoïsation via `resolveSerieIndividu` : la série d'un enfant
+// - Récursion + mémoïsation via `resolveSerieNoeud` : la série d'un enfant
 //   intermédiaire (ex. région) n'est calculée qu'une fois même si plusieurs
 //   parents (ou plusieurs cibles dans la même requête) la sollicitent.
-// Les enfants d'une cellule sont les cellules des enfants territoriaux, pour la
-// même combinaison.
+const cleDeTri = (noeud: Noeud): string => [noeud.individuPublicId, ...noeud.modalites].join('|')
+
 const computeSerieDerivee = async (
-  parent: Cellule,
-  ctx: ResolveSerieContext,
+  { fonction: fonctionAgregation, enfants }: AgregationNoeud,
+  graphe: GrapheSerie,
   cache: Map<string, ReadonlyArray<PointInterne>>,
-  fonctionAgregation: FonctionAgregation,
 ): Promise<ReadonlyArray<PointInterne>> => {
-  const enfants = ctx.enfantsParParent.get(parent.individuId) ?? []
-  // Tri stable par publicId pour des contributions déterministes en sortie.
-  const enfantsTries = [...enfants].sort((a, b) => a.publicId.localeCompare(b.publicId))
+  // Tri stable par publicId (puis modalités) pour des contributions déterministes.
+  const enfantsTries = [...enfants].sort((a, b) => cleDeTri(a).localeCompare(cleDeTri(b)))
 
   type EnfantState = {
-    enfant: IndividuRef
+    enfant: Noeud
     points: ReadonlyArray<PointInterne>
     estAgrege: boolean
     pointer: number // index de la dernière valeur ≤ bucket courant (-1 = aucune)
@@ -123,12 +134,8 @@ const computeSerieDerivee = async (
   for (const enfant of enfantsTries) {
     states.push({
       enfant,
-      points: await resolveSerieIndividu(
-        { individuId: enfant.id, combinaisonId: parent.combinaisonId },
-        ctx,
-        cache,
-      ),
-      estAgrege: getFonctionAgregationActive(enfant.id, ctx) !== null,
+      points: await resolveSerieNoeud(enfant, graphe, cache),
+      estAgrege: graphe.agregationParNoeud.has(enfant.cle),
       pointer: -1,
     })
   }
@@ -182,7 +189,8 @@ const computeSerieDerivee = async (
       const courant = state.pointer >= 0 ? state.points[state.pointer] : undefined
       if (!courant) {
         contributions.push({
-          individuPublicId: state.enfant.publicId,
+          individuPublicId: state.enfant.individuPublicId,
+          modalites: state.enfant.modalites,
           valeur: null,
           dateOrigine: null,
           source: 'manquante',
@@ -193,7 +201,8 @@ const computeSerieDerivee = async (
       // pour un enfant déjà dérivé, on n'a que la date de son bucket le plus récent.
       const dateOrigine = courant.type === 'saisie' ? courant.dateOrigine : courant.bucket
       contributions.push({
-        individuPublicId: state.enfant.publicId,
+        individuPublicId: state.enfant.individuPublicId,
+        modalites: state.enfant.modalites,
         valeur: courant.valeur,
         dateOrigine,
         source: state.estAgrege ? 'derivee' : 'saisie',

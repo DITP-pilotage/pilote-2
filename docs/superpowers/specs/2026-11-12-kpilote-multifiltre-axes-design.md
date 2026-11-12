@@ -132,8 +132,8 @@ Les indicateurs **sans axe** suivent le chemin de calcul actuel, inchangé (`loa
 
 1. **Chemin 1 (D8).** Pour une cellule « individu I, combinaison partielle » :
    - si I est une feuille territoriale (ou son niveau est saisi, fonction NONE) : on agrège les axes
-     **à ce niveau**, axe par axe dans l'ordre de déclaration, avec la fonction de l'axe (D14) à chaque
-     niveau de l'axe puis pour « Tous » ;
+     **à ce niveau**, axe par axe : le premier axe déclaré est combiné en premier (au plus près des saisies),
+     avec la fonction de l'axe (D14) à chaque niveau de l'axe puis pour « Tous » ;
    - sinon : on calcule la même cellule pour chaque enfant territorial, puis on remonte avec la fonction du
      référentiel (chemin existant).
 2. **Modalité parente** (ex. Fraude fiscale) : agrégat de ses enfants avec la fonction de leur niveau.
