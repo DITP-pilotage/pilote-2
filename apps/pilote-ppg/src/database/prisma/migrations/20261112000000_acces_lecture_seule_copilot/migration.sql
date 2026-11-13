@@ -16,7 +16,7 @@ BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'copilot') THEN
     FOR schema_name IN
       SELECT nspname FROM pg_namespace
-      WHERE nspname IN ('public', 'raw_data', 'marts', 'barometre')
+      WHERE nspname IN ('public', 'raw_data', 'marts', 'barometre', 'df3')
     LOOP
       EXECUTE format('GRANT USAGE ON SCHEMA %I TO copilot', schema_name);
       EXECUTE format('GRANT SELECT ON ALL TABLES IN SCHEMA %I TO copilot', schema_name);
