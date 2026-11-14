@@ -1,75 +1,21 @@
 import { useRouter } from "next/router";
-import { DétailTerritoire } from "@/shared/territoire/Territoire.interface";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
-import {
-  CartographieOptions,
-  CartographieTerritoireAffiché,
-  CartographieTerritoires,
-} from "./useCartographie.interface";
-import { CartographieDonnées } from "./Cartographie.interface";
 
-export default function useCartographie(
+export function useCartographie(
   territoireCode: string,
   pathname:
     | "/accueil/chantier/[territoireCode]"
     | "/chantier/[id]/[territoireCode]"
     | null,
 ) {
-  const { territoiresAccessiblesEnLecture, listeTerritoires } =
-    useTerritoireHabilitation();
-  const régions = listeTerritoires.filter(
-    (territoire) => territoire.maille === "regionale",
-  );
+  const { territoiresAccessiblesEnLecture } = useTerritoireHabilitation();
   const [territoiresCompares, setTerritoiresCompares] =
     useTerritoiresCompares();
 
   const router = useRouter();
 
-  function déterminerRégionsÀTracer(
-    territoireAffiché: CartographieTerritoireAffiché,
-  ) {
-    return territoireAffiché.maille === "regionale"
-      ? régions.filter(
-          (région) => région.codeInsee === territoireAffiché.codeInsee,
-        )
-      : régions;
-  }
-
-  function créerTerritoires(
-    territoiresÀTracer: DétailTerritoire[],
-    frontièresÀTracer: DétailTerritoire[],
-    données: CartographieDonnées,
-  ): CartographieTerritoires {
-    return {
-      territoires: territoiresÀTracer.map((territoire) => ({
-        codeInsee: territoire.codeInsee,
-        territoireCode: territoire.code,
-        code: territoire.code,
-        remplissage: données[territoire.code]?.remplissage ?? "#bababa", // TODO où gérer ce undefined ?
-        libellé: données[territoire.code]?.libellé ?? "-", // TODO où gérer ce undefined ?
-        contenuInfoBulle: données[territoire.code]?.contenu, // TODO où gérer ce undefined ?
-        estInteractif: territoire.accèsLecture,
-        estApplicable: données[territoire.code]?.estApplicable ?? null,
-      })),
-      frontières: frontièresÀTracer.map((frontière) => ({
-        codeInsee: frontière.codeInsee,
-        code: frontière.code,
-      })),
-    };
-  }
-
-  const optionsParDéfaut: CartographieOptions = {
-    territoireAffiché: {
-      codeInsee: "FR",
-      maille: "nationale",
-    },
-    territoireSélectionnable: true,
-    multiséléction: false,
-    estInteractif: true,
-  };
-
-  function auClicTerritoireCallback(
+  function onTerritoireClick(
     territoireCodeSelectionnee: string,
     territoireSélectionnable: boolean,
   ) {
@@ -127,7 +73,7 @@ export default function useCartographie(
     );
   }
 
-  function auClicTerritoireMultiSélectionCallback(
+  function onTerritoireMultiSelectClick(
     territoireCodeSelectionnee: string,
     territoireSélectionnable: boolean,
   ) {
@@ -139,7 +85,7 @@ export default function useCartographie(
 
     if (territoireCode === territoireCodeSelectionnee) {
       delete router.query.territoiresCompares;
-      return auClicTerritoireCallback(
+      return onTerritoireClick(
         territoireCodeSelectionnee,
         territoireSélectionnable,
       );
@@ -166,11 +112,5 @@ export default function useCartographie(
     }
   }
 
-  return {
-    déterminerRégionsÀTracer,
-    créerTerritoires,
-    optionsParDéfaut,
-    auClicTerritoireCallback,
-    auClicTerritoireMultiSélectionCallback,
-  };
+  return { onTerritoireClick, onTerritoireMultiSelectClick };
 }
