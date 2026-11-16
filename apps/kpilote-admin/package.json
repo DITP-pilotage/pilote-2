@@ -56,7 +56,7 @@
     "cmdk": "^1.1.1",
     "codemirror": "^6.0.2",
     "dompurify": "^3.4.17",
-    "dotenv": "17.4.2",
+    "dotenv": "18.0.9",
     "hono": "^4.13.16",
     "hono-rate-limiter": "^0.5.4",
     "iron-session": "^9.0.1",
