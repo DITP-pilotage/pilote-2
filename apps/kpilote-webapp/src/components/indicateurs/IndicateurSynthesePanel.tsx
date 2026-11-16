@@ -1,12 +1,12 @@
 import { type SensSouhaite, type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import {
+  type Interpretation,
+  interpretDifference,
+  interpretExtremes,
+} from '@pilote/kpilote-shared/interpretation'
 import { useSuspenseQueries } from '@tanstack/react-query'
 
 import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
-import {
-  type Interpretation,
-  interpreterSelonSens,
-  interpreterValeursExtremes,
-} from '@/components/indicateurs/interpreterSelonSens'
 import { Pill, type PillTone } from '@pilote/kpilote-ui/Pill'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 import { clsxm } from '@/lib/clsxm'
@@ -23,32 +23,32 @@ import {
   indicateurValeursRemarquablesQueryOptions,
 } from '@/queries/indicateurs'
 
-type ValeurDate = { date: string; valeur: number }
+type DatedValue = { date: string; valeur: number }
 
 // Série mensuelle triée du plus récent au plus ancien : [0] = dernière valeur,
 // [1] = valeur précédente. La « valeur précédente » du ticket est dérivée ici,
 // sans appel API dédié (la série est déjà en cache).
-const valeursTrieesDesc = (items: ReadonlyArray<ValeurDate>): ValeurDate[] =>
+const sortByDateDesc = (items: ReadonlyArray<DatedValue>): DatedValue[] =>
   [...items].sort((a, b) => b.date.localeCompare(a.date))
 
 // Lecture selon le sens souhaité (PIL-1778) : vert favorable, orange défavorable,
 // bleu neutre. Le texte masqué donne la même information aux lecteurs d'écran.
-const TON_PAR_INTERPRETATION: Record<Interpretation, PillTone> = {
+const TONE_BY_INTERPRETATION: Record<Interpretation, PillTone> = {
   favorable: 'success',
-  defavorable: 'warning',
-  neutre: 'info',
+  unfavorable: 'warning',
+  neutral: 'info',
 }
 
-const CLASSE_TEXTE_PAR_INTERPRETATION: Record<Interpretation, string> = {
+const TEXT_CLASS_BY_INTERPRETATION: Record<Interpretation, string> = {
   favorable: 'text-success-425',
-  defavorable: 'text-warning-425',
-  neutre: 'text-blue-425',
+  unfavorable: 'text-warning-425',
+  neutral: 'text-blue-425',
 }
 
-const LIBELLE_INTERPRETATION: Record<Interpretation, string | null> = {
+const INTERPRETATION_LABEL: Record<Interpretation, string | null> = {
   favorable: 'favorable',
-  defavorable: 'défavorable',
-  neutre: null,
+  unfavorable: 'défavorable',
+  neutral: null,
 }
 
 type IndicateurSynthesePanelProps = {
@@ -82,9 +82,9 @@ export function IndicateurSynthesePanel({
       ],
     })
 
-  const serie = valeursTrieesDesc(valeurs.items)
-  const derniere = serie[0]
-  const precedente = serie[1]
+  const series = sortByDateDesc(valeurs.items)
+  const latest = series[0]
+  const previous = series[1]
 
   const variation = synthese.items[0]?.variation ?? null
   const ecartMediane = synthese.items[0]?.ecartMediane ?? null
@@ -92,13 +92,13 @@ export function IndicateurSynthesePanel({
 
   // Le taux et l'objectif portent sur « Tous » (objectif de l'individu) : pour une
   // modalité, ni taux ni bloc « Progression », qui montrerait l'objectif de « Tous ».
-  const dernierPoint = modalites.length > 0 ? undefined : tauxProgression.items.at(-1)
-  const taux = dernierPoint?.tauxProgression ?? null
+  const lastPoint = modalites.length > 0 ? undefined : tauxProgression.items.at(-1)
+  const taux = lastPoint?.tauxProgression ?? null
 
-  const { max: interpretationMax, min: interpretationMin } = interpreterValeursExtremes(
-    stats,
+  const extremes = interpretExtremes({
     sensSouhaite,
-  )
+    sameValue: stats.min !== null && stats.min === stats.max,
+  })
 
   return (
     <section className="rounded-xl border border-border bg-surface p-6 sm:p-8">
@@ -110,17 +110,17 @@ export function IndicateurSynthesePanel({
               Valeur d&apos;avancement
               {legend && <span className="text-primary"> · {legend}</span>}
             </Text>
-            {derniere ? (
+            {latest ? (
               <>
                 <Heading as="p" size="display-sm" className="mt-3 text-blue-cumulus">
-                  {formatNumberFr(derniere.valeur)}
+                  {formatNumberFr(latest.valeur)}
                   {unite?.abbreviation && <span className="ml-2">{unite.abbreviation}</span>}
                 </Heading>
                 <Text variant="body" tone="subtle" className="mt-2">
-                  {formatMonthYearNumericFr(derniere.date)}
+                  {formatMonthYearNumericFr(latest.date)}
                 </Text>
                 {variation !== null && (
-                  <PastilleVariation variation={variation} sensSouhaite={sensSouhaite} />
+                  <VariationPill variation={variation} sensSouhaite={sensSouhaite} />
                 )}
               </>
             ) : (
@@ -129,22 +129,22 @@ export function IndicateurSynthesePanel({
               </Heading>
             )}
 
-            {precedente && (
+            {previous && (
               <Text variant="body" tone="muted" className="mt-3">
                 <span className="font-bold">Valeur précédente :</span>{' '}
                 <span className="font-semibold text-primary">
-                  {formatNumberFr(precedente.valeur, unite)}
+                  {formatNumberFr(previous.valeur, unite)}
                 </span>{' '}
-                ({formatMonthYearNumericFr(precedente.date)})
+                ({formatMonthYearNumericFr(previous.date)})
               </Text>
             )}
           </div>
 
-          {dernierPoint && (
+          {lastPoint && (
             <IndicateurProgression
               taux={taux}
-              valeurCible={dernierPoint.valeurCible}
-              dateCible={dernierPoint.dateCible}
+              valeurCible={lastPoint.valeurCible}
+              dateCible={lastPoint.dateCible}
               unite={unite}
             />
           )}
@@ -161,25 +161,25 @@ export function IndicateurSynthesePanel({
             {legend && <span className="text-primary"> · {legend}</span>}
           </Text>
           <ul className="mt-3 flex flex-col gap-0.5">
-            <ComparaisonRow
-              valueClassName={CLASSE_TEXTE_PAR_INTERPRETATION[interpretationMax]}
+            <ComparisonRow
+              valueClassName={TEXT_CLASS_BY_INTERPRETATION[extremes.max]}
               label="Valeur maximale observée"
               value={stats.max}
               unite={unite}
-              srText={LIBELLE_INTERPRETATION[interpretationMax]}
+              srText={INTERPRETATION_LABEL[extremes.max]}
             />
-            <ComparaisonRow
+            <ComparisonRow
               valueClassName="text-blue-425"
               label="Valeur médiane observée"
               value={stats.mediane}
               unite={unite}
             />
-            <ComparaisonRow
-              valueClassName={CLASSE_TEXTE_PAR_INTERPRETATION[interpretationMin]}
+            <ComparisonRow
+              valueClassName={TEXT_CLASS_BY_INTERPRETATION[extremes.min]}
               label="Valeur minimale observée"
               value={stats.min}
               unite={unite}
-              srText={LIBELLE_INTERPRETATION[interpretationMin]}
+              srText={INTERPRETATION_LABEL[extremes.min]}
             />
           </ul>
 
@@ -188,7 +188,7 @@ export function IndicateurSynthesePanel({
               <Text variant="body" tone="muted" className="font-bold">
                 Écart à la médiane
               </Text>
-              <PastilleEcartMediane
+              <MedianGapPill
                 ecartMediane={ecartMediane}
                 unite={unite}
                 sensSouhaite={sensSouhaite}
@@ -203,27 +203,27 @@ export function IndicateurSynthesePanel({
 
 // Flèche et libellé décrivent le mouvement réel ; seule la couleur l'interprète.
 // Tous suivent le signe affiché : une variation lue « 0 » est stable.
-function PastilleVariation({
+function VariationPill({
   variation,
   sensSouhaite,
 }: {
   variation: number
   sensSouhaite: SensSouhaite
 }) {
-  const signe = displayedDifferenceSign(variation)
-  const interpretation = interpreterSelonSens(signe, sensSouhaite)
-  const libelle = LIBELLE_INTERPRETATION[interpretation]
+  const sign = displayedDifferenceSign(variation)
+  const interpretation = interpretDifference(sign, sensSouhaite)
+  const label = INTERPRETATION_LABEL[interpretation]
   return (
-    <Pill tone={TON_PAR_INTERPRETATION[interpretation]} className="mt-3 w-fit text-sm">
-      {signe === 0 ? (
+    <Pill tone={TONE_BY_INTERPRETATION[interpretation]} className="mt-3 w-fit text-sm">
+      {sign === 0 ? (
         <span>
           <span aria-hidden="true">→</span> STABLE
         </span>
       ) : (
         <span>
-          <span aria-hidden="true">{signe > 0 ? '↑' : '↓'}</span>{' '}
-          {signe > 0 ? 'EN HAUSSE' : 'EN BAISSE'} : {formatDifferenceFr(variation)}
-          {libelle && <span className="sr-only"> (évolution {libelle})</span>}
+          <span aria-hidden="true">{sign > 0 ? '↑' : '↓'}</span>{' '}
+          {sign > 0 ? 'EN HAUSSE' : 'EN BAISSE'} : {formatDifferenceFr(variation)}
+          {label && <span className="sr-only"> (évolution {label})</span>}
         </span>
       )}
     </Pill>
@@ -231,7 +231,7 @@ function PastilleVariation({
 }
 
 // Même libellé dans les deux sens ; le signe est conservé, la couleur suit le sens.
-function PastilleEcartMediane({
+function MedianGapPill({
   ecartMediane,
   unite,
   sensSouhaite,
@@ -240,22 +240,22 @@ function PastilleEcartMediane({
   unite: UniteIndicateurApiModel | null
   sensSouhaite: SensSouhaite
 }) {
-  const signe = displayedDifferenceSign(ecartMediane)
-  const interpretation = interpreterSelonSens(signe, sensSouhaite)
-  const libelle = LIBELLE_INTERPRETATION[interpretation]
+  const sign = displayedDifferenceSign(ecartMediane)
+  const interpretation = interpretDifference(sign, sensSouhaite)
+  const label = INTERPRETATION_LABEL[interpretation]
   const position =
-    signe > 0 ? 'au-dessus de la médiane' : signe < 0 ? 'au-dessous de la médiane' : 'à la médiane'
+    sign > 0 ? 'au-dessus de la médiane' : sign < 0 ? 'au-dessous de la médiane' : 'à la médiane'
   return (
-    <Pill tone={TON_PAR_INTERPRETATION[interpretation]}>
+    <Pill tone={TONE_BY_INTERPRETATION[interpretation]}>
       <span>
         {formatDifferenceFr(ecartMediane, unite)} · {position}
-        {libelle && <span className="sr-only"> (position {libelle})</span>}
+        {label && <span className="sr-only"> (position {label})</span>}
       </span>
     </Pill>
   )
 }
 
-function ComparaisonRow({
+function ComparisonRow({
   valueClassName,
   label,
   value,

@@ -116,6 +116,10 @@
       "types": "./src/indicateur.ts",
       "default": "./src/indicateur.ts"
     },
+    "./interpretation": {
+      "types": "./src/interpretation.ts",
+      "default": "./src/interpretation.ts"
+    },
     "./individu": {
       "types": "./src/individu.ts",
       "default": "./src/individu.ts"
