@@ -9,7 +9,7 @@ Branche : `feat/PIL-1778-restitution-baisse`, ouverte depuis `feat/PIL-1778-taux
 
 Depuis la PR1 (#2655), un indicateur porte un sens souhaité, `HAUSSE` ou `BAISSE`. La webapp interprète pourtant toujours les valeurs comme si plus haut était mieux : pour un taux de chômage, une hausse s'affiche en vert et le maximum observé aussi.
 
-Cette PR applique les règles de PIL-1778 dans le panneau de synthèse de l'onglet « Résultats » de la fiche indicateur, le seul endroit de la webapp qui qualifie une valeur de favorable ou de défavorable :
+Cette PR applique les règles de PIL-1778 dans le panneau de synthèse de l'onglet « Résultats » de la fiche indicateur, le seul endroit de la fiche indicateur qui qualifie une valeur de favorable ou de défavorable (l'assistant et son tableau de bord le font aussi : voir « Évolutions après revue ») :
 
 1. la pastille de variation garde sa flèche et son libellé, qui décrivent le mouvement réel, mais sa couleur dépend du sens ;
 2. le minimum et le maximum échangent leurs couleurs pour un indicateur à la baisse ;
@@ -74,7 +74,7 @@ Fichier proposé : `apps/kpilote-webapp/src/components/indicateurs/interpreterSe
 ### `valeurAvancement/computeVariation.ts`
 
 - Moins de deux valeurs → `null`. Signature inchangée.
-- Seul appelant : `valeurAvancement/queries/listSyntheseIndividus.ts`, qui ne change pas. La règle vaut pour les séries saisies comme pour les séries dérivées, puisque les deux passent par ce calcul.
+- Seul appelant : `valeurAvancement/queries/listSyntheseIndividus.ts`, qui lit désormais les deux derniers points de la série au lieu de la recalculer. La règle vaut pour les séries saisies comme pour les séries dérivées, puisque les deux passent par ce calcul.
 
 ### `valeurAvancement/computeMediane.ts` et `computeEcartMediane.ts`
 
@@ -168,3 +168,14 @@ Dans le seed, quatre indicateurs sont à la baisse : IND-001, IND-004, IND-023 (
 - L'affichage du sens dans l'onglet « Résultats ».
 - Le contraste des pastilles verte et orange sur leur fond teinté (environ 2,9:1), qui est un défaut existant.
 - La couleur de la carte de France selon le sens.
+
+## Évolutions après revue
+
+La revue de la pile (après rebase sur dev, qui a apporté l'assistant kpilote) a changé ces points :
+
+- **Rouge pour le défavorable**, comme le demande le ticket, au lieu de l'orange : `Pill` gagne un ton `error`. Tous les tons passent au texte foncé de leur famille (`text-success`, `text-error`, `text-primary`, `text-blue-cumulus`), au-dessus de 4,5:1 ; les tons 425 n'atteignaient que 2,9 à 3,7:1.
+- **La lecture ne tient plus à la seule couleur** (RGAA 3.1) : « favorable » ou « défavorable » s'affiche dans les pastilles, et « meilleure valeur » à côté du bon extrême. Le texte masqué disparaît.
+- **Minimum et maximum sont comparés tels qu'affichés**, comme la variation et l'écart ; la variation porte l'unité de l'indicateur.
+- **La règle vit dans kpilote-shared** (`interpretation.ts` : `interpretDifference`, `interpretExtremes`), noms techniques en anglais, pour que l'assistant la lise à la même source.
+- **L'assistant lit le sens** : les outils de synthèse et d'évolution exposent `sensSouhaite` et la lecture de la variation et de l'écart ; le glossaire, la règle « devant / derrière » et les gabarits du rédacteur d'encarts s'appuient sur ces lectures ; les widgets de son tableau de bord disent qu'un indicateur à la baisse n'a pas de taux et lisent l'écart.
+
