@@ -50,22 +50,21 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
     "extrait les taux d'avancement jalon depuis l'historique d'évolution",
     createIntegrationTest(async () => {
       // given
-      await fixtures.chantierIdentite({ id: "CH-001" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         maille: "DEPT",
         code_insee: "75",
         zone_id: "D75",
       });
-      await fixtures.indicateurIdentite({
-        id: "IND-001",
-        chantier_id: "CH-001",
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
         statut: "PUBLIE",
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-001",
-        chantier_id: "CH-001",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -85,7 +84,7 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
         ],
       });
       await fixtures.indicateurTerritoireJalon({
-        id: "IND-001",
+        id: indicateur.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -98,10 +97,10 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
 
       // when
       const result = await query.execute({
-        indicateurId: "IND-001",
-        chantierId: "CH-001",
+        indicateurId: indicateur.id,
+        chantierId: chantier.id,
         jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-001", ["DEPT-75"]),
+        habilitations: habilitationsPourChantier(chantier.id, ["DEPT-75"]),
         profil: ProfilEnum.DITP_ADMIN,
       });
 
@@ -124,22 +123,21 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
     "filtre les entrées sans taux_avancement_jalon",
     createIntegrationTest(async () => {
       // given
-      await fixtures.chantierIdentite({ id: "CH-002" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-002",
+        id: chantier.id,
         territoire_code: "DEPT-92",
         maille: "DEPT",
         code_insee: "92",
         zone_id: "D92",
       });
-      await fixtures.indicateurIdentite({
-        id: "IND-002",
-        chantier_id: "CH-002",
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
         statut: "PUBLIE",
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-002",
-        chantier_id: "CH-002",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         territoire_code: "DEPT-92",
         code_insee: "92",
         maille: "DEPT",
@@ -160,7 +158,7 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
         ],
       });
       await fixtures.indicateurTerritoireJalon({
-        id: "IND-002",
+        id: indicateur.id,
         territoire_code: "DEPT-92",
         code_insee: "92",
         maille: "DEPT",
@@ -172,10 +170,10 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
 
       // when
       const result = await query.execute({
-        indicateurId: "IND-002",
-        chantierId: "CH-002",
+        indicateurId: indicateur.id,
+        chantierId: chantier.id,
         jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-002", ["DEPT-92"]),
+        habilitations: habilitationsPourChantier(chantier.id, ["DEPT-92"]),
         profil: ProfilEnum.DITP_ADMIN,
       });
 
@@ -198,22 +196,21 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
     "retourne un historique vide quand evolution_avancement est null",
     createIntegrationTest(async () => {
       // given
-      await fixtures.chantierIdentite({ id: "CH-003" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-003",
+        id: chantier.id,
         territoire_code: "DEPT-33",
         maille: "DEPT",
         code_insee: "33",
         zone_id: "D33",
       });
-      await fixtures.indicateurIdentite({
-        id: "IND-003",
-        chantier_id: "CH-003",
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
         statut: "PUBLIE",
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-003",
-        chantier_id: "CH-003",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         territoire_code: "DEPT-33",
         code_insee: "33",
         maille: "DEPT",
@@ -221,7 +218,7 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
         est_applicable: true,
       });
       await fixtures.indicateurTerritoireJalon({
-        id: "IND-003",
+        id: indicateur.id,
         territoire_code: "DEPT-33",
         code_insee: "33",
         maille: "DEPT",
@@ -233,10 +230,10 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
 
       // when
       const result = await query.execute({
-        indicateurId: "IND-003",
-        chantierId: "CH-003",
+        indicateurId: indicateur.id,
+        chantierId: chantier.id,
         jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-003", ["DEPT-33"]),
+        habilitations: habilitationsPourChantier(chantier.id, ["DEPT-33"]),
         profil: ProfilEnum.DITP_ADMIN,
       });
 

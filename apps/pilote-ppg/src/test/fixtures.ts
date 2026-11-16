@@ -820,8 +820,7 @@ export const fixtures = {
       data: {
         indic_id: indicId,
         indic_parent_ch:
-          overrides.indic_parent_ch ??
-          `CH-${randomUUID().slice(0, 3).toUpperCase()}`,
+          overrides.indic_parent_ch ?? `CH-${randomUUID().slice(0, 6)}`,
         indic_nom: `Indicateur test ${indicId}`,
         ...overrides,
       },
@@ -837,8 +836,7 @@ export const fixtures = {
       data: {
         indic_id: indicId,
         indic_parent_ch:
-          overrides.indic_parent_ch ??
-          `CH-${randomUUID().slice(0, 3).toUpperCase()}`,
+          overrides.indic_parent_ch ?? `CH-${randomUUID().slice(0, 6)}`,
         indic_nom: `Indicateur test ${indicId}`,
         ...overrides,
       },
@@ -874,7 +872,7 @@ export const fixtures = {
       ? { porteur_id: overrides.porteur_id_principal }
       : await fixtures.metadataPorteur();
     const chantierId =
-      overrides.chantier_id ?? `CH-${randomUUID().slice(0, 3).toUpperCase()}`;
+      overrides.chantier_id ?? `CH-${randomUUID().slice(0, 6)}`;
     return prisma.metadata_chantiers.create({
       data: {
         chantier_id: chantierId,

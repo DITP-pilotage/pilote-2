@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import {
@@ -24,10 +25,11 @@ describe("SaveChantierHandler", () => {
         const ppg = await fixtures.metadataPpg();
         const perimetre = await fixtures.metadataPerimetre();
         const porteur = await fixtures.metadataPorteur();
+        const chantierId = randomUUID();
 
         // When
         await handler.execute({
-          chantierId: "CH-099",
+          chantierId,
           chNom: "Nouveau chantier",
           chDescr: null,
           chPpg: ppg.ppg_id,
@@ -46,7 +48,7 @@ describe("SaveChantierHandler", () => {
 
         // Then
         const chantier = await getPrisma().metadata_chantiers.findUniqueOrThrow(
-          { where: { chantier_id: "CH-099" } },
+          { where: { chantier_id: chantierId } },
         );
         expect(chantier.ch_nom).toBe("Nouveau chantier");
         expect(chantier.ch_state).toBe($Enums.type_statut.BROUILLON);
@@ -60,8 +62,7 @@ describe("SaveChantierHandler", () => {
         // Given
         const ppg = await fixtures.metadataPpg();
         const perimetre = await fixtures.metadataPerimetre();
-        await fixtures.metadataChantier({
-          chantier_id: "CH-010",
+        const chantierExistant = await fixtures.metadataChantier({
           ch_nom: "Ancien nom",
           ch_ppg: ppg.ppg_id,
           ch_per: perimetre.perimetre_id,
@@ -69,7 +70,7 @@ describe("SaveChantierHandler", () => {
 
         // When
         await handler.execute({
-          chantierId: "CH-010",
+          chantierId: chantierExistant.chantier_id,
           chNom: "Nouveau nom",
           chDescr: "Une description",
           chPpg: ppg.ppg_id,
@@ -88,7 +89,7 @@ describe("SaveChantierHandler", () => {
 
         // Then
         const chantier = await getPrisma().metadata_chantiers.findUniqueOrThrow(
-          { where: { chantier_id: "CH-010" } },
+          { where: { chantier_id: chantierExistant.chantier_id } },
         );
         expect(chantier.ch_nom).toBe("Nouveau nom");
         expect(chantier.ch_descr).toBe("Une description");
@@ -108,10 +109,11 @@ describe("SaveChantierHandler", () => {
         // Given
         const ppg = await fixtures.metadataPpg();
         const perimetre = await fixtures.metadataPerimetre();
+        const chantierId = randomUUID();
 
         // When
         await handler.execute({
-          chantierId: "CH-099",
+          chantierId,
           chNom: "Chantier multi-porteurs",
           chDescr: null,
           chPpg: ppg.ppg_id,
@@ -130,7 +132,7 @@ describe("SaveChantierHandler", () => {
 
         // Then
         const chantier = await getPrisma().metadata_chantiers.findUniqueOrThrow(
-          { where: { chantier_id: "CH-099" } },
+          { where: { chantier_id: chantierId } },
         );
         expect(chantier.porteur_id_principal).toBe("MIN-01");
         expect(chantier.porteur_ids_secondaires).toEqual(["MIN-02", "MIN-03"]);
@@ -144,10 +146,11 @@ describe("SaveChantierHandler", () => {
         const ppg = await fixtures.metadataPpg();
         const perimetre = await fixtures.metadataPerimetre();
         const porteur = await fixtures.metadataPorteur();
+        const chantierId = randomUUID();
 
         // When
         await handler.execute({
-          chantierId: "CH-099",
+          chantierId,
           chNom: "Chantier",
           chDescr: null,
           chPpg: ppg.ppg_id,
@@ -166,7 +169,7 @@ describe("SaveChantierHandler", () => {
 
         // Then
         const chantier = await getPrisma().metadata_chantiers.findUniqueOrThrow(
-          { where: { chantier_id: "CH-099" } },
+          { where: { chantier_id: chantierId } },
         );
         expect(chantier.conseiller_mail).toBeNull();
       }),

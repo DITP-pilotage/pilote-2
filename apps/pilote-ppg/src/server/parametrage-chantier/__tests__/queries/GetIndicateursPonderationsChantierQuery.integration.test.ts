@@ -28,10 +28,9 @@ describe("GetIndicateursPonderationsChantierQuery", () => {
     "retourne les indicateurs rattachés au chantier avec leurs pondérations et mailles applicables",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const chantier = await fixtures.metadataChantier();
       const indicateur = await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-010",
+        indic_parent_ch: chantier.chantier_id,
         indic_nom: "Taux de couverture",
       });
       await fixtures.metadataIndicateurComplementaire({
@@ -47,12 +46,12 @@ describe("GetIndicateursPonderationsChantierQuery", () => {
       });
 
       // When
-      const result = await query.run({ chantierId: "CH-010" });
+      const result = await query.run({ chantierId: chantier.chantier_id });
 
       // Then
       expect(result).toEqual([
         {
-          indicId: "IND-001",
+          indicId: indicateur.indic_id,
           indicNom: "Taux de couverture",
           estActif: true,
           maillesApplicables: ["NAT", "REG"],
@@ -68,15 +67,14 @@ describe("GetIndicateursPonderationsChantierQuery", () => {
     "n'inclut pas les indicateurs rattachés à un autre chantier",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
-      await fixtures.metadataChantier({ chantier_id: "CH-020" });
+      const chantier = await fixtures.metadataChantier();
+      const autreChantier = await fixtures.metadataChantier();
       await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-020",
+        indic_parent_ch: autreChantier.chantier_id,
       });
 
       // When
-      const result = await query.run({ chantierId: "CH-010" });
+      const result = await query.run({ chantierId: chantier.chantier_id });
 
       // Then
       expect(result).toEqual([]);
@@ -87,20 +85,19 @@ describe("GetIndicateursPonderationsChantierQuery", () => {
     "utilise des valeurs par défaut si l'indicateur n'a pas de complémentaire ni de parametrage",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
-      await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-010",
+      const chantier = await fixtures.metadataChantier();
+      const indicateur = await fixtures.metadataIndicateurHidden({
+        indic_parent_ch: chantier.chantier_id,
         indic_nom: "Indicateur sans complément",
       });
 
       // When
-      const result = await query.run({ chantierId: "CH-010" });
+      const result = await query.run({ chantierId: chantier.chantier_id });
 
       // Then
       expect(result).toEqual([
         {
-          indicId: "IND-001",
+          indicId: indicateur.indic_id,
           indicNom: "Indicateur sans complément",
           estActif: true,
           maillesApplicables: ["NAT"],
@@ -115,27 +112,25 @@ describe("GetIndicateursPonderationsChantierQuery", () => {
     "indique si chaque indicateur est actif et liste les actifs avant les inactifs",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
-      await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-010",
+      const chantier = await fixtures.metadataChantier();
+      const indicateurInactif = await fixtures.metadataIndicateurHidden({
+        indic_parent_ch: chantier.chantier_id,
         indic_nom: "A - inactif",
         indic_hidden_pilote: true,
       });
-      await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-002",
-        indic_parent_ch: "CH-010",
+      const indicateurActif = await fixtures.metadataIndicateurHidden({
+        indic_parent_ch: chantier.chantier_id,
         indic_nom: "B - actif",
         indic_hidden_pilote: false,
       });
 
       // When
-      const result = await query.run({ chantierId: "CH-010" });
+      const result = await query.run({ chantierId: chantier.chantier_id });
 
       // Then
       expect(result).toEqual([
         {
-          indicId: "IND-002",
+          indicId: indicateurActif.indic_id,
           indicNom: "B - actif",
           estActif: true,
           maillesApplicables: ["NAT"],
@@ -144,7 +139,7 @@ describe("GetIndicateursPonderationsChantierQuery", () => {
           poidsPourcentNat: null,
         },
         {
-          indicId: "IND-001",
+          indicId: indicateurInactif.indic_id,
           indicNom: "A - inactif",
           estActif: false,
           maillesApplicables: ["NAT"],

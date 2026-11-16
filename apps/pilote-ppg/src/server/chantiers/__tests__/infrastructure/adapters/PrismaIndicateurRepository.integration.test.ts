@@ -22,7 +22,7 @@ describe("PrismaIndicateurRepository", () => {
       "doit récupérer les données associés à l'indicateur",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -40,7 +40,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -113,29 +112,23 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         // Then
-        expect(result).toEqual([
+        expect(result).toIncludeSameMembers([
           expect.objectContaining({
-            indicId: "IND-001",
+            indicId: indicateur.id,
             territoireCode: "NAT-FR",
             valeurCibleAnnuelle: 22,
+            dateValeurCibleAnnuelle: new Date("2025-12-06"),
             tauxAvancementAnnuel: 13,
             valeurAvancement: 25,
+            dateValeurAvancement: new Date("2025-12-06"),
           }),
           expect.objectContaining({
-            indicId: "IND-001",
+            indicId: indicateur.id,
             territoireCode: "REG-01",
             valeurAvancement: 30,
+            dateValeurAvancement: new Date("2025-12-06"),
           }),
         ]);
-        expect(result[0].dateValeurCibleAnnuelle?.toISOString()).toStartWith(
-          "2025-12-06",
-        );
-        expect(result[0].dateValeurAvancement?.toISOString()).toStartWith(
-          "2025-12-06",
-        );
-        expect(result[1].dateValeurAvancement?.toISOString()).toStartWith(
-          "2025-12-06",
-        );
       }),
     );
 
@@ -143,7 +136,7 @@ describe("PrismaIndicateurRepository", () => {
       "quand on donne un jalon, doit récupérer les données associés à l'indicateur",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -161,7 +154,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -234,27 +226,23 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         // Then
-        expect(result).toEqual([
+        expect(result).toIncludeSameMembers([
           expect.objectContaining({
-            indicId: "IND-001",
+            indicId: indicateur.id,
             territoireCode: "NAT-FR",
             valeurCibleAnnuelle: 20,
+            dateValeurCibleAnnuelle: new Date("2024-12-06"),
             tauxAvancementAnnuel: 13,
             valeurAvancement: 20,
+            dateValeurAvancement: new Date("2024-12-06"),
           }),
           expect.objectContaining({
-            indicId: "IND-001",
+            indicId: indicateur.id,
             territoireCode: "REG-01",
             valeurAvancement: null,
             dateValeurAvancement: null,
           }),
         ]);
-        expect(result[0].dateValeurCibleAnnuelle?.toISOString()).toStartWith(
-          "2024-12-06",
-        );
-        expect(result[0].dateValeurAvancement?.toISOString()).toStartWith(
-          "2024-12-06",
-        );
       }),
     );
   });
@@ -264,7 +252,7 @@ describe("PrismaIndicateurRepository", () => {
       "sans PVA, retourne les détails des indicateurs pour un chantier et un territoire",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -282,7 +270,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
         });
@@ -352,7 +339,7 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"]).toEqual(
+        expect(result[indicateur.id]["NAT-FR"]).toEqual(
           expect.objectContaining({
             valeurAvancement: 110,
             dateValeurAvancement: "2026-01-12T00:00:00.000Z",
@@ -370,7 +357,7 @@ describe("PrismaIndicateurRepository", () => {
       "avec une PVA [CREEE], retourne les détails des indicateurs pour un chantier, territoire et proposition",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -388,7 +375,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
         });
@@ -475,11 +461,11 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+        expect(result[indicateur.id]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result[indicateur.id]["NAT-FR"].dateValeurAvancement).toEqual(
           "2026-01-12T00:00:00.000Z",
         );
-        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+        expect(result[indicateur.id]["NAT-FR"].proposition).toEqual({
           valeurAvancement: 120,
           tauxAvancement: null,
           tauxAvancementIntermediaire: null,
@@ -500,7 +486,7 @@ describe("PrismaIndicateurRepository", () => {
       "avec une PVA [CREEE] sur une date ultérieure, retourne les détails des indicateurs pour un chantier, territoire et proposition",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -518,7 +504,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
         });
@@ -606,11 +591,11 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+        expect(result[indicateur.id]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result[indicateur.id]["NAT-FR"].dateValeurAvancement).toEqual(
           "2026-01-12T00:00:00.000Z",
         );
-        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+        expect(result[indicateur.id]["NAT-FR"].proposition).toEqual({
           valeurAvancement: 120,
           tauxAvancement: null,
           tauxAvancementIntermediaire: null,
@@ -631,7 +616,7 @@ describe("PrismaIndicateurRepository", () => {
       "avec une PVA [CREEE, MODIFIEE], retourne les détails des indicateurs pour un chantier, territoire et dernière proposition",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -649,7 +634,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
         });
@@ -747,11 +731,11 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+        expect(result[indicateur.id]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result[indicateur.id]["NAT-FR"].dateValeurAvancement).toEqual(
           "2026-01-12T00:00:00.000Z",
         );
-        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+        expect(result[indicateur.id]["NAT-FR"].proposition).toEqual({
           valeurAvancement: 140,
           tauxAvancement: null,
           tauxAvancementIntermediaire: null,
@@ -771,7 +755,7 @@ describe("PrismaIndicateurRepository", () => {
       "avec une PVA [CREEE, MODIFIEE] sur une date ultérieure, retourne les détails des indicateurs pour un chantier, territoire et dernière proposition",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -789,7 +773,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
         });
@@ -888,11 +871,11 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+        expect(result[indicateur.id]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result[indicateur.id]["NAT-FR"].dateValeurAvancement).toEqual(
           "2026-01-12T00:00:00.000Z",
         );
-        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+        expect(result[indicateur.id]["NAT-FR"].proposition).toEqual({
           valeurAvancement: 140,
           tauxAvancement: null,
           tauxAvancementIntermediaire: null,
@@ -921,7 +904,6 @@ describe("PrismaIndicateurRepository", () => {
         const jalon = 2025;
 
         const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
           nom: "Chantier 001",
           ministeres: ["1009"],
           ministeres_acronymes: ["MINA"],
@@ -943,7 +925,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -1051,11 +1032,11 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+        expect(result[indicateur.id]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result[indicateur.id]["NAT-FR"].dateValeurAvancement).toEqual(
           "2026-01-12T00:00:00.000Z",
         );
-        expect(result["IND-001"]["NAT-FR"].proposition).toBeNull();
+        expect(result[indicateur.id]["NAT-FR"].proposition).toBeNull();
       }),
     );
 
@@ -1070,7 +1051,6 @@ describe("PrismaIndicateurRepository", () => {
         const jalon = 2025;
 
         const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
           nom: "Chantier 001",
           ministeres: ["1009"],
           ministeres_acronymes: ["MINA"],
@@ -1092,7 +1072,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -1200,11 +1179,11 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+        expect(result[indicateur.id]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result[indicateur.id]["NAT-FR"].dateValeurAvancement).toEqual(
           "2026-01-12T00:00:00.000Z",
         );
-        expect(result["IND-001"]["NAT-FR"].proposition).toBeNull();
+        expect(result[indicateur.id]["NAT-FR"].proposition).toBeNull();
       }),
     );
 
@@ -1212,7 +1191,7 @@ describe("PrismaIndicateurRepository", () => {
       "avec une PVA [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et nouvelle proposition",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -1230,7 +1209,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
         });
@@ -1355,11 +1333,11 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+        expect(result[indicateur.id]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result[indicateur.id]["NAT-FR"].dateValeurAvancement).toEqual(
           "2026-01-12T00:00:00.000Z",
         );
-        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+        expect(result[indicateur.id]["NAT-FR"].proposition).toEqual({
           valeurAvancement: 150,
           tauxAvancement: null,
           tauxAvancementIntermediaire: null,
@@ -1380,7 +1358,7 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_REFUSEE, le propositionStatutTerritoire est null et le propositionStatutDirectionProjet est du même type avec la date de l'événement",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -1391,7 +1369,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -1454,10 +1431,10 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(
-          result["IND-001"]["NAT-FR"].propositionStatutTerritoire,
+          result[indicateur.id]["NAT-FR"].propositionStatutTerritoire,
         ).toBeNull();
         expect(
-          result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
+          result[indicateur.id]["NAT-FR"].propositionStatutDirectionProjet,
         ).toEqual({
           statut: EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE,
           date: "2026-01-12",
@@ -1474,7 +1451,7 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type %s suivi de PROPOSITION_VALEUR_CREEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_CREEE",
       createIntegrationTest(async (_prisma, evenement) => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -1485,7 +1462,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -1554,15 +1530,15 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual(
-          {
-            statut: "PROPOSITION_VALEUR_CREEE",
-            date: "2026-01-12",
-            dateTime: "2026-01-12T00:00:00.000Z",
-          },
-        );
         expect(
-          result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
+          result[indicateur.id]["NAT-FR"].propositionStatutTerritoire,
+        ).toEqual({
+          statut: "PROPOSITION_VALEUR_CREEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+        expect(
+          result[indicateur.id]["NAT-FR"].propositionStatutDirectionProjet,
         ).toEqual({
           statut: evenement,
           date: "2026-01-12",
@@ -1579,7 +1555,7 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type %s suivi de PROPOSITION_VALEUR_MODIFIEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_MODIFIEE",
       createIntegrationTest(async (_prisma, evenement) => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -1590,7 +1566,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -1663,15 +1638,15 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual(
-          {
-            statut: "PROPOSITION_VALEUR_MODIFIEE",
-            date: "2026-01-12",
-            dateTime: "2026-01-12T00:00:00.000Z",
-          },
-        );
         expect(
-          result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
+          result[indicateur.id]["NAT-FR"].propositionStatutTerritoire,
+        ).toEqual({
+          statut: "PROPOSITION_VALEUR_MODIFIEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+        expect(
+          result[indicateur.id]["NAT-FR"].propositionStatutDirectionProjet,
         ).toEqual({
           statut: evenement,
           date: "2026-01-12",
@@ -1684,7 +1659,7 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_SUPPRIMEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_SUPPRIMEE et le propositionStatutDirectionProjet est null",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -1695,7 +1670,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -1757,15 +1731,15 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual(
-          {
-            statut: "PROPOSITION_VALEUR_SUPPRIMEE",
-            date: "2026-01-12",
-            dateTime: "2026-01-12T00:00:00.000Z",
-          },
-        );
         expect(
-          result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
+          result[indicateur.id]["NAT-FR"].propositionStatutTerritoire,
+        ).toEqual({
+          statut: "PROPOSITION_VALEUR_SUPPRIMEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+        expect(
+          result[indicateur.id]["NAT-FR"].propositionStatutDirectionProjet,
         ).toBeNull();
       }),
     );
@@ -1774,7 +1748,7 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_CREEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_CREEE et le propositionStatutDirectionProjet est null",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -1785,7 +1759,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -1836,15 +1809,15 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual(
-          {
-            statut: "PROPOSITION_VALEUR_CREEE",
-            date: "2026-01-12",
-            dateTime: "2026-01-12T00:00:00.000Z",
-          },
-        );
         expect(
-          result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
+          result[indicateur.id]["NAT-FR"].propositionStatutTerritoire,
+        ).toEqual({
+          statut: "PROPOSITION_VALEUR_CREEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+        expect(
+          result[indicateur.id]["NAT-FR"].propositionStatutDirectionProjet,
         ).toBeNull();
       }),
     );
@@ -1853,7 +1826,7 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_MODIFIEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_MODIFIEE et le propositionStatutDirectionProjet est null",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -1864,7 +1837,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -1937,15 +1909,15 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual(
-          {
-            statut: "PROPOSITION_VALEUR_MODIFIEE",
-            date: "2026-01-12",
-            dateTime: "2026-01-12T00:00:00.000Z",
-          },
-        );
         expect(
-          result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
+          result[indicateur.id]["NAT-FR"].propositionStatutTerritoire,
+        ).toEqual({
+          statut: "PROPOSITION_VALEUR_MODIFIEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+        expect(
+          result[indicateur.id]["NAT-FR"].propositionStatutDirectionProjet,
         ).toBeNull();
       }),
     );
@@ -1954,7 +1926,7 @@ describe("PrismaIndicateurRepository", () => {
       "s'assure que les événements sur différentes dates ne s'impactent pas mutuellement",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -1965,7 +1937,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -2031,15 +2002,15 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         // Seuls les événements de la date la plus récente (2026-01-15) sont pris en compte
-        expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual(
-          {
-            statut: "PROPOSITION_VALEUR_CREEE",
-            date: "2026-01-15",
-            dateTime: "2026-01-15T00:00:00.000Z",
-          },
-        );
         expect(
-          result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
+          result[indicateur.id]["NAT-FR"].propositionStatutTerritoire,
+        ).toEqual({
+          statut: "PROPOSITION_VALEUR_CREEE",
+          date: "2026-01-15",
+          dateTime: "2026-01-15T00:00:00.000Z",
+        });
+        expect(
+          result[indicateur.id]["NAT-FR"].propositionStatutDirectionProjet,
         ).toBeNull();
       }),
     );
@@ -2048,7 +2019,7 @@ describe("PrismaIndicateurRepository", () => {
       "calcule le statutTauxAvancement EN_COURS quand la date de création de la proposition est postérieure à la dernière exécution des datajobs",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -2059,7 +2030,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
           statut: "PUBLIE",
@@ -2103,7 +2073,7 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(
-          result["IND-001"]["NAT-FR"].proposition?.statutTauxAvancement,
+          result[indicateur.id]["NAT-FR"].proposition?.statutTauxAvancement,
         ).toEqual("EN_COURS");
       }),
     );
@@ -2112,7 +2082,7 @@ describe("PrismaIndicateurRepository", () => {
       "calcule le statutTauxAvancement CALCULE quand la date de création de la proposition est antérieure à la dernière exécution des datajobs",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -2123,7 +2093,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
           statut: "PUBLIE",
@@ -2167,7 +2136,7 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(
-          result["IND-001"]["NAT-FR"].proposition?.statutTauxAvancement,
+          result[indicateur.id]["NAT-FR"].proposition?.statutTauxAvancement,
         ).toEqual("CALCULE");
       }),
     );
@@ -2176,7 +2145,7 @@ describe("PrismaIndicateurRepository", () => {
       "calcule dateImport comme la date_creation la plus récente des événements VALEUR_CREEE et VALEUR_MODIFIEE antérieurs à la date de dernière exécution des datajobs",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -2194,15 +2163,12 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           chantier_id: chantier.id,
         });
         const indicateur3 = await fixtures.indicateurIdentite({
-          id: "IND-003",
           chantier_id: chantier.id,
         });
 
@@ -2241,7 +2207,7 @@ describe("PrismaIndicateurRepository", () => {
 
         const utilisateur = await fixtures.utilisateur();
 
-        // IND-001 NAT-FR : événements VALEUR_CREEE et VALEUR_MODIFIEE avant dateDerniereExecutionDatajobs
+        // indicateur1 NAT-FR : événements VALEUR_CREEE et VALEUR_MODIFIEE avant dateDerniereExecutionDatajobs
         await fixtures.indicateurTerritoireValeurEvenement({
           indic_id: indicateur1.id,
           territoire_code: "NAT-FR",
@@ -2257,7 +2223,7 @@ describe("PrismaIndicateurRepository", () => {
           id_auteur_modification: utilisateur.id,
         });
 
-        // IND-001 DEPT-01 : date_creation différente de NAT-FR
+        // indicateur1 DEPT-01 : date_creation différente de NAT-FR
         await fixtures.indicateurTerritoireValeurEvenement({
           indic_id: indicateur1.id,
           territoire_code: "DEPT-01",
@@ -2266,7 +2232,7 @@ describe("PrismaIndicateurRepository", () => {
           id_auteur_modification: utilisateur.id,
         });
 
-        // IND-002 NAT-FR : uniquement des événements PROPOSITION_* (pas d'import)
+        // indicateur2 NAT-FR : uniquement des événements PROPOSITION_* (pas d'import)
         await fixtures.indicateurTerritoireValeurEvenement({
           indic_id: indicateur2.id,
           territoire_code: "NAT-FR",
@@ -2275,7 +2241,7 @@ describe("PrismaIndicateurRepository", () => {
           id_auteur_modification: utilisateur.id,
         });
 
-        // IND-003 NAT-FR : événements après dateDerniereExecutionDatajobs (pas d'import)
+        // indicateur3 NAT-FR : événements après dateDerniereExecutionDatajobs (pas d'import)
         await fixtures.indicateurTerritoireValeurEvenement({
           indic_id: indicateur3.id,
           territoire_code: "NAT-FR",
@@ -2294,14 +2260,14 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(result["IND-001"]["NAT-FR"].dateImport).toEqual(
+        expect(result[indicateur1.id]["NAT-FR"].dateImport).toEqual(
           new Date("2026-01-15T00:00:00.000Z").toLocaleString(),
         );
-        expect(result["IND-001"]["DEPT-01"].dateImport).toEqual(
+        expect(result[indicateur1.id]["DEPT-01"].dateImport).toEqual(
           new Date("2026-01-20T00:00:00.000Z").toLocaleString(),
         );
-        expect(result["IND-002"]["NAT-FR"].dateImport).toBeNull();
-        expect(result["IND-003"]["NAT-FR"].dateImport).toBeNull();
+        expect(result[indicateur2.id]["NAT-FR"].dateImport).toBeNull();
+        expect(result[indicateur3.id]["NAT-FR"].dateImport).toBeNull();
       }),
     );
 
@@ -2309,7 +2275,7 @@ describe("PrismaIndicateurRepository", () => {
       "pour un indicateur agrégé NAT avec va_nat_from=DEPT, calcule dateImport à partir des événements DEPT",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -2327,7 +2293,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -2391,7 +2356,7 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         // NAT-FR utilise les événements DEPT (date la plus récente: 2026-01-20)
-        expect(result["IND-001"]["NAT-FR"].dateImport).toEqual(
+        expect(result[indicateur.id]["NAT-FR"].dateImport).toEqual(
           new Date("2026-01-20T00:00:00.000Z").toLocaleString(),
         );
       }),
@@ -2401,7 +2366,7 @@ describe("PrismaIndicateurRepository", () => {
       "pour un indicateur agrégé NAT avec va_nat_from=REG, calcule dateImport à partir des événements REG",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -2419,7 +2384,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -2476,7 +2440,7 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         // NAT-FR utilise les événements REG (date: 2026-01-15)
-        expect(result["IND-001"]["NAT-FR"].dateImport).toEqual(
+        expect(result[indicateur.id]["NAT-FR"].dateImport).toEqual(
           new Date("2026-01-15T00:00:00.000Z").toLocaleString(),
         );
       }),
@@ -2486,7 +2450,7 @@ describe("PrismaIndicateurRepository", () => {
       "pour un indicateur agrégé REG avec va_reg_from=DEPT, calcule dateImport à partir des événements DEPT enfants",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -2504,7 +2468,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
         });
 
@@ -2561,7 +2524,7 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         // REG-84 utilise les événements DEPT (date: 2026-01-25)
-        expect(result["IND-001"]["REG-84"].dateImport).toEqual(
+        expect(result[indicateur.id]["REG-84"].dateImport).toEqual(
           new Date("2026-01-25T00:00:00.000Z").toLocaleString(),
         );
       }),
@@ -2573,8 +2536,13 @@ describe("PrismaIndicateurRepository", () => {
       "sans PVA, retourne les détails d'un indicateur sur tous les territoires territoire",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -2605,13 +2573,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -2629,7 +2590,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -2681,7 +2641,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -2718,8 +2678,13 @@ describe("PrismaIndicateurRepository", () => {
       "avec une PVA [CREEE], retourne les détails des indicateurs pour un chantier, territoire et proposition",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -2750,13 +2715,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -2774,7 +2732,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -2877,7 +2834,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -2910,8 +2867,13 @@ describe("PrismaIndicateurRepository", () => {
       "avec une PVA [CREEE, MODIFIEE], retourne les détails des indicateurs pour un chantier, territoire et dernière proposition",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -2942,13 +2904,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -2966,7 +2921,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -3081,7 +3035,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -3118,8 +3072,13 @@ describe("PrismaIndicateurRepository", () => {
       "avec une PVA [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et aucune proposition",
       createIntegrationTest(async (_prisma, evenement) => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -3150,13 +3109,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -3173,7 +3125,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -3286,7 +3237,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -3309,8 +3260,13 @@ describe("PrismaIndicateurRepository", () => {
       "avec une PVA [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et la proposition",
       createIntegrationTest(async (_prisma, evenement) => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -3341,13 +3297,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -3364,7 +3313,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -3477,7 +3425,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -3497,8 +3445,13 @@ describe("PrismaIndicateurRepository", () => {
       "avec une PVA [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et nouvelle proposition",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -3529,13 +3482,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -3553,7 +3499,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -3699,7 +3644,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -3732,8 +3677,13 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_REFUSEE, le propositionStatutTerritoire est null et le propositionStatutDirectionProjet est PROPOSITION_VALEUR_REFUSEE avec la date de l'événement",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -3764,13 +3714,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -3788,7 +3731,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -3873,7 +3815,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -3895,8 +3837,13 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_ACCUSEE_RECEPTION suivi de PROPOSITION_VALEUR_CREEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_CREEE",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -3927,13 +3874,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -3951,7 +3891,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -4037,7 +3976,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -4062,8 +4001,13 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_ACCUSEE_RECEPTION suivi de PROPOSITION_VALEUR_MODIFIEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_MODIFIEE",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -4094,13 +4038,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -4118,7 +4055,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -4217,7 +4153,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -4242,8 +4178,13 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_SUPPRIMEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_SUPPRIMEE et le propositionStatutDirectionProjet est null",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -4274,13 +4215,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -4298,7 +4232,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -4383,7 +4316,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -4404,8 +4337,13 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_CREEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_CREEE et le propositionStatutDirectionProjet est null",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -4436,13 +4374,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -4460,7 +4391,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -4530,7 +4460,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -4551,8 +4481,13 @@ describe("PrismaIndicateurRepository", () => {
       "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_MODIFIEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_MODIFIEE et le propositionStatutDirectionProjet est null",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -4583,13 +4518,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -4607,7 +4535,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -4705,7 +4632,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -4726,8 +4653,13 @@ describe("PrismaIndicateurRepository", () => {
       "s'assure que les événements sur différentes dates ne s'impactent pas mutuellement",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02", "DEPT-01"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -4758,13 +4690,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -4781,7 +4706,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -4862,7 +4786,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -4884,8 +4808,13 @@ describe("PrismaIndicateurRepository", () => {
       "calcule le statutTauxAvancement EN_COURS quand la date de création de la proposition est postérieure à la dernière exécution des datajobs",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -4916,13 +4845,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -4932,7 +4854,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -4967,7 +4888,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -4985,8 +4906,13 @@ describe("PrismaIndicateurRepository", () => {
       "calcule le statutTauxAvancement CALCULE quand la date de création de la proposition est antérieure à la dernière exécution des datajobs",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-02"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -5017,13 +4943,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-          ministeres: ["1009"],
-          ministeres_acronymes: ["MINA"],
-        });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-02",
@@ -5033,7 +4952,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           unite_mesure: "kg",
@@ -5067,7 +4985,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -5085,8 +5003,9 @@ describe("PrismaIndicateurRepository", () => {
       "calcule dateImport comme la date_creation la plus récente des événements VALEUR_CREEE et VALEUR_MODIFIEE antérieurs à la date de dernière exécution des datajobs",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite();
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["DEPT-01", "DEPT-02", "DEPT-03"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -5117,8 +5036,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "DEPT-01",
@@ -5142,7 +5059,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: indicateurId,
           chantier_id: chantier.id,
         });
 
@@ -5210,7 +5126,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
@@ -5230,8 +5146,9 @@ describe("PrismaIndicateurRepository", () => {
       "pour un indicateur agrégé NAT avec va_nat_from=DEPT, calcule dateImport à partir des événements DEPT",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite();
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["NAT-FR"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -5262,8 +5179,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "NAT-FR",
@@ -5280,7 +5195,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: indicateurId,
           chantier_id: chantier.id,
         });
 
@@ -5329,7 +5243,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.DITP_ADMIN,
             jalon,
@@ -5348,8 +5262,9 @@ describe("PrismaIndicateurRepository", () => {
       "pour un indicateur agrégé REG avec va_reg_from=DEPT, calcule dateImport à partir des événements DEPT enfants",
       createIntegrationTest(async () => {
         // Given
-        const chantiersIds = ["CH-001"];
-        const indicateurId = "IND-001";
+        const chantier = await fixtures.chantierIdentite();
+
+        const chantiersIds = [chantier.id];
         const territoireCodes = ["REG-84"];
         const jalon = 2025;
         const habilitations: Habilitations = {
@@ -5380,8 +5295,6 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
-
         await fixtures.chantierTerritoire({
           id: chantier.id,
           territoire_code: "REG-84",
@@ -5398,7 +5311,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: indicateurId,
           chantier_id: chantier.id,
         });
 
@@ -5447,7 +5359,7 @@ describe("PrismaIndicateurRepository", () => {
         // When
         const result =
           await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-            indicateurId,
+            indicateur.id,
             habilitations,
             ProfilEnum.DITP_ADMIN,
             jalon,
@@ -5469,11 +5381,9 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier1 = await fixtures.chantierIdentite({
-          id: "CH-001",
           statut: "PUBLIE",
         });
         const chantier2 = await fixtures.chantierIdentite({
-          id: "CH-002",
           statut: "PUBLIE",
         });
 
@@ -5493,19 +5403,16 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier1.id,
           statut: "PUBLIE",
         });
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           nom: "Indicateur 002",
           chantier_id: chantier1.id,
           statut: "PUBLIE",
         });
         const indicateur3 = await fixtures.indicateurIdentite({
-          id: "IND-003",
           nom: "Indicateur 003",
           chantier_id: chantier2.id,
           statut: "PUBLIE",
@@ -5548,19 +5455,19 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(result.size).toEqual(2);
-        expect(result.get("CH-001")).toEqual(
+        expect(result.get(chantier1.id)).toEqual(
           expect.arrayContaining([
             {
-              id: "IND-001",
+              id: indicateur1.id,
               nom: "Indicateur 001",
               mailles: ["NAT"],
               responsablesDonneesMails: [],
             },
           ]),
         );
-        expect(result.get("CH-002")).toEqual([
+        expect(result.get(chantier2.id)).toEqual([
           {
-            id: "IND-003",
+            id: indicateur3.id,
             nom: "Indicateur 003",
             mailles: ["NAT"],
             responsablesDonneesMails: [],
@@ -5574,7 +5481,6 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
           nom: "Chantier 001",
           statut: "PUBLIE",
         });
@@ -5587,9 +5493,8 @@ describe("PrismaIndicateurRepository", () => {
           zone_id: "FRANCE",
         });
 
-        // IND-001: est_applicable = false
+        // indicateur1: est_applicable = false
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           statut: "PUBLIE",
@@ -5606,9 +5511,8 @@ describe("PrismaIndicateurRepository", () => {
           est_a_jour: false,
         });
 
-        // IND-002: est_applicable = null
+        // indicateur2: est_applicable = null
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           nom: "Indicateur 002",
           chantier_id: chantier.id,
           statut: "PUBLIE",
@@ -5625,9 +5529,8 @@ describe("PrismaIndicateurRepository", () => {
           est_a_jour: false,
         });
 
-        // IND-003: est_applicable = true (seul inclus)
+        // indicateur3: est_applicable = true (seul inclus)
         const indicateur3 = await fixtures.indicateurIdentite({
-          id: "IND-003",
           nom: "Indicateur 003",
           chantier_id: chantier.id,
           statut: "PUBLIE",
@@ -5650,9 +5553,9 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(result.size).toEqual(1);
-        expect(result.get("CH-001")).toEqual([
+        expect(result.get(chantier.id)).toEqual([
           {
-            id: "IND-003",
+            id: indicateur3.id,
             nom: "Indicateur 003",
             mailles: ["NAT"],
             responsablesDonneesMails: [],
@@ -5666,7 +5569,6 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
           nom: "Chantier 001",
           statut: "PUBLIE",
         });
@@ -5680,7 +5582,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           statut: "PUBLIE",
@@ -5711,7 +5612,6 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier1 = await fixtures.chantierIdentite({
-          id: "CH-001",
           nom: "Chantier 001",
           statut: "PUBLIE",
         });
@@ -5725,7 +5625,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const chantier2 = await fixtures.chantierIdentite({
-          id: "CH-002",
           nom: "Chantier 002",
           statut: "PUBLIE",
         });
@@ -5738,9 +5637,8 @@ describe("PrismaIndicateurRepository", () => {
           zone_id: "FRANCE",
         });
 
-        // CH-001: indicateur non à jour
+        // chantier1: indicateur non à jour
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier1.id,
           statut: "PUBLIE",
@@ -5757,9 +5655,8 @@ describe("PrismaIndicateurRepository", () => {
           est_a_jour: false,
         });
 
-        // CH-002: indicateur à jour
+        // chantier2: indicateur à jour
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           nom: "Indicateur 002",
           chantier_id: chantier2.id,
           statut: "PUBLIE",
@@ -5782,15 +5679,15 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(result.size).toEqual(1);
-        expect(result.get("CH-001")).toEqual([
+        expect(result.get(chantier1.id)).toEqual([
           {
-            id: "IND-001",
+            id: indicateur1.id,
             nom: "Indicateur 001",
             mailles: ["NAT"],
             responsablesDonneesMails: [],
           },
         ]);
-        expect(result.has("CH-002")).toEqual(false);
+        expect(result.has(chantier2.id)).toEqual(false);
       }),
     );
 
@@ -5799,7 +5696,6 @@ describe("PrismaIndicateurRepository", () => {
       // Given
       createIntegrationTest(async () => {
         const chantier1 = await fixtures.chantierIdentite({
-          id: "CH-001",
           nom: "Chantier 001",
           statut: "PUBLIE",
         });
@@ -5813,7 +5709,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const chantier2 = await fixtures.chantierIdentite({
-          id: "CH-002",
           nom: "Chantier 002",
           statut: "BROUILLON",
         });
@@ -5827,7 +5722,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier1.id,
           statut: "PUBLIE",
@@ -5845,7 +5739,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           nom: "Indicateur 002",
           chantier_id: chantier1.id,
           statut: "SUPPRIME",
@@ -5863,7 +5756,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur3 = await fixtures.indicateurIdentite({
-          id: "IND-003",
           nom: "Indicateur 003",
           chantier_id: chantier2.id,
           statut: "PUBLIE",
@@ -5886,15 +5778,15 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(result.size).toEqual(1);
-        expect(result.get("CH-001")).toEqual([
+        expect(result.get(chantier1.id)).toEqual([
           {
-            id: "IND-001",
+            id: indicateur1.id,
             nom: "Indicateur 001",
             mailles: ["NAT"],
             responsablesDonneesMails: [],
           },
         ]);
-        expect(result.has("CH-002")).toEqual(false);
+        expect(result.has(chantier2.id)).toEqual(false);
       }),
     );
 
@@ -5904,7 +5796,6 @@ describe("PrismaIndicateurRepository", () => {
         // Given
 
         const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
           nom: "Chantier 001",
           statut: "PUBLIE",
         });
@@ -5934,14 +5825,13 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           type_id: "IMPACT",
           statut: "PUBLIE",
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur1.id,
           chantier_id: chantier.id,
           maille: "NAT",
@@ -5952,7 +5842,7 @@ describe("PrismaIndicateurRepository", () => {
           est_a_jour: false,
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur1.id,
           chantier_id: chantier.id,
           maille: "REG",
@@ -5963,7 +5853,7 @@ describe("PrismaIndicateurRepository", () => {
           est_a_jour: null,
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur1.id,
           chantier_id: chantier.id,
           maille: "DEPT",
@@ -5975,14 +5865,13 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           nom: "Indicateur 002",
           chantier_id: chantier.id,
           type_id: "IMPACT",
           statut: "PUBLIE",
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur2.id,
           chantier_id: chantier.id,
           maille: "NAT",
@@ -5993,7 +5882,7 @@ describe("PrismaIndicateurRepository", () => {
           est_a_jour: true,
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur2.id,
           chantier_id: chantier.id,
           maille: "REG",
@@ -6004,7 +5893,7 @@ describe("PrismaIndicateurRepository", () => {
           est_a_jour: false,
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur2.id,
           chantier_id: chantier.id,
           maille: "DEPT",
@@ -6021,22 +5910,20 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(result.size).toEqual(1);
-        expect(result.get("CH-001")).toEqual([
+        expect(result.get(chantier.id)).toIncludeSameMembers([
           {
-            id: "IND-001",
+            id: indicateur1.id,
             nom: "Indicateur 001",
-            mailles: expect.arrayContaining(["NAT", "REG"]),
+            mailles: expect.toIncludeSameMembers(["NAT", "REG"]),
             responsablesDonneesMails: [],
           },
           {
-            id: "IND-002",
+            id: indicateur2.id,
             nom: "Indicateur 002",
-            mailles: expect.arrayContaining(["REG", "DEPT"]),
+            mailles: expect.toIncludeSameMembers(["REG", "DEPT"]),
             responsablesDonneesMails: [],
           },
         ]);
-        expect(result.get("CH-001")![0].mailles).toHaveLength(2);
-        expect(result.get("CH-001")![1].mailles).toHaveLength(2);
       }),
     );
 
@@ -6045,11 +5932,9 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier1 = await fixtures.chantierIdentite({
-          id: "CH-001",
           statut: "PUBLIE",
         });
         const chantier2 = await fixtures.chantierIdentite({
-          id: "CH-002",
           statut: "PUBLIE",
         });
 
@@ -6069,13 +5954,11 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier1.id,
           statut: "PUBLIE",
         });
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           nom: "Indicateur 002",
           chantier_id: chantier2.id,
           statut: "PUBLIE",
@@ -6106,21 +5989,21 @@ describe("PrismaIndicateurRepository", () => {
         const result =
           await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId(
             {
-              chantiersIds: ["CH-001"],
+              chantiersIds: [chantier1.id],
             },
           );
 
         // Then
         expect(result.size).toEqual(1);
-        expect(result.get("CH-001")).toEqual([
+        expect(result.get(chantier1.id)).toEqual([
           {
-            id: "IND-001",
+            id: indicateur1.id,
             nom: "Indicateur 001",
             mailles: ["NAT"],
             responsablesDonneesMails: [],
           },
         ]);
-        expect(result.has("CH-002")).toEqual(false);
+        expect(result.has(chantier2.id)).toEqual(false);
       }),
     );
 
@@ -6129,11 +6012,9 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantierPublie = await fixtures.chantierIdentite({
-          id: "CH-001",
           statut: "PUBLIE",
         });
         const chantierBrouillon = await fixtures.chantierIdentite({
-          id: "CH-002",
           statut: "BROUILLON",
         });
 
@@ -6153,13 +6034,11 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantierPublie.id,
           statut: "PUBLIE",
         });
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           nom: "Indicateur 002",
           chantier_id: chantierBrouillon.id,
           statut: "PUBLIE",
@@ -6192,8 +6071,8 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(resultSansOption.size).toEqual(1);
-        expect(resultSansOption.has("CH-001")).toEqual(true);
-        expect(resultSansOption.has("CH-002")).toEqual(false);
+        expect(resultSansOption.has(chantierPublie.id)).toEqual(true);
+        expect(resultSansOption.has(chantierBrouillon.id)).toEqual(false);
 
         // When - avec inclureChantiersBrouillon : les deux chantiers sont retournés
         const resultAvecBrouillon =
@@ -6205,8 +6084,8 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(resultAvecBrouillon.size).toEqual(2);
-        expect(resultAvecBrouillon.has("CH-001")).toEqual(true);
-        expect(resultAvecBrouillon.has("CH-002")).toEqual(true);
+        expect(resultAvecBrouillon.has(chantierPublie.id)).toEqual(true);
+        expect(resultAvecBrouillon.has(chantierBrouillon.id)).toEqual(true);
       }),
     );
   });
@@ -6217,7 +6096,6 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
           statut: "PUBLIE",
         });
 
@@ -6230,7 +6108,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           statut: "PUBLIE",
@@ -6271,8 +6148,8 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(result.size).toEqual(1);
-        expect(result.get("CH-001")).toEqual([
-          { id: "IND-001", nom: "Indicateur 001" },
+        expect(result.get(chantier.id)).toEqual([
+          { id: indicateur.id, nom: "Indicateur 001" },
         ]);
       }),
     );
@@ -6282,7 +6159,6 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
           statut: "PUBLIE",
         });
 
@@ -6303,7 +6179,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           statut: "PUBLIE",
@@ -6373,8 +6248,8 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(result.size).toEqual(1);
-        expect(result.get("CH-001")).toEqual([
-          { id: "IND-001", nom: "Indicateur 001" },
+        expect(result.get(chantier.id)).toEqual([
+          { id: indicateur.id, nom: "Indicateur 001" },
         ]);
       }),
     );
@@ -6384,7 +6259,6 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
           statut: "PUBLIE",
         });
 
@@ -6397,7 +6271,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           statut: "PUBLIE",
@@ -6445,7 +6318,6 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantierPublie = await fixtures.chantierIdentite({
-          id: "CH-001",
           statut: "PUBLIE",
         });
 
@@ -6458,7 +6330,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const chantierBrouillon = await fixtures.chantierIdentite({
-          id: "CH-002",
           statut: "BROUILLON",
         });
 
@@ -6472,7 +6343,6 @@ describe("PrismaIndicateurRepository", () => {
 
         // Indicateur publié sur chantier publié (doit apparaitre)
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantierPublie.id,
           statut: "PUBLIE",
@@ -6505,7 +6375,6 @@ describe("PrismaIndicateurRepository", () => {
 
         // Indicateur supprimé sur chantier publié (ne doit pas apparaitre)
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           nom: "Indicateur 002",
           chantier_id: chantierPublie.id,
           statut: "SUPPRIME",
@@ -6538,7 +6407,6 @@ describe("PrismaIndicateurRepository", () => {
 
         // Indicateur publié sur chantier brouillon (ne doit pas apparaitre)
         const indicateur3 = await fixtures.indicateurIdentite({
-          id: "IND-003",
           nom: "Indicateur 003",
           chantier_id: chantierBrouillon.id,
           statut: "PUBLIE",
@@ -6577,10 +6445,10 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(result.size).toEqual(1);
-        expect(result.get("CH-001")).toEqual([
-          { id: "IND-001", nom: "Indicateur 001" },
+        expect(result.get(chantierPublie.id)).toEqual([
+          { id: indicateur1.id, nom: "Indicateur 001" },
         ]);
-        expect(result.has("CH-002")).toEqual(false);
+        expect(result.has(chantierBrouillon.id)).toEqual(false);
       }),
     );
 
@@ -6589,7 +6457,6 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
           statut: "PUBLIE",
         });
 
@@ -6603,7 +6470,6 @@ describe("PrismaIndicateurRepository", () => {
 
         // est_applicable = false
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           statut: "PUBLIE",
@@ -6636,7 +6502,6 @@ describe("PrismaIndicateurRepository", () => {
 
         // est_applicable = true (seul inclus)
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           nom: "Indicateur 002",
           chantier_id: chantier.id,
           statut: "PUBLIE",
@@ -6675,8 +6540,8 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(result.size).toEqual(1);
-        expect(result.get("CH-001")).toEqual([
-          { id: "IND-002", nom: "Indicateur 002" },
+        expect(result.get(chantier.id)).toEqual([
+          { id: indicateur2.id, nom: "Indicateur 002" },
         ]);
       }),
     );
@@ -6686,7 +6551,6 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
           statut: "PUBLIE",
         });
 
@@ -6699,7 +6563,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           statut: "PUBLIE",
@@ -6746,7 +6609,6 @@ describe("PrismaIndicateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
           statut: "PUBLIE",
         });
 
@@ -6759,7 +6621,6 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           nom: "Indicateur 001",
           chantier_id: chantier.id,
           statut: "PUBLIE",
@@ -6819,19 +6680,16 @@ describe("PrismaIndicateurRepository", () => {
   });
 
   describe("#recupererPourExports", () => {
-    const CHANTIER_ID = "CH-001";
-
     describe("filtrage", () => {
       it(
         "doit exclure les indicateurs supprimés",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -6839,12 +6697,12 @@ describe("PrismaIndicateurRepository", () => {
             est_applicable: true,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             statut: $Enums.type_statut_indicateur.SUPPRIME,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -6853,7 +6711,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["NAT-FR"],
             2025,
             2025,
@@ -6868,9 +6726,9 @@ describe("PrismaIndicateurRepository", () => {
         "doit exclure les indicateurs dont le chantier n'a aucun ministère",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({ id: CHANTIER_ID, ministeres: [] });
+          const chantier = await fixtures.chantierIdentite({ ministeres: [] });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -6878,11 +6736,11 @@ describe("PrismaIndicateurRepository", () => {
             est_applicable: true,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -6891,7 +6749,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["NAT-FR"],
             2025,
             2025,
@@ -6906,12 +6764,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit exclure les indicateurs dont le chantier_territoire n'est pas applicable",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -6919,11 +6776,11 @@ describe("PrismaIndicateurRepository", () => {
             est_applicable: false,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -6932,7 +6789,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["NAT-FR"],
             2025,
             2025,
@@ -6947,12 +6804,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit exclure les indicateurs dont le territoire_code n'est pas dans territoireCodesLecture",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -6960,11 +6816,11 @@ describe("PrismaIndicateurRepository", () => {
             est_applicable: true,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -6973,7 +6829,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When : seul REG-84 est demandé, NAT-FR ne doit pas apparaître
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["REG-84"],
             2025,
             2025,
@@ -6990,12 +6846,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit retourner les valeurs (actuelle, cible, taux) correspondant au jalon spécifié",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7003,11 +6858,11 @@ describe("PrismaIndicateurRepository", () => {
             est_applicable: true,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7036,7 +6891,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["NAT-FR"],
             2025,
             2025,
@@ -7059,12 +6914,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit retourner des valeurs null quand aucun enregistrement n'existe pour le jalon demandé",
         createIntegrationTest(async () => {
           // Given : aucun indicateur_territoire_jalon créé pour le jalon 2026
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7072,11 +6926,11 @@ describe("PrismaIndicateurRepository", () => {
             est_applicable: true,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7085,7 +6939,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["NAT-FR"],
             2026,
             2025,
@@ -7108,12 +6962,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit retourner le taux d'avancement chantier du jalon sélectionné et du jalon par défaut séparément",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7121,11 +6974,11 @@ describe("PrismaIndicateurRepository", () => {
             est_applicable: true,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7133,7 +6986,7 @@ describe("PrismaIndicateurRepository", () => {
           });
           // jalon par défaut 2025 → taux 60
           await fixtures.chantierTerritoireJalon({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7143,7 +6996,7 @@ describe("PrismaIndicateurRepository", () => {
           });
           // jalon sélectionné 2026 → taux 80
           await fixtures.chantierTerritoireJalon({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7154,7 +7007,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["NAT-FR"],
             2026,
             2025,
@@ -7176,12 +7029,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit être true pour une maille DEPT avec des propositions de valeur d'avancement",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -7190,11 +7042,11 @@ describe("PrismaIndicateurRepository", () => {
             nombre_propositions_valeur_actuelle: 2,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -7203,7 +7055,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["DEPT-01"],
             2025,
             2025,
@@ -7222,12 +7074,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit être false pour une maille DEPT sans proposition de valeur d'avancement",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -7236,11 +7087,11 @@ describe("PrismaIndicateurRepository", () => {
             nombre_propositions_valeur_actuelle: 0,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -7249,7 +7100,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["DEPT-01"],
             2025,
             2025,
@@ -7268,12 +7119,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit être true pour une maille REG dont un département enfant a des propositions",
         createIntegrationTest(async () => {
           // Given : REG-84 sans propositions, DEPT-01 (enfant de REG-84) avec propositions
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "REG-84",
             code_insee: "84",
             maille: "REG",
@@ -7282,7 +7132,7 @@ describe("PrismaIndicateurRepository", () => {
             nombre_propositions_valeur_actuelle: 0,
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -7291,11 +7141,11 @@ describe("PrismaIndicateurRepository", () => {
             nombre_propositions_valeur_actuelle: 1,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "REG-84",
             code_insee: "84",
             maille: "REG",
@@ -7304,7 +7154,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["REG-84"],
             2025,
             2025,
@@ -7323,12 +7173,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit être true pour une maille NAT quand n'importe quel territoire du chantier a des propositions",
         createIntegrationTest(async () => {
           // Given : NAT-FR sans propositions, DEPT-01 avec propositions
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7337,7 +7186,7 @@ describe("PrismaIndicateurRepository", () => {
             nombre_propositions_valeur_actuelle: 0,
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -7346,11 +7195,11 @@ describe("PrismaIndicateurRepository", () => {
             nombre_propositions_valeur_actuelle: 1,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7359,7 +7208,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["NAT-FR"],
             2025,
             2025,
@@ -7380,12 +7229,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit être true si aucun département applicable n'existe pour le chantier",
         createIntegrationTest(async () => {
           // Given : DEPT-01 non applicable
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7393,7 +7241,7 @@ describe("PrismaIndicateurRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -7402,11 +7250,11 @@ describe("PrismaIndicateurRepository", () => {
             taux_avancement_mandat: null,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7415,7 +7263,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["NAT-FR"],
             2025,
             2025,
@@ -7434,12 +7282,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit être true si au moins un département applicable possède un taux d'avancement non null",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7447,7 +7294,7 @@ describe("PrismaIndicateurRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -7456,7 +7303,7 @@ describe("PrismaIndicateurRepository", () => {
           });
           // DEPT-01 a un taux non null pour le jalon par défaut (2025), mais pas pour le jalon sélectionné (2026)
           await fixtures.chantierTerritoireJalon({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -7465,11 +7312,11 @@ describe("PrismaIndicateurRepository", () => {
             taux_avancement: 50,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7478,7 +7325,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["NAT-FR"],
             2026,
             2025,
@@ -7497,12 +7344,11 @@ describe("PrismaIndicateurRepository", () => {
         "doit être false si tous les départements applicables ont un taux d'avancement null",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: CHANTIER_ID,
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7510,7 +7356,7 @@ describe("PrismaIndicateurRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: CHANTIER_ID,
+            id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -7519,11 +7365,11 @@ describe("PrismaIndicateurRepository", () => {
             taux_avancement_mandat: null,
           });
           const indicateur = await fixtures.indicateurIdentite({
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
           });
           await fixtures.indicateurTerritoire({
             id: indicateur.id,
-            chantier_id: CHANTIER_ID,
+            chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -7532,7 +7378,7 @@ describe("PrismaIndicateurRepository", () => {
 
           // When
           const result = await prismaIndicateurRepository.recupererPourExports(
-            CHANTIER_ID,
+            chantier.id,
             ["NAT-FR"],
             2025,
             2025,

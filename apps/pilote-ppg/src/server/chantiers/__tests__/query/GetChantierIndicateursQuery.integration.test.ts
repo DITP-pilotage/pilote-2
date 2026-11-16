@@ -7,31 +7,31 @@ describe("GetChantierIndicateursQuery", () => {
   const query = new GetChantierIndicateursQuery({ prisma: new PrismaPilote() });
 
   const creerIndicateur = async (responsablesDonneesMails: string[]) => {
-    await fixtures.chantierIdentite({ id: "CH-001" });
+    const chantier = await fixtures.chantierIdentite();
     await fixtures.chantierTerritoire({
-      id: "CH-001",
+      id: chantier.id,
       territoire_code: "NAT-FR",
       code_insee: "FR",
       maille: "NAT",
       zone_id: "FRANCE",
     });
-    await fixtures.indicateurIdentite({
-      id: "IND-001",
-      chantier_id: "CH-001",
+    const indicateur = await fixtures.indicateurIdentite({
+      chantier_id: chantier.id,
       statut: "PUBLIE",
       responsables_donnees_mails: responsablesDonneesMails,
     });
     await fixtures.indicateurTerritoire({
-      id: "IND-001",
-      chantier_id: "CH-001",
+      id: indicateur.id,
+      chantier_id: chantier.id,
       territoire_code: "NAT-FR",
     });
+    return { chantier, indicateur };
   };
 
-  const executer = () =>
+  const executer = (chantierId: string) =>
     query.execute({
       territoireCode: "NAT-FR",
-      chantierId: "CH-001",
+      chantierId,
       jalon: 2025,
     });
 
@@ -42,15 +42,17 @@ describe("GetChantierIndicateursQuery", () => {
       const responsable = await fixtures.utilisateur({
         email: "jeanne.martin@modernisation.gouv.fr",
       });
-      await creerIndicateur(["Jeanne.Martin@Modernisation.gouv.fr"]);
+      const { chantier, indicateur } = await creerIndicateur([
+        "Jeanne.Martin@Modernisation.gouv.fr",
+      ]);
 
       // When
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // Then
       expect(result.indicateurs).toEqual([
         expect.objectContaining({
-          indicateur_id: "IND-001",
+          indicateur_id: indicateur.id,
           responsables_donnees_ids: [responsable.id],
         }),
       ]);
@@ -61,10 +63,12 @@ describe("GetChantierIndicateursQuery", () => {
     "omet un e-mail qui ne correspond à aucun compte, sans jamais renvoyer d'e-mail",
     createIntegrationTest(async () => {
       // Given
-      await creerIndicateur(["inconnu@modernisation.gouv.fr"]);
+      const { chantier } = await creerIndicateur([
+        "inconnu@modernisation.gouv.fr",
+      ]);
 
       // When
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // Then
       expect(result.indicateurs).toEqual([

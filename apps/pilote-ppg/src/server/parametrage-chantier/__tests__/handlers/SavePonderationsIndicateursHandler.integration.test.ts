@@ -28,14 +28,12 @@ describe("SavePonderationsIndicateursHandler", () => {
     "enregistre les pondérations quand la somme par maille applicable vaut 100",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const chantier = await fixtures.metadataChantier();
       const indicateur1 = await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-010",
+        indic_parent_ch: chantier.chantier_id,
       });
       const indicateur2 = await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-002",
-        indic_parent_ch: "CH-010",
+        indic_parent_ch: chantier.chantier_id,
       });
       await fixtures.metadataIndicateurComplementaire({
         indic_id: indicateur1.indic_id,
@@ -94,14 +92,12 @@ describe("SavePonderationsIndicateursHandler", () => {
     "enregistre les pondérations même si la somme d'une maille applicable est différente de 100",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const chantier = await fixtures.metadataChantier();
       const indicateur1 = await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-010",
+        indic_parent_ch: chantier.chantier_id,
       });
       const indicateur2 = await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-002",
-        indic_parent_ch: "CH-010",
+        indic_parent_ch: chantier.chantier_id,
       });
       await fixtures.metadataIndicateurComplementaire({
         indic_id: indicateur1.indic_id,
@@ -162,10 +158,9 @@ describe("SavePonderationsIndicateursHandler", () => {
     "n'inclut pas les mailles non applicables à un indicateur dans le calcul de la somme",
     createIntegrationTest(async () => {
       // Given : un indicateur non territorialisé (donc seule la maille NAT est applicable)
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const chantier = await fixtures.metadataChantier();
       const indicateur = await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-010",
+        indic_parent_ch: chantier.chantier_id,
       });
       await fixtures.metadataIndicateurComplementaire({
         indic_id: indicateur.indic_id,
@@ -206,10 +201,9 @@ describe("SavePonderationsIndicateursHandler", () => {
     "historise la modification quand une pondération passe à 0",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const chantier = await fixtures.metadataChantier();
       const indicateur = await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-010",
+        indic_parent_ch: chantier.chantier_id,
       });
       await fixtures.metadataIndicateurComplementaire({
         indic_id: indicateur.indic_id,
@@ -267,10 +261,9 @@ describe("SavePonderationsIndicateursHandler", () => {
     "n'historise rien quand les pondérations enregistrées sont identiques aux précédentes",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const chantier = await fixtures.metadataChantier();
       const indicateur = await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-010",
+        indic_parent_ch: chantier.chantier_id,
       });
       await fixtures.metadataIndicateurComplementaire({
         indic_id: indicateur.indic_id,
@@ -312,10 +305,9 @@ describe("SavePonderationsIndicateursHandler", () => {
     "désactive un indicateur quand il est enregistré comme inactif",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const chantier = await fixtures.metadataChantier();
       const indicateur = await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-010",
+        indic_parent_ch: chantier.chantier_id,
         indic_hidden_pilote: false,
       });
       await fixtures.metadataIndicateurComplementaire({
@@ -358,10 +350,9 @@ describe("SavePonderationsIndicateursHandler", () => {
     "historise le statut avec les métadonnées et la pondération avec le paramétrage, comme la fiche indicateur",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const chantier = await fixtures.metadataChantier();
       const indicateur = await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-010",
+        indic_parent_ch: chantier.chantier_id,
         indic_hidden_pilote: true,
       });
       await fixtures.metadataIndicateurComplementaire({
@@ -421,10 +412,9 @@ describe("SavePonderationsIndicateursHandler", () => {
     "ne réécrit pas le statut d'un indicateur dont le statut n'a pas changé",
     createIntegrationTest(async () => {
       // Given : un statut non renseigné, considéré comme actif
-      await fixtures.metadataChantier({ chantier_id: "CH-010" });
+      const chantier = await fixtures.metadataChantier();
       const indicateur = await fixtures.metadataIndicateurHidden({
-        indic_id: "IND-001",
-        indic_parent_ch: "CH-010",
+        indic_parent_ch: chantier.chantier_id,
         indic_hidden_pilote: null,
       });
       await fixtures.metadataIndicateurComplementaire({

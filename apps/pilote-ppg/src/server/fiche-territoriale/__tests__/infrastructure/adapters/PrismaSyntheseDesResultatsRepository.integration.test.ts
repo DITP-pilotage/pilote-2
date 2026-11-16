@@ -147,24 +147,22 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
 
         // Then
         expect([...result.keys()]).toIncludeSameMembers([ch1.id, ch2.id]);
-        expect(result.get(ch1.id)?.at(0)?.dateMeteo).toEqual(
-          "2024-01-02T00:00:00.000Z",
-        );
-        expect(result.get(ch1.id)?.at(0)?.dateCommentaire).toEqual(
-          "2024-01-02T00:00:00.000Z",
-        );
-        expect(result.get(ch1.id)?.at(1)?.dateMeteo).toEqual(
-          "2023-01-02T00:00:00.000Z",
-        );
-        expect(result.get(ch1.id)?.at(1)?.dateCommentaire).toEqual(
-          "2023-01-02T00:00:00.000Z",
-        );
-        expect(result.get(ch2.id)?.at(0)?.dateMeteo).toEqual(
-          "2021-04-02T00:00:00.000Z",
-        );
-        expect(result.get(ch2.id)?.at(0)?.dateCommentaire).toEqual(
-          "2021-04-02T00:00:00.000Z",
-        );
+        expect(result.get(ch1.id)).toIncludeSameMembers([
+          expect.objectContaining({
+            dateMeteo: "2024-01-02T00:00:00.000Z",
+            dateCommentaire: "2024-01-02T00:00:00.000Z",
+          }),
+          expect.objectContaining({
+            dateMeteo: "2023-01-02T00:00:00.000Z",
+            dateCommentaire: "2023-01-02T00:00:00.000Z",
+          }),
+        ]);
+        expect(result.get(ch2.id)).toIncludeSameMembers([
+          expect.objectContaining({
+            dateMeteo: "2021-04-02T00:00:00.000Z",
+            dateCommentaire: "2021-04-02T00:00:00.000Z",
+          }),
+        ]);
       }),
     );
   });

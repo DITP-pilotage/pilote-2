@@ -22,9 +22,9 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
       "prend la date la plus récente parmi plusieurs chantiers",
       createIntegrationTest(async () => {
         // given
-        await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -32,7 +32,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           est_applicable: true,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -41,9 +41,9 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           date_taux_avancement: new Date("2024-01-15T00:00:00.000Z"),
         });
 
-        await fixtures.chantierIdentite({ id: "CH-002" });
+        const autreChantier = await fixtures.chantierIdentite();
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: autreChantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -51,7 +51,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           est_applicable: true,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-002",
+          id: autreChantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -62,7 +62,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
 
         // when
         const result = await query.run({
-          chantierIds: ["CH-001", "CH-002"],
+          chantierIds: [chantier.id, autreChantier.id],
           jalon: 2025,
         });
 
@@ -82,9 +82,9 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
       "retourne null si aucun chantier n'a de date",
       createIntegrationTest(async () => {
         // given
-        await fixtures.chantierIdentite({ id: "CH-003" });
+        const chantier = await fixtures.chantierIdentite();
         await fixtures.chantierTerritoire({
-          id: "CH-003",
+          id: chantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -92,7 +92,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           est_applicable: true,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-003",
+          id: chantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -103,7 +103,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
 
         // when
         const result = await query.run({
-          chantierIds: ["CH-003"],
+          chantierIds: [chantier.id],
           jalon: 2025,
         });
 
@@ -125,9 +125,9 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
       "retourne false si tous les chantiers sont non applicables",
       createIntegrationTest(async () => {
         // given
-        await fixtures.chantierIdentite({ id: "CH-004" });
+        const chantier = await fixtures.chantierIdentite();
         await fixtures.chantierTerritoire({
-          id: "CH-004",
+          id: chantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -135,7 +135,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           est_applicable: false,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-004",
+          id: chantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -143,9 +143,9 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           jalon: 2025,
         });
 
-        await fixtures.chantierIdentite({ id: "CH-005" });
+        const autreChantier = await fixtures.chantierIdentite();
         await fixtures.chantierTerritoire({
-          id: "CH-005",
+          id: autreChantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -153,7 +153,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           est_applicable: false,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-005",
+          id: autreChantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -163,7 +163,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
 
         // when
         const result = await query.run({
-          chantierIds: ["CH-004", "CH-005"],
+          chantierIds: [chantier.id, autreChantier.id],
           jalon: 2025,
         });
 
@@ -183,9 +183,9 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
       "retourne true si tous les chantiers sont applicables",
       createIntegrationTest(async () => {
         // given
-        await fixtures.chantierIdentite({ id: "CH-008" });
+        const chantier = await fixtures.chantierIdentite();
         await fixtures.chantierTerritoire({
-          id: "CH-008",
+          id: chantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -193,7 +193,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           est_applicable: true,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-008",
+          id: chantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -201,9 +201,9 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           jalon: 2025,
         });
 
-        await fixtures.chantierIdentite({ id: "CH-009" });
+        const autreChantier = await fixtures.chantierIdentite();
         await fixtures.chantierTerritoire({
-          id: "CH-009",
+          id: autreChantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -211,7 +211,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           est_applicable: true,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-009",
+          id: autreChantier.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -221,7 +221,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
 
         // when
         const result = await query.run({
-          chantierIds: ["CH-008", "CH-009"],
+          chantierIds: [chantier.id, autreChantier.id],
           jalon: 2025,
         });
 
@@ -241,9 +241,9 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
       "retourne null si au moins un chantier est applicable",
       createIntegrationTest(async () => {
         // given
-        await fixtures.chantierIdentite({ id: "CH-006" });
+        const chantierNonApplicable = await fixtures.chantierIdentite();
         await fixtures.chantierTerritoire({
-          id: "CH-006",
+          id: chantierNonApplicable.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -251,7 +251,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           est_applicable: false,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-006",
+          id: chantierNonApplicable.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -259,9 +259,9 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           jalon: 2025,
         });
 
-        await fixtures.chantierIdentite({ id: "CH-007" });
+        const chantierApplicable = await fixtures.chantierIdentite();
         await fixtures.chantierTerritoire({
-          id: "CH-007",
+          id: chantierApplicable.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -269,7 +269,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
           est_applicable: true,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-007",
+          id: chantierApplicable.id,
           territoire_code: "DEPT-75",
           maille: "DEPT",
           code_insee: "75",
@@ -279,7 +279,7 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
 
         // when
         const result = await query.run({
-          chantierIds: ["CH-006", "CH-007"],
+          chantierIds: [chantierNonApplicable.id, chantierApplicable.id],
           jalon: 2025,
         });
 

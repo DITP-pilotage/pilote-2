@@ -19,11 +19,10 @@ describe("IndicateurSQLRepository", () => {
       "doit récupérer les détails des indicateurs regroupé par chantier",
       createIntegrationTest(async () => {
         // Given
-        const chantier1 = await fixtures.chantierIdentite({ id: "CH-001" });
-        const chantier2 = await fixtures.chantierIdentite({ id: "CH-002" });
+        const chantier1 = await fixtures.chantierIdentite();
+        const chantier2 = await fixtures.chantierIdentite();
 
-        await fixtures.indicateurIdentite({
-          id: "IND-001",
+        const indicateur1 = await fixtures.indicateurIdentite({
           nom: "Indicateur 001",
           chantier_id: chantier1.id,
           type_id: "IMPACT",
@@ -37,8 +36,7 @@ describe("IndicateurSQLRepository", () => {
           delai_disponibilite: 10,
           responsables_donnees_mails: ["john.doe@pilote.fr"],
         });
-        await fixtures.indicateurIdentite({
-          id: "IND-002",
+        const indicateur2 = await fixtures.indicateurIdentite({
           nom: "Indicateur 002",
           chantier_id: chantier2.id,
           type_id: "IMPACT",
@@ -47,7 +45,7 @@ describe("IndicateurSQLRepository", () => {
           source: "Une source indic 2",
           mode_de_calcul: "Un mode indic 2",
           unite_mesure: "kg",
-          parent_id: "IND-001",
+          parent_id: indicateur1.id,
           periodicite: null,
           delai_disponibilite: null,
           responsables_donnees_mails: ["jane.doe@pilote.fr"],
@@ -61,9 +59,9 @@ describe("IndicateurSQLRepository", () => {
 
         // Then
         expect(result).toMatchObject({
-          "CH-001": [
+          [chantier1.id]: [
             {
-              id: "IND-001",
+              id: indicateur1.id,
               nom: "Indicateur 001",
               type: "IMPACT",
               estIndicateurDuBaromètre: true,
@@ -77,9 +75,9 @@ describe("IndicateurSQLRepository", () => {
               responsablesDonneesMails: ["john.doe@pilote.fr"],
             },
           ],
-          "CH-002": [
+          [chantier2.id]: [
             {
-              id: "IND-002",
+              id: indicateur2.id,
               nom: "Indicateur 002",
               type: "IMPACT",
               estIndicateurDuBaromètre: false,
@@ -87,7 +85,7 @@ describe("IndicateurSQLRepository", () => {
               source: "Une source indic 2",
               modeDeCalcul: "Un mode indic 2",
               unité: "kg",
-              parentId: "IND-001",
+              parentId: indicateur1.id,
               periodicite: "Non renseignée",
               delaiDisponibilite: "Non renseignée",
               responsablesDonneesMails: ["jane.doe@pilote.fr"],
@@ -103,9 +101,9 @@ describe("IndicateurSQLRepository", () => {
       "doit récupérer les détails des indicateurs groupés par chantier et par indicateur",
       createIntegrationTest(async () => {
         // Given
-        const chantier1 = await fixtures.chantierIdentite({ id: "CH-001" });
-        const chantier2 = await fixtures.chantierIdentite({ id: "CH-002" });
-        const chantier3 = await fixtures.chantierIdentite({ id: "CH-003" });
+        const chantier1 = await fixtures.chantierIdentite();
+        const chantier2 = await fixtures.chantierIdentite();
+        const chantier3 = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier1.id,
@@ -151,25 +149,21 @@ describe("IndicateurSQLRepository", () => {
         });
 
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier1.id,
           type_id: "IMPACT",
           unite_mesure: "kg",
         });
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           chantier_id: chantier2.id,
           type_id: "IMPACT",
           unite_mesure: "mg",
         });
-        // IND-004 n'a pas de territoire DEPT-01 (exclu des résultats)
+        // Cet indicateur n'a pas de territoire DEPT-01 (exclu des résultats)
         await fixtures.indicateurIdentite({
-          id: "IND-004",
           chantier_id: chantier2.id,
           type_id: "IMPACT",
         });
         const indicateur5 = await fixtures.indicateurIdentite({
-          id: "IND-005",
           chantier_id: chantier1.id,
           type_id: "IMPACT",
         });
@@ -349,8 +343,8 @@ describe("IndicateurSQLRepository", () => {
 
         // Then
         expect(result).toMatchObject({
-          "CH-001": {
-            "IND-001": {
+          [chantier1.id]: {
+            [indicateur1.id]: {
               "DEPT-01": {
                 avancement: {
                   annuel: 13,
@@ -384,7 +378,7 @@ describe("IndicateurSQLRepository", () => {
                 valeurInitiale: 12,
               },
             },
-            "IND-005": {
+            [indicateur5.id]: {
               "DEPT-01": {
                 avancement: {
                   annuel: 13,
@@ -419,8 +413,8 @@ describe("IndicateurSQLRepository", () => {
               },
             },
           },
-          "CH-002": {
-            "IND-002": {
+          [chantier2.id]: {
+            [indicateur2.id]: {
               "DEPT-01": {
                 avancement: {
                   annuel: 13,
@@ -463,7 +457,7 @@ describe("IndicateurSQLRepository", () => {
       "doit calculer la dateImport à partir des événements VALEUR_CREEE et VALEUR_MODIFIEE",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -481,12 +475,10 @@ describe("IndicateurSQLRepository", () => {
         });
 
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
           type_id: "IMPACT",
         });
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           chantier_id: chantier.id,
           type_id: "IMPACT",
         });
@@ -586,12 +578,12 @@ describe("IndicateurSQLRepository", () => {
           );
 
         // Then
-        expect(result["CH-001"]["IND-001"]["DEPT-01"].dateImport).toEqual(
-          new Date("2026-01-15T10:00:00.000Z").toISOString(),
-        );
-        expect(result["CH-001"]["IND-002"]["DEPT-02"].dateImport).toEqual(
-          new Date("2026-01-20T10:00:00.000Z").toISOString(),
-        );
+        expect(
+          result[chantier.id][indicateur1.id]["DEPT-01"].dateImport,
+        ).toEqual(new Date("2026-01-15T10:00:00.000Z").toISOString());
+        expect(
+          result[chantier.id][indicateur2.id]["DEPT-02"].dateImport,
+        ).toEqual(new Date("2026-01-20T10:00:00.000Z").toISOString());
       }),
     );
 
@@ -599,7 +591,7 @@ describe("IndicateurSQLRepository", () => {
       "pour maille NAT avec va_nat_from=REG, calcule dateImport à partir des événements REG",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -617,7 +609,6 @@ describe("IndicateurSQLRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
           type_id: "IMPACT",
         });
@@ -696,7 +687,7 @@ describe("IndicateurSQLRepository", () => {
           );
 
         // Then
-        expect(result["CH-001"]["IND-001"]["NAT-FR"].dateImport).toEqual(
+        expect(result[chantier.id][indicateur.id]["NAT-FR"].dateImport).toEqual(
           new Date("2026-01-20T10:00:00.000Z").toISOString(),
         );
       }),
@@ -706,7 +697,7 @@ describe("IndicateurSQLRepository", () => {
       "pour maille REG avec va_reg_from=DEPT, calcule dateImport à partir des événements des départements enfants",
       createIntegrationTest(async () => {
         // Given
-        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+        const chantier = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
@@ -724,7 +715,6 @@ describe("IndicateurSQLRepository", () => {
         });
 
         const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier.id,
           type_id: "IMPACT",
         });
@@ -803,7 +793,7 @@ describe("IndicateurSQLRepository", () => {
           );
 
         // Then
-        expect(result["CH-001"]["IND-001"]["REG-84"].dateImport).toEqual(
+        expect(result[chantier.id][indicateur.id]["REG-84"].dateImport).toEqual(
           new Date("2026-01-25T10:00:00.000Z").toISOString(),
         );
       }),
@@ -815,11 +805,10 @@ describe("IndicateurSQLRepository", () => {
       "doit récupérer les détails des indicateurs regroupé par chantier",
       createIntegrationTest(async () => {
         // Given
-        const chantier1 = await fixtures.chantierIdentite({ id: "CH-001" });
-        const chantier2 = await fixtures.chantierIdentite({ id: "CH-002" });
+        const chantier1 = await fixtures.chantierIdentite();
+        const chantier2 = await fixtures.chantierIdentite();
 
-        await fixtures.indicateurIdentite({
-          id: "IND-001",
+        const indicateur1 = await fixtures.indicateurIdentite({
           nom: "Indicateur 001",
           chantier_id: chantier1.id,
           type_id: "IMPACT",
@@ -833,9 +822,8 @@ describe("IndicateurSQLRepository", () => {
           delai_disponibilite: 10,
           responsables_donnees_mails: ["john.doe@pilote.fr"],
         });
-        // IND-002 appartient à CH-002, donc exclu du résultat
+        // Cet indicateur appartient à chantier2, donc exclu du résultat
         await fixtures.indicateurIdentite({
-          id: "IND-002",
           nom: "Indicateur 002",
           chantier_id: chantier2.id,
           type_id: "IMPACT",
@@ -844,13 +832,12 @@ describe("IndicateurSQLRepository", () => {
           source: "Une source indic 2",
           mode_de_calcul: "Un mode indic 2",
           unite_mesure: "kg",
-          parent_id: "IND-001",
+          parent_id: indicateur1.id,
           periodicite: null,
           delai_disponibilite: null,
           responsables_donnees_mails: ["jane.doe@pilote.fr"],
         });
-        await fixtures.indicateurIdentite({
-          id: "IND-004",
+        const indicateur4 = await fixtures.indicateurIdentite({
           nom: "Indicateur 004",
           chantier_id: chantier1.id,
           type_id: "IMPACT",
@@ -871,9 +858,9 @@ describe("IndicateurSQLRepository", () => {
         );
 
         // Then
-        expect(result).toMatchObject([
-          {
-            id: "IND-001",
+        expect(result).toIncludeSameMembers([
+          expect.objectContaining({
+            id: indicateur1.id,
             nom: "Indicateur 001",
             type: "IMPACT",
             estIndicateurDuBaromètre: true,
@@ -885,9 +872,9 @@ describe("IndicateurSQLRepository", () => {
             periodicite: "10 jours",
             delaiDisponibilite: "10",
             responsablesDonneesMails: ["john.doe@pilote.fr"],
-          },
-          {
-            id: "IND-004",
+          }),
+          expect.objectContaining({
+            id: indicateur4.id,
             nom: "Indicateur 004",
             type: "IMPACT",
             estIndicateurDuBaromètre: true,
@@ -899,7 +886,7 @@ describe("IndicateurSQLRepository", () => {
             periodicite: "10 jours",
             delaiDisponibilite: "10",
             responsablesDonneesMails: ["john.doe@pilote.fr"],
-          },
+          }),
         ]);
       }),
     );
@@ -910,8 +897,8 @@ describe("IndicateurSQLRepository", () => {
       "doit récupérer l'id des indicateurs qui font partis de la liste des chantiers et qui ont une pondération supérieur à 0 sur au moins un territoire",
       createIntegrationTest(async () => {
         // Given
-        const chantier1 = await fixtures.chantierIdentite({ id: "CH-001" });
-        const chantier2 = await fixtures.chantierIdentite({ id: "CH-002" });
+        const chantier1 = await fixtures.chantierIdentite();
+        const chantier2 = await fixtures.chantierIdentite();
 
         await fixtures.chantierTerritoire({
           id: chantier1.id,
@@ -935,19 +922,16 @@ describe("IndicateurSQLRepository", () => {
           zone_id: "FRANCE",
         });
 
-        // IND-001 a ponderation=0 sur tous les territoires, donc exclu
+        // indicateur1 a ponderation=0 sur tous les territoires, donc exclu
         const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
           chantier_id: chantier1.id,
         });
-        // IND-002 appartient à CH-002 (non dans la liste des chantiers demandés)
+        // indicateur2 appartient à chantier2 (non dans la liste des chantiers demandés)
         const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
           chantier_id: chantier2.id,
         });
-        // IND-003 a ponderation>0 sur DEPT-01, donc inclus
+        // indicateur3 a ponderation>0 sur DEPT-01, donc inclus
         const indicateur3 = await fixtures.indicateurIdentite({
-          id: "IND-003",
           chantier_id: chantier1.id,
         });
 
@@ -995,7 +979,7 @@ describe("IndicateurSQLRepository", () => {
           );
 
         // Then
-        expect(result).toEqual(["IND-003"]);
+        expect(result).toEqual([indicateur3.id]);
       }),
     );
   });

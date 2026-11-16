@@ -16,16 +16,16 @@ describe("GetAvancementChantierQuery", () => {
     "retourne 3 entrées pour un territoire DEPT (DEPT + REG parent + NAT-FR)",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-001" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
         zone_id: "zone-1",
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -35,14 +35,14 @@ describe("GetAvancementChantierQuery", () => {
         date_taux_avancement: new Date("2025-03-15"),
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "REG-11",
         code_insee: "11",
         maille: "REG",
         zone_id: "zone-2",
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "REG-11",
         code_insee: "11",
         maille: "REG",
@@ -52,14 +52,14 @@ describe("GetAvancementChantierQuery", () => {
         date_taux_avancement: new Date("2025-03-10"),
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
         zone_id: "zone-3",
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -71,7 +71,7 @@ describe("GetAvancementChantierQuery", () => {
 
       // When
       const result = await query.execute({
-        chantierId: "CH-001",
+        chantierId: chantier.id,
         jalon: 2025,
         territoireCode: "DEPT-75",
       });
@@ -104,16 +104,16 @@ describe("GetAvancementChantierQuery", () => {
     "retourne 2 entrées pour un territoire REG (REG + NAT-FR)",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-002" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-002",
+        id: chantier.id,
         territoire_code: "REG-11",
         code_insee: "11",
         maille: "REG",
         zone_id: "zone-1",
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-002",
+        id: chantier.id,
         territoire_code: "REG-11",
         code_insee: "11",
         maille: "REG",
@@ -122,14 +122,14 @@ describe("GetAvancementChantierQuery", () => {
         taux_avancement: 55.0,
       });
       await fixtures.chantierTerritoire({
-        id: "CH-002",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
         zone_id: "zone-2",
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-002",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -140,7 +140,7 @@ describe("GetAvancementChantierQuery", () => {
 
       // When
       const result = await query.execute({
-        chantierId: "CH-002",
+        chantierId: chantier.id,
         jalon: 2025,
         territoireCode: "REG-11",
       });
@@ -168,16 +168,16 @@ describe("GetAvancementChantierQuery", () => {
     "retourne 1 entrée pour NAT-FR",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-003" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-003",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
         zone_id: "zone-1",
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-003",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -188,7 +188,7 @@ describe("GetAvancementChantierQuery", () => {
 
       // When
       const result = await query.execute({
-        chantierId: "CH-003",
+        chantierId: chantier.id,
         jalon: 2025,
         territoireCode: "NAT-FR",
       });
@@ -208,16 +208,16 @@ describe("GetAvancementChantierQuery", () => {
     "retourne null pour taux_avancement quand il n'est pas renseigné",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-004" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-004",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
         zone_id: "zone-1",
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-004",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -228,7 +228,7 @@ describe("GetAvancementChantierQuery", () => {
 
       // When
       const result = await query.execute({
-        chantierId: "CH-004",
+        chantierId: chantier.id,
         jalon: 2025,
         territoireCode: "NAT-FR",
       });

@@ -31,7 +31,7 @@ describe("PrismaRapportPropositionsAvancementRepository", () => {
             chantiers: [
               {
                 nom_chantier: "Chantier Test",
-                id_chantier: "CH-001",
+                id_chantier: randomUUID(),
                 nombre_propositions:
                   "3 propositions territoriales de valeur d'avancement",
                 conseiller_email: "conseiller@test.com",

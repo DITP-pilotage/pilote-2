@@ -16,20 +16,17 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
     "retourne la répartition des météos pour les chantiers donnés sur un territoire",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantierEnSoleil = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
       });
-      await fixtures.chantierIdentite({
-        id: "CH-002",
+      const autreChantierEnSoleil = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
       });
-      await fixtures.chantierIdentite({
-        id: "CH-003",
+      const chantierEnOrage = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantierEnSoleil.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -38,7 +35,7 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoire({
-        id: "CH-002",
+        id: autreChantierEnSoleil.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -47,7 +44,7 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoire({
-        id: "CH-003",
+        id: chantierEnOrage.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -58,7 +55,11 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
 
       // When
       const result = await query.execute({
-        chantierIds: ["CH-001", "CH-002", "CH-003"],
+        chantierIds: [
+          chantierEnSoleil.id,
+          autreChantierEnSoleil.id,
+          chantierEnOrage.id,
+        ],
         territoireCode: "NAT-FR",
       });
 
@@ -76,16 +77,14 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
     "exclut les chantiers non applicables",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantierApplicable = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
       });
-      await fixtures.chantierIdentite({
-        id: "CH-002",
+      const chantierNonApplicable = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantierApplicable.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -94,7 +93,7 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoire({
-        id: "CH-002",
+        id: chantierNonApplicable.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -106,7 +105,7 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
 
       // When
       const result = await query.execute({
-        chantierIds: ["CH-001", "CH-002"],
+        chantierIds: [chantierApplicable.id, chantierNonApplicable.id],
         territoireCode: "NAT-FR",
       });
 
@@ -124,17 +123,15 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
     "exclut les chantiers sans ministères",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantierAvecMinistere = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
       });
-      await fixtures.chantierIdentite({
-        id: "CH-002",
+      const chantierSansMinistere = await fixtures.chantierIdentite({
         // pas de ministères
         ministeres: [],
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantierAvecMinistere.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -143,7 +140,7 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoire({
-        id: "CH-002",
+        id: chantierSansMinistere.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -154,7 +151,7 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
 
       // When
       const result = await query.execute({
-        chantierIds: ["CH-001", "CH-002"],
+        chantierIds: [chantierAvecMinistere.id, chantierSansMinistere.id],
         territoireCode: "NAT-FR",
       });
 
@@ -172,16 +169,14 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
     "ignore les chantiers dont l'id n'est pas dans la liste",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantierDemande = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
       });
-      await fixtures.chantierIdentite({
-        id: "CH-002",
+      const chantierNonDemande = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantierDemande.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -190,7 +185,7 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoire({
-        id: "CH-002",
+        id: chantierNonDemande.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -199,9 +194,9 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
         est_applicable: true,
       });
 
-      // When — seul CH-001 est demandé
+      // When — seul le premier chantier est demandé
       const result = await query.execute({
-        chantierIds: ["CH-001"],
+        chantierIds: [chantierDemande.id],
         territoireCode: "NAT-FR",
       });
 
@@ -238,12 +233,11 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
     "ne compte que les chantiers du territoire demandé",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantier = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -252,7 +246,7 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -263,7 +257,7 @@ describe("GetRepartitionMeteoChantiersQuery", () => {
 
       // When — on demande uniquement NAT-FR
       const result = await query.execute({
-        chantierIds: ["CH-001"],
+        chantierIds: [chantier.id],
         territoireCode: "NAT-FR",
       });
 

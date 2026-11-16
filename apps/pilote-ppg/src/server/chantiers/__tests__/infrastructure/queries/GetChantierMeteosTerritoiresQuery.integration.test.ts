@@ -16,9 +16,9 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
     "retourne les météos NAT, REG et DEPT",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-001" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -27,7 +27,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -35,7 +35,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         jalon: 2025,
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "REG-11",
         code_insee: "11",
         maille: "REG",
@@ -44,7 +44,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "REG-11",
         code_insee: "11",
         maille: "REG",
@@ -52,7 +52,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         jalon: 2025,
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -61,7 +61,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -71,7 +71,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
 
       // When
       const result = await query.execute({
-        chantierId: "CH-001",
+        chantierId: chantier.id,
         jalon: 2025,
       });
 
@@ -102,9 +102,9 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
     "retourne estApplicable correctement",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-002" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-002",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -113,7 +113,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-002",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -121,7 +121,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         jalon: 2025,
       });
       await fixtures.chantierTerritoire({
-        id: "CH-002",
+        id: chantier.id,
         territoire_code: "DEPT-13",
         code_insee: "13",
         maille: "DEPT",
@@ -130,7 +130,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         est_applicable: false,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-002",
+        id: chantier.id,
         territoire_code: "DEPT-13",
         code_insee: "13",
         maille: "DEPT",
@@ -140,7 +140,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
 
       // When
       const result = await query.execute({
-        chantierId: "CH-002",
+        chantierId: chantier.id,
         jalon: 2025,
       });
 
@@ -164,9 +164,9 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
     "mappe code_insee",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-003" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-003",
+        id: chantier.id,
         territoire_code: "REG-11",
         code_insee: "11",
         maille: "REG",
@@ -175,7 +175,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-003",
+        id: chantier.id,
         territoire_code: "REG-11",
         code_insee: "11",
         maille: "REG",
@@ -185,7 +185,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
 
       // When
       const result = await query.execute({
-        chantierId: "CH-003",
+        chantierId: chantier.id,
         jalon: 2025,
       });
 
@@ -203,9 +203,9 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
     "retourne NON_RENSEIGNEE quand meteo est null",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-004" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-004",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -214,7 +214,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-004",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -224,7 +224,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
 
       // When
       const result = await query.execute({
-        chantierId: "CH-004",
+        chantierId: chantier.id,
         jalon: 2025,
       });
 
@@ -241,11 +241,11 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
     "retourne une liste vide quand aucun territoire ne correspond",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-005" });
+      const chantier = await fixtures.chantierIdentite();
 
       // When
       const result = await query.execute({
-        chantierId: "CH-005",
+        chantierId: chantier.id,
         jalon: 2025,
       });
 

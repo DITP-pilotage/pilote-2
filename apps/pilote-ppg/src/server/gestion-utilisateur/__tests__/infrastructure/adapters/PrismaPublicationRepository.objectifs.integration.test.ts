@@ -54,7 +54,7 @@ describe("PrismaPublicationRepository (objectifs)", () => {
         const objectifsAnonymises = await tx.objectif.findMany({
           where: { auteur_modification_id: auteurAnonyme.id },
         });
-        expect(objectifsAnonymises).toEqual([
+        expect(objectifsAnonymises).toIncludeSameMembers([
           expect.objectContaining({ id: objectif2.id }),
           expect.objectContaining({ id: objectif3.id }),
         ]);
@@ -102,7 +102,7 @@ describe("PrismaPublicationRepository (objectifs)", () => {
         const objectifsAnonymises = await tx.objectif.findMany({
           where: { auteur_creation_id: auteurAnonyme.id },
         });
-        expect(objectifsAnonymises).toEqual([
+        expect(objectifsAnonymises).toIncludeSameMembers([
           expect.objectContaining({ id: objectif2.id }),
           expect.objectContaining({ id: objectif3.id }),
         ]);

@@ -39,16 +39,13 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-001",
-            nom: "Chantier Test 1",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier Test 1",
         });
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "REG-01",
             maille: "REG",
             code_insee: "01",
@@ -56,25 +53,18 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-001",
-            nom: "Indicateur Test 1",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            chantier_identite: {
-              connect: {
-                id: "CH-001",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur Test 1",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
         });
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-001",
-            chantier_id: "CH-001",
+            id: indicateur.id,
+            chantier_id: chantier.id,
             maille: "REG",
             territoire_code: "REG-01",
             code_insee: "01",
@@ -85,7 +75,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-001",
+              indicId: indicateur.id,
               territoireCode: "REG-01",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -113,7 +103,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           await prisma.indicateur_territoire_valeur_evenement.findMany();
 
         expect(evenements).toHaveLength(1);
-        expect(evenements[0].indic_id).toBe("IND-001");
+        expect(evenements[0].indic_id).toBe(indicateur.id);
         expect(evenements[0].territoire_code).toBe("REG-01");
         expect(evenements[0].type_evenement).toBe("PROPOSITION_VALEUR_CREEE");
         expect(evenements[0].type_valeur).toBe("VALEUR_AVANCEMENT");
@@ -152,16 +142,13 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-002",
-            nom: "Chantier Test 2",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier Test 2",
         });
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-002",
+            id: chantier.id,
             territoire_code: "DEPT-75",
             maille: "DEPT",
             code_insee: "75",
@@ -169,25 +156,18 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-002",
-            nom: "Indicateur Test 2",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            chantier_identite: {
-              connect: {
-                id: "CH-002",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur Test 2",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
         });
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-002",
-            chantier_id: "CH-002",
+            id: indicateur.id,
+            chantier_id: chantier.id,
             maille: "DEPT",
             territoire_code: "DEPT-75",
             code_insee: "75",
@@ -198,7 +178,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement1 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-002",
+              indicId: indicateur.id,
               territoireCode: "DEPT-75",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -219,7 +199,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement2 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-002",
+              indicId: indicateur.id,
               territoireCode: "DEPT-75",
               typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -312,23 +292,17 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-003",
-            nom: "Chantier Test 3",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier Test 3",
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-004",
-            nom: "Chantier Test 4",
-          },
+        const autreChantier = await fixtures.chantierIdentite({
+          nom: "Chantier Test 4",
         });
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-003",
+            id: chantier.id,
             territoire_code: "REG-02",
             maille: "REG",
             code_insee: "02",
@@ -338,7 +312,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-004",
+            id: autreChantier.id,
             territoire_code: "REG-02",
             maille: "REG",
             code_insee: "02",
@@ -346,40 +320,26 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-003",
-            nom: "Indicateur Test 3",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            chantier_identite: {
-              connect: {
-                id: "CH-003",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur Test 3",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-004",
-            nom: "Indicateur Test 4",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            chantier_identite: {
-              connect: {
-                id: "CH-004",
-              },
-            },
-          },
+        const autreIndicateur = await fixtures.indicateurIdentite({
+          chantier_id: autreChantier.id,
+          nom: "Indicateur Test 4",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
         });
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-003",
-            chantier_id: "CH-003",
+            id: indicateur.id,
+            chantier_id: chantier.id,
             maille: "REG",
             territoire_code: "REG-02",
             code_insee: "02",
@@ -389,8 +349,8 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-004",
-            chantier_id: "CH-004",
+            id: autreIndicateur.id,
+            chantier_id: autreChantier.id,
             maille: "REG",
             territoire_code: "REG-02",
             code_insee: "02",
@@ -401,7 +361,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement1 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-003",
+              indicId: indicateur.id,
               territoireCode: "REG-02",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -422,7 +382,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement2 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-003",
+              indicId: indicateur.id,
               territoireCode: "REG-02",
               typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
               typeValeur: "VALEUR_CIBLE",
@@ -443,7 +403,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement3 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-004",
+              indicId: autreIndicateur.id,
               territoireCode: "REG-02",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -469,7 +429,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenements =
           await prismaIndicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur(
             {
-              indicId: "IND-003",
+              indicId: indicateur.id,
               territoireCode: "REG-02",
               typeValeur: "VALEUR_AVANCEMENT",
             },
@@ -477,7 +437,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
 
         // Then
         expect(evenements).toHaveLength(1);
-        expect(evenements[0].indicId).toBe("IND-003");
+        expect(evenements[0].indicId).toBe(indicateur.id);
         expect(evenements[0].territoireCode).toBe("REG-02");
         expect(evenements[0].typeValeur).toBe("VALEUR_AVANCEMENT");
         expect(evenements[0].valeur).toBe(30);
@@ -540,16 +500,13 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-005",
-            nom: "Chantier Test 5",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier Test 5",
         });
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-005",
+            id: chantier.id,
             territoire_code: "REG-02",
             maille: "REG",
             code_insee: "02",
@@ -557,25 +514,18 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-005",
-            nom: "Indicateur Test 5",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            chantier_identite: {
-              connect: {
-                id: "CH-005",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur Test 5",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
         });
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-005",
-            chantier_id: "CH-005",
+            id: indicateur.id,
+            chantier_id: chantier.id,
             maille: "REG",
             territoire_code: "REG-02",
             code_insee: "02",
@@ -586,7 +536,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement1 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-005",
+              indicId: indicateur.id,
               territoireCode: "REG-02",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -607,7 +557,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement2 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-005",
+              indicId: indicateur.id,
               territoireCode: "REG-02",
               typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -628,7 +578,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement3 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-005",
+              indicId: indicateur.id,
               territoireCode: "REG-02",
               typeEvenement: "PROPOSITION_VALEUR_ACCEPTEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -650,7 +600,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementsSurDate =
           await prismaIndicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
             {
-              indicId: "IND-005",
+              indicId: indicateur.id,
               territoireCode: "REG-02",
               typeValeur: "VALEUR_AVANCEMENT",
               dateValeur: date1,
@@ -691,16 +641,13 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-006",
-            nom: "Chantier Test 6",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier Test 6",
         });
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-006",
+            id: chantier.id,
             territoire_code: "REG-03",
             maille: "REG",
             code_insee: "03",
@@ -708,25 +655,18 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-006",
-            nom: "Indicateur Test 6",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            chantier_identite: {
-              connect: {
-                id: "CH-006",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur Test 6",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
         });
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-006",
-            chantier_id: "CH-006",
+            id: indicateur.id,
+            chantier_id: chantier.id,
             maille: "REG",
             territoire_code: "REG-03",
             code_insee: "03",
@@ -737,7 +677,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-006",
+              indicId: indicateur.id,
               territoireCode: "REG-03",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_CIBLE",
@@ -763,7 +703,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementsSurDate =
           await prismaIndicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
             {
-              indicId: "IND-006",
+              indicId: indicateur.id,
               territoireCode: "REG-03",
               typeValeur: "VALEUR_AVANCEMENT", // Type différent
               dateValeur: new Date("2024-05-01"),
@@ -831,16 +771,13 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-007",
-            nom: "Chantier Test 7",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier Test 7",
         });
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-007",
+            id: chantier.id,
             territoire_code: "DEPT-69",
             maille: "DEPT",
             code_insee: "69",
@@ -848,25 +785,18 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-007",
-            nom: "Indicateur Test 7",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            chantier_identite: {
-              connect: {
-                id: "CH-007",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur Test 7",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
         });
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-007",
-            chantier_id: "CH-007",
+            id: indicateur.id,
+            chantier_id: chantier.id,
             maille: "DEPT",
             territoire_code: "DEPT-69",
             code_insee: "69",
@@ -877,7 +807,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement1 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-007",
+              indicId: indicateur.id,
               territoireCode: "DEPT-69",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -898,7 +828,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement2 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-007",
+              indicId: indicateur.id,
               territoireCode: "DEPT-69",
               typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -919,7 +849,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement3 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-007",
+              indicId: indicateur.id,
               territoireCode: "DEPT-69",
               typeEvenement: "PROPOSITION_VALEUR_ACCEPTEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -941,7 +871,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenements =
           await prismaIndicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur(
             {
-              indicId: "IND-007",
+              indicId: indicateur.id,
               territoireCode: "DEPT-69",
               typeValeur: "VALEUR_AVANCEMENT",
             },
@@ -1035,16 +965,13 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-010",
-            nom: "Chantier Test 10",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier Test 10",
         });
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-010",
+            id: chantier.id,
             territoire_code: "REG-01",
             maille: "REG",
             code_insee: "10",
@@ -1052,25 +979,18 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-010",
-            nom: "Indicateur Test 10",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            chantier_identite: {
-              connect: {
-                id: "CH-010",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur Test 10",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
         });
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-010",
-            chantier_id: "CH-010",
+            id: indicateur.id,
+            chantier_id: chantier.id,
             maille: "REG",
             territoire_code: "REG-01",
             code_insee: "10",
@@ -1082,7 +1002,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement1 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-010",
+              indicId: indicateur.id,
               territoireCode: "REG-01",
               typeEvenement: "VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1099,7 +1019,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement2 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-010",
+              indicId: indicateur.id,
               territoireCode: "REG-01",
               typeEvenement: "VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1116,7 +1036,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement3 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-010",
+              indicId: indicateur.id,
               territoireCode: "REG-01",
               typeEvenement: "VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1133,7 +1053,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement4 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-010",
+              indicId: indicateur.id,
               typeEvenement: "VALEUR_CREEE",
               territoireCode: "REG-01",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1155,7 +1075,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementsSurDates =
           await prismaIndicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA(
             {
-              indicId: "IND-010",
+              indicId: indicateur.id,
               territoireCode: "REG-01",
               typeValeur: "VALEUR_AVANCEMENT",
               dateValeur: dateRef,
@@ -1200,16 +1120,13 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-011",
-            nom: "Chantier Test 11",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier Test 11",
         });
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-011",
+            id: chantier.id,
             territoire_code: "REG-01",
             maille: "REG",
             code_insee: "01",
@@ -1217,25 +1134,18 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-011",
-            nom: "Indicateur Test 11",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            chantier_identite: {
-              connect: {
-                id: "CH-011",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur Test 11",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
         });
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-011",
-            chantier_id: "CH-011",
+            id: indicateur.id,
+            chantier_id: chantier.id,
             maille: "REG",
             territoire_code: "REG-01",
             code_insee: "01",
@@ -1246,7 +1156,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-011",
+              indicId: indicateur.id,
               territoireCode: "REG-01",
               typeEvenement: "VALEUR_CREEE",
               dateCreation: new Date("2024-12-01"),
@@ -1268,7 +1178,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementsSurDates =
           await prismaIndicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA(
             {
-              indicId: "IND-011",
+              indicId: indicateur.id,
               territoireCode: "REG-01",
               typeValeur: "VALEUR_AVANCEMENT",
               dateValeur: dateRef,
@@ -1339,16 +1249,13 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-008",
-            nom: "Chantier Test 8",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier Test 8",
         });
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-008",
+            id: chantier.id,
             territoire_code: "NAT-FR",
             maille: "NAT",
             code_insee: "FR",
@@ -1356,25 +1263,18 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-008",
-            nom: "Indicateur Test 8",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            chantier_identite: {
-              connect: {
-                id: "CH-008",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur Test 8",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
         });
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-008",
-            chantier_id: "CH-008",
+            id: indicateur.id,
+            chantier_id: chantier.id,
             maille: "NAT",
             territoire_code: "NAT-FR",
             code_insee: "FR",
@@ -1385,7 +1285,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement1 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-008",
+              indicId: indicateur.id,
               territoireCode: "NAT-FR",
               typeEvenement: "VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1402,7 +1302,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement2 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-008",
+              indicId: indicateur.id,
               territoireCode: "NAT-FR",
               typeEvenement: "VALEUR_MODIFIEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1419,7 +1319,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement3 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-008",
+              indicId: indicateur.id,
               territoireCode: "NAT-FR",
               typeEvenement: "VALEUR_CREEE",
               typeValeur: "VALEUR_CIBLE",
@@ -1436,7 +1336,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement4 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-008",
+              indicId: indicateur.id,
               territoireCode: "NAT-FR",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1457,7 +1357,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenement5 =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-008",
+              indicId: indicateur.id,
               territoireCode: "NAT-FR",
               typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1483,7 +1383,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenements =
           await prismaIndicateurTerritoireValeurEvenementRepository.recupererHistoriqueParIndicIdEtTerritoireCode(
             {
-              indicId: "IND-008",
+              indicId: indicateur.id,
               territoireCode: "NAT-FR",
             },
           );
@@ -1540,17 +1440,14 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-PVA-001",
-            nom: "Chantier PVA Test 1",
-            statut: "PUBLIE",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier PVA Test 1",
+          statut: "PUBLIE",
         });
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-PVA-001",
+            id: chantier.id,
             territoire_code: "REG-01",
             maille: "REG",
             code_insee: "01",
@@ -1559,27 +1456,20 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-PVA-001",
-            nom: "Indicateur PVA Test 1",
-            unite_mesure: "%",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            statut: "PUBLIE",
-            chantier_identite: {
-              connect: {
-                id: "CH-PVA-001",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur PVA Test 1",
+          unite_mesure: "%",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
+          statut: "PUBLIE",
         });
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-PVA-001",
-            chantier_id: "CH-PVA-001",
+            id: indicateur.id,
+            chantier_id: chantier.id,
             maille: "REG",
             territoire_code: "REG-01",
             code_insee: "01",
@@ -1593,7 +1483,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementProposition =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-PVA-001",
+              indicId: indicateur.id,
               territoireCode: "REG-01",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1620,16 +1510,16 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
 
         // Then
         expect(result.size).toBe(1);
-        expect(result.has("CH-PVA-001")).toBe(true);
+        expect(result.has(chantier.id)).toBe(true);
 
-        const indicateurMap = result.get("CH-PVA-001")!;
+        const indicateurMap = result.get(chantier.id)!;
         expect(indicateurMap.size).toBe(1);
-        expect(indicateurMap.has("IND-PVA-001")).toBe(true);
+        expect(indicateurMap.has(indicateur.id)).toBe(true);
 
-        const rapports = indicateurMap.get("IND-PVA-001")!;
+        const rapports = indicateurMap.get(indicateur.id)!;
         expect(rapports).toEqual([
           {
-            indicateurId: "IND-PVA-001",
+            indicateurId: indicateur.id,
             territoireCode: "REG-01",
             valeurAvancementProposee: "75",
             dateValeurAvancement: "01/06/2024",
@@ -1658,25 +1548,22 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-PVA-002",
-            nom: "Chantier PVA Test 2",
-            statut: "PUBLIE",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier PVA Test 2",
+          statut: "PUBLIE",
         });
 
         await prisma.chantier_territoire.createMany({
           data: [
             {
-              id: "CH-PVA-002",
+              id: chantier.id,
               territoire_code: "REG-02",
               maille: "REG",
               code_insee: "02",
               zone_id: "R02",
             },
             {
-              id: "CH-PVA-002",
+              id: chantier.id,
               territoire_code: "REG-03",
               maille: "REG",
               code_insee: "03",
@@ -1685,28 +1572,21 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           ],
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-PVA-002",
-            nom: "Indicateur PVA Test 2",
-            unite_mesure: "unité",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            statut: "PUBLIE",
-            chantier_identite: {
-              connect: {
-                id: "CH-PVA-002",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur PVA Test 2",
+          unite_mesure: "unité",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
+          statut: "PUBLIE",
         });
 
         await prisma.indicateur_territoire.createMany({
           data: [
             {
-              id: "IND-PVA-002",
-              chantier_id: "CH-PVA-002",
+              id: indicateur.id,
+              chantier_id: chantier.id,
               maille: "REG",
               territoire_code: "REG-02",
               code_insee: "02",
@@ -1716,8 +1596,8 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
               est_applicable: true,
             },
             {
-              id: "IND-PVA-002",
-              chantier_id: "CH-PVA-002",
+              id: indicateur.id,
+              chantier_id: chantier.id,
               maille: "REG",
               territoire_code: "REG-03",
               code_insee: "03",
@@ -1732,7 +1612,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementCree =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-PVA-002",
+              indicId: indicateur.id,
               territoireCode: "REG-02",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1752,7 +1632,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementAcceptee =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-PVA-002",
+              indicId: indicateur.id,
               territoireCode: "REG-02",
               typeEvenement: "PROPOSITION_VALEUR_ACCEPTEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1771,7 +1651,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementRefusee =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-PVA-002",
+              indicId: indicateur.id,
               territoireCode: "REG-03",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1797,11 +1677,11 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           await prismaIndicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds();
 
         // Then
-        const indicateurMap = result.get("CH-PVA-002")!;
-        const rapports = indicateurMap.get("IND-PVA-002")!;
+        const indicateurMap = result.get(chantier.id)!;
+        const rapports = indicateurMap.get(indicateur.id)!;
         expect(rapports).toEqual([
           {
-            indicateurId: "IND-PVA-002",
+            indicateurId: indicateur.id,
             territoireCode: "REG-03",
             valeurAvancementProposee: "250",
             dateValeurAvancement: "01/07/2024",
@@ -1830,17 +1710,14 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-PVA-003",
-            nom: "Chantier PVA Test 3",
-            statut: "PUBLIE",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier PVA Test 3",
+          statut: "PUBLIE",
         });
 
         await prisma.chantier_territoire.create({
           data: {
-            id: "CH-PVA-003",
+            id: chantier.id,
             territoire_code: "REG-03",
             maille: "REG",
             code_insee: "03",
@@ -1848,26 +1725,19 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-PVA-003",
-            nom: "Indicateur PVA Test 3",
-            type_id: "IMPACT",
-            est_barometre: false,
-            est_phare: false,
-            statut: "PUBLIE",
-            chantier_identite: {
-              connect: {
-                id: "CH-PVA-003",
-              },
-            },
-          },
+        const indicateur = await fixtures.indicateurIdentite({
+          chantier_id: chantier.id,
+          nom: "Indicateur PVA Test 3",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
+          statut: "PUBLIE",
         });
 
         await prisma.indicateur_territoire.create({
           data: {
-            id: "IND-PVA-003",
-            chantier_id: "CH-PVA-003",
+            id: indicateur.id,
+            chantier_id: chantier.id,
             maille: "REG",
             territoire_code: "REG-03",
             code_insee: "03",
@@ -1882,7 +1752,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementCree =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-PVA-003",
+              indicId: indicateur.id,
               territoireCode: "REG-03",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1902,7 +1772,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementModifiee =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-PVA-003",
+              indicId: indicateur.id,
               territoireCode: "REG-03",
               typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -1928,11 +1798,11 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           await prismaIndicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds();
 
         // Then
-        const indicateurMap = result.get("CH-PVA-003")!;
-        const rapports = indicateurMap.get("IND-PVA-003")!;
+        const indicateurMap = result.get(chantier.id)!;
+        const rapports = indicateurMap.get(indicateur.id)!;
         expect(rapports).toEqual([
           {
-            indicateurId: "IND-PVA-003",
+            indicateurId: indicateur.id,
             territoireCode: "REG-03",
             valeurAvancementProposee: "15",
             dateValeurAvancement: "01/01/2024",
@@ -1961,32 +1831,26 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           },
         });
 
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: "CH-PVA-005",
-              nom: "Chantier PVA Test 5 (Brouillon)",
-              statut: "BROUILLON",
-            },
-            {
-              id: "CH-PVA-006",
-              nom: "Chantier PVA Test 6 (Publié)",
-              statut: "PUBLIE",
-            },
-          ],
+        const chantierBrouillon = await fixtures.chantierIdentite({
+          nom: "Chantier PVA Test 5 (Brouillon)",
+          statut: "BROUILLON",
+        });
+        const chantierPublie = await fixtures.chantierIdentite({
+          nom: "Chantier PVA Test 6 (Publié)",
+          statut: "PUBLIE",
         });
 
         await prisma.chantier_territoire.createMany({
           data: [
             {
-              id: "CH-PVA-005",
+              id: chantierBrouillon.id,
               territoire_code: "REG-01",
               maille: "REG",
               code_insee: "01",
               zone_id: "R01",
             },
             {
-              id: "CH-PVA-006",
+              id: chantierPublie.id,
               territoire_code: "REG-02",
               maille: "REG",
               code_insee: "02",
@@ -1995,34 +1859,31 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           ],
         });
 
-        await prisma.indicateur_identite.createMany({
-          data: [
-            {
-              id: "IND-PVA-005",
-              chantier_id: "CH-PVA-005",
-              nom: "Indicateur PVA Test 5 (Chantier Brouillon)",
-              type_id: "IMPACT",
-              est_barometre: false,
-              est_phare: false,
-              statut: "PUBLIE",
-            },
-            {
-              id: "IND-PVA-006",
-              chantier_id: "CH-PVA-006",
-              nom: "Indicateur PVA Test 6 (Indicateur Brouillon)",
-              type_id: "IMPACT",
-              est_barometre: false,
-              est_phare: false,
-              statut: "SUPPRIME",
-            },
-          ],
+        const indicateurDuChantierBrouillon = await fixtures.indicateurIdentite(
+          {
+            chantier_id: chantierBrouillon.id,
+            nom: "Indicateur PVA Test 5 (Chantier Brouillon)",
+            type_id: "IMPACT",
+            est_barometre: false,
+            est_phare: false,
+            statut: "PUBLIE",
+          },
+        );
+
+        const indicateurSupprime = await fixtures.indicateurIdentite({
+          chantier_id: chantierPublie.id,
+          nom: "Indicateur PVA Test 6 (Indicateur Brouillon)",
+          type_id: "IMPACT",
+          est_barometre: false,
+          est_phare: false,
+          statut: "SUPPRIME",
         });
 
         await prisma.indicateur_territoire.createMany({
           data: [
             {
-              id: "IND-PVA-005",
-              chantier_id: "CH-PVA-005",
+              id: indicateurDuChantierBrouillon.id,
+              chantier_id: chantierBrouillon.id,
               maille: "REG",
               territoire_code: "REG-01",
               code_insee: "01",
@@ -2032,8 +1893,8 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
               est_applicable: true,
             },
             {
-              id: "IND-PVA-006",
-              chantier_id: "CH-PVA-006",
+              id: indicateurSupprime.id,
+              chantier_id: chantierPublie.id,
               maille: "REG",
               territoire_code: "REG-02",
               code_insee: "02",
@@ -2048,7 +1909,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementChantierBrouillon =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-PVA-005",
+              indicId: indicateurDuChantierBrouillon.id,
               territoireCode: "REG-01",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",
@@ -2068,7 +1929,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         const evenementIndicateurBrouillon =
           IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
-              indicId: "IND-PVA-006",
+              indicId: indicateurSupprime.id,
               territoireCode: "REG-02",
               typeEvenement: "PROPOSITION_VALEUR_CREEE",
               typeValeur: "VALEUR_AVANCEMENT",

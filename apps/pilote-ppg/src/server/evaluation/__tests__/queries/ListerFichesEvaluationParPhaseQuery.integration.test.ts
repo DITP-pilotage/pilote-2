@@ -226,11 +226,9 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
       createIntegrationTest(async () => {
         // Given
         const chantier1 = await f.chantierIdentite({
-          id: "CH-NC-001",
           nom: "Chantier NC 1",
         });
         const chantier2 = await f.chantierIdentite({
-          id: "CH-NC-002",
           nom: "Chantier NC 2",
         });
 

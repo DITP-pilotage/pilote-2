@@ -29,24 +29,25 @@ describe("GetChantiersHabilitesQuery", () => {
     "retourne les IDs des chantiers habilités, publiés et avec ministères",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const premierChantier = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
         statut: $Enums.type_statut.PUBLIE,
       });
-      await fixtures.chantierIdentite({
-        id: "CH-002",
+      const secondChantier = await fixtures.chantierIdentite({
         ministeres: ["MIN-02"],
         statut: $Enums.type_statut.PUBLIE,
       });
 
       // When
       const result = await query.execute(
-        habilitationsAvecLecture(["CH-001", "CH-002"]),
+        habilitationsAvecLecture([premierChantier.id, secondChantier.id]),
       );
 
       // Then
-      expect(result.sort()).toEqual(["CH-001", "CH-002"]);
+      expect(result).toIncludeSameMembers([
+        premierChantier.id,
+        secondChantier.id,
+      ]);
     }),
   );
 
@@ -54,22 +55,22 @@ describe("GetChantiersHabilitesQuery", () => {
     "exclut les chantiers non présents dans les habilitations",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantierHabilite = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
         statut: $Enums.type_statut.PUBLIE,
       });
       await fixtures.chantierIdentite({
-        id: "CH-002",
         ministeres: ["MIN-02"],
         statut: $Enums.type_statut.PUBLIE,
       });
 
-      // When — seul CH-001 est habilité
-      const result = await query.execute(habilitationsAvecLecture(["CH-001"]));
+      // When
+      const result = await query.execute(
+        habilitationsAvecLecture([chantierHabilite.id]),
+      );
 
       // Then
-      expect(result).toEqual(["CH-001"]);
+      expect(result).toEqual([chantierHabilite.id]);
     }),
   );
 
@@ -77,34 +78,35 @@ describe("GetChantiersHabilitesQuery", () => {
     "exclut les chantiers avec un statut différent de PUBLIE",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantierPublie = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
         statut: $Enums.type_statut.PUBLIE,
       });
-      await fixtures.chantierIdentite({
-        id: "CH-002",
+      const chantierBrouillon = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
         statut: $Enums.type_statut.BROUILLON,
       });
-      await fixtures.chantierIdentite({
-        id: "CH-003",
+      const chantierArchive = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
         statut: $Enums.type_statut.ARCHIVE,
       });
-      await fixtures.chantierIdentite({
-        id: "CH-004",
+      const chantierSupprime = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
         statut: $Enums.type_statut.SUPPRIME,
       });
 
       // When
       const result = await query.execute(
-        habilitationsAvecLecture(["CH-001", "CH-002", "CH-003", "CH-004"]),
+        habilitationsAvecLecture([
+          chantierPublie.id,
+          chantierBrouillon.id,
+          chantierArchive.id,
+          chantierSupprime.id,
+        ]),
       );
 
       // Then
-      expect(result).toEqual(["CH-001"]);
+      expect(result).toEqual([chantierPublie.id]);
     }),
   );
 
@@ -112,13 +114,11 @@ describe("GetChantiersHabilitesQuery", () => {
     "exclut les chantiers sans ministères",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantierAvecMinisteres = await fixtures.chantierIdentite({
         ministeres: ["MIN-01"],
         statut: $Enums.type_statut.PUBLIE,
       });
-      await fixtures.chantierIdentite({
-        id: "CH-002",
+      const chantierSansMinisteres = await fixtures.chantierIdentite({
         // ministeres vide
         ministeres: [],
         statut: $Enums.type_statut.PUBLIE,
@@ -126,11 +126,14 @@ describe("GetChantiersHabilitesQuery", () => {
 
       // When
       const result = await query.execute(
-        habilitationsAvecLecture(["CH-001", "CH-002"]),
+        habilitationsAvecLecture([
+          chantierAvecMinisteres.id,
+          chantierSansMinisteres.id,
+        ]),
       );
 
       // Then
-      expect(result).toEqual(["CH-001"]);
+      expect(result).toEqual([chantierAvecMinisteres.id]);
     }),
   );
 

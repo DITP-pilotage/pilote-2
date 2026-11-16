@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { PrismaUtilisateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaUtilisateurRepository";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
@@ -15,6 +16,11 @@ describe("PrismaUtilisateurRepository", () => {
       "doit récupérer tous les utilisateur actifs ayant le profil demandé et les habilitations en lecture sur au moins un chantier de la liste",
       createIntegrationTest(async () => {
         // Given
+        const chantierId1 = randomUUID();
+        const chantierId2 = randomUUID();
+        const chantierId3 = randomUUID();
+        const chantierId4 = randomUUID();
+
         await prisma.utilisateur.createMany({
           data: [
             {
@@ -66,27 +72,27 @@ describe("PrismaUtilisateurRepository", () => {
             {
               utilisateurId: "d1e776ad-af24-4320-bef9-7367d0373cad",
               scopeCode: "lecture",
-              chantiers: ["CH-001", "CH-003"],
+              chantiers: [chantierId1, chantierId3],
             },
             {
               utilisateurId: "7056999c-349d-4567-a230-8b0db19c888e",
               scopeCode: "lecture",
-              chantiers: ["CH-002"],
+              chantiers: [chantierId2],
             },
             {
               utilisateurId: "eb735d0d-8249-496c-9c54-a2d502405950",
               scopeCode: "lecture",
-              chantiers: ["CH-004"],
+              chantiers: [chantierId4],
             },
             {
               utilisateurId: "c57f3b57-f4d7-40e2-81fe-65e27fbd8ad0",
               scopeCode: "lecture",
-              chantiers: ["CH-001", "CH-004"],
+              chantiers: [chantierId1, chantierId4],
             },
             {
               utilisateurId: "dce03af2-e6c6-4f9c-8162-6afb98de6318",
               scopeCode: "lecture",
-              chantiers: ["CH-001", "CH-003"],
+              chantiers: [chantierId1, chantierId3],
             },
           ],
         });
@@ -95,7 +101,7 @@ describe("PrismaUtilisateurRepository", () => {
         const utilisateurs =
           await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
             ["EQUIPE_DIR_PROJET"],
-            ["CH-001", "CH-004"],
+            [chantierId1, chantierId4],
           );
         // Then
         expect(utilisateurs).toHaveLength(2);
@@ -108,27 +114,20 @@ describe("PrismaUtilisateurRepository", () => {
       "doit récupérer les utilisateurs ayant des habilitations via périmètres",
       createIntegrationTest(async () => {
         // Given
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: "CH-100",
-              nom: "Chantier 100",
-              perimetre_ids: ["PER-001", "PER-002"],
-              statut: "PUBLIE",
-            },
-            {
-              id: "CH-101",
-              nom: "Chantier 101",
-              perimetre_ids: ["PER-002"],
-              statut: "PUBLIE",
-            },
-            {
-              id: "CH-102",
-              nom: "Chantier 102",
-              perimetre_ids: ["PER-003"],
-              statut: "PUBLIE",
-            },
-          ],
+        const chantier100 = await fixtures.chantierIdentite({
+          nom: "Chantier 100",
+          perimetre_ids: ["PER-001", "PER-002"],
+          statut: "PUBLIE",
+        });
+        const chantier101 = await fixtures.chantierIdentite({
+          nom: "Chantier 101",
+          perimetre_ids: ["PER-002"],
+          statut: "PUBLIE",
+        });
+        await fixtures.chantierIdentite({
+          nom: "Chantier 102",
+          perimetre_ids: ["PER-003"],
+          statut: "PUBLIE",
         });
 
         await prisma.utilisateur.createMany({
@@ -171,15 +170,23 @@ describe("PrismaUtilisateurRepository", () => {
         const utilisateurs =
           await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
             ["EQUIPE_DIR_PROJET"],
-            ["CH-100", "CH-101"],
+            [chantier100.id, chantier101.id],
           );
 
         // Then
-        expect(utilisateurs).toHaveLength(2);
-        expect(utilisateurs[0].email).toStrictEqual("user.perimetre1@test.com");
-        expect(utilisateurs[0].listeChantiers).toEqual(["CH-100"]);
-        expect(utilisateurs[1].email).toStrictEqual("user.perimetre2@test.com");
-        expect(utilisateurs[1].listeChantiers).toEqual(["CH-100", "CH-101"]);
+        expect(utilisateurs).toIncludeSameMembers([
+          expect.objectContaining({
+            email: "user.perimetre1@test.com",
+            listeChantiers: [chantier100.id],
+          }),
+          expect.objectContaining({
+            email: "user.perimetre2@test.com",
+            listeChantiers: expect.toIncludeSameMembers([
+              chantier100.id,
+              chantier101.id,
+            ]),
+          }),
+        ]);
       }),
     );
 
@@ -187,27 +194,20 @@ describe("PrismaUtilisateurRepository", () => {
       "doit récupérer les utilisateurs ayant des habilitations directes et via périmètres",
       createIntegrationTest(async () => {
         // Given
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: "CH-200",
-              nom: "Chantier 200",
-              perimetre_ids: ["PER-100"],
-              statut: "PUBLIE",
-            },
-            {
-              id: "CH-201",
-              nom: "Chantier 201",
-              perimetre_ids: ["PER-100"],
-              statut: "PUBLIE",
-            },
-            {
-              id: "CH-202",
-              nom: "Chantier 202",
-              perimetre_ids: [],
-              statut: "PUBLIE",
-            },
-          ],
+        const chantier200 = await fixtures.chantierIdentite({
+          nom: "Chantier 200",
+          perimetre_ids: ["PER-100"],
+          statut: "PUBLIE",
+        });
+        const chantier201 = await fixtures.chantierIdentite({
+          nom: "Chantier 201",
+          perimetre_ids: ["PER-100"],
+          statut: "PUBLIE",
+        });
+        const chantier202 = await fixtures.chantierIdentite({
+          nom: "Chantier 202",
+          perimetre_ids: [],
+          statut: "PUBLIE",
         });
 
         await prisma.utilisateur.create({
@@ -225,7 +225,7 @@ describe("PrismaUtilisateurRepository", () => {
           data: {
             utilisateurId: "b1b2b3b4-1111-2222-3333-444444444444",
             scopeCode: "lecture",
-            chantiers: ["CH-202"],
+            chantiers: [chantier202.id],
             perimetres: ["PER-100"],
           },
         });
@@ -234,16 +234,19 @@ describe("PrismaUtilisateurRepository", () => {
         const utilisateurs =
           await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
             ["EQUIPE_DIR_PROJET"],
-            ["CH-200", "CH-201", "CH-202"],
+            [chantier200.id, chantier201.id, chantier202.id],
           );
 
         // Then
-        expect(utilisateurs).toHaveLength(1);
-        expect(utilisateurs[0].email).toStrictEqual("user.mixte@test.com");
-        expect(utilisateurs[0].listeChantiers).toEqual([
-          "CH-202",
-          "CH-200",
-          "CH-201",
+        expect(utilisateurs).toEqual([
+          expect.objectContaining({
+            email: "user.mixte@test.com",
+            listeChantiers: expect.toIncludeSameMembers([
+              chantier202.id,
+              chantier200.id,
+              chantier201.id,
+            ]),
+          }),
         ]);
       }),
     );
@@ -252,6 +255,8 @@ describe("PrismaUtilisateurRepository", () => {
       "doit récupérer les utilisateurs de plusieurs profils en même temps",
       createIntegrationTest(async () => {
         // Given
+        const chantierId = randomUUID();
+
         await prisma.utilisateur.createMany({
           data: [
             {
@@ -286,17 +291,17 @@ describe("PrismaUtilisateurRepository", () => {
             {
               utilisateurId: "a3f1e2d4-0001-4000-8000-000000000001",
               scopeCode: "lecture",
-              chantiers: ["CH-MP-001"],
+              chantiers: [chantierId],
             },
             {
               utilisateurId: "a3f1e2d4-0002-4000-8000-000000000002",
               scopeCode: "lecture",
-              chantiers: ["CH-MP-001"],
+              chantiers: [chantierId],
             },
             {
               utilisateurId: "a3f1e2d4-0003-4000-8000-000000000003",
               scopeCode: "lecture",
-              chantiers: ["CH-MP-001"],
+              chantiers: [chantierId],
             },
           ],
         });
@@ -305,7 +310,7 @@ describe("PrismaUtilisateurRepository", () => {
         const utilisateurs =
           await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
             ["EQUIPE_DIR_PROJET", "SECRETARIAT_GENERAL"],
-            ["CH-MP-001"],
+            [chantierId],
           );
 
         // Then
@@ -323,13 +328,10 @@ describe("PrismaUtilisateurRepository", () => {
       "ne doit pas récupérer les utilisateurs ayant uniquement des périmètres sans chantiers correspondants",
       createIntegrationTest(async () => {
         // Given
-        await prisma.chantier_identite.create({
-          data: {
-            id: "CH-300",
-            nom: "Chantier 300",
-            perimetre_ids: ["PER-200"],
-            statut: "PUBLIE",
-          },
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 300",
+          perimetre_ids: ["PER-200"],
+          statut: "PUBLIE",
         });
 
         await prisma.utilisateur.create({
@@ -355,7 +357,7 @@ describe("PrismaUtilisateurRepository", () => {
         const utilisateurs =
           await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
             ["EQUIPE_DIR_PROJET"],
-            ["CH-300"],
+            [chantier.id],
           );
 
         // Then

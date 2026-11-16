@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { chantier_territoire_jalon } from "@prisma/client";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
@@ -42,7 +43,7 @@ describe("PrismaChantierRepository", () => {
         createIntegrationTest(async () => {
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-INEXISTANT",
+            randomUUID(),
             ["NAT-FR"],
             optionsParDefaut,
             2025,
@@ -58,9 +59,9 @@ describe("PrismaChantierRepository", () => {
         "doit retourner null si le chantier n'a aucun ministère",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({ id: "CH-001", ministeres: [] });
+          const chantier = await fixtures.chantierIdentite({ ministeres: [] });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -70,7 +71,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["NAT-FR"],
             optionsParDefaut,
             2025,
@@ -86,12 +87,11 @@ describe("PrismaChantierRepository", () => {
         "doit exclure les territoires absents de territoireCodesLecture",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -99,7 +99,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "REG-84",
             code_insee: "84",
             maille: "REG",
@@ -109,7 +109,7 @@ describe("PrismaChantierRepository", () => {
 
           // When : seul NAT-FR est demandé
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["NAT-FR"],
             optionsParDefaut,
             2025,
@@ -127,12 +127,11 @@ describe("PrismaChantierRepository", () => {
         "doit exclure les territoires dont la météo ne correspond pas à listeMeteos",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -141,7 +140,7 @@ describe("PrismaChantierRepository", () => {
             meteo: "SOLEIL",
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "REG-84",
             code_insee: "84",
             maille: "REG",
@@ -152,7 +151,7 @@ describe("PrismaChantierRepository", () => {
 
           // When : seuls les territoires avec météo SOLEIL sont demandés
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["NAT-FR", "REG-84"],
             { ...optionsParDefaut, listeMeteos: ["SOLEIL"] },
             2025,
@@ -172,12 +171,11 @@ describe("PrismaChantierRepository", () => {
         "doit retourner le taux d'avancement du jalon demandé pour chaque territoire",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -186,7 +184,7 @@ describe("PrismaChantierRepository", () => {
           });
           // Jalon 2024 — ne doit pas apparaître
           await fixtures.chantierTerritoireJalon({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -196,7 +194,7 @@ describe("PrismaChantierRepository", () => {
           });
           // Jalon 2025 — attendu
           await fixtures.chantierTerritoireJalon({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -207,7 +205,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["NAT-FR"],
             optionsParDefaut,
             2025,
@@ -225,12 +223,11 @@ describe("PrismaChantierRepository", () => {
         "doit retourner null pour tauxDAvancement si aucun jalon n'existe pour ce territoire",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -240,7 +237,7 @@ describe("PrismaChantierRepository", () => {
 
           // When : aucun chantier_territoire_jalon créé
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["NAT-FR"],
             optionsParDefaut,
             2025,
@@ -258,12 +255,11 @@ describe("PrismaChantierRepository", () => {
         "doit retourner tauxDAvancementNational, tauxDAvancementRégional et tauxDAvancementDépartemental depuis les jalons de chaque niveau pour une maille DEPT",
         createIntegrationTest(async () => {
           // Given
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             ministeres: ["MINEDU"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -271,7 +267,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "REG-84",
             code_insee: "84",
             maille: "REG",
@@ -279,7 +275,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -287,7 +283,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoireJalon({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: "NAT",
@@ -296,7 +292,7 @@ describe("PrismaChantierRepository", () => {
             taux_avancement: 50,
           });
           await fixtures.chantierTerritoireJalon({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "REG-84",
             code_insee: "84",
             maille: "REG",
@@ -305,7 +301,7 @@ describe("PrismaChantierRepository", () => {
             taux_avancement: 65,
           });
           await fixtures.chantierTerritoireJalon({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -316,7 +312,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["DEPT-01"],
             optionsParDefaut,
             2025,
@@ -358,14 +354,13 @@ describe("PrismaChantierRepository", () => {
             estEnAlertePossedePropositionsValeurAvancement: false,
           };
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
@@ -374,7 +369,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "01",
             territoire_code: "DEPT-01",
@@ -383,7 +378,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "02",
             territoire_code: "DEPT-02",
@@ -392,7 +387,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "REG",
             code_insee: "84",
             territoire_code: "REG-84",
@@ -403,7 +398,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["NAT-FR"],
             optionsPourExport,
             2025,
@@ -437,14 +432,13 @@ describe("PrismaChantierRepository", () => {
             estEnAlertePossedePropositionsValeurAvancement: false,
           };
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
@@ -453,7 +447,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "01",
             territoire_code: "DEPT-01",
@@ -463,7 +457,7 @@ describe("PrismaChantierRepository", () => {
           });
           // DEPT-02 possède une proposition
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "02",
             territoire_code: "DEPT-02",
@@ -472,7 +466,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "REG",
             code_insee: "84",
             territoire_code: "REG-84",
@@ -483,7 +477,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["NAT-FR"],
             optionsPourExport,
             2025,
@@ -517,14 +511,13 @@ describe("PrismaChantierRepository", () => {
             estEnAlertePossedePropositionsValeurAvancement: false,
           };
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
@@ -533,7 +526,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "01",
             territoire_code: "DEPT-01",
@@ -542,7 +535,7 @@ describe("PrismaChantierRepository", () => {
             nombre_propositions_valeur_actuelle: 0,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "02",
             territoire_code: "DEPT-02",
@@ -552,7 +545,7 @@ describe("PrismaChantierRepository", () => {
           });
           // REG-84 possède une proposition
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "REG",
             code_insee: "84",
             territoire_code: "REG-84",
@@ -563,7 +556,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["REG-84"],
             optionsPourExport,
             2025,
@@ -597,14 +590,13 @@ describe("PrismaChantierRepository", () => {
             estEnAlertePossedePropositionsValeurAvancement: false,
           };
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
@@ -614,7 +606,7 @@ describe("PrismaChantierRepository", () => {
           });
           // DEPT-01 possède une proposition (département enfant de REG-84)
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "01",
             territoire_code: "DEPT-01",
@@ -623,7 +615,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "02",
             territoire_code: "DEPT-02",
@@ -632,7 +624,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "REG",
             code_insee: "84",
             territoire_code: "REG-84",
@@ -643,7 +635,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["REG-84"],
             optionsPourExport,
             2025,
@@ -677,14 +669,13 @@ describe("PrismaChantierRepository", () => {
             estEnAlertePossedePropositionsValeurAvancement: false,
           };
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
@@ -693,7 +684,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "01",
             territoire_code: "DEPT-01",
@@ -703,7 +694,7 @@ describe("PrismaChantierRepository", () => {
           });
           // DEPT-02 a une proposition mais n'est pas enfant de REG-84
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "02",
             territoire_code: "DEPT-02",
@@ -712,7 +703,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "REG",
             code_insee: "84",
             territoire_code: "REG-84",
@@ -723,7 +714,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["REG-84"],
             optionsPourExport,
             2025,
@@ -757,14 +748,13 @@ describe("PrismaChantierRepository", () => {
             estEnAlertePossedePropositionsValeurAvancement: false,
           };
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
@@ -774,7 +764,7 @@ describe("PrismaChantierRepository", () => {
           });
           // DEPT-01 possède une proposition
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "01",
             territoire_code: "DEPT-01",
@@ -783,7 +773,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "02",
             territoire_code: "DEPT-02",
@@ -792,7 +782,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "REG",
             code_insee: "84",
             territoire_code: "REG-84",
@@ -803,7 +793,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["DEPT-01"],
             optionsPourExport,
             2025,
@@ -837,14 +827,13 @@ describe("PrismaChantierRepository", () => {
             estEnAlertePossedePropositionsValeurAvancement: false,
           };
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
@@ -853,7 +842,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "01",
             territoire_code: "DEPT-01",
@@ -863,7 +852,7 @@ describe("PrismaChantierRepository", () => {
           });
           // DEPT-02 a une proposition mais on demande DEPT-01
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "02",
             territoire_code: "DEPT-02",
@@ -872,7 +861,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "REG",
             code_insee: "84",
             territoire_code: "REG-84",
@@ -883,7 +872,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["DEPT-01"],
             optionsPourExport,
             2025,
@@ -919,14 +908,13 @@ describe("PrismaChantierRepository", () => {
             estEnAlertePossedePropositionsValeurAvancement: false,
           };
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
@@ -936,7 +924,7 @@ describe("PrismaChantierRepository", () => {
           });
           // Départements non applicables
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "01",
             territoire_code: "DEPT-01",
@@ -945,7 +933,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: false,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "02",
             territoire_code: "DEPT-02",
@@ -954,7 +942,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: false,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "REG",
             code_insee: "84",
             territoire_code: "REG-84",
@@ -965,7 +953,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["NAT-FR"],
             optionsPourExport,
             2025,
@@ -999,20 +987,18 @@ describe("PrismaChantierRepository", () => {
             estEnAlertePossedePropositionsValeurAvancement: false,
           };
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier1 = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierIdentite({
-            id: "CH-002",
             nom: "Chantier 002",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier1.id,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
@@ -1022,7 +1008,7 @@ describe("PrismaChantierRepository", () => {
           });
           // DEPT-01 a un taux non null
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier1.id,
             maille: "DEPT",
             code_insee: "01",
             territoire_code: "DEPT-01",
@@ -1031,7 +1017,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier1.id,
             maille: "DEPT",
             code_insee: "02",
             territoire_code: "DEPT-02",
@@ -1042,7 +1028,7 @@ describe("PrismaChantierRepository", () => {
 
           // DEPT-01 a un taux non null pour le jalon par défaut (2025), mais pas pour le jalon sélectionné (2026)
           await fixtures.chantierTerritoireJalon({
-            id: "CH-001",
+            id: chantier1.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -1053,7 +1039,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier1.id,
             ["NAT-FR"],
             optionsPourExport,
             2026,
@@ -1087,14 +1073,13 @@ describe("PrismaChantierRepository", () => {
             estEnAlertePossedePropositionsValeurAvancement: false,
           };
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
@@ -1104,7 +1089,7 @@ describe("PrismaChantierRepository", () => {
           });
           // Tous les départements ont taux_avancement_mandat null
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "01",
             territoire_code: "DEPT-01",
@@ -1113,7 +1098,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "DEPT",
             code_insee: "02",
             territoire_code: "DEPT-02",
@@ -1122,7 +1107,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier.id,
             maille: "REG",
             code_insee: "84",
             territoire_code: "REG-84",
@@ -1133,7 +1118,7 @@ describe("PrismaChantierRepository", () => {
 
           // Tous les jalons par défaut (2025) ont un taux null, le jalon sélectionné (2026) n'existe pas
           await fixtures.chantierTerritoireJalon({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "DEPT-01",
             code_insee: "01",
             maille: "DEPT",
@@ -1142,7 +1127,7 @@ describe("PrismaChantierRepository", () => {
             taux_avancement: null,
           });
           await fixtures.chantierTerritoireJalon({
-            id: "CH-001",
+            id: chantier.id,
             territoire_code: "DEPT-02",
             code_insee: "02",
             maille: "DEPT",
@@ -1153,7 +1138,7 @@ describe("PrismaChantierRepository", () => {
 
           // When
           const result = await prismaChantierRepository.recupererPourExports(
-            "CH-001",
+            chantier.id,
             ["NAT-FR"],
             optionsPourExport,
             2026,
@@ -1173,18 +1158,21 @@ describe("PrismaChantierRepository", () => {
       "Quand on le chantier demandé n'existe pas, doit remonter une erreur en cas de chantier non trouvé",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({ id: "CH-001", nom: "Chantier 001" });
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+        });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "NAT-FR",
           code_insee: "FR",
           maille: "NAT",
           zone_id: "FRANCE",
         });
+        const chantierInexistantId = randomUUID();
 
         const habilitation = {
           lecture: {
-            chantiers: ["CH-001", "CH-002"],
+            chantiers: [chantier.id, chantierInexistantId],
             territoires: ["NAT-FR"],
           },
         } as unknown as Utilisateur["habilitations"];
@@ -1194,7 +1182,7 @@ describe("PrismaChantierRepository", () => {
         // When
         const request = async () => {
           await prismaChantierRepository.recupererLesEntreesDUnChantier(
-            "CH-002",
+            chantierInexistantId,
             habilitation,
             profil,
             2024,
@@ -1202,7 +1190,9 @@ describe("PrismaChantierRepository", () => {
         };
 
         // Then
-        await expect(request).rejects.toThrow(/chantier 'CH-002' non trouvé/);
+        await expect(request).rejects.toThrow(
+          `chantier '${chantierInexistantId}' non trouvé`,
+        );
       }),
     );
 
@@ -1210,23 +1200,25 @@ describe("PrismaChantierRepository", () => {
       "quand on est un profil territorial, doit renvoyer la liste des chantiers sans la maille nationale",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({ id: "CH-001", nom: "Chantier 001" });
+        const chantier = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+        });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "NAT-FR",
           code_insee: "FR",
           maille: "NAT",
           zone_id: "FRANCE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "DEPT-87",
           code_insee: "87",
           maille: "DEPT",
           zone_id: "D87",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "DEPT-88",
           code_insee: "87",
           maille: "DEPT",
@@ -1235,7 +1227,7 @@ describe("PrismaChantierRepository", () => {
 
         const habilitation = {
           lecture: {
-            chantiers: ["CH-001", "CH-002"],
+            chantiers: [chantier.id, randomUUID()],
             territoires: ["DEPT-87"],
           },
         } as unknown as Utilisateur["habilitations"];
@@ -1245,7 +1237,7 @@ describe("PrismaChantierRepository", () => {
         // When
         const listeChantier =
           await prismaChantierRepository.recupererLesEntreesDUnChantier(
-            "CH-001",
+            chantier.id,
             habilitation,
             profil,
             2024,
@@ -1265,31 +1257,35 @@ describe("PrismaChantierRepository", () => {
       "quand on n'est pas un profil territorial, doit renvoyer la liste des chantiers avec la maille nationale",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({ id: "CH-001", nom: "Chantier 001" });
-        await fixtures.chantierIdentite({ id: "CH-002", nom: "Chantier 002" });
+        const chantier1 = await fixtures.chantierIdentite({
+          nom: "Chantier 001",
+        });
+        const chantier2 = await fixtures.chantierIdentite({
+          nom: "Chantier 002",
+        });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: chantier2.id,
           territoire_code: "NAT-FR",
           code_insee: "FR",
           maille: "NAT",
           zone_id: "FRANCE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier1.id,
           territoire_code: "NAT-FR",
           code_insee: "FR",
           maille: "NAT",
           zone_id: "FRANCE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier1.id,
           territoire_code: "DEPT-87",
           code_insee: "87",
           maille: "DEPT",
           zone_id: "D87",
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-001",
+          id: chantier1.id,
           territoire_code: "DEPT-87",
           code_insee: "87",
           maille: "DEPT",
@@ -1298,7 +1294,7 @@ describe("PrismaChantierRepository", () => {
           taux_avancement: 10,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-001",
+          id: chantier1.id,
           territoire_code: "DEPT-87",
           code_insee: "87",
           maille: "DEPT",
@@ -1307,14 +1303,14 @@ describe("PrismaChantierRepository", () => {
           taux_avancement: 12,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier1.id,
           territoire_code: "DEPT-88",
           code_insee: "88",
           maille: "DEPT",
           zone_id: "D88",
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-001",
+          id: chantier1.id,
           territoire_code: "DEPT-88",
           code_insee: "88",
           maille: "DEPT",
@@ -1323,7 +1319,7 @@ describe("PrismaChantierRepository", () => {
           taux_avancement: 10,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-001",
+          id: chantier1.id,
           territoire_code: "DEPT-88",
           code_insee: "88",
           maille: "DEPT",
@@ -1334,7 +1330,7 @@ describe("PrismaChantierRepository", () => {
 
         const habilitation = {
           lecture: {
-            chantiers: ["CH-001", "CH-002"],
+            chantiers: [chantier1.id, chantier2.id],
             territoires: ["DEPT-87"],
           },
         } as unknown as Utilisateur["habilitations"];
@@ -1344,7 +1340,7 @@ describe("PrismaChantierRepository", () => {
         // When
         const listeChantier =
           await prismaChantierRepository.recupererLesEntreesDUnChantier(
-            "CH-001",
+            chantier1.id,
             habilitation,
             profil,
             2024,
@@ -1377,26 +1373,22 @@ describe("PrismaChantierRepository", () => {
       "quand on a l'option estBarometre et territorialisation à ['regionale', 'departementale'], doit remonter les chantiers ids contenant soit les chantiers du barometre soit territorialisé",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier1 = await fixtures.chantierIdentite({
           nom: "Chantier 001",
           est_barometre: true,
           est_territorialise: true,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantier2 = await fixtures.chantierIdentite({
           nom: "Chantier 002",
           est_barometre: true,
           est_territorialise: false,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-003",
+        const chantier3 = await fixtures.chantierIdentite({
           nom: "Chantier 003",
           est_barometre: false,
           est_territorialise: true,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-004",
+        const chantier4 = await fixtures.chantierIdentite({
           nom: "Chantier 004",
           est_barometre: false,
           est_territorialise: false,
@@ -1422,12 +1414,12 @@ describe("PrismaChantierRepository", () => {
         // When
         const result =
           await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(
-            ["CH-001", "CH-002", "CH-003", "CH-004"],
+            [chantier1.id, chantier2.id, chantier3.id, chantier4.id],
             optionsPourExport,
           );
 
         // Then
-        expect(result).toEqual(["CH-001"]);
+        expect(result).toEqual([chantier1.id]);
       }),
     );
 
@@ -1435,26 +1427,22 @@ describe("PrismaChantierRepository", () => {
       "quand on a l'option estBarometre est a false et estTerritorialise à false, doit remonter les chantiers ids contenant les chantiers du barometre",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier1 = await fixtures.chantierIdentite({
           nom: "Chantier 001",
           est_barometre: true,
           est_territorialise: true,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantier2 = await fixtures.chantierIdentite({
           nom: "Chantier 002",
           est_barometre: true,
           est_territorialise: false,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-003",
+        const chantier3 = await fixtures.chantierIdentite({
           nom: "Chantier 003",
           est_barometre: false,
           est_territorialise: true,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-004",
+        const chantier4 = await fixtures.chantierIdentite({
           nom: "Chantier 004",
           est_barometre: false,
           est_territorialise: false,
@@ -1480,12 +1468,12 @@ describe("PrismaChantierRepository", () => {
         // When
         const result =
           await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(
-            ["CH-001", "CH-002", "CH-003", "CH-004"],
+            [chantier1.id, chantier2.id, chantier3.id, chantier4.id],
             optionsPourExport,
           );
 
         // Then
-        expect(result).toEqual(["CH-001", "CH-002"]);
+        expect(result).toEqual([chantier1.id, chantier2.id]);
       }),
     );
 
@@ -1493,29 +1481,25 @@ describe("PrismaChantierRepository", () => {
       "quand on a l'option estBarometre est a false et territorialisation à ['regionale', 'departementale'], doit remonter les chantiers ids contenant les chantiers territorialise",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier1 = await fixtures.chantierIdentite({
           nom: "Chantier 001",
           est_barometre: true,
           est_territorialise: true,
           mailles_applicables: ["REG", "DEPT"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantier2 = await fixtures.chantierIdentite({
           nom: "Chantier 002",
           est_barometre: true,
           est_territorialise: false,
           mailles_applicables: ["NAT"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-003",
+        const chantier3 = await fixtures.chantierIdentite({
           nom: "Chantier 003",
           est_barometre: false,
           est_territorialise: true,
           mailles_applicables: ["REG", "DEPT"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-004",
+        const chantier4 = await fixtures.chantierIdentite({
           nom: "Chantier 004",
           est_barometre: false,
           est_territorialise: false,
@@ -1542,12 +1526,12 @@ describe("PrismaChantierRepository", () => {
         // When
         const result =
           await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(
-            ["CH-001", "CH-002", "CH-003", "CH-004"],
+            [chantier1.id, chantier2.id, chantier3.id, chantier4.id],
             optionsPourExport,
           );
 
         // Then
-        expect(result).toEqual(["CH-001", "CH-003"]);
+        expect(result).toEqual([chantier1.id, chantier3.id]);
       }),
     );
 
@@ -1555,36 +1539,31 @@ describe("PrismaChantierRepository", () => {
       "quand on a l'option listeStatuts est définie, doit remonter les chantiers ids des chantiers avec les statuts demandés",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier1 = await fixtures.chantierIdentite({
           nom: "Chantier 001",
           est_barometre: true,
           est_territorialise: true,
           statut: "PUBLIE",
         });
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantier2 = await fixtures.chantierIdentite({
           nom: "Chantier 002",
           est_barometre: true,
           est_territorialise: false,
           statut: "PUBLIE",
         });
-        await fixtures.chantierIdentite({
-          id: "CH-003",
+        const chantier3 = await fixtures.chantierIdentite({
           nom: "Chantier 003",
           est_barometre: false,
           est_territorialise: true,
           statut: "BROUILLON",
         });
-        await fixtures.chantierIdentite({
-          id: "CH-004",
+        const chantier4 = await fixtures.chantierIdentite({
           nom: "Chantier 004",
           est_barometre: false,
           est_territorialise: false,
           statut: "ARCHIVE",
         });
-        await fixtures.chantierIdentite({
-          id: "CH-005",
+        const chantier5 = await fixtures.chantierIdentite({
           nom: "Chantier 005",
           est_barometre: false,
           est_territorialise: false,
@@ -1611,12 +1590,18 @@ describe("PrismaChantierRepository", () => {
         // When
         const result =
           await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(
-            ["CH-001", "CH-002", "CH-003", "CH-004", "CH-005"],
+            [
+              chantier1.id,
+              chantier2.id,
+              chantier3.id,
+              chantier4.id,
+              chantier5.id,
+            ],
             optionsPourExport,
           );
 
         // Then
-        expect(result).toEqual(["CH-001", "CH-002", "CH-003"]);
+        expect(result).toEqual([chantier1.id, chantier2.id, chantier3.id]);
       }),
     );
 
@@ -1624,40 +1609,35 @@ describe("PrismaChantierRepository", () => {
       "quand on a l'option perimetreIds est définie, doit remonter les chantiers ids des chantiers avec les périmètres demandés",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier1 = await fixtures.chantierIdentite({
           nom: "Chantier 001",
           est_barometre: true,
           est_territorialise: true,
           statut: "PUBLIE",
           perimetre_ids: ["PER-01", "PER-02"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantier2 = await fixtures.chantierIdentite({
           nom: "Chantier 002",
           est_barometre: true,
           est_territorialise: false,
           statut: "PUBLIE",
           perimetre_ids: ["PER-01"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-003",
+        const chantier3 = await fixtures.chantierIdentite({
           nom: "Chantier 003",
           est_barometre: false,
           est_territorialise: true,
           statut: "BROUILLON",
           perimetre_ids: ["PER-02"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-004",
+        const chantier4 = await fixtures.chantierIdentite({
           nom: "Chantier 004",
           est_barometre: false,
           est_territorialise: false,
           statut: "ARCHIVE",
           perimetre_ids: ["PER-03"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-005",
+        const chantier5 = await fixtures.chantierIdentite({
           nom: "Chantier 005",
           est_barometre: false,
           est_territorialise: false,
@@ -1685,12 +1665,23 @@ describe("PrismaChantierRepository", () => {
         // When
         const result =
           await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(
-            ["CH-001", "CH-002", "CH-003", "CH-004", "CH-005"],
+            [
+              chantier1.id,
+              chantier2.id,
+              chantier3.id,
+              chantier4.id,
+              chantier5.id,
+            ],
             optionsPourExport,
           );
 
         // Then
-        expect(result).toEqual(["CH-001", "CH-002", "CH-003", "CH-005"]);
+        expect(result).toEqual([
+          chantier1.id,
+          chantier2.id,
+          chantier3.id,
+          chantier5.id,
+        ]);
       }),
     );
 
@@ -1698,40 +1689,35 @@ describe("PrismaChantierRepository", () => {
       "quand on a l'option listeChantierId est définie, doit remonter les chantiers ids des chantiers avec les ids de chantier demandés",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier1 = await fixtures.chantierIdentite({
           nom: "Chantier 001",
           est_barometre: true,
           est_territorialise: true,
           statut: "PUBLIE",
           perimetre_ids: ["PER-01", "PER-02"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantier2 = await fixtures.chantierIdentite({
           nom: "Chantier 002",
           est_barometre: true,
           est_territorialise: false,
           statut: "PUBLIE",
           perimetre_ids: ["PER-01"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-003",
+        const chantier3 = await fixtures.chantierIdentite({
           nom: "Chantier 003",
           est_barometre: false,
           est_territorialise: true,
           statut: "BROUILLON",
           perimetre_ids: ["PER-02"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-004",
+        const chantier4 = await fixtures.chantierIdentite({
           nom: "Chantier 004",
           est_barometre: false,
           est_territorialise: false,
           statut: "ARCHIVE",
           perimetre_ids: ["PER-03"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-005",
+        const chantier5 = await fixtures.chantierIdentite({
           nom: "Chantier 005",
           est_barometre: false,
           est_territorialise: false,
@@ -1743,8 +1729,8 @@ describe("PrismaChantierRepository", () => {
           estBarometre: false,
           territorialisation: [],
           perimetreIds: [],
-          listeChantierId: ["CH-002", "CH-003", "CH-005"],
-          listeMeteos: ["CH-002", "CH-003", "CH-005"],
+          listeChantierId: [chantier2.id, chantier3.id, chantier5.id],
+          listeMeteos: [chantier2.id, chantier3.id, chantier5.id],
           listeStatuts: [],
           listeOptionsExport: [],
           territoireCode: undefined,
@@ -1759,12 +1745,18 @@ describe("PrismaChantierRepository", () => {
         // When
         const result =
           await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(
-            ["CH-001", "CH-002", "CH-003", "CH-004", "CH-005"],
+            [
+              chantier1.id,
+              chantier2.id,
+              chantier3.id,
+              chantier4.id,
+              chantier5.id,
+            ],
             optionsPourExport,
           );
 
         // Then
-        expect(result).toEqual(["CH-002", "CH-003", "CH-005"]);
+        expect(result).toEqual([chantier2.id, chantier3.id, chantier5.id]);
       }),
     );
   });
@@ -1774,7 +1766,6 @@ describe("PrismaChantierRepository", () => {
       "quand on est profil territoriale et que les filtres sont laissés par défault, doit remonter les chantiers demandés",
       createIntegrationTest(async () => {
         // Given
-        const chantiersLectureIds = ["CH-001", "CH-002", "CH-004"];
         const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
 
         const filtres: FiltreQueryParams = {
@@ -1789,32 +1780,28 @@ describe("PrismaChantierRepository", () => {
 
         const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
 
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier1 = await fixtures.chantierIdentite({
           nom: "Chantier 001",
           ministeres: ["1009"],
           ministeres_acronymes: ["MINA"],
           est_barometre: true,
           est_territorialise: true,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-003",
+        const chantier3 = await fixtures.chantierIdentite({
           nom: "Chantier 003",
           ministeres: ["1009"],
           ministeres_acronymes: ["MINA"],
           est_barometre: false,
           est_territorialise: true,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantier2 = await fixtures.chantierIdentite({
           nom: "Chantier 002",
           ministeres: ["1009"],
           ministeres_acronymes: ["MINA"],
           est_barometre: true,
           est_territorialise: false,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-004",
+        const chantier4 = await fixtures.chantierIdentite({
           nom: "Chantier 004",
           ministeres: ["1009"],
           ministeres_acronymes: ["MINA"],
@@ -1822,7 +1809,7 @@ describe("PrismaChantierRepository", () => {
           est_territorialise: false,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier1.id,
           zone_id: "D87",
           maille: "DEPT",
           code_insee: "87",
@@ -1832,7 +1819,7 @@ describe("PrismaChantierRepository", () => {
           taux_avancement_mandat: 5,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier1.id,
           zone_id: "D88",
           maille: "DEPT",
           code_insee: "88",
@@ -1842,7 +1829,7 @@ describe("PrismaChantierRepository", () => {
           taux_avancement_mandat: 2,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: chantier2.id,
           zone_id: "D88",
           maille: "DEPT",
           code_insee: "88",
@@ -1852,7 +1839,7 @@ describe("PrismaChantierRepository", () => {
           taux_avancement_mandat: 10,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-003",
+          id: chantier3.id,
           zone_id: "FRANCE",
           maille: "NAT",
           code_insee: "FR",
@@ -1862,7 +1849,7 @@ describe("PrismaChantierRepository", () => {
           taux_avancement_mandat: 15,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-004",
+          id: chantier4.id,
           zone_id: "D87",
           maille: "DEPT",
           code_insee: "87",
@@ -1871,6 +1858,8 @@ describe("PrismaChantierRepository", () => {
           est_applicable: true,
           taux_avancement_mandat: 20,
         });
+
+        const chantiersLectureIds = [chantier1.id, chantier2.id, chantier4.id];
 
         const jalon = 2024;
 
@@ -1886,32 +1875,37 @@ describe("PrismaChantierRepository", () => {
           );
 
         // Then
-        expect(result).toMatchObject([
-          {
-            nom: "Chantier 001",
-            chantier_territoire: [
-              { territoire_code: "DEPT-87", taux_avancement_mandat: 5 },
-              { territoire_code: "DEPT-88", taux_avancement_mandat: 2 },
-            ],
-          },
-          {
-            nom: "Chantier 002",
-            chantier_territoire: [
-              { territoire_code: "DEPT-88", taux_avancement_mandat: 10 },
-            ],
-          },
-          {
-            nom: "Chantier 004",
-            chantier_territoire: [
-              { territoire_code: "DEPT-87", taux_avancement_mandat: 20 },
-            ],
-          },
-        ]);
+        expect(result).toMatchObject(
+          [
+            {
+              id: chantier1.id,
+              nom: "Chantier 001",
+              chantier_territoire: [
+                { territoire_code: "DEPT-87", taux_avancement_mandat: 5 },
+                { territoire_code: "DEPT-88", taux_avancement_mandat: 2 },
+              ],
+            },
+            {
+              id: chantier2.id,
+              nom: "Chantier 002",
+              chantier_territoire: [
+                { territoire_code: "DEPT-88", taux_avancement_mandat: 10 },
+              ],
+            },
+            {
+              id: chantier4.id,
+              nom: "Chantier 004",
+              chantier_territoire: [
+                { territoire_code: "DEPT-87", taux_avancement_mandat: 20 },
+              ],
+            },
+          ].sort((gauche, droite) => gauche.id.localeCompare(droite.id)),
+        );
         expect(result).not.toMatchObject([
           {
             territoire_code: "NAT-FR",
             taux_avancement_mandat: 20,
-            chantier_identite: { id: "CH-003" },
+            chantier_identite: { id: chantier3.id },
           },
         ]);
       }),
@@ -1921,7 +1915,6 @@ describe("PrismaChantierRepository", () => {
       "quand on n'est pas un profil territoriale et que les filtres sont laissés par défault, doit remonter les chantiers demandés avec la maille nationale en plus",
       createIntegrationTest(async () => {
         // Given
-        const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
         const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
 
         const filtres: FiltreQueryParams = {
@@ -1936,32 +1929,28 @@ describe("PrismaChantierRepository", () => {
 
         const profil = ProfilEnum.DITP_ADMIN;
 
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier1 = await fixtures.chantierIdentite({
           nom: "Chantier 001",
           ministeres: ["1009"],
           ministeres_acronymes: ["MINA"],
           est_barometre: true,
           est_territorialise: true,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantier2 = await fixtures.chantierIdentite({
           nom: "Chantier 002",
           ministeres: ["1009"],
           ministeres_acronymes: ["MINA"],
           est_barometre: true,
           est_territorialise: false,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-003",
+        const chantier3 = await fixtures.chantierIdentite({
           nom: "Chantier 003",
           ministeres: ["1009"],
           ministeres_acronymes: ["MINA"],
           est_barometre: false,
           est_territorialise: true,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-004",
+        const chantier4 = await fixtures.chantierIdentite({
           nom: "Chantier 004",
           ministeres: ["1009"],
           ministeres_acronymes: ["MINA"],
@@ -1969,7 +1958,7 @@ describe("PrismaChantierRepository", () => {
           est_territorialise: false,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier1.id,
           zone_id: "D87",
           maille: "DEPT",
           code_insee: "87",
@@ -1979,7 +1968,7 @@ describe("PrismaChantierRepository", () => {
           est_applicable: true,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-003",
+          id: chantier3.id,
           zone_id: "FRANCE",
           maille: "NAT",
           code_insee: "FR",
@@ -1989,7 +1978,7 @@ describe("PrismaChantierRepository", () => {
           est_applicable: true,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: chantier2.id,
           zone_id: "D88",
           maille: "DEPT",
           code_insee: "88",
@@ -1999,7 +1988,7 @@ describe("PrismaChantierRepository", () => {
           est_applicable: true,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-004",
+          id: chantier4.id,
           zone_id: "D87",
           maille: "DEPT",
           code_insee: "87",
@@ -2008,6 +1997,13 @@ describe("PrismaChantierRepository", () => {
           taux_avancement_mandat: 5,
           est_applicable: true,
         });
+
+        const chantiersLectureIds = [
+          chantier1.id,
+          chantier2.id,
+          chantier3.id,
+          chantier4.id,
+        ];
 
         const jalon = 2024;
 
@@ -2023,32 +2019,38 @@ describe("PrismaChantierRepository", () => {
           );
 
         // Then
-        expect(result).toMatchObject([
-          {
-            nom: "Chantier 001",
-            chantier_territoire: [
-              { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
-            ],
-          },
-          {
-            nom: "Chantier 002",
-            chantier_territoire: [
-              { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
-            ],
-          },
-          {
-            nom: "Chantier 003",
-            chantier_territoire: [
-              { territoire_code: "NAT-FR", taux_avancement_mandat: 4 },
-            ],
-          },
-          {
-            nom: "Chantier 004",
-            chantier_territoire: [
-              { territoire_code: "DEPT-87", taux_avancement_mandat: 5 },
-            ],
-          },
-        ]);
+        expect(result).toMatchObject(
+          [
+            {
+              id: chantier1.id,
+              nom: "Chantier 001",
+              chantier_territoire: [
+                { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+              ],
+            },
+            {
+              id: chantier2.id,
+              nom: "Chantier 002",
+              chantier_territoire: [
+                { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
+              ],
+            },
+            {
+              id: chantier3.id,
+              nom: "Chantier 003",
+              chantier_territoire: [
+                { territoire_code: "NAT-FR", taux_avancement_mandat: 4 },
+              ],
+            },
+            {
+              id: chantier4.id,
+              nom: "Chantier 004",
+              chantier_territoire: [
+                { territoire_code: "DEPT-87", taux_avancement_mandat: 5 },
+              ],
+            },
+          ].sort((gauche, droite) => gauche.id.localeCompare(droite.id)),
+        );
       }),
     );
 
@@ -2057,7 +2059,6 @@ describe("PrismaChantierRepository", () => {
         "quand on est profil territoriale et que le filtres perimetres est defini, doit remonter les chantiers demandés",
         createIntegrationTest(async () => {
           // Given
-          const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
           const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
 
           const filtres: FiltreQueryParams = {
@@ -2072,8 +2073,7 @@ describe("PrismaChantierRepository", () => {
 
           const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier1 = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2081,8 +2081,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: true,
             perimetre_ids: ["PER-01", "PER-02"],
           });
-          await fixtures.chantierIdentite({
-            id: "CH-002",
+          const chantier2 = await fixtures.chantierIdentite({
             nom: "Chantier 002",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2090,8 +2089,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: false,
             perimetre_ids: ["PER-03", "PER-04"],
           });
-          await fixtures.chantierIdentite({
-            id: "CH-003",
+          const chantier3 = await fixtures.chantierIdentite({
             nom: "Chantier 003",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2100,7 +2098,7 @@ describe("PrismaChantierRepository", () => {
             perimetre_ids: ["PER-01", "PER-03"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier1.id,
             zone_id: "D87",
             maille: "DEPT",
             code_insee: "87",
@@ -2110,7 +2108,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-002",
+            id: chantier2.id,
             zone_id: "D88",
             maille: "DEPT",
             code_insee: "88",
@@ -2120,7 +2118,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-003",
+            id: chantier3.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2129,6 +2127,13 @@ describe("PrismaChantierRepository", () => {
             taux_avancement_mandat: 4,
             est_applicable: true,
           });
+
+          const chantiersLectureIds = [
+            chantier1.id,
+            chantier2.id,
+            chantier3.id,
+            randomUUID(),
+          ];
 
           const jalon = 2024;
 
@@ -2144,20 +2149,24 @@ describe("PrismaChantierRepository", () => {
             );
 
           // Then
-          expect(result).toMatchObject([
-            {
-              nom: "Chantier 001",
-              chantier_territoire: [
-                { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
-              ],
-            },
-            {
-              nom: "Chantier 003",
-              chantier_territoire: [
-                { territoire_code: "REG-01", taux_avancement_mandat: 4 },
-              ],
-            },
-          ]);
+          expect(result).toMatchObject(
+            [
+              {
+                id: chantier1.id,
+                nom: "Chantier 001",
+                chantier_territoire: [
+                  { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+                ],
+              },
+              {
+                id: chantier3.id,
+                nom: "Chantier 003",
+                chantier_territoire: [
+                  { territoire_code: "REG-01", taux_avancement_mandat: 4 },
+                ],
+              },
+            ].sort((gauche, droite) => gauche.id.localeCompare(droite.id)),
+          );
         }),
       );
 
@@ -2165,7 +2174,6 @@ describe("PrismaChantierRepository", () => {
         "quand on est profil territoriale et que le filtres statut est defini, doit remonter les chantiers demandés",
         createIntegrationTest(async () => {
           // Given
-          const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
           const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
 
           const filtres: FiltreQueryParams = {
@@ -2180,8 +2188,7 @@ describe("PrismaChantierRepository", () => {
 
           const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier1 = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2189,8 +2196,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: true,
             statut: "PUBLIE",
           });
-          await fixtures.chantierIdentite({
-            id: "CH-002",
+          const chantier2 = await fixtures.chantierIdentite({
             nom: "Chantier 002",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2198,8 +2204,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: false,
             statut: "BROUILLON",
           });
-          await fixtures.chantierIdentite({
-            id: "CH-003",
+          const chantier3 = await fixtures.chantierIdentite({
             nom: "Chantier 003",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2208,7 +2213,7 @@ describe("PrismaChantierRepository", () => {
             statut: "ARCHIVE",
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier1.id,
             zone_id: "D87",
             maille: "DEPT",
             code_insee: "87",
@@ -2218,7 +2223,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-002",
+            id: chantier2.id,
             zone_id: "D88",
             maille: "DEPT",
             code_insee: "88",
@@ -2228,7 +2233,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-003",
+            id: chantier3.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2237,6 +2242,13 @@ describe("PrismaChantierRepository", () => {
             taux_avancement_mandat: 4,
             est_applicable: true,
           });
+
+          const chantiersLectureIds = [
+            chantier1.id,
+            chantier2.id,
+            chantier3.id,
+            randomUUID(),
+          ];
 
           const jalon = 2024;
 
@@ -2252,20 +2264,24 @@ describe("PrismaChantierRepository", () => {
             );
 
           // Then
-          expect(result).toMatchObject([
-            {
-              nom: "Chantier 001",
-              chantier_territoire: [
-                { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
-              ],
-            },
-            {
-              nom: "Chantier 002",
-              chantier_territoire: [
-                { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
-              ],
-            },
-          ]);
+          expect(result).toMatchObject(
+            [
+              {
+                id: chantier1.id,
+                nom: "Chantier 001",
+                chantier_territoire: [
+                  { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+                ],
+              },
+              {
+                id: chantier2.id,
+                nom: "Chantier 002",
+                chantier_territoire: [
+                  { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
+                ],
+              },
+            ].sort((gauche, droite) => gauche.id.localeCompare(droite.id)),
+          );
         }),
       );
 
@@ -2273,7 +2289,6 @@ describe("PrismaChantierRepository", () => {
         "quand on est profil territoriale et que le filtres meteos est defini, doit remonter les chantiers demandés",
         createIntegrationTest(async () => {
           // Given
-          const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
           const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
 
           const filtres: FiltreQueryParams = {
@@ -2288,26 +2303,23 @@ describe("PrismaChantierRepository", () => {
 
           const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier1 = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
-          await fixtures.chantierIdentite({
-            id: "CH-002",
+          const chantier2 = await fixtures.chantierIdentite({
             nom: "Chantier 002",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
-          await fixtures.chantierIdentite({
-            id: "CH-003",
+          const chantier3 = await fixtures.chantierIdentite({
             nom: "Chantier 003",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier1.id,
             zone_id: "D87",
             maille: "DEPT",
             code_insee: "87",
@@ -2317,7 +2329,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-002",
+            id: chantier2.id,
             zone_id: "D87",
             maille: "DEPT",
             code_insee: "87",
@@ -2327,7 +2339,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-002",
+            id: chantier2.id,
             zone_id: "D88",
             maille: "DEPT",
             code_insee: "88",
@@ -2337,7 +2349,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-003",
+            id: chantier3.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2346,6 +2358,13 @@ describe("PrismaChantierRepository", () => {
             taux_avancement_mandat: 4,
             est_applicable: true,
           });
+
+          const chantiersLectureIds = [
+            chantier1.id,
+            chantier2.id,
+            chantier3.id,
+            randomUUID(),
+          ];
 
           const jalon = 2024;
 
@@ -2361,14 +2380,17 @@ describe("PrismaChantierRepository", () => {
             );
 
           // Then
-          expect(result).toMatchObject([
-            {
-              nom: "Chantier 001",
-              chantier_territoire: [
-                { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
-              ],
-            },
-          ]);
+          expect(result).toMatchObject(
+            [
+              {
+                id: chantier1.id,
+                nom: "Chantier 001",
+                chantier_territoire: [
+                  { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+                ],
+              },
+            ].sort((gauche, droite) => gauche.id.localeCompare(droite.id)),
+          );
         }),
       );
 
@@ -2376,7 +2398,6 @@ describe("PrismaChantierRepository", () => {
         "quand on est profil territoriale et que le filtres axes est defini, doit remonter les chantiers demandés",
         createIntegrationTest(async () => {
           // Given
-          const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
           const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
 
           const filtres: FiltreQueryParams = {
@@ -2391,8 +2412,7 @@ describe("PrismaChantierRepository", () => {
 
           const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier1 = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2400,8 +2420,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: true,
             axe: "axe 3",
           });
-          await fixtures.chantierIdentite({
-            id: "CH-002",
+          const chantier2 = await fixtures.chantierIdentite({
             nom: "Chantier 002",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2409,8 +2428,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: false,
             axe: "axe 2",
           });
-          await fixtures.chantierIdentite({
-            id: "CH-003",
+          const chantier3 = await fixtures.chantierIdentite({
             nom: "Chantier 003",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2419,7 +2437,7 @@ describe("PrismaChantierRepository", () => {
             axe: "axe 1",
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier1.id,
             zone_id: "D87",
             maille: "DEPT",
             code_insee: "87",
@@ -2429,7 +2447,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-002",
+            id: chantier2.id,
             zone_id: "D88",
             maille: "DEPT",
             code_insee: "88",
@@ -2439,7 +2457,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-003",
+            id: chantier3.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2448,6 +2466,13 @@ describe("PrismaChantierRepository", () => {
             taux_avancement_mandat: 4,
             est_applicable: true,
           });
+
+          const chantiersLectureIds = [
+            chantier1.id,
+            chantier2.id,
+            chantier3.id,
+            randomUUID(),
+          ];
 
           const jalon = 2024;
 
@@ -2463,20 +2488,24 @@ describe("PrismaChantierRepository", () => {
             );
 
           // Then
-          expect(result).toMatchObject([
-            {
-              nom: "Chantier 002",
-              chantier_territoire: [
-                { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
-              ],
-            },
-            {
-              nom: "Chantier 003",
-              chantier_territoire: [
-                { territoire_code: "REG-01", taux_avancement_mandat: 4 },
-              ],
-            },
-          ]);
+          expect(result).toMatchObject(
+            [
+              {
+                id: chantier2.id,
+                nom: "Chantier 002",
+                chantier_territoire: [
+                  { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
+                ],
+              },
+              {
+                id: chantier3.id,
+                nom: "Chantier 003",
+                chantier_territoire: [
+                  { territoire_code: "REG-01", taux_avancement_mandat: 4 },
+                ],
+              },
+            ].sort((gauche, droite) => gauche.id.localeCompare(droite.id)),
+          );
         }),
       );
 
@@ -2484,7 +2513,6 @@ describe("PrismaChantierRepository", () => {
         "quand on est profil territoriale et que le filtres est barometre et territorialisation est defini en regionale et departementale, doit remonter les chantiers demandés",
         createIntegrationTest(async () => {
           // Given
-          const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
           const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
 
           const filtres: FiltreQueryParams = {
@@ -2499,8 +2527,7 @@ describe("PrismaChantierRepository", () => {
 
           const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier1 = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2508,8 +2535,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: true,
             mailles_applicables: ["REG", "DEPT"],
           });
-          await fixtures.chantierIdentite({
-            id: "CH-002",
+          const chantier2 = await fixtures.chantierIdentite({
             nom: "Chantier 002",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2517,8 +2543,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: false,
             mailles_applicables: ["NAT"],
           });
-          await fixtures.chantierIdentite({
-            id: "CH-003",
+          const chantier3 = await fixtures.chantierIdentite({
             nom: "Chantier 003",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2526,8 +2551,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: true,
             mailles_applicables: ["REG", "DEPT"],
           });
-          await fixtures.chantierIdentite({
-            id: "CH-004",
+          const chantier4 = await fixtures.chantierIdentite({
             nom: "Chantier 004",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2536,7 +2560,7 @@ describe("PrismaChantierRepository", () => {
             mailles_applicables: ["NAT"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier1.id,
             zone_id: "D87",
             maille: "DEPT",
             code_insee: "87",
@@ -2546,7 +2570,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-002",
+            id: chantier2.id,
             zone_id: "D88",
             maille: "DEPT",
             code_insee: "88",
@@ -2556,7 +2580,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-003",
+            id: chantier3.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2566,7 +2590,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-004",
+            id: chantier4.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2575,6 +2599,13 @@ describe("PrismaChantierRepository", () => {
             taux_avancement_mandat: 5,
             est_applicable: true,
           });
+
+          const chantiersLectureIds = [
+            chantier1.id,
+            chantier2.id,
+            chantier3.id,
+            chantier4.id,
+          ];
 
           const jalon = 2024;
 
@@ -2590,14 +2621,17 @@ describe("PrismaChantierRepository", () => {
             );
 
           // Then
-          expect(result).toMatchObject([
-            {
-              nom: "Chantier 001",
-              chantier_territoire: [
-                { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
-              ],
-            },
-          ]);
+          expect(result).toMatchObject(
+            [
+              {
+                id: chantier1.id,
+                nom: "Chantier 001",
+                chantier_territoire: [
+                  { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+                ],
+              },
+            ].sort((gauche, droite) => gauche.id.localeCompare(droite.id)),
+          );
         }),
       );
 
@@ -2605,7 +2639,6 @@ describe("PrismaChantierRepository", () => {
         "quand on est profil territoriale et que le filtres est barometre est defini, doit remonter les chantiers demandés",
         createIntegrationTest(async () => {
           // Given
-          const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
           const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
 
           const filtres: FiltreQueryParams = {
@@ -2620,32 +2653,28 @@ describe("PrismaChantierRepository", () => {
 
           const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier1 = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
             est_barometre: true,
             est_territorialise: true,
           });
-          await fixtures.chantierIdentite({
-            id: "CH-002",
+          const chantier2 = await fixtures.chantierIdentite({
             nom: "Chantier 002",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
             est_barometre: true,
             est_territorialise: false,
           });
-          await fixtures.chantierIdentite({
-            id: "CH-003",
+          const chantier3 = await fixtures.chantierIdentite({
             nom: "Chantier 003",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
             est_barometre: false,
             est_territorialise: true,
           });
-          await fixtures.chantierIdentite({
-            id: "CH-004",
+          const chantier4 = await fixtures.chantierIdentite({
             nom: "Chantier 004",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2653,7 +2682,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: false,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier1.id,
             zone_id: "D87",
             maille: "DEPT",
             code_insee: "87",
@@ -2663,7 +2692,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-002",
+            id: chantier2.id,
             zone_id: "D88",
             maille: "DEPT",
             code_insee: "88",
@@ -2673,7 +2702,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-003",
+            id: chantier3.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2683,7 +2712,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-004",
+            id: chantier4.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2692,6 +2721,13 @@ describe("PrismaChantierRepository", () => {
             taux_avancement_mandat: 5,
             est_applicable: true,
           });
+
+          const chantiersLectureIds = [
+            chantier1.id,
+            chantier2.id,
+            chantier3.id,
+            chantier4.id,
+          ];
 
           const jalon = 2024;
 
@@ -2707,20 +2743,24 @@ describe("PrismaChantierRepository", () => {
             );
 
           // Then
-          expect(result).toMatchObject([
-            {
-              nom: "Chantier 001",
-              chantier_territoire: [
-                { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
-              ],
-            },
-            {
-              nom: "Chantier 002",
-              chantier_territoire: [
-                { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
-              ],
-            },
-          ]);
+          expect(result).toMatchObject(
+            [
+              {
+                id: chantier1.id,
+                nom: "Chantier 001",
+                chantier_territoire: [
+                  { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+                ],
+              },
+              {
+                id: chantier2.id,
+                nom: "Chantier 002",
+                chantier_territoire: [
+                  { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
+                ],
+              },
+            ].sort((gauche, droite) => gauche.id.localeCompare(droite.id)),
+          );
         }),
       );
 
@@ -2728,7 +2768,6 @@ describe("PrismaChantierRepository", () => {
         "quand on est profil territoriale et que le filtres est territorialise est defini, doit remonter les chantiers demandés",
         createIntegrationTest(async () => {
           // Given
-          const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
           const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
 
           const filtres: FiltreQueryParams = {
@@ -2743,8 +2782,7 @@ describe("PrismaChantierRepository", () => {
 
           const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier1 = await fixtures.chantierIdentite({
             nom: "Chantier 001",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2752,8 +2790,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: true,
             mailles_applicables: ["REG", "DEPT"],
           });
-          await fixtures.chantierIdentite({
-            id: "CH-002",
+          const chantier2 = await fixtures.chantierIdentite({
             nom: "Chantier 002",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2761,8 +2798,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: false,
             mailles_applicables: ["NAT"],
           });
-          await fixtures.chantierIdentite({
-            id: "CH-003",
+          const chantier3 = await fixtures.chantierIdentite({
             nom: "Chantier 003",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2770,8 +2806,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: true,
             mailles_applicables: ["REG", "DEPT"],
           });
-          await fixtures.chantierIdentite({
-            id: "CH-004",
+          const chantier4 = await fixtures.chantierIdentite({
             nom: "Chantier 004",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2780,7 +2815,7 @@ describe("PrismaChantierRepository", () => {
             mailles_applicables: ["NAT"],
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier1.id,
             zone_id: "D87",
             maille: "DEPT",
             code_insee: "87",
@@ -2790,7 +2825,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-002",
+            id: chantier2.id,
             zone_id: "D88",
             maille: "DEPT",
             code_insee: "88",
@@ -2800,7 +2835,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-003",
+            id: chantier3.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2810,7 +2845,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-004",
+            id: chantier4.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2819,6 +2854,13 @@ describe("PrismaChantierRepository", () => {
             taux_avancement_mandat: 5,
             est_applicable: true,
           });
+
+          const chantiersLectureIds = [
+            chantier1.id,
+            chantier2.id,
+            chantier3.id,
+            chantier4.id,
+          ];
 
           const jalon = 2024;
 
@@ -2834,20 +2876,24 @@ describe("PrismaChantierRepository", () => {
             );
 
           // Then
-          expect(result).toMatchObject([
-            {
-              nom: "Chantier 001",
-              chantier_territoire: [
-                { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
-              ],
-            },
-            {
-              nom: "Chantier 003",
-              chantier_territoire: [
-                { territoire_code: "REG-01", taux_avancement_mandat: 4 },
-              ],
-            },
-          ]);
+          expect(result).toMatchObject(
+            [
+              {
+                id: chantier1.id,
+                nom: "Chantier 001",
+                chantier_territoire: [
+                  { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+                ],
+              },
+              {
+                id: chantier3.id,
+                nom: "Chantier 003",
+                chantier_territoire: [
+                  { territoire_code: "REG-01", taux_avancement_mandat: 4 },
+                ],
+              },
+            ].sort((gauche, droite) => gauche.id.localeCompare(droite.id)),
+          );
         }),
       );
 
@@ -2855,7 +2901,6 @@ describe("PrismaChantierRepository", () => {
         "quand on est profil territoriale et que le filtres valeur de recherche est defini, doit remonter les chantiers demandés",
         createIntegrationTest(async () => {
           // Given
-          const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
           const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
 
           const filtres: FiltreQueryParams = {
@@ -2870,32 +2915,28 @@ describe("PrismaChantierRepository", () => {
 
           const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
 
-          await fixtures.chantierIdentite({
-            id: "CH-001",
+          const chantier1 = await fixtures.chantierIdentite({
             nom: "Chantier 001 ajout texte pour valeur de recherche",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
             est_barometre: true,
             est_territorialise: true,
           });
-          await fixtures.chantierIdentite({
-            id: "CH-002",
+          const chantier2 = await fixtures.chantierIdentite({
             nom: "Chantier maValeur recherche 002 ajout texte pour valeur de recherche",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
             est_barometre: true,
             est_territorialise: false,
           });
-          await fixtures.chantierIdentite({
-            id: "CH-003",
+          const chantier3 = await fixtures.chantierIdentite({
             nom: "Chantier maValeur recherche 003 ajout texte pour valeur de recherche",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
             est_barometre: false,
             est_territorialise: true,
           });
-          await fixtures.chantierIdentite({
-            id: "CH-004",
+          const chantier4 = await fixtures.chantierIdentite({
             nom: "Chantier 004 ajout texte pour valeur de recherche",
             ministeres: ["1009"],
             ministeres_acronymes: ["MINA"],
@@ -2903,7 +2944,7 @@ describe("PrismaChantierRepository", () => {
             est_territorialise: false,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-001",
+            id: chantier1.id,
             zone_id: "D87",
             maille: "DEPT",
             code_insee: "87",
@@ -2913,7 +2954,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-002",
+            id: chantier2.id,
             zone_id: "D88",
             maille: "DEPT",
             code_insee: "88",
@@ -2923,7 +2964,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-003",
+            id: chantier3.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2933,7 +2974,7 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
           await fixtures.chantierTerritoire({
-            id: "CH-004",
+            id: chantier4.id,
             zone_id: "R01",
             maille: "REG",
             code_insee: "01",
@@ -2942,6 +2983,13 @@ describe("PrismaChantierRepository", () => {
             taux_avancement_mandat: 5,
             est_applicable: true,
           });
+
+          const chantiersLectureIds = [
+            chantier1.id,
+            chantier2.id,
+            chantier3.id,
+            chantier4.id,
+          ];
 
           const jalon = 2024;
 
@@ -2957,20 +3005,24 @@ describe("PrismaChantierRepository", () => {
             );
 
           // Then
-          expect(result).toMatchObject([
-            {
-              nom: "Chantier maValeur recherche 002 ajout texte pour valeur de recherche",
-              chantier_territoire: [
-                { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
-              ],
-            },
-            {
-              nom: "Chantier maValeur recherche 003 ajout texte pour valeur de recherche",
-              chantier_territoire: [
-                { territoire_code: "REG-01", taux_avancement_mandat: 4 },
-              ],
-            },
-          ]);
+          expect(result).toMatchObject(
+            [
+              {
+                id: chantier2.id,
+                nom: "Chantier maValeur recherche 002 ajout texte pour valeur de recherche",
+                chantier_territoire: [
+                  { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
+                ],
+              },
+              {
+                id: chantier3.id,
+                nom: "Chantier maValeur recherche 003 ajout texte pour valeur de recherche",
+                chantier_territoire: [
+                  { territoire_code: "REG-01", taux_avancement_mandat: 4 },
+                ],
+              },
+            ].sort((gauche, droite) => gauche.id.localeCompare(droite.id)),
+          );
         }),
       );
     });
@@ -2983,10 +3035,10 @@ describe("PrismaChantierRepository", () => {
         // Given
         const prisma = getPrisma();
 
-        await fixtures.chantierIdentite({ id: "CH-001" });
-        await fixtures.chantierIdentite({ id: "CH-002" });
+        const chantier1 = await fixtures.chantierIdentite();
+        const chantier2 = await fixtures.chantierIdentite();
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier1.id,
           territoire_code: "DEPT-87",
           zone_id: "D87",
           maille: "DEPT",
@@ -2994,7 +3046,7 @@ describe("PrismaChantierRepository", () => {
           meteo: "SOLEIL",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier1.id,
           territoire_code: "DEPT-88",
           zone_id: "D88",
           maille: "DEPT",
@@ -3002,7 +3054,7 @@ describe("PrismaChantierRepository", () => {
           meteo: "COUVERT",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: chantier2.id,
           territoire_code: "DEPT-87",
           zone_id: "D87",
           maille: "DEPT",
@@ -3012,7 +3064,7 @@ describe("PrismaChantierRepository", () => {
 
         // When
         await prismaChantierRepository.modifierMeteo(
-          "CH-001",
+          chantier1.id,
           "DEPT-87",
           "NUAGE",
         );
@@ -3020,17 +3072,26 @@ describe("PrismaChantierRepository", () => {
         // Then
         const chantier01Dept87 = await prisma.chantier_territoire.findUnique({
           where: {
-            id_territoire_code: { id: "CH-001", territoire_code: "DEPT-87" },
+            id_territoire_code: {
+              id: chantier1.id,
+              territoire_code: "DEPT-87",
+            },
           },
         });
         const chantier01Dept88 = await prisma.chantier_territoire.findUnique({
           where: {
-            id_territoire_code: { id: "CH-001", territoire_code: "DEPT-88" },
+            id_territoire_code: {
+              id: chantier1.id,
+              territoire_code: "DEPT-88",
+            },
           },
         });
         const chantier02Dept87 = await prisma.chantier_territoire.findUnique({
           where: {
-            id_territoire_code: { id: "CH-002", territoire_code: "DEPT-87" },
+            id_territoire_code: {
+              id: chantier2.id,
+              territoire_code: "DEPT-87",
+            },
           },
         });
         expect(chantier01Dept87!.meteo).toStrictEqual("NUAGE");
@@ -3067,22 +3128,19 @@ describe("PrismaChantierRepository", () => {
           : "DEPT";
 
     const creerChantier = async (
-      id: string,
       territoires: {
         territoire_code: string;
         nombre_propositions_valeur_actuelle?: number;
         est_applicable?: boolean;
       }[],
     ) => {
-      await fixtures.chantierIdentite({
-        id,
-        nom: `Chantier ${id}`,
+      const chantier = await fixtures.chantierIdentite({
         ministeres: ["1009"],
         ministeres_acronymes: ["MINA"],
       });
       for (const territoire of territoires) {
         await fixtures.chantierTerritoire({
-          id,
+          id: chantier.id,
           maille: mailleDuTerritoire(territoire.territoire_code),
           code_insee: territoire.territoire_code.split("-")[1],
           territoire_code: territoire.territoire_code,
@@ -3092,15 +3150,17 @@ describe("PrismaChantierRepository", () => {
           est_applicable: territoire.est_applicable ?? true,
         });
       }
+      return chantier;
     };
 
     const lister = (
+      chantierId: string,
       territoireCode: string,
       territoiresLectureIds = tousLesTerritoires,
     ) =>
       prismaChantierRepository
         .listChantiersHabilitesByTerritoire(
-          ["CH-001"],
+          [chantierId],
           territoiresLectureIds,
           ProfilEnum.DITP_ADMIN,
           filtresParDefaut,
@@ -3124,17 +3184,17 @@ describe("PrismaChantierRepository", () => {
     it(
       "ne ramène que la ligne du territoire demandé",
       createIntegrationTest(async () => {
-        await creerChantier("CH-001", [
+        const chantier = await creerChantier([
           { territoire_code: "NAT-FR" },
           { territoire_code: "REG-84" },
           { territoire_code: "DEPT-01" },
         ]);
 
-        const result = await lister("DEPT-01");
+        const result = await lister(chantier.id, "DEPT-01");
 
         expect(result).toEqual([
           {
-            id: "CH-001",
+            id: chantier.id,
             territoires: ["DEPT-01"],
             aUnePropositionValeurAvancementDansUnTerritoireEnfant: false,
             aUnTauxAvancementDepartemental: false,
@@ -3146,7 +3206,7 @@ describe("PrismaChantierRepository", () => {
     it(
       "au national, signale une proposition portée par un département visible",
       createIntegrationTest(async () => {
-        await creerChantier("CH-001", [
+        const chantier = await creerChantier([
           { territoire_code: "NAT-FR" },
           {
             territoire_code: "DEPT-01",
@@ -3154,7 +3214,7 @@ describe("PrismaChantierRepository", () => {
           },
         ]);
 
-        const result = await lister("NAT-FR");
+        const result = await lister(chantier.id, "NAT-FR");
 
         expect(result).toEqual([
           expect.objectContaining({
@@ -3167,7 +3227,7 @@ describe("PrismaChantierRepository", () => {
     it(
       "au national, ignore une proposition portée par un département hors habilitation",
       createIntegrationTest(async () => {
-        await creerChantier("CH-001", [
+        const chantier = await creerChantier([
           { territoire_code: "NAT-FR" },
           {
             territoire_code: "DEPT-01",
@@ -3175,7 +3235,7 @@ describe("PrismaChantierRepository", () => {
           },
         ]);
 
-        const result = await lister("NAT-FR", ["REG-84"]);
+        const result = await lister(chantier.id, "NAT-FR", ["REG-84"]);
 
         expect(result).toEqual([
           expect.objectContaining({
@@ -3188,7 +3248,7 @@ describe("PrismaChantierRepository", () => {
     it(
       "en région, ne retient que les propositions de ses propres départements",
       createIntegrationTest(async () => {
-        await creerChantier("CH-001", [
+        const chantier = await creerChantier([
           { territoire_code: "REG-84" },
           {
             territoire_code: "DEPT-02",
@@ -3196,9 +3256,9 @@ describe("PrismaChantierRepository", () => {
           },
         ]);
 
-        const sansDepartementDeLaRegion = await lister("REG-84");
+        const sansDepartementDeLaRegion = await lister(chantier.id, "REG-84");
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           maille: "DEPT",
           code_insee: "26",
           territoire_code: "DEPT-26",
@@ -3206,7 +3266,7 @@ describe("PrismaChantierRepository", () => {
           nombre_propositions_valeur_actuelle: 3,
           est_applicable: true,
         });
-        const avecDepartementDeLaRegion = await lister("REG-84");
+        const avecDepartementDeLaRegion = await lister(chantier.id, "REG-84");
 
         expect([
           sansDepartementDeLaRegion[0]
@@ -3220,12 +3280,12 @@ describe("PrismaChantierRepository", () => {
     it(
       "considère le taux départemental présent quand aucun département n'est applicable",
       createIntegrationTest(async () => {
-        await creerChantier("CH-001", [
+        const chantier = await creerChantier([
           { territoire_code: "NAT-FR" },
           { territoire_code: "DEPT-01", est_applicable: false },
         ]);
 
-        const result = await lister("NAT-FR");
+        const result = await lister(chantier.id, "NAT-FR");
 
         expect(result).toEqual([
           expect.objectContaining({ aUnTauxAvancementDepartemental: true }),
@@ -3236,14 +3296,14 @@ describe("PrismaChantierRepository", () => {
     it(
       "considère le taux départemental présent dès qu'un département en a un au jalon par défaut",
       createIntegrationTest(async () => {
-        await creerChantier("CH-001", [
+        const chantier = await creerChantier([
           { territoire_code: "NAT-FR" },
           { territoire_code: "DEPT-01" },
           { territoire_code: "DEPT-02" },
         ]);
         // taux au jalon sélectionné (2026) seulement : ne compte pas
         await fixtures.chantierTerritoireJalon({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "DEPT-02",
           code_insee: "02",
           maille: "DEPT",
@@ -3251,9 +3311,9 @@ describe("PrismaChantierRepository", () => {
           jalon: 2026,
           taux_avancement: 40,
         });
-        const sansTauxAuJalonParDefaut = await lister("NAT-FR");
+        const sansTauxAuJalonParDefaut = await lister(chantier.id, "NAT-FR");
         await fixtures.chantierTerritoireJalon({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "DEPT-01",
           code_insee: "01",
           maille: "DEPT",
@@ -3261,7 +3321,7 @@ describe("PrismaChantierRepository", () => {
           jalon: 2025,
           taux_avancement: 30,
         });
-        const avecTauxAuJalonParDefaut = await lister("NAT-FR");
+        const avecTauxAuJalonParDefaut = await lister(chantier.id, "NAT-FR");
 
         expect([
           sansTauxAuJalonParDefaut[0].aUnTauxAvancementDepartemental,

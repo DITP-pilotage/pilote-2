@@ -67,7 +67,7 @@ describe("PrismaPublicationRepository (syntheses-des-resultats)", () => {
         const synthesisAnonymisees = await tx.synthese_des_resultats.findMany({
           where: { auteur_creation_id: auteurAnonyme.id },
         });
-        expect(synthesisAnonymisees).toEqual([
+        expect(synthesisAnonymisees).toIncludeSameMembers([
           expect.objectContaining({ id: synthese2.id }),
           expect.objectContaining({ id: synthese3.id }),
         ]);
@@ -128,7 +128,7 @@ describe("PrismaPublicationRepository (syntheses-des-resultats)", () => {
         const synthesisAnonymisees = await tx.synthese_des_resultats.findMany({
           where: { auteur_modification_id: auteurAnonyme.id },
         });
-        expect(synthesisAnonymisees).toEqual([
+        expect(synthesisAnonymisees).toIncludeSameMembers([
           expect.objectContaining({ id: synthese2.id }),
           expect.objectContaining({ id: synthese3.id }),
         ]);

@@ -71,7 +71,6 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       const dateImport = new Date("2024-01-15T10:00:00Z");
       const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
-        id: "IND-001",
         nom: "Indicateur Test",
         chantier_id: chantier.id,
       });
@@ -117,7 +116,6 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       const dateImport = new Date("2024-01-15T10:00:00Z");
       const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
-        id: "IND-002",
         nom: "Indicateur Cible",
         chantier_id: chantier.id,
       });
@@ -163,7 +161,6 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       const dateImport = new Date("2024-01-15T10:00:00Z");
       const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
-        id: "IND-003",
         nom: "Indicateur Multiple",
         chantier_id: chantier.id,
       });
@@ -194,18 +191,7 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       });
 
       // Then
-      expect(result).toEqual([
-        {
-          id: mesureVI.id,
-          indicateurId: indicateurIdentite.id,
-          indicateurNom: indicateurIdentite.nom,
-          territoireCode: "DEPT-75",
-          territoireNom: "Paris",
-          typeValeur: "VALEUR_INITIALE",
-          dateValeur: new Date("2024-01-01"),
-          valeur: 100,
-          dateImport,
-        },
+      expect(result).toIncludeSameMembers([
         {
           id: mesureVC.id,
           indicateurId: indicateurIdentite.id,
@@ -215,6 +201,17 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
           typeValeur: "VALEUR_CIBLE",
           dateValeur: new Date("2024-01-01"),
           valeur: 200,
+          dateImport,
+        },
+        {
+          id: mesureVI.id,
+          indicateurId: indicateurIdentite.id,
+          indicateurNom: indicateurIdentite.nom,
+          territoireCode: "DEPT-75",
+          territoireNom: "Paris",
+          typeValeur: "VALEUR_INITIALE",
+          dateValeur: new Date("2024-01-01"),
+          valeur: 100,
           dateImport,
         },
       ]);
@@ -227,7 +224,6 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       // Given
       const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
-        id: "IND-004",
         nom: "Indicateur Filtré",
         chantier_id: chantier.id,
       });
@@ -269,7 +265,6 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       const dateImport = new Date("2024-01-15T10:00:00Z");
       const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
-        id: "IND-005",
         nom: "Indicateur Null",
         chantier_id: chantier.id,
       });
