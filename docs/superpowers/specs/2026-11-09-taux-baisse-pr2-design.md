@@ -158,3 +158,10 @@ Les tests existants de `resolveCollectionTauxProgression` et des endpoints ne do
 - L'interprétation selon le sens : couleurs, variation, min et max, médiane (PR3).
 - Tout affichage de la raison de l'absence de taux.
 - Un champ d'API pour distinguer une collection vide d'une collection non calculable.
+
+## Évolutions après revue
+
+- **Les collections disent pourquoi elles n'ont pas de taux** : le taux de collection et sa liste par individu portent `raisonSansTaux` (`COLLECTION_VIDE`, `AUCUN_INDICATEUR_PONDERE`, `INDICATEUR_A_LA_BAISSE` prioritaire, `INDICATEUR_NON_CALCULABLE`), et chaque contribution son `sensSouhaite`. Cela revient sur les décisions 3 et 7 et sur les deux derniers points du hors-périmètre.
+- **La carte d'une collection sans taux** reste masquée pour un manque de données, comme avant la PR ; pour un indicateur à la baisse, elle affiche « Non calculable : la collection contient un indicateur à la baisse ».
+- **Les tests d'une collection à la baisse** (tout-ou-rien, pondération 0) reviennent, avec la raison attendue.
+
