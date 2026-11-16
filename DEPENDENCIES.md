@@ -1312,6 +1312,13 @@ version de l'arbre dans le sélecteur) et `tar@>=7 <8` (`tar` absent de l'arbre)
 change que la section `overrides:` du lockfile, aucune résolution ne bouge. Si une nouvelle dépendance
 réintroduit l'une de ces lignes, l'audit le dira : le plancher se repose alors en connaissance de cause.
 
+**`msw` 2.15 → 3.0.3** (kpilote-webapp, tests uniquement) : seul changement requis, `onUnhandledRequest`
+renommé `onUnhandledFrame` (`vitest.setup.ts`). Vérifié qu'une requête sans handler échoue toujours
+(`[MSW] Cannot bypass a request when using the "error" strategy`). Les changements silencieux de la 3.0
+(cookies plus gérés en Node, plus de patch de `setTimeout` sous fake timers) ne touchent aucun test :
+aucun handler ne lit de cookie, et le seul `useFakeTimers` (`session.test.ts`, `Date` seul) ne passe pas
+par MSW.
+
 ### Octobre 2026 (2026-10-29) — Campagne centrée sécu
 
 Branche `deps/campagne-2026-10-29`. Départ : **85 deps périmées, 3 majors, 54 advisories**

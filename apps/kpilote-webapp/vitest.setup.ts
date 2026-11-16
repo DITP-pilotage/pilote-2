@@ -4,7 +4,7 @@ import { afterAll, afterEach, beforeAll } from 'vitest'
 import { server } from '@/tests/server'
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: 'error' })
+  server.listen({ onUnhandledFrame: 'error' })
 })
 
 afterEach(() => {
