@@ -1305,7 +1305,12 @@ l'avertissement pnpm corrompait le JSON de `pnpm outdated`.
 **Suivi de la campagne du 2026-10-29** : rien du « Reste à faire » n'avait été appliqué. Exclusions
 `seroval`/`fast-uri` retirées ici avec deux semaines de retard ; `msw` 3, `dotenv` 18 et le nettoyage des
 quatre overrides sans objet (`brace-expansion@<2`, `immutable@>=4 <5`, `js-yaml@>=4 <5`, `tar@>=7 <8`,
-troisième campagne de suite) restent à faire.
+troisième campagne de suite) sont traités dans des PR empilées sur celle-ci.
+
+**Overrides sans objet supprimés** : `brace-expansion@<2`, `immutable@>=4 <5`, `js-yaml@>=4 <5` (aucune
+version de l'arbre dans le sélecteur) et `tar@>=7 <8` (`tar` absent de l'arbre). Preuve : leur retrait ne
+change que la section `overrides:` du lockfile, aucune résolution ne bouge. Si une nouvelle dépendance
+réintroduit l'une de ces lignes, l'audit le dira : le plancher se repose alors en connaissance de cause.
 
 ### Octobre 2026 (2026-10-29) — Campagne centrée sécu
 
