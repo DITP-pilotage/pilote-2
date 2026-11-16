@@ -27,7 +27,7 @@ describe("PrismaRapportResponsableDonneesRepository", () => {
             chantiers: [
               {
                 nom_chantier: "Chantier 197",
-                id_chantier: "CH-197",
+                id_chantier: randomUUID(),
                 indicateursNonMisAJour: [
                   { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
                 ],
@@ -155,6 +155,7 @@ describe("PrismaRapportResponsableDonneesRepository", () => {
       "désérialise correctement le contenu JSON du rapport",
       createIntegrationTest(async () => {
         // Given
+        const chantierId = randomUUID();
         await fixtures.rapportResponsableDonnees({
           email_responsable: "responsable@test.com",
           statut_envoi: "CREE",
@@ -162,7 +163,7 @@ describe("PrismaRapportResponsableDonneesRepository", () => {
             chantiers: [
               {
                 nom_chantier: "Chantier 197",
-                id_chantier: "CH-197",
+                id_chantier: chantierId,
                 indicateursNonMisAJour: [
                   { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
                 ],
@@ -176,10 +177,9 @@ describe("PrismaRapportResponsableDonneesRepository", () => {
         const [result] = await repository.recupererRapportsParStatut("CREE");
 
         // Then
-        expect(result.contenuRapport.chantiers).toHaveLength(1);
-        expect(result.contenuRapport.chantiers[0].id_chantier).toEqual(
-          "CH-197",
-        );
+        expect(result.contenuRapport.chantiers).toEqual([
+          expect.objectContaining({ id_chantier: chantierId }),
+        ]);
       }),
     );
   });

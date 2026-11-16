@@ -22,6 +22,11 @@ describe("RecupererRapportHebdomadaireQuery", () => {
         profilCode: "COORDINATEUR_REGION",
       });
 
+      const [premierChantierId, secondChantierId] = [
+        randomUUID(),
+        randomUUID(),
+      ].sort();
+
       // chantiers and indicateurs are stored in non-id order, and nom is opposite to id order
       const contenuRapport: ContenuRapport = {
         coordinateur: {
@@ -45,7 +50,7 @@ describe("RecupererRapportHebdomadaireQuery", () => {
         },
         sectionActiviteChantiers: [
           {
-            id: "CH-002",
+            id: secondChantierId,
             nom: "Chantier A",
             indicateurs: [
               {
@@ -79,7 +84,7 @@ describe("RecupererRapportHebdomadaireQuery", () => {
             ],
           },
           {
-            id: "CH-001",
+            id: premierChantierId,
             nom: "Chantier Z",
             indicateurs: [
               {
@@ -114,7 +119,7 @@ describe("RecupererRapportHebdomadaireQuery", () => {
           ...contenuRapport,
           sectionActiviteChantiers: [
             {
-              id: "CH-001",
+              id: premierChantierId,
               nom: "Chantier Z",
               indicateurs: [
                 {
@@ -125,7 +130,7 @@ describe("RecupererRapportHebdomadaireQuery", () => {
               ],
             },
             {
-              id: "CH-002",
+              id: secondChantierId,
               nom: "Chantier A",
               indicateurs: [
                 {

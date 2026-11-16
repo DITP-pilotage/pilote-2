@@ -41,20 +41,20 @@ const COTES_D_ARMOR: TerritoireTest = {
 };
 
 async function seedChantier(
-  chantierId: string,
   territoires: TerritoireTest[],
   statut: "PUBLIE" | "BROUILLON" = "PUBLIE",
 ) {
-  await fixtures.chantierIdentite({ id: chantierId, statut });
+  const chantier = await fixtures.chantierIdentite({ statut });
   for (const territoire of territoires) {
     await fixtures.chantierTerritoire({
-      id: chantierId,
+      id: chantier.id,
       territoire_code: territoire.territoire_code,
       code_insee: territoire.code_insee,
       maille: territoire.maille,
       zone_id: territoire.zone_id,
     });
   }
+  return chantier;
 }
 
 describe("GetIndicateursNonAJourQuery", () => {
@@ -66,17 +66,20 @@ describe("GetIndicateursNonAJourQuery", () => {
     "renvoie une ligne par territoire en retard, y compris sans valeur jamais remontée",
     createIntegrationTest(async () => {
       // given
-      await seedChantier("CH-001", [FINISTERE, ILLE_ET_VILAINE, COTES_D_ARMOR]);
-      await fixtures.indicateurIdentite({
-        id: "IND-001",
-        chantier_id: "CH-001",
+      const chantier = await seedChantier([
+        FINISTERE,
+        ILLE_ET_VILAINE,
+        COTES_D_ARMOR,
+      ]);
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
         nom: "Nombre de bornes",
         periodicite: "Trimestrielle",
         delai_disponibilite: 1,
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-001",
-        chantier_id: "CH-001",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         ...FINISTERE,
         est_applicable: true,
         est_a_jour: false,
@@ -84,8 +87,8 @@ describe("GetIndicateursNonAJourQuery", () => {
         prochaine_date_maj: new Date("2026-05-31"),
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-001",
-        chantier_id: "CH-001",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         ...ILLE_ET_VILAINE,
         est_applicable: true,
         est_a_jour: true,
@@ -94,8 +97,8 @@ describe("GetIndicateursNonAJourQuery", () => {
       });
       // Aucune valeur jamais remontée et est_a_jour NULL : compté en retard comme dans le mail
       await fixtures.indicateurTerritoire({
-        id: "IND-001",
-        chantier_id: "CH-001",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         ...COTES_D_ARMOR,
         est_applicable: true,
         est_a_jour: null,
@@ -103,16 +106,16 @@ describe("GetIndicateursNonAJourQuery", () => {
 
       // when
       const result = await query.execute({
-        chantierIds: ["CH-001"],
+        chantierIds: [chantier.id],
         territoireCodes: ["DEPT-29", "DEPT-35", "DEPT-22"],
       });
 
       // then
       expect(result).toEqual([
         {
-          chantierId: "CH-001",
-          chantierNom: "Chantier CH-001",
-          indicateurId: "IND-001",
+          chantierId: chantier.id,
+          chantierNom: chantier.nom,
+          indicateurId: indicateur.id,
           indicateurNom: "Nombre de bornes",
           periodicite: "Trimestrielle",
           delaiDisponibiliteMois: 1,
@@ -124,9 +127,9 @@ describe("GetIndicateursNonAJourQuery", () => {
           miseAJourAttendueDepuis: null,
         },
         {
-          chantierId: "CH-001",
-          chantierNom: "Chantier CH-001",
-          indicateurId: "IND-001",
+          chantierId: chantier.id,
+          chantierNom: chantier.nom,
+          indicateurId: indicateur.id,
           indicateurNom: "Nombre de bornes",
           periodicite: "Trimestrielle",
           delaiDisponibiliteMois: 1,
@@ -145,46 +148,43 @@ describe("GetIndicateursNonAJourQuery", () => {
     "exclut les territoires non applicables, hors périmètre, et les chantiers ou indicateurs non publiés",
     createIntegrationTest(async () => {
       // given
-      await seedChantier("CH-001", [FINISTERE, ILLE_ET_VILAINE]);
-      await seedChantier("CH-002", [FINISTERE], "BROUILLON");
-      await fixtures.indicateurIdentite({
-        id: "IND-001",
-        chantier_id: "CH-001",
+      const chantierPublie = await seedChantier([FINISTERE, ILLE_ET_VILAINE]);
+      const chantierBrouillon = await seedChantier([FINISTERE], "BROUILLON");
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantierPublie.id,
       });
-      await fixtures.indicateurIdentite({
-        id: "IND-003",
-        chantier_id: "CH-001",
+      const indicateurSupprime = await fixtures.indicateurIdentite({
+        chantier_id: chantierPublie.id,
         statut: "SUPPRIME",
       });
-      await fixtures.indicateurIdentite({
-        id: "IND-002",
-        chantier_id: "CH-002",
+      const indicateurChantierBrouillon = await fixtures.indicateurIdentite({
+        chantier_id: chantierBrouillon.id,
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-001",
-        chantier_id: "CH-001",
+        id: indicateur.id,
+        chantier_id: chantierPublie.id,
         ...FINISTERE,
         est_applicable: false,
         est_a_jour: false,
       });
       // Hors des territoires demandés : ni listé ni compté
       await fixtures.indicateurTerritoire({
-        id: "IND-001",
-        chantier_id: "CH-001",
+        id: indicateur.id,
+        chantier_id: chantierPublie.id,
         ...ILLE_ET_VILAINE,
         est_applicable: true,
         est_a_jour: false,
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-003",
-        chantier_id: "CH-001",
+        id: indicateurSupprime.id,
+        chantier_id: chantierPublie.id,
         ...FINISTERE,
         est_applicable: true,
         est_a_jour: false,
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-002",
-        chantier_id: "CH-002",
+        id: indicateurChantierBrouillon.id,
+        chantier_id: chantierBrouillon.id,
         ...FINISTERE,
         est_applicable: true,
         est_a_jour: false,
@@ -192,7 +192,7 @@ describe("GetIndicateursNonAJourQuery", () => {
 
       // when
       const result = await query.execute({
-        chantierIds: ["CH-001", "CH-002"],
+        chantierIds: [chantierPublie.id, chantierBrouillon.id],
         territoireCodes: ["DEPT-29"],
       });
 
@@ -205,15 +205,14 @@ describe("GetIndicateursNonAJourQuery", () => {
     "ne renvoie pas un indicateur demandé rattaché à un chantier hors périmètre",
     createIntegrationTest(async () => {
       // given
-      await seedChantier("CH-001", [FINISTERE]);
-      await seedChantier("CH-002", [FINISTERE]);
-      await fixtures.indicateurIdentite({
-        id: "IND-002",
-        chantier_id: "CH-002",
+      const chantierDansPerimetre = await seedChantier([FINISTERE]);
+      const chantierHorsPerimetre = await seedChantier([FINISTERE]);
+      const indicateurHorsPerimetre = await fixtures.indicateurIdentite({
+        chantier_id: chantierHorsPerimetre.id,
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-002",
-        chantier_id: "CH-002",
+        id: indicateurHorsPerimetre.id,
+        chantier_id: chantierHorsPerimetre.id,
         ...FINISTERE,
         est_applicable: true,
         est_a_jour: false,
@@ -221,9 +220,9 @@ describe("GetIndicateursNonAJourQuery", () => {
 
       // when
       const result = await query.execute({
-        chantierIds: ["CH-001"],
+        chantierIds: [chantierDansPerimetre.id],
         territoireCodes: ["DEPT-29"],
-        indicateurIds: ["IND-002"],
+        indicateurIds: [indicateurHorsPerimetre.id],
       });
 
       // then
@@ -235,14 +234,13 @@ describe("GetIndicateursNonAJourQuery", () => {
     "ne renvoie pas un indicateur entièrement à jour",
     createIntegrationTest(async () => {
       // given
-      await seedChantier("CH-001", [FINISTERE]);
-      await fixtures.indicateurIdentite({
-        id: "IND-001",
-        chantier_id: "CH-001",
+      const chantier = await seedChantier([FINISTERE]);
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-001",
-        chantier_id: "CH-001",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         ...FINISTERE,
         est_applicable: true,
         est_a_jour: true,
@@ -250,9 +248,9 @@ describe("GetIndicateursNonAJourQuery", () => {
 
       // when
       const result = await query.execute({
-        chantierIds: ["CH-001"],
+        chantierIds: [chantier.id],
         territoireCodes: ["DEPT-29"],
-        indicateurIds: ["IND-001"],
+        indicateurIds: [indicateur.id],
       });
 
       // then
@@ -264,28 +262,49 @@ describe("GetIndicateursNonAJourQuery", () => {
     "trie les lignes par chantier, indicateur et territoire",
     createIntegrationTest(async () => {
       // given
-      await seedChantier("CH-002", [FRANCE, FINISTERE]);
-      await seedChantier("CH-001", [FRANCE, FINISTERE, ILLE_ET_VILAINE]);
-      for (const [indicateurId, chantierId] of [
-        ["IND-003", "CH-002"],
-        ["IND-002", "CH-001"],
-        ["IND-001", "CH-001"],
-      ]) {
-        await fixtures.indicateurIdentite({
-          id: indicateurId,
-          chantier_id: chantierId,
-          nom: `Indicateur ${indicateurId}`,
-          periodicite: "Mensuelle",
-          delai_disponibilite: 0,
+      const [premierChantier, secondChantier] = [
+        await fixtures.chantierIdentite({ statut: "PUBLIE" }),
+        await fixtures.chantierIdentite({ statut: "PUBLIE" }),
+      ].sort((gauche, droite) => gauche.id.localeCompare(droite.id));
+      for (const [chantierId, territoire] of [
+        [secondChantier.id, FRANCE],
+        [secondChantier.id, FINISTERE],
+        [premierChantier.id, FRANCE],
+        [premierChantier.id, FINISTERE],
+        [premierChantier.id, ILLE_ET_VILAINE],
+      ] as const) {
+        await fixtures.chantierTerritoire({
+          id: chantierId,
+          territoire_code: territoire.territoire_code,
+          code_insee: territoire.code_insee,
+          maille: territoire.maille,
+          zone_id: territoire.zone_id,
         });
       }
+      const [premierIndicateur, secondIndicateur] = [
+        await fixtures.indicateurIdentite({
+          chantier_id: premierChantier.id,
+          periodicite: "Mensuelle",
+          delai_disponibilite: 0,
+        }),
+        await fixtures.indicateurIdentite({
+          chantier_id: premierChantier.id,
+          periodicite: "Mensuelle",
+          delai_disponibilite: 0,
+        }),
+      ].sort((gauche, droite) => gauche.id.localeCompare(droite.id));
+      const indicateurSecondChantier = await fixtures.indicateurIdentite({
+        chantier_id: secondChantier.id,
+        periodicite: "Mensuelle",
+        delai_disponibilite: 0,
+      });
       const lignes: [string, string, TerritoireTest, boolean | null][] = [
-        ["IND-001", "CH-001", FINISTERE, false],
-        ["IND-001", "CH-001", ILLE_ET_VILAINE, null],
-        ["IND-001", "CH-001", FRANCE, false],
-        ["IND-002", "CH-001", FINISTERE, true],
-        ["IND-002", "CH-001", ILLE_ET_VILAINE, false],
-        ["IND-003", "CH-002", FRANCE, false],
+        [indicateurSecondChantier.id, secondChantier.id, FRANCE, false],
+        [secondIndicateur.id, premierChantier.id, ILLE_ET_VILAINE, false],
+        [secondIndicateur.id, premierChantier.id, FINISTERE, true],
+        [premierIndicateur.id, premierChantier.id, FRANCE, false],
+        [premierIndicateur.id, premierChantier.id, ILLE_ET_VILAINE, null],
+        [premierIndicateur.id, premierChantier.id, FINISTERE, false],
       ];
       for (const [indicateurId, chantierId, territoire, estAJour] of lignes) {
         await fixtures.indicateurTerritoire({
@@ -299,7 +318,7 @@ describe("GetIndicateursNonAJourQuery", () => {
 
       // when
       const result = await query.execute({
-        chantierIds: ["CH-001", "CH-002"],
+        chantierIds: [premierChantier.id, secondChantier.id],
         territoireCodes: ["NAT-FR", "DEPT-29", "DEPT-35"],
       });
 
@@ -310,11 +329,11 @@ describe("GetIndicateursNonAJourQuery", () => {
             `${chantierId} ${indicateurId} ${territoireCode}`,
         ),
       ).toEqual([
-        "CH-001 IND-001 DEPT-29",
-        "CH-001 IND-001 DEPT-35",
-        "CH-001 IND-001 NAT-FR",
-        "CH-001 IND-002 DEPT-35",
-        "CH-002 IND-003 NAT-FR",
+        `${premierChantier.id} ${premierIndicateur.id} DEPT-29`,
+        `${premierChantier.id} ${premierIndicateur.id} DEPT-35`,
+        `${premierChantier.id} ${premierIndicateur.id} NAT-FR`,
+        `${premierChantier.id} ${secondIndicateur.id} DEPT-35`,
+        `${secondChantier.id} ${indicateurSecondChantier.id} NAT-FR`,
       ]);
     }),
   );

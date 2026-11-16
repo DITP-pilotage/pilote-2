@@ -29,16 +29,13 @@ describe("ListChantiersQuery", () => {
       "retourne les chantiers triés par date de mise à jour décroissante",
       createIntegrationTest(async () => {
         // Given — updated_at explicites pour garantir l'ordre indépendamment de la vitesse d'insertion
-        await fixtures.metadataChantier({
-          chantier_id: "CH-003",
+        const chantierLePlusRecent = await fixtures.metadataChantier({
           updated_at: new Date("2026-01-03"),
         });
-        await fixtures.metadataChantier({
-          chantier_id: "CH-001",
+        const chantierLePlusAncien = await fixtures.metadataChantier({
           updated_at: new Date("2026-01-01"),
         });
-        await fixtures.metadataChantier({
-          chantier_id: "CH-002",
+        const chantierIntermediaire = await fixtures.metadataChantier({
           updated_at: new Date("2026-01-02"),
         });
 
@@ -47,9 +44,15 @@ describe("ListChantiersQuery", () => {
 
         // Then
         expect(resultat).toEqual([
-          expect.objectContaining({ chantierId: "CH-003" }),
-          expect.objectContaining({ chantierId: "CH-002" }),
-          expect.objectContaining({ chantierId: "CH-001" }),
+          expect.objectContaining({
+            chantierId: chantierLePlusRecent.chantier_id,
+          }),
+          expect.objectContaining({
+            chantierId: chantierIntermediaire.chantier_id,
+          }),
+          expect.objectContaining({
+            chantierId: chantierLePlusAncien.chantier_id,
+          }),
         ]);
       }),
     );
@@ -63,8 +66,7 @@ describe("ListChantiersQuery", () => {
           perimetre_id: "PER-042",
           per_nom: "Périmètre Fonction publique",
         });
-        await fixtures.metadataChantier({
-          chantier_id: "CH-042",
+        const chantier = await fixtures.metadataChantier({
           ch_nom: "Mon chantier",
           ch_state: "PUBLIE",
           ch_per: perimetre.perimetre_id,
@@ -77,7 +79,7 @@ describe("ListChantiersQuery", () => {
         // Then
         expect(resultat).toEqual([
           {
-            chantierId: "CH-042",
+            chantierId: chantier.chantier_id,
             chNom: "Mon chantier",
             chState: "PUBLIE",
             perimetreId: "PER-042",

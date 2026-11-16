@@ -27,8 +27,6 @@ function habilitationsPourChantier(
 }
 
 async function créerIndicateurAvecTerritoires(
-  chantierId: string,
-  indicateurId: string,
   territoires: {
     code: string;
     codeInsee: string;
@@ -38,24 +36,23 @@ async function créerIndicateurAvecTerritoires(
     estApplicable: boolean;
   }[],
 ) {
-  await fixtures.chantierIdentite({ id: chantierId });
-  await fixtures.indicateurIdentite({
-    id: indicateurId,
-    chantier_id: chantierId,
+  const chantier = await fixtures.chantierIdentite();
+  const indicateur = await fixtures.indicateurIdentite({
+    chantier_id: chantier.id,
     statut: "PUBLIE",
   });
 
   for (const t of territoires) {
     await fixtures.chantierTerritoire({
-      id: chantierId,
+      id: chantier.id,
       territoire_code: t.code,
       maille: t.maille,
       code_insee: t.codeInsee,
       zone_id: t.zoneId,
     });
     await fixtures.indicateurTerritoire({
-      id: indicateurId,
-      chantier_id: chantierId,
+      id: indicateur.id,
+      chantier_id: chantier.id,
       territoire_code: t.code,
       code_insee: t.codeInsee,
       maille: t.maille,
@@ -63,7 +60,7 @@ async function créerIndicateurAvecTerritoires(
       est_applicable: t.estApplicable,
     });
     await fixtures.indicateurTerritoireJalon({
-      id: indicateurId,
+      id: indicateur.id,
       territoire_code: t.code,
       code_insee: t.codeInsee,
       maille: t.maille,
@@ -73,6 +70,8 @@ async function créerIndicateurAvecTerritoires(
       taux_avancement: t.valeurActuelle,
     });
   }
+
+  return { chantier, indicateur };
 }
 
 describe("GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery", () => {
@@ -101,7 +100,7 @@ describe("GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery", () 
     "calcule minimum, médiane et maximum pour des territoires départementaux",
     createIntegrationTest(async () => {
       // given
-      await créerIndicateurAvecTerritoires("CH-010", "IND-010", [
+      const { chantier, indicateur } = await créerIndicateurAvecTerritoires([
         {
           code: "DEPT-75",
           codeInsee: "75",
@@ -130,11 +129,11 @@ describe("GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery", () 
 
       // when
       const result = await query.execute({
-        indicateurId: "IND-010",
-        chantierId: "CH-010",
+        indicateurId: indicateur.id,
+        chantierId: chantier.id,
         maille: "departementale",
         jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-010", [
+        habilitations: habilitationsPourChantier(chantier.id, [
           "DEPT-75",
           "DEPT-92",
           "DEPT-93",
@@ -155,7 +154,7 @@ describe("GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery", () 
     "exclut les territoires non applicables du calcul",
     createIntegrationTest(async () => {
       // given
-      await créerIndicateurAvecTerritoires("CH-011", "IND-011", [
+      const { chantier, indicateur } = await créerIndicateurAvecTerritoires([
         {
           code: "DEPT-75",
           codeInsee: "75",
@@ -184,11 +183,11 @@ describe("GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery", () 
 
       // when
       const result = await query.execute({
-        indicateurId: "IND-011",
-        chantierId: "CH-011",
+        indicateurId: indicateur.id,
+        chantierId: chantier.id,
         maille: "departementale",
         jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-011", [
+        habilitations: habilitationsPourChantier(chantier.id, [
           "DEPT-75",
           "DEPT-92",
           "DEPT-93",
@@ -209,7 +208,7 @@ describe("GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery", () 
     "filtre par maille régionale en ignorant les territoires départementaux",
     createIntegrationTest(async () => {
       // given
-      await créerIndicateurAvecTerritoires("CH-012", "IND-012", [
+      const { chantier, indicateur } = await créerIndicateurAvecTerritoires([
         {
           code: "REG-11",
           codeInsee: "11",
@@ -230,11 +229,11 @@ describe("GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery", () 
 
       // when
       const result = await query.execute({
-        indicateurId: "IND-012",
-        chantierId: "CH-012",
+        indicateurId: indicateur.id,
+        chantierId: chantier.id,
         maille: "regionale",
         jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-012", [
+        habilitations: habilitationsPourChantier(chantier.id, [
           "REG-11",
           "DEPT-75",
         ]),
@@ -254,7 +253,7 @@ describe("GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery", () 
     "calcule la médiane pour un nombre pair de valeurs",
     createIntegrationTest(async () => {
       // given
-      await créerIndicateurAvecTerritoires("CH-013", "IND-013", [
+      const { chantier, indicateur } = await créerIndicateurAvecTerritoires([
         {
           code: "DEPT-75",
           codeInsee: "75",
@@ -291,11 +290,11 @@ describe("GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery", () 
 
       // when — only DEPT territories are used for departementale
       const result = await query.execute({
-        indicateurId: "IND-013",
-        chantierId: "CH-013",
+        indicateurId: indicateur.id,
+        chantierId: chantier.id,
         maille: "departementale",
         jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-013", [
+        habilitations: habilitationsPourChantier(chantier.id, [
           "DEPT-75",
           "DEPT-92",
           "DEPT-93",

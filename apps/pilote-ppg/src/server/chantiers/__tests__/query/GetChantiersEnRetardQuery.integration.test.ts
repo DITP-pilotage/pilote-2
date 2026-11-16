@@ -16,8 +16,7 @@ describe("GetChantiersQuery — view en_retard", () => {
     "remonte un chantier dont l'écart sur le jalon demandé est <= -10",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantier = await fixtures.chantierIdentite({
         nom: "Chantier en retard",
         axe: "Axe 1",
         ppg: "PPG 1",
@@ -26,7 +25,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         directeurs_projet_ids: ["directeur-projet-id"],
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -36,7 +35,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         coordinateurs_territoriaux_ids: ["coordinateur-id"],
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -57,7 +56,7 @@ describe("GetChantiersQuery — view en_retard", () => {
       expect(result.chantiers).toEqual([
         {
           chantier: {
-            id: "CH-001",
+            id: chantier.id,
             nom: "Chantier en retard",
             axe: "Axe 1",
             ppg: "PPG 1",
@@ -84,13 +83,12 @@ describe("GetChantiersQuery — view en_retard", () => {
     "ne remonte pas un chantier dont seul l'écart mandat est <= -10 mais pas l'écart du jalon",
     createIntegrationTest(async () => {
       // Given — écart mandat agrégé en retard, mais écart sur le jalon courant rattrapé
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantier = await fixtures.chantierIdentite({
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -99,7 +97,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         ecart: -20,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -124,14 +122,13 @@ describe("GetChantiersQuery — view en_retard", () => {
     "remonte un chantier dont l'écart du jalon est <= -10 même si l'écart mandat ne l'est pas",
     createIntegrationTest(async () => {
       // Given — écart mandat OK, mais écart sur le jalon courant en retard
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantier = await fixtures.chantierIdentite({
         nom: "Chantier",
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -140,7 +137,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         ecart: -5,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -159,7 +156,7 @@ describe("GetChantiersQuery — view en_retard", () => {
       // Then — l'écart retourné est celui du jalon, pas du mandat
       expect(result.chantiers).toEqual([
         expect.objectContaining({
-          chantier: expect.objectContaining({ id: "CH-001" }),
+          chantier: expect.objectContaining({ id: chantier.id }),
           ecart: -15,
         }),
       ]);
@@ -170,13 +167,12 @@ describe("GetChantiersQuery — view en_retard", () => {
     "filtre par jalon — un même chantier peut être en retard sur un jalon et pas sur l'autre",
     createIntegrationTest(async () => {
       // Given — en retard en 2024, rattrapé en 2025
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantier = await fixtures.chantierIdentite({
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -184,7 +180,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -193,7 +189,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         ecart: -20,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -222,7 +218,7 @@ describe("GetChantiersQuery — view en_retard", () => {
       // Then
       expect(resultat2024.chantiers).toEqual([
         expect.objectContaining({
-          chantier: expect.objectContaining({ id: "CH-001" }),
+          chantier: expect.objectContaining({ id: chantier.id }),
           ecart: -20,
         }),
       ]);
@@ -233,13 +229,12 @@ describe("GetChantiersQuery — view en_retard", () => {
     "exclut les chantiers non applicables",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantier = await fixtures.chantierIdentite({
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -247,7 +242,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         est_applicable: false,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -272,13 +267,12 @@ describe("GetChantiersQuery — view en_retard", () => {
     "exclut les chantiers non publiés",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantier = await fixtures.chantierIdentite({
         ministeres_acronymes: ["MIN-01"],
         statut: "BROUILLON",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -286,7 +280,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -311,13 +305,12 @@ describe("GetChantiersQuery — view en_retard", () => {
     "ne remonte que les chantiers du territoire demandé",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantier = await fixtures.chantierIdentite({
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -325,7 +318,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -334,7 +327,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         ecart: -15,
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -342,7 +335,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -369,13 +362,12 @@ describe("GetChantiersQuery — view en_retard", () => {
     "trie les chantiers par écart croissant",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantierEcartMoins12 = await fixtures.chantierIdentite({
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantierEcartMoins12.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -383,7 +375,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantierEcartMoins12.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -391,13 +383,12 @@ describe("GetChantiersQuery — view en_retard", () => {
         jalon: 2025,
         ecart: -12,
       });
-      await fixtures.chantierIdentite({
-        id: "CH-002",
+      const chantierEcartMoins30 = await fixtures.chantierIdentite({
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-002",
+        id: chantierEcartMoins30.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -405,7 +396,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-002",
+        id: chantierEcartMoins30.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -413,13 +404,12 @@ describe("GetChantiersQuery — view en_retard", () => {
         jalon: 2025,
         ecart: -30,
       });
-      await fixtures.chantierIdentite({
-        id: "CH-003",
+      const chantierEcartMoins20 = await fixtures.chantierIdentite({
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-003",
+        id: chantierEcartMoins20.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -427,7 +417,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-003",
+        id: chantierEcartMoins20.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -445,9 +435,9 @@ describe("GetChantiersQuery — view en_retard", () => {
 
       // Then — tri du plus bas écart au plus haut
       expect(result.chantiers.map((c) => c.chantier.id)).toEqual([
-        "CH-002",
-        "CH-003",
-        "CH-001",
+        chantierEcartMoins30.id,
+        chantierEcartMoins20.id,
+        chantierEcartMoins12.id,
       ]);
     }),
   );
@@ -456,13 +446,12 @@ describe("GetChantiersQuery — view en_retard", () => {
     "retourne la dernière synthèse des résultats du chantier territoire",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantier = await fixtures.chantierIdentite({
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -470,7 +459,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -479,7 +468,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         ecart: -15,
       });
       const syntheseRecente = await fixtures.syntheseDesResultats({
-        chantier_id: "CH-001",
+        chantier_id: chantier.id,
         territoire_code: "NAT-FR",
         maille: "NAT",
         code_insee: "FR",
@@ -488,7 +477,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         date_modification: new Date("2025-06-01T00:00:00Z"),
       });
       await fixtures.syntheseDesResultats({
-        chantier_id: "CH-001",
+        chantier_id: chantier.id,
         territoire_code: "NAT-FR",
         maille: "NAT",
         code_insee: "FR",
@@ -524,13 +513,12 @@ describe("GetChantiersQuery — view en_retard", () => {
     "retourne les derniers commentaires publiés (données et autres résultats)",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantier = await fixtures.chantierIdentite({
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -538,7 +526,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -547,7 +535,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         ecart: -15,
       });
       await fixtures.commentaire({
-        chantier_id: "CH-001",
+        chantier_id: chantier.id,
         territoire_code: "NAT-FR",
         maille: "NAT",
         code_insee: "FR",
@@ -556,7 +544,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         date_modification: new Date("2025-01-01T00:00:00Z"),
       });
       await fixtures.commentaire({
-        chantier_id: "CH-001",
+        chantier_id: chantier.id,
         territoire_code: "NAT-FR",
         maille: "NAT",
         code_insee: "FR",
@@ -565,7 +553,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         date_modification: new Date("2025-06-01T00:00:00Z"),
       });
       await fixtures.commentaire({
-        chantier_id: "CH-001",
+        chantier_id: chantier.id,
         territoire_code: "NAT-FR",
         maille: "NAT",
         code_insee: "FR",
@@ -603,13 +591,12 @@ describe("GetChantiersQuery — view en_retard", () => {
     "exclut les commentaires en brouillon",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({
-        id: "CH-001",
+      const chantier = await fixtures.chantierIdentite({
         ministeres_acronymes: ["MIN-01"],
         statut: "PUBLIE",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -617,7 +604,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         est_applicable: true,
       });
       await fixtures.chantierTerritoireJalon({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "NAT-FR",
         code_insee: "FR",
         maille: "NAT",
@@ -626,7 +613,7 @@ describe("GetChantiersQuery — view en_retard", () => {
         ecart: -15,
       });
       await fixtures.commentaire({
-        chantier_id: "CH-001",
+        chantier_id: chantier.id,
         territoire_code: "NAT-FR",
         maille: "NAT",
         code_insee: "FR",

@@ -1087,19 +1087,14 @@ describe("#AfficherPilotageQuery", () => {
           rattachement_code: rattachement.code,
         });
 
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: "CH-301",
-              nom: "Chantier Synthèse 1",
-              ministeres: ["MIN-SYNTH"],
-            },
-            {
-              id: "CH-302",
-              nom: "Chantier Synthèse 2",
-              ministeres: ["MIN-SYNTH"],
-            },
-          ],
+        const chantier1 = await f.chantierIdentite({
+          nom: "Chantier Synthèse 1",
+          ministeres: ["MIN-SYNTH"],
+        });
+
+        const chantier2 = await f.chantierIdentite({
+          nom: "Chantier Synthèse 2",
+          ministeres: ["MIN-SYNTH"],
         });
 
         const fiche = await f.fiche({
@@ -1126,14 +1121,14 @@ describe("#AfficherPilotageQuery", () => {
         await prisma.chantier_territoire.createMany({
           data: [
             {
-              id: "CH-301",
+              id: chantier1.id,
               territoire_code: rattachement.code,
               code_insee: "92",
               maille: "DEPT",
               zone_id: "zone-synth",
             },
             {
-              id: "CH-302",
+              id: chantier2.id,
               territoire_code: rattachement.code,
               code_insee: "92",
               maille: "DEPT",
@@ -1145,7 +1140,7 @@ describe("#AfficherPilotageQuery", () => {
         await prisma.chantier_territoire_jalon.createMany({
           data: [
             {
-              id: "CH-301",
+              id: chantier1.id,
               territoire_code: rattachement.code,
               code_insee: "92",
               maille: "DEPT",
@@ -1153,7 +1148,7 @@ describe("#AfficherPilotageQuery", () => {
               jalon: jalon,
             },
             {
-              id: "CH-302",
+              id: chantier2.id,
               territoire_code: rattachement.code,
               code_insee: "92",
               maille: "DEPT",
@@ -1166,7 +1161,7 @@ describe("#AfficherPilotageQuery", () => {
         await prisma.chantier_evaluation.createMany({
           data: [
             {
-              id: "CH-301",
+              id: chantier1.id,
               territoire_code: rattachement.code,
               code_insee: "92",
               maille: "DEPT",
@@ -1176,7 +1171,7 @@ describe("#AfficherPilotageQuery", () => {
               jalon: jalon,
             },
             {
-              id: "CH-302",
+              id: chantier2.id,
               territoire_code: rattachement.code,
               code_insee: "92",
               maille: "DEPT",
@@ -1334,24 +1329,19 @@ describe("#AfficherPilotageQuery", () => {
           libelle: "Rattachement Test",
         });
 
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: "CH-201",
-              nom: "Chantier Test 1",
-              ministeres: ["MIN-TEST"],
-            },
-            {
-              id: "CH-202",
-              nom: "Chantier Test 2",
-              ministeres: ["MIN-TEST"],
-            },
-            {
-              id: "CH-203",
-              nom: "Chantier Test 3",
-              ministeres: ["MIN-TEST"],
-            },
-          ],
+        const chantier1 = await f.chantierIdentite({
+          nom: "Chantier Test 1",
+          ministeres: ["MIN-TEST"],
+        });
+
+        const chantier2 = await f.chantierIdentite({
+          nom: "Chantier Test 2",
+          ministeres: ["MIN-TEST"],
+        });
+
+        const chantier3 = await f.chantierIdentite({
+          nom: "Chantier Test 3",
+          ministeres: ["MIN-TEST"],
         });
 
         const fiche = await f.fiche({
@@ -1363,21 +1353,21 @@ describe("#AfficherPilotageQuery", () => {
         await prisma.chantier_territoire.createMany({
           data: [
             {
-              id: "CH-201",
+              id: chantier1.id,
               territoire_code: rattachement.code,
               code_insee: "91",
               maille: "DEPT",
               zone_id: "zone-test",
             },
             {
-              id: "CH-202",
+              id: chantier2.id,
               territoire_code: rattachement.code,
               code_insee: "91",
               maille: "DEPT",
               zone_id: "zone-test",
             },
             {
-              id: "CH-203",
+              id: chantier3.id,
               territoire_code: rattachement.code,
               code_insee: "91",
               maille: "DEPT",
@@ -1389,7 +1379,7 @@ describe("#AfficherPilotageQuery", () => {
         await prisma.chantier_territoire_jalon.createMany({
           data: [
             {
-              id: "CH-201",
+              id: chantier1.id,
               territoire_code: rattachement.code,
               code_insee: "91",
               maille: "DEPT",
@@ -1397,7 +1387,7 @@ describe("#AfficherPilotageQuery", () => {
               jalon: jalon,
             },
             {
-              id: "CH-202",
+              id: chantier2.id,
               territoire_code: rattachement.code,
               code_insee: "91",
               maille: "DEPT",
@@ -1405,7 +1395,7 @@ describe("#AfficherPilotageQuery", () => {
               jalon: jalon,
             },
             {
-              id: "CH-203",
+              id: chantier3.id,
               territoire_code: rattachement.code,
               code_insee: "91",
               maille: "DEPT",
@@ -1418,7 +1408,7 @@ describe("#AfficherPilotageQuery", () => {
         await prisma.chantier_evaluation.createMany({
           data: [
             {
-              id: "CH-201",
+              id: chantier1.id,
               territoire_code: rattachement.code,
               code_insee: "91",
               maille: "DEPT",
@@ -1428,7 +1418,7 @@ describe("#AfficherPilotageQuery", () => {
               jalon: jalon,
             },
             {
-              id: "CH-202",
+              id: chantier2.id,
               territoire_code: rattachement.code,
               code_insee: "91",
               maille: "DEPT",
@@ -1438,7 +1428,7 @@ describe("#AfficherPilotageQuery", () => {
               jalon: jalon,
             },
             {
-              id: "CH-203",
+              id: chantier3.id,
               territoire_code: rattachement.code,
               code_insee: "91",
               maille: "DEPT",

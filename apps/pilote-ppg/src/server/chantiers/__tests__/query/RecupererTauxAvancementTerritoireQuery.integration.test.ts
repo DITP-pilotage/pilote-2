@@ -18,17 +18,13 @@ const habilitationsSurChantiers = (chantiers: string[]): Habilitations => {
   };
 };
 
-const creerChantierAvecTauxSurREG75 = async (
-  id: string,
-  tauxAvancement: number,
-) => {
-  await fixtures.chantierIdentite({
-    id,
+const creerChantierAvecTauxSurREG75 = async (tauxAvancement: number) => {
+  const chantier = await fixtures.chantierIdentite({
     ministeres: ["MIN-01"],
     statut: "PUBLIE",
   });
   await fixtures.chantierTerritoire({
-    id,
+    id: chantier.id,
     territoire_code: "REG-75",
     code_insee: "75",
     maille: "REG",
@@ -36,7 +32,7 @@ const creerChantierAvecTauxSurREG75 = async (
     est_applicable: true,
   });
   await fixtures.chantierTerritoireJalon({
-    id,
+    id: chantier.id,
     territoire_code: "REG-75",
     code_insee: "75",
     maille: "REG",
@@ -44,6 +40,7 @@ const creerChantierAvecTauxSurREG75 = async (
     jalon: 2026,
     taux_avancement: tauxAvancement,
   });
+  return chantier;
 };
 
 describe("RecupererTauxAvancementTerritoireQuery", () => {
@@ -64,14 +61,14 @@ describe("RecupererTauxAvancementTerritoireQuery", () => {
     "calcule le taux d'avancement sur les seuls chantiers accessibles à l'utilisateur",
     createIntegrationTest(async () => {
       // Given
-      await creerChantierAvecTauxSurREG75("CH-084", 20);
-      await creerChantierAvecTauxSurREG75("CH-062", 80);
+      const chantierAccessible = await creerChantierAvecTauxSurREG75(20);
+      await creerChantierAvecTauxSurREG75(80);
 
       // When
       const result = await query.execute({
         territoireCode: "REG-75",
         jalon: 2026,
-        habilitations: habilitationsSurChantiers(["CH-084"]),
+        habilitations: habilitationsSurChantiers([chantierAccessible.id]),
       });
 
       // Then
@@ -87,7 +84,7 @@ describe("RecupererTauxAvancementTerritoireQuery", () => {
     "ne calcule pas de taux d'avancement pour un utilisateur sans chantier accessible",
     createIntegrationTest(async () => {
       // Given
-      await creerChantierAvecTauxSurREG75("CH-062", 80);
+      await creerChantierAvecTauxSurREG75(80);
 
       // When
       const result = await query.execute({

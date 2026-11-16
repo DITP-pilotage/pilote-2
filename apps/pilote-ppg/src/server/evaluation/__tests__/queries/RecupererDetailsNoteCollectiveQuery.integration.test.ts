@@ -64,28 +64,19 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           },
         });
 
-        const chantier1 = await prisma.chantier_identite.create({
-          data: {
-            id: "CH-101",
-            nom: "Chantier Alpha",
-            ministeres: [ministere1.id],
-          },
+        const chantier1 = await f.chantierIdentite({
+          nom: "Chantier Alpha",
+          ministeres: [ministere1.id],
         });
 
-        const chantier2 = await prisma.chantier_identite.create({
-          data: {
-            id: "CH-102",
-            nom: "Chantier Beta",
-            ministeres: [ministere2.id],
-          },
+        const chantier2 = await f.chantierIdentite({
+          nom: "Chantier Beta",
+          ministeres: [ministere2.id],
         });
 
-        const chantier3 = await prisma.chantier_identite.create({
-          data: {
-            id: "CH-103",
-            nom: "Chantier Gamma",
-            ministeres: [ministere1.id],
-          },
+        const chantier3 = await f.chantierIdentite({
+          nom: "Chantier Gamma",
+          ministeres: [ministere1.id],
         });
 
         await prisma.chantier_territoire.createMany({
@@ -237,32 +228,34 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         const result = await query.run({ rattachementCode, jalon });
 
         // Then
-        expect(result).toEqual([
-          {
-            id: chantier1.id,
-            nom: chantier1.nom,
-            iconeMinistere: ministere1.icone,
-            tauxAvancement: 75.5,
-            tauxAvancementPilote: 80.0,
-            indicateurs: [],
-          },
-          {
-            id: chantier2.id,
-            nom: chantier2.nom,
-            iconeMinistere: ministere2.icone,
-            tauxAvancement: 82.3,
-            tauxAvancementPilote: 85.0,
-            indicateurs: [],
-          },
-          {
-            id: chantier3.id,
-            nom: chantier3.nom,
-            iconeMinistere: ministere1.icone,
-            tauxAvancement: 90,
-            tauxAvancementPilote: 92.0,
-            indicateurs: [],
-          },
-        ]);
+        expect(new Set(result)).toEqual(
+          new Set([
+            {
+              id: chantier1.id,
+              nom: chantier1.nom,
+              iconeMinistere: ministere1.icone,
+              tauxAvancement: 75.5,
+              tauxAvancementPilote: 80.0,
+              indicateurs: [],
+            },
+            {
+              id: chantier2.id,
+              nom: chantier2.nom,
+              iconeMinistere: ministere2.icone,
+              tauxAvancement: 82.3,
+              tauxAvancementPilote: 85.0,
+              indicateurs: [],
+            },
+            {
+              id: chantier3.id,
+              nom: chantier3.nom,
+              iconeMinistere: ministere1.icone,
+              tauxAvancement: 90,
+              tauxAvancementPilote: 92.0,
+              indicateurs: [],
+            },
+          ]),
+        );
       }),
     );
 
@@ -293,20 +286,14 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           },
         });
 
-        const chantier1 = await prisma.chantier_identite.create({
-          data: {
-            id: "CH-201",
-            nom: "Chantier Delta",
-            ministeres: [ministere.id],
-          },
+        const chantier1 = await f.chantierIdentite({
+          nom: "Chantier Delta",
+          ministeres: [ministere.id],
         });
 
-        const chantier2 = await prisma.chantier_identite.create({
-          data: {
-            id: "CH-202",
-            nom: "Chantier Epsilon",
-            ministeres: [ministere.id],
-          },
+        const chantier2 = await f.chantierIdentite({
+          nom: "Chantier Epsilon",
+          ministeres: [ministere.id],
         });
 
         await prisma.chantier_territoire.createMany({
@@ -400,24 +387,26 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         const result = await query.run({ rattachementCode, jalon });
 
         // Then
-        expect(result).toEqual([
-          {
-            id: chantier1.id,
-            nom: chantier1.nom,
-            iconeMinistere: ministere.icone,
-            tauxAvancement: 65,
-            tauxAvancementPilote: 68.0,
-            indicateurs: [],
-          },
-          {
-            id: chantier2.id,
-            nom: chantier2.nom,
-            iconeMinistere: ministere.icone,
-            tauxAvancement: 70,
-            tauxAvancementPilote: 73.0,
-            indicateurs: [],
-          },
-        ]);
+        expect(new Set(result)).toEqual(
+          new Set([
+            {
+              id: chantier1.id,
+              nom: chantier1.nom,
+              iconeMinistere: ministere.icone,
+              tauxAvancement: 65,
+              tauxAvancementPilote: 68.0,
+              indicateurs: [],
+            },
+            {
+              id: chantier2.id,
+              nom: chantier2.nom,
+              iconeMinistere: ministere.icone,
+              tauxAvancement: 70,
+              tauxAvancementPilote: 73.0,
+              indicateurs: [],
+            },
+          ]),
+        );
       }),
     );
 
@@ -458,12 +447,9 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           jalon: jalon,
         });
 
-        const chantier = await prisma.chantier_identite.create({
-          data: {
-            id: "CH-401",
-            nom: "Chantier Sans Ministère",
-            ministeres: [],
-          },
+        const chantier = await f.chantierIdentite({
+          nom: "Chantier Sans Ministère",
+          ministeres: [],
         });
 
         await prisma.chantier_territoire.create({
@@ -555,65 +541,44 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           },
         });
 
-        const chantier1 = await prisma.chantier_identite.create({
-          data: {
-            id: "CH-500",
-            nom: "Chantier avec Indicateurs",
-            ministeres: [ministere.id],
-          },
+        const chantier1 = await f.chantierIdentite({
+          nom: "Chantier avec Indicateurs",
+          ministeres: [ministere.id],
         });
 
-        const chantier2 = await prisma.chantier_identite.create({
-          data: {
-            id: "CH-501",
-            nom: "Autre Chantier",
-            ministeres: [ministere.id],
-          },
+        const chantier2 = await f.chantierIdentite({
+          nom: "Autre Chantier",
+          ministeres: [ministere.id],
         });
 
-        const indicateur1 = await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-001",
-            nom: "Indicateur Alpha",
-            chantier_id: chantier1.id,
-            type_id: "IMPACT",
-          },
+        const indicateur1 = await f.indicateurIdentite({
+          chantier_id: chantier1.id,
+          nom: "Indicateur Alpha",
+          type_id: "IMPACT",
         });
 
-        const indicateur2 = await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-002",
-            nom: "Indicateur Beta",
-            chantier_id: chantier1.id,
-            type_id: "IMPACT",
-          },
+        const indicateur2 = await f.indicateurIdentite({
+          chantier_id: chantier1.id,
+          nom: "Indicateur Beta",
+          type_id: "IMPACT",
         });
 
-        const indicateur3 = await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-003",
-            nom: "Indicateur Gamma",
-            chantier_id: chantier1.id,
-            type_id: "IMPACT",
-          },
+        const indicateur3 = await f.indicateurIdentite({
+          chantier_id: chantier1.id,
+          nom: "Indicateur Gamma",
+          type_id: "IMPACT",
         });
 
-        const indicateur4 = await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-004",
-            nom: "Indicateur Autre Chantier",
-            chantier_id: chantier2.id,
-            type_id: "IMPACT",
-          },
+        const indicateur4 = await f.indicateurIdentite({
+          chantier_id: chantier2.id,
+          nom: "Indicateur Autre Chantier",
+          type_id: "IMPACT",
         });
 
-        const indicateur5 = await prisma.indicateur_identite.create({
-          data: {
-            id: "IND-005",
-            nom: "Indicateur Autre Territoire",
-            chantier_id: chantier1.id,
-            type_id: "IMPACT",
-          },
+        const indicateur5 = await f.indicateurIdentite({
+          chantier_id: chantier1.id,
+          nom: "Indicateur Autre Territoire",
+          type_id: "IMPACT",
         });
 
         await prisma.chantier_territoire.createMany({
@@ -901,54 +866,63 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         const result = await query.run({ rattachementCode, jalon });
 
         // Then
-        expect(result).toEqual([
-          {
-            id: chantier1.id,
-            nom: chantier1.nom,
-            iconeMinistere: ministere.icone,
-            tauxAvancement: 72.8,
-            tauxAvancementPilote: 78.5,
-            indicateurs: [
-              {
-                id: indicateur1.id,
-                nom: indicateur1.nom,
-                tauxAvancement: 80.2,
-                tauxAvancementPilote: 85.0,
-                ponderation: 33,
-              },
-              {
-                id: indicateur2.id,
-                nom: indicateur2.nom,
-                tauxAvancement: 88.5,
-                tauxAvancementPilote: 92.5,
-                ponderation: 33,
-              },
-              {
-                id: indicateur3.id,
-                nom: indicateur3.nom,
-                tauxAvancement: null,
-                tauxAvancementPilote: null,
-                ponderation: 34,
-              },
-            ],
-          },
-          {
-            id: chantier2.id,
-            nom: chantier2.nom,
-            iconeMinistere: ministere.icone,
-            tauxAvancement: 50.0,
-            tauxAvancementPilote: 55.0,
-            indicateurs: [
-              {
-                id: indicateur4.id,
-                nom: indicateur4.nom,
-                tauxAvancement: 68.0,
-                tauxAvancementPilote: 70.0,
-                ponderation: 1,
-              },
-            ],
-          },
-        ]);
+        expect(
+          new Set(
+            result.map((chantier) => ({
+              ...chantier,
+              indicateurs: new Set(chantier.indicateurs),
+            })),
+          ),
+        ).toEqual(
+          new Set([
+            {
+              id: chantier1.id,
+              nom: chantier1.nom,
+              iconeMinistere: ministere.icone,
+              tauxAvancement: 72.8,
+              tauxAvancementPilote: 78.5,
+              indicateurs: new Set([
+                {
+                  id: indicateur1.id,
+                  nom: indicateur1.nom,
+                  tauxAvancement: 80.2,
+                  tauxAvancementPilote: 85.0,
+                  ponderation: 33,
+                },
+                {
+                  id: indicateur2.id,
+                  nom: indicateur2.nom,
+                  tauxAvancement: 88.5,
+                  tauxAvancementPilote: 92.5,
+                  ponderation: 33,
+                },
+                {
+                  id: indicateur3.id,
+                  nom: indicateur3.nom,
+                  tauxAvancement: null,
+                  tauxAvancementPilote: null,
+                  ponderation: 34,
+                },
+              ]),
+            },
+            {
+              id: chantier2.id,
+              nom: chantier2.nom,
+              iconeMinistere: ministere.icone,
+              tauxAvancement: 50.0,
+              tauxAvancementPilote: 55.0,
+              indicateurs: new Set([
+                {
+                  id: indicateur4.id,
+                  nom: indicateur4.nom,
+                  tauxAvancement: 68.0,
+                  tauxAvancementPilote: 70.0,
+                  ponderation: 1,
+                },
+              ]),
+            },
+          ]),
+        );
       }),
     );
 
@@ -979,20 +953,14 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           },
         });
 
-        const chantierNull = await prisma.chantier_identite.create({
-          data: {
-            id: "CH-600",
-            nom: "Chantier avec taux null",
-            ministeres: [ministere.id],
-          },
+        const chantierNull = await f.chantierIdentite({
+          nom: "Chantier avec taux null",
+          ministeres: [ministere.id],
         });
 
-        const chantierValide = await prisma.chantier_identite.create({
-          data: {
-            id: "CH-601",
-            nom: "Chantier avec taux valide",
-            ministeres: [ministere.id],
-          },
+        const chantierValide = await f.chantierIdentite({
+          nom: "Chantier avec taux valide",
+          ministeres: [ministere.id],
         });
 
         await prisma.chantier_territoire.createMany({

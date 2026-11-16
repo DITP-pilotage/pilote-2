@@ -18,24 +18,22 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
       "ajoute les chantiers aux habilitations existantes des coordinateurs REG et DEPT",
       createIntegrationTest(async (prisma) => {
         // given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           est_territorialise: true,
           statut: "PUBLIE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           est_applicable: true,
         });
 
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const autreChantier = await fixtures.chantierIdentite({
           est_territorialise: true,
           statut: "PUBLIE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: autreChantier.id,
           territoire_code: "DEPT-75",
           est_applicable: true,
         });
@@ -62,7 +60,7 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
 
         // when
         await handler.execute({
-          chantierIds: ["CH-001", "CH-002"],
+          chantierIds: [chantier.id, autreChantier.id],
           scope: "saisieCommentaire",
         });
 
@@ -85,10 +83,10 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
         });
 
         expect(habilitationRegion?.chantiers).toEqual(
-          expect.arrayContaining(["CH-001", "CH-002"]),
+          expect.arrayContaining([chantier.id, autreChantier.id]),
         );
         expect(habilitationDepartement?.chantiers).toEqual(
-          expect.arrayContaining(["CH-002"]),
+          expect.arrayContaining([autreChantier.id]),
         );
       }),
     );
@@ -97,24 +95,22 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
       "ajoute les chantier IDs sans doublons",
       createIntegrationTest(async (prisma) => {
         // given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           est_territorialise: true,
           statut: "PUBLIE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           est_applicable: true,
         });
 
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const autreChantier = await fixtures.chantierIdentite({
           est_territorialise: true,
           statut: "PUBLIE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: autreChantier.id,
           territoire_code: "REG-11",
           est_applicable: true,
         });
@@ -125,13 +121,13 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
         await fixtures.habilitation({
           utilisateurId: coordinateur.id,
           scopeCode: "saisieCommentaire",
-          chantiers: ["CH-001"],
+          chantiers: [chantier.id],
           territoires: ["REG-11"],
         });
 
         // when
         await handler.execute({
-          chantierIds: ["CH-001", "CH-002"],
+          chantierIds: [chantier.id, autreChantier.id],
           scope: "saisieCommentaire",
         });
 
@@ -146,7 +142,7 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
         });
 
         expect(habilitation?.chantiers).toEqual(
-          expect.arrayContaining(["CH-001", "CH-002"]),
+          expect.arrayContaining([chantier.id, autreChantier.id]),
         );
         expect(habilitation?.chantiers).toHaveLength(2);
       }),
@@ -156,13 +152,12 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
       "ne cible que les profils coordinateurs",
       createIntegrationTest(async (prisma) => {
         // given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           est_territorialise: true,
           statut: "PUBLIE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           est_applicable: true,
         });
@@ -189,7 +184,7 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
 
         // when
         await handler.execute({
-          chantierIds: ["CH-001"],
+          chantierIds: [chantier.id],
           scope: "saisieCommentaire",
         });
 
@@ -211,7 +206,7 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
           },
         });
 
-        expect(habilitationCoordinateur?.chantiers).toEqual(["CH-001"]);
+        expect(habilitationCoordinateur?.chantiers).toEqual([chantier.id]);
         expect(habilitationAdmin?.chantiers).toEqual([]);
       }),
     );
@@ -220,13 +215,12 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
       "ne modifie pas les habilitations des autres scopes",
       createIntegrationTest(async (prisma) => {
         // given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           est_territorialise: true,
           statut: "PUBLIE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           est_applicable: true,
         });
@@ -249,7 +243,7 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
 
         // when
         await handler.execute({
-          chantierIds: ["CH-001"],
+          chantierIds: [chantier.id],
           scope: "gestionUtilisateur",
         });
 
@@ -271,13 +265,12 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
       "préserve les territoires et périmètres existants lors de la mise à jour",
       createIntegrationTest(async (prisma) => {
         // given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           est_territorialise: true,
           statut: "PUBLIE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           est_applicable: true,
         });
@@ -295,7 +288,7 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
 
         // when
         await handler.execute({
-          chantierIds: ["CH-001"],
+          chantierIds: [chantier.id],
           scope: "saisieCommentaire",
         });
 
@@ -318,13 +311,12 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
       "n'ajoute pas le chantier si le coordinateur n'a aucun territoire applicable dans ses habilitations",
       createIntegrationTest(async (prisma) => {
         // given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           est_territorialise: true,
           statut: "PUBLIE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           est_applicable: true,
         });
@@ -336,13 +328,13 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
           utilisateurId: coordinateur.id,
           scopeCode: "saisieCommentaire",
           chantiers: [],
-          // REG-84 ne fait pas partie des territoires applicables de CH-001
+          // REG-84 ne fait pas partie des territoires applicables du chantier
           territoires: ["REG-84"],
         });
 
         // when
         await handler.execute({
-          chantierIds: ["CH-001"],
+          chantierIds: [chantier.id],
           scope: "saisieCommentaire",
         });
 
@@ -364,24 +356,22 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
       "ajoute uniquement les chantiers dont au moins un territoire applicable matche",
       createIntegrationTest(async (prisma) => {
         // given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           est_territorialise: true,
           statut: "PUBLIE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           est_applicable: true,
         });
 
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const autreChantier = await fixtures.chantierIdentite({
           est_territorialise: true,
           statut: "PUBLIE",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: autreChantier.id,
           territoire_code: "REG-84",
           est_applicable: true,
         });
@@ -393,13 +383,13 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
           utilisateurId: coordinateur.id,
           scopeCode: "saisieCommentaire",
           chantiers: [],
-          // match uniquement CH-001 (REG-11), pas CH-002 (REG-84)
+          // match uniquement le chantier en REG-11, pas celui en REG-84
           territoires: ["REG-11"],
         });
 
         // when
         await handler.execute({
-          chantierIds: ["CH-001", "CH-002"],
+          chantierIds: [chantier.id, autreChantier.id],
           scope: "saisieCommentaire",
         });
 
@@ -413,7 +403,7 @@ describe("AjouterLesChantierAuxHabilitationsHandler", () => {
           },
         });
 
-        expect(habilitation?.chantiers).toEqual(["CH-001"]);
+        expect(habilitation?.chantiers).toEqual([chantier.id]);
       }),
     );
   });

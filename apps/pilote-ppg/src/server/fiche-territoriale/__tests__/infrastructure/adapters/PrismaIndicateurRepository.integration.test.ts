@@ -1,6 +1,8 @@
 import { prisma } from "@/server/framework/persistence/prisma";
 import { PrismaIndicateurRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaIndicateurRepository";
+import { Indicateur } from "@/server/fiche-territoriale/domain/Indicateur";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
+import { fixtures } from "@/test/fixtures";
 
 describe("PrismaIndicateurRepository", () => {
   let prismaIndicateurRepository: PrismaIndicateurRepository;
@@ -14,63 +16,56 @@ describe("PrismaIndicateurRepository", () => {
       "quand la maille est un département, doit récupérer les indicateurs associés à la liste des chantiers",
       createIntegrationTest(async () => {
         // Given
-        const listeChantierId = ["CH-001", "CH-002"];
         const maille = "DEPT";
         const codeInsee = "01";
 
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: "CH-001",
-              nom: "Un nom de chantier 1",
-            },
-            {
-              id: "CH-002",
-              nom: "Un nom de chantier 2",
-            },
-            {
-              id: "CH-003",
-              nom: "Un nom de chantier 3",
-            },
-            {
-              id: "CH-004",
-              nom: "Un nom de chantier 4",
-            },
-          ],
+        const chantier1 = await fixtures.chantierIdentite({
+          nom: "Un nom de chantier 1",
         });
+        const chantier2 = await fixtures.chantierIdentite({
+          nom: "Un nom de chantier 2",
+        });
+        const chantier3 = await fixtures.chantierIdentite({
+          nom: "Un nom de chantier 3",
+        });
+        await fixtures.chantierIdentite({
+          nom: "Un nom de chantier 4",
+        });
+
+        const listeChantierId = [chantier1.id, chantier2.id];
 
         await prisma.chantier_territoire.createMany({
           data: [
             {
-              id: "CH-001",
+              id: chantier1.id,
               code_insee: "FR",
               maille: "NAT",
               zone_id: "FRANCE",
               territoire_code: "NAT-FR",
             },
             {
-              id: "CH-001",
+              id: chantier1.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
               territoire_code: "DEPT-01",
             },
             {
-              id: "CH-002",
+              id: chantier2.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
               territoire_code: "DEPT-01",
             },
             {
-              id: "CH-002",
+              id: chantier2.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
               territoire_code: "REG-01",
             },
             {
-              id: "CH-003",
+              id: chantier3.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -79,68 +74,57 @@ describe("PrismaIndicateurRepository", () => {
           ],
         });
 
-        await prisma.indicateur_identite.createMany({
-          data: [
-            {
-              id: "IND-001",
-              nom: "Un nom indicateur 1 OK baromètre",
-              chantier_id: "CH-001",
-              type_id: "IMPACT",
-              est_barometre: true,
-              unite_mesure: "Pourcentage",
-            },
-            {
-              id: "IND-002",
-              nom: "Un nom indicateur 2 OK pondération et maille",
-              chantier_id: "CH-001",
-              type_id: "IMPACT",
-              est_barometre: false,
-              unite_mesure: "Pourcentage",
-            },
-            {
-              id: "IND-003",
-              nom: "Un nom indicateur 3 OK pondération et maille",
-              chantier_id: "CH-002",
-              type_id: "IMPACT",
-              est_barometre: true,
-              unite_mesure: "million habitant",
-            },
-            {
-              id: "IND-004",
-              nom: "Un nom indicateur 4 KO maille",
-              chantier_id: "CH-002",
-              type_id: "IMPACT",
-              est_barometre: false,
-            },
-            {
-              id: "IND-005",
-              nom: "Un nom indicateur 5 KO chantier id",
-              chantier_id: "CH-003",
-              type_id: "IMPACT",
-              est_barometre: true,
-            },
-            {
-              id: "IND-006",
-              nom: "Un nom indicateur 6 KO pas barometre pondération null",
-              chantier_id: "CH-003",
-              type_id: "IMPACT",
-              est_barometre: false,
-            },
-            {
-              id: "IND-007",
-              nom: "Un nom indicateur 7 KO pas barometre pondération 0",
-              chantier_id: "CH-003",
-              type_id: "IMPACT",
-              est_barometre: false,
-            },
-          ],
+        const indicateur1 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 1 OK baromètre",
+          chantier_id: chantier1.id,
+          type_id: "IMPACT",
+          est_barometre: true,
+          unite_mesure: "Pourcentage",
+        });
+        const indicateur2 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 2 OK pondération et maille",
+          chantier_id: chantier1.id,
+          type_id: "IMPACT",
+          est_barometre: false,
+          unite_mesure: "Pourcentage",
+        });
+        const indicateur3 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 3 OK pondération et maille",
+          chantier_id: chantier2.id,
+          type_id: "IMPACT",
+          est_barometre: true,
+          unite_mesure: "million habitant",
+        });
+        const indicateur4 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 4 KO maille",
+          chantier_id: chantier2.id,
+          type_id: "IMPACT",
+          est_barometre: false,
+        });
+        const indicateur5 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 5 KO chantier id",
+          chantier_id: chantier3.id,
+          type_id: "IMPACT",
+          est_barometre: true,
+        });
+        const indicateur6 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 6 KO pas barometre pondération null",
+          chantier_id: chantier3.id,
+          type_id: "IMPACT",
+          est_barometre: false,
+        });
+        const indicateur7 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 7 KO pas barometre pondération 0",
+          chantier_id: chantier3.id,
+          type_id: "IMPACT",
+          est_barometre: false,
         });
 
         await prisma.indicateur_territoire.createMany({
           data: [
             {
-              id: "IND-001",
-              chantier_id: "CH-001",
+              id: indicateur1.id,
+              chantier_id: chantier1.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -148,8 +132,8 @@ describe("PrismaIndicateurRepository", () => {
               ponderation_zone_reel: null,
             },
             {
-              id: "IND-002",
-              chantier_id: "CH-001",
+              id: indicateur2.id,
+              chantier_id: chantier1.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -157,16 +141,16 @@ describe("PrismaIndicateurRepository", () => {
               ponderation_zone_reel: 20,
             },
             {
-              id: "IND-003",
-              chantier_id: "CH-002",
+              id: indicateur3.id,
+              chantier_id: chantier2.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
               territoire_code: "DEPT-01",
             },
             {
-              id: "IND-004",
-              chantier_id: "CH-002",
+              id: indicateur4.id,
+              chantier_id: chantier2.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
@@ -174,8 +158,8 @@ describe("PrismaIndicateurRepository", () => {
               ponderation_zone_reel: 20,
             },
             {
-              id: "IND-005",
-              chantier_id: "CH-003",
+              id: indicateur5.id,
+              chantier_id: chantier3.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -183,8 +167,8 @@ describe("PrismaIndicateurRepository", () => {
               ponderation_zone_reel: 20,
             },
             {
-              id: "IND-006",
-              chantier_id: "CH-003",
+              id: indicateur6.id,
+              chantier_id: chantier3.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -192,8 +176,8 @@ describe("PrismaIndicateurRepository", () => {
               ponderation_zone_reel: null,
             },
             {
-              id: "IND-007",
-              chantier_id: "CH-003",
+              id: indicateur7.id,
+              chantier_id: chantier3.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -206,7 +190,7 @@ describe("PrismaIndicateurRepository", () => {
         await prisma.indicateur_territoire_jalon.createMany({
           data: [
             {
-              id: "IND-001",
+              id: indicateur1.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -219,7 +203,7 @@ describe("PrismaIndicateurRepository", () => {
               jalon: 2024,
             },
             {
-              id: "IND-001",
+              id: indicateur1.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -232,7 +216,7 @@ describe("PrismaIndicateurRepository", () => {
               jalon: 2025,
             },
             {
-              id: "IND-002",
+              id: indicateur2.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -245,7 +229,7 @@ describe("PrismaIndicateurRepository", () => {
               jalon: 2024,
             },
             {
-              id: "IND-003",
+              id: indicateur3.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -266,40 +250,46 @@ describe("PrismaIndicateurRepository", () => {
             { listeChantierId, maille, codeInsee, jalon: 2024 },
           );
         // Then
-        expect([...result.keys()]).toEqual(["CH-001", "CH-002"]);
-        expect(result.get("CH-001")?.at(0)?.id).toEqual("IND-001");
-        expect(result.get("CH-001")?.at(0)?.nom).toEqual(
-          "Un nom indicateur 1 OK baromètre",
+        expect(new Set(result.keys())).toEqual(
+          new Set([chantier1.id, chantier2.id]),
         );
-        expect(result.get("CH-001")?.at(0)?.dateValeurAvancement).toEqual(
-          "2021-01-01T00:00:00.000Z",
+        expect(
+          result
+            .get(chantier1.id)
+            ?.toSorted((gauche, droite) => gauche.id.localeCompare(droite.id)),
+        ).toEqual(
+          [
+            Indicateur.creerIndicateur({
+              id: indicateur1.id,
+              nom: "Un nom indicateur 1 OK baromètre",
+              dateValeurAvancement: "2021-01-01T00:00:00.000Z",
+              tauxAvancement: 13,
+              valeurAvancement: 10.1,
+              valeurCible: 20,
+              uniteMesure: "Pourcentage",
+            }),
+            Indicateur.creerIndicateur({
+              id: indicateur2.id,
+              nom: "Un nom indicateur 2 OK pondération et maille",
+              dateValeurAvancement: "2023-02-04T00:00:00.000Z",
+              tauxAvancement: 13,
+              valeurAvancement: 22.3,
+              valeurCible: 23.3,
+              uniteMesure: "Pourcentage",
+            }),
+          ].toSorted((gauche, droite) => gauche.id.localeCompare(droite.id)),
         );
-        expect(result.get("CH-001")?.at(0)?.valeurAvancement).toEqual(10.1);
-        expect(result.get("CH-001")?.at(0)?.valeurCible).toEqual(20);
-        expect(result.get("CH-001")?.at(0)?.uniteMesure).toEqual("Pourcentage");
-        expect(result.get("CH-001")?.at(1)?.id).toEqual("IND-002");
-        expect(result.get("CH-001")?.at(1)?.nom).toEqual(
-          "Un nom indicateur 2 OK pondération et maille",
-        );
-        expect(result.get("CH-001")?.at(1)?.dateValeurAvancement).toEqual(
-          "2023-02-04T00:00:00.000Z",
-        );
-        expect(result.get("CH-001")?.at(1)?.valeurAvancement).toEqual(22.3);
-        expect(result.get("CH-001")?.at(1)?.valeurCible).toEqual(23.3);
-        expect(result.get("CH-001")?.at(1)?.uniteMesure).toEqual("Pourcentage");
-
-        expect(result.get("CH-002")?.at(0)?.id).toEqual("IND-003");
-        expect(result.get("CH-002")?.at(0)?.nom).toEqual(
-          "Un nom indicateur 3 OK pondération et maille",
-        );
-        expect(result.get("CH-002")?.at(0)?.dateValeurAvancement).toEqual(
-          "2022-08-02T00:00:00.000Z",
-        );
-        expect(result.get("CH-002")?.at(0)?.valeurAvancement).toEqual(31.3);
-        expect(result.get("CH-002")?.at(0)?.valeurCible).toEqual(32.3);
-        expect(result.get("CH-002")?.at(0)?.uniteMesure).toEqual(
-          "million habitant",
-        );
+        expect(result.get(chantier2.id)).toEqual([
+          Indicateur.creerIndicateur({
+            id: indicateur3.id,
+            nom: "Un nom indicateur 3 OK pondération et maille",
+            dateValeurAvancement: "2022-08-02T00:00:00.000Z",
+            tauxAvancement: 13,
+            valeurAvancement: 31.3,
+            valeurCible: 32.3,
+            uniteMesure: "million habitant",
+          }),
+        ]);
       }),
     );
 
@@ -307,63 +297,56 @@ describe("PrismaIndicateurRepository", () => {
       "quand la maille est une région, doit récupérer les indicateurs associés à la liste des chantiers",
       createIntegrationTest(async () => {
         // Given
-        const listeChantierId = ["CH-001", "CH-002"];
         const maille = "REG";
         const codeInsee = "01";
 
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: "CH-001",
-              nom: "Un nom de chantier 1",
-            },
-            {
-              id: "CH-002",
-              nom: "Un nom de chantier 2",
-            },
-            {
-              id: "CH-003",
-              nom: "Un nom de chantier 3",
-            },
-            {
-              id: "CH-004",
-              nom: "Un nom de chantier 4",
-            },
-          ],
+        const chantier1 = await fixtures.chantierIdentite({
+          nom: "Un nom de chantier 1",
         });
+        const chantier2 = await fixtures.chantierIdentite({
+          nom: "Un nom de chantier 2",
+        });
+        const chantier3 = await fixtures.chantierIdentite({
+          nom: "Un nom de chantier 3",
+        });
+        await fixtures.chantierIdentite({
+          nom: "Un nom de chantier 4",
+        });
+
+        const listeChantierId = [chantier1.id, chantier2.id];
 
         await prisma.chantier_territoire.createMany({
           data: [
             {
-              id: "CH-001",
+              id: chantier1.id,
               code_insee: "FR",
               maille: "NAT",
               zone_id: "FRANCE",
               territoire_code: "NAT-FR",
             },
             {
-              id: "CH-001",
+              id: chantier1.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
               territoire_code: "REG-01",
             },
             {
-              id: "CH-002",
+              id: chantier2.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
               territoire_code: "REG-01",
             },
             {
-              id: "CH-002",
+              id: chantier2.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
               territoire_code: "DEPT-01",
             },
             {
-              id: "CH-003",
+              id: chantier3.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
@@ -372,65 +355,54 @@ describe("PrismaIndicateurRepository", () => {
           ],
         });
 
-        await prisma.indicateur_identite.createMany({
-          data: [
-            {
-              id: "IND-001",
-              nom: "Un nom indicateur 1 OK baromètre",
-              chantier_id: "CH-001",
-              type_id: "IMPACT",
-              est_barometre: true,
-            },
-            {
-              id: "IND-002",
-              nom: "Un nom indicateur 2 OK pondération et maille",
-              chantier_id: "CH-001",
-              type_id: "IMPACT",
-              est_barometre: false,
-            },
-            {
-              id: "IND-003",
-              nom: "Un nom indicateur 3 OK pondération et maille",
-              chantier_id: "CH-002",
-              type_id: "IMPACT",
-              est_barometre: true,
-            },
-            {
-              id: "IND-004",
-              nom: "Un nom indicateur 4 KO maille",
-              chantier_id: "CH-002",
-              type_id: "IMPACT",
-              est_barometre: false,
-            },
-            {
-              id: "IND-005",
-              nom: "Un nom indicateur 5 KO chantier id",
-              chantier_id: "CH-003",
-              type_id: "IMPACT",
-              est_barometre: true,
-            },
-            {
-              id: "IND-006",
-              nom: "Un nom indicateur 6 KO pas barometre pondération null",
-              chantier_id: "CH-003",
-              type_id: "IMPACT",
-              est_barometre: false,
-            },
-            {
-              id: "IND-007",
-              nom: "Un nom indicateur 7 KO pas barometre pondération 0",
-              chantier_id: "CH-003",
-              type_id: "IMPACT",
-              est_barometre: false,
-            },
-          ],
+        const indicateur1 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 1 OK baromètre",
+          chantier_id: chantier1.id,
+          type_id: "IMPACT",
+          est_barometre: true,
+        });
+        const indicateur2 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 2 OK pondération et maille",
+          chantier_id: chantier1.id,
+          type_id: "IMPACT",
+          est_barometre: false,
+        });
+        const indicateur3 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 3 OK pondération et maille",
+          chantier_id: chantier2.id,
+          type_id: "IMPACT",
+          est_barometre: true,
+        });
+        const indicateur4 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 4 KO maille",
+          chantier_id: chantier2.id,
+          type_id: "IMPACT",
+          est_barometre: false,
+        });
+        const indicateur5 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 5 KO chantier id",
+          chantier_id: chantier3.id,
+          type_id: "IMPACT",
+          est_barometre: true,
+        });
+        const indicateur6 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 6 KO pas barometre pondération null",
+          chantier_id: chantier3.id,
+          type_id: "IMPACT",
+          est_barometre: false,
+        });
+        const indicateur7 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 7 KO pas barometre pondération 0",
+          chantier_id: chantier3.id,
+          type_id: "IMPACT",
+          est_barometre: false,
         });
 
         await prisma.indicateur_territoire.createMany({
           data: [
             {
-              id: "IND-001",
-              chantier_id: "CH-001",
+              id: indicateur1.id,
+              chantier_id: chantier1.id,
               code_insee: "01",
               zone_id: "R01",
               maille: "REG",
@@ -439,8 +411,8 @@ describe("PrismaIndicateurRepository", () => {
               date_valeur_actuelle_mandat: new Date("2021-01-01"),
             },
             {
-              id: "IND-002",
-              chantier_id: "CH-001",
+              id: indicateur2.id,
+              chantier_id: chantier1.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
@@ -449,8 +421,8 @@ describe("PrismaIndicateurRepository", () => {
               date_valeur_actuelle_mandat: new Date("2023-02-04"),
             },
             {
-              id: "IND-003",
-              chantier_id: "CH-002",
+              id: indicateur3.id,
+              chantier_id: chantier2.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
@@ -459,8 +431,8 @@ describe("PrismaIndicateurRepository", () => {
               date_valeur_actuelle_mandat: new Date("2022-08-02"),
             },
             {
-              id: "IND-004",
-              chantier_id: "CH-002",
+              id: indicateur4.id,
+              chantier_id: chantier2.id,
               code_insee: "01",
               zone_id: "D01",
               maille: "DEPT",
@@ -469,8 +441,8 @@ describe("PrismaIndicateurRepository", () => {
               date_valeur_actuelle_mandat: new Date("2022-08-02"),
             },
             {
-              id: "IND-005",
-              chantier_id: "CH-003",
+              id: indicateur5.id,
+              chantier_id: chantier3.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
@@ -479,8 +451,8 @@ describe("PrismaIndicateurRepository", () => {
               date_valeur_actuelle_mandat: new Date("2022-08-02"),
             },
             {
-              id: "IND-006",
-              chantier_id: "CH-003",
+              id: indicateur6.id,
+              chantier_id: chantier3.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
@@ -489,8 +461,8 @@ describe("PrismaIndicateurRepository", () => {
               date_valeur_actuelle_mandat: new Date("2022-08-02"),
             },
             {
-              id: "IND-007",
-              chantier_id: "CH-003",
+              id: indicateur7.id,
+              chantier_id: chantier3.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
@@ -504,7 +476,7 @@ describe("PrismaIndicateurRepository", () => {
         await prisma.indicateur_territoire_jalon.createMany({
           data: [
             {
-              id: "IND-001",
+              id: indicateur1.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
@@ -517,7 +489,7 @@ describe("PrismaIndicateurRepository", () => {
               jalon: 2024,
             },
             {
-              id: "IND-001",
+              id: indicateur1.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
@@ -530,7 +502,7 @@ describe("PrismaIndicateurRepository", () => {
               jalon: 2025,
             },
             {
-              id: "IND-002",
+              id: indicateur2.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
@@ -543,7 +515,7 @@ describe("PrismaIndicateurRepository", () => {
               jalon: 2024,
             },
             {
-              id: "IND-003",
+              id: indicateur3.id,
               code_insee: "01",
               maille: "REG",
               zone_id: "R01",
@@ -567,17 +539,40 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect([...result.keys()]).toEqual(["CH-001", "CH-002"]);
-        expect(result.get("CH-001")?.at(0)?.dateValeurAvancement).toEqual(
-          "2021-01-01T00:00:00.000Z",
+        expect(new Set(result.keys())).toEqual(
+          new Set([chantier1.id, chantier2.id]),
         );
-        expect(result.get("CH-001")?.at(1)?.dateValeurAvancement).toEqual(
-          "2023-02-04T00:00:00.000Z",
+        expect(
+          result
+            .get(chantier1.id)
+            ?.map(({ id, dateValeurAvancement }) => ({
+              id,
+              dateValeurAvancement,
+            }))
+            .toSorted((gauche, droite) => gauche.id.localeCompare(droite.id)),
+        ).toEqual(
+          [
+            {
+              id: indicateur1.id,
+              dateValeurAvancement: "2021-01-01T00:00:00.000Z",
+            },
+            {
+              id: indicateur2.id,
+              dateValeurAvancement: "2023-02-04T00:00:00.000Z",
+            },
+          ].toSorted((gauche, droite) => gauche.id.localeCompare(droite.id)),
         );
-
-        expect(result.get("CH-002")?.at(0)?.dateValeurAvancement).toEqual(
-          "2022-08-02T00:00:00.000Z",
-        );
+        expect(
+          result.get(chantier2.id)?.map(({ id, dateValeurAvancement }) => ({
+            id,
+            dateValeurAvancement,
+          })),
+        ).toEqual([
+          {
+            id: indicateur3.id,
+            dateValeurAvancement: "2022-08-02T00:00:00.000Z",
+          },
+        ]);
       }),
     );
   });
@@ -587,50 +582,41 @@ describe("PrismaIndicateurRepository", () => {
       "doit récupérer les indicateurs nationaux associés à la liste des chantiers",
       createIntegrationTest(async () => {
         // Given
-        const listeIndicateurId = ["IND-001", "IND-002"];
-
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: "CH-001",
-              nom: "Un nom de chantier 1",
-            },
-            {
-              id: "CH-002",
-              nom: "Un nom de chantier 2",
-            },
-            {
-              id: "CH-003",
-              nom: "Un nom de chantier 3",
-            },
-          ],
+        const chantier1 = await fixtures.chantierIdentite({
+          nom: "Un nom de chantier 1",
+        });
+        const chantier2 = await fixtures.chantierIdentite({
+          nom: "Un nom de chantier 2",
+        });
+        const chantier3 = await fixtures.chantierIdentite({
+          nom: "Un nom de chantier 3",
         });
 
         await prisma.chantier_territoire.createMany({
           data: [
             {
-              id: "CH-001",
+              id: chantier1.id,
               code_insee: "FR",
               maille: "NAT",
               zone_id: "FRANCE",
               territoire_code: "NAT-FR",
             },
             {
-              id: "CH-001",
+              id: chantier1.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
               territoire_code: "DEPT-01",
             },
             {
-              id: "CH-002",
+              id: chantier2.id,
               code_insee: "FR",
               maille: "NAT",
               zone_id: "FRANCE",
               territoire_code: "NAT-FR",
             },
             {
-              id: "CH-003",
+              id: chantier3.id,
               code_insee: "FR",
               maille: "NAT",
               zone_id: "FRANCE",
@@ -639,34 +625,29 @@ describe("PrismaIndicateurRepository", () => {
           ],
         });
 
-        await prisma.indicateur_identite.createMany({
-          data: [
-            {
-              id: "IND-001",
-              nom: "Un nom indicateur 1 KO pas NAT chantier 1",
-              chantier_id: "CH-001",
-              type_id: "IMPACT",
-            },
-            {
-              id: "IND-002",
-              nom: "Un nom indicateur 3 OK chantier 2",
-              chantier_id: "CH-002",
-              type_id: "IMPACT",
-            },
-            {
-              id: "IND-003",
-              nom: "Un nom indicateur 4 KO indic id",
-              chantier_id: "CH-003",
-              type_id: "IMPACT",
-            },
-          ],
+        const indicateur1 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 1 KO pas NAT chantier 1",
+          chantier_id: chantier1.id,
+          type_id: "IMPACT",
         });
+        const indicateur2 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 3 OK chantier 2",
+          chantier_id: chantier2.id,
+          type_id: "IMPACT",
+        });
+        const indicateur3 = await fixtures.indicateurIdentite({
+          nom: "Un nom indicateur 4 KO indic id",
+          chantier_id: chantier3.id,
+          type_id: "IMPACT",
+        });
+
+        const listeIndicateurId = [indicateur1.id, indicateur2.id];
 
         await prisma.indicateur_territoire.createMany({
           data: [
             {
-              id: "IND-001",
-              chantier_id: "CH-001",
+              id: indicateur1.id,
+              chantier_id: chantier1.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -674,8 +655,8 @@ describe("PrismaIndicateurRepository", () => {
               taux_avancement_mandat: 9.2,
             },
             {
-              id: "IND-001",
-              chantier_id: "CH-001",
+              id: indicateur1.id,
+              chantier_id: chantier1.id,
               code_insee: "FR",
               maille: "NAT",
               zone_id: "FRANCE",
@@ -683,8 +664,8 @@ describe("PrismaIndicateurRepository", () => {
               taux_avancement_mandat: 10.2,
             },
             {
-              id: "IND-002",
-              chantier_id: "CH-002",
+              id: indicateur2.id,
+              chantier_id: chantier2.id,
               code_insee: "FR",
               maille: "NAT",
               zone_id: "FRANCE",
@@ -692,8 +673,8 @@ describe("PrismaIndicateurRepository", () => {
               taux_avancement_mandat: 11.2,
             },
             {
-              id: "IND-003",
-              chantier_id: "CH-003",
+              id: indicateur3.id,
+              chantier_id: chantier3.id,
               code_insee: "01",
               maille: "NAT",
               zone_id: "FRANCE",
@@ -706,7 +687,7 @@ describe("PrismaIndicateurRepository", () => {
         await prisma.indicateur_territoire_jalon.createMany({
           data: [
             {
-              id: "IND-001",
+              id: indicateur1.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -719,7 +700,7 @@ describe("PrismaIndicateurRepository", () => {
               jalon: 2024,
             },
             {
-              id: "IND-001",
+              id: indicateur1.id,
               code_insee: "01",
               maille: "DEPT",
               zone_id: "D01",
@@ -732,7 +713,7 @@ describe("PrismaIndicateurRepository", () => {
               jalon: 2025,
             },
             {
-              id: "IND-001",
+              id: indicateur1.id,
               code_insee: "FR",
               maille: "NAT",
               zone_id: "FRANCE",
@@ -745,7 +726,7 @@ describe("PrismaIndicateurRepository", () => {
               jalon: 2024,
             },
             {
-              id: "IND-001",
+              id: indicateur1.id,
               code_insee: "FR",
               maille: "NAT",
               zone_id: "FRANCE",
@@ -758,7 +739,7 @@ describe("PrismaIndicateurRepository", () => {
               jalon: 2025,
             },
             {
-              id: "IND-002",
+              id: indicateur2.id,
               code_insee: "FR",
               maille: "NAT",
               zone_id: "FRANCE",
@@ -771,7 +752,7 @@ describe("PrismaIndicateurRepository", () => {
               jalon: 2024,
             },
             {
-              id: "IND-003",
+              id: indicateur3.id,
               code_insee: "FR",
               maille: "NAT",
               zone_id: "FRANCE",
@@ -795,10 +776,12 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect([...result.keys()]).toEqual(["IND-001", "IND-002"]);
-        expect(result.get("IND-001")?.tauxAvancement).toEqual(10.2);
+        expect(new Set(result.keys())).toEqual(
+          new Set([indicateur1.id, indicateur2.id]),
+        );
+        expect(result.get(indicateur1.id)?.tauxAvancement).toEqual(10.2);
 
-        expect(result.get("IND-002")?.tauxAvancement).toEqual(11.2);
+        expect(result.get(indicateur2.id)?.tauxAvancement).toEqual(11.2);
       }),
     );
   });

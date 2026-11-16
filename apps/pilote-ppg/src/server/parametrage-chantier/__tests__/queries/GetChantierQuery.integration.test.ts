@@ -16,22 +16,20 @@ describe("GetChantierQuery", () => {
       "retourne le chantier correspondant",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.metadataChantier({
-          chantier_id: "CH-007",
+        const chantier = await fixtures.metadataChantier({
           ch_nom: "Chantier cible",
         });
         await fixtures.metadataChantier({
-          chantier_id: "CH-008",
           ch_nom: "Autre chantier",
         });
 
         // When
-        const resultat = await query.run({ chantierId: "CH-007" });
+        const resultat = await query.run({ chantierId: chantier.chantier_id });
 
         // Then
         expect(resultat).toEqual(
           expect.objectContaining({
-            chantierId: "CH-007",
+            chantierId: chantier.chantier_id,
             chNom: "Chantier cible",
           }),
         );
@@ -42,14 +40,13 @@ describe("GetChantierQuery", () => {
       "retourne le porteur principal et les porteurs secondaires",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.metadataChantier({
-          chantier_id: "CH-007",
+        const chantier = await fixtures.metadataChantier({
           porteur_id_principal: "MIN-01",
           porteur_ids_secondaires: ["MIN-02", "MIN-03"],
         });
 
         // When
-        const resultat = await query.run({ chantierId: "CH-007" });
+        const resultat = await query.run({ chantierId: chantier.chantier_id });
 
         // Then
         expect(resultat).toEqual(

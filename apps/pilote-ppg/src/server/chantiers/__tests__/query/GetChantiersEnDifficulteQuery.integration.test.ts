@@ -13,13 +13,12 @@ describe("GetChantiersQuery — view en_difficulte", () => {
     ecartMandat: number | null;
     ecartJalon: number | null;
   }) => {
-    await fixtures.chantierIdentite({
-      id: "CH-001",
+    const chantier = await fixtures.chantierIdentite({
       ministeres_acronymes: ["MIN-01"],
       statut: "PUBLIE",
     });
     await fixtures.chantierTerritoire({
-      id: "CH-001",
+      id: chantier.id,
       territoire_code: "DEPT-29",
       code_insee: "29",
       maille: "DEPT",
@@ -29,7 +28,7 @@ describe("GetChantiersQuery — view en_difficulte", () => {
       ecart: ecartMandat,
     });
     await fixtures.chantierTerritoireJalon({
-      id: "CH-001",
+      id: chantier.id,
       territoire_code: "DEPT-29",
       code_insee: "29",
       maille: "DEPT",
@@ -37,13 +36,17 @@ describe("GetChantiersQuery — view en_difficulte", () => {
       jalon: 2026,
       ecart: ecartJalon,
     });
+    return chantier;
   };
 
   it(
     "remonte un chantier en difficulté dont seul l'écart mandat est <= -10",
     createIntegrationTest(async () => {
       // Given
-      await semerChantierOrageux({ ecartMandat: -20, ecartJalon: -5 });
+      const chantier = await semerChantierOrageux({
+        ecartMandat: -20,
+        ecartJalon: -5,
+      });
 
       // When
       const [resultat] = await query.execute({
@@ -55,7 +58,7 @@ describe("GetChantiersQuery — view en_difficulte", () => {
       // Then
       expect(resultat.chantiers).toEqual([
         expect.objectContaining({
-          chantier: expect.objectContaining({ id: "CH-001" }),
+          chantier: expect.objectContaining({ id: chantier.id }),
           ecart: -5,
           est_en_retard: false,
           est_en_difficulte: true,
@@ -68,7 +71,10 @@ describe("GetChantiersQuery — view en_difficulte", () => {
     "remonte un chantier en difficulté dont l'écart du jalon n'est pas calculé",
     createIntegrationTest(async () => {
       // Given
-      await semerChantierOrageux({ ecartMandat: -20, ecartJalon: null });
+      const chantier = await semerChantierOrageux({
+        ecartMandat: -20,
+        ecartJalon: null,
+      });
 
       // When
       const [resultat] = await query.execute({
@@ -80,7 +86,7 @@ describe("GetChantiersQuery — view en_difficulte", () => {
       // Then
       expect(resultat.chantiers).toEqual([
         expect.objectContaining({
-          chantier: expect.objectContaining({ id: "CH-001" }),
+          chantier: expect.objectContaining({ id: chantier.id }),
           ecart: null,
           est_en_retard: false,
           est_en_difficulte: true,

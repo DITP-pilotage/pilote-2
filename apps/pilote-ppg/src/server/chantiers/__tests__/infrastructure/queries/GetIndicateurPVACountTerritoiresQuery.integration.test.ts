@@ -56,22 +56,21 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
     createIntegrationTest(async () => {
       // Given
       const auteur = await fixtures.utilisateur();
-      await fixtures.chantierIdentite({ id: "CH-001" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-001",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
         zone_id: "D75",
       });
-      await fixtures.indicateurIdentite({
-        id: "IND-001",
-        chantier_id: "CH-001",
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
         statut: "PUBLIE",
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-001",
-        chantier_id: "CH-001",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -79,7 +78,7 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
         est_applicable: true,
       });
       await fixtures.indicateurTerritoireValeurEvenement({
-        indic_id: "IND-001",
+        indic_id: indicateur.id,
         territoire_code: "DEPT-75",
         id_auteur_modification: auteur.id,
         type_evenement: "PROPOSITION_VALEUR_CREEE",
@@ -87,10 +86,10 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
 
       // When
       const result = await query.execute({
-        indicateurId: "IND-001",
-        chantierId: "CH-001",
+        indicateurId: indicateur.id,
+        chantierId: chantier.id,
         jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-001", ["DEPT-75"]),
+        habilitations: habilitationsPourChantier(chantier.id, ["DEPT-75"]),
         profil: ProfilEnum.DITP_ADMIN,
       });
 
@@ -110,22 +109,21 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
     "retourne nombrePropositionsValeur à 0 quand aucun événement de proposition",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-002" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-002",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
         zone_id: "D75",
       });
-      await fixtures.indicateurIdentite({
-        id: "IND-002",
-        chantier_id: "CH-002",
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
         statut: "PUBLIE",
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-002",
-        chantier_id: "CH-002",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -135,10 +133,10 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
 
       // When
       const result = await query.execute({
-        indicateurId: "IND-002",
-        chantierId: "CH-002",
+        indicateurId: indicateur.id,
+        chantierId: chantier.id,
         jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-002", ["DEPT-75"]),
+        habilitations: habilitationsPourChantier(chantier.id, ["DEPT-75"]),
         profil: ProfilEnum.DITP_ADMIN,
       });
 
@@ -159,22 +157,21 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
     createIntegrationTest(async () => {
       // Given
       const auteur = await fixtures.utilisateur();
-      await fixtures.chantierIdentite({ id: "CH-003" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-003",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
         zone_id: "D75",
       });
-      await fixtures.indicateurIdentite({
-        id: "IND-003",
-        chantier_id: "CH-003",
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
         statut: "PUBLIE",
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-003",
-        chantier_id: "CH-003",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -183,7 +180,7 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
       });
       // Older event: proposition created
       await fixtures.indicateurTerritoireValeurEvenement({
-        indic_id: "IND-003",
+        indic_id: indicateur.id,
         territoire_code: "DEPT-75",
         id_auteur_modification: auteur.id,
         type_evenement: "PROPOSITION_VALEUR_CREEE",
@@ -192,7 +189,7 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
       });
       // Newer event: proposition deleted (terminated)
       await fixtures.indicateurTerritoireValeurEvenement({
-        indic_id: "IND-003",
+        indic_id: indicateur.id,
         territoire_code: "DEPT-75",
         id_auteur_modification: auteur.id,
         type_evenement: "PROPOSITION_VALEUR_SUPPRIMEE",
@@ -202,10 +199,10 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
 
       // When
       const result = await query.execute({
-        indicateurId: "IND-003",
-        chantierId: "CH-003",
+        indicateurId: indicateur.id,
+        chantierId: chantier.id,
         jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-003", ["DEPT-75"]),
+        habilitations: habilitationsPourChantier(chantier.id, ["DEPT-75"]),
         profil: ProfilEnum.DITP_ADMIN,
       });
 
@@ -225,29 +222,28 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
     "retourne estApplicable correctement",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-004" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-004",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
         zone_id: "D75",
       });
       await fixtures.chantierTerritoire({
-        id: "CH-004",
+        id: chantier.id,
         territoire_code: "DEPT-13",
         code_insee: "13",
         maille: "DEPT",
         zone_id: "D13",
       });
-      await fixtures.indicateurIdentite({
-        id: "IND-004",
-        chantier_id: "CH-004",
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
         statut: "PUBLIE",
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-004",
-        chantier_id: "CH-004",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -255,8 +251,8 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
         est_applicable: true,
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-004",
-        chantier_id: "CH-004",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         territoire_code: "DEPT-13",
         code_insee: "13",
         maille: "DEPT",
@@ -266,10 +262,10 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
 
       // When
       const result = await query.execute({
-        indicateurId: "IND-004",
-        chantierId: "CH-004",
+        indicateurId: indicateur.id,
+        chantierId: chantier.id,
         jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-004", [
+        habilitations: habilitationsPourChantier(chantier.id, [
           "DEPT-75",
           "DEPT-13",
         ]),
@@ -296,22 +292,21 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
     "lance une erreur quand le territoire n'est pas dans les habilitations",
     createIntegrationTest(async () => {
       // Given
-      await fixtures.chantierIdentite({ id: "CH-005" });
+      const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
-        id: "CH-005",
+        id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
         zone_id: "D75",
       });
-      await fixtures.indicateurIdentite({
-        id: "IND-005",
-        chantier_id: "CH-005",
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
         statut: "PUBLIE",
       });
       await fixtures.indicateurTerritoire({
-        id: "IND-005",
-        chantier_id: "CH-005",
+        id: indicateur.id,
+        chantier_id: chantier.id,
         territoire_code: "DEPT-75",
         code_insee: "75",
         maille: "DEPT",
@@ -323,13 +318,13 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
       // Then
       await expect(
         query.execute({
-          indicateurId: "IND-005",
-          chantierId: "CH-005",
+          indicateurId: indicateur.id,
+          chantierId: chantier.id,
           jalon: 2025,
-          habilitations: habilitationsPourChantier("CH-005", ["DEPT-13"]),
+          habilitations: habilitationsPourChantier(chantier.id, ["DEPT-13"]),
           profil: ProfilEnum.DITP_ADMIN,
         }),
-      ).rejects.toThrow("indicateur 'IND-005' non trouvé");
+      ).rejects.toThrow(`indicateur '${indicateur.id}' non trouvé`);
     }),
   );
 });

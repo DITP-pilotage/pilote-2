@@ -204,15 +204,12 @@ describe("ListerFichesAutoEvaluationQuery", () => {
         });
 
         const chantier1 = await f.chantierIdentite({
-          id: "CH-001",
           nom: "Chantier 1",
         });
         const chantier2 = await f.chantierIdentite({
-          id: "CH-002",
           nom: "Chantier 2",
         });
         const chantier3 = await f.chantierIdentite({
-          id: "CH-003",
           nom: "Chantier 3",
         });
 

@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
@@ -18,20 +19,21 @@ describe("ChantiersSignalesDataFetcher", () => {
       "exclut les chantiers dont la liste de ministères est vide",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantierAvecMinisteres = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
         });
-        await fixtures.chantierIdentite({ id: "CH-002", ministeres: [] });
+        const chantierSansMinisteres = await fixtures.chantierIdentite({
+          ministeres: [],
+        });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantierAvecMinisteres.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
           est_applicable: true,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: chantierSansMinisteres.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
@@ -40,13 +42,15 @@ describe("ChantiersSignalesDataFetcher", () => {
 
         // When
         const résultat = await dataFetcher.recupererChantierTerritoires({
-          chantierIds: ["CH-001", "CH-002"],
+          chantierIds: [chantierAvecMinisteres.id, chantierSansMinisteres.id],
           territoireCode: "REG-11",
           jalon: 2025,
         });
 
         // Then
-        expect(résultat.map((ct) => ct.id)).toEqual(["CH-001"]);
+        expect(résultat.map((ct) => ct.id)).toEqual([
+          chantierAvecMinisteres.id,
+        ]);
       }),
     );
 
@@ -54,12 +58,11 @@ describe("ChantiersSignalesDataFetcher", () => {
       "exclut les chantiers territoire non applicables",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
@@ -68,7 +71,7 @@ describe("ChantiersSignalesDataFetcher", () => {
 
         // When
         const résultat = await dataFetcher.recupererChantierTerritoires({
-          chantierIds: ["CH-001"],
+          chantierIds: [chantier.id],
           territoireCode: "REG-11",
           jalon: 2025,
         });
@@ -82,23 +85,21 @@ describe("ChantiersSignalesDataFetcher", () => {
       "restreint aux chantierIds demandés",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantierDemande = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
         });
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantierNonDemande = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantierDemande.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
           est_applicable: true,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: chantierNonDemande.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
@@ -107,13 +108,13 @@ describe("ChantiersSignalesDataFetcher", () => {
 
         // When
         const résultat = await dataFetcher.recupererChantierTerritoires({
-          chantierIds: ["CH-001"],
+          chantierIds: [chantierDemande.id],
           territoireCode: "REG-11",
           jalon: 2025,
         });
 
         // Then
-        expect(résultat.map((ct) => ct.id)).toEqual(["CH-001"]);
+        expect(résultat.map((ct) => ct.id)).toEqual([chantierDemande.id]);
       }),
     );
 
@@ -121,25 +122,23 @@ describe("ChantiersSignalesDataFetcher", () => {
       "avec statutPublieUniquement, exclut les chantiers non publiés",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantierPublie = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
           statut: "PUBLIE",
         });
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantierBrouillon = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
           statut: "BROUILLON",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantierPublie.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
           est_applicable: true,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: chantierBrouillon.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
@@ -148,14 +147,14 @@ describe("ChantiersSignalesDataFetcher", () => {
 
         // When
         const résultat = await dataFetcher.recupererChantierTerritoires({
-          chantierIds: ["CH-001", "CH-002"],
+          chantierIds: [chantierPublie.id, chantierBrouillon.id],
           territoireCode: "REG-11",
           jalon: 2025,
           statutPublieUniquement: true,
         });
 
         // Then
-        expect(résultat.map((ct) => ct.id)).toEqual(["CH-001"]);
+        expect(résultat.map((ct) => ct.id)).toEqual([chantierPublie.id]);
       }),
     );
 
@@ -163,13 +162,12 @@ describe("ChantiersSignalesDataFetcher", () => {
       "sans statutPublieUniquement, inclut les chantiers non publiés",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
           statut: "BROUILLON",
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
@@ -178,13 +176,13 @@ describe("ChantiersSignalesDataFetcher", () => {
 
         // When
         const résultat = await dataFetcher.recupererChantierTerritoires({
-          chantierIds: ["CH-001"],
+          chantierIds: [chantier.id],
           territoireCode: "REG-11",
           jalon: 2025,
         });
 
         // Then
-        expect(résultat.map((ct) => ct.id)).toEqual(["CH-001"]);
+        expect(résultat.map((ct) => ct.id)).toEqual([chantier.id]);
       }),
     );
 
@@ -192,19 +190,18 @@ describe("ChantiersSignalesDataFetcher", () => {
       "ne remonte les données de chantier_territoire_jalon que pour le jalon demandé",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
           est_applicable: true,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
@@ -212,7 +209,7 @@ describe("ChantiersSignalesDataFetcher", () => {
           ecart: -50,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
@@ -222,7 +219,7 @@ describe("ChantiersSignalesDataFetcher", () => {
 
         // When
         const résultat = await dataFetcher.recupererChantierTerritoires({
-          chantierIds: ["CH-001"],
+          chantierIds: [chantier.id],
           territoireCode: "REG-11",
           jalon: 2025,
         });
@@ -230,7 +227,7 @@ describe("ChantiersSignalesDataFetcher", () => {
         // Then
         expect(résultat).toEqual([
           expect.objectContaining({
-            id: "CH-001",
+            id: chantier.id,
             chantier_territoire_jalon: [{ ecart: -15, taux_avancement: null }],
           }),
         ]);
@@ -243,24 +240,22 @@ describe("ChantiersSignalesDataFetcher", () => {
       "au national, compte les PVA depuis les territoires enfants REG et DEPT",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantierAvecPva = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantierAvecPva.id,
           territoire_code: "REG-11",
           code_insee: "11",
           maille: "REG",
           est_applicable: true,
           nombre_propositions_valeur_actuelle: 2,
         });
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantierSansPva = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
         });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: chantierSansPva.id,
           territoire_code: "DEPT-75",
           code_insee: "75",
           maille: "DEPT",
@@ -271,12 +266,12 @@ describe("ChantiersSignalesDataFetcher", () => {
         // When
         const résultat = await dataFetcher.recupererPvaIds(
           "NAT",
-          ["CH-001", "CH-002"],
+          [chantierAvecPva.id, chantierSansPva.id],
           "NAT-FR",
         );
 
         // Then
-        expect(résultat).toEqual(new Set(["CH-001"]));
+        expect(résultat).toEqual(new Set([chantierAvecPva.id]));
       }),
     );
 
@@ -311,12 +306,11 @@ describe("ChantiersSignalesDataFetcher", () => {
           },
         });
 
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "DEPT-31",
           code_insee: "31",
           maille: "DEPT",
@@ -327,12 +321,12 @@ describe("ChantiersSignalesDataFetcher", () => {
         // When
         const résultat = await dataFetcher.recupererPvaIds(
           "REG",
-          ["CH-001"],
+          [chantier.id],
           "REG-76",
         );
 
         // Then
-        expect(résultat).toEqual(new Set(["CH-001"]));
+        expect(résultat).toEqual(new Set([chantier.id]));
       }),
     );
 
@@ -342,7 +336,7 @@ describe("ChantiersSignalesDataFetcher", () => {
         // When
         const résultat = await dataFetcher.recupererPvaIds(
           "DEPT",
-          ["CH-001"],
+          [randomUUID()],
           "DEPT-75",
         );
 
@@ -376,13 +370,12 @@ describe("ChantiersSignalesDataFetcher", () => {
       "au national, ignore les chantiers dont la cible n'est pas attendue",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        const chantier = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
           cible_attendue: false,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantier.id,
           territoire_code: "DEPT-75",
           code_insee: "75",
           maille: "DEPT",
@@ -395,7 +388,7 @@ describe("ChantiersSignalesDataFetcher", () => {
             "NAT",
             [
               {
-                id: "CH-001",
+                id: chantier.id,
                 meteo: null,
                 tendance: null,
                 nombre_propositions_valeur_actuelle: 0,
@@ -421,21 +414,20 @@ describe("ChantiersSignalesDataFetcher", () => {
     it(
       "au national, distingue les chantiers avec département applicable de ceux avec un taux renseigné",
       createIntegrationTest(async () => {
-        // Given — CH-001 a un dept applicable sans taux, CH-002 a un dept applicable avec taux
-        await fixtures.chantierIdentite({
-          id: "CH-001",
+        // Given — chantierSansTaux a un dept applicable sans taux, chantierAvecTaux a un dept applicable avec taux
+        const chantierSansTaux = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
           cible_attendue: true,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-001",
+          id: chantierSansTaux.id,
           territoire_code: "DEPT-75",
           code_insee: "75",
           maille: "DEPT",
           est_applicable: true,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-001",
+          id: chantierSansTaux.id,
           territoire_code: "DEPT-75",
           code_insee: "75",
           maille: "DEPT",
@@ -443,20 +435,19 @@ describe("ChantiersSignalesDataFetcher", () => {
           taux_avancement: null,
         });
 
-        await fixtures.chantierIdentite({
-          id: "CH-002",
+        const chantierAvecTaux = await fixtures.chantierIdentite({
           ministeres: ["MIN-01"],
           cible_attendue: true,
         });
         await fixtures.chantierTerritoire({
-          id: "CH-002",
+          id: chantierAvecTaux.id,
           territoire_code: "DEPT-75",
           code_insee: "75",
           maille: "DEPT",
           est_applicable: true,
         });
         await fixtures.chantierTerritoireJalon({
-          id: "CH-002",
+          id: chantierAvecTaux.id,
           territoire_code: "DEPT-75",
           code_insee: "75",
           maille: "DEPT",
@@ -466,7 +457,7 @@ describe("ChantiersSignalesDataFetcher", () => {
 
         const chantierTerritoiresNat = [
           {
-            id: "CH-001",
+            id: chantierSansTaux.id,
             meteo: null,
             tendance: null,
             nombre_propositions_valeur_actuelle: 0,
@@ -475,7 +466,7 @@ describe("ChantiersSignalesDataFetcher", () => {
             chantier_territoire_jalon: [],
           },
           {
-            id: "CH-002",
+            id: chantierAvecTaux.id,
             meteo: null,
             tendance: null,
             nombre_propositions_valeur_actuelle: 0,
@@ -495,8 +486,11 @@ describe("ChantiersSignalesDataFetcher", () => {
 
         // Then
         expect(résultat).toEqual({
-          chantiersAvecDept: new Set(["CH-001", "CH-002"]),
-          chantiersAvecTaux: new Set(["CH-002"]),
+          chantiersAvecDept: new Set([
+            chantierSansTaux.id,
+            chantierAvecTaux.id,
+          ]),
+          chantiersAvecTaux: new Set([chantierAvecTaux.id]),
         });
       }),
     );

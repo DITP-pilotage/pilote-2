@@ -54,10 +54,9 @@ describe("PrismaPublicationRepository (objectifs)", () => {
         const objectifsAnonymises = await tx.objectif.findMany({
           where: { auteur_modification_id: auteurAnonyme.id },
         });
-        expect(objectifsAnonymises).toEqual([
-          expect.objectContaining({ id: objectif2.id }),
-          expect.objectContaining({ id: objectif3.id }),
-        ]);
+        expect(objectifsAnonymises.map(({ id }) => id).sort()).toEqual(
+          [objectif2.id, objectif3.id].sort(),
+        );
       }),
     );
 
@@ -102,10 +101,9 @@ describe("PrismaPublicationRepository (objectifs)", () => {
         const objectifsAnonymises = await tx.objectif.findMany({
           where: { auteur_creation_id: auteurAnonyme.id },
         });
-        expect(objectifsAnonymises).toEqual([
-          expect.objectContaining({ id: objectif2.id }),
-          expect.objectContaining({ id: objectif3.id }),
-        ]);
+        expect(objectifsAnonymises.map(({ id }) => id).sort()).toEqual(
+          [objectif2.id, objectif3.id].sort(),
+        );
       }),
     );
 

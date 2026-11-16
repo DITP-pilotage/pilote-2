@@ -33,45 +33,49 @@ async function seedIndicateur({
   chantierStatut?: "PUBLIE" | "BROUILLON";
   indicateurStatut?: "PUBLIE" | "SUPPRIME";
 } = {}) {
-  await fixtures.chantierIdentite({ id: "CH-SVV", statut: chantierStatut });
+  const chantier = await fixtures.chantierIdentite({ statut: chantierStatut });
   for (const territoire of [FINISTERE, ILLE_ET_VILAINE]) {
     await fixtures.chantierTerritoire({
-      id: "CH-SVV",
+      id: chantier.id,
       territoire_code: territoire.territoire_code,
       code_insee: territoire.code_insee,
       maille: territoire.maille,
       zone_id: territoire.zone_id,
     });
   }
-  await fixtures.indicateurIdentite({
-    id: "IND-SVV",
-    chantier_id: "CH-SVV",
+  const indicateur = await fixtures.indicateurIdentite({
+    chantier_id: chantier.id,
     nom: "Nombre de bornes",
     statut: indicateurStatut,
   });
+  return { chantier, indicateur };
 }
 
 async function seedTerritoire({
+  chantierId,
+  indicateurId,
   territoire = FINISTERE,
   valeurInitiale = 10,
   estApplicable = true,
   jalons = { [JALON]: 100 },
 }: {
+  chantierId: string;
+  indicateurId: string;
   territoire?: TerritoireTest;
   valeurInitiale?: number | null;
   estApplicable?: boolean;
   jalons?: Record<number, number | null>;
-} = {}) {
+}) {
   await fixtures.indicateurTerritoire({
-    id: "IND-SVV",
-    chantier_id: "CH-SVV",
+    id: indicateurId,
+    chantier_id: chantierId,
     ...territoire,
     est_applicable: estApplicable,
     valeur_initiale: valeurInitiale,
   });
   for (const [jalon, valeurCible] of Object.entries(jalons)) {
     await fixtures.indicateurTerritoireJalon({
-      id: "IND-SVV",
+      id: indicateurId,
       territoire_code: territoire.territoire_code,
       code_insee: territoire.code_insee,
       maille: territoire.maille,
@@ -83,11 +87,13 @@ async function seedTerritoire({
 }
 
 const ligne = (
+  chantier: { id: string; nom: string },
+  indicateur: { id: string },
   overrides: Partial<LigneIndicateurSansViVc>,
 ): LigneIndicateurSansViVc => ({
-  chantierId: "CH-SVV",
-  chantierNom: "Chantier CH-SVV",
-  indicateurId: "IND-SVV",
+  chantierId: chantier.id,
+  chantierNom: chantier.nom,
+  indicateurId: indicateur.id,
   indicateurNom: "Nombre de bornes",
   maille: "DEPT",
   territoireCode: "DEPT-29",
@@ -104,9 +110,12 @@ describe("GetIndicateursSansViVcQuery", () => {
     prisma: new PrismaPilote(),
   });
 
-  const executer = (valeurs: ValeursRecherchees = "vi_et_vc") =>
+  const executer = (
+    chantierId: string,
+    valeurs: ValeursRecherchees = "vi_et_vc",
+  ) =>
     query.execute({
-      chantierIds: ["CH-SVV"],
+      chantierIds: [chantierId],
       territoireCodes: ["DEPT-29", "DEPT-35"],
       jalon: JALON,
       valeurs,
@@ -116,14 +125,20 @@ describe("GetIndicateursSansViVcQuery", () => {
     "signale la VI nulle",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ valeurInitiale: null });
+      const { chantier, indicateur } = await seedIndicateur();
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        valeurInitiale: null,
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
-      expect(result).toEqual([ligne({ viManquante: true })]);
+      expect(result).toEqual([
+        ligne(chantier, indicateur, { viManquante: true }),
+      ]);
     }),
   );
 
@@ -131,11 +146,15 @@ describe("GetIndicateursSansViVcQuery", () => {
     "ne signale pas une VI à 0",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ valeurInitiale: 0 });
+      const { chantier, indicateur } = await seedIndicateur();
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        valeurInitiale: 0,
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
       expect(result).toEqual([]);
@@ -146,14 +165,20 @@ describe("GetIndicateursSansViVcQuery", () => {
     "signale la VC nulle au jalon",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ jalons: { [JALON]: null } });
+      const { chantier, indicateur } = await seedIndicateur();
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        jalons: { [JALON]: null },
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
-      expect(result).toEqual([ligne({ vcManquante: true })]);
+      expect(result).toEqual([
+        ligne(chantier, indicateur, { vcManquante: true }),
+      ]);
     }),
   );
 
@@ -161,11 +186,15 @@ describe("GetIndicateursSansViVcQuery", () => {
     "ne signale pas une VC à 0",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ jalons: { [JALON]: 0 } });
+      const { chantier, indicateur } = await seedIndicateur();
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        jalons: { [JALON]: 0 },
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
       expect(result).toEqual([]);
@@ -176,11 +205,15 @@ describe("GetIndicateursSansViVcQuery", () => {
     "ignore un territoire sans ligne pour le jalon",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ jalons: {} });
+      const { chantier, indicateur } = await seedIndicateur();
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        jalons: {},
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
       expect(result).toEqual([]);
@@ -191,11 +224,15 @@ describe("GetIndicateursSansViVcQuery", () => {
     "ignore une VC nulle sur un autre jalon",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ jalons: { 2025: null, [JALON]: 100 } });
+      const { chantier, indicateur } = await seedIndicateur();
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        jalons: { 2025: null, [JALON]: 100 },
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
       expect(result).toEqual([]);
@@ -206,11 +243,16 @@ describe("GetIndicateursSansViVcQuery", () => {
     "ignore un territoire non applicable",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ valeurInitiale: null, estApplicable: false });
+      const { chantier, indicateur } = await seedIndicateur();
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        valeurInitiale: null,
+        estApplicable: false,
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
       expect(result).toEqual([]);
@@ -221,11 +263,17 @@ describe("GetIndicateursSansViVcQuery", () => {
     "ignore un indicateur non publié",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur({ indicateurStatut: "SUPPRIME" });
-      await seedTerritoire({ valeurInitiale: null });
+      const { chantier, indicateur } = await seedIndicateur({
+        indicateurStatut: "SUPPRIME",
+      });
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        valeurInitiale: null,
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
       expect(result).toEqual([]);
@@ -236,11 +284,17 @@ describe("GetIndicateursSansViVcQuery", () => {
     "ignore un chantier non publié",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur({ chantierStatut: "BROUILLON" });
-      await seedTerritoire({ valeurInitiale: null });
+      const { chantier, indicateur } = await seedIndicateur({
+        chantierStatut: "BROUILLON",
+      });
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        valeurInitiale: null,
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
       expect(result).toEqual([]);
@@ -251,12 +305,16 @@ describe("GetIndicateursSansViVcQuery", () => {
     "ignore un territoire hors périmètre",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ valeurInitiale: null });
+      const { chantier, indicateur } = await seedIndicateur();
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        valeurInitiale: null,
+      });
 
       // when
       const result = await query.execute({
-        chantierIds: ["CH-SVV"],
+        chantierIds: [chantier.id],
         territoireCodes: ["DEPT-35"],
         jalon: JALON,
         valeurs: "vi_et_vc",
@@ -271,20 +329,26 @@ describe("GetIndicateursSansViVcQuery", () => {
     "signale VI sur un territoire et VC sur un autre, chacun avec son motif",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ valeurInitiale: null });
+      const { chantier, indicateur } = await seedIndicateur();
       await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        valeurInitiale: null,
+      });
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
         territoire: ILLE_ET_VILAINE,
         jalons: { [JALON]: null },
       });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
       expect(result).toEqual([
-        ligne({ viManquante: true }),
-        ligne({
+        ligne(chantier, indicateur, { viManquante: true }),
+        ligne(chantier, indicateur, {
           territoireCode: "DEPT-35",
           territoireNom: "Ille-et-Vilaine",
           territoireNomAffiche: "35 - Ille-et-Vilaine",
@@ -298,14 +362,21 @@ describe("GetIndicateursSansViVcQuery", () => {
     "donne une seule ligne, avec les deux motifs, pour un territoire sans VI ni VC",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ valeurInitiale: null, jalons: { [JALON]: null } });
+      const { chantier, indicateur } = await seedIndicateur();
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        valeurInitiale: null,
+        jalons: { [JALON]: null },
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
-      expect(result).toEqual([ligne({ viManquante: true, vcManquante: true })]);
+      expect(result).toEqual([
+        ligne(chantier, indicateur, { viManquante: true, vcManquante: true }),
+      ]);
     }),
   );
 
@@ -313,20 +384,26 @@ describe("GetIndicateursSansViVcQuery", () => {
     "en recherche vc, ne remonte pas un territoire seulement sans VI et ne marque pas viManquante",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ valeurInitiale: null });
+      const { chantier, indicateur } = await seedIndicateur();
       await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        valeurInitiale: null,
+      });
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
         territoire: ILLE_ET_VILAINE,
         valeurInitiale: null,
         jalons: { [JALON]: null },
       });
 
       // when
-      const result = await executer("vc");
+      const result = await executer(chantier.id, "vc");
 
       // then
       expect(result).toEqual([
-        ligne({
+        ligne(chantier, indicateur, {
           territoireCode: "DEPT-35",
           territoireNom: "Ille-et-Vilaine",
           territoireNomAffiche: "35 - Ille-et-Vilaine",
@@ -340,20 +417,26 @@ describe("GetIndicateursSansViVcQuery", () => {
     "en recherche vi, ne remonte pas un territoire seulement sans VC et ne marque pas vcManquante",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ jalons: { [JALON]: null } });
+      const { chantier, indicateur } = await seedIndicateur();
       await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        jalons: { [JALON]: null },
+      });
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
         territoire: ILLE_ET_VILAINE,
         valeurInitiale: null,
         jalons: { [JALON]: null },
       });
 
       // when
-      const result = await executer("vi");
+      const result = await executer(chantier.id, "vi");
 
       // then
       expect(result).toEqual([
-        ligne({
+        ligne(chantier, indicateur, {
           territoireCode: "DEPT-35",
           territoireNom: "Ille-et-Vilaine",
           territoireNomAffiche: "35 - Ille-et-Vilaine",
@@ -367,17 +450,19 @@ describe("GetIndicateursSansViVcQuery", () => {
     "dernière VC connue : le jalon antérieur le plus récent non nul",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
+      const { chantier, indicateur } = await seedIndicateur();
       await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
         jalons: { 2023: 50, 2024: 100, 2025: null, [JALON]: null },
       });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
       expect(result).toEqual([
-        ligne({
+        ligne(chantier, indicateur, {
           vcManquante: true,
           derniereVcConnue: { valeur: 100, jalon: 2024 },
         }),
@@ -389,15 +474,19 @@ describe("GetIndicateursSansViVcQuery", () => {
     "dernière VC connue à 0",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ jalons: { 2025: 0, [JALON]: null } });
+      const { chantier, indicateur } = await seedIndicateur();
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        jalons: { 2025: 0, [JALON]: null },
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
       expect(result).toEqual([
-        ligne({
+        ligne(chantier, indicateur, {
           vcManquante: true,
           derniereVcConnue: { valeur: 0, jalon: 2025 },
         }),
@@ -409,14 +498,20 @@ describe("GetIndicateursSansViVcQuery", () => {
     "dernière VC connue : ignore un jalon postérieur",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
-      await seedTerritoire({ jalons: { [JALON]: null, 2027: 50 } });
+      const { chantier, indicateur } = await seedIndicateur();
+      await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
+        jalons: { [JALON]: null, 2027: 50 },
+      });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
-      expect(result).toEqual([ligne({ vcManquante: true })]);
+      expect(result).toEqual([
+        ligne(chantier, indicateur, { vcManquante: true }),
+      ]);
     }),
   );
 
@@ -424,17 +519,21 @@ describe("GetIndicateursSansViVcQuery", () => {
     "derniereVcConnue est null pour une ligne en VI manquante seule",
     createIntegrationTest(async () => {
       // given
-      await seedIndicateur();
+      const { chantier, indicateur } = await seedIndicateur();
       await seedTerritoire({
+        chantierId: chantier.id,
+        indicateurId: indicateur.id,
         valeurInitiale: null,
         jalons: { 2025: 80, [JALON]: 100 },
       });
 
       // when
-      const result = await executer();
+      const result = await executer(chantier.id);
 
       // then
-      expect(result).toEqual([ligne({ viManquante: true })]);
+      expect(result).toEqual([
+        ligne(chantier, indicateur, { viManquante: true }),
+      ]);
     }),
   );
 });

@@ -38,7 +38,6 @@ describe("IndicateurActiviteGateway", () => {
         territoire_code: "DEPT-75",
       });
       const indicateurIdentite = await fixtures.indicateurIdentite({
-        id: "IND-001",
         nom: "Indicateur Test",
         chantier_id: chantier.id,
       });
@@ -150,7 +149,6 @@ describe("IndicateurActiviteGateway", () => {
         territoire_code: "DEPT-92",
       });
       const indicateurIdentite = await fixtures.indicateurIdentite({
-        id: "IND-002",
         nom: "Indicateur Tri",
         chantier_id: chantier.id,
       });
@@ -245,7 +243,6 @@ describe("IndicateurActiviteGateway", () => {
 
       const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
-        id: "IND-003",
         nom: "Indicateur Null",
         chantier_id: chantier.id,
       });
