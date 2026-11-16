@@ -34,6 +34,7 @@ export const computeContributions = (
         tauxProgression: dernier?.tauxProgression ?? null,
         date: dernier?.date ?? null,
         ponderation,
+        sensSouhaite: indicateur.sensSouhaite,
       }
     }),
   )

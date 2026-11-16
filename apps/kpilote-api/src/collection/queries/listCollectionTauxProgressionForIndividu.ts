@@ -1,4 +1,5 @@
 import {
+  type CollectionTauxProgressionSummaryApiModel,
   type CollectionTauxProgressionSummaryListApiModel,
   type ListCollectionTauxProgressionForIndividuQuery,
 } from '@pilote/kpilote-shared/collectionTauxProgression'
@@ -75,12 +76,8 @@ const build = async (
 const computeCollectionTaux = async (
   collection: CollectionRow,
   individuCible: IndividuRef,
-): Promise<{ collection: string; tauxProgression: number | null }> => {
-  if (collection.indicateurs.length === 0) {
-    return { collection: collection.publicId, tauxProgression: null }
-  }
-
+): Promise<CollectionTauxProgressionSummaryApiModel> => {
   const contributions = await computeContributions(collection.indicateurs, individuCible)
-  const { tauxProgression } = resolveCollectionTauxProgression(contributions)
-  return { collection: collection.publicId, tauxProgression }
+  const { tauxProgression, raisonSansTaux } = resolveCollectionTauxProgression(contributions)
+  return { collection: collection.publicId, tauxProgression, raisonSansTaux }
 }
