@@ -88,7 +88,7 @@ Il permet aussi, comme le pin précédent, ESLint 10 (qui requiert Node ≥ 20.1
 |---|---|---|---|
 | `@keycloak/keycloak-admin-client` | `26.5.6` | La 26.6.0 a un `prepare` script cassé qui appelle `pnpm wireit`. À re-tester maintenant qu'on est sur pnpm (le blocage d'origine venait de `npm install`). | Check `pnpm outdated` à chaque campagne |
 | `@tiptap/*` (core, extensions, react, pm, starter-kit, etc.) | `3.22.3` | Les packages `@tiptap/*` **doivent tous être à la même version** au runtime sinon l'éditeur plante (multiple `@tiptap/core` instances). On pin à l'exact pour éviter qu'un seul paquet dérive. | Bumper tout le bloc ensemble |
-| `evalite` (ppg, devDep) | `1.0.0-beta.16` | Outillage local des evals d'Albert. Seule version qui fournit `trialCount`, `evalite.each()` et les scorers : la `0.19.0` (`latest`) n'en a aucun. Les deux sont figées depuis le 2026-02-20. `better-sqlite3` est en `^13` alors que sa peer demande `^11` : la v11 n'a pas de binaire précompilé pour Node 24. | À chaque campagne : `npm view evalite dist-tags`. Passer en `^1` dès la 1.0 stable, et réaligner `better-sqlite3` sur sa peer |
+| `evalite` (ppg, devDep) | `1.0.0-beta.16` | Outillage local des evals d'Albert. Seule version qui fournit `trialCount`, `evalite.each()` et les scorers : la `0.19.0` (`latest`) n'en a aucun. Les deux sont figées depuis le 2026-02-20. `better-sqlite3` est en `^13` alors que sa peer demande `^11` : la v11 n'a pas de binaire précompilé pour Node 24. | À chaque campagne : `npm view evalite dist-tags`. Passer en `^1` dès la 1.0 stable, et réaligner `better-sqlite3` sur sa peer. Le 2026-11-16, le moteur l'a « bumpé » en `0.19.0`, une rétrogradation classée major : il écarte désormais toute cible inférieure à la version courante (`retrogradationsEcartees`) |
 | `fast-xml-parser` | `5.7.3` | Bumpé en mai 2026 pour CVEs. Pinné car la 5.7.1 introduit `@nodable/entities` v2.1.0 avec breaking changes sur les entités — on fige tant qu'on n'a pas vérifié l'impact. | À évaluer pour passer en `^5.7.3` |
 | `@next/env`, `next-auth`, `convict*`, `dotenv`, `dotenv-expand`, `next-router-mock`, `jest-extended`, `sanitize-html`, `sass`, `swagger-ui-react`, `ws`, `zustand`, etc. | divers | Pins historiques par prudence. Chaque ligne pourrait être remplacée par `^` lors d'une campagne si on valide que le bump mineur est safe. | À réévaluer ponctuellement |
 
@@ -122,7 +122,7 @@ Définis dans `pnpm.overrides` du `package.json` racine. Tous ajoutés lors de l
 
 | Override | Verdict | Cible CVE | Condition de sortie (corrigée) | Action |
 |---|---|---|---|---|
-| `@hono/node-server@>=1.19.10 <2: >=2.1.3 <3` (ajouté le 2026-11-09) | **PORTEUR** — 1.19.17 sans lui | GHSA-rmxm-3fg6-px4f (`serveStatic` décode deux fois le chemin, bypass de middleware) : aucun correctif en 1.x, premier patch en 2.1.3 | `@hono/vite-dev-server` (devDep des 3 apps kpilote, `^1.19.11`) et `@ai-sdk/devtools` (ppg, `^1.13.7`) acceptent une 2.x, **ou** l'advisory reçoit un backport 1.x | **GARDER.** Plafond de major forcé sur de l'outillage dev uniquement : `getRequestListener` et `getConnInfo`, seuls imports du plugin, existent en 2.x ; serveur de dev kpilote-api vérifié identique à `dev` |
+| `@hono/node-server@>=1.19.10 <2: >=2.1.3 <3` (ajouté le 2026-11-09) | **PORTEUR** — 1.19.17 sans lui | GHSA-rmxm-3fg6-px4f (`serveStatic` décode deux fois le chemin, bypass de middleware) : aucun correctif en 1.x, premier patch en 2.1.3 | `@hono/vite-dev-server` (devDep des 3 apps kpilote, `^1.19.11`) et `@ai-sdk/devtools` (ppg, `^1.13.7`) acceptent une 2.x, **ou** l'advisory reçoit un backport 1.x. **Non remplie au 2026-11-16** : `@hono/vite-dev-server` toujours en 0.26.1 (2026-07-11) ; la 1.19.18 backporte GHSA-jpvv-r467-5p4w mais **pas** GHSA-rmxm (range `>=1.19.10 <2.1.3`, aucun patch 1.x) | **GARDER.** Plafond de major forcé sur de l'outillage dev uniquement : `getRequestListener` et `getConnInfo`, seuls imports du plugin, existent en 2.x ; serveur de dev kpilote-api vérifié identique à `dev` |
 | `@hono/node-server: >=1.19.13` | **PORTEUR** — se résout en 1.19.11 sans lui | GHSA-92pp-h63x-v22m (bypass middleware, `<1.19.13`) — **réelle** | ~~« Quand `@prisma/dev` bumpera »~~ **visait le mauvais paquet.** `@prisma/dev@0.24.14` a *supprimé* la dep — mais `prisma@7.8.0` le pinne à `0.24.3` exact. Vraie condition : **quand `prisma` relèvera son pin `@prisma/dev`** (probablement 7.9.0). | **CIBLER** `"@prisma/dev>@hono/node-server": ">=1.19.13 <2"`. Ne **jamais** poser `<2` en global : les 3 apps kpilote sont en `^2.0.8` depuis `8c1d0b548`. |
 | `@xmldom/xmldom: >=0.9.10` | **PORTEUR** — 0.9.9 sans lui | 4× **HIGH** (GHSA-2v35-w6hq-6mfw, -f6ww-3ggp-fr8h, -x6wf-f3px-wcqx, -j759-j44w-7fr8) — **réelles** | ~~« stable 5.x de `speech-rule-engine` »~~ **incomplète.** `mathjax-full@3.2.2` déclare `^4.0.6` : même une 5.0.0 stable ne serait pas prise. Vraie condition : **stable 5.x de speech-rule-engine ET bump de `mathjax-full`.** (`latest` = `5.0.0-rc.4`) | **GARDER**, borner `">=0.9.10 <0.10"` |
 | `postcss: >=8.5.10` | **PORTEUR** — 8.4.31 sans lui | GHSA-qx2v-qp2m-jg93 — **réelle** | ~~« Bumpera naturellement »~~ **structurellement impossible** : `next@16.2.6` **pinne** `postcss: 8.4.31` (exact, pas un caret). Vraie condition : **quand `next` relèvera son pin** — à retester par `npm view next@<v> dependencies.postcss`. | **GARDER**, borner `">=8.5.10 <9"` |
@@ -1261,6 +1261,51 @@ sert une CSP permissive (`'unsafe-inline'`). Après tout bump de `next` ou `reac
 - **Attendre** : `@hono/node-server` v2 (retirer l'override d'abord, cf. « Overrides »)
 
 ## Historique des campagnes
+
+### Novembre 2026 (2026-11-16) — Campagne centrée sécu
+
+Branche `deps/campagne-2026-11-16`. Départ : **58 deps périmées, 5 majors, 11 advisories**
+(0 critical, 0 high, 9 moderate, 2 low).
+
+| Étape | Advisories |
+|---|---|
+| départ, sur `dev` | 11 |
+| lot in-range (39 paquets) + 5 pin-minors | 6 — `hono` 4.13.13 → 4.13.16 ferme ses 5 advisories |
+| `@hono/node-server` 2.1.5 → 2.1.6, sous exclusion d'un jour | **4** |
+
+**Les majors (`@hookform/resolvers` 7, `dotenv` 18, `msw` 3, `evalite`) ne fermaient aucune advisory**
+et ont été retirés sur décision explicite. `msw` 3 casse toujours le `tsc` de kpilote-webapp
+(`onUnhandledRequest`). `evalite` n'était pas un major mais une **rétrogradation** (1.0.0-beta.16 →
+0.19.0, son `latest`) qui cassait le `tsc` de ppg (`viteConfig`) : le moteur écarte désormais ces cibles.
+
+**Quarantaine.** `seroval` et `fast-uri`, échus le 2026-11-01 et le 2026-11-02 et mûrs, sont retirés ; les
+trois overrides repassent en plancher (`>=1.6.11 <2`, `>=3.1.9 <4`, `>=4.2.3 <5`), résolution inchangée.
+Le banc d'essai avait jugé `seroval` porteur (« 1.8.1 sans lui ») : verdict biaisé, il a tourné avec
+l'exclusion encore active, seule raison pour laquelle la 1.8.1 (2026-11-11) était visible.
+`@hono/node-server@2.1.6` entre en exclusion **par version exacte** (acceptée ici, l'instance transitive
+étant elle-même forcée par override), échéance le jour même : à retirer juste après le merge.
+
+**Résiduel (4)**, aucun en production :
+
+- `glob` 13.0.6 et `minimatch` 10.2.6 via `evalite>@fastify/static` 10.1.8 (ppg, outillage des evals).
+  `@fastify/static` 10.1.9 passe à `glob ^14` mais n'est mûre que le **2026-11-18** : relever alors
+  l'override `evalite>@fastify/static` à `>=10.1.9 <11`.
+- `minimatch` 9.0.9 via `@hono/vite-dev-server` 0.26.1 (serveur de dev), qui exige `^9.0.3` ; correctif
+  seulement en 11.0.1. Même condition de sortie que l'override `@hono/node-server@<2`.
+- `fast-xml-parser` 5.11.2 (ppg, low, pin exact) : 5.12.0 mûre le **2026-11-17**.
+
+**Faux rouge des tests ppg le lundi matin.** `ProduireRapportsHebdomadairesUseCase` échoue chaque lundi
+entre 00:00 et 10:00 (Paris) : la période commence le lundi à 09:00:01 et les données du test datent de
+`Date.now() - 1h`. Tous les commits du moteur (09:43–09:52) en ont hérité ; l'oracle rejoué à 10:24 est vert.
+
+**Défauts du moteur corrigés** : cibles inférieures à la version courante écartées
+(`retrogradationsEcartees`) ; refus de démarrer sous un autre Node que `engines.node`, dont
+l'avertissement pnpm corrompait le JSON de `pnpm outdated`.
+
+**Suivi de la campagne du 2026-10-29** : rien du « Reste à faire » n'avait été appliqué. Exclusions
+`seroval`/`fast-uri` retirées ici avec deux semaines de retard ; `msw` 3, `dotenv` 18 et le nettoyage des
+quatre overrides sans objet (`brace-expansion@<2`, `immutable@>=4 <5`, `js-yaml@>=4 <5`, `tar@>=7 <8`,
+troisième campagne de suite) restent à faire.
 
 ### Octobre 2026 (2026-10-29) — Campagne centrée sécu
 
