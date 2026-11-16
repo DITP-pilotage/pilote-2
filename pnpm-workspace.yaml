@@ -16,8 +16,3 @@ minimumReleaseAgeExclude:
   # next et @next/* relèvent d'une politique permanente, pas d'un contournement daté.
   - next
   - "@next/*"
-  # expire: 2026-11-16
-  # Correctif d'advisories @hono/node-server (GHSA-qv5m-9pm6-hqp3, GHSA-jpvv-r467-5p4w) : 2.1.6,
-  # publiée le 2026-11-02 à 10:22 UTC, mûre le jour même à 11:22 heure de Paris. Posée pour ne pas
-  # attendre une heure : à retirer dès la campagne du 2026-11-16 mergée.
-  - "@hono/node-server@2.1.6"
