@@ -42,7 +42,7 @@
     "@pilote/kpilote-acme": "workspace:*",
     "@pilote/kpilote-shared": "workspace:*",
     "@prisma/adapter-pg": "^7.10.1",
-    "@prisma/client": "7.10.0",
+    "@prisma/client": "7.10.1",
     "ai": "^7.0.159",
     "chrono-node": "^2.10.3",
     "dotenv": "17.4.2",
