@@ -51,9 +51,10 @@ describe("PrismaPublicationRepository (decisions-strategiques)", () => {
         const decisionsAnonymisees = await tx.decision_strategique.findMany({
           where: { auteur_modification_id: auteurAnonyme.id },
         });
-        expect(decisionsAnonymisees.map(({ id }) => id).sort()).toEqual(
-          [decision2.id, decision3.id].sort(),
-        );
+        expect(decisionsAnonymisees).toIncludeSameMembers([
+          expect.objectContaining({ id: decision2.id }),
+          expect.objectContaining({ id: decision3.id }),
+        ]);
       }),
     );
 
@@ -95,9 +96,10 @@ describe("PrismaPublicationRepository (decisions-strategiques)", () => {
         const decisionsAnonymisees = await tx.decision_strategique.findMany({
           where: { auteur_creation_id: auteurAnonyme.id },
         });
-        expect(decisionsAnonymisees.map(({ id }) => id).sort()).toEqual(
-          [decision2.id, decision3.id].sort(),
-        );
+        expect(decisionsAnonymisees).toIncludeSameMembers([
+          expect.objectContaining({ id: decision2.id }),
+          expect.objectContaining({ id: decision3.id }),
+        ]);
       }),
     );
 

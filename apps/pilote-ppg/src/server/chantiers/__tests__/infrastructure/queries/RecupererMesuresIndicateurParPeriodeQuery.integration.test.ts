@@ -191,10 +191,7 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       });
 
       // Then
-      const resultTrieParType = [...result].sort((gauche, droite) =>
-        gauche.typeValeur.localeCompare(droite.typeValeur),
-      );
-      expect(resultTrieParType).toEqual([
+      expect(result).toIncludeSameMembers([
         {
           id: mesureVC.id,
           indicateurId: indicateurIdentite.id,

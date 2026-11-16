@@ -250,35 +250,30 @@ describe("PrismaIndicateurRepository", () => {
             { listeChantierId, maille, codeInsee, jalon: 2024 },
           );
         // Then
-        expect(new Set(result.keys())).toEqual(
-          new Set([chantier1.id, chantier2.id]),
-        );
-        expect(
-          result
-            .get(chantier1.id)
-            ?.toSorted((gauche, droite) => gauche.id.localeCompare(droite.id)),
-        ).toEqual(
-          [
-            Indicateur.creerIndicateur({
-              id: indicateur1.id,
-              nom: "Un nom indicateur 1 OK baromètre",
-              dateValeurAvancement: "2021-01-01T00:00:00.000Z",
-              tauxAvancement: 13,
-              valeurAvancement: 10.1,
-              valeurCible: 20,
-              uniteMesure: "Pourcentage",
-            }),
-            Indicateur.creerIndicateur({
-              id: indicateur2.id,
-              nom: "Un nom indicateur 2 OK pondération et maille",
-              dateValeurAvancement: "2023-02-04T00:00:00.000Z",
-              tauxAvancement: 13,
-              valeurAvancement: 22.3,
-              valeurCible: 23.3,
-              uniteMesure: "Pourcentage",
-            }),
-          ].toSorted((gauche, droite) => gauche.id.localeCompare(droite.id)),
-        );
+        expect([...result.keys()]).toIncludeSameMembers([
+          chantier1.id,
+          chantier2.id,
+        ]);
+        expect(result.get(chantier1.id)).toIncludeSameMembers([
+          Indicateur.creerIndicateur({
+            id: indicateur1.id,
+            nom: "Un nom indicateur 1 OK baromètre",
+            dateValeurAvancement: "2021-01-01T00:00:00.000Z",
+            tauxAvancement: 13,
+            valeurAvancement: 10.1,
+            valeurCible: 20,
+            uniteMesure: "Pourcentage",
+          }),
+          Indicateur.creerIndicateur({
+            id: indicateur2.id,
+            nom: "Un nom indicateur 2 OK pondération et maille",
+            dateValeurAvancement: "2023-02-04T00:00:00.000Z",
+            tauxAvancement: 13,
+            valeurAvancement: 22.3,
+            valeurCible: 23.3,
+            uniteMesure: "Pourcentage",
+          }),
+        ]);
         expect(result.get(chantier2.id)).toEqual([
           Indicateur.creerIndicateur({
             id: indicateur3.id,
@@ -539,29 +534,25 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(new Set(result.keys())).toEqual(
-          new Set([chantier1.id, chantier2.id]),
-        );
+        expect([...result.keys()]).toIncludeSameMembers([
+          chantier1.id,
+          chantier2.id,
+        ]);
         expect(
-          result
-            .get(chantier1.id)
-            ?.map(({ id, dateValeurAvancement }) => ({
-              id,
-              dateValeurAvancement,
-            }))
-            .toSorted((gauche, droite) => gauche.id.localeCompare(droite.id)),
-        ).toEqual(
-          [
-            {
-              id: indicateur1.id,
-              dateValeurAvancement: "2021-01-01T00:00:00.000Z",
-            },
-            {
-              id: indicateur2.id,
-              dateValeurAvancement: "2023-02-04T00:00:00.000Z",
-            },
-          ].toSorted((gauche, droite) => gauche.id.localeCompare(droite.id)),
-        );
+          result.get(chantier1.id)?.map(({ id, dateValeurAvancement }) => ({
+            id,
+            dateValeurAvancement,
+          })),
+        ).toIncludeSameMembers([
+          {
+            id: indicateur1.id,
+            dateValeurAvancement: "2021-01-01T00:00:00.000Z",
+          },
+          {
+            id: indicateur2.id,
+            dateValeurAvancement: "2023-02-04T00:00:00.000Z",
+          },
+        ]);
         expect(
           result.get(chantier2.id)?.map(({ id, dateValeurAvancement }) => ({
             id,
@@ -776,9 +767,10 @@ describe("PrismaIndicateurRepository", () => {
           );
 
         // Then
-        expect(new Set(result.keys())).toEqual(
-          new Set([indicateur1.id, indicateur2.id]),
-        );
+        expect([...result.keys()]).toIncludeSameMembers([
+          indicateur1.id,
+          indicateur2.id,
+        ]);
         expect(result.get(indicateur1.id)?.tauxAvancement).toEqual(10.2);
 
         expect(result.get(indicateur2.id)?.tauxAvancement).toEqual(11.2);

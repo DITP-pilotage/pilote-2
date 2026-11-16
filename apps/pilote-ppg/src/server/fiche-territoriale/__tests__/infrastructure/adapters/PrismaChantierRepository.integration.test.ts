@@ -150,21 +150,21 @@ describe("PrismaChantierRepository", () => {
 
           // Then
           expect(result).toHaveLength(2);
-          expect(result).toMatchObject([
-            {
+          expect(result).toIncludeSameMembers([
+            expect.objectContaining({
               id: chantier1.id,
               tauxAvancement: null,
               meteo: "SOLEIL",
               nom: "Chantier 001",
               codeMinisterePorteur: "1009",
-            },
-            {
+            }),
+            expect.objectContaining({
               id: chantier2.id,
               tauxAvancement: 2,
               meteo: null,
               nom: "Chantier 002",
               codeMinisterePorteur: "1010",
-            },
+            }),
           ]);
         }),
       );
@@ -621,13 +621,9 @@ describe("PrismaChantierRepository", () => {
             );
           // Then
           expect(result).toHaveLength(2);
-          expect(result).toMatchObject([
-            {
-              id: chantier1.id,
-            },
-            {
-              id: chantier2.id,
-            },
+          expect(result).toIncludeSameMembers([
+            expect.objectContaining({ id: chantier1.id }),
+            expect.objectContaining({ id: chantier2.id }),
           ]);
         }),
       );

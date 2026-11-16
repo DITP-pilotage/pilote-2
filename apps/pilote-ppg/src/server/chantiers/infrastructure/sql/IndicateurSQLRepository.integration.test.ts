@@ -858,42 +858,36 @@ describe("IndicateurSQLRepository", () => {
         );
 
         // Then
-        expect(
-          result.toSorted((gauche, droite) =>
-            gauche.id.localeCompare(droite.id),
-          ),
-        ).toMatchObject(
-          [
-            {
-              id: indicateur1.id,
-              nom: "Indicateur 001",
-              type: "IMPACT",
-              estIndicateurDuBaromètre: true,
-              description: "Indicateur 1 chantier 1",
-              source: "Une source indic 1",
-              modeDeCalcul: "Un mode indic 1",
-              unité: "mg",
-              parentId: null,
-              periodicite: "10 jours",
-              delaiDisponibilite: "10",
-              responsablesDonneesMails: ["john.doe@pilote.fr"],
-            },
-            {
-              id: indicateur4.id,
-              nom: "Indicateur 004",
-              type: "IMPACT",
-              estIndicateurDuBaromètre: true,
-              description: "Indicateur 4 chantier 1",
-              source: "Une source indic 4",
-              modeDeCalcul: "Un mode indic 4",
-              unité: "mg",
-              parentId: null,
-              periodicite: "10 jours",
-              delaiDisponibilite: "10",
-              responsablesDonneesMails: ["john.doe@pilote.fr"],
-            },
-          ].toSorted((gauche, droite) => gauche.id.localeCompare(droite.id)),
-        );
+        expect(result).toIncludeSameMembers([
+          expect.objectContaining({
+            id: indicateur1.id,
+            nom: "Indicateur 001",
+            type: "IMPACT",
+            estIndicateurDuBaromètre: true,
+            description: "Indicateur 1 chantier 1",
+            source: "Une source indic 1",
+            modeDeCalcul: "Un mode indic 1",
+            unité: "mg",
+            parentId: null,
+            periodicite: "10 jours",
+            delaiDisponibilite: "10",
+            responsablesDonneesMails: ["john.doe@pilote.fr"],
+          }),
+          expect.objectContaining({
+            id: indicateur4.id,
+            nom: "Indicateur 004",
+            type: "IMPACT",
+            estIndicateurDuBaromètre: true,
+            description: "Indicateur 4 chantier 1",
+            source: "Une source indic 4",
+            modeDeCalcul: "Un mode indic 4",
+            unité: "mg",
+            parentId: null,
+            periodicite: "10 jours",
+            delaiDisponibilite: "10",
+            responsablesDonneesMails: ["john.doe@pilote.fr"],
+          }),
+        ]);
       }),
     );
   });

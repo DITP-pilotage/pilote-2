@@ -228,34 +228,32 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         const result = await query.run({ rattachementCode, jalon });
 
         // Then
-        expect(new Set(result)).toEqual(
-          new Set([
-            {
-              id: chantier1.id,
-              nom: chantier1.nom,
-              iconeMinistere: ministere1.icone,
-              tauxAvancement: 75.5,
-              tauxAvancementPilote: 80.0,
-              indicateurs: [],
-            },
-            {
-              id: chantier2.id,
-              nom: chantier2.nom,
-              iconeMinistere: ministere2.icone,
-              tauxAvancement: 82.3,
-              tauxAvancementPilote: 85.0,
-              indicateurs: [],
-            },
-            {
-              id: chantier3.id,
-              nom: chantier3.nom,
-              iconeMinistere: ministere1.icone,
-              tauxAvancement: 90,
-              tauxAvancementPilote: 92.0,
-              indicateurs: [],
-            },
-          ]),
-        );
+        expect(result).toIncludeSameMembers([
+          {
+            id: chantier1.id,
+            nom: chantier1.nom,
+            iconeMinistere: ministere1.icone,
+            tauxAvancement: 75.5,
+            tauxAvancementPilote: 80.0,
+            indicateurs: [],
+          },
+          {
+            id: chantier2.id,
+            nom: chantier2.nom,
+            iconeMinistere: ministere2.icone,
+            tauxAvancement: 82.3,
+            tauxAvancementPilote: 85.0,
+            indicateurs: [],
+          },
+          {
+            id: chantier3.id,
+            nom: chantier3.nom,
+            iconeMinistere: ministere1.icone,
+            tauxAvancement: 90,
+            tauxAvancementPilote: 92.0,
+            indicateurs: [],
+          },
+        ]);
       }),
     );
 
@@ -387,26 +385,24 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         const result = await query.run({ rattachementCode, jalon });
 
         // Then
-        expect(new Set(result)).toEqual(
-          new Set([
-            {
-              id: chantier1.id,
-              nom: chantier1.nom,
-              iconeMinistere: ministere.icone,
-              tauxAvancement: 65,
-              tauxAvancementPilote: 68.0,
-              indicateurs: [],
-            },
-            {
-              id: chantier2.id,
-              nom: chantier2.nom,
-              iconeMinistere: ministere.icone,
-              tauxAvancement: 70,
-              tauxAvancementPilote: 73.0,
-              indicateurs: [],
-            },
-          ]),
-        );
+        expect(result).toIncludeSameMembers([
+          {
+            id: chantier1.id,
+            nom: chantier1.nom,
+            iconeMinistere: ministere.icone,
+            tauxAvancement: 65,
+            tauxAvancementPilote: 68.0,
+            indicateurs: [],
+          },
+          {
+            id: chantier2.id,
+            nom: chantier2.nom,
+            iconeMinistere: ministere.icone,
+            tauxAvancement: 70,
+            tauxAvancementPilote: 73.0,
+            indicateurs: [],
+          },
+        ]);
       }),
     );
 
@@ -866,63 +862,54 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         const result = await query.run({ rattachementCode, jalon });
 
         // Then
-        expect(
-          new Set(
-            result.map((chantier) => ({
-              ...chantier,
-              indicateurs: new Set(chantier.indicateurs),
-            })),
-          ),
-        ).toEqual(
-          new Set([
-            {
-              id: chantier1.id,
-              nom: chantier1.nom,
-              iconeMinistere: ministere.icone,
-              tauxAvancement: 72.8,
-              tauxAvancementPilote: 78.5,
-              indicateurs: new Set([
-                {
-                  id: indicateur1.id,
-                  nom: indicateur1.nom,
-                  tauxAvancement: 80.2,
-                  tauxAvancementPilote: 85.0,
-                  ponderation: 33,
-                },
-                {
-                  id: indicateur2.id,
-                  nom: indicateur2.nom,
-                  tauxAvancement: 88.5,
-                  tauxAvancementPilote: 92.5,
-                  ponderation: 33,
-                },
-                {
-                  id: indicateur3.id,
-                  nom: indicateur3.nom,
-                  tauxAvancement: null,
-                  tauxAvancementPilote: null,
-                  ponderation: 34,
-                },
-              ]),
-            },
-            {
-              id: chantier2.id,
-              nom: chantier2.nom,
-              iconeMinistere: ministere.icone,
-              tauxAvancement: 50.0,
-              tauxAvancementPilote: 55.0,
-              indicateurs: new Set([
-                {
-                  id: indicateur4.id,
-                  nom: indicateur4.nom,
-                  tauxAvancement: 68.0,
-                  tauxAvancementPilote: 70.0,
-                  ponderation: 1,
-                },
-              ]),
-            },
-          ]),
-        );
+        expect(result).toIncludeSameMembers([
+          {
+            id: chantier1.id,
+            nom: chantier1.nom,
+            iconeMinistere: ministere.icone,
+            tauxAvancement: 72.8,
+            tauxAvancementPilote: 78.5,
+            indicateurs: expect.toIncludeSameMembers([
+              {
+                id: indicateur1.id,
+                nom: indicateur1.nom,
+                tauxAvancement: 80.2,
+                tauxAvancementPilote: 85.0,
+                ponderation: 33,
+              },
+              {
+                id: indicateur2.id,
+                nom: indicateur2.nom,
+                tauxAvancement: 88.5,
+                tauxAvancementPilote: 92.5,
+                ponderation: 33,
+              },
+              {
+                id: indicateur3.id,
+                nom: indicateur3.nom,
+                tauxAvancement: null,
+                tauxAvancementPilote: null,
+                ponderation: 34,
+              },
+            ]),
+          },
+          {
+            id: chantier2.id,
+            nom: chantier2.nom,
+            iconeMinistere: ministere.icone,
+            tauxAvancement: 50.0,
+            tauxAvancementPilote: 55.0,
+            indicateurs: expect.toIncludeSameMembers([
+              {
+                id: indicateur4.id,
+                nom: indicateur4.nom,
+                tauxAvancement: 68.0,
+                tauxAvancementPilote: 70.0,
+                ponderation: 1,
+              },
+            ]),
+          },
+        ]);
       }),
     );
 

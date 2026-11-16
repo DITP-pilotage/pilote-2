@@ -112,33 +112,23 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         // Then
-        const donneesTrieesParTerritoire = [...result].sort(
-          (donneeA, donneeB) =>
-            donneeA.territoireCode.localeCompare(donneeB.territoireCode),
-        );
-        expect(donneesTrieesParTerritoire).toEqual([
+        expect(result).toIncludeSameMembers([
           expect.objectContaining({
             indicId: indicateur.id,
             territoireCode: "NAT-FR",
             valeurCibleAnnuelle: 22,
+            dateValeurCibleAnnuelle: new Date("2025-12-06"),
             tauxAvancementAnnuel: 13,
             valeurAvancement: 25,
+            dateValeurAvancement: new Date("2025-12-06"),
           }),
           expect.objectContaining({
             indicId: indicateur.id,
             territoireCode: "REG-01",
             valeurAvancement: 30,
+            dateValeurAvancement: new Date("2025-12-06"),
           }),
         ]);
-        expect(
-          donneesTrieesParTerritoire[0].dateValeurCibleAnnuelle?.toISOString(),
-        ).toStartWith("2025-12-06");
-        expect(
-          donneesTrieesParTerritoire[0].dateValeurAvancement?.toISOString(),
-        ).toStartWith("2025-12-06");
-        expect(
-          donneesTrieesParTerritoire[1].dateValeurAvancement?.toISOString(),
-        ).toStartWith("2025-12-06");
       }),
     );
 
@@ -236,17 +226,15 @@ describe("PrismaIndicateurRepository", () => {
         });
 
         // Then
-        const donneesTrieesParTerritoire = [...result].sort(
-          (donneeA, donneeB) =>
-            donneeA.territoireCode.localeCompare(donneeB.territoireCode),
-        );
-        expect(donneesTrieesParTerritoire).toEqual([
+        expect(result).toIncludeSameMembers([
           expect.objectContaining({
             indicId: indicateur.id,
             territoireCode: "NAT-FR",
             valeurCibleAnnuelle: 20,
+            dateValeurCibleAnnuelle: new Date("2024-12-06"),
             tauxAvancementAnnuel: 13,
             valeurAvancement: 20,
+            dateValeurAvancement: new Date("2024-12-06"),
           }),
           expect.objectContaining({
             indicId: indicateur.id,
@@ -255,12 +243,6 @@ describe("PrismaIndicateurRepository", () => {
             dateValeurAvancement: null,
           }),
         ]);
-        expect(
-          donneesTrieesParTerritoire[0].dateValeurCibleAnnuelle?.toISOString(),
-        ).toStartWith("2024-12-06");
-        expect(
-          donneesTrieesParTerritoire[0].dateValeurAvancement?.toISOString(),
-        ).toStartWith("2024-12-06");
       }),
     );
   });
@@ -5928,27 +5910,20 @@ describe("PrismaIndicateurRepository", () => {
 
         // Then
         expect(result.size).toEqual(1);
-        const indicateursNonAJourTriesParNom = [
-          ...(result.get(chantier.id) ?? []),
-        ].sort((indicateurA, indicateurB) =>
-          indicateurA.nom.localeCompare(indicateurB.nom),
-        );
-        expect(indicateursNonAJourTriesParNom).toEqual([
+        expect(result.get(chantier.id)).toIncludeSameMembers([
           {
             id: indicateur1.id,
             nom: "Indicateur 001",
-            mailles: expect.arrayContaining(["NAT", "REG"]),
+            mailles: expect.toIncludeSameMembers(["NAT", "REG"]),
             responsablesDonneesMails: [],
           },
           {
             id: indicateur2.id,
             nom: "Indicateur 002",
-            mailles: expect.arrayContaining(["REG", "DEPT"]),
+            mailles: expect.toIncludeSameMembers(["REG", "DEPT"]),
             responsablesDonneesMails: [],
           },
         ]);
-        expect(result.get(chantier.id)![0].mailles).toHaveLength(2);
-        expect(result.get(chantier.id)![1].mailles).toHaveLength(2);
       }),
     );
 

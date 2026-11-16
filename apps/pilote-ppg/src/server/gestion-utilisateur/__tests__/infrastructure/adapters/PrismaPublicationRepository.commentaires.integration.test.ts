@@ -70,9 +70,10 @@ describe("PrismaPublicationRepository (commentaires)", () => {
         const commentairesAnonymises = await tx.commentaire.findMany({
           where: { auteur_modification_id: auteurAnonyme.id },
         });
-        expect(commentairesAnonymises.map(({ id }) => id).sort()).toEqual(
-          [commentaire2.id, commentaire3.id].sort(),
-        );
+        expect(commentairesAnonymises).toIncludeSameMembers([
+          expect.objectContaining({ id: commentaire2.id }),
+          expect.objectContaining({ id: commentaire3.id }),
+        ]);
       }),
     );
 
@@ -133,9 +134,10 @@ describe("PrismaPublicationRepository (commentaires)", () => {
         const commentairesAnonymises = await tx.commentaire.findMany({
           where: { auteur_creation_id: auteurAnonyme.id },
         });
-        expect(commentairesAnonymises.map(({ id }) => id).sort()).toEqual(
-          [commentaire2.id, commentaire3.id].sort(),
-        );
+        expect(commentairesAnonymises).toIncludeSameMembers([
+          expect.objectContaining({ id: commentaire2.id }),
+          expect.objectContaining({ id: commentaire3.id }),
+        ]);
       }),
     );
 
