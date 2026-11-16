@@ -10,13 +10,17 @@ import { runToolAs } from '@/test/toolHarness'
 
 const token = () => randomUUID().slice(0, 8)
 
-const givenIndicateurAvecValeur = async (visibilite: Visibilite) => {
+const givenIndicateurAvecValeur = async (
+  visibilite: Visibilite,
+  sensSouhaite: 'HAUSSE' | 'BAISSE' = 'HAUSSE',
+) => {
   const marqueur = token()
   const referentiel = await fixtures.referentiel({ nom: `Départements ${marqueur}` })
   const indicateur = await fixtures.indicateur({
     nom: `Chômage ${marqueur}`,
     visibilite,
     unite: UniteIndicateur.POURCENTAGE,
+    sensSouhaite,
   })
   await fixtures.indicateurReferentiel({ indicateur, referentiel })
   const { id, publicId } = await fixtures.individu({ nom: `Vaucluse ${marqueur}`, referentiel })
@@ -68,6 +72,37 @@ describe('get_synthese_indicateur', () => {
             }),
           ],
           notFound: [],
+        }),
+      )
+    }),
+  )
+
+  it(
+    'donne le sens souhaité et lit la variation selon ce sens, sans taux à la baisse',
+    integrationTest(async () => {
+      // Chômage de 9,5 à 9,1 : la baisse est favorable pour un indicateur à la baisse.
+      const { indicateur, individu } = await givenIndicateurAvecValeur(Visibilite.PUBLIC, 'BAISSE')
+
+      const output = await runToolAs(
+        randomUUID(),
+        'get_synthese_indicateur',
+        getSyntheseIndicateur,
+        {
+          indicateurId: indicateur.publicId,
+          individuId: individu.publicId,
+        },
+      )
+
+      expect(output).toEqual(
+        expect.objectContaining({
+          indicateur: expect.objectContaining({ sensSouhaite: 'BAISSE' }),
+          individus: [
+            expect.objectContaining({
+              tauxProgression: null,
+              lectureVariation: 'favorable',
+              lectureEcartMediane: 'neutral',
+            }),
+          ],
         }),
       )
     }),

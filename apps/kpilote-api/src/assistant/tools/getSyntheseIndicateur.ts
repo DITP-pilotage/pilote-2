@@ -5,7 +5,8 @@ import {
   type EntityRef,
   type SyntheseIndicateurOutput,
 } from '@pilote/kpilote-shared/assistant/tools'
-import { type IndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import { type IndicateurApiModel, type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
+import { interpretDifference } from '@pilote/kpilote-shared/interpretation'
 
 import { resolvePerimetre, type ResolvedPerimetre } from '@/assistant/tools/perimetre'
 import { type QueryToolDefinition } from '@/assistant/tools/toolDefinition'
@@ -51,9 +52,11 @@ const withoutIndividus = (
 
 const readIndividus = async ({
   indicateurId,
+  sensSouhaite,
   individus,
 }: {
   indicateurId: string
+  sensSouhaite: SensSouhaite
   individus: EntityRef[]
 }): Promise<SyntheseIndicateurOutput['individus']> => {
   const ids = individus.map((individu) => individu.id)
@@ -70,17 +73,23 @@ const readIndividus = async ({
 
   const dated = (valeur: number | undefined, date: string | undefined): DatedValue | null =>
     valeur === undefined || date === undefined ? null : { valeur, date }
+  const lecture = (difference: number | null) =>
+    difference === null ? null : interpretDifference(difference, sensSouhaite)
 
   return individus.map((individu) => {
     const valeur = derniereValeur.get(individu.id)
     const cible = objectif.get(individu.id)
+    const variation = syntheseParIndividu.get(individu.id)?.variation ?? null
+    const ecartMediane = syntheseParIndividu.get(individu.id)?.ecartMediane ?? null
     return {
       individu,
       derniereValeur: dated(valeur?.valeur, valeur?.date),
       objectif: dated(cible?.valeurCible, cible?.dateCible),
       tauxProgression: dernierTaux.get(individu.id)?.tauxProgression ?? null,
-      variation: syntheseParIndividu.get(individu.id)?.variation ?? null,
-      ecartMediane: syntheseParIndividu.get(individu.id)?.ecartMediane ?? null,
+      variation,
+      lectureVariation: lecture(variation),
+      ecartMediane,
+      lectureEcartMediane: lecture(ecartMediane),
     }
   })
 }
@@ -90,6 +99,8 @@ export const getSyntheseIndicateur: QueryToolDefinition<'get_synthese_indicateur
 - \`notFound\` : identifiants inexistants ou que l'utilisateur ne peut pas consulter ; ne les distingue pas.
 - \`truncated\` / \`total\` : le périmètre dépassait ${MAX_PERIMETRE_INDIVIDUS} individus ; dis-le.
 - \`needsClarification\` : il manque l'individu ; demande-le à l'utilisateur.
+- \`indicateur.sensSouhaite\` : HAUSSE, une valeur plus haute est meilleure ; BAISSE, une valeur plus basse est meilleure (ex. un taux de chômage). À la baisse, \`tauxProgression\` est toujours null par construction, ce n'est pas un manque de données ; le minimum est la meilleure valeur, le maximum la moins bonne.
+- \`lectureVariation\` / \`lectureEcartMediane\` : favorable, unfavorable ou neutral selon ce sens. Dis si une évolution ou une position est bonne d'après eux, jamais d'après le seul signe.
 Utilise-le pour : « où en est », l'avancement, l'état ou la comparaison d'un indicateur pour un ou plusieurs individus.
 Ne l'utilise pas pour : la série complète dans le temps → get_evolution_indicateur ; une collection → get_synthese_collection.
 
@@ -103,6 +114,7 @@ ${PERIMETRE_DESCRIPTION}`,
       nom: indicateur.nom,
       unite: indicateur.unite?.libelle ?? null,
       description: indicateur.description,
+      sensSouhaite: indicateur.sensSouhaite,
       referentiels: indicateur.referentiels.map((referentiel) => ({
         id: referentiel.id,
         nom: referentiel.nom,
@@ -147,7 +159,11 @@ ${PERIMETRE_DESCRIPTION}`,
       individus:
         cible.individus.length === 0
           ? []
-          : await readIndividus({ indicateurId, individus: cible.individus }),
+          : await readIndividus({
+              indicateurId,
+              sensSouhaite: indicateur.sensSouhaite,
+              individus: cible.individus,
+            }),
       valeursRemarquables,
       notFound: cible.notFound,
       ...(cible.truncated ? { total: cible.total, truncated: true } : {}),
