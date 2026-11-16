@@ -29,7 +29,7 @@
   "dependencies": {
     "@ai-sdk/react": "^4.0.163",
     "@hono/node-server": "2.1.6",
-    "@hookform/resolvers": "^5.9.2",
+    "@hookform/resolvers": "^7.0.1",
     "@js-temporal/polyfill": "^0.5.1",
     "@pilote/kpilote-acme": "workspace:*",
     "@pilote/kpilote-shared": "workspace:*",

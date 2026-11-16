@@ -1333,6 +1333,11 @@ par MSW.
 - Le message `◇ injected env` passe de stdout à stderr : il ne pollue plus le flux JSON de pino.
 - Préchargement (`node -r dotenv/config`) et `.env.vault` supprimés : aucun usage dans le dépôt.
 
+**`@hookform/resolvers` 5.9.2 → 7.0.1** (kpilote-admin, kpilote-webapp, ppg). Les deux majors ne cassent que
+les resolvers `effect-ts` (6.0, Effect v4) et `typebox` (7.0, paquet `typebox` 1.x) ; le dépôt n'importe que
+`zodResolver` (33 imports). Vérifié : le dossier `zod/` est intact entre v5.9.2 et v7.0.1 (diff GitHub), peers
+`zod` et `react-hook-form` inchangés.
+
 ### Octobre 2026 (2026-10-29) — Campagne centrée sécu
 
 Branche `deps/campagne-2026-10-29`. Départ : **85 deps périmées, 3 majors, 54 advisories**

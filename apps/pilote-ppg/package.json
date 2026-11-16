@@ -68,7 +68,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@faker-js/faker": "^10.6.0",
     "@getbrevo/brevo": "^6.2.0",
-    "@hookform/resolvers": "^5.9.2",
+    "@hookform/resolvers": "^7.0.1",
     "@keycloak/keycloak-admin-client": "26.8.1",
     "@next/env": "16.4.6",
     "@prisma/adapter-pg": "^7.10.1",
