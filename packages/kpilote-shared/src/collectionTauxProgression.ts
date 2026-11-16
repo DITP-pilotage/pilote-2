@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { dateSchema } from './dates'
+import { sensSouhaiteSchema } from './indicateur'
 import { individuPublicIdSchema } from './individu'
 import { collectionPublicIdSchema, indicateurPublicIdSchema } from './publicIds'
 
@@ -34,6 +35,23 @@ export type ListCollectionTauxProgressionForIndividuQuery = z.infer<
   typeof listCollectionTauxProgressionForIndividuQuerySchema
 >
 
+export const raisonSansTauxSchema = z
+  .enum([
+    'COLLECTION_VIDE',
+    'AUCUN_INDICATEUR_PONDERE',
+    'INDICATEUR_A_LA_BAISSE',
+    'INDICATEUR_NON_CALCULABLE',
+  ])
+  .nullable()
+  .describe(
+    'Pourquoi `tauxProgression` vaut null, ou null quand il est calculé. ' +
+      'COLLECTION_VIDE : aucun indicateur. AUCUN_INDICATEUR_PONDERE : toutes les pondérations valent 0. ' +
+      'INDICATEUR_A_LA_BAISSE : au moins un indicateur pondéré est à la baisse, son taux ne se calcule pas ' +
+      '(prioritaire sur la raison suivante). INDICATEUR_NON_CALCULABLE : au moins un indicateur pondéré ' +
+      "n'a pas de taux (pas d'objectif, pas de valeur, dernier objectif à 0).",
+  )
+export type RaisonSansTaux = z.infer<typeof raisonSansTauxSchema>
+
 export const collectionTauxProgressionSummaryApiModelSchema = z.object({
   collection: collectionPublicIdSchema,
   tauxProgression: z
@@ -44,6 +62,7 @@ export const collectionTauxProgressionSummaryApiModelSchema = z.object({
         "null si au moins un indicateur pondéré de la collection n'est pas calculable (règle tout-ou-rien, " +
         'y compris un indicateur à la baisse) ou si la collection est vide.',
     ),
+  raisonSansTaux: raisonSansTauxSchema,
 })
 export type CollectionTauxProgressionSummaryApiModel = z.infer<
   typeof collectionTauxProgressionSummaryApiModelSchema
@@ -90,6 +109,7 @@ export const collectionTauxProgressionContributionApiModelSchema = z.object({
     .describe(
       'Pondération appliquée à cet indicateur dans la moyenne pondérée de la collection. Fixé à 1 en v0.',
     ),
+  sensSouhaite: sensSouhaiteSchema,
 })
 export type CollectionTauxProgressionContributionApiModel = z.infer<
   typeof collectionTauxProgressionContributionApiModelSchema
@@ -106,6 +126,7 @@ export const collectionTauxProgressionApiModelSchema = z.object({
         "null si au moins un indicateur pondéré de la collection n'est pas calculable (règle tout-ou-rien, " +
         'y compris un indicateur à la baisse) ou si la collection est vide.',
     ),
+  raisonSansTaux: raisonSansTauxSchema,
   contributions: z
     .array(collectionTauxProgressionContributionApiModelSchema)
     .describe(

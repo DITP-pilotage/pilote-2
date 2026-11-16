@@ -36,7 +36,7 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: colId, tauxProgression: null }],
+        items: [{ collection: colId, tauxProgression: null, raisonSansTaux: 'COLLECTION_VIDE' }],
       })
     }),
   )
@@ -94,7 +94,7 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: colId, tauxProgression: 65 }],
+        items: [{ collection: colId, tauxProgression: 65, raisonSansTaux: null }],
       })
     }),
   )
@@ -144,7 +144,9 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: colId, tauxProgression: null }],
+        items: [
+          { collection: colId, tauxProgression: null, raisonSansTaux: 'INDICATEUR_NON_CALCULABLE' },
+        ],
       })
     }),
   )
@@ -194,7 +196,9 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: colId, tauxProgression: null }],
+        items: [
+          { collection: colId, tauxProgression: null, raisonSansTaux: 'INDICATEUR_NON_CALCULABLE' },
+        ],
       })
     }),
   )
@@ -235,7 +239,9 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: colId, tauxProgression: null }],
+        items: [
+          { collection: colId, tauxProgression: null, raisonSansTaux: 'INDICATEUR_NON_CALCULABLE' },
+        ],
       })
     }),
   )
@@ -284,7 +290,7 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: colId, tauxProgression: 90 }],
+        items: [{ collection: colId, tauxProgression: 90, raisonSansTaux: null }],
       })
     }),
   )
@@ -343,7 +349,7 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
 
       const items = result._unsafeUnwrap().items
       expect(items).toHaveLength(1)
-      expect(items[0]).toEqual({ collection: colPublic, tauxProgression: 50 })
+      expect(items[0]).toEqual({ collection: colPublic, tauxProgression: 50, raisonSansTaux: null })
     }),
   )
 

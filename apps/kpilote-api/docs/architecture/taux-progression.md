@@ -60,7 +60,7 @@ Le rapport `valeur / valeurCible` n'a de sens que pour un indicateur à la hauss
 
 - `resolveTauxProgression` construit les points comme pour un indicateur à la hausse (même objectif applicable, même `valeurCible` et même `dateCible`), avec `tauxProgression = null` ;
 - les points restent renvoyés : la courbe garde sa série « Objectif », et la webapp affiche le bloc « Progression » avec « — » et l'objectif ;
-- côté collection, la règle tout-ou-rien s'applique : un indicateur à la baisse avec une pondération > 0 rend le taux de la collection `null`. Avec une pondération à 0, il est ignoré.
+- côté collection, la règle tout-ou-rien s'applique : un indicateur à la baisse avec une pondération > 0 rend le taux de la collection `null`. Avec une pondération à 0, il est ignoré. Le champ `raisonSansTaux` vaut alors `INDICATEUR_A_LA_BAISSE`, prioritaire sur `INDICATEUR_NON_CALCULABLE` : le client peut expliquer l'absence de taux au lieu d'afficher un manque de données.
 
 Le sens arrive à `computeTauxProgressionPoints` par ses appelants, qui le lisent dans leur `select` d'indicateur.
 
