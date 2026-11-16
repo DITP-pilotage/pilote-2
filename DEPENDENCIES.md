@@ -1319,6 +1319,20 @@ renommé `onUnhandledFrame` (`vitest.setup.ts`). Vérifié qu'une requête sans 
 aucun handler ne lit de cookie, et le seul `useFakeTimers` (`session.test.ts`, `Date` seul) ne passe pas
 par MSW.
 
+**`dotenv` 17.4.2 → 18.0.9** (kpilote-api, kpilote-admin, kpilote-webapp, ppg). La 18.0.10 (correctif de
+`dotenv.parse` sous Vite) n'était pas mûre. Ce que `tsc` ne voyait pas :
+
+- **🔴 La 18 livre un binaire `dotenv`, qui remplaçait celui de `dotenv-cli` dans ppg.** `test:database:init`
+  (joué par `testAndLint.yml`), `test:e2e:database:init` et `test:e2e:server` appelaient `dotenv --no-expand
+  -e <fichier> --` : le nouveau CLI n'a ni `-e` ni `--no-expand`, il affiche son aide et sort en 1. Les trois
+  scripts passent à `dotenv run -f <fichier> --` et `dotenv-cli` est retiré. Vérifié : l'environnement
+  injecté est identique variable par variable pour `.env.test` et `.env.e2e` (dotenv seul n'expanse pas, ce
+  qui équivaut à `--no-expand`), et `test:database:init` cible bien `localhost:7433`.
+- `DOTENV_CONFIG_PATH` reste honoré par `import 'dotenv/config'` (repli documenté) : `pnpm eval` et
+  `prisma generate` lisent toujours `.env.test`. Vérifié : port 7433 avec la variable, 5432 sans.
+- Le message `◇ injected env` passe de stdout à stderr : il ne pollue plus le flux JSON de pino.
+- Préchargement (`node -r dotenv/config`) et `.env.vault` supprimés : aucun usage dans le dépôt.
+
 ### Octobre 2026 (2026-10-29) — Campagne centrée sécu
 
 Branche `deps/campagne-2026-10-29`. Départ : **85 deps périmées, 3 majors, 54 advisories**
