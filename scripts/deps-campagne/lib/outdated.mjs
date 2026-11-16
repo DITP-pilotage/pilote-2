@@ -38,6 +38,12 @@ export function parseOutdated(raw) {
         // sans dist-tag. Un paquet déjà en préversion suit sa lignée, il n'est pas concerné.
         estPreversion:
           semver.prerelease(info.latest) !== null && semver.prerelease(info.current) === null,
+        // `latest` peut être SOUS la version courante quand on suit une préversion plus
+        // avancée que la stable (evalite 1.0.0-beta.16, `latest` 0.19.0) : « bumper » serait
+        // rétrograder, et le numéro de major suffit à le faire passer pour un major.
+        estRetrograde: semver.valid(info.latest) !== null
+          && semver.valid(info.current) !== null
+          && semver.lt(info.latest, info.current),
         // Indispensable : `pnpm add` écrit dans `dependencies` par défaut. Sans savoir
         // qu'un paquet est une devDependency, on le déplacerait silencieusement de section.
         estDevDependency: info.dependencyType === 'devDependencies',

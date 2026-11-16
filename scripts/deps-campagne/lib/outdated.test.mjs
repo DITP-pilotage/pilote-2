@@ -168,3 +168,16 @@ test('parseOutdated marque une cible en préversion quand la version courante es
   assert.equal(parNom['hono'].estPreversion, false)
   assert.equal(parNom['next-auth'].estPreversion, false, 'déjà en préversion : on suit sa lignée')
 })
+
+test('parseOutdated marque une cible inférieure à la version courante', () => {
+  // Campagne du 2026-11-16 : evalite est en 1.0.0-beta.16 et son `latest` est 0.19.0. Le
+  // moteur l'a « bumpé » en major, c'est-à-dire rétrogradé, et cassé le tsc de ppg.
+  const deps = parseOutdated({
+    evalite: { current: '1.0.0-beta.16', latest: '0.19.0', dependencyType: 'devDependencies' },
+    msw: { current: '2.15.0', latest: '3.0.3', dependencyType: 'devDependencies' },
+  })
+  const parNom = Object.fromEntries(deps.map((d) => [d.name, d]))
+
+  assert.equal(parNom['evalite'].estRetrograde, true)
+  assert.equal(parNom['msw'].estRetrograde, false)
+})

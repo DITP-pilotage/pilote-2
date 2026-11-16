@@ -70,6 +70,15 @@ function verifierPrealables() {
   if (stdout.trim()) {
     throw new Error('working tree sale — commite ou stash avant de lancer la campagne')
   }
+  // Constaté le 2026-11-16 : sous un autre Node, pnpm écrit son « Unsupported engine » dans
+  // stdout, au milieu du JSON de `pnpm outdated`, et la campagne meurt sur un JSON illisible.
+  const nodeAttendu = JSON.parse(readFileSync('package.json', 'utf8')).engines?.node
+  if (nodeAttendu && process.versions.node !== nodeAttendu) {
+    throw new Error(
+      `Node ${process.versions.node} au lieu de ${nodeAttendu} (engines.node) — bascule de version ` +
+        '(nvm use) puis relance.',
+    )
+  }
   if (!verifierBaseAccessible()) {
     throw new Error(
       'base de dev injoignable — kpilote-api en a besoin même pour son lint (prisma generate --sql). ' +
@@ -320,13 +329,18 @@ function main() {
   for (const dep of preversions) {
     journal(`préversion écartée : ${dep.name} ${dep.current} -> ${dep.latest}`)
   }
+  const retrogrades = apres.filter((d) => d.estRetrograde)
+  for (const dep of retrogrades) {
+    journal(`rétrogradation écartée : ${dep.name} ${dep.current} -> ${dep.latest}`)
+  }
   report = {
     ...report,
     preversionsEcartees: preversions.map((d) => ({ name: d.name, de: d.current, vers: d.latest })),
+    retrogradationsEcartees: retrogrades.map((d) => ({ name: d.name, de: d.current, vers: d.latest })),
   }
 
   // --- Ce qui reste : pins et majors, groupés par couplage.
-  for (const groupe of grouperCouples(apres.filter((d) => !d.estPreversion))) {
+  for (const groupe of grouperCouples(apres.filter((d) => !d.estPreversion && !d.estRetrograde))) {
     const categorie = groupe.deps.some((d) => d.isMajor) ? 'major' : 'pin-minor'
     const cible = libelleCible(groupe)
     journal(`${categorie} : ${groupe.nom} ${cible}`)
