@@ -5831,7 +5831,7 @@ describe("PrismaIndicateurRepository", () => {
           statut: "PUBLIE",
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur1.id,
           chantier_id: chantier.id,
           maille: "NAT",
@@ -5842,7 +5842,7 @@ describe("PrismaIndicateurRepository", () => {
           est_a_jour: false,
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur1.id,
           chantier_id: chantier.id,
           maille: "REG",
@@ -5853,7 +5853,7 @@ describe("PrismaIndicateurRepository", () => {
           est_a_jour: null,
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur1.id,
           chantier_id: chantier.id,
           maille: "DEPT",
@@ -5871,7 +5871,7 @@ describe("PrismaIndicateurRepository", () => {
           statut: "PUBLIE",
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur2.id,
           chantier_id: chantier.id,
           maille: "NAT",
@@ -5882,7 +5882,7 @@ describe("PrismaIndicateurRepository", () => {
           est_a_jour: true,
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur2.id,
           chantier_id: chantier.id,
           maille: "REG",
@@ -5893,7 +5893,7 @@ describe("PrismaIndicateurRepository", () => {
           est_a_jour: false,
         });
 
-        fixtures.indicateurTerritoire({
+        await fixtures.indicateurTerritoire({
           id: indicateur2.id,
           chantier_id: chantier.id,
           maille: "DEPT",

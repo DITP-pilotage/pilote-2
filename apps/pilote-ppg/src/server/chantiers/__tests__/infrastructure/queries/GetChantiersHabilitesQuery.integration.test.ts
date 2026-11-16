@@ -44,9 +44,10 @@ describe("GetChantiersHabilitesQuery", () => {
       );
 
       // Then
-      expect(result.sort()).toEqual(
-        [premierChantier.id, secondChantier.id].sort(),
-      );
+      expect(result).toIncludeSameMembers([
+        premierChantier.id,
+        secondChantier.id,
+      ]);
     }),
   );
 

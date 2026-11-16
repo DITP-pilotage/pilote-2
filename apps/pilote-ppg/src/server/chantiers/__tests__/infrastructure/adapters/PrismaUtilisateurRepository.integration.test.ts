@@ -174,13 +174,18 @@ describe("PrismaUtilisateurRepository", () => {
           );
 
         // Then
-        expect(utilisateurs).toHaveLength(2);
-        expect(utilisateurs[0].email).toStrictEqual("user.perimetre1@test.com");
-        expect(utilisateurs[0].listeChantiers).toEqual([chantier100.id]);
-        expect(utilisateurs[1].email).toStrictEqual("user.perimetre2@test.com");
-        expect(utilisateurs[1].listeChantiers).toEqual([
-          chantier100.id,
-          chantier101.id,
+        expect(utilisateurs).toIncludeSameMembers([
+          expect.objectContaining({
+            email: "user.perimetre1@test.com",
+            listeChantiers: [chantier100.id],
+          }),
+          expect.objectContaining({
+            email: "user.perimetre2@test.com",
+            listeChantiers: expect.toIncludeSameMembers([
+              chantier100.id,
+              chantier101.id,
+            ]),
+          }),
         ]);
       }),
     );
@@ -233,12 +238,15 @@ describe("PrismaUtilisateurRepository", () => {
           );
 
         // Then
-        expect(utilisateurs).toHaveLength(1);
-        expect(utilisateurs[0].email).toStrictEqual("user.mixte@test.com");
-        expect(utilisateurs[0].listeChantiers).toEqual([
-          chantier202.id,
-          chantier200.id,
-          chantier201.id,
+        expect(utilisateurs).toEqual([
+          expect.objectContaining({
+            email: "user.mixte@test.com",
+            listeChantiers: expect.toIncludeSameMembers([
+              chantier202.id,
+              chantier200.id,
+              chantier201.id,
+            ]),
+          }),
         ]);
       }),
     );
