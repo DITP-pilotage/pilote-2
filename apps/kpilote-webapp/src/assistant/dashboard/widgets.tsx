@@ -1,5 +1,6 @@
 import type { DashboardWidget } from '@pilote/kpilote-shared/assistant/dashboard'
-import type { UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import type { SensSouhaite, UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import { interpretDifference, interpretExtremes } from '@pilote/kpilote-shared/interpretation'
 import { DataTable } from '@pilote/kpilote-ui/DataTable'
 import { ProgressBar } from '@pilote/kpilote-ui/ProgressBar'
 import { queryOptions, useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query'
@@ -13,10 +14,12 @@ import {
 } from '@/api/indicateurs'
 import { WidgetRenderer } from '@/components/widgets/WidgetRenderer'
 import {
+  displayedDifferenceSign,
   formatDifferenceFr,
   formatMonthYearNumericFr,
   formatMonthYearShortFr,
   formatNumberFr,
+  INTERPRETATION_LABEL_FR,
 } from '@/lib/format'
 import { collectionTauxProgressionQueryOptions } from '@/queries/collections'
 import {
@@ -44,6 +47,22 @@ const taux = (value: number | null | undefined): string =>
 
 const valeur = (value: number | null | undefined, unite: UniteIndicateurApiModel | null) =>
   value === null || value === undefined ? '—' : formatNumberFr(value, unite)
+
+// Un indicateur à la baisse n'a pas de taux par construction : on le dit plutôt qu'un « — » muet.
+const tauxSelonSens = (value: number | null | undefined, sensSouhaite: SensSouhaite): string =>
+  (value === null || value === undefined) && sensSouhaite === 'BAISSE'
+    ? '— (indicateur à la baisse)'
+    : taux(value)
+
+const differenceSelonSens = (
+  value: number,
+  unite: UniteIndicateurApiModel | null,
+  sensSouhaite: SensSouhaite,
+): string => {
+  const label =
+    INTERPRETATION_LABEL_FR[interpretDifference(displayedDifferenceSign(value), sensSouhaite)]
+  return label ? `${formatDifferenceFr(value, unite)} · ${label}` : formatDifferenceFr(value, unite)
+}
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -102,6 +121,11 @@ function KpiIndicateur({ widget, labels }: { widget: WidgetOf<'kpi_indicateur'>;
           .join(' · ')}
         progress={point?.tauxProgression}
       />
+      {indicateur.sensSouhaite === 'BAISSE' && (
+        <p className="m-0 text-xs text-text-muted">
+          Indicateur à la baisse : pas de taux de progression
+        </p>
+      )}
     </Panel>
   )
 }
@@ -119,7 +143,11 @@ function KpiCollection({ widget, labels }: { widget: WidgetOf<'kpi_collection'>;
     >
       <Kpi
         value={taux(data.tauxProgression)}
-        caption="Taux de progression pondéré"
+        caption={
+          data.raisonSansTaux === 'INDICATEUR_A_LA_BAISSE'
+            ? 'Non calculable : la collection contient un indicateur à la baisse'
+            : 'Taux de progression pondéré'
+        }
         progress={data.tauxProgression}
       />
     </Panel>
@@ -202,7 +230,7 @@ function TableauIndividus({
     ],
   })
   const [valeurs, points, synthese] = tableau
-  const { unite } = indicateur
+  const { unite, sensSouhaite } = indicateur
   const rows = widget.individuIds.map((individuId) => ({
     individuId,
     derniere: latest(valeurs.items.filter((item) => item.individu === individuId)),
@@ -229,7 +257,7 @@ function TableauIndividus({
           {
             key: 'taux',
             header: 'Taux de progression',
-            cell: (row) => taux(row.point?.tauxProgression),
+            cell: (row) => tauxSelonSens(row.point?.tauxProgression, sensSouhaite),
           },
           {
             key: 'ecart',
@@ -237,7 +265,7 @@ function TableauIndividus({
             cell: (row) =>
               row.synthese?.ecartMediane === null || row.synthese?.ecartMediane === undefined
                 ? '—'
-                : formatDifferenceFr(row.synthese.ecartMediane, unite),
+                : differenceSelonSens(row.synthese.ecartMediane, unite, sensSouhaite),
           },
         ]}
       />
@@ -278,7 +306,11 @@ function ContributionsCollection({
             header: 'Pondération',
             cell: (row) => formatNumberFr(row.ponderation),
           },
-          { key: 'taux', header: 'Taux de progression', cell: (row) => taux(row.tauxProgression) },
+          {
+            key: 'taux',
+            header: 'Taux de progression',
+            cell: (row) => tauxSelonSens(row.tauxProgression, row.sensSouhaite),
+          },
         ]}
       />
     </Panel>
@@ -299,20 +331,27 @@ function ValeursRemarquables({
     ],
   })
   const item = data.items.find(({ referentiel }) => referentiel === widget.referentielId)
+  const min = item?.min ?? null
+  const max = item?.max ?? null
+  const extremes = interpretExtremes({
+    sensSouhaite: indicateur.sensSouhaite,
+    sameValue: min === null || max === null || formatNumberFr(min) === formatNumberFr(max),
+  })
   const stats = [
-    ['Minimum', item?.min],
-    ['Médiane', item?.mediane],
-    ['Maximum', item?.max],
+    ['Minimum', min, extremes.min === 'favorable'],
+    ['Médiane', item?.mediane, false],
+    ['Maximum', max, extremes.max === 'favorable'],
   ] as const
   return (
     <Panel
       title={`${labelOf(labels, widget.indicateurId)} — ${labelOf(labels, widget.referentielId)}`}
     >
       <dl className="m-0 grid grid-cols-3 gap-3">
-        {stats.map(([label, value]) => (
+        {stats.map(([label, value, isBestValue]) => (
           <div key={label} className="flex flex-col gap-1">
             <dt className="text-xs text-text-subtle">{label}</dt>
             <dd className="m-0 text-lg font-bold text-text">{valeur(value, indicateur.unite)}</dd>
+            {isBestValue && <dd className="m-0 text-xs text-text-muted">meilleure valeur</dd>}
           </div>
         ))}
       </dl>
