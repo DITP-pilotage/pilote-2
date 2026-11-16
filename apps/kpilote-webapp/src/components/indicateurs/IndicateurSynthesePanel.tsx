@@ -31,18 +31,18 @@ type DatedValue = { date: string; valeur: number }
 const sortByDateDesc = (items: ReadonlyArray<DatedValue>): DatedValue[] =>
   [...items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
 
-// Lecture selon le sens souhaité (PIL-1778) : vert favorable, orange défavorable,
-// bleu neutre. Le texte masqué donne la même information aux lecteurs d'écran.
+// Lecture selon le sens souhaité (PIL-1778) : vert favorable, rouge défavorable,
+// bleu neutre. Le mot affiché porte la même information sans la couleur (RGAA 3.1).
 const TONE_BY_INTERPRETATION: Record<Interpretation, PillTone> = {
   favorable: 'success',
-  unfavorable: 'warning',
+  unfavorable: 'error',
   neutral: 'info',
 }
 
 const TEXT_CLASS_BY_INTERPRETATION: Record<Interpretation, string> = {
-  favorable: 'text-success-425',
-  unfavorable: 'text-warning-425',
-  neutral: 'text-blue-425',
+  favorable: 'text-success',
+  unfavorable: 'text-error',
+  neutral: 'text-blue-cumulus',
 }
 
 const INTERPRETATION_LABEL: Record<Interpretation, string | null> = {
@@ -158,10 +158,10 @@ export function IndicateurSynthesePanel({
               label="Valeur maximale observée"
               value={stats.max}
               unite={unite}
-              srText={INTERPRETATION_LABEL[extremes.max]}
+              isBestValue={extremes.max === 'favorable'}
             />
             <ComparisonRow
-              valueClassName="text-blue-425"
+              valueClassName="text-blue-cumulus"
               label="Valeur médiane observée"
               value={stats.mediane}
               unite={unite}
@@ -171,7 +171,7 @@ export function IndicateurSynthesePanel({
               label="Valeur minimale observée"
               value={stats.min}
               unite={unite}
-              srText={INTERPRETATION_LABEL[extremes.min]}
+              isBestValue={extremes.min === 'favorable'}
             />
           </ul>
 
@@ -193,7 +193,7 @@ export function IndicateurSynthesePanel({
   )
 }
 
-// Flèche et libellé décrivent le mouvement réel ; seule la couleur l'interprète.
+// Flèche et libellé décrivent le mouvement réel ; la couleur et le mot l'interprètent.
 // Tous suivent le signe affiché : une variation lue « 0 » est stable.
 function VariationPill({
   variation,
@@ -215,7 +215,7 @@ function VariationPill({
         <span>
           <span aria-hidden="true">{sign > 0 ? '↑' : '↓'}</span>{' '}
           {sign > 0 ? 'EN HAUSSE' : 'EN BAISSE'} : {formatDifferenceFr(variation)}
-          {label && <span className="sr-only"> (évolution {label})</span>}
+          {label && <> · {label}</>}
         </span>
       )}
     </Pill>
@@ -241,7 +241,7 @@ function MedianGapPill({
     <Pill tone={TONE_BY_INTERPRETATION[interpretation]}>
       <span>
         {formatDifferenceFr(ecartMediane, unite)} · {position}
-        {label && <span className="sr-only"> (position {label})</span>}
+        {label && <> · {label}</>}
       </span>
     </Pill>
   )
@@ -252,13 +252,13 @@ function ComparisonRow({
   label,
   value,
   unite,
-  srText,
+  isBestValue = false,
 }: {
   valueClassName: string
   label: string
   value: number | null
   unite: UniteIndicateurApiModel | null
-  srText?: string | null
+  isBestValue?: boolean
 }) {
   return (
     <li className="flex items-baseline justify-between gap-3 py-1.5">
@@ -275,9 +275,11 @@ function ComparisonRow({
           <>
             {formatNumberFr(value)}
             {unite?.abbreviation && (
-              <span className="ml-1 font-medium text-text-subtle">{unite.abbreviation}</span>
+              <span className="ml-1 font-medium text-text-muted">{unite.abbreviation}</span>
             )}
-            {srText && <span className="sr-only"> ({srText})</span>}
+            {isBestValue && (
+              <span className="ml-2 text-xs font-medium text-text-muted">meilleure valeur</span>
+            )}
           </>
         )}
       </span>
