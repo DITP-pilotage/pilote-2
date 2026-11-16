@@ -133,7 +133,7 @@ importers:
         specifier: 17.4.2
         version: 17.4.2
       hono:
-        specifier: ^4.13.16
+        specifier: '>=4.13.5 <5'
         version: 4.13.16
       hono-rate-limiter:
         specifier: ^0.5.4
@@ -264,7 +264,7 @@ importers:
         version: 7.10.1
       '@prisma/client':
         specifier: 7.10.0
-        version: 7.10.0(prisma@7.10.0(@types/node@26.6.6)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(better-sqlite3@13.0.3)(magicast@0.5.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@7.0.2))(typescript@7.0.2)
+        version: 7.10.0(prisma@7.10.0(@types/node@26.6.6)(@types/react@19.3.0)(better-sqlite3@13.0.3)(magicast@0.5.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@7.0.2))(typescript@7.0.2)
       ai:
         specifier: ^7.0.159
         version: 7.0.159(zod@4.6.7)
@@ -275,7 +275,7 @@ importers:
         specifier: 17.4.2
         version: 17.4.2
       hono:
-        specifier: ^4.13.16
+        specifier: '>=4.13.5 <5'
         version: 4.13.16
       jose:
         specifier: ^6.2.15
@@ -429,7 +429,7 @@ importers:
         specifier: 3.0.6
         version: 3.0.6(echarts@6.1.0)(react@19.3.1)
       hono:
-        specifier: ^4.13.16
+        specifier: '>=4.13.5 <5'
         version: 4.13.16
       hono-rate-limiter:
         specifier: ^0.5.4
@@ -595,14 +595,14 @@ importers:
         specifier: 26.8.1
         version: 26.8.1
       '@next/env':
-        specifier: 16.4.3
-        version: 16.4.3
+        specifier: 16.4.6
+        version: 16.4.6
       '@prisma/adapter-pg':
         specifier: ^7.10.1
         version: 7.10.1
       '@prisma/client':
         specifier: 7.10.0
-        version: 7.10.0(prisma@7.10.0(@types/node@26.6.6)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(better-sqlite3@13.0.3)(magicast@0.5.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@7.0.2))(typescript@7.0.2)
+        version: 7.10.0(prisma@7.10.0(@types/node@26.6.6)(@types/react@19.3.0)(better-sqlite3@13.0.3)(magicast@0.5.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@7.0.2))(typescript@7.0.2)
       '@tanstack/react-query':
         specifier: ^5.105.1
         version: 5.105.1(@types/react@19.3.0)(react@19.3.1)
@@ -790,7 +790,7 @@ importers:
         specifier: ^2.18.1
         version: 2.18.1
       sharp:
-        specifier: ^0.35.5
+        specifier: '>=0.35.5 <0.36'
         version: 0.35.5(@types/node@26.6.6)
       sonner:
         specifier: ^2.0.8
@@ -956,7 +956,7 @@ importers:
         specifier: ^0.9.1
         version: 0.9.1(hono@4.13.16)(zod@4.6.7)
       hono:
-        specifier: ^4.13.16
+        specifier: '>=4.13.5 <5'
         version: 4.13.16
       pino:
         specifier: ^10.4.0
@@ -993,7 +993,7 @@ importers:
   packages/kpilote-acme:
     devDependencies:
       hono:
-        specifier: ^4.13.16
+        specifier: '>=4.13.5 <5'
         version: 4.13.16
       oxlint:
         specifier: ^1.90.0
@@ -2022,9 +2022,6 @@ packages:
   '@mswjs/interceptors@0.41.9':
     resolution: {integrity: sha512-VVPPgHyQ6ShqnrmDWuxjmUIsO9gWyOZFmuOfLd9LfBGQJwZfy0gvv9pbHSJuoFNIYC7ZDX9aoFwowjcdSC4E8w==}
     engines: {node: '>=18'}
-
-  '@next/env@16.4.3':
-    resolution: {integrity: sha512-a7tz1QCcWWkwC/rPJcPMJk/UNRu9CFhDd3OHYE5hddbJrs8BqRTalxI6GlKCWEGzRLHN+S/B7a4PAHCtm25aBQ==}
 
   '@next/env@16.4.6':
     resolution: {integrity: sha512-SunBjJ6t+oBtecS3dTjdVuMhUogP5wD/vrGL5EVuQYM1iS4O5ilL51HkiJ3sPjMzRHiCChvr4dbaSJbR7F3lxA==}
@@ -8100,8 +8097,6 @@ snapshots:
       outvariant: 1.4.3
       strict-event-emitter: 0.5.1
 
-  '@next/env@16.4.3': {}
-
   '@next/env@16.4.6': {}
 
   '@next/swc-darwin-arm64@16.4.6':
@@ -8316,7 +8311,7 @@ snapshots:
 
   '@prisma/client-runtime-utils@7.10.0': {}
 
-  '@prisma/client@7.10.0(prisma@7.10.0(@types/node@26.6.6)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(better-sqlite3@13.0.3)(magicast@0.5.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@7.0.2))(typescript@7.0.2)':
+  '@prisma/client@7.10.0(prisma@7.10.0(@types/node@26.6.6)(@types/react@19.3.0)(better-sqlite3@13.0.3)(magicast@0.5.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@7.0.2))(typescript@7.0.2)':
     dependencies:
       '@prisma/client-runtime-utils': 7.10.0
     optionalDependencies:
