@@ -1,5 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import { type Interpretation } from '@pilote/kpilote-shared/interpretation'
 
 // Défaut d'Intl : les nombres s'affichent avec au plus 3 décimales.
 const numberFr = new Intl.NumberFormat('fr-FR')
@@ -45,6 +46,14 @@ export const displayedDifferenceSign = (value: number): -1 | 0 | 1 => {
   if (types.includes('minusSign')) return -1
   if (types.includes('plusSign')) return 1
   return 0
+}
+
+// Lecture d'une différence selon le sens souhaité, à afficher à côté de sa couleur
+// (RGAA 3.1) ; une différence neutre ne s'annote pas.
+export const INTERPRETATION_LABEL_FR: Record<Interpretation, string | null> = {
+  favorable: 'favorable',
+  unfavorable: 'défavorable',
+  neutral: null,
 }
 
 export const formatDateFr = (value: Date | string): string => dateFr.format(toDate(value))

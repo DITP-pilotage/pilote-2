@@ -15,6 +15,7 @@ import {
   formatDifferenceFr,
   formatMonthYearNumericFr,
   formatNumberFr,
+  INTERPRETATION_LABEL_FR,
 } from '@/lib/format'
 import {
   indicateurSyntheseIndividuQueryOptions,
@@ -43,12 +44,6 @@ const TEXT_CLASS_BY_INTERPRETATION: Record<Interpretation, string> = {
   favorable: 'text-success',
   unfavorable: 'text-error',
   neutral: 'text-blue-cumulus',
-}
-
-const INTERPRETATION_LABEL: Record<Interpretation, string | null> = {
-  favorable: 'favorable',
-  unfavorable: 'défavorable',
-  neutral: null,
 }
 
 type IndicateurSynthesePanelProps = {
@@ -218,7 +213,7 @@ function VariationPill({
 }) {
   const sign = displayedDifferenceSign(variation)
   const interpretation = interpretDifference(sign, sensSouhaite)
-  const label = INTERPRETATION_LABEL[interpretation]
+  const label = INTERPRETATION_LABEL_FR[interpretation]
   return (
     <Pill tone={TONE_BY_INTERPRETATION[interpretation]} className="mt-3 w-fit text-sm">
       {sign === 0 ? (
@@ -248,7 +243,7 @@ function MedianGapPill({
 }) {
   const sign = displayedDifferenceSign(ecartMediane)
   const interpretation = interpretDifference(sign, sensSouhaite)
-  const label = INTERPRETATION_LABEL[interpretation]
+  const label = INTERPRETATION_LABEL_FR[interpretation]
   const position =
     sign > 0 ? 'au-dessus de la médiane' : sign < 0 ? 'au-dessous de la médiane' : 'à la médiane'
   return (
