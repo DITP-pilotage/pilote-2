@@ -1,3 +1,4 @@
+import { type ValidationErrorApiModel } from '@pilote/kpilote-shared/error'
 import { type IndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -34,6 +35,7 @@ const BODY_BASE = {
   nom: 'Fraudes détectées',
   visibilite: 'PRIVE' as const,
   unite: null,
+  sensSouhaite: 'HAUSSE' as const,
   referentiels: [],
 }
 
@@ -148,6 +150,22 @@ describe.concurrent('PUT /indicateurs/{id} : axes', () => {
       })
 
       expect(response.status).toBe(400)
+    }),
+  )
+})
+
+describe.concurrent('PUT /indicateurs/{id} : validation', () => {
+  it(
+    'refuse un body sans sens souhaité',
+    integrationTest(async () => {
+      const cle = await cleAdmin()
+      const { sensSouhaite: _sensSouhaite, ...bodySansSens } = BODY_BASE
+
+      const response = await put(cle, testIndicateurNumericId(), bodySansSens)
+
+      expect(response.status).toBe(400)
+      const body = (await response.json()) as ValidationErrorApiModel
+      expect(body.details.issues.map((issue) => issue.path)).toEqual([['sensSouhaite']])
     }),
   )
 })
