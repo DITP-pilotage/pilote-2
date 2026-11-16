@@ -30,10 +30,10 @@ export function CollectionAvancement({
   )
 
   if (data == null) return null
-
-  // Sans taux (règle tout-ou-rien, ou collection vide : l'API ne les distingue pas),
-  // on garde le bloc avec « — » et sans barre, comme pour un indicateur.
   const taux = data.tauxProgression
+  // Un manque de données masque le bloc ; un indicateur à la baisse n'est pas un
+  // manque : on garde le bloc et on dit pourquoi il n'y a pas de taux.
+  if (taux == null && data.raisonSansTaux !== 'INDICATEUR_A_LA_BAISSE') return null
 
   return (
     <div>
@@ -41,18 +41,15 @@ export function CollectionAvancement({
         <Text variant="kicker" tone="muted" as="p">
           Progression
         </Text>
-        {taux == null ? (
-          <span className="text-sm font-bold tabular-nums text-text-muted">
-            <span aria-hidden="true">—</span>
-            <span className="sr-only">Progression de la collection non disponible</span>
-          </span>
-        ) : (
-          <span className="text-sm font-bold tabular-nums text-text-muted">
-            {formatNumberFr(taux)} %
-          </span>
-        )}
+        <span className="text-sm font-bold tabular-nums text-text-muted">
+          {taux == null ? '—' : `${formatNumberFr(taux)} %`}
+        </span>
       </div>
-      {taux != null && (
+      {taux == null ? (
+        <Text variant="body" tone="muted" className="mt-1 text-sm">
+          Non calculable : la collection contient un indicateur à la baisse
+        </Text>
+      ) : (
         <ProgressBar
           value={taux}
           tone="neutral"
