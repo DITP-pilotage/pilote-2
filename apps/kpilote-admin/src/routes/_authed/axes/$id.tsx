@@ -1,12 +1,16 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Network } from 'lucide-react'
+import { useState } from 'react'
 
 import { upsertAxe } from '@/api/axes'
 import { AxeForm, type AxeFormValues } from '@/components/AxeForm'
+import { AxeGrapheModale } from '@/components/AxeGraphe'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { ModalitesArbre } from '@/components/ModalitesArbre'
 import { PageHeading } from '@/components/PageHeading'
 import { ProdEditSectionHeader } from '@/components/ProdEditSectionHeader'
+import { Button } from '@pilote/kpilote-ui/Button'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
@@ -30,6 +34,7 @@ function EditAxeComponent() {
   const { isProd, locked, unlock } = useProdEditUnlock()
   const { data: axe } = useSuspenseQuery(axeQueryOptions(id))
   const { data: modalites } = useSuspenseQuery(axeModalitesQueryOptions(id))
+  const [grapheOuvert, setGrapheOuvert] = useState(false)
 
   const initial: AxeFormValues = {
     id: axe.id,
@@ -88,8 +93,22 @@ function EditAxeComponent() {
           onUnlock={unlock}
           confirmation="Déverrouiller l'édition des modalités en PRODUCTION ?"
         />
+        <div className="flex justify-end">
+          <Button variant="secondary" size="sm" onClick={() => setGrapheOuvert(true)}>
+            <Network />
+            Voir le graphe de calcul
+          </Button>
+        </div>
         <ModalitesArbre axeId={id} niveaux={axe.niveaux} modalites={modalites} disabled={locked} />
       </div>
+
+      <AxeGrapheModale
+        open={grapheOuvert}
+        onClose={() => setGrapheOuvert(false)}
+        axe={axe}
+        modalites={modalites}
+        locked={locked}
+      />
     </div>
   )
 }
