@@ -1,3 +1,7 @@
+import { type RaisonSansTaux } from '@pilote/kpilote-shared/collectionTauxProgression'
+import { type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
+import { type Interpretation } from '@pilote/kpilote-shared/interpretation'
+
 // Le sous-agent recopie une chaîne mieux qu'il ne reformate un nombre (constat PPG : il
 // écrivait « 22 points » pour −22) : tout ce qu'il écrit lui arrive déjà formaté.
 
@@ -28,6 +32,31 @@ export const formatValeur = (valeur: number | null, unite: string | null): strin
 
 export const formatTaux = (taux: number | null): string =>
   taux === null ? 'non calculé' : `${Math.round(taux)} %`
+
+// Sans taux à la baisse par construction : ce n'est pas une donnée manquante.
+export const formatTauxIndicateur = (taux: number | null, sensSouhaite: SensSouhaite): string =>
+  taux === null && sensSouhaite === 'BAISSE'
+    ? 'sans objet (indicateur à la baisse)'
+    : formatTaux(taux)
+
+export const formatTauxCollection = (taux: number | null, raison: RaisonSansTaux): string =>
+  taux === null && raison === 'INDICATEUR_A_LA_BAISSE'
+    ? 'non calculable (la collection contient un indicateur à la baisse)'
+    : formatTaux(taux)
+
+export const formatSens = (sensSouhaite: SensSouhaite): string =>
+  sensSouhaite === 'BAISSE'
+    ? 'à la baisse : une valeur plus basse est meilleure'
+    : 'à la hausse : une valeur plus haute est meilleure'
+
+const LECTURE: Record<Interpretation, string> = {
+  favorable: 'favorable',
+  unfavorable: 'défavorable',
+  neutral: 'neutre',
+}
+
+export const formatLecture = (interpretation: Interpretation | null): string =>
+  interpretation === null ? 'non calculée' : LECTURE[interpretation]
 
 // L'écart entre deux pourcentages se compte en points : « −1,5 % » se lirait comme relatif.
 export const formatEcart = (ecart: number | null, unite: string | null): string => {

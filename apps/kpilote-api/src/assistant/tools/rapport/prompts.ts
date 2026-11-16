@@ -7,7 +7,9 @@ const RULES = `Tu rédiges, pour kpilote, l'outil de pilotage d'indicateurs de l
 
 # Les données
 
-Le message contient les données, en JSON. Les valeurs, taux, écarts et dates y sont déjà écrits : recopie-les tels quels, signe et unité compris, sans les arrondir ni les convertir. « non renseignée » ou « non calculé » : la donnée manque, dis-le.
+Le message contient les données, en JSON. Les valeurs, taux, écarts et dates y sont déjà écrits : recopie-les tels quels, signe et unité compris, sans les arrondir ni les convertir. « non renseignée » ou « non calculé » : la donnée manque, dis-le. « sans objet (indicateur à la baisse) » ou « non calculable (la collection contient un indicateur à la baisse) » : ce n'est pas un manque de données, recopie-le tel quel.
+
+Le sens souhaité dit si une valeur plus haute ou plus basse est meilleure. Les lectures (« favorable », « défavorable », « neutre ») disent si une variation ou un écart est bon selon ce sens : fonde-toi sur elles, jamais sur le signe, pour dire qui progresse ou qui est devant.
 
 # Les règles
 
@@ -31,9 +33,9 @@ Le taux de progression de la collection s'établit à {taux}.
 
 | Indicateur | Pondération | Dernière valeur | Objectif | Taux de progression | Écart à la médiane |
 |---|---|---|---|---|---|
-| {nom (identifiant)} | {pondération} | {valeur} au {date} | {objectif} au {date} | {taux} | {écart} |
+| {nom (identifiant)} | {pondération} | {valeur} au {date} | {objectif} au {date} | {taux} | {écart} ({lecture}) |
 
-**Ce qui tire l'avancement** : {1 ou 2 phrases factuelles : les indicateurs les plus avancés et les moins avancés, d'après leurs taux}
+**Ce qui tire l'avancement** : {1 ou 2 phrases factuelles : les indicateurs les plus avancés et les moins avancés, d'après leurs taux ; un indicateur à la baisse n'a pas de taux, situe-le par la lecture de son écart à la médiane}
 
 Si des indicateurs ne sont pas lisibles, écris-le en une phrase. Si la liste est tronquée (\`indicateursTronques\`), écris combien d'indicateurs sont présentés sur combien.
 
@@ -49,14 +51,14 @@ ${SOURCES}`
 
 const SYNTHESE_INDICATEUR = `# Synthèse : {nom de l'indicateur} — {nom de l'individu}
 
-{Dernière valeur et sa date, objectif et sa date, taux de progression, en 1 ou 2 phrases.}
+{Dernière valeur et sa date, objectif et sa date, taux de progression, en 1 ou 2 phrases ; pour un indicateur à la baisse, dis qu'une valeur plus basse est meilleure.}
 
 ---
 
 ## Position et évolution
 
-- **Variation récente** : {variation}
-- **Écart à la médiane** : {écart}, pour une médiane de {médiane} ({référentiel})
+- **Variation récente** : {variation} ({lecture})
+- **Écart à la médiane** : {écart} ({lecture}), pour une médiane de {médiane} ({référentiel})
 - **Dernières valeurs** : {valeurs datées, de la plus ancienne à la plus récente}
 
 ---
@@ -79,7 +81,7 @@ const COMPARAISON_COLLECTION = `# Comparaison : {nom de la collection} — {noms
 
 ## Analyse des écarts
 
-{Qui est devant, qui est derrière, de combien de points.}
+{Qui est devant, qui est derrière, de combien de points. Un taux non calculable ne se classe pas : dis pourquoi.}
 
 ---
 
@@ -103,11 +105,11 @@ const COMPARAISON_INDICATEUR = `# Comparaison : {nom de l'indicateur} — {noms 
 
 | Individu | Dernière valeur | Objectif | Taux de progression | Écart à la médiane |
 |---|---|---|---|---|
-| {nom (identifiant)} | {valeur} au {date} | {objectif} | {taux} | {écart} |
+| {nom (identifiant)} | {valeur} au {date} | {objectif} | {taux} | {écart} ({lecture}) |
 
 ## Analyse des écarts
 
-{Qui est devant, qui est derrière, de combien, au regard de la médiane.}
+{Qui est devant, qui est derrière, de combien, au regard de la médiane, d'après les lectures : pour un indicateur à la baisse, devant veut dire la valeur la plus basse.}
 
 ---
 

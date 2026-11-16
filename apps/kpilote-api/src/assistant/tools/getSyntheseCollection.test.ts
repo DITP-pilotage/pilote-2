@@ -10,11 +10,15 @@ import { runToolAs } from '@/test/toolHarness'
 
 const token = () => randomUUID().slice(0, 8)
 
-const givenCollection = async (visibilite: Visibilite) => {
+const givenCollection = async (
+  visibilite: Visibilite,
+  sensSouhaite: 'HAUSSE' | 'BAISSE' = 'HAUSSE',
+) => {
   const marqueur = token()
   const indicateur = await fixtures.indicateur({
     nom: `Indicateur ${marqueur}`,
     visibilite: Visibilite.PUBLIC,
+    sensSouhaite,
   })
   const collection = await fixtures.collection({
     nom: `Collection ${marqueur}`,
@@ -56,6 +60,31 @@ describe('get_synthese_collection', () => {
             }),
           ],
           notFound: [],
+        }),
+      )
+    }),
+  )
+
+  it(
+    'dit qu’un indicateur à la baisse empêche le taux de la collection',
+    integrationTest(async () => {
+      const { collection, individu } = await givenCollection(Visibilite.PUBLIC, 'BAISSE')
+
+      const output = await runToolAs(
+        randomUUID(),
+        'get_synthese_collection',
+        getSyntheseCollection,
+        {
+          collectionId: collection.publicId,
+          individuId: individu.publicId,
+        },
+      )
+
+      expect(output).toEqual(
+        expect.objectContaining({
+          tauxProgression: null,
+          raisonSansTaux: 'INDICATEUR_A_LA_BAISSE',
+          contributions: [expect.objectContaining({ sensSouhaite: 'BAISSE' })],
         }),
       )
     }),

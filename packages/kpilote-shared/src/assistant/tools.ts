@@ -1,5 +1,8 @@
 import { z } from 'zod'
 
+import { type RaisonSansTaux } from '../collectionTauxProgression'
+import { type SensSouhaite } from '../indicateur'
+import { type Interpretation } from '../interpretation'
 import { type DashboardOutput } from './dashboard'
 import { collectionIdInput, indicateurIdInput, individuIdInput, referentielIdInput } from './ids'
 
@@ -211,6 +214,7 @@ export type SyntheseIndicateurOutput = {
     | (EntityRef & {
         unite: string | null
         description: string | null
+        sensSouhaite: SensSouhaite
         referentiels: EntityRef[]
       })
     | null
@@ -220,7 +224,9 @@ export type SyntheseIndicateurOutput = {
     objectif: DatedValue | null
     tauxProgression: number | null
     variation: number | null
+    lectureVariation: Interpretation | null
     ecartMediane: number | null
+    lectureEcartMediane: Interpretation | null
   }>
   valeursRemarquables: Array<{
     referentiel: EntityRef
@@ -238,16 +244,18 @@ export type SyntheseCollectionOutput = {
   collection: (EntityRef & { description: string | null }) | null
   individu: EntityRef | null
   tauxProgression: number | null
+  raisonSansTaux: RaisonSansTaux
   contributions: Array<{
     indicateur: EntityRef
     ponderation: number
+    sensSouhaite: SensSouhaite
     tauxProgression: number | null
   }>
   notFound: string[]
 }
 
 export type EvolutionIndicateurOutput = {
-  indicateur: (EntityRef & { unite: string | null }) | null
+  indicateur: (EntityRef & { unite: string | null; sensSouhaite: SensSouhaite }) | null
   individu: EntityRef | null
   points: DatedValue[]
   total: number
