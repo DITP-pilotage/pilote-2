@@ -14,6 +14,11 @@ import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chant
 import { IndicateurActiviteGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/IndicateurActiviteGateway";
 import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
 
+// Un mercredi midi : la période commence le lundi à 9h, un instant réel tombant un lundi matin
+// laisserait les données « d'il y a une heure » hors période.
+const MAINTENANT = new Date("2026-01-14T12:00:00+01:00");
+const IL_Y_A_UNE_HEURE = new Date(MAINTENANT.getTime() - 60 * 60 * 1000);
+
 describe("ProduireRapportsHebdomadairesUseCase", () => {
   let useCase: ProduireRapportsHebdomadairesUseCase;
   const prismaPilote = new PrismaPilote();
@@ -76,7 +81,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteCree = await fixtures.utilisateur({
         profilCode: "PREFET_REGION",
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
       await fixtures.habilitation({
         utilisateurId: compteCree.id,
@@ -84,7 +89,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       });
 
       // When
-      const result = await useCase.run();
+      const result = await useCase.run({ maintenant: MAINTENANT });
 
       // Then
       expect(result.rapportsCrees).toBe(1);
@@ -124,7 +129,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       });
 
       // When
-      const result = await useCase.run();
+      const result = await useCase.run({ maintenant: MAINTENANT });
 
       // Then
       expect(result.rapportsCrees).toBe(1);
@@ -163,7 +168,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteDansRegion = await fixtures.utilisateur({
         profilCode: "PREFET_REGION",
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
       await fixtures.habilitation({
         utilisateurId: compteDansRegion.id,
@@ -172,7 +177,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteDansDept = await fixtures.utilisateur({
         profilCode: "PREFET_DEPARTEMENT",
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
       await fixtures.habilitation({
         utilisateurId: compteDansDept.id,
@@ -180,7 +185,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       });
 
       // When
-      const result = await useCase.run();
+      const result = await useCase.run({ maintenant: MAINTENANT });
 
       // Then
       expect(result.rapportsCrees).toBe(1);
@@ -224,7 +229,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteDansRegion = await fixtures.utilisateur({
         profilCode: "PREFET_REGION",
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
       await fixtures.habilitation({
         utilisateurId: compteDansRegion.id,
@@ -233,7 +238,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteDansDept = await fixtures.utilisateur({
         profilCode: "PREFET_DEPARTEMENT",
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
       await fixtures.habilitation({
         utilisateurId: compteDansDept.id,
@@ -242,7 +247,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteDansAutreDept = await fixtures.utilisateur({
         profilCode: "PREFET_DEPARTEMENT",
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
       await fixtures.habilitation({
         utilisateurId: compteDansAutreDept.id,
@@ -250,7 +255,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       });
 
       // When
-      const result = await useCase.run();
+      const result = await useCase.run({ maintenant: MAINTENANT });
 
       // Then
       expect(result.rapportsCrees).toBe(1);
@@ -294,7 +299,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const comptePrefet = await fixtures.utilisateur({
         profilCode: "PREFET_REGION",
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
       await fixtures.habilitation({
         utilisateurId: comptePrefet.id,
@@ -303,7 +308,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteDitp = await fixtures.utilisateur({
         profilCode: "DITP_ADMIN",
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
       await fixtures.habilitation({
         utilisateurId: compteDitp.id,
@@ -311,7 +316,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       });
 
       // When
-      const result = await useCase.run();
+      const result = await useCase.run({ maintenant: MAINTENANT });
 
       // Then
       expect(result.rapportsCrees).toBe(1);
@@ -382,10 +387,10 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
         id_auteur_modification: auteur.id,
         type_evenement: "VALEUR_MODIFIEE",
         valeur: 75,
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
 
-      const result = await useCase.run();
+      const result = await useCase.run({ maintenant: MAINTENANT });
 
       expect(result.rapportsCrees).toBe(1);
 
@@ -430,7 +435,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
         chantiers: [],
       });
 
-      const result = await useCase.run();
+      const result = await useCase.run({ maintenant: MAINTENANT });
 
       expect(result.rapportsCrees).toBe(1);
     }),
@@ -480,10 +485,10 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
         id_auteur_modification: auteur.id,
         type_evenement: "VALEUR_MODIFIEE",
         valeur: 80,
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
 
-      const result = await useCase.run();
+      const result = await useCase.run({ maintenant: MAINTENANT });
 
       expect(result.rapportsCrees).toBe(1);
     }),
@@ -532,10 +537,10 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
         id_auteur_modification: auteur.id,
         type_evenement: "VALEUR_MODIFIEE",
         valeur: 85,
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
 
-      const result = await useCase.run();
+      const result = await useCase.run({ maintenant: MAINTENANT });
 
       expect(result.rapportsCrees).toBe(1);
 
@@ -596,10 +601,10 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
         id_auteur_modification: auteur.id,
         type_evenement: "VALEUR_MODIFIEE",
         valeur: 85,
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
 
-      const result = await useCase.run();
+      const result = await useCase.run({ maintenant: MAINTENANT });
 
       expect(result.rapportsCrees).toBe(1);
     }),
@@ -648,10 +653,10 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
         id_auteur_modification: auteur.id,
         type_evenement: "VALEUR_MODIFIEE",
         valeur: 85,
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        date_creation: IL_Y_A_UNE_HEURE,
       });
 
-      const result = await useCase.run();
+      const result = await useCase.run({ maintenant: MAINTENANT });
 
       expect(result.rapportsCrees).toBe(1);
     }),
