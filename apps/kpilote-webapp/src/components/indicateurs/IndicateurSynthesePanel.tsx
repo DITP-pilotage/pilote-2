@@ -91,7 +91,11 @@ export function IndicateurSynthesePanel({
 
   const extremes = interpretExtremes({
     sensSouhaite,
-    sameValue: stats.min !== null && stats.min === stats.max,
+    // Comparés tels qu'affichés : deux « 10 » ne se colorent pas l'un en vert, l'autre en rouge.
+    sameValue:
+      stats.min !== null &&
+      stats.max !== null &&
+      formatNumberFr(stats.min) === formatNumberFr(stats.max),
   })
 
   return (
@@ -113,7 +117,7 @@ export function IndicateurSynthesePanel({
                   {formatMonthYearNumericFr(latest.date)}
                 </Text>
                 {variation !== null && (
-                  <VariationPill variation={variation} sensSouhaite={sensSouhaite} />
+                  <VariationPill variation={variation} unite={unite} sensSouhaite={sensSouhaite} />
                 )}
               </>
             ) : (
@@ -197,9 +201,11 @@ export function IndicateurSynthesePanel({
 // Tous suivent le signe affiché : une variation lue « 0 » est stable.
 function VariationPill({
   variation,
+  unite,
   sensSouhaite,
 }: {
   variation: number
+  unite: UniteIndicateurApiModel | null
   sensSouhaite: SensSouhaite
 }) {
   const sign = displayedDifferenceSign(variation)
@@ -214,7 +220,7 @@ function VariationPill({
       ) : (
         <span>
           <span aria-hidden="true">{sign > 0 ? '↑' : '↓'}</span>{' '}
-          {sign > 0 ? 'EN HAUSSE' : 'EN BAISSE'} : {formatDifferenceFr(variation)}
+          {sign > 0 ? 'EN HAUSSE' : 'EN BAISSE'} : {formatDifferenceFr(variation, unite)}
           {label && <> · {label}</>}
         </span>
       )}
