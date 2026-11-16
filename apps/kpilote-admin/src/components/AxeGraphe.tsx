@@ -8,11 +8,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   AlertTriangle,
   ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsDownUp,
+  ChevronsUpDown,
   Dices,
   Eraser,
   Info,
   MousePointerClick,
   Plus,
+  Search,
   Trash2,
   X,
 } from 'lucide-react'
@@ -33,6 +38,9 @@ const MIN_COL_GAP = 48
 const MAX_NODE_W = 240
 const MIN_NODE_W = 150
 const TOUS_ID = '__TOUS__'
+const CHILD_LIMIT = 25
+const AUTO_COLLAPSE_AT = 60
+const ALERTES_LIMIT = 5
 
 type Mode = 'edition' | 'simulation'
 type Fonction = 'SUM' | 'AVG'
@@ -43,11 +51,13 @@ type LayoutNode = {
   nom: string
   kind: Kind
   niveau: number
-  x: number
-  y: number
   parent: string | null
   children: string[]
 }
+
+type PlacedNode = LayoutNode & { x: number; y: number; hidden: number }
+
+type MoreNode = { parent: string; x: number; y: number; count: number }
 
 type Selection =
   | { type: 'node'; id: string }
@@ -57,56 +67,108 @@ type Selection =
 
 type Computed = { value: number | null; present: number; expected: number }
 
-const buildLayout = (
-  niveaux: ReadonlyArray<NiveauAxeApiModel>,
-  modalites: ReadonlyArray<ModaliteApiModel>,
-  availableWidth: number,
-) => {
-  const depth = Math.max(niveaux.length, ...modalites.map((m) => m.niveau))
+const buildTree = (modalites: ReadonlyArray<ModaliteApiModel>) => {
+  const byParent = new Map<string | null, string[]>()
+  for (const m of modalites) {
+    byParent.set(m.parent, [...(byParent.get(m.parent) ?? []), m.id])
+  }
+  const tree = new Map<string, LayoutNode>()
+  for (const m of modalites) {
+    const children = byParent.get(m.id) ?? []
+    tree.set(m.id, {
+      id: m.id,
+      nom: m.nom,
+      kind: children.length === 0 ? 'feuille' : 'parente',
+      niveau: m.niveau,
+      parent: m.parent ?? TOUS_ID,
+      children,
+    })
+  }
+  tree.set(TOUS_ID, {
+    id: TOUS_ID,
+    nom: 'Tous',
+    kind: 'tous',
+    niveau: 0,
+    parent: null,
+    children: byParent.get(null) ?? [],
+  })
+  return tree
+}
+
+const countDescendants = (tree: Map<string, LayoutNode>, id: string): number =>
+  (tree.get(id)?.children ?? []).reduce((total, c) => total + 1 + countDescendants(tree, c), 0)
+
+// Au-delà de quelques dizaines de modalités, on part replié au premier niveau.
+const initialCollapsed = (tree: Map<string, LayoutNode>) =>
+  new Set(
+    tree.size - 1 > AUTO_COLLAPSE_AT
+      ? (tree.get(TOUS_ID)?.children ?? []).filter((id) => tree.get(id)?.kind === 'parente')
+      : [],
+  )
+
+const normalize = (value: string) => value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
+const buildLayout = ({
+  tree,
+  depth,
+  availableWidth,
+  collapsed,
+  showAll,
+  visible,
+}: {
+  tree: Map<string, LayoutNode>
+  depth: number
+  availableWidth: number
+  collapsed: ReadonlySet<string>
+  showAll: ReadonlySet<string>
+  visible: ReadonlySet<string> | null
+}) => {
   const cols = depth + 1
   const laneW = Math.max(MIN_NODE_W + MIN_COL_GAP, availableWidth / cols)
   const nodeW = Math.max(MIN_NODE_W, Math.min(MAX_NODE_W, laneW - MIN_COL_GAP))
   const laneX = (col: number) => col * laneW
   const nodeX = (col: number) => laneX(col) + (laneW - nodeW) / 2
-  const childrenOf = (parent: string | null) => modalites.filter((m) => m.parent === parent)
-  const nodes = new Map<string, LayoutNode>()
+  const colOf = (niveau: number) => (niveau === 0 ? depth : depth - niveau)
+  const placed = new Map<string, PlacedNode>()
+  const extras: MoreNode[] = []
   let row = 0
+  const nextRow = () => HEADER_H + LANE_PAD + row++ * ROW_H
 
-  const place = (modalite: ModaliteApiModel): number => {
-    const children = childrenOf(modalite.id)
-    const y =
-      children.length === 0
-        ? HEADER_H + LANE_PAD + row++ * ROW_H
-        : children.map(place).reduce((a, b) => a + b, 0) / children.length
-    nodes.set(modalite.id, {
-      id: modalite.id,
-      nom: modalite.nom,
-      kind: children.length === 0 ? 'feuille' : 'parente',
-      niveau: modalite.niveau,
-      x: nodeX(depth - modalite.niveau),
+  const place = (id: string): number => {
+    const node = tree.get(id)!
+    const isCollapsed = !visible && collapsed.has(id)
+    const children = isCollapsed
+      ? []
+      : visible
+        ? node.children.filter((c) => visible.has(c))
+        : node.children
+    const limited = !visible && !showAll.has(id) && children.length > CHILD_LIMIT
+    const shown = limited ? children.slice(0, CHILD_LIMIT) : children
+    const ys = shown.map(place)
+    if (limited) {
+      const y = nextRow()
+      extras.push({
+        parent: id,
+        x: nodeX(colOf(node.niveau + 1)),
+        y,
+        count: children.length - CHILD_LIMIT,
+      })
+      ys.push(y)
+    }
+    const y = ys.length === 0 ? nextRow() : ys.reduce((a, b) => a + b, 0) / ys.length
+    placed.set(id, {
+      ...node,
+      x: nodeX(colOf(node.niveau)),
       y,
-      parent: modalite.parent ?? TOUS_ID,
-      children: children.map((c) => c.id),
+      hidden: isCollapsed ? countDescendants(tree, id) : 0,
     })
     return y
   }
-
-  const roots = childrenOf(null)
-  const rootYs = roots.map(place)
-  nodes.set(TOUS_ID, {
-    id: TOUS_ID,
-    nom: 'Tous',
-    kind: 'tous',
-    niveau: 0,
-    x: nodeX(depth),
-    y: rootYs.length ? rootYs.reduce((a, b) => a + b, 0) / rootYs.length : HEADER_H + LANE_PAD,
-    parent: null,
-    children: roots.map((r) => r.id),
-  })
+  place(TOUS_ID)
 
   return {
-    nodes,
-    depth,
+    placed,
+    extras,
     laneW,
     nodeW,
     laneX,
@@ -266,10 +328,30 @@ function AxeGraphe({
   onClose: () => void
 }) {
   const niveaux = axe.niveaux
+  const depth = Math.max(niveaux.length, ...modalites.map((m) => m.niveau))
+  const tree = useMemo(() => buildTree(modalites), [modalites])
   const { ref, width: availableWidth } = useWidth()
-  const { nodes, depth, laneW, nodeW, laneX, width, height } = useMemo(
-    () => buildLayout(niveaux, modalites, availableWidth),
-    [niveaux, modalites, availableWidth],
+  const [collapsed, setCollapsed] = useState<Set<string>>(() => initialCollapsed(tree))
+  const [showAll, setShowAll] = useState<Set<string>>(() => new Set())
+  const [recherche, setRecherche] = useState('')
+
+  const visible = useMemo(() => {
+    const query = normalize(recherche.trim())
+    if (query === '') return null
+    const ids = new Set<string>([TOUS_ID])
+    for (const node of tree.values()) {
+      if (node.kind === 'tous') continue
+      if (!normalize(node.nom).includes(query) && !normalize(node.id).includes(query)) continue
+      ids.add(node.id)
+      for (const ancestor of ancestorsOf(tree, node.id)) ids.add(ancestor.id)
+    }
+    return ids
+  }, [tree, recherche])
+  const nbResultats = visible ? visible.size - 1 : 0
+
+  const { placed, extras, laneW, nodeW, laneX, width, height } = useMemo(
+    () => buildLayout({ tree, depth, availableWidth, collapsed, showAll, visible }),
+    [tree, depth, availableWidth, collapsed, showAll, visible],
   )
   const edition = useAxeEdition(axe)
   const [hovered, setHovered] = useState<string | null>(null)
@@ -280,6 +362,34 @@ function AxeGraphe({
   const simulation = mode === 'simulation'
   const editable = mode === 'edition' && !locked
 
+  const toggleCollapse = (id: string) =>
+    setCollapsed((current) => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+
+  // Déplie les ancêtres d'une modalité (et lève la limite d'affichage) pour la rendre visible.
+  const reveal = (id: string) => {
+    const chain = ancestorsOf(tree, id)
+    setCollapsed((current) => new Set([...current].filter((c) => !chain.some((a) => a.id === c))))
+    setShowAll((current) => {
+      const next = new Set(current)
+      let child = id
+      for (const ancestor of chain) {
+        if (ancestor.children.indexOf(child) >= CHILD_LIMIT) next.add(ancestor.id)
+        child = ancestor.id
+      }
+      return next
+    })
+  }
+
+  const selectNode = (id: string) => {
+    reveal(id)
+    setSelection({ type: 'node', id })
+  }
+
   const selectedNodeId =
     selection?.type === 'node'
       ? selection.id
@@ -288,15 +398,15 @@ function AxeGraphe({
         : null
   const focus = hovered ?? selectedNodeId
   const highlighted = focus
-    ? relatedIds(nodes, focus)
+    ? relatedIds(tree, focus)
     : selection?.type === 'niveau'
-      ? new Set([...nodes.values()].filter((n) => n.niveau === selection.ordre).map((n) => n.id))
+      ? new Set([...tree.values()].filter((n) => n.niveau === selection.ordre).map((n) => n.id))
       : null
 
   const computed = useMemo(() => {
     const result = new Map<string, Computed>()
     const compute = (id: string): number | null => {
-      const node = nodes.get(id)
+      const node = tree.get(id)
       if (!node) return null
       if (node.kind === 'feuille') {
         const raw = saisies[id]?.replace(',', '.').trim()
@@ -312,9 +422,10 @@ function AxeGraphe({
     }
     compute(TOUS_ID)
     return result
-  }, [nodes, saisies, fonction])
+  }, [tree, saisies, fonction])
 
-  const feuilles = [...nodes.values()].filter((n) => n.kind === 'feuille')
+  const feuilles = [...tree.values()].filter((n) => n.kind === 'feuille')
+  const parentes = [...tree.values()].filter((n) => n.kind === 'parente')
   const fillRandom = () =>
     setSaisies(
       Object.fromEntries(
@@ -327,9 +438,7 @@ function AxeGraphe({
 
   const niveauxVides = niveaux.filter((n) => !modalites.some((m) => m.niveau === n.ordre))
   const feuillesIntermediaires = feuilles.filter((f) => f.niveau < niveaux.length)
-  const parentsUniques = [...nodes.values()].filter(
-    (n) => n.kind === 'parente' && n.children.length === 1,
-  )
+  const parentsUniques = parentes.filter((n) => n.children.length === 1)
   const nbAlertes = niveauxVides.length + feuillesIntermediaires.length + parentsUniques.length
 
   const nomNiveau = (ordre: number) =>
@@ -354,8 +463,8 @@ function AxeGraphe({
         <div className="mr-auto">
           <Dialog.Title>Axe {axe.nom}</Dialog.Title>
           <Dialog.Description className="text-xs">
-            Les valeurs se saisissent sur les feuilles, à gauche, et remontent vers la droite
-            jusqu’à « Tous ».
+            {pluriel(tree.size - 1, 'modalité')} · les valeurs se saisissent sur les feuilles, à
+            gauche, et remontent vers la droite jusqu’à « Tous ».
           </Dialog.Description>
         </div>
         <div className="flex items-center gap-4 text-xs text-text-muted">
@@ -414,6 +523,45 @@ function AxeGraphe({
         </button>
       </header>
 
+      <div className="flex flex-wrap items-center gap-3 border-b border-border bg-surface px-6 py-2">
+        <label className="relative">
+          <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-text-subtle" />
+          <input
+            value={recherche}
+            onChange={(event) => setRecherche(event.target.value)}
+            placeholder="Rechercher une modalité"
+            aria-label="Rechercher une modalité"
+            className="w-72 rounded-md border border-border bg-surface py-1.5 pr-2.5 pl-8 text-sm text-text focus:border-primary focus:outline-none"
+          />
+        </label>
+        {visible ? (
+          <span className="text-xs text-text-muted">
+            {nbResultats === 0
+              ? 'Aucune modalité ne correspond.'
+              : `${pluriel(nbResultats, 'modalité')} affichée${nbResultats > 1 ? 's' : ''} (résultats et leurs parents)`}
+          </span>
+        ) : (
+          <>
+            <Button
+              size="sm"
+              variant="tertiary"
+              disabled={parentes.length === 0}
+              onClick={() => setCollapsed(new Set(parentes.map((p) => p.id)))}
+            >
+              <ChevronsDownUp /> Tout replier
+            </Button>
+            <Button
+              size="sm"
+              variant="tertiary"
+              disabled={collapsed.size === 0}
+              onClick={() => setCollapsed(new Set())}
+            >
+              <ChevronsUpDown /> Tout déplier
+            </Button>
+          </>
+        )}
+      </div>
+
       <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div ref={ref} className="min-h-0 overflow-auto bg-surface-muted">
           {availableWidth > 0 ? (
@@ -439,7 +587,7 @@ function AxeGraphe({
                       disabled={isTous}
                       onClick={() => setSelection(selected ? null : { type: 'niveau', ordre })}
                       className={clsxm(
-                        'flex w-full flex-col items-center justify-center border-b border-border/70 text-center',
+                        'sticky top-0 z-10 flex w-full flex-col items-center justify-center border-b border-border/70 bg-inherit text-center',
                         !isTous && 'hover:bg-primary-tinted/40',
                       )}
                       style={{ height: HEADER_H }}
@@ -482,40 +630,43 @@ function AxeGraphe({
                     </marker>
                   ))}
                 </defs>
-                {[...nodes.values()]
-                  .filter((n) => n.parent)
+                {[...placed.values()]
+                  .filter((n) => n.parent && placed.has(n.parent))
                   .map((n) => {
-                    const parent = nodes.get(n.parent!)!
-                    const x1 = n.x + nodeW
-                    const y1 = n.y + NODE_H / 2
-                    const x2 = parent.x - 2
-                    const y2 = parent.y + NODE_H / 2
-                    const mid = (x1 + x2) / 2
+                    const parent = placed.get(n.parent!)!
                     const on = !!(focus && highlighted?.has(n.id) && highlighted.has(parent.id))
                     return (
-                      <path
+                      <Lien
                         key={n.id}
-                        d={`M${x1},${y1} C${mid},${y1} ${mid},${y2} ${x2},${y2}`}
-                        fill="none"
-                        markerEnd={`url(#fleche-${on ? 'on' : 'off'})`}
-                        className={clsxm(
-                          'transition-opacity',
-                          on ? 'stroke-primary' : 'stroke-border-strong',
-                          highlighted && !on && 'opacity-25',
-                        )}
-                        strokeWidth={on ? 2 : 1.25}
+                        from={n}
+                        to={parent}
+                        nodeW={nodeW}
+                        on={on}
+                        dimmed={!!highlighted && !on}
                       />
                     )
                   })}
+                {extras.map((more) => (
+                  <Lien
+                    key={`more-${more.parent}`}
+                    from={more}
+                    to={placed.get(more.parent)!}
+                    nodeW={nodeW}
+                    on={false}
+                    dimmed={!!highlighted}
+                    dashed
+                  />
+                ))}
               </svg>
 
-              {[...nodes.values()].map((n) => (
+              {[...placed.values()].map((n) => (
                 <GraphNode
                   key={n.id}
                   node={n}
                   width={nodeW}
                   selected={selectedNodeId === n.id}
                   dimmed={highlighted ? !highlighted.has(n.id) : false}
+                  match={!!visible && n.kind !== 'tous'}
                   simulation={simulation}
                   fonction={fonction}
                   saisie={saisies[n.id] ?? ''}
@@ -526,14 +677,39 @@ function AxeGraphe({
                       s?.type === 'node' && s.id === n.id ? null : { type: 'node', id: n.id },
                     )
                   }
+                  onToggle={
+                    !visible && n.kind !== 'feuille' && n.children.length > 0
+                      ? () => toggleCollapse(n.id)
+                      : undefined
+                  }
                   onAddChild={
                     editable && canAddChild(n)
-                      ? () =>
+                      ? () => {
+                          if (collapsed.has(n.id)) toggleCollapse(n.id)
                           setSelection({ type: 'ajout', parent: n.kind === 'tous' ? null : n.id })
+                        }
                       : undefined
                   }
                   onSaisie={(value) => setSaisies((s) => ({ ...s, [n.id]: value }))}
                 />
+              ))}
+
+              {extras.map((more) => (
+                <button
+                  key={`more-${more.parent}`}
+                  type="button"
+                  onClick={() => setShowAll((current) => new Set(current).add(more.parent))}
+                  className={clsxm(
+                    'absolute flex flex-col items-start justify-center rounded-lg border border-dashed border-border-strong bg-surface/70 px-3 text-left transition-opacity hover:border-primary',
+                    highlighted && 'opacity-30',
+                  )}
+                  style={{ left: more.x, top: more.y, width: nodeW, height: NODE_H }}
+                >
+                  <span className="text-sm font-medium text-text">
+                    + {pluriel(more.count, 'autre modalité')}
+                  </span>
+                  <span className="text-[11px] text-primary">Tout afficher</span>
+                </button>
               ))}
             </div>
           ) : null}
@@ -544,7 +720,7 @@ function AxeGraphe({
             <Glossaire
               axeNom={axe.nom}
               niveaux={niveaux}
-              nodes={nodes}
+              nodes={tree}
               editable={editable}
               vide={modalites.length === 0}
               onAjouterRacine={() => setSelection({ type: 'ajout', parent: null })}
@@ -558,11 +734,11 @@ function AxeGraphe({
               >
                 <ArrowLeft className="size-3.5" /> Comment lire ce graphe
               </button>
-              {selection.type === 'node' && nodes.get(selection.id) ? (
+              {selection.type === 'node' && tree.get(selection.id) ? (
                 <DetailModalite
                   key={selection.id}
-                  node={nodes.get(selection.id)!}
-                  nodes={nodes}
+                  node={tree.get(selection.id)!}
+                  nodes={tree}
                   niveaux={niveaux}
                   nomNiveau={nomNiveau}
                   simulation={simulation}
@@ -570,8 +746,16 @@ function AxeGraphe({
                   computed={computed}
                   editable={editable}
                   edition={edition}
-                  onSelect={(id) => setSelection({ type: 'node', id })}
-                  onAjouter={(parent) => setSelection({ type: 'ajout', parent })}
+                  onSelect={selectNode}
+                  onAjouter={(parent) => {
+                    if (parent) reveal(parent)
+                    setCollapsed((current) => {
+                      const next = new Set(current)
+                      if (parent) next.delete(parent)
+                      return next
+                    })
+                    setSelection({ type: 'ajout', parent })
+                  }}
                   onSupprime={() => setSelection(null)}
                 />
               ) : selection.type === 'niveau' ? (
@@ -579,22 +763,22 @@ function AxeGraphe({
                   key={selection.ordre}
                   ordre={selection.ordre}
                   niveaux={niveaux}
-                  nodes={nodes}
+                  nodes={tree}
                   nomNiveau={nomNiveau}
                   editable={editable}
                   edition={edition}
-                  onSelect={(id) => setSelection({ type: 'node', id })}
+                  onSelect={selectNode}
                   onAjouter={(parent) => setSelection({ type: 'ajout', parent })}
                   onSupprime={() => setSelection(null)}
                 />
               ) : selection.type === 'ajout' ? (
                 <FormulaireAjout
                   key={selection.parent ?? TOUS_ID}
-                  parent={selection.parent ? (nodes.get(selection.parent) ?? null) : null}
+                  parent={selection.parent ? (tree.get(selection.parent) ?? null) : null}
                   nomNiveau={nomNiveau}
-                  existants={nodes}
+                  existants={tree}
                   edition={edition}
-                  onCree={(id) => setSelection({ type: 'node', id })}
+                  onCree={selectNode}
                 />
               ) : null}
             </div>
@@ -619,23 +803,62 @@ function AxeGraphe({
                   Le niveau <strong>{n.nom}</strong> n’a aucune modalité.
                 </Note>
               ))}
-              {feuillesIntermediaires.map((f) => (
+              {feuillesIntermediaires.slice(0, ALERTES_LIMIT).map((f) => (
                 <Note key={f.id} tone="warning">
                   <strong>{f.nom}</strong> s’arrête avant le niveau « {niveaux.at(-1)?.nom} » :
                   c’est une feuille, on saisira directement dessus.
                 </Note>
               ))}
-              {parentsUniques.map((p) => (
+              {parentsUniques.slice(0, ALERTES_LIMIT).map((p) => (
                 <Note key={p.id}>
                   <strong>{p.nom}</strong> n’a qu’un enfant : elle aura toujours la même valeur que
                   lui.
                 </Note>
               ))}
+              {feuillesIntermediaires.length + parentsUniques.length > ALERTES_LIMIT * 2 ? (
+                <p className="text-xs text-text-subtle">Liste tronquée.</p>
+              ) : null}
             </section>
           ) : null}
         </aside>
       </div>
     </div>
+  )
+}
+
+function Lien({
+  from,
+  to,
+  nodeW,
+  on,
+  dimmed,
+  dashed = false,
+}: {
+  from: { x: number; y: number }
+  to: { x: number; y: number }
+  nodeW: number
+  on: boolean
+  dimmed: boolean
+  dashed?: boolean
+}) {
+  const x1 = from.x + nodeW
+  const y1 = from.y + NODE_H / 2
+  const x2 = to.x - 2
+  const y2 = to.y + NODE_H / 2
+  const mid = (x1 + x2) / 2
+  return (
+    <path
+      d={`M${x1},${y1} C${mid},${y1} ${mid},${y2} ${x2},${y2}`}
+      fill="none"
+      markerEnd={`url(#fleche-${on ? 'on' : 'off'})`}
+      strokeDasharray={dashed ? '4 4' : undefined}
+      className={clsxm(
+        'transition-opacity',
+        on ? 'stroke-primary' : 'stroke-border-strong',
+        dimmed && 'opacity-25',
+      )}
+      strokeWidth={on ? 2 : 1.25}
+    />
   )
 }
 
@@ -1246,36 +1469,43 @@ function GraphNode({
   width,
   selected,
   dimmed,
+  match,
   simulation,
   fonction,
   saisie,
   computed,
   onHover,
   onSelect,
+  onToggle,
   onAddChild,
   onSaisie,
 }: {
-  node: LayoutNode
+  node: PlacedNode
   width: number
   selected: boolean
   dimmed: boolean
+  match: boolean
   simulation: boolean
   fonction: Fonction
   saisie: string
   computed: Computed | undefined
   onHover: (id: string | null) => void
   onSelect: () => void
+  onToggle: (() => void) | undefined
   onAddChild: (() => void) | undefined
   onSaisie: (value: string) => void
 }) {
   const isTous = node.kind === 'tous'
+  const isCollapsed = node.hidden > 0
   const incomplete = computed && node.kind !== 'feuille' && computed.present < computed.expected
   const meta =
     node.kind === 'feuille'
       ? 'Saisie'
       : node.children.length === 0
         ? 'Aucune modalité'
-        : `${simulation ? (fonction === 'SUM' ? 'Somme' : 'Moyenne') : 'Calcul'} de ${pluriel(node.children.length, 'enfant')}`
+        : isCollapsed
+          ? `${pluriel(node.hidden, 'modalité')} repliée${node.hidden > 1 ? 's' : ''}`
+          : `${simulation ? (fonction === 'SUM' ? 'Somme' : 'Moyenne') : 'Calcul'} de ${pluriel(node.children.length, 'enfant')}`
   return (
     <div
       className={clsxm('group absolute transition-opacity', dimmed && 'opacity-30')}
@@ -1283,6 +1513,12 @@ function GraphNode({
       onMouseEnter={() => onHover(node.id)}
       onMouseLeave={() => onHover(null)}
     >
+      {isCollapsed ? (
+        <>
+          <span className="absolute inset-0 translate-x-2 translate-y-2 rounded-lg border border-border bg-surface" />
+          <span className="absolute inset-0 translate-x-1 translate-y-1 rounded-lg border border-border bg-surface" />
+        </>
+      ) : null}
       <div
         role="button"
         tabIndex={0}
@@ -1291,10 +1527,11 @@ function GraphNode({
           if (event.key === 'Enter' || event.key === ' ') onSelect()
         }}
         className={clsxm(
-          'flex h-full cursor-pointer items-stretch overflow-hidden rounded-lg border shadow-sm transition-colors',
+          'relative flex h-full cursor-pointer items-stretch overflow-hidden rounded-lg border shadow-sm transition-colors',
           isTous
             ? 'border-text bg-text text-primary-foreground'
             : 'border-border bg-surface hover:border-primary/60',
+          match && 'border-primary',
           selected && 'ring-2 ring-primary ring-offset-2',
         )}
       >
@@ -1332,16 +1569,44 @@ function GraphNode({
               </span>
             )}
           </div>
+        ) : onAddChild ? (
+          <div className="flex shrink-0 items-center pr-2">
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                onAddChild()
+              }}
+              title={
+                isTous ? 'Ajouter une modalité au niveau 1' : `Ajouter un enfant à ${node.nom}`
+              }
+              className={clsxm(
+                'flex size-6 items-center justify-center rounded-md opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100',
+                isTous
+                  ? 'text-primary-foreground hover:bg-surface/20'
+                  : 'text-primary hover:bg-primary-tinted',
+              )}
+            >
+              <Plus className="size-4" />
+            </button>
+          </div>
         ) : null}
       </div>
-      {onAddChild ? (
+      {onToggle ? (
         <button
           type="button"
-          onClick={onAddChild}
-          title={isTous ? 'Ajouter une modalité au niveau 1' : `Ajouter un enfant à ${node.nom}`}
-          className="absolute top-1/2 -left-3 flex size-6 -translate-y-1/2 items-center justify-center rounded-full border border-primary bg-surface text-primary opacity-0 shadow-sm transition-opacity group-hover:opacity-100 hover:bg-primary hover:text-primary-foreground focus:opacity-100"
+          onClick={onToggle}
+          title={isCollapsed ? 'Déplier' : 'Replier'}
+          className="absolute top-1/2 -left-3 z-10 flex h-6 min-w-6 -translate-y-1/2 items-center justify-center gap-0.5 rounded-full border border-border-strong bg-surface px-1 text-[11px] font-semibold text-text-muted shadow-sm hover:border-primary hover:text-primary"
         >
-          <Plus className="size-3.5" />
+          {isCollapsed ? (
+            <>
+              <ChevronLeft className="size-3.5" />
+              {node.hidden}
+            </>
+          ) : (
+            <ChevronRight className="size-3.5" />
+          )}
         </button>
       ) : null}
     </div>
