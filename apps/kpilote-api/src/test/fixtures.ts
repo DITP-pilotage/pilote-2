@@ -53,6 +53,7 @@ import {
   type FonctionAgregation,
   type FonctionAgregationAxe,
   type PeriodeMiseAJour,
+  type SensSouhaite,
   type UniteDuree,
   type UniteIndicateur,
 } from '@/generated/prisma/enums'
@@ -65,6 +66,7 @@ type IndicateurOverrides = Partial<{
   nom: string
   visibilite: Visibilite
   unite: UniteIndicateur | null
+  sensSouhaite: SensSouhaite
   description: string | null
   methodeCalcul: string | null
   sourceDonnees: string | null

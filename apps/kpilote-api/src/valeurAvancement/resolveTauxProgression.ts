@@ -1,3 +1,5 @@
+import { type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
+
 import { type Bucket, compareBuckets } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 
@@ -55,10 +57,12 @@ const computeTaux = (valeur: Decimal, valeurCible: Decimal): number | null => {
 export const resolveTauxProgression = ({
   valeurs,
   objectifsParIndividu,
+  sensSouhaite,
 }: {
   valeurs: ReadonlyArray<ValeurBrute>
   // valeurs dans chaque liste triées par dateCible ASC
   objectifsParIndividu: Map<string, ReadonlyArray<ObjectifBrut>>
+  sensSouhaite: SensSouhaite
 }): TauxProgressionPoint[] => {
   const points: TauxProgressionPoint[] = []
 
@@ -76,7 +80,10 @@ export const resolveTauxProgression = ({
       valeur: valeur.valeur,
       valeurCible: objectif.valeurCible,
       dateCible: objectif.dateCible,
-      tauxProgression: computeTaux(valeur.valeur, objectif.valeurCible),
+      // Pas de taux pour un indicateur à la baisse : VA / VC n'y a pas de sens. Le
+      // point garde valeur et cible pour l'affichage.
+      tauxProgression:
+        sensSouhaite === 'BAISSE' ? null : computeTaux(valeur.valeur, objectif.valeurCible),
     })
   }
 

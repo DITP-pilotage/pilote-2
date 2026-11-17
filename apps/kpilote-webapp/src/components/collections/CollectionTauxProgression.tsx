@@ -1,3 +1,4 @@
+import { type CollectionTauxProgressionApiModel } from '@pilote/kpilote-shared/collectionTauxProgression'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { StatCard } from '@pilote/kpilote-ui/StatCard'
@@ -8,14 +9,22 @@ const formatTaux = (taux: number | null): string => {
   return `${taux} %`
 }
 
-const buildCaption = (
-  taux: number | null,
-  contributions: ReadonlyArray<{ tauxProgression: number | null }>,
-): string => {
-  if (taux !== null) return 'Moyenne pondérée des indicateurs'
-  const nbBloquants = contributions.filter((c) => c.tauxProgression === null).length
-  if (contributions.length === 0) return 'Collection sans indicateur'
-  return `${nbBloquants}/${contributions.length} indicateur${nbBloquants > 1 ? 's' : ''} sans taux`
+// Seules les contributions pondérées (> 0) comptent : le calcul ignore celles à
+// pondération 0, la légende aussi.
+const buildCaption = ({
+  tauxProgression,
+  raisonSansTaux,
+  contributions,
+}: CollectionTauxProgressionApiModel): string => {
+  if (tauxProgression !== null) return 'Moyenne pondérée des indicateurs'
+  if (raisonSansTaux === 'COLLECTION_VIDE') return 'Collection sans indicateur'
+  if (raisonSansTaux === 'AUCUN_INDICATEUR_PONDERE') return 'Aucun indicateur pondéré'
+  if (raisonSansTaux === 'INDICATEUR_A_LA_BAISSE') {
+    return 'Non calculable : la collection contient un indicateur à la baisse'
+  }
+  const ponderees = contributions.filter((c) => c.ponderation > 0)
+  const nbBloquants = ponderees.filter((c) => c.tauxProgression === null).length
+  return `${nbBloquants}/${ponderees.length} indicateur${nbBloquants > 1 ? 's' : ''} sans taux`
 }
 
 export function CollectionTauxProgression({
@@ -32,7 +41,7 @@ export function CollectionTauxProgression({
     <StatCard
       label="Avancement de la collection"
       value={formatTaux(data.tauxProgression)}
-      caption={buildCaption(data.tauxProgression, data.contributions)}
+      caption={buildCaption(data)}
       tone={data.tauxProgression === null ? 'muted' : 'primary'}
     />
   )

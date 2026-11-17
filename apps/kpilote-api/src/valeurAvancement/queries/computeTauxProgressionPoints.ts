@@ -1,4 +1,5 @@
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
+import { type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
 
 import { trouverCombinaisonVideId } from '@/axe/combinaison'
 import { type BucketKey, compareBuckets } from '@/framework/bucket'
@@ -29,11 +30,13 @@ import {
 // collection" (cf. `docs/architecture/taux-progression.md`).
 export const computeTauxProgressionPoints = async ({
   indicateurId,
+  sensSouhaite,
   individusCibles,
   dateTruncValeur,
   dateTruncObjectif,
 }: {
   indicateurId: string
+  sensSouhaite: SensSouhaite
   individusCibles: ReadonlyArray<IndividuRef>
   dateTruncValeur: DateTrunc
   dateTruncObjectif: DateTrunc
@@ -85,5 +88,5 @@ export const computeTauxProgressionPoints = async ({
     objectifsParIndividu.set(cible.id, objectifsList)
   }
 
-  return resolveTauxProgression({ valeurs, objectifsParIndividu })
+  return resolveTauxProgression({ valeurs, objectifsParIndividu, sensSouhaite })
 }
