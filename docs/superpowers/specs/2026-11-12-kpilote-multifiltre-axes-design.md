@@ -127,22 +127,72 @@ IND-102 · DEPT-84 · Fraude fiscale = TVA + IR.
 
 ## 5. Sémantique de calcul (indicateurs à axes)
 
-Les indicateurs **sans axe** suivent le chemin de calcul actuel, inchangé (`loadSousArbre`,
-`resolveSerieIndividu`, `resolveObjectifIndividu`).
+### Un seul moteur, un seul graphe
 
-1. **Chemin 1 (D8).** Pour une cellule « individu I, combinaison partielle » :
-   - si I est une feuille territoriale (ou son niveau est saisi, fonction NONE) : on agrège les axes
-     **à ce niveau**, axe par axe dans l'ordre de déclaration, avec la fonction de l'axe (D14) à chaque
-     niveau de l'axe puis pour « Tous » ;
-   - sinon : on calcule la même cellule pour chaque enfant territorial, puis on remonte avec la fonction du
-     référentiel (chemin existant).
-2. **Modalité parente** (ex. Fraude fiscale) : agrégat de ses enfants avec la fonction de leur niveau.
-3. **Modalités absentes (cube creux).** Pour un individu donné, seules les modalités observées au moins une
-   fois (sur tout l'historique) sont attendues. Un opérateur absent d'un département ne compte pas comme 0.
-4. **Couverture** : enfants avec valeur / enfants attendus, comme aujourd'hui. **Contributions** : les enfants
-   de l'étape d'agrégation.
-5. **Valeurs permissives** : report de la dernière valeur connue, comme aujourd'hui.
-6. **Saisie** : sur une modalité feuille de chaque axe déclaré (D9).
+Tous les indicateurs passent par le même moteur (`resolveSerieNoeud`), qui calcule sur un graphe générique
+(`GrapheSerie`) construit par `buildGrapheSerie`. Sans axe, ce graphe ne fait que remonter la hiérarchie des
+individus sur la combinaison vide : c'est le calcul d'aujourd'hui, à l'identique (snapshot des lectures :
+0 différence). Avec des axes, il les ajoute sous cette hiérarchie.
+
+En résumé (chemin 1, D8) : on combine d'abord les modalités sur les individus qui portent les saisies, puis on
+remonte la hiérarchie des individus comme avant.
+
+### Les trois questions du moteur
+
+Une cellule, c'est un individu et, pour chaque axe déclaré, soit une modalité, soit « Tous ». Pour calculer sa
+valeur, le moteur pose trois questions dans l'ordre et s'arrête à la première réponse positive.
+
+1. **L'individu se calcule-t-il à partir de ses individus enfants ?** C'est le cas s'il en a et que la fonction
+   de son référentiel n'est pas NONE (PACA à partir du 84 et du 13). Le moteur calcule alors la même cellule,
+   avec les mêmes modalités, pour chaque individu enfant, puis combine avec la fonction du référentiel. C'est le
+   calcul existant.
+2. **Sinon, reste-t-il un axe à « Tous » ou sur une modalité parente ?** Cela n'arrive qu'à un individu saisi :
+   sans individu enfant, ou dont le référentiel a la fonction NONE. Le moteur descend alors cet axe d'un niveau,
+   ne garde que les modalités observées pour cet individu, et combine avec la fonction de l'axe (détail
+   ci-dessous).
+3. **Sinon, la cellule est entièrement précisée** : c'est une saisie, sur une modalité feuille de chaque axe
+   (D9). Le moteur lit la valeur. Sans axe, on arrive directement ici.
+
+### La question 2 en détail
+
+**Descendre d'un niveau.** Les modalités d'un axe forment un arbre : « Tous », puis les modalités racines (ex.
+les familles), puis leurs enfants (ex. les types). « Tous » descend vers les modalités racines, une modalité
+parente vers ses modalités enfants. Chaque cellule obtenue repasse par les trois questions : sur un axe
+Famille → Type, « 84 · Tous » descend de deux niveaux. Une modalité parente n'est jamais saisie, elle vaut
+toujours le total de ses enfants.
+
+**Ne garder que les modalités observées.** Une modalité jamais saisie pour un individu n'existe pas pour lui :
+elle ne compte ni comme 0, ni comme une valeur manquante. Une modalité saisie au moins une fois, à n'importe
+quelle date, est attendue sur toute la période : avant sa première valeur elle est manquante, ensuite sa
+dernière valeur est reportée sur les dates suivantes. Avec la CAF dans le 13 :
+
+| Situation                         | La CAF est-elle attendue ? | « 13 · Tous »                                                                   |
+| --------------------------------- | -------------------------- | ------------------------------------------------------------------------------- |
+| CAF jamais saisie                 | Non                        | France Travail seul, couverture 1 / 1                                           |
+| CAF saisie en janvier, rien après | Oui                        | En février, la CAF garde sa valeur de janvier (report), couverture 2 / 2        |
+| CAF saisie à partir de mars       | Oui                        | Janvier et février : CAF manquante, couverture 1 / 2 ; à partir de mars : 2 / 2 |
+
+Le report de la dernière valeur connue et la couverture (enfants avec valeur / enfants attendus) fonctionnent
+comme aujourd'hui, à chaque niveau. Les contributions d'une cellule sont les enfants de l'étape d'agrégation ;
+quand l'agrégation porte sur un axe, elles portent les modalités de l'enfant.
+
+**Combiner avec la fonction de l'axe.** Chaque axe d'un indicateur déclare une fonction, somme ou moyenne (D14).
+Elle s'applique à chaque niveau : des types vers les familles, puis des familles vers « Tous ». Exemple, en
+somme, dans le 84 : Fraude fiscale = TVA 5 + IR 3 = 8 ; Fraude sociale = Cotisations 4 ; Tous = 8 + 4 = 12. L'IS
+et les prestations, jamais observés dans le 84, ne sont pas attendus.
+
+### Plusieurs axes
+
+Si plusieurs axes restent à « Tous », le moteur n'en descend qu'un à la fois, en commençant par le **dernier
+déclaré**. Le graphe se construit du haut vers le bas : le premier axe déclaré se retrouve donc en bas, au plus
+près des saisies, et c'est lui qui est combiné en premier (ordre réglable dans l'admin, D8).
+
+Exemple : Opérateur (1er, moyenne) puis Type de fraude (2e, somme), dans le 84. Saisies : Orange · TVA = 10,
+SFR · TVA = 30, Orange · IR = 20, SFR · IR jamais observé.
+
+- Ordre retenu : TVA = (10 + 30) / 2 = 20 ; IR = 20 ; Tous · Tous = 20 + 20 = **40**.
+- Ordre inverse (fraude combinée d'abord) : Orange = 10 + 20 = 30 ; SFR = 30 ; Tous · Tous = **30**.
+- Sans cellule manquante, les deux ordres donnent le même total.
 
 ### Exemple de référence (à mettre en test)
 
@@ -226,14 +276,28 @@ Pour lire un fichier du POC : `git show origin/claude/individu-dimension-poc-f01
 
 ## 9. Points ouverts
 
-1. **Rejeu pilote-ppg (PIL-1979).** Depuis le 2026-11-10, `dev` ne contient plus la synchronisation pilote-ppg
-   → kpilote (commit `55d4ed4b5`, PR #2668 : « supprime la synchronisation vers kpilote, inutilisée »). Le
-   « rejeu pilote-ppg » n'a donc plus de consommateur à protéger. Proposition : garder ces tests sous le nom
-   « non-régression des écritures » (comportement actuel de `valeurs:batch` et `PUT /indicateurs`), sans
-   référence à pilote-ppg. **À confirmer avec Antoine**, puis mettre à jour PIL-1979 et la description de
-   PIL-1963.
-2. **Format exact de `modalites=`** et de la décomposition dans l'API : à figer dans PIL-1991 / PIL-1998.
+1. ~~**Rejeu pilote-ppg (PIL-1979).**~~ Tranché (#2674) : les tests sont des tests de non-régression des
+   écritures (`valeurs:batch`, `PUT /indicateurs`), sans référence à pilote-ppg.
+2. **Format de la décomposition dans l'API** : à figer dans PIL-1998. Le format de `modalites=` pour les lectures
+   est figé par PIL-1991 (§6).
 3. **Ticket PIL-1980** (feature flag) : abandonné (D12), à supprimer dans Jira.
+4. **Total connu, ventilation partielle. À trancher avant PIL-1994 (saisie).** Exemple : on sait que 10 000
+   personnes ont de 20 à 30 ans, et seulement que 2 000 ont de 20 à 22 ans. Avec D9 (saisie sur les feuilles
+   seulement), 10 000 ne peut pas être saisi sur 20-30, et la lecture de 20-30 renvoie 2 000 avec une couverture
+   de 1 / 1 : les autres tranches, jamais observées, ne sont pas attendues. C'est une régression silencieuse par
+   rapport au modèle sans axe, où l'on saisissait 10 000. Pistes, issues du POC (`dimensions-design.md`, tour 2
+   et §5.5) :
+   - (a) **modalité feuille « non ventilé »** qui porte l'écart (20-30 non ventilé = 8 000, donc 20-30 = 10 000).
+     Aucun changement de moteur, valable en somme ; l'écart se corrige à la main quand le détail arrive ;
+   - (b) **fonction NONE sur un axe** : « Tous » se saisit et les modalités ne servent qu'à la décomposition.
+     Couvre les totaux qui ne sont pas des sommes (doubles comptes, ex. un point France Services commun à
+     plusieurs opérateurs). Revient sur D14 ;
+   - (c) **la saisie d'un total prime à sa case** sur le calcul. Revient sur D9 ; le POC a écarté une variante
+     temporelle (« la saisie vaut jusqu'au premier point dérivé ») pour bascule de valeur, effacement par
+     rattrapage d'historique et attaque d'intégrité.
+
+   Proposition : (a) dès PIL-1994, (b) si un cas réel de double compte se présente (carto-sp ?). **À arbitrer
+   avec Antoine** (point n°3 de PIL-1963).
 
 ---
 

@@ -20,8 +20,8 @@ import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveS
 import {
   type IndividuRef,
   type PointInterne,
-  resolveSerieIndividu,
-} from '@/valeurAvancement/resolveSerieIndividu'
+  resolveSerieNoeud,
+} from '@/valeurAvancement/resolveSerieNoeud'
 
 // Aligné sur listValeursForIndicateur : on raisonne sur les buckets mensuels
 // pour les agrégés (cf. doc d'archi `indicateur-derives.md`).
@@ -64,7 +64,7 @@ const buildStats = async ({
   const startedAt = performance.now()
   // Indicateur sans axe : la combinaison vide. PIL-1991 passera la combinaison sélectionnée.
   const combinaisonId = await trouverCombinaisonVideId()
-  const { ctx, allNodes } = await loadResolveSerieContext({
+  const { graphe, noeud, allNodes } = await loadResolveSerieContext({
     indicateurId,
     individusCibles: cibles,
     dateTrunc,
@@ -77,9 +77,7 @@ const buildStats = async ({
     const contributions: ValeursRemarquablesContributionApiModel[] = []
     const valeurs: Decimal[] = []
     for (const individu of referentiel.individus) {
-      const dernierPoint = (
-        await resolveSerieIndividu({ individuId: individu.id, combinaisonId }, ctx, cache)
-      ).at(-1)
+      const dernierPoint = (await resolveSerieNoeud(noeud({ individu }), graphe, cache)).at(-1)
       if (!dernierPoint) continue
       valeurs.push(dernierPoint.valeur)
       contributions.push({

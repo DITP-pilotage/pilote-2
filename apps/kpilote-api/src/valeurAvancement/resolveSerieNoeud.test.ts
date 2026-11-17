@@ -2,14 +2,15 @@ import { describe, expect, it } from 'vitest'
 
 import { parseBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
-import { cleCellule } from '@/valeurAvancement/cellule'
+import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
 import {
+  type GrapheSerie,
   type IndividuRef,
+  type Noeud,
   type PointInterne,
-  resolveSerieIndividu,
-  type ResolveSerieContext,
+  resolveSerieNoeud,
   type SaisieTronquee,
-} from '@/valeurAvancement/resolveSerieIndividu'
+} from '@/valeurAvancement/resolveSerieNoeud'
 
 const d = (n: number): Decimal => new Decimal(n)
 const b = parseBucket
@@ -33,37 +34,49 @@ const DEPT_D: IndividuRef = { id: 'i-dept-d', publicId: 'DEPT-D', referentielId:
 
 // Toutes les séries de ces tests visent une même combinaison.
 const COMBINAISON = 'combinaison-test'
-const cellule = (individu: IndividuRef) => ({ individuId: individu.id, combinaisonId: COMBINAISON })
-const cle = (individu: IndividuRef) => cleCellule(cellule(individu))
+const TOUS: ReadonlyArray<IndividuRef> = [FRANCE, REG_N, REG_S, DEPT_A, DEPT_B, DEPT_C, DEPT_D]
 
+// Graphe d'un indicateur sans axe, construit comme en production
+// (`buildGrapheSerie`, combinaison vide). Un individu absent de
+// `individusReferentiel` n'a pas de référentiel : il est saisi, comme un
+// individu dont le référentiel n'est pas lié à l'indicateur.
 const buildContext = (input: {
   enfantsParParent?: Record<string, IndividuRef[]>
   fonctionAgregationParReferentiel?: Record<string, 'SUM' | 'AVG' | 'NONE'>
   serieFeuilleParIndividu?: Record<string, SaisieTronquee[]>
   individusReferentiel?: Record<string, string>
-}): ResolveSerieContext => ({
-  enfantsParParent: new Map(Object.entries(input.enfantsParParent ?? {})),
-  fonctionAgregationParReferentiel: new Map(
-    Object.entries(input.fonctionAgregationParReferentiel ?? {}),
-  ),
-  serieFeuilleParCellule: new Map(
-    Object.entries(input.serieFeuilleParIndividu ?? {}).map(([individuId, saisies]) => [
-      cleCellule({ individuId, combinaisonId: COMBINAISON }),
-      saisies,
-    ]),
-  ),
-  referentielParIndividu: new Map(Object.entries(input.individusReferentiel ?? {})),
-})
+}) => {
+  const referentiels = input.individusReferentiel ?? {}
+  const saisies = Object.entries(input.serieFeuilleParIndividu ?? {})
+  return buildGrapheSerie({
+    individus: TOUS.map((individu) => ({
+      ...individu,
+      referentielId: referentiels[individu.id] ?? '',
+    })),
+    enfantsParParent: new Map(Object.entries(input.enfantsParParent ?? {})),
+    fonctionAgregationParReferentiel: new Map(
+      Object.entries(input.fonctionAgregationParReferentiel ?? {}),
+    ),
+    axes: [],
+    modalites: [],
+    cellules: saisies.map(([individuId, liste]) => ({
+      individuId,
+      combinaisonId: COMBINAISON,
+      saisies: liste,
+    })),
+    modalitesParCombinaison: new Map(),
+  })
+}
 
-describe('resolveSerieIndividu — feuille', () => {
+describe('resolveSerieNoeud — feuille', () => {
   it('retourne une série vide pour une feuille sans saisies', async () => {
-    const ctx = buildContext({ individusReferentiel: { [DEPT_A.id]: REF_DEPT } })
+    const { graphe, noeud } = buildContext({ individusReferentiel: { [DEPT_A.id]: REF_DEPT } })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    expect(await resolveSerieIndividu(cellule(DEPT_A), ctx, cache)).toEqual([])
+    expect(await resolveSerieNoeud(noeud({ individu: DEPT_A }), graphe, cache)).toEqual([])
   })
 
   it('retourne la série de saisies tronquée pour une feuille', async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: { [DEPT_A.id]: REF_DEPT },
       serieFeuilleParIndividu: {
         [DEPT_A.id]: [
@@ -73,7 +86,7 @@ describe('resolveSerieIndividu — feuille', () => {
       },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    const serie = await resolveSerieIndividu(cellule(DEPT_A), ctx, cache)
+    const serie = await resolveSerieNoeud(noeud({ individu: DEPT_A }), graphe, cache)
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toEqual({
@@ -91,7 +104,7 @@ describe('resolveSerieIndividu — feuille', () => {
   })
 
   it('traite un nœud sans fonctionAgregation comme une feuille (lit ses saisies)', async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: { [FRANCE.id]: REF_PAYS },
       enfantsParParent: { [FRANCE.id]: [REG_N] },
       fonctionAgregationParReferentiel: { [REF_PAYS]: 'NONE' },
@@ -100,16 +113,16 @@ describe('resolveSerieIndividu — feuille', () => {
       },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    const serie = await resolveSerieIndividu(cellule(FRANCE), ctx, cache)
+    const serie = await resolveSerieNoeud(noeud({ individu: FRANCE }), graphe, cache)
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({ type: 'saisie', valeur: d(99) })
   })
 })
 
-describe('resolveSerieIndividu — agrégation 1 niveau', () => {
+describe('resolveSerieNoeud — agrégation 1 niveau', () => {
   it('agrège par bucket avec couverture complète', async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
         [DEPT_A.id]: REF_DEPT,
@@ -123,7 +136,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
+    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
@@ -142,7 +155,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
   })
 
   it('émet dès la première valeur connue (combineLatest permissif)', async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
         [DEPT_A.id]: REF_DEPT,
@@ -156,7 +169,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
+    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
 
     expect(serie).toHaveLength(3)
     // 2025-01 : seul DEPT-A connu → valeur=10, couverture 1/2
@@ -166,8 +179,20 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
     })
     expect((serie[0] as { contributions: unknown[] }).contributions).toEqual([
-      { individuPublicId: 'DEPT-A', valeur: d(10), dateOrigine: b('2025-01-01'), source: 'saisie' },
-      { individuPublicId: 'DEPT-B', valeur: null, dateOrigine: null, source: 'manquante' },
+      {
+        individuPublicId: 'DEPT-A',
+        modalites: [],
+        valeur: d(10),
+        dateOrigine: b('2025-01-01'),
+        source: 'saisie',
+      },
+      {
+        individuPublicId: 'DEPT-B',
+        modalites: [],
+        valeur: null,
+        dateOrigine: null,
+        source: 'manquante',
+      },
     ])
     // 2025-02 : DEPT-A carry-forward (10) + DEPT-B (50) → 60, couverture 2/2
     expect(serie[1]).toMatchObject({
@@ -181,7 +206,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
 
   it('trie les contributions par publicId', async () => {
     // Enfants déclarés dans un ordre non alphabétique
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
         [DEPT_B.id]: REF_DEPT,
@@ -195,7 +220,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
+    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
     const contributions = (serie[0] as { contributions: { individuPublicId: string }[] })
       .contributions
 
@@ -203,7 +228,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
   })
 
   it("n'émet rien si aucun enfant n'a jamais saisi", async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
         [DEPT_A.id]: REF_DEPT,
@@ -213,11 +238,11 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       fonctionAgregationParReferentiel: { [REF_REG]: 'SUM' },
     })
 
-    expect(await resolveSerieIndividu(cellule(REG_S), ctx, new Map())).toEqual([])
+    expect(await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())).toEqual([])
   })
 
   it('ignore les saisies sur un nœud agrégé (D6 : saisie ignorée si fonctionAgregation)', async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
         [DEPT_A.id]: REF_DEPT,
@@ -230,16 +255,16 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
+    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({ type: 'derivee', valeur: d(42) })
   })
 })
 
-describe('resolveSerieIndividu — agrégation AVG', () => {
+describe('resolveSerieNoeud — agrégation AVG', () => {
   it('calcule la moyenne arithmétique simple sur couverture complète', async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
         [DEPT_A.id]: REF_DEPT,
@@ -253,7 +278,7 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
+    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
@@ -267,7 +292,7 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
   })
 
   it('moyenne sur les enfants connus uniquement (permissif, comme SUM)', async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
         [DEPT_A.id]: REF_DEPT,
@@ -281,7 +306,7 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
+    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
 
     expect(serie).toHaveLength(2)
     // 2025-01 : seul DEPT-A → moyenne sur 1 = 10, couverture 1/2
@@ -295,7 +320,7 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
   })
 
   it("n'émet rien si aucun enfant n'a jamais saisi (évite la division par zéro)", async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
         [DEPT_A.id]: REF_DEPT,
@@ -305,11 +330,11 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
       fonctionAgregationParReferentiel: { [REF_REG]: 'AVG' },
     })
 
-    expect(await resolveSerieIndividu(cellule(REG_S), ctx, new Map())).toEqual([])
+    expect(await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())).toEqual([])
   })
 
   it('produit une moyenne décimale exacte sur des entiers non divisibles', async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
         [DEPT_A.id]: REF_DEPT,
@@ -325,7 +350,7 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(cellule(REG_S), ctx, new Map())
+    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
 
     // (1 + 2 + 2) / 3 = 1.6666...
     const valeur = (serie[0] as { valeur: Decimal }).valeur
@@ -333,9 +358,9 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
   })
 })
 
-describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
+describe('resolveSerieNoeud — agrégation multi-niveaux', () => {
   it('agrège récursivement France (régions agrégées de départements)', async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [FRANCE.id]: REF_PAYS,
         [REG_N.id]: REF_REG,
@@ -359,7 +384,7 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(cellule(FRANCE), ctx, new Map())
+    const serie = await resolveSerieNoeud(noeud({ individu: FRANCE }), graphe, new Map())
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({
@@ -372,13 +397,25 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
     const contributions = (serie[0] as { contributions: { source: string; valeur: Decimal }[] })
       .contributions
     expect(contributions).toEqual([
-      { individuPublicId: 'REG-N', valeur: d(3), dateOrigine: b('2025-01-01'), source: 'derivee' },
-      { individuPublicId: 'REG-S', valeur: d(30), dateOrigine: b('2025-01-01'), source: 'derivee' },
+      {
+        individuPublicId: 'REG-N',
+        modalites: [],
+        valeur: d(3),
+        dateOrigine: b('2025-01-01'),
+        source: 'derivee',
+      },
+      {
+        individuPublicId: 'REG-S',
+        modalites: [],
+        valeur: d(30),
+        dateOrigine: b('2025-01-01'),
+        source: 'derivee',
+      },
     ])
   })
 
   it('propage le carry-forward à travers les niveaux', async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [FRANCE.id]: REF_PAYS,
         [REG_N.id]: REF_REG,
@@ -398,7 +435,7 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
       },
     })
 
-    const serie = await resolveSerieIndividu(cellule(FRANCE), ctx, new Map())
+    const serie = await resolveSerieNoeud(noeud({ individu: FRANCE }), graphe, new Map())
 
     expect(serie).toHaveLength(2)
     // 2025-01 : REG-N = 5, REG-S inconnu → 5
@@ -408,21 +445,69 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
   })
 })
 
-describe('resolveSerieIndividu — mémoïsation', () => {
+// Nœud d'un indicateur à axes, construit à la main : le moteur ne lit que le
+// graphe, il ne sait pas d'où viennent les modalités.
+const noeudAvecModalites = (individu: IndividuRef, modalites: string[]): Noeud => ({
+  cle: [individu.id, ...modalites].join('~'),
+  individuPublicId: individu.publicId,
+  modalites,
+})
+
+describe('resolveSerieNoeud — nœuds avec modalités', () => {
+  it('porte les modalités de chaque enfant dans les contributions, triées après l’individu', async () => {
+    // DEPT-A · Tous = FT + CAF : deux enfants du même individu.
+    const tous = noeudAvecModalites(DEPT_A, [])
+    const ft = noeudAvecModalites(DEPT_A, ['FT'])
+    const caf = noeudAvecModalites(DEPT_A, ['CAF'])
+    const graphe: GrapheSerie = {
+      agregationParNoeud: new Map([[tous.cle, { fonction: 'SUM', enfants: [ft, caf] }]]),
+      saisiesParNoeud: new Map([
+        [ft.cle, [saisie('2025-01-01', 1)]],
+        [caf.cle, [saisie('2025-02-01', 2)]],
+      ]),
+    }
+
+    const serie = await resolveSerieNoeud(tous, graphe, new Map())
+
+    expect(serie).toHaveLength(2)
+    expect(serie[0]).toMatchObject({
+      valeur: d(1),
+      couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
+    })
+    expect((serie[1] as { contributions: unknown[] }).contributions).toEqual([
+      {
+        individuPublicId: 'DEPT-A',
+        modalites: ['CAF'],
+        valeur: d(2),
+        dateOrigine: b('2025-02-01'),
+        source: 'saisie',
+      },
+      {
+        individuPublicId: 'DEPT-A',
+        modalites: ['FT'],
+        valeur: d(1),
+        dateOrigine: b('2025-01-01'),
+        source: 'saisie',
+      },
+    ])
+  })
+})
+
+describe('resolveSerieNoeud — mémoïsation', () => {
   it('retourne la même référence pour une même cellule réinterrogée', async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: { [DEPT_A.id]: REF_DEPT },
       serieFeuilleParIndividu: { [DEPT_A.id]: [saisie('2025-01-01', 7)] },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-    const a = await resolveSerieIndividu(cellule(DEPT_A), ctx, cache)
-    const b = await resolveSerieIndividu(cellule(DEPT_A), ctx, cache)
+    const a = await resolveSerieNoeud(noeud({ individu: DEPT_A }), graphe, cache)
+    const b = await resolveSerieNoeud(noeud({ individu: DEPT_A }), graphe, cache)
     expect(b).toBe(a)
   })
 
   it("partage la série d'un enfant entre deux appels parents distincts", async () => {
-    const ctx = buildContext({
+    const { graphe, noeud } = buildContext({
       individusReferentiel: {
         [FRANCE.id]: REF_PAYS,
         [REG_S.id]: REF_REG,
@@ -437,14 +522,14 @@ describe('resolveSerieIndividu — mémoïsation', () => {
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-    await resolveSerieIndividu(cellule(REG_S), ctx, cache)
+    await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, cache)
     const tailleAvant = cache.size
 
-    await resolveSerieIndividu(cellule(FRANCE), ctx, cache)
+    await resolveSerieNoeud(noeud({ individu: FRANCE }), graphe, cache)
     // Cache : REG_S et DEPT_A déjà présents avant l'appel FRANCE, qui n'ajoute que France.
-    expect(cache.has(cle(DEPT_A))).toBe(true)
-    expect(cache.has(cle(REG_S))).toBe(true)
-    expect(cache.has(cle(FRANCE))).toBe(true)
+    expect(cache.has(noeud({ individu: DEPT_A }).cle)).toBe(true)
+    expect(cache.has(noeud({ individu: REG_S }).cle)).toBe(true)
+    expect(cache.has(noeud({ individu: FRANCE }).cle)).toBe(true)
     expect(cache.size).toBe(tailleAvant + 1)
   })
 })

@@ -18,7 +18,7 @@ import {
   resolveCollectionTauxProgression,
 } from '@/collection/resolveCollectionTauxProgression'
 import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
+import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 import { type TauxProgressionPoint } from '@/valeurAvancement/resolveTauxProgression'
 
 // Aligné sur la route /indicateurs/:id/taux-progression : `month/month` est

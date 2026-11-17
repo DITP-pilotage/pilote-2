@@ -11,8 +11,8 @@ import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveS
 import {
   type IndividuRef,
   type PointInterne,
-  resolveSerieIndividu,
-} from '@/valeurAvancement/resolveSerieIndividu'
+  resolveSerieNoeud,
+} from '@/valeurAvancement/resolveSerieNoeud'
 import {
   type ObjectifBrut,
   resolveTauxProgression,
@@ -43,7 +43,7 @@ export const computeTauxProgressionPoints = async ({
   // Le taux d'un indicateur sans axe se calcule sur la combinaison vide ; pour
   // un indicateur à axes, PIL-1991 le calculera sur la marginale (D6).
   const combinaisonId = await trouverCombinaisonVideId()
-  const [{ ctx: serieCtx }, { ctx: objectifCtx }] = await Promise.all([
+  const [{ graphe: serieGraphe, noeud }, { ctx: objectifCtx }] = await Promise.all([
     loadResolveSerieContext({
       indicateurId,
       individusCibles,
@@ -63,11 +63,7 @@ export const computeTauxProgressionPoints = async ({
   const objectifsParIndividu = new Map<string, ObjectifBrut[]>()
 
   for (const cible of individusCibles) {
-    const serie = await resolveSerieIndividu(
-      { individuId: cible.id, combinaisonId },
-      serieCtx,
-      serieCache,
-    )
+    const serie = await resolveSerieNoeud(noeud({ individu: cible }), serieGraphe, serieCache)
     for (const point of serie) {
       valeurs.push({
         individuId: cible.id,

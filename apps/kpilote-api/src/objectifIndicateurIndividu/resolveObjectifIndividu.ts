@@ -3,7 +3,7 @@ import { type FonctionAgregation } from '@pilote/kpilote-shared/indicateur'
 import { type Bucket, type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 import { agreger, getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
+import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
 export type ObjectifSaisieBucketise = {
   bucket: Bucket

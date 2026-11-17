@@ -11,7 +11,7 @@ tauxProgression = min(100, (valeur / valeurCible) × 100)
 où `valeurCible` est celle de l'objectif applicable au bucket mensuel de chaque valeur d'avancement.
 
 **Périmètre :**
-- Indicateurs feuille **et** dérivés (agrégation hiérarchique des valeurs via `resolveSerieIndividu`)
+- Indicateurs feuille **et** dérivés (agrégation hiérarchique des valeurs via `resolveSerieNoeud`)
 - Objectifs feuille **et** dérivés (agrégation hiérarchique via `resolveObjectifIndividu`)
 - Granularité paramétrable des deux côtés via `dateTruncValeur` et `dateTruncObjectif` (défaut `month` / `month`), avec la contrainte `dateTruncObjectif >= dateTruncValeur`
 - Taux tronqué à 2 décimales (jamais 100 % avant atteinte stricte de la cible)
@@ -109,7 +109,7 @@ L'implémentation suit le pattern établi : **chargement bulk en amont, résolut
 1. Charger en bulk le ResolveSerieContext (sous-arbre + saisies bucketisées + fonctions d'agrégation)
 2. Charger en bulk le ResolveObjectifContext (sous-arbre + objectifs bucketisés)
 3. Pour chaque individu cible :
-   a. serie    = resolveSerieIndividu(individuId, ...)    → Array<PointInterne>
+   a. serie    = resolveSerieNoeud(individuId, ...)    → Array<PointInterne>
    b. objectifsMap = resolveObjectifIndividu(individuId, ...) → Map<bucketDateCible, PointObjectifInterne>
 4. Convertir objectifsMap → ObjectifBrut[] triés par dateCible ASC
 5. Pour chaque (individu, point de série) — `date = point.bucket` :
@@ -149,7 +149,7 @@ d'objectifs sur une grille mensuelle commune.
    │                              ├──────────────────────────────────▶│                              │
    │                              │                                   │                              │
    │                              │ pour chaque individu cible :      │                              │
-   │                              │   resolveSerieIndividu    → ValeurBrute[]                        │
+   │                              │   resolveSerieNoeud    → ValeurBrute[]                        │
    │                              │   resolveObjectifIndividu → ObjectifBrut[] (triés dateCible asc) │
    │                              ├──────────────────────────────────▶│                              │
    │                              │                                                                  │
@@ -196,7 +196,7 @@ sequenceDiagram
     participant C as Client
     participant R as Route GET /indicateurs/:id/taux-progression
     participant Q as listTauxProgressionForIndicateur
-    participant S as resolveSerieIndividu
+    participant S as resolveSerieNoeud
     participant O as resolveObjectifIndividu
     participant T as resolveTauxProgression (pur)
 
@@ -211,7 +211,7 @@ sequenceDiagram
     end
 
     loop chaque individu cible
-        Q->>S: resolveSerieIndividu(individuId)
+        Q->>S: resolveSerieNoeud(individuId)
         S-->>Q: ValeurBrute[]
         Q->>O: resolveObjectifIndividu(individuId)
         O-->>Q: ObjectifBrut[] (triés dateCible asc)
@@ -231,7 +231,7 @@ sequenceDiagram
     R-->>C: JSON
 ```
 
-### `resolveSerieIndividu` — récursion + carry-forward **permissif**
+### `resolveSerieNoeud` — récursion + carry-forward **permissif**
 
 Calcule la série d'un individu :
 - si l'individu est **feuille** (pas de fonction d'agrégation active sur son référentiel) → ses saisies bucketisées telles quelles
@@ -242,7 +242,7 @@ Calcule la série d'un individu :
 #### Flux (ASCII)
 
 ```
-resolveSerieIndividu(individuId, ctx, cache)               [async — yield event loop par bucket]
+resolveSerieNoeud(individuId, ctx, cache)               [async — yield event loop par bucket]
    │
    ├── cache.get(individuId) → hit ? oui → retour
    │
@@ -259,7 +259,7 @@ resolveSerieIndividu(individuId, ctx, cache)               [async — yield even
    │                ├── enfants = ctx.enfantsParParent.get(parent), triés par publicId asc
    │                │
    │                ├── pour chaque enfant (séquentiel — la mémo amortit le coût) :
-   │                │     state.points = await resolveSerieIndividu(enfant.id, ctx, cache)
+   │                │     state.points = await resolveSerieNoeud(enfant.id, ctx, cache)
    │                │     state.pointer = -1
    │                │
    │                ├── union des buckets distincts présents chez ≥ 1 enfant (triés ASC)
@@ -306,7 +306,7 @@ bucket    ptr A → val    ptr B → val    contributions               valeur �
 sequenceDiagram
     autonumber
     participant Caller
-    participant R as resolveSerieIndividu(I)
+    participant R as resolveSerieNoeud(I)
     participant Cache
     participant Ctx as ResolveSerieContext
     participant CSD as computeSerieDerivee
@@ -326,7 +326,7 @@ sequenceDiagram
             R->>CSD: parentId, fonctionAgregation
             CSD->>Ctx: enfantsParParent.get(parent)<br/>tri par publicId asc
             loop chaque enfant (séquentiel)
-                CSD->>R: resolveSerieIndividu(enfant) — récursion mémo
+                CSD->>R: resolveSerieNoeud(enfant) — récursion mémo
                 R-->>CSD: enfant.points
             end
             Note over CSD: union des buckets distincts (asc)

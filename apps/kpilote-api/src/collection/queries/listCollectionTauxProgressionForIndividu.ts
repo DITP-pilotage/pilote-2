@@ -12,7 +12,7 @@ import { Prisma } from '@/generated/prisma/client'
 import { computeContributions } from '@/collection/queries/computeCollectionContributions'
 import { withCollectionReadPermission } from '@/collection/permissions'
 import { resolveCollectionTauxProgression } from '@/collection/resolveCollectionTauxProgression'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
+import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
 const collectionListArgs = {
   select: {

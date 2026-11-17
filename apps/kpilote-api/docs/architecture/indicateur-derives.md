@@ -60,7 +60,7 @@ Le découpage isole le calcul (testable sans DB) du chargement (testable par tes
    - `loadSousArbre` — BFS itératif niveau par niveau sur la table `relation`. Construit `enfantsParParent` (la topologie locale dont l'algo a besoin) et `allNodes` (l'univers des descendants).
    - `loadFonctionsAgregation` — map `referentielId → FonctionAgregation` (`SUM` ou `NONE`) pour l'indicateur courant.
    - Puis `loadSaisiesTronquees` (séquentiel : a besoin de `allNodes`) — une requête `$queryRawTyped` pour toutes les saisies, déjà groupées par bucket.
-3. **Calcul** — pour chaque cible, `resolveSerieIndividu` produit une série ; on filtre par `dateDebut`/`dateFin` en sortie, puis on convertit en `ValeurAvancementApiModel`.
+3. **Calcul** — pour chaque cible, `resolveSerieNoeud` produit une série ; on filtre par `dateDebut`/`dateFin` en sortie, puis on convertit en `ValeurAvancementApiModel`.
 
 Tout le travail DB est concentré au début. Le reste vit en mémoire avec un cache local à la requête.
 
@@ -95,7 +95,7 @@ Mécanique en deux passes :
 
 ### Mémoïsation
 
-`resolveSerieIndividu` consulte un cache `Map<individuId, Point[]>` local à la requête. Si `/valeurs?individus=FRANCE,REG-PACA` est appelé, la série de `REG-PACA` est calculée une seule fois — la branche du calcul de FRANCE qui la traverse réutilise le résultat caché. La complexité d'un appel multi-cibles reste celle d'une seule passe sur l'arbre.
+`resolveSerieNoeud` consulte un cache `Map<individuId, Point[]>` local à la requête. Si `/valeurs?individus=FRANCE,REG-PACA` est appelé, la série de `REG-PACA` est calculée une seule fois — la branche du calcul de FRANCE qui la traverse réutilise le résultat caché. La complexité d'un appel multi-cibles reste celle d'une seule passe sur l'arbre.
 
 ### Dédoublonnage par bucket (côté SQL)
 

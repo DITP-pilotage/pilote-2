@@ -16,8 +16,8 @@ import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveS
 import {
   type IndividuRef,
   type PointInterne,
-  resolveSerieIndividu,
-} from '@/valeurAvancement/resolveSerieIndividu'
+  resolveSerieNoeud,
+} from '@/valeurAvancement/resolveSerieNoeud'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
@@ -52,7 +52,7 @@ const build = async (
   const combinaisonId = await trouverCombinaisonVideId()
   const resolus = await Promise.all(
     indicateurs.map(async (indicateur) => {
-      const { ctx: serieCtx } = await loadResolveSerieContext({
+      const { graphe: serieGraphe, noeud } = await loadResolveSerieContext({
         indicateurId: indicateur.id,
         individusCibles: [individu],
         dateTrunc,
@@ -60,11 +60,7 @@ const build = async (
       })
 
       const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
-      const serie = await resolveSerieIndividu(
-        { individuId: individu.id, combinaisonId },
-        serieCtx,
-        serieCache,
-      )
+      const serie = await resolveSerieNoeud(noeud({ individu }), serieGraphe, serieCache)
       const dernier = serie.at(-1)
       if (!dernier) return null
 
