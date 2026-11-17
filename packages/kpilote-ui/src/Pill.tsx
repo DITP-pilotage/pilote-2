@@ -2,12 +2,14 @@ import { type ReactNode } from 'react'
 
 import { clsxm } from './clsxm'
 
-type PillTone = 'success' | 'warning' | 'info' | 'neutral'
+export type PillTone = 'success' | 'warning' | 'error' | 'info' | 'neutral'
 
+// Texte foncé de chaque famille : au moins 4,5:1 sur son fond tinté (RGAA 3.2).
 const pillToneClasses: Record<PillTone, string> = {
-  success: 'bg-success-tinted text-success-425',
-  warning: 'bg-warning-tinted text-warning-425',
-  info: 'bg-primary-tinted text-blue-425',
+  success: 'bg-success-tinted text-success',
+  warning: 'bg-warning-tinted text-warning',
+  error: 'bg-error-tinted text-error',
+  info: 'bg-primary-tinted text-primary',
   neutral: 'bg-surface-muted text-text-muted',
 }
 

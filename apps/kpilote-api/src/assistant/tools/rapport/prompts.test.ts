@@ -27,6 +27,13 @@ describe('prompts des encarts', () => {
     }
   })
 
+  it('font juger un écart par sa lecture selon le sens souhaité, jamais par son signe', () => {
+    for (const prompt of prompts) {
+      expect(prompt).toContain('fonde-toi sur elles, jamais sur le signe')
+      expect(prompt).toContain("ce n'est pas un manque de données")
+    }
+  })
+
   it('signalent une liste d’indicateurs tronquée', () => {
     expect(buildSyntheseSystemPrompt('COLLECTION')).toContain('indicateursTronques')
   })

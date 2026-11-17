@@ -1,4 +1,4 @@
-import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import { type SensSouhaite, type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 import { Suspense } from 'react'
 
 import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
@@ -16,6 +16,7 @@ export function IndicateurResultatsTab({
   individuId,
   referentielId,
   unite,
+  sensSouhaite,
   referentielNom,
   sousOnglet,
   onSousOngletChange,
@@ -24,6 +25,7 @@ export function IndicateurResultatsTab({
   individuId: string
   referentielId: string
   unite: UniteIndicateurApiModel | null
+  sensSouhaite: SensSouhaite
   referentielNom: string | null
   sousOnglet: SousOnglet
   onSousOngletChange: (sousOnglet: SousOnglet) => void
@@ -35,6 +37,7 @@ export function IndicateurResultatsTab({
         referentielId={referentielId}
         individuId={individuId}
         unite={unite}
+        sensSouhaite={sensSouhaite}
         referentielNom={referentielNom}
       />
 

@@ -1,16 +1,21 @@
-import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import { type SensSouhaite, type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import {
+  type Interpretation,
+  interpretDifference,
+  interpretExtremes,
+} from '@pilote/kpilote-shared/interpretation'
 import { useSuspenseQueries } from '@tanstack/react-query'
 
 import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
-import { Pill } from '@pilote/kpilote-ui/Pill'
+import { Pill, type PillTone } from '@pilote/kpilote-ui/Pill'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 import {
+  displayedDifferenceSign,
+  formatDifferenceFr,
   formatMonthYearNumericFr,
-  formatNumberAvecUniteFr,
   formatNumberFr,
-  formatVariationAvecUniteFr,
-  formatVariationFr,
+  INTERPRETATION_LABEL_FR,
 } from '@/lib/format'
 import {
   indicateurSyntheseIndividuQueryOptions,
@@ -19,19 +24,34 @@ import {
   indicateurValeursRemarquablesQueryOptions,
 } from '@/queries/indicateurs'
 
-type ValeurDate = { date: string; valeur: number }
+type DatedValue = { date: string; valeur: number }
 
 // Série mensuelle triée du plus récent au plus ancien : [0] = dernière valeur,
 // [1] = valeur précédente. La « valeur précédente » du ticket est dérivée ici,
 // sans appel API dédié (la série est déjà en cache).
-const valeursTrieesDesc = (items: ReadonlyArray<ValeurDate>): ValeurDate[] =>
+const sortByDateDesc = (items: ReadonlyArray<DatedValue>): DatedValue[] =>
   [...items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+
+// Lecture selon le sens souhaité (PIL-1778) : vert favorable, rouge défavorable,
+// bleu neutre. Le mot affiché porte la même information sans la couleur (RGAA 3.1).
+const TONE_BY_INTERPRETATION: Record<Interpretation, PillTone> = {
+  favorable: 'success',
+  unfavorable: 'error',
+  neutral: 'info',
+}
+
+const TEXT_CLASS_BY_INTERPRETATION: Record<Interpretation, string> = {
+  favorable: 'text-success',
+  unfavorable: 'text-error',
+  neutral: 'text-blue-cumulus',
+}
 
 type IndicateurSynthesePanelProps = {
   indicateurId: string
   referentielId: string
   individuId: string
   unite: UniteIndicateurApiModel | null
+  sensSouhaite: SensSouhaite
   referentielNom: string | null
 }
 
@@ -40,6 +60,7 @@ export function IndicateurSynthesePanel({
   referentielId,
   individuId,
   unite,
+  sensSouhaite,
   referentielNom,
 }: IndicateurSynthesePanelProps) {
   const [{ data: remarquables }, { data: synthese }, { data: valeurs }, { data: tauxProgression }] =
@@ -52,16 +73,25 @@ export function IndicateurSynthesePanel({
       ],
     })
 
-  const serie = valeursTrieesDesc(valeurs.items)
-  const derniere = serie[0]
-  const precedente = serie[1]
+  const series = sortByDateDesc(valeurs.items)
+  const latest = series[0]
+  const previous = series[1]
 
   const variation = synthese.items[0]?.variation ?? null
   const ecartMediane = synthese.items[0]?.ecartMediane ?? null
   const stats = remarquables.items[0] ?? { min: null, max: null, mediane: null }
 
-  const dernierPoint = tauxProgression.items[tauxProgression.items.length - 1]
-  const taux = dernierPoint?.tauxProgression ?? null
+  const lastPoint = tauxProgression.items[tauxProgression.items.length - 1]
+  const taux = lastPoint?.tauxProgression ?? null
+
+  const extremes = interpretExtremes({
+    sensSouhaite,
+    // Comparés tels qu'affichés : deux « 10 » ne se colorent pas l'un en vert, l'autre en rouge.
+    sameValue:
+      stats.min !== null &&
+      stats.max !== null &&
+      formatNumberFr(stats.min) === formatNumberFr(stats.max),
+  })
 
   return (
     <section className="rounded-xl border border-border bg-surface p-6 sm:p-8">
@@ -72,20 +102,17 @@ export function IndicateurSynthesePanel({
             <Text variant="kicker" as="p">
               Valeur d&apos;avancement
             </Text>
-            {derniere ? (
+            {latest ? (
               <>
                 <Heading as="p" size="display-sm" className="mt-3 text-blue-cumulus">
-                  {formatNumberFr(derniere.valeur)}
+                  {formatNumberFr(latest.valeur)}
                   {unite?.abbreviation && <span className="ml-2">{unite.abbreviation}</span>}
                 </Heading>
                 <Text variant="body" tone="subtle" className="mt-2">
-                  {formatMonthYearNumericFr(derniere.date)}
+                  {formatMonthYearNumericFr(latest.date)}
                 </Text>
-                {variation !== null && variation !== 0 && (
-                  <Pill tone={variation > 0 ? 'success' : 'warning'} className="mt-3 w-fit text-sm">
-                    {variation > 0 ? '↑' : '↓'} {variation > 0 ? 'EN HAUSSE' : 'EN BAISSE'} :{' '}
-                    {formatVariationFr(variation)}
-                  </Pill>
+                {variation !== null && (
+                  <VariationPill variation={variation} unite={unite} sensSouhaite={sensSouhaite} />
                 )}
               </>
             ) : (
@@ -94,22 +121,22 @@ export function IndicateurSynthesePanel({
               </Heading>
             )}
 
-            {precedente && (
+            {previous && (
               <Text variant="body" tone="muted" className="mt-3">
                 <span className="font-bold">Valeur précédente :</span>{' '}
                 <span className="font-semibold text-primary">
-                  {formatNumberAvecUniteFr(precedente.valeur, unite)}
+                  {formatNumberFr(previous.valeur, unite)}
                 </span>{' '}
-                ({formatMonthYearNumericFr(precedente.date)})
+                ({formatMonthYearNumericFr(previous.date)})
               </Text>
             )}
           </div>
 
-          {dernierPoint && (
+          {lastPoint && (
             <IndicateurProgression
               taux={taux}
-              valeurCible={dernierPoint.valeurCible}
-              dateCible={dernierPoint.dateCible}
+              valeurCible={lastPoint.valeurCible}
+              dateCible={lastPoint.dateCible}
               unite={unite}
             />
           )}
@@ -125,23 +152,25 @@ export function IndicateurSynthesePanel({
             {referentielNom && <span className="text-primary"> · {referentielNom}</span>}
           </Text>
           <ul className="mt-3 flex flex-col gap-0.5">
-            <ComparaisonRow
-              valueClassName="text-success-425"
+            <ComparisonRow
+              valueClassName={TEXT_CLASS_BY_INTERPRETATION[extremes.max]}
               label="Valeur maximale observée"
               value={stats.max}
               unite={unite}
+              isBestValue={extremes.max === 'favorable'}
             />
-            <ComparaisonRow
-              valueClassName="text-blue-425"
+            <ComparisonRow
+              valueClassName="text-blue-cumulus"
               label="Valeur médiane observée"
               value={stats.mediane}
               unite={unite}
             />
-            <ComparaisonRow
-              valueClassName="text-warning-425"
+            <ComparisonRow
+              valueClassName={TEXT_CLASS_BY_INTERPRETATION[extremes.min]}
               label="Valeur minimale observée"
               value={stats.min}
               unite={unite}
+              isBestValue={extremes.min === 'favorable'}
             />
           </ul>
 
@@ -150,10 +179,11 @@ export function IndicateurSynthesePanel({
               <Text variant="body" tone="muted" className="font-bold">
                 Écart à la médiane
               </Text>
-              <Pill tone={ecartMediane > 0 ? 'success' : ecartMediane < 0 ? 'warning' : 'info'}>
-                {formatVariationAvecUniteFr(ecartMediane, unite)} ·{' '}
-                {ecartMediane > 0 ? 'en avance' : ecartMediane < 0 ? 'en retard' : 'à la médiane'}
-              </Pill>
+              <MedianGapPill
+                ecartMediane={ecartMediane}
+                unite={unite}
+                sensSouhaite={sensSouhaite}
+              />
             </div>
           )}
         </div>
@@ -162,16 +192,74 @@ export function IndicateurSynthesePanel({
   )
 }
 
-function ComparaisonRow({
+// Flèche et libellé décrivent le mouvement réel ; la couleur et le mot l'interprètent.
+// Tous suivent le signe affiché : une variation lue « 0 » est stable.
+function VariationPill({
+  variation,
+  unite,
+  sensSouhaite,
+}: {
+  variation: number
+  unite: UniteIndicateurApiModel | null
+  sensSouhaite: SensSouhaite
+}) {
+  const sign = displayedDifferenceSign(variation)
+  const interpretation = interpretDifference(sign, sensSouhaite)
+  const label = INTERPRETATION_LABEL_FR[interpretation]
+  return (
+    <Pill tone={TONE_BY_INTERPRETATION[interpretation]} className="mt-3 w-fit text-sm">
+      {sign === 0 ? (
+        <span>
+          <span aria-hidden="true">→</span> STABLE
+        </span>
+      ) : (
+        <span>
+          <span aria-hidden="true">{sign > 0 ? '↑' : '↓'}</span>{' '}
+          {sign > 0 ? 'EN HAUSSE' : 'EN BAISSE'} : {formatDifferenceFr(variation, unite)}
+          {label && <> · {label}</>}
+        </span>
+      )}
+    </Pill>
+  )
+}
+
+// Même libellé dans les deux sens ; le signe est conservé, la couleur suit le sens.
+function MedianGapPill({
+  ecartMediane,
+  unite,
+  sensSouhaite,
+}: {
+  ecartMediane: number
+  unite: UniteIndicateurApiModel | null
+  sensSouhaite: SensSouhaite
+}) {
+  const sign = displayedDifferenceSign(ecartMediane)
+  const interpretation = interpretDifference(sign, sensSouhaite)
+  const label = INTERPRETATION_LABEL_FR[interpretation]
+  const position =
+    sign > 0 ? 'au-dessus de la médiane' : sign < 0 ? 'au-dessous de la médiane' : 'à la médiane'
+  return (
+    <Pill tone={TONE_BY_INTERPRETATION[interpretation]}>
+      <span>
+        {formatDifferenceFr(ecartMediane, unite)} · {position}
+        {label && <> · {label}</>}
+      </span>
+    </Pill>
+  )
+}
+
+function ComparisonRow({
   valueClassName,
   label,
   value,
   unite,
+  isBestValue = false,
 }: {
   valueClassName: string
   label: string
   value: number | null
   unite: UniteIndicateurApiModel | null
+  isBestValue?: boolean
 }) {
   return (
     <li className="flex items-baseline justify-between gap-3 py-1.5">
@@ -188,7 +276,10 @@ function ComparaisonRow({
           <>
             {formatNumberFr(value)}
             {unite?.abbreviation && (
-              <span className="ml-1 font-medium text-text-subtle">{unite.abbreviation}</span>
+              <span className="ml-1 font-medium text-text-muted">{unite.abbreviation}</span>
+            )}
+            {isBestValue && (
+              <span className="ml-2 text-xs font-medium text-text-muted">meilleure valeur</span>
             )}
           </>
         )}
