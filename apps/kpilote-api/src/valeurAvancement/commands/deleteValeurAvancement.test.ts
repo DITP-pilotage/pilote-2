@@ -5,7 +5,9 @@ import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
 import { deleteValeurAvancement } from '@/valeurAvancement/commands/deleteValeurAvancement'
+import { upsertValeursAvancementBatch } from '@/valeurAvancement/commands/upsertValeursAvancementBatch'
 import { fixtures } from '@/test/fixtures'
+import { indicateurWithTwoAxes, modalitesKey, valeursByModalites } from '@/test/indicateurWithAxes'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptId, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
@@ -283,6 +285,57 @@ describe.concurrent('deleteValeurAvancement', () => {
       expect(result._unsafeUnwrapErr()).toEqual({
         type: 'INDIVIDU_INCONNU',
         individu: individuId,
+      })
+    }),
+  )
+})
+
+describe.concurrent('suppression avec modalités', () => {
+  const DATE = '2025-03-01'
+
+  it(
+    'supprime la seule valeur de la cellule visée',
+    integrationTest(async () => {
+      const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
+      await runAsPrincipal(apiKey.id, () =>
+        upsertValeursAvancementBatch(indicateurId, {
+          items: [
+            { individu: individuId, modalites: [ids.orange, ids.tva], date: DATE, valeur: 1 },
+            { individu: individuId, modalites: [ids.sfr, ids.tva], date: DATE, valeur: 2 },
+          ],
+        }),
+      )
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        deleteValeurAvancement({
+          indicateurPublicId: indicateurId,
+          body: { individu: individuId, modalites: [ids.orange, ids.tva], date: DATE },
+        }),
+      )
+
+      expect(result.isOk()).toBe(true)
+      expect(await valeursByModalites(indicateurId)).toEqual(
+        new Map([[modalitesKey(ids.sfr, ids.tva), 2]]),
+      )
+    }),
+  )
+
+  it(
+    'ne fait rien sur une combinaison jamais saisie, et refuse une cellule incomplète',
+    integrationTest(async () => {
+      const { indicateurId, individuId, apiKey, axes, ids } = await indicateurWithTwoAxes()
+      const remove = (modalites: string[]) =>
+        runAsPrincipal(apiKey.id, () =>
+          deleteValeurAvancement({
+            indicateurPublicId: indicateurId,
+            body: { individu: individuId, modalites, date: DATE },
+          }),
+        )
+
+      expect((await remove([ids.sfr, ids.ir])).isOk()).toBe(true)
+      expect((await remove([ids.sfr]))._unsafeUnwrapErr()).toEqual({
+        type: 'MODALITE_MANQUANTE',
+        axes: [axes.fraude.publicId],
       })
     }),
   )
