@@ -7,7 +7,7 @@ import {
   type UniteIndicateurCode,
 } from '@pilote/kpilote-shared/indicateur'
 
-import { EMPTY_COMBINAISON_KEY } from '../src/axe/combinaison.js'
+import { combinaisonKey, EMPTY_COMBINAISON_KEY } from '../src/axe/combinaison.js'
 import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
 import {
   type FonctionAgregation,
@@ -977,12 +977,15 @@ const main = async () => {
         create: { indicateurId: indicateur.id, referentielId, fonctionAgregation: 'SUM' },
       })
     }
-    const axe = await prisma.axe.findUniqueOrThrow({ where: { publicId: item.axe } })
-    await prisma.indicateurAxe.upsert({
-      where: { indicateurId_axeId: { indicateurId: indicateur.id, axeId: axe.id } },
-      update: { ordre: 1, fonction: 'SUM' },
-      create: { indicateurId: indicateur.id, axeId: axe.id, ordre: 1, fonction: 'SUM' },
-    })
+    for (const [indexAxe, { axe: axePublicId }] of item.axes.entries()) {
+      const axe = await prisma.axe.findUniqueOrThrow({ where: { publicId: axePublicId } })
+      const ordre = indexAxe + 1
+      await prisma.indicateurAxe.upsert({
+        where: { indicateurId_axeId: { indicateurId: indicateur.id, axeId: axe.id } },
+        update: { ordre, fonction: 'SUM' },
+        create: { indicateurId: indicateur.id, axeId: axe.id, ordre, fonction: 'SUM' },
+      })
+    }
     for (const action of [
       IndicateurPermissionAction.READ,
       IndicateurPermissionAction.WRITE_DATA,
@@ -1001,26 +1004,47 @@ const main = async () => {
       })
     }
 
-    // Une combinaison par modalité feuille (axe unique) : sa clé est l'id de la
-    // modalité (cf. src/axe/combinaison.ts).
-    const combinaisonParModalite = new Map<string, string>()
-    for (const { publicId } of item.modalites) {
-      const modalite = await prisma.modalite.findUniqueOrThrow({ where: { publicId } })
+    // Une combinaison par jeu de modalités feuilles, une par axe (cf.
+    // src/axe/combinaison.ts pour la clé).
+    const valeursSeed = buildValeursAxes({ indicateur: item, departementPublicIds })
+    const modaliteParPublicId = new Map(
+      (
+        await prisma.modalite.findMany({
+          where: {
+            publicId: { in: item.axes.flatMap((axe) => axe.modalites.map((m) => m.publicId)) },
+          },
+        })
+      ).map((modalite) => [modalite.publicId, modalite]),
+    )
+    const combinaisonParModalites = new Map<string, string>()
+    for (const modalitePublicIds of new Set(
+      valeursSeed.map((v) => v.modalitePublicIds.join(',')),
+    )) {
+      const modalites = modalitePublicIds
+        .split(',')
+        .map((publicId) => modaliteParPublicId.get(publicId))
+        .filter((modalite) => modalite !== undefined)
+      const cle = combinaisonKey({ modalites })
       const combinaison = await prisma.combinaison.upsert({
-        where: { cle: modalite.id },
+        where: { cle },
         update: {},
         create: {
           id: uuidv7(),
-          cle: modalite.id,
-          modalites: { create: { axeId: modalite.axeId, modaliteId: modalite.id } },
+          cle,
+          modalites: {
+            create: modalites.map((modalite) => ({
+              axeId: modalite.axeId,
+              modaliteId: modalite.id,
+            })),
+          },
         },
       })
-      combinaisonParModalite.set(publicId, combinaison.id)
+      combinaisonParModalites.set(modalitePublicIds, combinaison.id)
     }
 
-    const valeurs = buildValeursAxes({ indicateur: item, departementPublicIds }).flatMap((v) => {
+    const valeurs = valeursSeed.flatMap((v) => {
       const individu = individusParPublicId.get(v.individuPublicId)
-      const combinaisonId = combinaisonParModalite.get(v.modalitePublicId)
+      const combinaisonId = combinaisonParModalites.get(v.modalitePublicIds.join(','))
       if (!individu || !combinaisonId) return []
       return [
         {
