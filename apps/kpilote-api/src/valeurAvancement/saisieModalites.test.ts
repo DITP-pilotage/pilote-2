@@ -22,7 +22,7 @@ const DATE = '2025-03-01'
 //  - Opérateur : Orange, SFR (un niveau) ;
 //  - Type de fraude : Fiscale > TVA, IR (deux niveaux).
 // Un troisième axe existe sans être déclaré sur l'indicateur.
-const indicateurADeuxAxes = async () => {
+const indicateurWithTwoAxes = async () => {
   const indicateurId = testIndicateurId()
   const referentiel = { publicId: testReferentielId() }
   const individuId = testDeptId()
@@ -69,7 +69,7 @@ const indicateurADeuxAxes = async () => {
   return { indicateurId, individuId, apiKey, axes: { operateur, fraude }, ids }
 }
 
-const indicateurSansAxe = async () => {
+const indicateurWithoutAxe = async () => {
   const indicateurId = testIndicateurId()
   const referentiel = { publicId: testReferentielId() }
   const individuId = testDeptId()
@@ -85,7 +85,7 @@ const indicateurSansAxe = async () => {
 }
 
 // Les valeurs de l'indicateur, par modalités de leur combinaison (triées).
-const valeursParModalites = async (indicateurPublicId: string) => {
+const valeursByModalites = async (indicateurPublicId: string) => {
   const valeurs = await db().valeurAvancement.findMany({
     where: { indicateur: { publicId: indicateurPublicId } },
     include: { combinaison: { include: { modalites: { include: { modalite: true } } } } },
@@ -101,13 +101,13 @@ const valeursParModalites = async (indicateurPublicId: string) => {
   )
 }
 
-const cle = (...publicIds: string[]) => [...publicIds].sort().join('+')
+const key = (...publicIds: string[]) => [...publicIds].sort().join('+')
 
 describe.concurrent('saisie unitaire avec modalités', () => {
   it(
     'saisit sur une cellule complète et renvoie les modalités dans l’ordre des axes',
     integrationTest(async () => {
-      const { indicateurId, individuId, apiKey, ids } = await indicateurADeuxAxes()
+      const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
 
       const result = await runAsPrincipal(apiKey.id, () =>
         upsertValeurAvancement({
@@ -124,8 +124,8 @@ describe.concurrent('saisie unitaire avec modalités', () => {
         valeur: 42,
         type: 'saisie',
       })
-      expect(await valeursParModalites(indicateurId)).toEqual(
-        new Map([[cle(ids.orange, ids.tva), 42]]),
+      expect(await valeursByModalites(indicateurId)).toEqual(
+        new Map([[key(ids.orange, ids.tva), 42]]),
       )
     }),
   )
@@ -133,7 +133,7 @@ describe.concurrent('saisie unitaire avec modalités', () => {
   it(
     'remplace la valeur de la même cellule, sans recréer la combinaison',
     integrationTest(async () => {
-      const { indicateurId, individuId, apiKey, ids } = await indicateurADeuxAxes()
+      const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
       const saisir = (valeur: number) =>
         runAsPrincipal(apiKey.id, () =>
           upsertValeurAvancement({
@@ -145,8 +145,8 @@ describe.concurrent('saisie unitaire avec modalités', () => {
       await saisir(1)
       await saisir(2)
 
-      expect(await valeursParModalites(indicateurId)).toEqual(
-        new Map([[cle(ids.orange, ids.ir), 2]]),
+      expect(await valeursByModalites(indicateurId)).toEqual(
+        new Map([[key(ids.orange, ids.ir), 2]]),
       )
     }),
   )
@@ -154,7 +154,7 @@ describe.concurrent('saisie unitaire avec modalités', () => {
   it(
     'refuse chaque saisie incomplète ou invalide',
     integrationTest(async () => {
-      const { indicateurId, individuId, apiKey, axes, ids } = await indicateurADeuxAxes()
+      const { indicateurId, individuId, apiKey, axes, ids } = await indicateurWithTwoAxes()
       const inconnue = testModaliteId()
       const saisir = (modalites: string[] | undefined) =>
         runAsPrincipal(apiKey.id, () =>
@@ -189,14 +189,14 @@ describe.concurrent('saisie unitaire avec modalités', () => {
         type: 'MODALITE_NON_FEUILLE',
         modalites: [ids.fiscale],
       })
-      expect(await valeursParModalites(indicateurId)).toEqual(new Map())
+      expect(await valeursByModalites(indicateurId)).toEqual(new Map())
     }),
   )
 
   it(
     'garde le format historique pour un indicateur sans axe',
     integrationTest(async () => {
-      const { indicateurId, individuId, apiKey, orange } = await indicateurSansAxe()
+      const { indicateurId, individuId, apiKey, orange } = await indicateurWithoutAxe()
       const saisir = (modalites: string[] | undefined) =>
         runAsPrincipal(apiKey.id, () =>
           upsertValeurAvancement({
@@ -219,7 +219,7 @@ describe.concurrent('suppression avec modalités', () => {
   it(
     'supprime la seule valeur de la cellule visée',
     integrationTest(async () => {
-      const { indicateurId, individuId, apiKey, ids } = await indicateurADeuxAxes()
+      const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
       await runAsPrincipal(apiKey.id, () =>
         upsertValeursAvancementBatch(indicateurId, {
           items: [
@@ -237,14 +237,14 @@ describe.concurrent('suppression avec modalités', () => {
       )
 
       expect(result.isOk()).toBe(true)
-      expect(await valeursParModalites(indicateurId)).toEqual(new Map([[cle(ids.sfr, ids.tva), 2]]))
+      expect(await valeursByModalites(indicateurId)).toEqual(new Map([[key(ids.sfr, ids.tva), 2]]))
     }),
   )
 
   it(
     'ne fait rien sur une combinaison jamais saisie, et refuse une cellule incomplète',
     integrationTest(async () => {
-      const { indicateurId, individuId, apiKey, axes, ids } = await indicateurADeuxAxes()
+      const { indicateurId, individuId, apiKey, axes, ids } = await indicateurWithTwoAxes()
       const supprimer = (modalites: string[]) =>
         runAsPrincipal(apiKey.id, () =>
           deleteValeurAvancement({
@@ -266,7 +266,7 @@ describe.concurrent('saisie en lot avec modalités', () => {
   it(
     'écrit chaque cellule sur sa combinaison, et met à jour au second passage',
     integrationTest(async () => {
-      const { indicateurId, individuId, apiKey, ids } = await indicateurADeuxAxes()
+      const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
       const lot = (valeur: number) =>
         runAsPrincipal(apiKey.id, () =>
           upsertValeursAvancementBatch(indicateurId, {
@@ -280,11 +280,11 @@ describe.concurrent('saisie en lot avec modalités', () => {
 
       expect((await lot(1))._unsafeUnwrap()).toEqual({ total: 3, created: 3, updated: 0 })
       expect((await lot(2))._unsafeUnwrap()).toEqual({ total: 3, created: 0, updated: 3 })
-      expect(await valeursParModalites(indicateurId)).toEqual(
+      expect(await valeursByModalites(indicateurId)).toEqual(
         new Map([
-          [cle(ids.orange, ids.tva), 2],
-          [cle(ids.sfr, ids.tva), 2],
-          [cle(ids.sfr, ids.ir), 2],
+          [key(ids.orange, ids.tva), 2],
+          [key(ids.sfr, ids.tva), 2],
+          [key(ids.sfr, ids.ir), 2],
         ]),
       )
     }),
@@ -293,7 +293,7 @@ describe.concurrent('saisie en lot avec modalités', () => {
   it(
     'agrège les erreurs de modalités par cause et n’applique rien',
     integrationTest(async () => {
-      const { indicateurId, individuId, apiKey, axes, ids } = await indicateurADeuxAxes()
+      const { indicateurId, individuId, apiKey, axes, ids } = await indicateurWithTwoAxes()
       const inconnue = testModaliteId()
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -320,14 +320,14 @@ describe.concurrent('saisie en lot avec modalités', () => {
           { code: 'AXE_NON_DECLARE', indices: [5], modalite: ids.autre },
         ],
       })
-      expect(await valeursParModalites(indicateurId)).toEqual(new Map())
+      expect(await valeursByModalites(indicateurId)).toEqual(new Map())
     }),
   )
 
   it(
     'refuse un doublon de cellule, quel que soit l’ordre des modalités',
     integrationTest(async () => {
-      const { indicateurId, individuId, apiKey, ids } = await indicateurADeuxAxes()
+      const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
 
       const result = await runAsPrincipal(apiKey.id, () =>
         upsertValeursAvancementBatch(indicateurId, {
@@ -357,7 +357,7 @@ describe.concurrent('saisie en lot avec modalités', () => {
   it(
     'refuse des modalités sur un indicateur sans axe',
     integrationTest(async () => {
-      const { indicateurId, individuId, apiKey, orange } = await indicateurSansAxe()
+      const { indicateurId, individuId, apiKey, orange } = await indicateurWithoutAxe()
 
       const result = await runAsPrincipal(apiKey.id, () =>
         upsertValeursAvancementBatch(indicateurId, {

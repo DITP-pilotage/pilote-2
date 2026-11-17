@@ -1,6 +1,6 @@
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
 
-import { trouverCombinaisonVideId } from '@/axe/combinaison'
+import { getEmptyCombinaisonId } from '@/axe/combinaison'
 import { parseBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
 import { getValeursTronqueesPourIndividus } from '@/generated/prisma/sql'
@@ -96,7 +96,7 @@ const loadCombinaisonVide = async ({
   individuIds: ReadonlyArray<string>
   dateTrunc: DateTrunc
 }): Promise<DonneesCombinaisons> => {
-  const combinaisonId = await trouverCombinaisonVideId()
+  const combinaisonId = await getEmptyCombinaisonId()
   const cellules = await loadSaisiesTronquees({
     indicateurId,
     individuIds,

@@ -31,8 +31,8 @@ import {
   collectionTauxProgressionSummaryListApiModelSchema,
 } from '@pilote/kpilote-shared/collectionTauxProgression'
 
-import { messageModalitesError } from '@/axe/modalitesDemandees'
-import { messageResoudreSelectionError } from '@/axe/resoudreSelection'
+import { modalitesErrorMessage } from '@/axe/requestedModalites'
+import { selectionErrorMessage } from '@/axe/resolveSelection'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
@@ -150,7 +150,7 @@ const getValeursForIndicateurRoute = createRoute({
 
 // --- PUT /indicateurs/:id/valeurs --------------------------------------------
 
-const ECRITURE_MODALITES_DESCRIPTION =
+const MODALITES_WRITE_DESCRIPTION =
   'Indicateur à axes : `modalites` porte exactement une modalité feuille par axe déclaré ' +
   '(sinon 400 `MODALITE_INCONNUE`, `AXE_NON_DECLARE`, `MODALITES_MEME_AXE`, `MODALITE_MANQUANTE` ' +
   'ou `MODALITE_NON_FEUILLE`). Indicateur sans axe : `modalites` absent ou vide.'
@@ -163,7 +163,7 @@ const upsertValeurAvancementRoute = createRoute({
   description:
     "Upsert d'une valeur unique sur la cellule `(indicateur, individu, modalites, date)`. Si la cellule a déjà une valeur à cette date, la `valeur` est remplacée ; sinon une nouvelle valeur est créée. " +
     "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`). " +
-    ECRITURE_MODALITES_DESCRIPTION,
+    MODALITES_WRITE_DESCRIPTION,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -192,7 +192,7 @@ const deleteValeurAvancementRoute = createRoute({
   description:
     "Supprime la valeur identifiée par `(indicateur, individu, modalites, date)`. Idempotent : retourne `204` même si la valeur n'existait pas. " +
     "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`). " +
-    ECRITURE_MODALITES_DESCRIPTION,
+    MODALITES_WRITE_DESCRIPTION,
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -487,7 +487,7 @@ valeurAvancementRoutes.openapi(getValeursForIndicateurRoute, async (context) => 
         context,
         error: {
           code: error.type,
-          message: messageResoudreSelectionError(error),
+          message: selectionErrorMessage(error),
           details: { modalites: error.modalites },
         },
         schema: ErrorApiModelSchema,
@@ -515,7 +515,7 @@ valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
     (error) =>
       jsonResponseError({
         context,
-        error: erreurEcritureCellule(error),
+        error: celluleWriteError(error),
         schema: ErrorApiModelSchema,
         status: 400,
       }),
@@ -523,7 +523,7 @@ valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
 })
 
 // Erreur 400 d'une écriture unitaire : individu inconnu ou modalités invalides.
-const erreurEcritureCellule = (
+const celluleWriteError = (
   error: UpsertValeurAvancementError | DeleteValeurAvancementError,
 ): { code: string; message: string; details: Record<string, unknown> } => {
   const { type, ...details } = error
@@ -532,7 +532,7 @@ const erreurEcritureCellule = (
     message:
       error.type === 'INDIVIDU_INCONNU'
         ? "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur"
-        : messageModalitesError(error),
+        : modalitesErrorMessage(error),
     details,
   }
 }
@@ -550,7 +550,7 @@ valeurAvancementRoutes.openapi(deleteValeurAvancementRoute, async (context) => {
     (error) =>
       jsonResponseError({
         context,
-        error: erreurEcritureCellule(error),
+        error: celluleWriteError(error),
         schema: ErrorApiModelSchema,
         status: 400,
       }),
@@ -620,7 +620,7 @@ valeurAvancementRoutes.openapi(getValeursRemarquablesForIndicateurRoute, async (
         context,
         error: {
           code: error.type,
-          message: messageResoudreSelectionError(error),
+          message: selectionErrorMessage(error),
           details: { modalites: error.modalites },
         },
         schema: ErrorApiModelSchema,
@@ -646,7 +646,7 @@ valeurAvancementRoutes.openapi(getSyntheseIndividusRoute, async (context) => {
         context,
         error: {
           code: error.type,
-          message: messageResoudreSelectionError(error),
+          message: selectionErrorMessage(error),
           details: { modalites: error.modalites },
         },
         schema: ErrorApiModelSchema,

@@ -1,6 +1,6 @@
 import { uuidv7 } from 'uuidv7'
 
-import { cleCombinaison, trouverCombinaisonVideId } from '@/axe/combinaison'
+import { combinaisonKey, getEmptyCombinaisonId } from '@/axe/combinaison'
 import { env } from '@/env'
 import { hashApiKey } from '@/framework/auth/apiKey'
 import { db } from '@/framework/persistence/dbStore'
@@ -537,7 +537,7 @@ type CombinaisonOverrides = { modalites?: ModaliteOverrides[] }
 const upsertCombinaison = async (o: CombinaisonOverrides = {}): Promise<CombinaisonModel> => {
   const modaliteRows: ModaliteModel[] = []
   for (const modalite of o.modalites ?? []) modaliteRows.push(await upsertModalite(modalite))
-  const cle = cleCombinaison({ modaliteIds: modaliteRows.map((modalite) => modalite.id) })
+  const cle = combinaisonKey({ modalites: modaliteRows })
   const existing = await db().combinaison.findUnique({ where: { cle } })
   if (existing) return existing
   return db().combinaison.create({
@@ -622,7 +622,7 @@ const upsertValeurAvancement = async (o: ValeurAvancementOverrides) => {
   const individuRow = await upsertIndividu(o.individu)
   const combinaisonId = o.combinaison
     ? (await upsertCombinaison(o.combinaison)).id
-    : await trouverCombinaisonVideId()
+    : await getEmptyCombinaisonId()
   const date = o.date ?? DEFAULT_VALEUR_AVANCEMENT_DATE
   const valeur = o.valeur ?? DEFAULT_VALEUR_AVANCEMENT_VALEUR
   return db().valeurAvancement.upsert({

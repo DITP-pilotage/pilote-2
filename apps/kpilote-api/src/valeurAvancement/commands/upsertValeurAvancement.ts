@@ -5,8 +5,8 @@ import {
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { cleDeModalites, trouverOuCreerCombinaisons } from '@/axe/combinaison'
-import { type SaisieModalitesError } from '@/axe/modalitesDemandees'
+import { combinaisonKey, upsertCombinaisons } from '@/axe/combinaison'
+import { type SaisieModalitesError } from '@/axe/requestedModalites'
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
@@ -29,36 +29,38 @@ export const upsertValeurAvancement = ({
     individuPublicId: body.individu,
     modalitePublicIds: body.modalites ?? [],
   }).andThen(({ indicateur, individu, modalites }) =>
-    ResultAsync.fromSafePromise(
-      (async () => {
-        const idParCle = await trouverOuCreerCombinaisons({ combinaisons: [modalites] })
-        const combinaisonId = idParCle.get(cleDeModalites(modalites))!
-        const valeur = await db().valeurAvancement.upsert({
-          where: {
-            valeur_avancement_cellule_unique: {
+    ResultAsync.fromSafePromise(upsertCombinaisons({ combinaisons: [modalites] }))
+      .map((idParCle) => idParCle.get(combinaisonKey({ modalites }))!)
+      .andThen((combinaisonId) =>
+        ResultAsync.fromSafePromise(
+          db().valeurAvancement.upsert({
+            where: {
+              valeur_avancement_cellule_unique: {
+                indicateurId: indicateur.id,
+                individuId: individu.id,
+                combinaisonId,
+                date: body.date,
+              },
+            },
+            update: { valeur: new Decimal(body.valeur) },
+            create: {
+              id: uuidv7(),
               indicateurId: indicateur.id,
               individuId: individu.id,
               combinaisonId,
               date: body.date,
+              valeur: new Decimal(body.valeur),
             },
-          },
-          update: { valeur: new Decimal(body.valeur) },
-          create: {
-            id: uuidv7(),
-            indicateurId: indicateur.id,
-            individuId: individu.id,
-            combinaisonId,
-            date: body.date,
-            valeur: new Decimal(body.valeur),
-          },
-          include: {
-            indicateur: { select: { publicId: true } },
-            individu: { select: { publicId: true } },
-          },
-        })
-        return toValeurSaisieApiModel(valeur, {
+            include: {
+              indicateur: { select: { publicId: true } },
+              individu: { select: { publicId: true } },
+            },
+          }),
+        ),
+      )
+      .map((valeur) =>
+        toValeurSaisieApiModel(valeur, {
           modalites: modalites.map((modalite) => modalite.publicId),
-        })
-      })(),
-    ),
+        }),
+      ),
   )

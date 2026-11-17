@@ -3,20 +3,24 @@ import {
   type UpsertValeursAvancementBatchBody,
   type UpsertValeursAvancementBatchResultApiModel,
 } from '@pilote/kpilote-shared/valeurAvancement'
-import { err, ok, type Result, ResultAsync } from 'neverthrow'
+import { err, ok, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { cleDeModalites, trouverOuCreerCombinaisons } from '@/axe/combinaison'
+import { combinaisonKey, upsertCombinaisons } from '@/axe/combinaison'
 import {
-  chargerContexteModalites,
-  type ContexteModalites,
-  type ModaliteDemandee,
-  type SaisieModalitesError,
-  validerModalitesSaisie,
-} from '@/axe/modalitesDemandees'
+  loadModalitesContext,
+  type ModalitesContext,
+  type RequestedModalite,
+  validateSaisieModalites,
+} from '@/axe/requestedModalites'
 import { db } from '@/framework/persistence/dbStore'
 import { upsertValeursAvancementBatch as upsertValeursAvancementBatchQuery } from '@/generated/prisma/sql'
 import { resolveIndicateurForWriteData } from '@/indicateur/resolveIndicateurForWrite'
+import {
+  aggregateModalitesErrors,
+  detectDuplicateKeys,
+  type ModalitesByItem,
+} from '@/valeurAvancement/batchErrors'
 
 export type BatchInvalidError = {
   type: 'BATCH_INVALID'
@@ -29,7 +33,7 @@ type BatchItems = UpsertValeursAvancementBatchBody['items']
 
 // Cellule résolue d'un item : l'individu et ses modalités (une feuille par axe
 // déclaré, dans l'ordre des axes ; aucune pour un indicateur sans axe).
-type CelluleResolue = { individuId: string; modalites: ModaliteDemandee[] }
+type ResolvedCellule = { individuId: string; modalites: RequestedModalite[] }
 
 export const upsertValeursAvancementBatch = (
   indicateurPublicId: string,
@@ -53,83 +57,43 @@ const validateAndResolveCellules = ({
 }: {
   indicateurId: string
   items: BatchItems
-}): ResultAsync<CelluleResolue[], BatchInvalidError> =>
+}): ResultAsync<ResolvedCellule[], BatchInvalidError> =>
   ResultAsync.fromSafePromise(
     Promise.all([
       loadIndividusContext({ indicateurId, items }),
-      chargerContexteModalites({
+      loadModalitesContext({
         indicateurId,
         modalitePublicIds: items.flatMap((item) => item.modalites ?? []),
       }),
     ]),
   ).andThen(([{ individuByPublicId, linkedReferentielIds }, contexteModalites]) => {
-    const modalitesParItem = validerModalitesItems({ items, contexte: contexteModalites })
+    const modalitesByItem = validateItemsModalites({ items, contexte: contexteModalites })
     const errors = [
-      ...detectDuplicateKeys({ items, modalitesParItem }),
+      ...detectDuplicateKeys({ items, modalitesByItem }),
       ...detectIndividusInconnus({ items, individuByPublicId, linkedReferentielIds }),
-      ...agregerErreursModalites(modalitesParItem),
+      ...aggregateModalitesErrors({ modalitesByItem }),
     ]
     if (errors.length > 0)
-      return err<CelluleResolue[], BatchInvalidError>({ type: 'BATCH_INVALID', errors })
-    return ok<CelluleResolue[], BatchInvalidError>(
+      return err<ResolvedCellule[], BatchInvalidError>({ type: 'BATCH_INVALID', errors })
+    return ok<ResolvedCellule[], BatchInvalidError>(
       items.map((item, index) => ({
         individuId: individuByPublicId.get(item.individu)!.id,
         // Aucune erreur à ce stade : chaque item a ses modalités.
-        modalites: modalitesParItem[index]!.unwrapOr([]),
+        modalites: modalitesByItem[index]!.unwrapOr([]),
       })),
     )
   })
 
-const validerModalitesItems = ({
+const validateItemsModalites = ({
   items,
   contexte,
 }: {
   items: BatchItems
-  contexte: ContexteModalites
-}): Result<ModaliteDemandee[], SaisieModalitesError>[] =>
-  items.map((item) => validerModalitesSaisie({ contexte, modalitePublicIds: item.modalites ?? [] }))
-
-// Détecte les cellules `(individu, modalites, date)` qui apparaissent plus d'une fois dans
-// le payload. Un import « propre » n'a pas de doublon ; on refuse explicitement plutôt que
-// de laisser passer un last-write-wins silencieux qui dépendrait de l'ordre d'apparition.
-// Les items dont les modalités sont invalides ont déjà leur erreur : ils sont ignorés ici.
-const detectDuplicateKeys = ({
-  items,
-  modalitesParItem,
-}: {
-  items: BatchItems
-  modalitesParItem: ReadonlyArray<Result<ModaliteDemandee[], SaisieModalitesError>>
-}): BatchInvalidErrorEntryApiModel[] => {
-  const KEY_SEP = '\u0000'
-  const entreesParCle = new Map<
-    string,
-    { indices: number[]; individu: string; modalites: string[]; date: string }
-  >()
-  items.forEach((item, index) => {
-    const modalites = modalitesParItem[index]!
-    if (modalites.isErr()) return
-    const publicIds = modalites.value.map((modalite) => modalite.publicId)
-    const cle = [item.individu, ...publicIds, item.date].join(KEY_SEP)
-    const entree = entreesParCle.get(cle)
-    if (entree) entree.indices.push(index)
-    else
-      entreesParCle.set(cle, {
-        indices: [index],
-        individu: item.individu,
-        modalites: publicIds,
-        date: item.date,
-      })
-  })
-  return [...entreesParCle.values()]
-    .filter((entree) => entree.indices.length > 1)
-    .map(({ indices, individu, modalites, date }) => ({
-      code: 'DUPLICATE_KEY',
-      indices,
-      individu,
-      ...(modalites.length > 0 ? { modalites } : {}),
-      date,
-    }))
-}
+  contexte: ModalitesContext
+}): ModalitesByItem =>
+  items.map((item) =>
+    validateSaisieModalites({ contexte, modalitePublicIds: item.modalites ?? [] }),
+  )
 
 type IndividuRow = { id: string; publicId: string; referentielId: string }
 
@@ -195,49 +159,6 @@ const detectIndividusInconnus = ({
   return errors
 }
 
-// Comme pour les individus : une entrée par cause et par modalité (ou par
-// axe), qui pointe toutes les lignes concernées.
-const agregerErreursModalites = (
-  modalitesParItem: ReadonlyArray<Result<ModaliteDemandee[], SaisieModalitesError>>,
-): BatchInvalidErrorEntryApiModel[] => {
-  const entrees = new Map<string, BatchInvalidErrorEntryApiModel>()
-  const ajouter = (cle: string, index: number, creer: () => BatchInvalidErrorEntryApiModel) => {
-    const entree = entrees.get(cle) ?? creer()
-    if (!entree.indices.includes(index)) entree.indices.push(index)
-    entrees.set(cle, entree)
-  }
-  modalitesParItem.forEach((resultat, index) => {
-    if (resultat.isOk()) return
-    const erreur = resultat.error
-    switch (erreur.type) {
-      case 'MODALITE_INCONNUE':
-      case 'AXE_NON_DECLARE':
-      case 'MODALITE_NON_FEUILLE':
-        for (const modalite of erreur.modalites) {
-          ajouter(`${erreur.type}|${modalite}`, index, () => ({
-            code: erreur.type,
-            indices: [],
-            modalite,
-          }))
-        }
-        return
-      case 'MODALITES_MEME_AXE':
-        ajouter(`${erreur.type}|${erreur.axe}`, index, () => ({
-          code: erreur.type,
-          indices: [],
-          axe: erreur.axe,
-        }))
-        return
-      case 'MODALITE_MANQUANTE':
-        for (const axe of erreur.axes) {
-          ajouter(`${erreur.type}|${axe}`, index, () => ({ code: erreur.type, indices: [], axe }))
-        }
-        return
-    }
-  })
-  return [...entrees.values()]
-}
-
 // Forme transmise au paramètre `payload.items` de la requête TypedSQL.
 // Doit rester en miroir de `prisma/sql/upsertValeursAvancementBatch.sql` (clés extraites
 // via `input->>'…'`). On passe `valeur` en string pour préserver la précision décimale
@@ -260,29 +181,31 @@ const executeBatch = ({
   items,
 }: {
   indicateurId: string
-  cellules: ReadonlyArray<CelluleResolue>
+  cellules: ReadonlyArray<ResolvedCellule>
   items: BatchItems
 }): ResultAsync<UpsertValeursAvancementBatchResultApiModel, never> =>
   ResultAsync.fromSafePromise(
-    (async () => {
-      const idParCle = await trouverOuCreerCombinaisons({
-        combinaisons: cellules.map((cellule) => cellule.modalites),
-      })
-      const sqlItems: SqlBatchItem[] = items.map((item, index) => {
+    upsertCombinaisons({ combinaisons: cellules.map((cellule) => cellule.modalites) }),
+  )
+    .map((idParCle) =>
+      items.map((item, index): SqlBatchItem => {
         const cellule = cellules[index]!
         return {
           id: uuidv7(),
           individuId: cellule.individuId,
-          combinaisonId: idParCle.get(cleDeModalites(cellule.modalites))!,
+          combinaisonId: idParCle.get(combinaisonKey({ modalites: cellule.modalites }))!,
           date: item.date,
           valeur: item.valeur.toString(),
         }
-      })
-      const rows = await db().$queryRawTyped(
-        upsertValeursAvancementBatchQuery(indicateurId, { items: sqlItems }),
-      )
+      }),
+    )
+    .andThen((sqlItems) =>
+      ResultAsync.fromSafePromise(
+        db().$queryRawTyped(upsertValeursAvancementBatchQuery(indicateurId, { items: sqlItems })),
+      ),
+    )
+    .map((rows) => {
       const total = rows.length
       const created = rows.reduce((sum, row) => sum + (row.created === true ? 1 : 0), 0)
       return { total, created, updated: total - created }
-    })(),
-  )
+    })

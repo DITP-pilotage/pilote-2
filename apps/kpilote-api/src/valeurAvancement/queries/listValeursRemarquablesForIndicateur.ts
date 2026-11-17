@@ -7,7 +7,7 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { type Selection } from '@/axe/modalites'
-import { type ResoudreSelectionError, resoudreSelection } from '@/axe/resoudreSelection'
+import { type ResolveSelectionError, resolveSelection } from '@/axe/resolveSelection'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { formatBucket } from '@/framework/bucket'
 import { type Decimal } from '@/framework/decimal'
@@ -31,7 +31,7 @@ const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 export const listValeursRemarquablesForIndicateur = (
   indicateurPublicId: string,
   params: ListValeursRemarquablesForIndicateurQuery,
-): ResultAsync<ValeursRemarquablesListApiModel, ResoudreSelectionError> => {
+): ResultAsync<ValeursRemarquablesListApiModel, ResolveSelectionError> => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({
@@ -39,7 +39,7 @@ export const listValeursRemarquablesForIndicateur = (
       select: { id: true },
     }),
   ).andThen((indicateur) =>
-    resoudreSelection({
+    resolveSelection({
       indicateurId: indicateur.id,
       modalitePublicIds: params.modalites ?? [],
     }).andThen((selection) =>

@@ -1,7 +1,7 @@
 import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
-import { trouverCombinaisonVideId } from '@/axe/combinaison'
+import { getEmptyCombinaisonId } from '@/axe/combinaison'
 import { db } from '@/framework/persistence/dbStore'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -60,7 +60,7 @@ describe.concurrent('valeurs de plusieurs combinaisons sur une même cellule', (
 
       const valeurs = await valeursParCombinaison(indicateurId)
 
-      expect(valeurs.get(await trouverCombinaisonVideId())).toBe(10)
+      expect(valeurs.get(await getEmptyCombinaisonId())).toBe(10)
       expect(valeurs.get(orangeId)).toBe(3)
     }),
   )
@@ -96,7 +96,7 @@ describe.concurrent('valeurs de plusieurs combinaisons sur une même cellule', (
 
       expect(result.isOk()).toBe(true)
       const valeurs = await valeursParCombinaison(indicateurId)
-      expect(valeurs.get(await trouverCombinaisonVideId())).toBe(42)
+      expect(valeurs.get(await getEmptyCombinaisonId())).toBe(42)
       expect(valeurs.get(orangeId)).toBe(3)
     }),
   )

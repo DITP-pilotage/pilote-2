@@ -87,7 +87,7 @@ export const batchInvalidIssueApiModelSchema = z.object({
 })
 export type BatchInvalidIssueApiModel = z.infer<typeof batchInvalidIssueApiModelSchema>
 
-const indicesErreurSchema = z.array(z.number().int().nonnegative()).min(1)
+const errorIndicesSchema = z.array(z.number().int().nonnegative()).min(1)
 
 export const batchInvalidErrorEntryApiModelSchema = z.discriminatedUnion('code', [
   z.object({
@@ -126,29 +126,29 @@ export const batchInvalidErrorEntryApiModelSchema = z.discriminatedUnion('code',
   }),
   z.object({
     code: z.literal('MODALITE_INCONNUE'),
-    indices: indicesErreurSchema.describe('Tous les index où cette modalité apparaît.'),
+    indices: errorIndicesSchema.describe('Tous les index où cette modalité apparaît.'),
     modalite: modalitePublicIdSchema,
   }),
   z.object({
     code: z.literal('AXE_NON_DECLARE'),
-    indices: indicesErreurSchema.describe('Tous les index où cette modalité apparaît.'),
+    indices: errorIndicesSchema.describe('Tous les index où cette modalité apparaît.'),
     modalite: modalitePublicIdSchema.describe('Modalité d’un axe que l’indicateur ne déclare pas.'),
   }),
   z.object({
     code: z.literal('MODALITES_MEME_AXE'),
-    indices: indicesErreurSchema.describe(
+    indices: errorIndicesSchema.describe(
       'Les index des entrées qui citent plusieurs modalités de cet axe.',
     ),
     axe: axePublicIdSchema,
   }),
   z.object({
     code: z.literal('MODALITE_MANQUANTE'),
-    indices: indicesErreurSchema.describe('Les index des entrées sans modalité pour cet axe.'),
+    indices: errorIndicesSchema.describe('Les index des entrées sans modalité pour cet axe.'),
     axe: axePublicIdSchema,
   }),
   z.object({
     code: z.literal('MODALITE_NON_FEUILLE'),
-    indices: indicesErreurSchema.describe('Tous les index où cette modalité apparaît.'),
+    indices: errorIndicesSchema.describe('Tous les index où cette modalité apparaît.'),
     modalite: modalitePublicIdSchema.describe(
       'Modalité qui a des enfants : sa valeur se calcule, elle ne se saisit pas.',
     ),

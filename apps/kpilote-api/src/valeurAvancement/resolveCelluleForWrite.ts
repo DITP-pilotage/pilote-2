@@ -1,11 +1,11 @@
 import { ResultAsync } from 'neverthrow'
 
 import {
-  chargerContexteModalites,
-  type ModaliteDemandee,
+  loadModalitesContext,
+  type RequestedModalite,
   type SaisieModalitesError,
-  validerModalitesSaisie,
-} from '@/axe/modalitesDemandees'
+  validateSaisieModalites,
+} from '@/axe/requestedModalites'
 import { type IndividuInconnuError } from '@/individu/permission'
 import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
 
@@ -13,7 +13,7 @@ type CelluleForWrite = {
   indicateur: { id: string; publicId: string }
   individu: { id: string; publicId: string }
   // Une modalité feuille par axe déclaré, dans l'ordre des axes.
-  modalites: ModaliteDemandee[]
+  modalites: RequestedModalite[]
 }
 
 // Cible d'une écriture unitaire : l'individu (droits et rattachement à
@@ -30,9 +30,9 @@ export const resolveCelluleForWrite = ({
   resolveIndicateurAndIndividuForWriteData({ indicateurPublicId, individuPublicId }).andThen(
     ({ indicateur, individu }) =>
       ResultAsync.fromSafePromise(
-        chargerContexteModalites({ indicateurId: indicateur.id, modalitePublicIds }),
+        loadModalitesContext({ indicateurId: indicateur.id, modalitePublicIds }),
       ).andThen((contexte) =>
-        validerModalitesSaisie({ contexte, modalitePublicIds }).map((modalites) => ({
+        validateSaisieModalites({ contexte, modalitePublicIds }).map((modalites) => ({
           indicateur,
           individu,
           modalites,

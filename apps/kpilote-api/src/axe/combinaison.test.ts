@@ -1,27 +1,27 @@
 import { describe, expect, it } from 'vitest'
 
-import { cleDeModalites, trouverOuCreerCombinaisons } from '@/axe/combinaison'
+import { combinaisonKey, upsertCombinaisons } from '@/axe/combinaison'
 import { db } from '@/framework/persistence/dbStore'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testAxeId } from '@/test/randomIds'
 
-describe.concurrent('trouverOuCreerCombinaisons', () => {
+describe.concurrent('upsertCombinaisons', () => {
   it(
     'crée une combinaison une seule fois, quel que soit l’ordre des modalités',
     integrationTest(async () => {
       const orange = await fixtures.modalite({ niveau: { axe: { publicId: testAxeId() } } })
       const tva = await fixtures.modalite({ niveau: { axe: { publicId: testAxeId() } } })
 
-      const premier = await trouverOuCreerCombinaisons({ combinaisons: [[orange, tva]] })
-      const second = await trouverOuCreerCombinaisons({
+      const premier = await upsertCombinaisons({ combinaisons: [[orange, tva]] })
+      const second = await upsertCombinaisons({
         combinaisons: [
           [tva, orange],
           [orange, tva],
         ],
       })
 
-      const cle = cleDeModalites([orange, tva])
+      const cle = combinaisonKey({ modalites: [orange, tva] })
       expect(second).toEqual(premier)
       const combinaisons = await db().combinaison.findMany({
         where: { cle },
@@ -43,7 +43,7 @@ describe.concurrent('trouverOuCreerCombinaisons', () => {
   it(
     'retrouve la combinaison vide sans rien créer',
     integrationTest(async () => {
-      const idParCle = await trouverOuCreerCombinaisons({ combinaisons: [[]] })
+      const idParCle = await upsertCombinaisons({ combinaisons: [[]] })
 
       const vide = await db().combinaison.findUniqueOrThrow({ where: { cle: '' } })
       expect(idParCle).toEqual(new Map([['', vide.id]]))

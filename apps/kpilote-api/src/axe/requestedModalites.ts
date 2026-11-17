@@ -6,30 +6,30 @@ import { db } from '@/framework/persistence/dbStore'
 // confrontées aux axes que l'indicateur déclare. Le chargement est fait une
 // fois, pour une écriture comme pour un lot entier ; les contrôles sont purs.
 
-export type AxeDeclare = { id: string; publicId: string }
+export type DeclaredAxe = { id: string; publicId: string }
 
-export type ModaliteDemandee = {
+export type RequestedModalite = {
   id: string
   publicId: string
   axeId: string
   axePublicId: string
-  estFeuille: boolean
+  isLeaf: boolean
 }
 
-export type ContexteModalites = {
+export type ModalitesContext = {
   // Dans l'ordre de déclaration sur l'indicateur.
-  axesDeclares: ReadonlyArray<AxeDeclare>
+  axesDeclares: ReadonlyArray<DeclaredAxe>
   // Les modalités citées qui existent (toutes, pas seulement celles des axes déclarés).
-  modaliteParPublicId: ReadonlyMap<string, ModaliteDemandee>
+  modaliteParPublicId: ReadonlyMap<string, RequestedModalite>
 }
 
-export const chargerContexteModalites = async ({
+export const loadModalitesContext = async ({
   indicateurId,
   modalitePublicIds,
 }: {
   indicateurId: string
   modalitePublicIds: ReadonlyArray<string>
-}): Promise<ContexteModalites> => {
+}): Promise<ModalitesContext> => {
   const [declarations, modalites] = await Promise.all([
     db().indicateurAxe.findMany({
       where: { indicateurId },
@@ -53,14 +53,14 @@ export const chargerContexteModalites = async ({
           publicId: modalite.publicId,
           axeId: modalite.axeId,
           axePublicId: modalite.axe.publicId,
-          estFeuille: modalite._count.enfants === 0,
+          isLeaf: modalite._count.enfants === 0,
         },
       ]),
     ),
   }
 }
 
-export type LireModalitesError =
+export type ResolveModalitesError =
   | { type: 'MODALITE_INCONNUE'; modalites: string[] }
   | { type: 'AXE_NON_DECLARE'; modalites: string[] }
   | { type: 'MODALITES_MEME_AXE'; axe: string; modalites: string[] }
@@ -68,13 +68,13 @@ export type LireModalitesError =
 // Contrôles communs aux lectures et aux écritures : chaque modalité existe,
 // appartient à un axe déclaré, et au plus une modalité par axe. Renvoie la
 // modalité retenue pour chaque axe cité (axeId → modalité).
-export const lireModalites = ({
+export const resolveModalites = ({
   contexte,
   modalitePublicIds,
 }: {
-  contexte: ContexteModalites
+  contexte: ModalitesContext
   modalitePublicIds: ReadonlyArray<string>
-}): Result<Map<string, ModaliteDemandee>, LireModalitesError> => {
+}): Result<Map<string, RequestedModalite>, ResolveModalitesError> => {
   const demandees = [...new Set(modalitePublicIds)]
   const inconnues = demandees.filter((publicId) => !contexte.modaliteParPublicId.has(publicId))
   if (inconnues.length > 0) return err({ type: 'MODALITE_INCONNUE', modalites: inconnues.sort() })
@@ -86,7 +86,7 @@ export const lireModalites = ({
     return err({ type: 'AXE_NON_DECLARE', modalites: horsAxes.map((m) => m.publicId).sort() })
   }
 
-  const parAxe = new Map<string, ModaliteDemandee>()
+  const parAxe = new Map<string, RequestedModalite>()
   for (const modalite of modalites) {
     if (parAxe.has(modalite.axeId)) {
       const memeAxe = modalites.filter((m) => m.axeId === modalite.axeId).map((m) => m.publicId)
@@ -102,7 +102,7 @@ export const lireModalites = ({
 }
 
 export type SaisieModalitesError =
-  | LireModalitesError
+  | ResolveModalitesError
   | { type: 'MODALITE_MANQUANTE'; axes: string[] }
   | { type: 'MODALITE_NON_FEUILLE'; modalites: string[] }
 
@@ -110,20 +110,20 @@ export type SaisieModalitesError =
 // feuille par axe déclaré (aucune pour un indicateur sans axe). Les niveaux
 // parents et « Tous » se calculent, ils ne se saisissent pas (spec D9).
 // Renvoie les modalités dans l'ordre de déclaration des axes.
-export const validerModalitesSaisie = ({
+export const validateSaisieModalites = ({
   contexte,
   modalitePublicIds,
 }: {
-  contexte: ContexteModalites
+  contexte: ModalitesContext
   modalitePublicIds: ReadonlyArray<string>
-}): Result<ModaliteDemandee[], SaisieModalitesError> =>
-  lireModalites({ contexte, modalitePublicIds }).andThen(
-    (parAxe): Result<ModaliteDemandee[], SaisieModalitesError> => {
+}): Result<RequestedModalite[], SaisieModalitesError> =>
+  resolveModalites({ contexte, modalitePublicIds }).andThen(
+    (parAxe): Result<RequestedModalite[], SaisieModalitesError> => {
       const manquants = contexte.axesDeclares.filter((axe) => !parAxe.has(axe.id))
       if (manquants.length > 0) {
         return err({ type: 'MODALITE_MANQUANTE', axes: manquants.map((axe) => axe.publicId) })
       }
-      const nonFeuilles = [...parAxe.values()].filter((modalite) => !modalite.estFeuille)
+      const nonFeuilles = [...parAxe.values()].filter((modalite) => !modalite.isLeaf)
       if (nonFeuilles.length > 0) {
         return err({
           type: 'MODALITE_NON_FEUILLE',
@@ -134,7 +134,7 @@ export const validerModalitesSaisie = ({
     },
   )
 
-export const messageModalitesError = (error: SaisieModalitesError): string => {
+export const modalitesErrorMessage = (error: SaisieModalitesError): string => {
   switch (error.type) {
     case 'MODALITE_INCONNUE':
       return `Modalités inconnues : ${error.modalites.join(', ')}.`
