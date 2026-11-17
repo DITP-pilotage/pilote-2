@@ -1,10 +1,10 @@
 import { type ResultAsync } from 'neverthrow'
 
 import {
-  type CibleResolution,
-  resoudreLibelles,
-  type ResoudreLibellesError,
-} from '@/valeurImport/calls/resoudreLibelles'
+  type ResolutionTarget,
+  resolveLabels,
+  type ResolveLabelsError,
+} from '@/valeurImport/calls/resolveLabels'
 import { type IndividuPourImport } from '@/valeurImport/queries/listIndividusForIndicateur'
 
 export type ResolutionEntry = { libelleSource: string; individuPublicId: string }
@@ -14,9 +14,9 @@ export type ResolutionResult = {
   nonResolus: ReadonlyArray<ResolutionNonResolu>
 }
 
-export type ResoudreIndividusError = ResoudreLibellesError
+export type ResoudreIndividusError = ResolveLabelsError
 
-const CIBLE_INDIVIDUS: CibleResolution = {
+const INDIVIDUS_TARGET: ResolutionTarget = {
   systemPrompt:
     "Tu reçois une liste de libellés bruts (libellésSources) provenant d'une colonne d'un fichier " +
     'de données téléversé. Ces libellés font référence à des individus connus (territoires, entités).\n' +
@@ -30,18 +30,18 @@ const CIBLE_INDIVIDUS: CibleResolution = {
     '\n' +
     "Quand tu as terminé, appelle l'outil `enregistrerMapping` avec ta proposition.\n" +
     "Si l'outil te signale des erreurs, corrige et rappelle-le.",
-  champPublicId: 'individuPublicId',
-  descriptionLibelle:
+  publicIdField: 'individuPublicId',
+  labelDescription:
     "Libellé tel qu'apparu dans la colonne individu du fichier (recopie EXACTE, " +
     'pas de reformulation).',
-  descriptionPublicId:
+  publicIdDescription:
     "publicId d'un individu présent dans la liste fournie. " +
     'Ne JAMAIS inventer un publicId — utilise uniquement ceux fournis en contexte.',
-  descriptionMapping:
+  mappingDescription:
     'Liste des libellés que tu as su rattacher avec confiance à un individu connu. ' +
     'Un même libellé ne doit pas apparaître plusieurs fois.',
-  evenementLog: 'importPoc.resoudreIndividus',
-  libelleLog: 'Albert call 2 (résolution)',
+  logEvent: 'importPoc.resoudreIndividus',
+  logLabel: 'Albert call 2 (résolution)',
 }
 
 export const resoudreIndividus = ({
@@ -69,12 +69,12 @@ export const resoudreIndividus = ({
     JSON.stringify([...libellesSources], null, 2),
   ].join('\n')
 
-  return resoudreLibelles({
-    cible: CIBLE_INDIVIDUS,
+  return resolveLabels({
+    cible: INDIVIDUS_TARGET,
     prompt,
     publicIdsValides: new Set(individusValides.map((individu) => individu.publicId)),
     libellesSources,
-    contexteLog: {
+    logContext: {
       indicateurNom: indicateur.nom,
       nbIndividusValides: individusValides.length,
       nbLibellesSources: libellesSources.length,

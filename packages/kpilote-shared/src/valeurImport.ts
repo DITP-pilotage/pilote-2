@@ -10,7 +10,7 @@ const colonneDateSchema = z.object({
 const colonneTypeValeurSchema = z.object({ nom: z.string() })
 
 // Indicateur à axes seulement : la colonne qui porte les modalités de chaque axe.
-const colonnesAxesSchema = z.array(z.object({ colonne: z.string(), axe: axePublicIdSchema }))
+const axeColumnsSchema = z.array(z.object({ colonne: z.string(), axe: axePublicIdSchema }))
 
 const planLongSchema = z.object({
   layout: z.literal('long'),
@@ -18,7 +18,7 @@ const planLongSchema = z.object({
   colonneDate: colonneDateSchema,
   colonneValeur: z.string(),
   colonneTypeValeur: colonneTypeValeurSchema.optional(),
-  colonnesAxes: colonnesAxesSchema.optional(),
+  colonnesAxes: axeColumnsSchema.optional(),
 })
 
 const planPivotSchema = z.object({
@@ -26,7 +26,7 @@ const planPivotSchema = z.object({
   colonneIndividu: z.string(),
   colonnesPivot: z.array(z.object({ nom: z.string(), dateIso: z.string() })).min(1),
   colonneTypeValeur: colonneTypeValeurSchema.optional(),
-  colonnesAxes: colonnesAxesSchema.optional(),
+  colonnesAxes: axeColumnsSchema.optional(),
 })
 
 export const normaliserPlanSchema = z.discriminatedUnion('layout', [
@@ -64,11 +64,11 @@ export const normaliserWarningSchema = z.object({
 })
 export type NormaliserWarning = z.infer<typeof normaliserWarningSchema>
 
-const nonResolusSchema = z.array(z.object({ libelleSource: z.string(), raison: z.string() }))
+const unresolvedLabelsSchema = z.array(z.object({ libelleSource: z.string(), raison: z.string() }))
 
 const resolutionApiSchema = z.object({
   mapping: z.array(z.object({ libelleSource: z.string(), individuPublicId: z.string() })),
-  nonResolus: nonResolusSchema,
+  nonResolus: unresolvedLabelsSchema,
   // Indicateur à axes seulement : la résolution de chaque colonne d'axe retenue.
   colonnesAxes: z
     .array(
@@ -76,7 +76,7 @@ const resolutionApiSchema = z.object({
         colonne: z.string(),
         axe: axePublicIdSchema,
         mapping: z.array(z.object({ libelleSource: z.string(), modalitePublicId: z.string() })),
-        nonResolus: nonResolusSchema,
+        nonResolus: unresolvedLabelsSchema,
       }),
     )
     .optional(),

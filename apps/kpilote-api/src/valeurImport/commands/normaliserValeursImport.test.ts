@@ -14,7 +14,7 @@ import {
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { decouvrirStructure, type Plan } from '@/valeurImport/calls/decouvrirStructure'
 import { resoudreIndividus } from '@/valeurImport/calls/resoudreIndividus'
-import { resoudreLibelles } from '@/valeurImport/calls/resoudreLibelles'
+import { resolveLabels } from '@/valeurImport/calls/resolveLabels'
 import { normaliserValeursImport } from '@/valeurImport/commands/normaliserValeursImport'
 
 // Albert est remplacé par des doublures déterministes, partagées par les tests
@@ -31,9 +31,9 @@ vi.mock('@/valeurImport/calls/resoudreIndividus', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/valeurImport/calls/resoudreIndividus')>()),
   resoudreIndividus: vi.fn(),
 }))
-vi.mock('@/valeurImport/calls/resoudreLibelles', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@/valeurImport/calls/resoudreLibelles')>()),
-  resoudreLibelles: vi.fn(),
+vi.mock('@/valeurImport/calls/resolveLabels', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/valeurImport/calls/resolveLabels')>()),
+  resolveLabels: vi.fn(),
 }))
 
 const planLong = (colonnesAxes?: Plan['colonnesAxes']): Plan => ({
@@ -46,7 +46,7 @@ const planLong = (colonnesAxes?: Plan['colonnesAxes']): Plan => ({
 
 beforeEach(() => {
   vi.mocked(decouvrirStructure).mockReset()
-  vi.mocked(resoudreLibelles).mockReset()
+  vi.mocked(resolveLabels).mockReset()
   vi.mocked(resoudreIndividus).mockImplementation(({ individusValides, libellesSources }) => {
     const parNom = new Map(individusValides.map((individu) => [individu.nom, individu.publicId]))
     return okAsync({
@@ -58,7 +58,7 @@ beforeEach(() => {
         .map((libelle) => ({ libelleSource: libelle, raison: 'Inconnu.' })),
     })
   })
-  vi.mocked(resoudreLibelles).mockImplementation(({ libellesSources }) =>
+  vi.mocked(resolveLabels).mockImplementation(({ libellesSources }) =>
     okAsync({
       mapping: [],
       nonResolus: libellesSources.map((libelle) => ({
@@ -71,7 +71,7 @@ beforeEach(() => {
 
 // Deux individus, dont une commune nommée « Orange » ; deux axes :
 // Opérateur (Orange, SFR) puis Type de fraude (Fiscale > TVA, IR).
-const indicateurADeuxAxes = async () => {
+const indicateurWithTwoAxes = async () => {
   const indicateurId = testIndicateurId()
   const referentiel = { publicId: testReferentielId() }
   const [communeOrange, ain] = testDeptIds(2)
@@ -123,7 +123,7 @@ describe('normaliserValeursImport — indicateur à axes', { concurrent: false }
   it(
     'layout long : résout chaque colonne contre les modalités de son axe, et écarte les lignes incomplètes',
     integrationTest(async () => {
-      const { indicateurId, communeOrange, ain, apiKey, axes, ids } = await indicateurADeuxAxes()
+      const { indicateurId, communeOrange, ain, apiKey, axes, ids } = await indicateurWithTwoAxes()
       vi.mocked(decouvrirStructure).mockImplementation(() =>
         okAsync(
           planLong([
@@ -168,7 +168,7 @@ describe('normaliserValeursImport — indicateur à axes', { concurrent: false }
       // Albert ne voit que les libellés que la correspondance exacte n'a pas
       // rattachés, et seulement les modalités feuilles de l'axe de la colonne.
       expect(
-        vi.mocked(resoudreLibelles).mock.calls.map(([params]) => ({
+        vi.mocked(resolveLabels).mock.calls.map(([params]) => ({
           libelles: params.libellesSources,
           candidats: [...params.publicIdsValides].sort(),
         })),
@@ -204,7 +204,7 @@ describe('normaliserValeursImport — indicateur à axes', { concurrent: false }
   it(
     'layout pivot : les modalités de la ligne valent pour chaque date',
     integrationTest(async () => {
-      const { indicateurId, ain, apiKey, axes, ids } = await indicateurADeuxAxes()
+      const { indicateurId, ain, apiKey, axes, ids } = await indicateurWithTwoAxes()
       vi.mocked(decouvrirStructure).mockImplementation(() =>
         okAsync({
           layout: 'pivot',
@@ -229,14 +229,14 @@ describe('normaliserValeursImport — indicateur à axes', { concurrent: false }
         { individu: ain, modalites: [ids.sfr, ids.tva], date: '2023-01-01', valeur: 7 },
         { individu: ain, modalites: [ids.sfr, ids.tva], date: '2024-01-01', valeur: 8 },
       ])
-      expect(resoudreLibelles).not.toHaveBeenCalled()
+      expect(resolveLabels).not.toHaveBeenCalled()
     }),
   )
 
   it(
     'n’importe rien quand un axe n’a pas de colonne dans le fichier',
     integrationTest(async () => {
-      const { indicateurId, apiKey, axes } = await indicateurADeuxAxes()
+      const { indicateurId, apiKey, axes } = await indicateurWithTwoAxes()
       vi.mocked(decouvrirStructure).mockImplementation(() =>
         okAsync(planLong([{ colonne: 'operateur', axe: axes.operateur.publicId }])),
       )
@@ -289,7 +289,7 @@ describe('normaliserValeursImport — indicateur sans axe', { concurrent: false 
           totalLibellesNonResolus: 0,
         },
       })
-      expect(resoudreLibelles).not.toHaveBeenCalled()
+      expect(resolveLabels).not.toHaveBeenCalled()
     }),
   )
 })

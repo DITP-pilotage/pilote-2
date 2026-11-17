@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
 import { type Plan } from '@/valeurImport/calls/decouvrirStructure'
-import { rapprocherModalites, retenirColonnesAxes } from '@/valeurImport/colonnesAxes'
-import { type AxePourImport } from '@/valeurImport/queries/listAxesForIndicateur'
+import { matchModalites, selectAxeColumns } from '@/valeurImport/axeColumns'
+import { type AxeForImport } from '@/valeurImport/queries/listAxesForIndicateur'
 
-const operateur: AxePourImport = {
+const operateur: AxeForImport = {
   publicId: 'AXE-OPERATEUR',
   nom: 'Opérateur',
   modalitesFeuilles: [
@@ -12,7 +12,7 @@ const operateur: AxePourImport = {
     { publicId: 'OP-SFR', nom: 'SFR' },
   ],
 }
-const fraude: AxePourImport = {
+const fraude: AxeForImport = {
   publicId: 'AXE-FRAUDE',
   nom: 'Type de fraude',
   modalitesFeuilles: [{ publicId: 'FR-TVA', nom: 'TVA' }],
@@ -28,9 +28,9 @@ const plan = (colonnesAxes: NonNullable<Plan['colonnesAxes']>): Plan => ({
 
 const headers = ['territoire', 'operateur', 'fraude', 'date', 'valeur']
 
-describe('retenirColonnesAxes', () => {
+describe('selectAxeColumns', () => {
   it('retient une colonne par axe, dans l’ordre des axes', () => {
-    const { colonnes, warnings } = retenirColonnesAxes({
+    const { colonnes, warnings } = selectAxeColumns({
       plan: plan([
         { colonne: 'fraude', axe: 'AXE-FRAUDE' },
         { colonne: 'operateur', axe: 'AXE-OPERATEUR' },
@@ -47,7 +47,7 @@ describe('retenirColonnesAxes', () => {
   })
 
   it('écarte une colonne absente, de structure ou en double, et signale l’axe non couvert', () => {
-    const { colonnes, warnings } = retenirColonnesAxes({
+    const { colonnes, warnings } = selectAxeColumns({
       plan: plan([
         { colonne: 'inexistante', axe: 'AXE-FRAUDE' },
         { colonne: 'territoire', axe: 'AXE-FRAUDE' },
@@ -69,9 +69,9 @@ describe('retenirColonnesAxes', () => {
   })
 })
 
-describe('rapprocherModalites', () => {
+describe('matchModalites', () => {
   it('rattache par publicId ou par nom, sans tenir compte de la casse ni des accents', () => {
-    const { mapping, restants } = rapprocherModalites({
+    const { mapping, restants } = matchModalites({
       libelles: ['op-orange', ' sfr ', 'Électricité', 'Bouygues'],
       modalites: [...operateur.modalitesFeuilles, { publicId: 'OP-EDF', nom: 'Electricite' }],
     })
@@ -85,7 +85,7 @@ describe('rapprocherModalites', () => {
   })
 
   it('laisse à Albert un libellé qui désigne plusieurs modalités', () => {
-    const { mapping, restants } = rapprocherModalites({
+    const { mapping, restants } = matchModalites({
       libelles: ['Orange'],
       modalites: [
         { publicId: 'OP-ORANGE', nom: 'Orange' },

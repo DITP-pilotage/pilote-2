@@ -13,11 +13,11 @@ import { createAlbertModel, STRUCTURED_TEMPERATURE } from '@/framework/llm/alber
 
 const MAX_STEPS = 3
 
-export type LibelleResolu = { libelleSource: string; publicId: string }
-export type LibelleNonResolu = { libelleSource: string; raison: string }
-export type ResolutionLibelles = {
-  mapping: ReadonlyArray<LibelleResolu>
-  nonResolus: ReadonlyArray<LibelleNonResolu>
+export type ResolvedLabel = { libelleSource: string; publicId: string }
+export type UnresolvedLabel = { libelleSource: string; raison: string }
+export type LabelResolution = {
+  mapping: ReadonlyArray<ResolvedLabel>
+  nonResolus: ReadonlyArray<UnresolvedLabel>
 }
 
 export type ToolValidationError = {
@@ -26,34 +26,34 @@ export type ToolValidationError = {
   libellesEnDoublon: string[]
 }
 
-export type ResoudreLibellesError = {
+export type ResolveLabelsError = {
   type: 'RESOLUTION_ECHEC'
   derniereErreur: ToolValidationError | null
 }
 
 // Ce qui distingue une résolution d'une autre : les textes vus par Albert, le
 // nom du champ d'identifiant dans l'outil et le préfixe des événements de log.
-export type CibleResolution = {
+export type ResolutionTarget = {
   systemPrompt: string
-  champPublicId: string
-  descriptionLibelle: string
-  descriptionPublicId: string
-  descriptionMapping: string
-  evenementLog: string
-  libelleLog: string
+  publicIdField: string
+  labelDescription: string
+  publicIdDescription: string
+  mappingDescription: string
+  logEvent: string
+  logLabel: string
 }
 
 // Entrée du mapping telle qu'Albert la renvoie : le libellé et le publicId,
 // sous le nom de champ propre à la cible (`individuPublicId`, `modalitePublicId`).
-type EntreeMapping = { libelleSource: string } & Record<string, string>
-type ToolInput = { mapping: EntreeMapping[]; nonResolus: LibelleNonResolu[] }
+type MappingEntry = { libelleSource: string } & Record<string, string>
+type ToolInput = { mapping: MappingEntry[]; nonResolus: UnresolvedLabel[] }
 
 const makeResolutionToolSchema = ({
   cible,
   publicIdsValides,
   libellesSources,
 }: {
-  cible: CibleResolution
+  cible: ResolutionTarget
   publicIdsValides: ReadonlySet<string>
   libellesSources: ReadonlyArray<string>
 }) => {
@@ -61,14 +61,14 @@ const makeResolutionToolSchema = ({
 
   const libelleSourceSchema = z
     .string()
-    .describe(cible.descriptionLibelle)
+    .describe(cible.labelDescription)
     .refine((value) => libellesSet.has(value), {
       message: "libelleSource doit être l'un de ceux fournis en input (recopie exacte requise).",
     })
 
   const publicIdSchema = z
     .string()
-    .describe(cible.descriptionPublicId)
+    .describe(cible.publicIdDescription)
     .refine((value) => publicIdsValides.has(value), {
       message: 'publicId inconnu — doit appartenir à la liste fournie.',
     })
@@ -79,10 +79,10 @@ const makeResolutionToolSchema = ({
       .array(
         z.object({
           libelleSource: libelleSourceSchema,
-          [cible.champPublicId]: publicIdSchema,
+          [cible.publicIdField]: publicIdSchema,
         }),
       )
-      .describe(cible.descriptionMapping),
+      .describe(cible.mappingDescription),
     nonResolus: z
       .array(
         z.object({
@@ -102,13 +102,13 @@ const makeResolutionToolSchema = ({
   }) as unknown as z.ZodType<ToolInput>
 }
 
-const validerCouverture = ({
+const validateCoverage = ({
   mapping,
   nonResolus,
   libellesSources,
 }: {
   mapping: ReadonlyArray<{ libelleSource: string }>
-  nonResolus: ReadonlyArray<LibelleNonResolu>
+  nonResolus: ReadonlyArray<UnresolvedLabel>
   libellesSources: ReadonlyArray<string>
 }): ToolValidationError | null => {
   const couverts = new Set<string>()
@@ -130,19 +130,19 @@ const validerCouverture = ({
   }
 }
 
-export const resoudreLibelles = ({
+export const resolveLabels = ({
   cible,
   prompt,
   publicIdsValides,
   libellesSources,
-  contexteLog,
+  logContext,
 }: {
-  cible: CibleResolution
+  cible: ResolutionTarget
   prompt: string
   publicIdsValides: ReadonlySet<string>
   libellesSources: ReadonlyArray<string>
-  contexteLog: Record<string, unknown>
-}): ResultAsync<ResolutionLibelles, ResoudreLibellesError> => {
+  logContext: Record<string, unknown>
+}): ResultAsync<LabelResolution, ResolveLabelsError> => {
   const model = createAlbertModel()
 
   // Court-circuit : aucun libellé à résoudre.
@@ -152,15 +152,12 @@ export const resoudreLibelles = ({
 
   const inputSchema = makeResolutionToolSchema({ cible, publicIdsValides, libellesSources })
 
-  let derniereTentative: ResolutionLibelles | null = null
+  let derniereTentative: LabelResolution | null = null
   let derniereErreur: ToolValidationError | null = null
   let nbAppelsTool = 0
 
   const elapsed = startTimer()
-  logger.info(
-    { event: `${cible.evenementLog}.start`, ...contexteLog },
-    `${cible.libelleLog} — début`,
-  )
+  logger.info({ event: `${cible.logEvent}.start`, ...logContext }, `${cible.logLabel} — début`)
 
   return ResultAsync.fromSafePromise(
     generateText({
@@ -176,12 +173,12 @@ export const resoudreLibelles = ({
           // eslint-disable-next-line @typescript-eslint/require-await -- l'AI SDK attend une fonction async
           execute: async ({ mapping, nonResolus }) => {
             nbAppelsTool += 1
-            const erreurs = validerCouverture({ mapping, nonResolus, libellesSources })
+            const erreurs = validateCoverage({ mapping, nonResolus, libellesSources })
             if (erreurs) {
               derniereErreur = erreurs
               logger.info(
                 {
-                  event: `${cible.evenementLog}.toolCall`,
+                  event: `${cible.logEvent}.toolCall`,
                   tentative: nbAppelsTool,
                   ok: false,
                   nbMappes: mapping.length,
@@ -202,14 +199,14 @@ export const resoudreLibelles = ({
             derniereTentative = {
               mapping: mapping.map((entree) => ({
                 libelleSource: entree.libelleSource,
-                publicId: entree[cible.champPublicId]!,
+                publicId: entree[cible.publicIdField]!,
               })),
               nonResolus,
             }
             derniereErreur = null
             logger.info(
               {
-                event: `${cible.evenementLog}.toolCall`,
+                event: `${cible.logEvent}.toolCall`,
                 tentative: nbAppelsTool,
                 ok: true,
                 nbMappes: mapping.length,
@@ -227,7 +224,7 @@ export const resoudreLibelles = ({
       const durationMs = elapsed()
       logger.info(
         {
-          event: `${cible.evenementLog}.done`,
+          event: `${cible.logEvent}.done`,
           durationMs,
           nbAppelsTool,
           nbSteps: result.steps.length,
@@ -241,11 +238,11 @@ export const resoudreLibelles = ({
               }
             : {}),
         },
-        `${cible.libelleLog} — fin`,
+        `${cible.logLabel} — fin`,
       )
       return derniereTentative
     }),
-  ).andThen((tentative): Result<ResolutionLibelles, ResoudreLibellesError> =>
+  ).andThen((tentative): Result<LabelResolution, ResolveLabelsError> =>
     tentative ? ok(tentative) : err({ type: 'RESOLUTION_ECHEC', derniereErreur }),
   )
 }

@@ -3,7 +3,7 @@ import { okAsync, ResultAsync } from 'neverthrow'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import {
   appliquerPlan,
-  type AxeApplication,
+  type AxeColumn,
   type ItemNormalise,
   type ResultatApplication,
   type WarningApplication,
@@ -14,19 +14,19 @@ import {
   type ResolutionEntry,
   type ResolutionNonResolu,
 } from '@/valeurImport/calls/resoudreIndividus'
-import { resoudreModalites } from '@/valeurImport/calls/resoudreModalites'
+import { resolveColumnModalites } from '@/valeurImport/calls/resolveColumnModalites'
 import { resoudreTypeValeur } from '@/valeurImport/calls/resoudreTypeValeur'
-import { retenirColonnesAxes } from '@/valeurImport/colonnesAxes'
+import { selectAxeColumns } from '@/valeurImport/axeColumns'
 import { collecterValeursDistinctes } from '@/valeurImport/helpers/collecterValeursDistinctes'
 import { resoudreColonneTypeValeur } from '@/valeurImport/helpers/resoudreColonneTypeValeur'
 import { safeStringify } from '@/valeurImport/helpers/safeStringify'
 import {
-  type AxePourImport,
+  type AxeForImport,
   listAxesForIndicateur,
 } from '@/valeurImport/queries/listAxesForIndicateur'
 import { listIndividusForIndicateur } from '@/valeurImport/queries/listIndividusForIndicateur'
 
-export type ResolutionColonneAxe = {
+export type AxeColumnResolution = {
   colonne: string
   axe: string
   mapping: Array<{ libelleSource: string; modalitePublicId: string }>
@@ -39,7 +39,7 @@ export type NormaliserValeursImportResult = {
     mapping: ResolutionEntry[]
     nonResolus: ResolutionNonResolu[]
     // Indicateur à axes seulement.
-    colonnesAxes?: ResolutionColonneAxe[]
+    colonnesAxes?: AxeColumnResolution[]
   }
   items: ItemNormalise[]
   warnings: WarningApplication[]
@@ -114,9 +114,9 @@ const resoudreEtapeTypeValeur = ({
   }))
 }
 
-type ResolutionAxes = {
+type AxesResolution = {
   // Une entrée par axe couvert par une colonne du fichier, dans l'ordre des axes.
-  axes: AxeApplication[]
+  axes: AxeColumn[]
   // Tous les axes de l'indicateur ont une colonne : sinon aucune ligne n'est complète.
   complet: boolean
   warnings: WarningApplication[]
@@ -124,7 +124,7 @@ type ResolutionAxes = {
 
 // Indicateur à axes : retient la colonne de chaque axe proposée par Albert, puis
 // résout ses libellés contre les modalités de cet axe.
-const resoudreEtapeAxes = ({
+const resolveAxesStep = ({
   indicateur,
   plan,
   rows,
@@ -135,18 +135,18 @@ const resoudreEtapeAxes = ({
   plan: Plan
   rows: Array<Record<string, unknown>>
   headers: string[]
-  axes: ReadonlyArray<AxePourImport>
-}): ResultAsync<ResolutionAxes, NormaliserValeursImportError> => {
+  axes: ReadonlyArray<AxeForImport>
+}): ResultAsync<AxesResolution, NormaliserValeursImportError> => {
   if (axes.length === 0) return okAsync({ axes: [], complet: true, warnings: [] })
-  const { colonnes, warnings } = retenirColonnesAxes({ plan, headers, axes })
+  const { colonnes, warnings } = selectAxeColumns({ plan, headers, axes })
   return ResultAsync.combine(
     colonnes.map(({ colonne, axe }) =>
-      resoudreModalites({
+      resolveColumnModalites({
         indicateur,
         axe,
         colonne,
         libellesSources: extraireLibellesSources(rows, colonne),
-      }).map((resolution): AxeApplication => ({
+      }).map((resolution): AxeColumn => ({
         colonne,
         axe: { publicId: axe.publicId, nom: axe.nom },
         modalitesValides: new Set(axe.modalitesFeuilles.map((modalite) => modalite.publicId)),
@@ -160,7 +160,7 @@ const resoudreEtapeAxes = ({
   }))
 }
 
-const versResolutionColonneAxe = (axe: AxeApplication): ResolutionColonneAxe => ({
+const toAxeColumnResolution = (axe: AxeColumn): AxeColumnResolution => ({
   colonne: axe.colonne,
   axe: axe.axe.publicId,
   mapping: axe.resolution.mapping.map(({ libelleSource, publicId }) => ({
@@ -198,7 +198,7 @@ export const normaliserValeursImport = (
             individusValides: individus,
             libellesSources,
           }).andThen((resolution) =>
-            resoudreEtapeAxes({
+            resolveAxesStep({
               indicateur: { nom: indicateur.nom },
               plan,
               rows,
@@ -221,7 +221,7 @@ export const normaliserValeursImport = (
                   mapping: [...resolution.mapping],
                   nonResolus: [...resolution.nonResolus],
                   ...(axes.length > 0
-                    ? { colonnesAxes: resolutionAxes.axes.map(versResolutionColonneAxe) }
+                    ? { colonnesAxes: resolutionAxes.axes.map(toAxeColumnResolution) }
                     : {}),
                 },
                 items: application.items,

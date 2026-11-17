@@ -1,6 +1,6 @@
 import { type Plan, type PlanLong, type PlanPivot } from '@/valeurImport/calls/decouvrirStructure'
 import { type ResolutionResult } from '@/valeurImport/calls/resoudreIndividus'
-import { type ResolutionLibelles } from '@/valeurImport/calls/resoudreLibelles'
+import { type LabelResolution } from '@/valeurImport/calls/resolveLabels'
 import { safeStringify } from '@/valeurImport/helpers/safeStringify'
 import { parseFrLibre } from '@/valeurImport/parsers/parseFrLibre'
 import { parseNombre } from '@/valeurImport/parsers/parseNombre'
@@ -9,11 +9,11 @@ import { parseNombre } from '@/valeurImport/parsers/parseNombre'
 export type ItemNormalise = { individu: string; modalites?: string[]; date: string; valeur: number }
 
 // Colonne d'axe retenue dans le fichier, avec la résolution de ses libellés.
-export type AxeApplication = {
+export type AxeColumn = {
   colonne: string
   axe: { publicId: string; nom: string }
   modalitesValides: ReadonlySet<string>
-  resolution: ResolutionLibelles
+  resolution: LabelResolution
 }
 
 export type WarningApplication = {
@@ -93,7 +93,7 @@ const warnIndividuNonResolu = ({
   ligneSource: ligne,
 })
 
-const warnModaliteNonResolue = ({
+const warnUnresolvedModalite = ({
   libelle,
   ligne,
   colonne,
@@ -111,7 +111,7 @@ const warnModaliteNonResolue = ({
   colonneSource: colonne,
 })
 
-const warnLignePartielle = ({
+const warnPartialRow = ({
   index,
   colonne,
   axe,
@@ -201,7 +201,7 @@ export const appliquerPlan = ({
   individusValides: ReadonlyArray<{ publicId: string }>
   typeValeur: { colonne: string; typesValeurRetenus: ReadonlyArray<string> } | null
   // Une entrée par axe de l'indicateur (vide sans axe).
-  axes?: ReadonlyArray<AxeApplication>
+  axes?: ReadonlyArray<AxeColumn>
 }): ResultatApplication => {
   const items: ItemNormalise[] = []
   const warnings: WarningApplication[] = []
@@ -289,12 +289,12 @@ export const appliquerPlan = ({
 
   // Les modalités d'une ligne, une par axe ; null si l'une manque ou n'est pas
   // résolue (la ligne est écartée).
-  const modalitesDeLigne = (row: Record<string, unknown>, index: number): string[] | null => {
+  const rowModalites = (row: Record<string, unknown>, index: number): string[] | null => {
     const modalites: string[] = []
     for (const axe of axes) {
       const libelle = safeStringify(row[axe.colonne]).trim()
       if (!libelle) {
-        warnings.push(warnLignePartielle({ index, colonne: axe.colonne, axe: axe.axe.nom }))
+        warnings.push(warnPartialRow({ index, colonne: axe.colonne, axe: axe.axe.nom }))
         return null
       }
       const publicId = modaliteParColonneEtLibelle.get(axe.colonne)?.get(libelle)
@@ -306,7 +306,7 @@ export const appliquerPlan = ({
             raisonNonResoluParColonne.get(axe.colonne)?.get(libelle) ??
             `Aucune modalité de l'axe « ${axe.axe.nom} » ne correspond.`
           warnings.push(
-            warnModaliteNonResolue({ libelle, ligne: index, colonne: axe.colonne, raison }),
+            warnUnresolvedModalite({ libelle, ligne: index, colonne: axe.colonne, raison }),
           )
         }
         return null
@@ -315,7 +315,7 @@ export const appliquerPlan = ({
     }
     return modalites
   }
-  const avecModalites = (modalites: string[]) => (modalites.length > 0 ? { modalites } : {})
+  const withModalites = (modalites: string[]) => (modalites.length > 0 ? { modalites } : {})
 
   const appliquerLong = (planLong: PlanLong): void => {
     for (const [index, row] of rows.entries()) {
@@ -327,7 +327,7 @@ export const appliquerPlan = ({
       }
       const { individu } = signalerLibelleNonResolu(libelle, index)
       if (!individu) continue
-      const modalites = modalitesDeLigne(row, index)
+      const modalites = rowModalites(row, index)
       if (!modalites) continue
 
       const date = parseFrLibre(row[planLong.colonneDate.nom])
@@ -357,7 +357,7 @@ export const appliquerPlan = ({
         continue
       }
 
-      items.push({ individu, ...avecModalites(modalites), date, valeur: valeurResult.valeur })
+      items.push({ individu, ...withModalites(modalites), date, valeur: valeurResult.valeur })
     }
   }
 
@@ -381,7 +381,7 @@ export const appliquerPlan = ({
       }
       const { individu } = signalerLibelleNonResolu(libelle, index)
       if (!individu) continue
-      const modalites = modalitesDeLigne(row, index)
+      const modalites = rowModalites(row, index)
       if (!modalites) continue
 
       for (const colonnePivot of planPivot.colonnesPivot) {
@@ -409,7 +409,7 @@ export const appliquerPlan = ({
         }
         items.push({
           individu,
-          ...avecModalites(modalites),
+          ...withModalites(modalites),
           date: dateParColonne.get(colonnePivot.nom)!,
           valeur: valeurResult.valeur,
         })

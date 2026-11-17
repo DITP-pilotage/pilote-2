@@ -1,12 +1,12 @@
 import { type WarningApplication } from '@/valeurImport/appliquerPlan'
 import { type Plan } from '@/valeurImport/calls/decouvrirStructure'
-import { type LibelleResolu } from '@/valeurImport/calls/resoudreLibelles'
-import { type AxePourImport } from '@/valeurImport/queries/listAxesForIndicateur'
+import { type ResolvedLabel } from '@/valeurImport/calls/resolveLabels'
+import { type AxeForImport } from '@/valeurImport/queries/listAxesForIndicateur'
 
-export type ColonneAxeRetenue = { colonne: string; axe: AxePourImport }
+export type SelectedAxeColumn = { colonne: string; axe: AxeForImport }
 
 // Colonnes de structure du plan : elles ne peuvent pas porter un axe.
-const colonnesDeStructure = (plan: Plan): Set<string> =>
+const structureColumns = (plan: Plan): Set<string> =>
   new Set([
     plan.colonneIndividu,
     ...(plan.layout === 'long'
@@ -19,18 +19,18 @@ const colonnesDeStructure = (plan: Plan): Set<string> =>
 // dans le fichier et ne sont pas des colonnes de structure, au plus une par
 // axe. Renvoie une colonne par axe couvert, dans l'ordre des axes, et un
 // avertissement par colonne écartée et par axe sans colonne.
-export const retenirColonnesAxes = ({
+export const selectAxeColumns = ({
   plan,
   headers,
   axes,
 }: {
   plan: Plan
   headers: ReadonlyArray<string>
-  axes: ReadonlyArray<AxePourImport>
-}): { colonnes: ColonneAxeRetenue[]; warnings: WarningApplication[] } => {
+  axes: ReadonlyArray<AxeForImport>
+}): { colonnes: SelectedAxeColumn[]; warnings: WarningApplication[] } => {
   const warnings: WarningApplication[] = []
   const headersSet = new Set(headers)
-  const structure = colonnesDeStructure(plan)
+  const structure = structureColumns(plan)
   const colonneParAxe = new Map<string, string>()
 
   for (const { colonne, axe } of plan.colonnesAxes ?? []) {
@@ -54,7 +54,7 @@ export const retenirColonnesAxes = ({
     colonneParAxe.set(axe, colonne)
   }
 
-  const colonnes: ColonneAxeRetenue[] = []
+  const colonnes: SelectedAxeColumn[] = []
   for (const axe of axes) {
     const colonne = colonneParAxe.get(axe.publicId)
     if (colonne === undefined) {
@@ -72,7 +72,7 @@ export const retenirColonnesAxes = ({
 }
 
 // Libellé comparable : sans accents, en minuscules, ponctuation réduite à des espaces.
-const normaliser = (libelle: string): string =>
+const normalizeLabel = (libelle: string): string =>
   libelle
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '')
@@ -82,23 +82,23 @@ const normaliser = (libelle: string): string =>
 
 // Rattache sans Albert les libellés qui désignent sans ambiguïté une modalité
 // feuille de l'axe, par son publicId ou son nom. Les autres restent à résoudre.
-export const rapprocherModalites = ({
+export const matchModalites = ({
   libelles,
   modalites,
 }: {
   libelles: ReadonlyArray<string>
   modalites: ReadonlyArray<{ publicId: string; nom: string }>
-}): { mapping: LibelleResolu[]; restants: string[] } => {
+}): { mapping: ResolvedLabel[]; restants: string[] } => {
   const candidats = new Map<string, Set<string>>()
   for (const modalite of modalites) {
-    for (const cle of [normaliser(modalite.publicId), normaliser(modalite.nom)]) {
+    for (const cle of [normalizeLabel(modalite.publicId), normalizeLabel(modalite.nom)]) {
       candidats.set(cle, (candidats.get(cle) ?? new Set()).add(modalite.publicId))
     }
   }
-  const mapping: LibelleResolu[] = []
+  const mapping: ResolvedLabel[] = []
   const restants: string[] = []
   for (const libelle of libelles) {
-    const trouves = candidats.get(normaliser(libelle))
+    const trouves = candidats.get(normalizeLabel(libelle))
     if (trouves?.size === 1) mapping.push({ libelleSource: libelle, publicId: [...trouves][0]! })
     else restants.push(libelle)
   }

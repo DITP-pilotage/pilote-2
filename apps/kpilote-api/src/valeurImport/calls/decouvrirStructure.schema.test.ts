@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   decouverteOutputSchema,
-  makeDecouverteOutputSchemaAvecAxes,
+  makeDecouverteOutputSchemaWithAxes,
 } from '@/valeurImport/calls/decouvrirStructure'
 
 describe('decouverteOutputSchema — colonneTypeValeur', () => {
@@ -53,8 +53,8 @@ describe('decouverteOutputSchema — colonneTypeValeur', () => {
   })
 })
 
-describe('makeDecouverteOutputSchemaAvecAxes — colonnesAxes', () => {
-  const schema = makeDecouverteOutputSchemaAvecAxes({ axePublicIds: ['AXE-OPERATEUR'] })
+describe('makeDecouverteOutputSchemaWithAxes — colonnesAxes', () => {
+  const schema = makeDecouverteOutputSchemaWithAxes({ axePublicIds: ['AXE-OPERATEUR'] })
   const plan = (axe: string) => ({
     statut: 'reconnu',
     plan: {

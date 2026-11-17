@@ -1,15 +1,15 @@
 import { okAsync, type ResultAsync } from 'neverthrow'
 
-import { rapprocherModalites } from '@/valeurImport/colonnesAxes'
+import { matchModalites } from '@/valeurImport/axeColumns'
 import {
-  type CibleResolution,
-  type ResolutionLibelles,
-  resoudreLibelles,
-  type ResoudreLibellesError,
-} from '@/valeurImport/calls/resoudreLibelles'
-import { type AxePourImport } from '@/valeurImport/queries/listAxesForIndicateur'
+  type ResolutionTarget,
+  type LabelResolution,
+  resolveLabels,
+  type ResolveLabelsError,
+} from '@/valeurImport/calls/resolveLabels'
+import { type AxeForImport } from '@/valeurImport/queries/listAxesForIndicateur'
 
-const CIBLE_MODALITES: CibleResolution = {
+const MODALITES_TARGET: ResolutionTarget = {
   systemPrompt:
     "Tu reçois une liste de libellés bruts (libellésSources) provenant d'une colonne d'un fichier " +
     "de données téléversé. Ces libellés désignent des modalités d'UN axe de l'indicateur " +
@@ -23,35 +23,35 @@ const CIBLE_MODALITES: CibleResolution = {
     '\n' +
     "Quand tu as terminé, appelle l'outil `enregistrerMapping` avec ta proposition.\n" +
     "Si l'outil te signale des erreurs, corrige et rappelle-le.",
-  champPublicId: 'modalitePublicId',
-  descriptionLibelle:
+  publicIdField: 'modalitePublicId',
+  labelDescription:
     "Libellé tel qu'apparu dans la colonne de l'axe (recopie EXACTE, pas de reformulation).",
-  descriptionPublicId:
+  publicIdDescription:
     "publicId d'une modalité présente dans la liste fournie. " +
     'Ne JAMAIS inventer un publicId — utilise uniquement ceux fournis en contexte.',
-  descriptionMapping:
+  mappingDescription:
     "Liste des libellés que tu as su rattacher avec confiance à une modalité de l'axe. " +
     'Un même libellé ne doit pas apparaître plusieurs fois.',
-  evenementLog: 'importPoc.resoudreModalites',
-  libelleLog: 'Albert (résolution des modalités)',
+  logEvent: 'importPoc.resolveColumnModalites',
+  logLabel: 'Albert (résolution des modalités)',
 }
 
 // Résout les libellés d'une colonne d'axe contre les modalités feuilles de cet
 // axe uniquement (« Orange » l'opérateur n'est pas « Orange » la commune) :
 // d'abord par correspondance exacte (publicId ou nom), puis par Albert pour les
 // libellés restants.
-export const resoudreModalites = ({
+export const resolveColumnModalites = ({
   indicateur,
   axe,
   colonne,
   libellesSources,
 }: {
   indicateur: { nom: string }
-  axe: AxePourImport
+  axe: AxeForImport
   colonne: string
   libellesSources: ReadonlyArray<string>
-}): ResultAsync<ResolutionLibelles, ResoudreLibellesError> => {
-  const { mapping, restants } = rapprocherModalites({
+}): ResultAsync<LabelResolution, ResolveLabelsError> => {
+  const { mapping, restants } = matchModalites({
     libelles: libellesSources,
     modalites: axe.modalitesFeuilles,
   })
@@ -68,12 +68,12 @@ export const resoudreModalites = ({
     JSON.stringify(restants, null, 2),
   ].join('\n')
 
-  return resoudreLibelles({
-    cible: CIBLE_MODALITES,
+  return resolveLabels({
+    cible: MODALITES_TARGET,
     prompt,
     publicIdsValides: new Set(axe.modalitesFeuilles.map((modalite) => modalite.publicId)),
     libellesSources: restants,
-    contexteLog: {
+    logContext: {
       indicateurNom: indicateur.nom,
       axe: axe.publicId,
       nbModalites: axe.modalitesFeuilles.length,

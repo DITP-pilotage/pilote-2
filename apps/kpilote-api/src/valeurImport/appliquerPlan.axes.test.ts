@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { type AxeApplication, appliquerPlan } from '@/valeurImport/appliquerPlan'
+import { type AxeColumn, appliquerPlan } from '@/valeurImport/appliquerPlan'
 import { type Plan } from '@/valeurImport/calls/decouvrirStructure'
 import { type ResolutionResult } from '@/valeurImport/calls/resoudreIndividus'
 
@@ -14,7 +14,7 @@ const resolution: ResolutionResult = {
   nonResolus: [],
 }
 
-const axes: AxeApplication[] = [
+const axes: AxeColumn[] = [
   {
     colonne: 'operateur',
     axe: { publicId: 'AXE-OPERATEUR', nom: 'Opérateur' },

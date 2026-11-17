@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { logger } from '@/framework/logger/logger'
 import { startTimer } from '@/framework/timer'
 import { createAlbertModel, STRUCTURED_TEMPERATURE } from '@/framework/llm/albert'
-import { type AxePourImport } from '@/valeurImport/queries/listAxesForIndicateur'
+import { type AxeForImport } from '@/valeurImport/queries/listAxesForIndicateur'
 
 const colonneDateSchema = z.object({
   nom: z.string().describe('Nom exact du header de colonne contenant la date (recopie exacte).'),
@@ -75,7 +75,7 @@ const planPivotSchema = z.object({
     ),
 })
 
-const echecSchema = z.object({
+const failureSchema = z.object({
   statut: z
     .literal('echec')
     .describe(
@@ -103,25 +103,25 @@ export const decouverteOutputSchema = z.discriminatedUnion('statut', [
     statut: z.literal('reconnu'),
     plan: z.discriminatedUnion('layout', [planLongSchema, planPivotSchema]),
   }),
-  echecSchema,
+  failureSchema,
 ])
 
 export type DecouverteOutput = z.infer<typeof decouverteOutputSchema>
 type DecouverteEchec = Extract<DecouverteOutput, { statut: 'echec' }>
 
 // Colonne du fichier qui porte les modalités d'un axe (publicId de l'axe).
-export type ColonneAxe = { colonne: string; axe: string }
+export type PlanAxeColumn = { colonne: string; axe: string }
 
 export type Plan = Extract<DecouverteOutput, { statut: 'reconnu' }>['plan'] & {
-  colonnesAxes?: ColonneAxe[]
+  colonnesAxes?: PlanAxeColumn[]
 }
 export type PlanLong = Extract<Plan, { layout: 'long' }>
 export type PlanPivot = Extract<Plan, { layout: 'pivot' }>
 
-type DecouverteResultat = { statut: 'reconnu'; plan: Plan } | DecouverteEchec
+type DecouverteResult = { statut: 'reconnu'; plan: Plan } | DecouverteEchec
 
 // Indicateur à axes : le plan dit aussi quelle colonne porte chaque axe.
-export const makeDecouverteOutputSchemaAvecAxes = ({
+export const makeDecouverteOutputSchemaWithAxes = ({
   axePublicIds,
 }: {
   axePublicIds: readonly [string, ...string[]]
@@ -147,7 +147,7 @@ export const makeDecouverteOutputSchemaAvecAxes = ({
         planPivotSchema.extend({ colonnesAxes }),
       ]),
     }),
-    echecSchema,
+    failureSchema,
   ])
 }
 
@@ -182,7 +182,7 @@ const SYSTEM_PROMPT_AXES =
   "publicId de l'axe. Une colonne d'axe n'est ni la colonne individu, ni la date, ni la valeur. " +
   "N'invente pas de colonne pour un axe absent du fichier."
 
-const MAX_EXEMPLES_MODALITES = 10
+const MAX_MODALITE_EXAMPLES = 10
 
 const MAX_LIGNES_ECHANTILLON = 8
 
@@ -204,15 +204,15 @@ export const decouvrirStructure = ({
   headers: ReadonlyArray<string>
   rows: ReadonlyArray<Record<string, unknown>>
   nomFichier: string
-  axes?: ReadonlyArray<AxePourImport>
+  axes?: ReadonlyArray<AxeForImport>
 }): ResultAsync<Plan, DecouvrirStructureError> => {
   const model = createAlbertModel()
   const echantillon = rows.slice(0, MAX_LIGNES_ECHANTILLON)
   const [premierAxe, ...autresAxes] = axes.map((axe) => axe.publicId)
-  const schema: z.ZodType<DecouverteResultat> =
+  const schema: z.ZodType<DecouverteResult> =
     premierAxe === undefined
       ? decouverteOutputSchema
-      : makeDecouverteOutputSchemaAvecAxes({ axePublicIds: [premierAxe, ...autresAxes] })
+      : makeDecouverteOutputSchemaWithAxes({ axePublicIds: [premierAxe, ...autresAxes] })
 
   const prompt = [
     `Indicateur ciblé : « ${indicateur.nom} »${
@@ -233,7 +233,7 @@ export const decouvrirStructure = ({
               publicId: axe.publicId,
               nom: axe.nom,
               exemplesModalites: axe.modalitesFeuilles
-                .slice(0, MAX_EXEMPLES_MODALITES)
+                .slice(0, MAX_MODALITE_EXAMPLES)
                 .map((modalite) => modalite.nom),
             })),
             null,
