@@ -2,7 +2,14 @@ import { type ChangeEvent, type DragEvent } from 'react'
 import { Upload } from 'lucide-react'
 
 // Zone de dépôt initiale (aucun fichier sélectionné) : drag'n'drop + input.
-export function ImportDropZone({ onFile }: { onFile: (file: File) => void }) {
+// `colonnes` : les colonnes attendues dans le format standard.
+export function ImportDropZone({
+  onFile,
+  colonnes,
+}: {
+  onFile: (file: File) => void
+  colonnes: ReadonlyArray<string>
+}) {
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const picked = event.target.files?.[0]
     if (picked) onFile(picked)
@@ -24,7 +31,7 @@ export function ImportDropZone({ onFile }: { onFile: (file: File) => void }) {
       <div>
         <p className="text-sm font-medium text-text">Glissez un fichier ou parcourez</p>
         <p className="mt-1 text-xs text-text-subtle">
-          CSV ou Excel · colonnes individu, date, valeur · 1000 lignes max
+          CSV ou Excel · colonnes {colonnes.join(', ')} · 1000 lignes max
         </p>
       </div>
       <input type="file" accept=".csv,.xlsx" className="hidden" onChange={onInputChange} />

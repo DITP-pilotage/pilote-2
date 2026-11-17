@@ -1,11 +1,18 @@
 import type { DataTableColumn } from '@pilote/kpilote-ui/DataTable'
 import { DataTable } from '@pilote/kpilote-ui/DataTable'
 
-import type { ParsedRow } from './lecture/matriceVersRows'
+import type { AxeImport, ParsedRow } from './lecture/matriceVersRows'
 
 const MAX_LIGNES_AFFICHEES = 100
 
-export function ImportPreviewTable({ rows }: { rows: ParsedRow[] }) {
+// Une colonne par axe de l'indicateur, titrée par le nom de l'axe.
+export function ImportPreviewTable({
+  rows,
+  axes = [],
+}: {
+  rows: ParsedRow[]
+  axes?: ReadonlyArray<AxeImport>
+}) {
   const visibles = rows.slice(0, MAX_LIGNES_AFFICHEES)
   const reste = rows.length - visibles.length
 
@@ -20,6 +27,11 @@ export function ImportPreviewTable({ rows }: { rows: ParsedRow[] }) {
       header: 'individu',
       cell: (row) => <span className="font-mono text-[13px]">{row.individu}</span>,
     },
+    ...axes.map((axe, rang): DataTableColumn<ParsedRow> => ({
+      key: `axe-${axe.id}`,
+      header: axe.nom,
+      cell: (row) => <span className="font-mono text-[13px]">{row.modalites?.[rang] ?? ''}</span>,
+    })),
     {
       key: 'date',
       header: 'date',

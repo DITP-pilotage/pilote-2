@@ -7,7 +7,7 @@ import { ModaleForm } from '@pilote/kpilote-ui/ModaleForm'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { ImportError } from '@/api/valeursImport'
 import { useImportValeursBatch } from '@/mutations/valeursImport'
-import { type ParseError } from './lecture/matriceVersRows'
+import { type AxeImport, colonnesAttendues, type ParseError } from './lecture/matriceVersRows'
 import { useImportValeurs } from './useImportValeurs'
 import { traduireErreursBatch, traduireIssuesValidation } from './traduireErreursBatch'
 import { EncadreMessage } from './EncadreMessage'
@@ -22,14 +22,20 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>
 
-const messageParseError = (error: ParseError): string => {
+const messageParseError = ({
+  error,
+  axes,
+}: {
+  error: ParseError
+  axes: ReadonlyArray<AxeImport>
+}): string => {
   switch (error.code) {
     case 'EMPTY':
       return 'Le fichier ne contient aucune ligne de données.'
     case 'TOO_MANY_ROWS':
       return `${error.count} lignes — la limite est de ${error.max} lignes par import. Scindez le fichier.`
     case 'MISSING_COLUMNS':
-      return `Colonne(s) manquante(s) : ${error.missing.join(', ')}. Attendu : individu, date, valeur.`
+      return `Colonne(s) manquante(s) : ${error.missing.join(', ')}. Attendu : ${colonnesAttendues({ axes }).join(', ')}.`
     case 'UNREADABLE':
       return "Fichier illisible. Vérifiez qu'il s'agit d'un CSV ou d'un Excel valide."
   }
@@ -53,7 +59,7 @@ export function ImportValeursModal({
 
   const file = useWatch({ control: form.control, name: 'file' }) ?? null
 
-  const { etat, payload } = useImportValeurs({ file, indicateurId: target.indicateur.id })
+  const { etat, payload, axes } = useImportValeurs({ file, indicateurId: target.indicateur.id })
 
   const onFileChange = (newFile: File) => {
     form.setValue('file', newFile, { shouldValidate: true })
@@ -83,7 +89,7 @@ export function ImportValeursModal({
       if (error instanceof ImportError) {
         const d = error.detail
         if (d.type === 'BATCH_INVALID') {
-          setErreursServeur(traduireErreursBatch({ details: d.details }))
+          setErreursServeur(traduireErreursBatch({ details: d.details, axes }))
         } else if (d.type === 'VALIDATION_ERROR') {
           setErreursServeur(traduireIssuesValidation({ issues: d.issues }))
         } else {
@@ -113,8 +119,10 @@ export function ImportValeursModal({
   // invitant à re-déposer un fichier.
   const zoneDepot = (error?: ParseError) => (
     <>
-      <ImportDropZone onFile={onFileChange} />
-      {error ? <EncadreMessage variant="erreur">{messageParseError(error)}</EncadreMessage> : null}
+      <ImportDropZone onFile={onFileChange} colonnes={colonnesAttendues({ axes })} />
+      {error ? (
+        <EncadreMessage variant="erreur">{messageParseError({ error, axes })}</EncadreMessage>
+      ) : null}
     </>
   )
 
@@ -133,11 +141,12 @@ export function ImportValeursModal({
           <ImportFormatValide
             nomFichier={etat.nomFichier}
             rows={etat.rows}
+            axes={axes}
             erreursServeur={erreursServeur}
           />
         )
       case 'albertRevue':
-        return <NormalisationRevue revue={etat.revue} erreursServeur={erreursServeur} />
+        return <NormalisationRevue revue={etat.revue} axes={axes} erreursServeur={erreursServeur} />
       case 'illisible':
       case 'albertEchec':
         return zoneDepot(etat.error)

@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 
+import { indicateurQueryOptions } from '@/queries/indicateurs'
 import { normaliserValeursQueryOptions } from '@/queries/valeursNormaliser'
 import { fichierVersMatrice } from './lecture/fichierVersMatrice'
-import { type ParsedRow } from './lecture/matriceVersRows'
+import { type AxeImport, type ParsedRow } from './lecture/matriceVersRows'
 import { matriceVersRecords } from './lecture/matriceVersRecords'
 import {
   deriverEtatImport,
@@ -17,13 +18,22 @@ const cleDeFichier = (file: File): string => `${file.name}:${file.size}:${file.l
 // les deux projections (rows strictes / records bruts pour Albert), et expose un
 // état discriminé + le payload prêt à envoyer. Toute la logique de transition vit
 // dans `deriverEtatImport` (pur, testé) ; ce hook n'est que le câblage des queries.
+// Les axes de l'indicateur fixent les colonnes attendues : la lecture attend
+// l'indicateur. S'il ne se charge pas, l'import se fait sans axe et l'API
+// signale les modalités manquantes.
+const AUCUN_AXE: AxeImport[] = []
+
 export function useImportValeurs({
   file,
   indicateurId,
 }: {
   file: File | null
   indicateurId: string
-}): { etat: EtatImport; payload: ParsedRow[] | null } {
+}): { etat: EtatImport; payload: ParsedRow[] | null; axes: AxeImport[] } {
+  const indicateurQuery = useQuery(indicateurQueryOptions(indicateurId))
+  const indicateurAxes = indicateurQuery.isError ? AUCUN_AXE : indicateurQuery.data?.axes
+  const axes = indicateurAxes ?? AUCUN_AXE
+
   const matriceQuery = useQuery({
     queryKey: ['import-matrice', file?.name, file?.size, file?.lastModified],
     queryFn: () => {
@@ -35,7 +45,7 @@ export function useImportValeurs({
   })
 
   const lecture = matriceQuery.data
-  const parseResult = parseLecture(lecture)
+  const parseResult = parseLecture({ lecture, axes: indicateurAxes })
 
   // Records dérivés seulement pour un fichier hors format standard (colonnes
   // manquantes) → c'est le seul cas qui déclenche Albert.
@@ -65,5 +75,5 @@ export function useImportValeurs({
     albert,
   })
 
-  return { etat, payload: payloadDepuisEtat(etat) }
+  return { etat, payload: payloadDepuisEtat(etat), axes }
 }

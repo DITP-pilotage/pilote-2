@@ -130,21 +130,36 @@ describe('payloadDepuisEtat', () => {
 
 describe('parseLecture', () => {
   it('renvoie undefined tant que la matrice n’est pas lue', () => {
-    expect(parseLecture(undefined)).toBeUndefined()
+    expect(parseLecture({ lecture: undefined, axes: [] })).toBeUndefined()
+  })
+
+  it('renvoie undefined tant que les axes de l’indicateur ne sont pas chargés', () => {
+    expect(
+      parseLecture({
+        lecture: { ok: true, matrice: [['individu', 'date', 'valeur']] },
+        axes: undefined,
+      }),
+    ).toBeUndefined()
   })
 
   it('renvoie UNREADABLE quand le fichier n’a pas pu être lu', () => {
-    expect(parseLecture({ ok: false })).toEqual({ ok: false, error: { code: 'UNREADABLE' } })
+    expect(parseLecture({ lecture: { ok: false }, axes: [] })).toEqual({
+      ok: false,
+      error: { code: 'UNREADABLE' },
+    })
   })
 
   it('parse la matrice quand la lecture a réussi', () => {
     expect(
       parseLecture({
-        ok: true,
-        matrice: [
-          ['individu', 'date', 'valeur'],
-          ['DEPT-84', '2024-01-15', 7.2],
-        ],
+        lecture: {
+          ok: true,
+          matrice: [
+            ['individu', 'date', 'valeur'],
+            ['DEPT-84', '2024-01-15', 7.2],
+          ],
+        },
+        axes: [],
       }),
     ).toEqual({ ok: true, rows })
   })
