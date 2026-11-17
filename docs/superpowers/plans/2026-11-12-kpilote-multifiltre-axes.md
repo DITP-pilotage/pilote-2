@@ -64,9 +64,9 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 | T5.1  | PIL-1990 | Calcul de la marginale sur les axes (fonctions pures)  | 🔄 en cours     |
 | T5.2  | PIL-1991 | Lectures : marginale et sélection de modalités         | 🔄 en cours     |
 | T5.3  | PIL-1992 | Comparaison et carte pour une modalité                 | 🔄 en cours     |
-| T6.1  | PIL-1994 | Saisie de valeurs avec modalités                       | à faire         |
-| T6.2  | PIL-1995 | Import Albert : colonnes d'axe                         | à faire         |
-| T6.3  | PIL-1996 | Webapp : import avec colonnes d'axe                    | à faire         |
+| T6.1  | PIL-1994 | Saisie de valeurs avec modalités                       | 🔄 en cours     |
+| T6.2  | PIL-1995 | Import Albert : colonnes d'axe                         | 🔄 en cours     |
+| T6.3  | PIL-1996 | Webapp : import avec colonnes d'axe                    | 🔄 en cours     |
 | T7.1  | PIL-1997 | Fiche indicateur : un sélecteur par axe                | à faire         |
 | T7.2  | PIL-1998 | Graphique « Décomposer par »                           | à faire         |
 | T8.1  | PIL-1999 | Mise en service des axes                               | à faire         |
@@ -409,6 +409,8 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 ### T6.1 — Saisie de valeurs avec modalités (PIL-1994)
 
+> **Écarts validés (2026-11-17) :** un indicateur à axes exige exactement une modalité feuille par axe déclaré ; un indicateur sans axe n'en accepte aucune (`[]` vaut un champ absent). Pas de « non ventilé » suggéré par l'API (spec §9, point 4). Erreurs : `MODALITE_INCONNUE`, `AXE_NON_DECLARE`, `MODALITES_MEME_AXE` (reprises des lectures), `MODALITE_MANQUANTE`, `MODALITE_NON_FEUILLE` ; doublon dans un lot : `DUPLICATE_KEY`, dont la clé gagne `modalites`. La réponse du `PUT` gagne `modalites` (absent sans axe). La suppression exige la même cellule complète que la saisie. Les nouveaux codes du lot sont traduits dans la webapp dès cette PR (`switch` exhaustif), avec le publicId de l'axe ; T6.3 affiche son nom.
+
 **Objectif :** saisir, modifier, supprimer une valeur précisée par des modalités, à l'unité et en lot.
 
 **Fichiers :** Modify `src/valeurAvancement/commands/*`, `src/valeurAvancement/routes.ts`, `src/indicateur/resolveIndicateurAndIndividuForWriteData.ts` ; Create `src/axe/resoudreCombinaison.ts` (trouve ou crée la combinaison par sa `cle`, de façon idempotente) ; Modify `packages/kpilote-shared/src/valeurAvancement.ts`.
@@ -431,6 +433,8 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 ### T6.2 — Import Albert : colonnes d'axe (PIL-1995)
 
+> **Écarts validés (2026-11-17) :** Albert rattache les colonnes aux axes dans le plan (`colonnesAxes: [{ colonne, axe }]`, validé par zod) ; pas de `choisirColonnesAxes.ts`. Les modalités se résolvent d'abord de façon déterministe (publicId ou nom normalisé, parmi les feuilles de l'axe), puis par Albert pour les libellés restants. Critère « evals mono rejouées » retiré : il n'existe pas d'eval de l'import.
+
 **Objectif :** normaliser un fichier qui contient, en plus de l'individu, une colonne par axe (ex. `territoire;operateur;date;valeur`).
 
 **Fichiers :** Modify `apps/kpilote-api/src/valeurImport/{appliquerPlan.ts,calls/decouvrirStructure.ts,calls/resoudreIndividus.ts,commands/normaliserValeursImport.ts}` ; Create `src/valeurImport/choisirColonnesAxes.ts`, `src/valeurImport/queries/listAxesForIndicateur.ts` ; Modify `packages/kpilote-shared/src/valeurImport.ts`.
@@ -448,11 +452,13 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 - [ ] Commune.
 - [ ] Tests avec Albert mocké : long et pivot, deux colonnes d'identité.
-- [ ] Evals mono rejouées sans régression.
+- ~~Evals mono rejouées sans régression.~~ Retiré (cf. écarts validés).
 
 ---
 
 ### T6.3 — Webapp : import avec colonnes d'axe (PIL-1996)
+
+> **Écarts validés (2026-11-17) :** format standard = `individu;date;valeur` + une colonne par axe, d'en-tête le **publicId de l'axe** (ex. `AXE-OPERATEUR`), de cellules les publicIds des modalités. Détection inspirée du POC, mais par rapprochement avec les axes déclarés de l'indicateur.
 
 **Objectif :** importer depuis la webapp un fichier à axes, jusqu'à l'écriture.
 

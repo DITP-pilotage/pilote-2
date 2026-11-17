@@ -29,6 +29,35 @@ describe('traduireErreursBatch', () => {
       'Doublon DEPT-84 / 2024-01-15 (lignes 3, 5).',
     ])
   })
+
+  it('traduit les erreurs de modalités', () => {
+    const messages = traduireErreursBatch({
+      details: {
+        errors: [
+          {
+            code: 'DUPLICATE_KEY',
+            indices: [0, 1],
+            individu: 'DEPT-84',
+            modalites: ['OP-ORANGE'],
+            date: '2024-01-15',
+          },
+          { code: 'MODALITE_INCONNUE', indices: [2], modalite: 'OP-XXX' },
+          { code: 'AXE_NON_DECLARE', indices: [3], modalite: 'FR-TVA' },
+          { code: 'MODALITES_MEME_AXE', indices: [4], axe: 'AXE-OPERATEUR' },
+          { code: 'MODALITE_MANQUANTE', indices: [5, 6], axe: 'AXE-OPERATEUR' },
+          { code: 'MODALITE_NON_FEUILLE', indices: [7], modalite: 'FR-FISCALE' },
+        ],
+      },
+    })
+    expect(messages).toEqual([
+      'Doublon DEPT-84 / OP-ORANGE / 2024-01-15 (lignes 2, 3).',
+      'Modalité inconnue « OP-XXX » (ligne 4).',
+      'Modalité « FR-TVA » d’un axe que l’indicateur ne déclare pas (ligne 5).',
+      'Plusieurs modalités de l’axe AXE-OPERATEUR (ligne 6).',
+      'Modalité manquante pour l’axe AXE-OPERATEUR (lignes 7, 8).',
+      'Modalité « FR-FISCALE » non saisissable : sa valeur se calcule à partir de ses sous-modalités (ligne 9).',
+    ])
+  })
 })
 
 describe('traduireIssuesValidation', () => {

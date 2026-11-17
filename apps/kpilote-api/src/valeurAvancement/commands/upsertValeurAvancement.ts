@@ -5,14 +5,15 @@ import {
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { trouverCombinaisonVideId } from '@/axe/combinaison'
+import { cleDeModalites, trouverOuCreerCombinaisons } from '@/axe/combinaison'
+import { type SaisieModalitesError } from '@/axe/modalitesDemandees'
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
-import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
+import { resolveCelluleForWrite } from '@/valeurAvancement/resolveCelluleForWrite'
 import { toValeurSaisieApiModel } from '@/valeurAvancement/utils'
 
-export type UpsertValeurAvancementError = IndividuInconnuError
+export type UpsertValeurAvancementError = IndividuInconnuError | SaisieModalitesError
 
 type UpsertValeurAvancementParams = {
   indicateurPublicId: string
@@ -23,13 +24,16 @@ export const upsertValeurAvancement = ({
   indicateurPublicId,
   body,
 }: UpsertValeurAvancementParams): ResultAsync<ValeurSaisieApiModel, UpsertValeurAvancementError> =>
-  resolveIndicateurAndIndividuForWriteData({
+  resolveCelluleForWrite({
     indicateurPublicId,
     individuPublicId: body.individu,
-  }).andThen(({ indicateur, individu }) =>
+    modalitePublicIds: body.modalites ?? [],
+  }).andThen(({ indicateur, individu, modalites }) =>
     ResultAsync.fromSafePromise(
-      trouverCombinaisonVideId().then((combinaisonId) =>
-        db().valeurAvancement.upsert({
+      (async () => {
+        const idParCle = await trouverOuCreerCombinaisons({ combinaisons: [modalites] })
+        const combinaisonId = idParCle.get(cleDeModalites(modalites))!
+        const valeur = await db().valeurAvancement.upsert({
           where: {
             valeur_avancement_cellule_unique: {
               indicateurId: indicateur.id,
@@ -51,7 +55,10 @@ export const upsertValeurAvancement = ({
             indicateur: { select: { publicId: true } },
             individu: { select: { publicId: true } },
           },
-        }),
-      ),
-    ).map(toValeurSaisieApiModel),
+        })
+        return toValeurSaisieApiModel(valeur, {
+          modalites: modalites.map((modalite) => modalite.publicId),
+        })
+      })(),
+    ),
   )

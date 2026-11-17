@@ -283,23 +283,10 @@ Pour lire un fichier du POC : `git show origin/claude/individu-dimension-poc-f01
 2. **Format de la décomposition dans l'API** : à figer dans PIL-1998. Le format de `modalites=` pour les lectures
    est figé par PIL-1991 (§6).
 3. **Ticket PIL-1980** (feature flag) : abandonné (D12), à supprimer dans Jira.
-4. **Total connu, ventilation partielle. À trancher avant PIL-1994 (saisie).** Exemple : on sait que 10 000
-   personnes ont de 20 à 30 ans, et seulement que 2 000 ont de 20 à 22 ans. Avec D9 (saisie sur les feuilles
-   seulement), 10 000 ne peut pas être saisi sur 20-30, et la lecture de 20-30 renvoie 2 000 avec une couverture
-   de 1 / 1 : les autres tranches, jamais observées, ne sont pas attendues. C'est une régression silencieuse par
-   rapport au modèle sans axe, où l'on saisissait 10 000. Pistes, issues du POC (`dimensions-design.md`, tour 2
-   et §5.5) :
-   - (a) **modalité feuille « non ventilé »** qui porte l'écart (20-30 non ventilé = 8 000, donc 20-30 = 10 000).
-     Aucun changement de moteur, valable en somme ; l'écart se corrige à la main quand le détail arrive ;
-   - (b) **fonction NONE sur un axe** : « Tous » se saisit et les modalités ne servent qu'à la décomposition.
-     Couvre les totaux qui ne sont pas des sommes (doubles comptes, ex. un point France Services commun à
-     plusieurs opérateurs). Revient sur D14 ;
-   - (c) **la saisie d'un total prime à sa case** sur le calcul. Revient sur D9 ; le POC a écarté une variante
-     temporelle (« la saisie vaut jusqu'au premier point dérivé ») pour bascule de valeur, effacement par
-     rattrapage d'historique et attaque d'intégrité.
-
-   Proposition : (a) dès PIL-1994, (b) si un cas réel de double compte se présente (carto-sp ?). **À arbitrer
-   avec Antoine** (point n°3 de PIL-1963).
+4. ~~**Total connu, ventilation partielle.**~~ Tranché (2026-11-17, PIL-1994) : pas de cas particulier. Sur un
+   indicateur à axes, on ne saisit que sur une combinaison complète de modalités feuilles (D9) : un total
+   ventilé en partie est une saisie invalide. Le moteur ne change pas. Qui veut porter un écart crée une
+   modalité feuille dédiée (ex. « Non ventilé ») dans l'admin ; rien ne le suggère dans l'API.
 
 ---
 
