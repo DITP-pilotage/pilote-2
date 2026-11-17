@@ -11,7 +11,7 @@ import {
   type ObjectifSaisieBucketise,
   type ResolveObjectifContext,
 } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
+import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
 export const loadResolveObjectifContext = async ({
   indicateurId,

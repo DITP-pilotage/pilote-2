@@ -17,7 +17,7 @@ import {
   type IndividuRef,
   type PointInterne,
   resolveSerieNoeud,
-} from '@/valeurAvancement/resolveSerieIndividu'
+} from '@/valeurAvancement/resolveSerieNoeud'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
@@ -60,7 +60,7 @@ const build = async (
       })
 
       const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
-      const serie = await resolveSerieNoeud(noeud(individu), serieGraphe, serieCache)
+      const serie = await resolveSerieNoeud(noeud({ individu }), serieGraphe, serieCache)
       const dernier = serie.at(-1)
       if (!dernier) return null
 

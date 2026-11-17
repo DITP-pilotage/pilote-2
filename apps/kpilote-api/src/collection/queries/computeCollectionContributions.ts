@@ -3,7 +3,7 @@ import { withConcurrency } from '@/framework/concurrency'
 import { type Decimal } from '@/framework/decimal'
 import { type IndicateurContribution } from '@/collection/resolveCollectionTauxProgression'
 import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
+import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 import { type TauxProgressionPoint } from '@/valeurAvancement/resolveTauxProgression'
 
 // Aligné sur /indicateurs/:id/taux-progression : `month/month` est le défaut

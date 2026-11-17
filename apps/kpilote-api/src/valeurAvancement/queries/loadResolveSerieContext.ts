@@ -14,7 +14,7 @@ import {
   type IndividuRef,
   type Noeud,
   type SaisieTronquee,
-} from '@/valeurAvancement/resolveSerieIndividu'
+} from '@/valeurAvancement/resolveSerieNoeud'
 
 // Charge en bulk tout ce dont le moteur (`resolveSerieNoeud`) a besoin pour
 // calculer une série (dérivée ou feuille) à partir d'un ensemble d'individus
@@ -39,7 +39,7 @@ export const loadResolveSerieContext = async ({
   combinaisonId: string
 }): Promise<{
   graphe: GrapheSerie
-  noeud: (individu: IndividuRef) => Noeud
+  noeud: (params: { individu: IndividuRef }) => Noeud
   allNodes: Map<string, IndividuRef>
 }> => {
   const [{ allNodes, enfantsParParent }, fonctionAgregationParReferentiel] = await Promise.all([

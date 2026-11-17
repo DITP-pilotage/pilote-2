@@ -1,4 +1,4 @@
-import { type SaisieTronquee } from '@/valeurAvancement/resolveSerieIndividu'
+import { type SaisieTronquee } from '@/valeurAvancement/resolveSerieNoeud'
 
 // Le point qui porte une valeur : un individu et une combinaison de modalités
 // (la combinaison vide pour un indicateur sans axe). Concept de domaine, pas

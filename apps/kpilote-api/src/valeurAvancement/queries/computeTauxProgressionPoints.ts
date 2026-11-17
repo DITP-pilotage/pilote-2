@@ -12,7 +12,7 @@ import {
   type IndividuRef,
   type PointInterne,
   resolveSerieNoeud,
-} from '@/valeurAvancement/resolveSerieIndividu'
+} from '@/valeurAvancement/resolveSerieNoeud'
 import {
   type ObjectifBrut,
   resolveTauxProgression,
@@ -63,7 +63,7 @@ export const computeTauxProgressionPoints = async ({
   const objectifsParIndividu = new Map<string, ObjectifBrut[]>()
 
   for (const cible of individusCibles) {
-    const serie = await resolveSerieNoeud(noeud(cible), serieGraphe, serieCache)
+    const serie = await resolveSerieNoeud(noeud({ individu: cible }), serieGraphe, serieCache)
     for (const point of serie) {
       valeurs.push({
         individuId: cible.id,

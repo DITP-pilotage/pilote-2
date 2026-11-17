@@ -21,7 +21,7 @@ import {
   type IndividuRef,
   type PointInterne,
   resolveSerieNoeud,
-} from '@/valeurAvancement/resolveSerieIndividu'
+} from '@/valeurAvancement/resolveSerieNoeud'
 
 // Aligné sur listValeursForIndicateur : on raisonne sur les buckets mensuels
 // pour les agrégés (cf. doc d'archi `indicateur-derives.md`).
@@ -77,7 +77,7 @@ const buildStats = async ({
     const contributions: ValeursRemarquablesContributionApiModel[] = []
     const valeurs: Decimal[] = []
     for (const individu of referentiel.individus) {
-      const dernierPoint = (await resolveSerieNoeud(noeud(individu), graphe, cache)).at(-1)
+      const dernierPoint = (await resolveSerieNoeud(noeud({ individu }), graphe, cache)).at(-1)
       if (!dernierPoint) continue
       valeurs.push(dernierPoint.valeur)
       contributions.push({

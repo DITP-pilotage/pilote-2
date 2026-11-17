@@ -23,7 +23,7 @@ import {
   type IndividuRef,
   type Noeud,
   type SaisieTronquee,
-} from '@/valeurAvancement/resolveSerieIndividu'
+} from '@/valeurAvancement/resolveSerieNoeud'
 
 // Construit le graphe de résolution consommé par `resolveSerieNoeud`, pour
 // tout indicateur, avec ou sans axe. Fonctions pures ; règle et schémas dans
@@ -98,7 +98,10 @@ export const buildGrapheSerie = ({
   cellules: ReadonlyArray<SaisiesCellule>
   // combinaisonId → (axeId → modaliteId) ; vide pour un indicateur sans axe.
   modalitesParCombinaison: ReadonlyMap<string, ReadonlyMap<string, string>>
-}): { graphe: GrapheSerie; noeud: (individu: IndividuRef, selection?: Selection) => Noeud } => {
+}): {
+  graphe: GrapheSerie
+  noeud: (params: { individu: IndividuRef; selection?: Selection }) => Noeud
+} => {
   // Une combinaison est observée pour un individu dès qu'elle porte une saisie.
   const cellulesSaisies = cellules.filter((cellule) => cellule.saisies.length > 0)
   const contexte: Contexte = {
@@ -129,7 +132,7 @@ export const buildGrapheSerie = ({
       saisiesParNoeud: graphe.saisiesParNoeud,
     },
     // Construction à la demande, à partir des nœuds cibles.
-    noeud: (individu, selection = new Map()) =>
+    noeud: ({ individu, selection = new Map() }) =>
       construireNoeud({ contexte, graphe, individu, selection }),
   }
 }

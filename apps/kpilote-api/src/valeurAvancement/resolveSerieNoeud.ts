@@ -156,7 +156,7 @@ const computeSerieDerivee = async (
   const result: PointInterne[] = []
 
   for (const bucket of buckets) {
-    // Yield à chaque bucket : voir doc en tête de `resolveSerieIndividu`.
+    // Yield à chaque bucket : voir doc en tête de `resolveSerieNoeud`.
     await yieldToEventLoop()
     // Carry-forward via pointers triés ASC.
     // `state.pointer` = index dans `state.points` de la **dernière** valeur

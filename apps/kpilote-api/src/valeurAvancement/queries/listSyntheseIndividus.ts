@@ -22,7 +22,7 @@ import {
   type Noeud,
   type PointInterne,
   resolveSerieNoeud,
-} from '@/valeurAvancement/resolveSerieIndividu'
+} from '@/valeurAvancement/resolveSerieNoeud'
 
 // Aligné sur listValeursForIndicateur : on raisonne sur les buckets mensuels
 // pour les agrégés (cf. doc d'archi `indicateur-derives.md`).
@@ -81,7 +81,7 @@ const buildSynthese = async (
 
   const items: SyntheseIndividusListApiModel['items'] = []
   for (const individu of individusDemandes) {
-    const serie = await resolveSerieNoeud(noeud(individu), graphe, cache)
+    const serie = await resolveSerieNoeud(noeud({ individu }), graphe, cache)
     items.push({
       individu: individu.publicId,
       variation: computeVariation(extractDeuxDerniers(serie)),
@@ -128,12 +128,12 @@ const computeMedianeParReferentiel = async ({
 }: {
   population: ReadonlyArray<IndividuRef>
   graphe: GrapheSerie
-  noeud: (individu: IndividuRef) => Noeud
+  noeud: (params: { individu: IndividuRef }) => Noeud
   cache: Map<string, ReadonlyArray<PointInterne>>
 }): Promise<Map<string, number | null>> => {
   const valeursParReferentiel = new Map<string, Decimal[]>()
   for (const individu of population) {
-    const dernier = (await resolveSerieNoeud(noeud(individu), graphe, cache)).at(-1)
+    const dernier = (await resolveSerieNoeud(noeud({ individu }), graphe, cache)).at(-1)
     if (!dernier) continue
     const liste = valeursParReferentiel.get(individu.referentielId) ?? []
     liste.push(dernier.valeur)

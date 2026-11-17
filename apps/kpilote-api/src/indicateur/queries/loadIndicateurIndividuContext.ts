@@ -1,7 +1,7 @@
 import { type FonctionAgregation } from '@pilote/kpilote-shared/indicateur'
 
 import { db } from '@/framework/persistence/dbStore'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
+import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
 export const loadIndividusParPublicId = async (
   publicIds: ReadonlyArray<string>,

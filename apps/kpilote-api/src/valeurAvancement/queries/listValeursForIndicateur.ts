@@ -15,7 +15,7 @@ import { db } from '@/framework/persistence/dbStore'
 import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import { type PointInterne, resolveSerieNoeud } from '@/valeurAvancement/resolveSerieIndividu'
+import { type PointInterne, resolveSerieNoeud } from '@/valeurAvancement/resolveSerieNoeud'
 
 // Cap par défaut à la granularité mensuelle : sans troncature, une série France
 // avec saisies quotidiennes par département explose (cf. design doc D11).
@@ -71,7 +71,7 @@ const buildSeries = async ({
   const dateFin = params.dateFin ? parseBucket(params.dateFin) : null
   const items: ValeurAvancementApiModel[] = []
   for (const individuCible of individusCibles) {
-    const serie = await resolveSerieNoeud(noeud(individuCible), graphe, cache)
+    const serie = await resolveSerieNoeud(noeud({ individu: individuCible }), graphe, cache)
     for (const point of serie) {
       if (dateDebut && compareBuckets(point.bucket, dateDebut) < 0) continue
       if (dateFin && compareBuckets(point.bucket, dateFin) > 0) continue

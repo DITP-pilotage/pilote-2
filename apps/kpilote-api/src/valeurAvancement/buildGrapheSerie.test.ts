@@ -10,7 +10,7 @@ import {
   type PointInterne,
   resolveSerieNoeud,
   type SaisieTronquee,
-} from '@/valeurAvancement/resolveSerieIndividu'
+} from '@/valeurAvancement/resolveSerieNoeud'
 
 // Exemples de la spec multifiltre (§5) et des points à arbitrer de PIL-1963.
 // Schémas : https://claude.ai/artifact/TduZuyP6atJ4bMZuQoHQQh
@@ -82,7 +82,11 @@ const dernierPoint = async (
   selection: Record<string, string> = {},
 ): Promise<PointInterne | undefined> =>
   (
-    await resolveSerieNoeud(noeud(individu, new Map(Object.entries(selection))), graphe, new Map())
+    await resolveSerieNoeud(
+      noeud({ individu, selection: new Map(Object.entries(selection)) }),
+      graphe,
+      new Map(),
+    )
   ).at(-1)
 
 const valeurDe = async (...args: Parameters<typeof dernierPoint>) =>
@@ -225,7 +229,7 @@ describe('buildGrapheSerie — axe imbriqué', () => {
     })
     const serieDe = async (selection: Record<string, string>) =>
       resolveSerieNoeud(
-        avecDates.noeud(D84, new Map(Object.entries(selection))),
+        avecDates.noeud({ individu: D84, selection: new Map(Object.entries(selection)) }),
         avecDates.graphe,
         new Map(),
       )
