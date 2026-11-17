@@ -1,13 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  type AxeCalcul,
-  buildGrapheSerie,
-  type CombinaisonObservee,
-  type ModaliteCalcul,
-} from '@/valeurAvancement/buildGrapheSerie'
+import { type AxeCalcul, type ModaliteCalcul } from '@/axe/modalites'
+import { type CombinaisonObservee } from '@/axe/observationsIndividu'
 import { compareBuckets, parseBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
+import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
 import { cleCellule } from '@/valeurAvancement/cellule'
 import {
   type IndividuRef,

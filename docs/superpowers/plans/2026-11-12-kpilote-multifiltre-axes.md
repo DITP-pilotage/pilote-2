@@ -351,7 +351,7 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 > **Écarts validés (2026-11-12) :** un seul moteur pour tous les indicateurs : `resolveSerieNoeud` calcule sur un graphe générique (`GrapheSerie`), construit par un seul constructeur, `buildGrapheSerie`, avec ou sans axe (sans axe : le calcul historique, inchangé). Les contributions internes portent les modalités du nœud enfant.
 
-**Fichiers :** Modify `src/valeurAvancement/resolveSerieIndividu.ts` (moteur sur graphe), `src/valeurAvancement/queries/loadResolveSerieContext.ts` et les 5 lectures ; Create `src/valeurAvancement/buildGrapheSerie.ts` (+ tests).
+**Fichiers :** Modify `src/valeurAvancement/resolveSerieIndividu.ts` (moteur sur graphe), `src/valeurAvancement/queries/loadResolveSerieContext.ts` et les 5 lectures ; Create `src/valeurAvancement/buildGrapheSerie.ts` (+ tests), `src/axe/modalites.ts` (axes, arbre des modalités, sélection), `src/axe/observationsIndividu.ts` (cube creux).
 
 **Étapes :**
 

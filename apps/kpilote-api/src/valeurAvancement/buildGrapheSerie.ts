@@ -1,5 +1,19 @@
 import { type FonctionAgregation } from '@pilote/kpilote-shared/indicateur'
 
+import {
+  type ArbreModalites,
+  type AxeCalcul,
+  construireArbreModalites,
+  descendreUnNiveau,
+  estFeuille,
+  type ModaliteCalcul,
+  type Selection,
+} from '@/axe/modalites'
+import {
+  combinaisonObserveeDe,
+  type CombinaisonObservee,
+  estObservee,
+} from '@/axe/observationsIndividu'
 import { getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
 import { cleCellule } from '@/valeurAvancement/cellule'
 import {
@@ -35,28 +49,6 @@ import {
 // Sans axe, la règle 2 ne s'applique jamais : on retrouve le calcul historique
 // sur la combinaison vide.
 
-export type AxeCalcul = {
-  id: string
-  fonction: Extract<FonctionAgregation, 'SUM' | 'AVG'>
-}
-
-export type ModaliteCalcul = {
-  id: string
-  publicId: string
-  axeId: string
-  parentId: string | null
-}
-
-// Combinaison qui porte au moins une valeur pour un individu : une modalité
-// feuille par axe (aucune pour la combinaison vide).
-export type CombinaisonObservee = {
-  combinaisonId: string
-  modaliteParAxe: ReadonlyMap<string, string>
-}
-
-// axeId → modaliteId ; un axe absent vaut « Tous ».
-export type Selection = ReadonlyMap<string, string>
-
 type Regle =
   | {
       type: 'agregationIndividus'
@@ -65,6 +57,26 @@ type Regle =
     }
   | { type: 'agregationAxe'; axe: AxeCalcul; selections: ReadonlyArray<Selection> }
   | { type: 'saisie' }
+
+// Entrées de la construction, en lecture seule.
+type Contexte = {
+  axes: ReadonlyArray<AxeCalcul>
+  arbre: ArbreModalites
+  hierarchie: {
+    enfantsParParent: ReadonlyMap<string, ReadonlyArray<IndividuRef>>
+    fonctionAgregationParReferentiel: ReadonlyMap<string, FonctionAgregation>
+    referentielParIndividu: ReadonlyMap<string, string>
+  }
+  observeesParIndividu: ReadonlyMap<string, ReadonlyArray<CombinaisonObservee>>
+  saisiesParCellule: ReadonlyMap<string, ReadonlyArray<SaisieTronquee>>
+}
+
+// Le graphe en cours de construction, rempli au fil des nœuds.
+type GrapheEnConstruction = {
+  agregationParNoeud: Map<string, AgregationNoeud>
+  saisiesParNoeud: Map<string, ReadonlyArray<SaisieTronquee>>
+  construits: Set<string>
+}
 
 export const buildGrapheSerie = ({
   individus,
@@ -85,179 +97,157 @@ export const buildGrapheSerie = ({
   // Saisies par cellule (`cleCellule`).
   saisiesParCellule: ReadonlyMap<string, ReadonlyArray<SaisieTronquee>>
 }): { graphe: GrapheSerie; noeud: (individu: IndividuRef, selection?: Selection) => Noeud } => {
-  const arbre = arbreModalites(modalites)
-  const hierarchie = {
-    enfantsParParent,
-    fonctionAgregationParReferentiel,
-    referentielParIndividu: new Map([...individus].map((i) => [i.id, i.referentielId])),
+  const contexte: Contexte = {
+    axes,
+    arbre: construireArbreModalites(modalites),
+    hierarchie: {
+      enfantsParParent,
+      fonctionAgregationParReferentiel,
+      referentielParIndividu: new Map([...individus].map((i) => [i.id, i.referentielId])),
+    },
+    observeesParIndividu,
+    saisiesParCellule,
   }
-  const observationsParIndividu = new Map<string, ObservationsIndividu>()
-  const observationsDe = (individuId: string): ObservationsIndividu => {
-    const dejaLues = observationsParIndividu.get(individuId)
-    if (dejaLues) return dejaLues
-    const observations = observationsIndividu({
-      observees: observeesParIndividu.get(individuId) ?? [],
-      axes,
-      arbre,
-    })
-    observationsParIndividu.set(individuId, observations)
-    return observations
+  const graphe: GrapheEnConstruction = {
+    agregationParNoeud: new Map(),
+    saisiesParNoeud: new Map(),
+    construits: new Set(),
   }
+  return {
+    // Mêmes Maps que la construction : elles se remplissent à chaque appel de `noeud`.
+    graphe: {
+      agregationParNoeud: graphe.agregationParNoeud,
+      saisiesParNoeud: graphe.saisiesParNoeud,
+    },
+    // Construction à la demande, à partir des nœuds cibles.
+    noeud: (individu, selection = new Map()) =>
+      construireNoeud({ contexte, graphe, individu, selection }),
+  }
+}
 
-  // Dernier axe déclaré encore à détailler : à « Tous » ou sur une modalité parente.
-  const axeADetailler = (selection: Selection): AxeCalcul | undefined =>
-    axes.findLast((axe) => {
-      const modaliteId = selection.get(axe.id)
-      return modaliteId === undefined || !arbre.estFeuille(modaliteId)
-    })
+const construireNoeud = ({
+  contexte,
+  graphe,
+  individu,
+  selection,
+}: {
+  contexte: Contexte
+  graphe: GrapheEnConstruction
+  individu: IndividuRef
+  selection: Selection
+}): Noeud => {
+  const noeud = noeudDe({ contexte, individu, selection })
+  if (graphe.construits.has(noeud.cle)) return noeud
+  graphe.construits.add(noeud.cle)
 
-  // Descend l'axe d'un niveau : « Tous » donne les modalités racines, une
-  // modalité parente ses modalités enfants.
-  const descendreUnNiveau = (selection: Selection, axe: AxeCalcul): Selection[] => {
+  const regle = deciderRegle({ contexte, individu, selection })
+  switch (regle.type) {
+    case 'agregationIndividus':
+      graphe.agregationParNoeud.set(noeud.cle, {
+        fonction: regle.fonction,
+        enfants: regle.enfants.map((enfant) =>
+          construireNoeud({ contexte, graphe, individu: enfant, selection }),
+        ),
+      })
+      break
+    case 'agregationAxe':
+      graphe.agregationParNoeud.set(noeud.cle, {
+        fonction: regle.axe.fonction,
+        enfants: regle.selections.map((detail) =>
+          construireNoeud({ contexte, graphe, individu, selection: detail }),
+        ),
+      })
+      break
+    case 'saisie': {
+      const saisies = saisiesDe({ contexte, individu, selection })
+      if (saisies) graphe.saisiesParNoeud.set(noeud.cle, saisies)
+      break
+    }
+  }
+  return noeud
+}
+
+const deciderRegle = ({
+  contexte,
+  individu,
+  selection,
+}: {
+  contexte: Contexte
+  individu: IndividuRef
+  selection: Selection
+}): Regle => {
+  const fonction = getFonctionAgregationActive(individu.id, contexte.hierarchie)
+  if (fonction) {
+    return {
+      type: 'agregationIndividus',
+      fonction,
+      enfants: contexte.hierarchie.enfantsParParent.get(individu.id) ?? [],
+    }
+  }
+  const axe = axeADetailler({ contexte, selection })
+  if (axe) {
+    const observees = contexte.observeesParIndividu.get(individu.id) ?? []
+    return {
+      type: 'agregationAxe',
+      axe,
+      selections: descendreUnNiveau({ arbre: contexte.arbre, axe, selection }).filter((detail) =>
+        estObservee({ arbre: contexte.arbre, observees, selection: detail }),
+      ),
+    }
+  }
+  return { type: 'saisie' }
+}
+
+const noeudDe = ({
+  contexte: { axes, arbre },
+  individu,
+  selection,
+}: {
+  contexte: Contexte
+  individu: IndividuRef
+  selection: Selection
+}): Noeud => ({
+  cle: [individu.id, ...axes.map((axe) => selection.get(axe.id) ?? '*')].join('~'),
+  individuPublicId: individu.publicId,
+  modalites: axes.flatMap((axe) => {
     const modaliteId = selection.get(axe.id)
-    const modalitesEnfants =
-      modaliteId === undefined ? arbre.racines(axe.id) : arbre.enfants(modaliteId)
-    return modalitesEnfants.map((enfant) => new Map([...selection, [axe.id, enfant]]))
-  }
+    const modalite = modaliteId === undefined ? undefined : arbre.modaliteParId.get(modaliteId)
+    return modalite ? [modalite.publicId] : []
+  }),
+})
 
-  const deciderRegle = (individu: IndividuRef, selection: Selection): Regle => {
-    const fonction = getFonctionAgregationActive(individu.id, hierarchie)
-    if (fonction) {
-      return {
-        type: 'agregationIndividus',
-        fonction,
-        enfants: enfantsParParent.get(individu.id) ?? [],
-      }
-    }
-    const axe = axeADetailler(selection)
-    if (axe) {
-      const observations = observationsDe(individu.id)
-      return {
-        type: 'agregationAxe',
-        axe,
-        selections: descendreUnNiveau(selection, axe).filter(observations.contient),
-      }
-    }
-    return { type: 'saisie' }
-  }
-
-  const noeudDe = (individu: IndividuRef, selection: Selection): Noeud => ({
-    cle: [individu.id, ...axes.map((axe) => selection.get(axe.id) ?? '*')].join('~'),
-    individuPublicId: individu.publicId,
-    modalites: axes.flatMap((axe) => {
-      const modaliteId = selection.get(axe.id)
-      return modaliteId === undefined ? [] : [arbre.publicId(modaliteId)]
-    }),
+// Dernier axe déclaré encore à détailler : à « Tous » ou sur une modalité parente.
+const axeADetailler = ({
+  contexte: { axes, arbre },
+  selection,
+}: {
+  contexte: Contexte
+  selection: Selection
+}): AxeCalcul | undefined =>
+  axes.findLast((axe) => {
+    const modaliteId = selection.get(axe.id)
+    return modaliteId === undefined || !estFeuille({ arbre, modaliteId })
   })
 
-  const agregationParNoeud = new Map<string, AgregationNoeud>()
-  const saisiesParNoeud = new Map<string, ReadonlyArray<SaisieTronquee>>()
-  const construits = new Set<string>()
-
-  // Construction à la demande, à partir des nœuds cibles.
-  const construire = (individu: IndividuRef, selection: Selection): Noeud => {
-    const noeud = noeudDe(individu, selection)
-    if (construits.has(noeud.cle)) return noeud
-    construits.add(noeud.cle)
-
-    const regle = deciderRegle(individu, selection)
-    switch (regle.type) {
-      case 'agregationIndividus':
-        agregationParNoeud.set(noeud.cle, {
-          fonction: regle.fonction,
-          enfants: regle.enfants.map((enfant) => construire(enfant, selection)),
-        })
-        break
-      case 'agregationAxe':
-        agregationParNoeud.set(noeud.cle, {
-          fonction: regle.axe.fonction,
-          enfants: regle.selections.map((detail) => construire(individu, detail)),
-        })
-        break
-      case 'saisie': {
-        const combinaisonId = observationsDe(individu.id).combinaisonDe(selection)
-        const saisies =
-          combinaisonId === undefined
-            ? undefined
-            : saisiesParCellule.get(cleCellule({ individuId: individu.id, combinaisonId }))
-        if (saisies) saisiesParNoeud.set(noeud.cle, saisies)
-        break
-      }
-    }
-    return noeud
-  }
-
-  return {
-    graphe: { agregationParNoeud, saisiesParNoeud },
-    noeud: (individu, selection = new Map()) => construire(individu, selection),
-  }
-}
-
-// Les modalités des axes, rangées en arbre (une forêt par axe).
-type ArbreModalites = {
-  racines: (axeId: string) => ReadonlyArray<string>
-  enfants: (modaliteId: string) => ReadonlyArray<string>
-  estFeuille: (modaliteId: string) => boolean
-  // `modaliteId` est `ancetre` ou l'un de ses descendants.
-  descendDe: (modaliteId: string, ancetre: string) => boolean
-  publicId: (modaliteId: string) => string
-}
-
-const arbreModalites = (modalites: ReadonlyArray<ModaliteCalcul>): ArbreModalites => {
-  const parId = new Map(modalites.map((m) => [m.id, m]))
-  const racinesParAxe = new Map<string, string[]>()
-  const enfantsParModalite = new Map<string, string[]>()
-  for (const modalite of modalites) {
-    const [index, cle] =
-      modalite.parentId === null
-        ? [racinesParAxe, modalite.axeId]
-        : [enfantsParModalite, modalite.parentId]
-    index.set(cle, [...(index.get(cle) ?? []), modalite.id])
-  }
-
-  const enfants = (modaliteId: string) => enfantsParModalite.get(modaliteId) ?? []
-  return {
-    racines: (axeId) => racinesParAxe.get(axeId) ?? [],
-    enfants,
-    estFeuille: (modaliteId) => enfants(modaliteId).length === 0,
-    descendDe: (modaliteId, ancetre) => {
-      for (let id: string | null = modaliteId; id !== null; id = parId.get(id)?.parentId ?? null) {
-        if (id === ancetre) return true
-      }
-      return false
-    },
-    publicId: (modaliteId) => parId.get(modaliteId)?.publicId ?? modaliteId,
-  }
-}
-
-// Ce qui a été saisi pour un individu (le cube creux) : seules les sélections
-// qui couvrent au moins une combinaison observée sont attendues.
-type ObservationsIndividu = {
-  // Une combinaison observée tombe sous la sélection : sur chaque axe choisi,
-  // sa modalité est la modalité choisie ou l'une de ses descendantes.
-  contient: (selection: Selection) => boolean
-  // La combinaison observée d'une sélection complète.
-  combinaisonDe: (selection: Selection) => string | undefined
-}
-
-const observationsIndividu = ({
-  observees,
-  axes,
-  arbre,
+// Saisies d'une sélection complète : celles de la combinaison observée qui lui
+// correspond exactement (sans axe, la combinaison vide).
+const saisiesDe = ({
+  contexte: { axes, observeesParIndividu, saisiesParCellule },
+  individu,
+  selection,
 }: {
-  observees: ReadonlyArray<CombinaisonObservee>
-  axes: ReadonlyArray<AxeCalcul>
-  arbre: ArbreModalites
-}): ObservationsIndividu => ({
-  contient: (selection) =>
-    observees.some((observee) =>
-      [...selection].every(([axeId, modaliteId]) => {
-        const modaliteObservee = observee.modaliteParAxe.get(axeId)
-        return modaliteObservee !== undefined && arbre.descendDe(modaliteObservee, modaliteId)
-      }),
-    ),
-  combinaisonDe: (selection) =>
-    observees.find((observee) =>
-      axes.every((axe) => observee.modaliteParAxe.get(axe.id) === selection.get(axe.id)),
-    )?.combinaisonId,
-})
+  contexte: Contexte
+  individu: IndividuRef
+  selection: Selection
+}): ReadonlyArray<SaisieTronquee> | undefined => {
+  const observee = combinaisonObserveeDe({
+    axes,
+    observees: observeesParIndividu.get(individu.id) ?? [],
+    selection,
+  })
+  return observee
+    ? saisiesParCellule.get(
+        cleCellule({ individuId: individu.id, combinaisonId: observee.combinaisonId }),
+      )
+    : undefined
+}
