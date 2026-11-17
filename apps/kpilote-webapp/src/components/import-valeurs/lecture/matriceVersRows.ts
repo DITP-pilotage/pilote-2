@@ -19,7 +19,7 @@ export type AxeImport = Pick<DeclarationAxeIndicateurApiModel, 'id' | 'nom'>
 
 // Colonnes attendues dans l'ordre où l'aide les présente : l'individu, une
 // colonne par axe (en-tête = publicId de l'axe), la date, la valeur.
-export const colonnesAttendues = ({ axes }: { axes: ReadonlyArray<AxeImport> }): string[] => [
+export const expectedColumns = ({ axes }: { axes: ReadonlyArray<AxeImport> }): string[] => [
   'individu',
   ...axes.map((axe) => axe.id),
   'date',
@@ -67,7 +67,7 @@ export function matriceVersRows({
   const entetes = ligneEntetes.map((cellule) => celluleVersTexte(cellule).trim().toLowerCase())
   const indexParColonne = new Map(COLONNES.map((nom) => [nom, entetes.indexOf(nom)]))
   const indexParAxe = axes.map((axe) => entetes.indexOf(axe.id.toLowerCase()))
-  const missing = colonnesAttendues({ axes }).filter((nom) => !entetes.includes(nom.toLowerCase()))
+  const missing = expectedColumns({ axes }).filter((nom) => !entetes.includes(nom.toLowerCase()))
   if (missing.length > 0) return { ok: false, error: { code: 'MISSING_COLUMNS', missing } }
 
   // Après le check missing, les trois colonnes sont garanties présentes.

@@ -16,7 +16,7 @@ const libelleLignes = (indices: number[]): string => {
 // Un axe se nomme par son nom quand l'indicateur le déclare, sinon par son publicId.
 const traduireEntree = (
   entree: BatchInvalidErrorEntryApiModel,
-  nomAxe: (publicId: string) => string,
+  axeName: (publicId: string) => string,
 ): string => {
   switch (entree.code) {
     case 'INVALID_ITEM': {
@@ -35,9 +35,9 @@ const traduireEntree = (
     case 'AXE_NON_DECLARE':
       return `Modalité « ${entree.modalite} » d’un axe que l’indicateur ne déclare pas (${libelleLignes(entree.indices)}).`
     case 'MODALITES_MEME_AXE':
-      return `Plusieurs modalités de l’axe « ${nomAxe(entree.axe)} » (${libelleLignes(entree.indices)}).`
+      return `Plusieurs modalités de l’axe « ${axeName(entree.axe)} » (${libelleLignes(entree.indices)}).`
     case 'MODALITE_MANQUANTE':
-      return `Modalité manquante pour l’axe « ${nomAxe(entree.axe)} » (${libelleLignes(entree.indices)}).`
+      return `Modalité manquante pour l’axe « ${axeName(entree.axe)} » (${libelleLignes(entree.indices)}).`
     case 'MODALITE_NON_FEUILLE':
       return `Modalité « ${entree.modalite} » non saisissable : sa valeur se calcule à partir de ses sous-modalités (${libelleLignes(entree.indices)}).`
     default: {
@@ -54,9 +54,9 @@ export function traduireErreursBatch({
   details: BatchInvalidErrorDetailsApiModel
   axes?: ReadonlyArray<AxeImport>
 }): string[] {
-  const nomParAxe = new Map(axes.map((axe) => [axe.id, axe.nom]))
-  const nomAxe = (publicId: string): string => nomParAxe.get(publicId) ?? publicId
-  return details.errors.map((entree) => traduireEntree(entree, nomAxe))
+  const nameByAxe = new Map(axes.map((axe) => [axe.id, axe.nom]))
+  const axeName = (publicId: string): string => nameByAxe.get(publicId) ?? publicId
+  return details.errors.map((entree) => traduireEntree(entree, axeName))
 }
 
 export function traduireIssuesValidation({

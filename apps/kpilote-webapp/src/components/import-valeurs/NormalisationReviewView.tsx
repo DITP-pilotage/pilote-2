@@ -6,7 +6,7 @@ import { ImportPreviewTable } from './ImportPreviewTable'
 import { type AxeImport } from './lecture/matriceVersRows'
 
 type Resolution = NormaliserValeursImportResponseApiModel['resolution']
-type ColonneAxeResolue = NonNullable<Resolution['colonnesAxes']>[number]
+type ResolvedAxeColumn = NonNullable<Resolution['colonnesAxes']>[number]
 
 const decrirePlan = (plan: NormaliserValeursImportResponseApiModel['plan']): string => {
   if (plan.layout === 'long') {
@@ -24,12 +24,12 @@ const decrirePlan = (plan: NormaliserValeursImportResponseApiModel['plan']): str
 
 // Indicateur à axes : pour chaque axe, la colonne du fichier qui le porte et la
 // correspondance de ses libellés avec les modalités.
-function ResolutionAxes({
+function AxesResolution({
   axes,
   colonnesAxes,
 }: {
   axes: ReadonlyArray<AxeImport>
-  colonnesAxes: ReadonlyArray<ColonneAxeResolue>
+  colonnesAxes: ReadonlyArray<ResolvedAxeColumn>
 }) {
   return (
     <div className="space-y-3 text-sm">
@@ -165,7 +165,7 @@ export function NormalisationReviewView({
             ) : null}
 
             {axes.length > 0 ? (
-              <ResolutionAxes axes={axes} colonnesAxes={resolution.colonnesAxes ?? []} />
+              <AxesResolution axes={axes} colonnesAxes={resolution.colonnesAxes ?? []} />
             ) : null}
 
             {resolution.mapping.length > 0 ? (

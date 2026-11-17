@@ -21,7 +21,7 @@ const cleDeFichier = (file: File): string => `${file.name}:${file.size}:${file.l
 // Les axes de l'indicateur fixent les colonnes attendues : la lecture attend
 // l'indicateur. S'il ne se charge pas, l'import se fait sans axe et l'API
 // signale les modalités manquantes.
-const AUCUN_AXE: AxeImport[] = []
+const NO_AXES: AxeImport[] = []
 
 export function useImportValeurs({
   file,
@@ -31,8 +31,8 @@ export function useImportValeurs({
   indicateurId: string
 }): { etat: EtatImport; payload: ParsedRow[] | null; axes: AxeImport[] } {
   const indicateurQuery = useQuery(indicateurQueryOptions(indicateurId))
-  const indicateurAxes = indicateurQuery.isError ? AUCUN_AXE : indicateurQuery.data?.axes
-  const axes = indicateurAxes ?? AUCUN_AXE
+  const indicateurAxes = indicateurQuery.isError ? NO_AXES : indicateurQuery.data?.axes
+  const axes = indicateurAxes ?? NO_AXES
 
   const matriceQuery = useQuery({
     queryKey: ['import-matrice', file?.name, file?.size, file?.lastModified],

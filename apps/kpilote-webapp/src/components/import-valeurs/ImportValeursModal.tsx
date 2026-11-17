@@ -7,7 +7,7 @@ import { ModaleForm } from '@pilote/kpilote-ui/ModaleForm'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { ImportError } from '@/api/valeursImport'
 import { useImportValeursBatch } from '@/mutations/valeursImport'
-import { type AxeImport, colonnesAttendues, type ParseError } from './lecture/matriceVersRows'
+import { type AxeImport, expectedColumns, type ParseError } from './lecture/matriceVersRows'
 import { useImportValeurs } from './useImportValeurs'
 import { traduireErreursBatch, traduireIssuesValidation } from './traduireErreursBatch'
 import { EncadreMessage } from './EncadreMessage'
@@ -35,7 +35,7 @@ const messageParseError = ({
     case 'TOO_MANY_ROWS':
       return `${error.count} lignes — la limite est de ${error.max} lignes par import. Scindez le fichier.`
     case 'MISSING_COLUMNS':
-      return `Colonne(s) manquante(s) : ${error.missing.join(', ')}. Attendu : ${colonnesAttendues({ axes }).join(', ')}.`
+      return `Colonne(s) manquante(s) : ${error.missing.join(', ')}. Attendu : ${expectedColumns({ axes }).join(', ')}.`
     case 'UNREADABLE':
       return "Fichier illisible. Vérifiez qu'il s'agit d'un CSV ou d'un Excel valide."
   }
@@ -119,7 +119,7 @@ export function ImportValeursModal({
   // invitant à re-déposer un fichier.
   const zoneDepot = (error?: ParseError) => (
     <>
-      <ImportDropZone onFile={onFileChange} colonnes={colonnesAttendues({ axes })} />
+      <ImportDropZone onFile={onFileChange} colonnes={expectedColumns({ axes })} />
       {error ? (
         <EncadreMessage variant="erreur">{messageParseError({ error, axes })}</EncadreMessage>
       ) : null}
