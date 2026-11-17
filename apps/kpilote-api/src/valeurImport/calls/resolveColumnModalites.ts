@@ -43,41 +43,38 @@ const MODALITES_TARGET: ResolutionTarget = {
 export const resolveColumnModalites = ({
   indicateur,
   axe,
-  colonne,
-  libellesSources,
+  column,
+  labels,
 }: {
   indicateur: { nom: string }
   axe: AxeForImport
-  colonne: string
-  libellesSources: ReadonlyArray<string>
+  column: string
+  labels: ReadonlyArray<string>
 }): ResultAsync<LabelResolution, ResolveLabelsError> => {
-  const { mapping, restants } = matchModalites({
-    libelles: libellesSources,
-    modalites: axe.modalitesFeuilles,
-  })
-  if (restants.length === 0) return okAsync({ mapping, nonResolus: [] })
+  const { mapping, remaining } = matchModalites({ labels, modalites: axe.modalitesFeuilles })
+  if (remaining.length === 0) return okAsync({ mapping, nonResolus: [] })
 
   const prompt = [
     `Indicateur : « ${indicateur.nom} ».`,
-    `Axe : « ${axe.nom} » (colonne « ${colonne} » du fichier).`,
+    `Axe : « ${axe.nom} » (colonne « ${column} » du fichier).`,
     '',
     `Modalités de l'axe (${axe.modalitesFeuilles.length}) :`,
     JSON.stringify(axe.modalitesFeuilles, null, 2),
     '',
-    `Libellés sources à mapper (${restants.length}) :`,
-    JSON.stringify(restants, null, 2),
+    `Libellés sources à mapper (${remaining.length}) :`,
+    JSON.stringify(remaining, null, 2),
   ].join('\n')
 
   return resolveLabels({
-    cible: MODALITES_TARGET,
+    target: MODALITES_TARGET,
     prompt,
-    publicIdsValides: new Set(axe.modalitesFeuilles.map((modalite) => modalite.publicId)),
-    libellesSources: restants,
+    validPublicIds: new Set(axe.modalitesFeuilles.map((modalite) => modalite.publicId)),
+    labels: remaining,
     logContext: {
       indicateurNom: indicateur.nom,
       axe: axe.publicId,
       nbModalites: axe.modalitesFeuilles.length,
-      nbLibellesSources: restants.length,
+      nbLibellesSources: remaining.length,
     },
   }).map((resolution) => ({
     mapping: [...mapping, ...resolution.mapping],

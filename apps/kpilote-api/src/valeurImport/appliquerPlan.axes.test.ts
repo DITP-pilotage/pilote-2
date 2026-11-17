@@ -16,9 +16,9 @@ const resolution: ResolutionResult = {
 
 const axes: AxeColumn[] = [
   {
-    colonne: 'operateur',
+    column: 'operateur',
     axe: { publicId: 'AXE-OPERATEUR', nom: 'Opérateur' },
-    modalitesValides: new Set(['OP-ORANGE', 'OP-SFR']),
+    validModalites: new Set(['OP-ORANGE', 'OP-SFR']),
     resolution: {
       mapping: [
         { libelleSource: 'Orange', publicId: 'OP-ORANGE' },
@@ -29,9 +29,9 @@ const axes: AxeColumn[] = [
     },
   },
   {
-    colonne: 'fraude',
+    column: 'fraude',
     axe: { publicId: 'AXE-FRAUDE', nom: 'Type de fraude' },
-    modalitesValides: new Set(['FR-TVA']),
+    validModalites: new Set(['FR-TVA']),
     resolution: { mapping: [{ libelleSource: 'TVA', publicId: 'FR-TVA' }], nonResolus: [] },
   },
 ]

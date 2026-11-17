@@ -118,7 +118,7 @@ type AxesResolution = {
   // Une entrée par axe couvert par une colonne du fichier, dans l'ordre des axes.
   axes: AxeColumn[]
   // Tous les axes de l'indicateur ont une colonne : sinon aucune ligne n'est complète.
-  complet: boolean
+  complete: boolean
   warnings: WarningApplication[]
 }
 
@@ -137,31 +137,31 @@ const resolveAxesStep = ({
   headers: string[]
   axes: ReadonlyArray<AxeForImport>
 }): ResultAsync<AxesResolution, NormaliserValeursImportError> => {
-  if (axes.length === 0) return okAsync({ axes: [], complet: true, warnings: [] })
-  const { colonnes, warnings } = selectAxeColumns({ plan, headers, axes })
+  if (axes.length === 0) return okAsync({ axes: [], complete: true, warnings: [] })
+  const { columns, warnings } = selectAxeColumns({ plan, headers, axes })
   return ResultAsync.combine(
-    colonnes.map(({ colonne, axe }) =>
+    columns.map(({ column, axe }) =>
       resolveColumnModalites({
         indicateur,
         axe,
-        colonne,
-        libellesSources: extraireLibellesSources(rows, colonne),
+        column,
+        labels: extraireLibellesSources(rows, column),
       }).map((resolution): AxeColumn => ({
-        colonne,
+        column,
         axe: { publicId: axe.publicId, nom: axe.nom },
-        modalitesValides: new Set(axe.modalitesFeuilles.map((modalite) => modalite.publicId)),
+        validModalites: new Set(axe.modalitesFeuilles.map((modalite) => modalite.publicId)),
         resolution,
       })),
     ),
-  ).map((axesResolus) => ({
-    axes: axesResolus,
-    complet: axesResolus.length === axes.length,
+  ).map((resolvedAxes) => ({
+    axes: resolvedAxes,
+    complete: resolvedAxes.length === axes.length,
     warnings,
   }))
 }
 
 const toAxeColumnResolution = (axe: AxeColumn): AxeColumnResolution => ({
-  colonne: axe.colonne,
+  colonne: axe.column,
   axe: axe.axe.publicId,
   mapping: axe.resolution.mapping.map(({ libelleSource, publicId }) => ({
     libelleSource,
@@ -204,15 +204,15 @@ export const normaliserValeursImport = (
               rows,
               headers,
               axes,
-            }).map((resolutionAxes) => {
-              const application: ResultatApplication = resolutionAxes.complet
+            }).map((axesResolution) => {
+              const application: ResultatApplication = axesResolution.complete
                 ? appliquerPlan({
                     plan,
                     rows,
                     resolution,
                     individusValides: individus,
                     typeValeur: resolutionTypeValeur,
-                    axes: resolutionAxes.axes,
+                    axes: axesResolution.axes,
                   })
                 : { items: [], warnings: [] }
               return {
@@ -221,11 +221,11 @@ export const normaliserValeursImport = (
                   mapping: [...resolution.mapping],
                   nonResolus: [...resolution.nonResolus],
                   ...(axes.length > 0
-                    ? { colonnesAxes: resolutionAxes.axes.map(toAxeColumnResolution) }
+                    ? { colonnesAxes: axesResolution.axes.map(toAxeColumnResolution) }
                     : {}),
                 },
                 items: application.items,
-                warnings: [...resolutionAxes.warnings, ...application.warnings],
+                warnings: [...axesResolution.warnings, ...application.warnings],
                 rapport: {
                   totalLignes: rows.length,
                   totalItemsProduits: application.items.length,

@@ -70,10 +70,10 @@ export const resoudreIndividus = ({
   ].join('\n')
 
   return resolveLabels({
-    cible: INDIVIDUS_TARGET,
+    target: INDIVIDUS_TARGET,
     prompt,
-    publicIdsValides: new Set(individusValides.map((individu) => individu.publicId)),
-    libellesSources,
+    validPublicIds: new Set(individusValides.map((individu) => individu.publicId)),
+    labels: libellesSources,
     logContext: {
       indicateurNom: indicateur.nom,
       nbIndividusValides: individusValides.length,

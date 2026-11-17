@@ -49,27 +49,27 @@ type MappingEntry = { libelleSource: string } & Record<string, string>
 type ToolInput = { mapping: MappingEntry[]; nonResolus: UnresolvedLabel[] }
 
 const makeResolutionToolSchema = ({
-  cible,
-  publicIdsValides,
-  libellesSources,
+  target,
+  validPublicIds,
+  labels,
 }: {
-  cible: ResolutionTarget
-  publicIdsValides: ReadonlySet<string>
-  libellesSources: ReadonlyArray<string>
+  target: ResolutionTarget
+  validPublicIds: ReadonlySet<string>
+  labels: ReadonlyArray<string>
 }) => {
-  const libellesSet = new Set(libellesSources)
+  const labelSet = new Set(labels)
 
   const libelleSourceSchema = z
     .string()
-    .describe(cible.labelDescription)
-    .refine((value) => libellesSet.has(value), {
+    .describe(target.labelDescription)
+    .refine((value) => labelSet.has(value), {
       message: "libelleSource doit être l'un de ceux fournis en input (recopie exacte requise).",
     })
 
   const publicIdSchema = z
     .string()
-    .describe(cible.publicIdDescription)
-    .refine((value) => publicIdsValides.has(value), {
+    .describe(target.publicIdDescription)
+    .refine((value) => validPublicIds.has(value), {
       message: 'publicId inconnu — doit appartenir à la liste fournie.',
     })
 
@@ -79,10 +79,10 @@ const makeResolutionToolSchema = ({
       .array(
         z.object({
           libelleSource: libelleSourceSchema,
-          [cible.publicIdField]: publicIdSchema,
+          [target.publicIdField]: publicIdSchema,
         }),
       )
-      .describe(cible.mappingDescription),
+      .describe(target.mappingDescription),
     nonResolus: z
       .array(
         z.object({
@@ -105,64 +105,64 @@ const makeResolutionToolSchema = ({
 const validateCoverage = ({
   mapping,
   nonResolus,
-  libellesSources,
+  labels,
 }: {
   mapping: ReadonlyArray<{ libelleSource: string }>
   nonResolus: ReadonlyArray<UnresolvedLabel>
-  libellesSources: ReadonlyArray<string>
+  labels: ReadonlyArray<string>
 }): ToolValidationError | null => {
-  const couverts = new Set<string>()
-  const doublons: string[] = []
+  const covered = new Set<string>()
+  const duplicates: string[] = []
   for (const item of mapping) {
-    if (couverts.has(item.libelleSource)) doublons.push(item.libelleSource)
-    couverts.add(item.libelleSource)
+    if (covered.has(item.libelleSource)) duplicates.push(item.libelleSource)
+    covered.add(item.libelleSource)
   }
   for (const item of nonResolus) {
-    if (couverts.has(item.libelleSource)) doublons.push(item.libelleSource)
-    couverts.add(item.libelleSource)
+    if (covered.has(item.libelleSource)) duplicates.push(item.libelleSource)
+    covered.add(item.libelleSource)
   }
-  const manquants = libellesSources.filter((libelle) => !couverts.has(libelle))
-  if (manquants.length === 0 && doublons.length === 0) return null
+  const missing = labels.filter((label) => !covered.has(label))
+  if (missing.length === 0 && duplicates.length === 0) return null
   return {
     publicIdsInvalides: [],
-    libellesNonCouverts: manquants,
-    libellesEnDoublon: doublons,
+    libellesNonCouverts: missing,
+    libellesEnDoublon: duplicates,
   }
 }
 
 export const resolveLabels = ({
-  cible,
+  target,
   prompt,
-  publicIdsValides,
-  libellesSources,
+  validPublicIds,
+  labels,
   logContext,
 }: {
-  cible: ResolutionTarget
+  target: ResolutionTarget
   prompt: string
-  publicIdsValides: ReadonlySet<string>
-  libellesSources: ReadonlyArray<string>
+  validPublicIds: ReadonlySet<string>
+  labels: ReadonlyArray<string>
   logContext: Record<string, unknown>
 }): ResultAsync<LabelResolution, ResolveLabelsError> => {
   const model = createAlbertModel()
 
   // Court-circuit : aucun libellé à résoudre.
-  if (libellesSources.length === 0) {
+  if (labels.length === 0) {
     return okAsync({ mapping: [], nonResolus: [] })
   }
 
-  const inputSchema = makeResolutionToolSchema({ cible, publicIdsValides, libellesSources })
+  const inputSchema = makeResolutionToolSchema({ target, validPublicIds, labels })
 
-  let derniereTentative: LabelResolution | null = null
-  let derniereErreur: ToolValidationError | null = null
-  let nbAppelsTool = 0
+  let lastAttempt: LabelResolution | null = null
+  let lastError: ToolValidationError | null = null
+  let toolCallCount = 0
 
   const elapsed = startTimer()
-  logger.info({ event: `${cible.logEvent}.start`, ...logContext }, `${cible.logLabel} — début`)
+  logger.info({ event: `${target.logEvent}.start`, ...logContext }, `${target.logLabel} — début`)
 
   return ResultAsync.fromSafePromise(
     generateText({
       model,
-      system: cible.systemPrompt,
+      system: target.systemPrompt,
       prompt,
       tools: {
         enregistrerMapping: tool({
@@ -172,42 +172,42 @@ export const resolveLabels = ({
           inputSchema,
           // eslint-disable-next-line @typescript-eslint/require-await -- l'AI SDK attend une fonction async
           execute: async ({ mapping, nonResolus }) => {
-            nbAppelsTool += 1
-            const erreurs = validateCoverage({ mapping, nonResolus, libellesSources })
-            if (erreurs) {
-              derniereErreur = erreurs
+            toolCallCount += 1
+            const errors = validateCoverage({ mapping, nonResolus, labels })
+            if (errors) {
+              lastError = errors
               logger.info(
                 {
-                  event: `${cible.logEvent}.toolCall`,
-                  tentative: nbAppelsTool,
+                  event: `${target.logEvent}.toolCall`,
+                  tentative: toolCallCount,
                   ok: false,
                   nbMappes: mapping.length,
                   nbNonResolus: nonResolus.length,
-                  nbLibellesNonCouverts: erreurs.libellesNonCouverts.length,
-                  nbLibellesEnDoublon: erreurs.libellesEnDoublon.length,
+                  nbLibellesNonCouverts: errors.libellesNonCouverts.length,
+                  nbLibellesEnDoublon: errors.libellesEnDoublon.length,
                 },
                 'Tool call invalide — Albert va corriger',
               )
               return {
                 ok: false as const,
-                ...erreurs,
+                ...errors,
                 consigne:
                   'Re-appelle `enregistrerMapping` avec un mapping/nonResolus couvrant EXACTEMENT ' +
                   'tous les libellés fournis, sans doublon.',
               }
             }
-            derniereTentative = {
-              mapping: mapping.map((entree) => ({
-                libelleSource: entree.libelleSource,
-                publicId: entree[cible.publicIdField]!,
+            lastAttempt = {
+              mapping: mapping.map((entry) => ({
+                libelleSource: entry.libelleSource,
+                publicId: entry[target.publicIdField]!,
               })),
               nonResolus,
             }
-            derniereErreur = null
+            lastError = null
             logger.info(
               {
-                event: `${cible.logEvent}.toolCall`,
-                tentative: nbAppelsTool,
+                event: `${target.logEvent}.toolCall`,
+                tentative: toolCallCount,
                 ok: true,
                 nbMappes: mapping.length,
                 nbNonResolus: nonResolus.length,
@@ -224,25 +224,25 @@ export const resolveLabels = ({
       const durationMs = elapsed()
       logger.info(
         {
-          event: `${cible.logEvent}.done`,
+          event: `${target.logEvent}.done`,
           durationMs,
-          nbAppelsTool,
+          toolCallCount,
           nbSteps: result.steps.length,
           inputTokens: result.usage.inputTokens,
           outputTokens: result.usage.outputTokens,
-          succes: derniereTentative !== null,
-          ...(derniereTentative
+          succes: lastAttempt !== null,
+          ...(lastAttempt
             ? {
-                nbMappesFinal: derniereTentative.mapping.length,
-                nbNonResolusFinal: derniereTentative.nonResolus.length,
+                nbMappesFinal: lastAttempt.mapping.length,
+                nbNonResolusFinal: lastAttempt.nonResolus.length,
               }
             : {}),
         },
-        `${cible.logLabel} — fin`,
+        `${target.logLabel} — fin`,
       )
-      return derniereTentative
+      return lastAttempt
     }),
-  ).andThen((tentative): Result<LabelResolution, ResolveLabelsError> =>
-    tentative ? ok(tentative) : err({ type: 'RESOLUTION_ECHEC', derniereErreur }),
+  ).andThen((attempt): Result<LabelResolution, ResolveLabelsError> =>
+    attempt ? ok(attempt) : err({ type: 'RESOLUTION_ECHEC', derniereErreur: lastError }),
   )
 }

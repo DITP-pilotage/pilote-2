@@ -208,11 +208,11 @@ export const decouvrirStructure = ({
 }): ResultAsync<Plan, DecouvrirStructureError> => {
   const model = createAlbertModel()
   const echantillon = rows.slice(0, MAX_LIGNES_ECHANTILLON)
-  const [premierAxe, ...autresAxes] = axes.map((axe) => axe.publicId)
+  const [firstAxe, ...otherAxes] = axes.map((axe) => axe.publicId)
   const schema: z.ZodType<DecouverteResult> =
-    premierAxe === undefined
+    firstAxe === undefined
       ? decouverteOutputSchema
-      : makeDecouverteOutputSchemaWithAxes({ axePublicIds: [premierAxe, ...autresAxes] })
+      : makeDecouverteOutputSchemaWithAxes({ axePublicIds: [firstAxe, ...otherAxes] })
 
   const prompt = [
     `Indicateur ciblé : « ${indicateur.nom} »${

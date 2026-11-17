@@ -48,21 +48,23 @@ beforeEach(() => {
   vi.mocked(decouvrirStructure).mockReset()
   vi.mocked(resolveLabels).mockReset()
   vi.mocked(resoudreIndividus).mockImplementation(({ individusValides, libellesSources }) => {
-    const parNom = new Map(individusValides.map((individu) => [individu.nom, individu.publicId]))
+    const individuIdByNom = new Map(
+      individusValides.map((individu) => [individu.nom, individu.publicId]),
+    )
     return okAsync({
       mapping: libellesSources
-        .filter((libelle) => parNom.has(libelle))
-        .map((libelle) => ({ libelleSource: libelle, individuPublicId: parNom.get(libelle)! })),
+        .filter((label) => individuIdByNom.has(label))
+        .map((label) => ({ libelleSource: label, individuPublicId: individuIdByNom.get(label)! })),
       nonResolus: libellesSources
-        .filter((libelle) => !parNom.has(libelle))
-        .map((libelle) => ({ libelleSource: libelle, raison: 'Inconnu.' })),
+        .filter((label) => !individuIdByNom.has(label))
+        .map((label) => ({ libelleSource: label, raison: 'Inconnu.' })),
     })
   })
-  vi.mocked(resolveLabels).mockImplementation(({ libellesSources }) =>
+  vi.mocked(resolveLabels).mockImplementation(({ labels }) =>
     okAsync({
       mapping: [],
-      nonResolus: libellesSources.map((libelle) => ({
-        libelleSource: libelle,
+      nonResolus: labels.map((label) => ({
+        libelleSource: label,
         raison: 'Albert ne reconnaît pas ce libellé.',
       })),
     }),
@@ -169,12 +171,12 @@ describe('normaliserValeursImport — indicateur à axes', { concurrent: false }
       // rattachés, et seulement les modalités feuilles de l'axe de la colonne.
       expect(
         vi.mocked(resolveLabels).mock.calls.map(([params]) => ({
-          libelles: params.libellesSources,
-          candidats: [...params.publicIdsValides].sort(),
+          labels: params.labels,
+          candidates: [...params.validPublicIds].sort(),
         })),
       ).toEqual([
-        { libelles: ['Bouygues'], candidats: [ids.orange, ids.sfr].sort() },
-        { libelles: ['Fiscale'], candidats: [ids.tva, ids.ir].sort() },
+        { labels: ['Bouygues'], candidates: [ids.orange, ids.sfr].sort() },
+        { labels: ['Fiscale'], candidates: [ids.tva, ids.ir].sort() },
       ])
       expect(resolution.colonnesAxes).toEqual([
         {

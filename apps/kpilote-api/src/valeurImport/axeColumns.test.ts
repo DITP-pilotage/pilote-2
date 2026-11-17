@@ -30,7 +30,7 @@ const headers = ['territoire', 'operateur', 'fraude', 'date', 'valeur']
 
 describe('selectAxeColumns', () => {
   it('retient une colonne par axe, dans l’ordre des axes', () => {
-    const { colonnes, warnings } = selectAxeColumns({
+    const { columns, warnings } = selectAxeColumns({
       plan: plan([
         { colonne: 'fraude', axe: 'AXE-FRAUDE' },
         { colonne: 'operateur', axe: 'AXE-OPERATEUR' },
@@ -39,15 +39,15 @@ describe('selectAxeColumns', () => {
       axes: [operateur, fraude],
     })
 
-    expect(colonnes).toEqual([
-      { colonne: 'operateur', axe: operateur },
-      { colonne: 'fraude', axe: fraude },
+    expect(columns).toEqual([
+      { column: 'operateur', axe: operateur },
+      { column: 'fraude', axe: fraude },
     ])
     expect(warnings).toEqual([])
   })
 
   it('écarte une colonne absente, de structure ou en double, et signale l’axe non couvert', () => {
-    const { colonnes, warnings } = selectAxeColumns({
+    const { columns, warnings } = selectAxeColumns({
       plan: plan([
         { colonne: 'inexistante', axe: 'AXE-FRAUDE' },
         { colonne: 'territoire', axe: 'AXE-FRAUDE' },
@@ -58,7 +58,7 @@ describe('selectAxeColumns', () => {
       axes: [operateur, fraude],
     })
 
-    expect(colonnes).toEqual([{ colonne: 'operateur', axe: operateur }])
+    expect(columns).toEqual([{ column: 'operateur', axe: operateur }])
     expect(warnings.map((warning) => [warning.code, warning.colonneSource])).toEqual([
       ['COLONNE_AXE_IGNOREE', 'inexistante'],
       ['COLONNE_AXE_IGNOREE', 'territoire'],
@@ -71,8 +71,8 @@ describe('selectAxeColumns', () => {
 
 describe('matchModalites', () => {
   it('rattache par publicId ou par nom, sans tenir compte de la casse ni des accents', () => {
-    const { mapping, restants } = matchModalites({
-      libelles: ['op-orange', ' sfr ', 'Électricité', 'Bouygues'],
+    const { mapping, remaining } = matchModalites({
+      labels: ['op-orange', ' sfr ', 'Électricité', 'Bouygues'],
       modalites: [...operateur.modalitesFeuilles, { publicId: 'OP-EDF', nom: 'Electricite' }],
     })
 
@@ -81,12 +81,12 @@ describe('matchModalites', () => {
       { libelleSource: ' sfr ', publicId: 'OP-SFR' },
       { libelleSource: 'Électricité', publicId: 'OP-EDF' },
     ])
-    expect(restants).toEqual(['Bouygues'])
+    expect(remaining).toEqual(['Bouygues'])
   })
 
   it('laisse à Albert un libellé qui désigne plusieurs modalités', () => {
-    const { mapping, restants } = matchModalites({
-      libelles: ['Orange'],
+    const { mapping, remaining } = matchModalites({
+      labels: ['Orange'],
       modalites: [
         { publicId: 'OP-ORANGE', nom: 'Orange' },
         { publicId: 'OP-ORANGE-PRO', nom: 'orange' },
@@ -94,6 +94,6 @@ describe('matchModalites', () => {
     })
 
     expect(mapping).toEqual([])
-    expect(restants).toEqual(['Orange'])
+    expect(remaining).toEqual(['Orange'])
   })
 })

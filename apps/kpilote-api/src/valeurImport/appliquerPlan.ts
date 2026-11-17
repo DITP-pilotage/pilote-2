@@ -10,9 +10,9 @@ export type ItemNormalise = { individu: string; modalites?: string[]; date: stri
 
 // Colonne d'axe retenue dans le fichier, avec la résolution de ses libellés.
 export type AxeColumn = {
-  colonne: string
+  column: string
   axe: { publicId: string; nom: string }
-  modalitesValides: ReadonlySet<string>
+  validModalites: ReadonlySet<string>
   resolution: LabelResolution
 }
 
@@ -94,36 +94,36 @@ const warnIndividuNonResolu = ({
 })
 
 const warnUnresolvedModalite = ({
-  libelle,
-  ligne,
-  colonne,
-  raison,
+  label,
+  row,
+  column,
+  reason,
 }: {
-  libelle: string
-  ligne: number
-  colonne: string
-  raison: string
+  label: string
+  row: number
+  column: string
+  reason: string
 }): WarningApplication => ({
   code: 'MODALITE_NON_RESOLUE',
-  message: `« ${libelle} » (colonne « ${colonne} ») : ${raison}`,
-  libelleSource: libelle,
-  ligneSource: ligne,
-  colonneSource: colonne,
+  message: `« ${label} » (colonne « ${column} ») : ${reason}`,
+  libelleSource: label,
+  ligneSource: row,
+  colonneSource: column,
 })
 
 const warnPartialRow = ({
   index,
-  colonne,
+  column,
   axe,
 }: {
   index: number
-  colonne: string
+  column: string
   axe: string
 }): WarningApplication => ({
   code: 'LIGNE_PARTIELLE',
-  message: `Ligne ${index} : pas de modalité pour l'axe « ${axe} » (colonne « ${colonne} ») — ligne écartée.`,
+  message: `Ligne ${index} : pas de modalité pour l'axe « ${axe} » (colonne « ${column} ») — ligne écartée.`,
   ligneSource: index,
-  colonneSource: colonne,
+  colonneSource: column,
 })
 
 const warnCelluleVide = ({
@@ -269,45 +269,43 @@ export const appliquerPlan = ({
 
   // Résolution des modalités, par colonne d'axe. Un publicId hors des modalités
   // de l'axe (halluciné) vaut un libellé non résolu.
-  const modaliteParColonneEtLibelle = new Map(
+  const modaliteByColumnAndLabel = new Map(
     axes.map((axe) => [
-      axe.colonne,
+      axe.column,
       new Map(
         axe.resolution.mapping
-          .filter((entree) => axe.modalitesValides.has(entree.publicId))
-          .map((entree) => [entree.libelleSource, entree.publicId]),
+          .filter((entry) => axe.validModalites.has(entry.publicId))
+          .map((entry) => [entry.libelleSource, entry.publicId]),
       ),
     ]),
   )
-  const raisonNonResoluParColonne = new Map(
+  const unresolvedReasonByColumn = new Map(
     axes.map((axe) => [
-      axe.colonne,
-      new Map(axe.resolution.nonResolus.map((entree) => [entree.libelleSource, entree.raison])),
+      axe.column,
+      new Map(axe.resolution.nonResolus.map((entry) => [entry.libelleSource, entry.raison])),
     ]),
   )
-  const modalitesDejaSignalees = new Set<string>()
+  const reportedModalites = new Set<string>()
 
   // Les modalités d'une ligne, une par axe ; null si l'une manque ou n'est pas
   // résolue (la ligne est écartée).
   const rowModalites = (row: Record<string, unknown>, index: number): string[] | null => {
     const modalites: string[] = []
     for (const axe of axes) {
-      const libelle = safeStringify(row[axe.colonne]).trim()
-      if (!libelle) {
-        warnings.push(warnPartialRow({ index, colonne: axe.colonne, axe: axe.axe.nom }))
+      const label = safeStringify(row[axe.column]).trim()
+      if (!label) {
+        warnings.push(warnPartialRow({ index, column: axe.column, axe: axe.axe.nom }))
         return null
       }
-      const publicId = modaliteParColonneEtLibelle.get(axe.colonne)?.get(libelle)
+      const publicId = modaliteByColumnAndLabel.get(axe.column)?.get(label)
       if (!publicId) {
-        const cle = `${axe.colonne}\u0000${libelle}`
-        if (!modalitesDejaSignalees.has(cle)) {
-          modalitesDejaSignalees.add(cle)
-          const raison =
-            raisonNonResoluParColonne.get(axe.colonne)?.get(libelle) ??
+        const key = `${axe.column}\u0000${label}`
+        if (!reportedModalites.has(key)) {
+          reportedModalites.add(key)
+          const reason =
+            unresolvedReasonByColumn.get(axe.column)?.get(label) ??
             `Aucune modalité de l'axe « ${axe.axe.nom} » ne correspond.`
-          warnings.push(
-            warnUnresolvedModalite({ libelle, ligne: index, colonne: axe.colonne, raison }),
-          )
+          warnings.push(warnUnresolvedModalite({ label, row: index, column: axe.column, reason }))
         }
         return null
       }
