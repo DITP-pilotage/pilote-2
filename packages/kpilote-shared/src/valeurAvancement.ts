@@ -256,6 +256,7 @@ export const listValeursRemarquablesForIndicateurQuerySchema = z.object({
         "bucket retenu comme « dernière valeur » de chaque individu. S'applique aux séries " +
         'saisies comme aux séries dérivées.',
     ),
+  modalites: modalitesCsvSchema.optional(),
 })
 export type ListValeursRemarquablesForIndicateurQuery = z.infer<
   typeof listValeursRemarquablesForIndicateurQuerySchema
@@ -299,6 +300,7 @@ export const listSyntheseIndividusQuerySchema = z.object({
         'buckets retenus comme « dernière » et « précédente » valeur pour le calcul de la ' +
         "variation. S'applique aux séries saisies comme aux séries dérivées.",
     ),
+  modalites: modalitesCsvSchema.optional(),
 })
 export type ListSyntheseIndividusQuery = z.infer<typeof listSyntheseIndividusQuerySchema>
 

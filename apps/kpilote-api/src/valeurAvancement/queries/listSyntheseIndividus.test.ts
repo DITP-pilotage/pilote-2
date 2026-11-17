@@ -2,9 +2,53 @@ import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testDeptIds, testIndicateurId, testReferentielId } from '@/test/randomIds'
+import {
+  testAxeId,
+  testDeptId,
+  testDeptIds,
+  testIndicateurId,
+  testModaliteId,
+  testReferentielId,
+} from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
+
+// Indicateur à un axe « opérateur » : Orange n'a jamais de valeur dans C.
+//
+//            Orange   SFR    Tous
+//   A          10      5      15
+//   B          20      –      20
+//   C           –      7       7
+const trancheOrangeAbsentDeC = async () => {
+  const indId = testIndicateurId()
+  const refId = testReferentielId()
+  const [a, b, c] = testDeptIds(3)
+  const indicateur = { publicId: indId, nom: 'T', visibilite: 'PUBLIC' as const }
+  await fixtures.indicateurReferentiel({ indicateur, referentiel: { publicId: refId } })
+  const axe = { publicId: testAxeId() }
+  const [orange, sfr] = [testModaliteId(), testModaliteId()]
+  await fixtures.modalite(
+    { publicId: orange, nom: 'Orange', niveau: { axe } },
+    { publicId: sfr, nom: 'SFR', niveau: { axe } },
+  )
+  await fixtures.indicateurAxe({ indicateur, axe, fonction: 'SUM' })
+  for (const [individu, modalite, valeur] of [
+    [a, orange, 10],
+    [a, sfr, 5],
+    [b, orange, 20],
+    [c, sfr, 7],
+  ] as const) {
+    await fixtures.valeurAvancement({
+      indicateur,
+      individu: { publicId: individu, referentiel: { publicId: refId } },
+      date: '2026-01-01',
+      valeur,
+      combinaison: { modalites: [{ publicId: modalite }] },
+    })
+  }
+  const apiKey = await fixtures.apiKey()
+  return { indId, a, c, orange, apiKeyId: apiKey.id }
+}
 
 describe.concurrent('listSyntheseIndividus', () => {
   it(
@@ -503,6 +547,71 @@ describe.concurrent('listSyntheseIndividus', () => {
       await expect(
         runAsPrincipal(apiKey.id, () => listSyntheseIndividus(indId, { individus: [deptId] })),
       ).rejects.toThrow()
+    }),
+  )
+
+  it(
+    'indicateur à axes, sans modalites : écart à la médiane des « Tous » du référentiel',
+    integrationTest(async () => {
+      const t = await trancheOrangeAbsentDeC()
+
+      const result = await runAsPrincipal(t.apiKeyId, () =>
+        listSyntheseIndividus(t.indId, { individus: [t.a, t.c] }),
+      )
+
+      // Médiane des « Tous » : 15 (7, 15, 20).
+      const items = result._unsafeUnwrap().items
+      expect(items.find((i) => i.individu === t.a)).toEqual({
+        individu: t.a,
+        variation: 15,
+        ecartMediane: 0,
+      })
+      expect(items.find((i) => i.individu === t.c)).toEqual({
+        individu: t.c,
+        variation: 7,
+        ecartMediane: -8,
+      })
+    }),
+  )
+
+  it(
+    "avec modalites : écart à la médiane des pairs qui ont la modalité, null pour l'individu qui ne l'a pas",
+    integrationTest(async () => {
+      const t = await trancheOrangeAbsentDeC()
+
+      const result = await runAsPrincipal(t.apiKeyId, () =>
+        listSyntheseIndividus(t.indId, { individus: [t.a, t.c], modalites: [t.orange] }),
+      )
+
+      // Médiane Orange : 15 (10, 20) ; C n'a pas Orange.
+      const items = result._unsafeUnwrap().items
+      expect(items.find((i) => i.individu === t.a)).toEqual({
+        individu: t.a,
+        variation: 10,
+        ecartMediane: -5,
+      })
+      expect(items.find((i) => i.individu === t.c)).toEqual({
+        individu: t.c,
+        variation: null,
+        ecartMediane: null,
+      })
+    }),
+  )
+
+  it(
+    'avec modalites : renvoie MODALITE_INCONNUE pour une modalité inexistante',
+    integrationTest(async () => {
+      const t = await trancheOrangeAbsentDeC()
+      const inconnue = testModaliteId()
+
+      const result = await runAsPrincipal(t.apiKeyId, () =>
+        listSyntheseIndividus(t.indId, { individus: [t.a], modalites: [inconnue] }),
+      )
+
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'MODALITE_INCONNUE',
+        modalites: [inconnue],
+      })
     }),
   )
 })
