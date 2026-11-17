@@ -97,9 +97,15 @@ const upsertIndicateurRoute = createRoute({
   method: 'put',
   path: '/indicateurs/{id}',
   tags: ['Indicateur', 'Admin'],
-  summary: 'Créer ou remplacer un indicateur (nom + référentiels liés)',
+  summary: 'Créer ou remplacer un indicateur',
   description:
-    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Crée l'indicateur s'il n'existe pas, ou met à jour son `nom` si déjà présent. Le champ `referentielIds` est obligatoire et applique une sémantique replace-all : l'ensemble des liens devient strictement celui décrit dans le body (tableau vide pour aucun lien). Les doublons sont silencieusement dédupliqués. Si un `referentielId` n'existe pas, l'appel échoue avec 400 `VALIDATION_ERROR` et `details.unknownReferentielIds`. Le champ `axes` est optionnel (absent = inchangé, `[]` = aucun axe) et remplace la déclaration complète ; la position donne l'ordre de déclaration. Axe inconnu : 400 `VALIDATION_ERROR` avec `details.unknownAxeIds`. Ajouter ou retirer un axe sur un indicateur qui a déjà des valeurs : 409 `AXES_VERROUILLES` (changer la fonction ou l'ordre reste permis). L'opération est atomique (transaction unique).",
+    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Crée l'indicateur s'il n'existe pas, sinon le met à jour. " +
+    '`nom`, `visibilite`, `unite` et `sensSouhaite` sont obligatoires et remplacés à chaque appel. ' +
+    "`referentiels` est obligatoire et applique une sémantique replace-all : l'ensemble des configurations devient strictement celui décrit dans le body (tableau vide pour aucun référentiel), les doublons sont dédupliqués. " +
+    'Les métadonnées (`description`, `methodeCalcul`, `sourceDonnees`, `sourceUrl`, `periodeMiseAJour`, `jourMiseAJour`, `delaiMiseADisposition`) sont optionnelles : absentes, elles restent inchangées ; à `null`, elles sont effacées. ' +
+    '`responsables` est optionnel : absent, la liste reste inchangée ; présent, elle est remplacée. ' +
+    "Le champ `axes` est optionnel (absent = inchangé, `[]` = aucun axe) et remplace la déclaration complète ; la position donne l'ordre de déclaration. Axe inconnu : 400 `VALIDATION_ERROR` avec `details.unknownAxeIds`. Ajouter ou retirer un axe sur un indicateur qui a déjà des valeurs : 409 `AXES_VERROUILLES` (changer la fonction ou l'ordre reste permis). " +
+    "Si un référentiel n'existe pas, l'appel échoue avec 400 `VALIDATION_ERROR` et `details.unknownReferentielIds` (idem `details.unknownUtilisateurIds` pour les responsables). L'opération est atomique (transaction unique).",
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
