@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { dateSchema } from './dates'
-import { individuPublicIdSchema } from './publicIds'
+import { axePublicIdSchema, individuPublicIdSchema, modalitePublicIdSchema } from './publicIds'
 
 const colonneDateSchema = z.object({
   nom: z.string(),
@@ -9,12 +9,16 @@ const colonneDateSchema = z.object({
 
 const colonneTypeValeurSchema = z.object({ nom: z.string() })
 
+// Indicateur à axes seulement : la colonne qui porte les modalités de chaque axe.
+const colonnesAxesSchema = z.array(z.object({ colonne: z.string(), axe: axePublicIdSchema }))
+
 const planLongSchema = z.object({
   layout: z.literal('long'),
   colonneIndividu: z.string(),
   colonneDate: colonneDateSchema,
   colonneValeur: z.string(),
   colonneTypeValeur: colonneTypeValeurSchema.optional(),
+  colonnesAxes: colonnesAxesSchema.optional(),
 })
 
 const planPivotSchema = z.object({
@@ -22,6 +26,7 @@ const planPivotSchema = z.object({
   colonneIndividu: z.string(),
   colonnesPivot: z.array(z.object({ nom: z.string(), dateIso: z.string() })).min(1),
   colonneTypeValeur: colonneTypeValeurSchema.optional(),
+  colonnesAxes: colonnesAxesSchema.optional(),
 })
 
 export const normaliserPlanSchema = z.discriminatedUnion('layout', [
@@ -32,6 +37,8 @@ export type NormaliserPlan = z.infer<typeof normaliserPlanSchema>
 
 export const itemNormaliseApiModelSchema = z.object({
   individu: individuPublicIdSchema,
+  // Une modalité par axe de l'indicateur, dans l'ordre des axes ; absent sans axe.
+  modalites: z.array(modalitePublicIdSchema).optional(),
   date: dateSchema,
   valeur: z.number(),
 })
@@ -45,6 +52,10 @@ export const normaliserWarningSchema = z.object({
     'VALEUR_INVALIDE',
     'CELLULE_VIDE',
     'LIGNE_IGNOREE',
+    'MODALITE_NON_RESOLUE',
+    'LIGNE_PARTIELLE',
+    'AXE_NON_COUVERT',
+    'COLONNE_AXE_IGNOREE',
   ]),
   message: z.string(),
   ligneSource: z.number().int().optional(),
@@ -53,9 +64,22 @@ export const normaliserWarningSchema = z.object({
 })
 export type NormaliserWarning = z.infer<typeof normaliserWarningSchema>
 
+const nonResolusSchema = z.array(z.object({ libelleSource: z.string(), raison: z.string() }))
+
 const resolutionApiSchema = z.object({
   mapping: z.array(z.object({ libelleSource: z.string(), individuPublicId: z.string() })),
-  nonResolus: z.array(z.object({ libelleSource: z.string(), raison: z.string() })),
+  nonResolus: nonResolusSchema,
+  // Indicateur à axes seulement : la résolution de chaque colonne d'axe retenue.
+  colonnesAxes: z
+    .array(
+      z.object({
+        colonne: z.string(),
+        axe: axePublicIdSchema,
+        mapping: z.array(z.object({ libelleSource: z.string(), modalitePublicId: z.string() })),
+        nonResolus: nonResolusSchema,
+      }),
+    )
+    .optional(),
 })
 
 const rapportSchema = z.object({

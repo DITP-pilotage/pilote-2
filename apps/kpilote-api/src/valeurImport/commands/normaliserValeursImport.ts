@@ -3,7 +3,9 @@ import { okAsync, ResultAsync } from 'neverthrow'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import {
   appliquerPlan,
+  type AxeApplication,
   type ItemNormalise,
+  type ResultatApplication,
   type WarningApplication,
 } from '@/valeurImport/appliquerPlan'
 import { decouvrirStructure, type Plan } from '@/valeurImport/calls/decouvrirStructure'
@@ -12,15 +14,33 @@ import {
   type ResolutionEntry,
   type ResolutionNonResolu,
 } from '@/valeurImport/calls/resoudreIndividus'
+import { resoudreModalites } from '@/valeurImport/calls/resoudreModalites'
 import { resoudreTypeValeur } from '@/valeurImport/calls/resoudreTypeValeur'
+import { retenirColonnesAxes } from '@/valeurImport/colonnesAxes'
 import { collecterValeursDistinctes } from '@/valeurImport/helpers/collecterValeursDistinctes'
 import { resoudreColonneTypeValeur } from '@/valeurImport/helpers/resoudreColonneTypeValeur'
 import { safeStringify } from '@/valeurImport/helpers/safeStringify'
+import {
+  type AxePourImport,
+  listAxesForIndicateur,
+} from '@/valeurImport/queries/listAxesForIndicateur'
 import { listIndividusForIndicateur } from '@/valeurImport/queries/listIndividusForIndicateur'
+
+export type ResolutionColonneAxe = {
+  colonne: string
+  axe: string
+  mapping: Array<{ libelleSource: string; modalitePublicId: string }>
+  nonResolus: Array<{ libelleSource: string; raison: string }>
+}
 
 export type NormaliserValeursImportResult = {
   plan: Plan
-  resolution: { mapping: ResolutionEntry[]; nonResolus: ResolutionNonResolu[] }
+  resolution: {
+    mapping: ResolutionEntry[]
+    nonResolus: ResolutionNonResolu[]
+    // Indicateur à axes seulement.
+    colonnesAxes?: ResolutionColonneAxe[]
+  }
   items: ItemNormalise[]
   warnings: WarningApplication[]
   rapport: {
@@ -94,24 +114,81 @@ const resoudreEtapeTypeValeur = ({
   }))
 }
 
+type ResolutionAxes = {
+  // Une entrée par axe couvert par une colonne du fichier, dans l'ordre des axes.
+  axes: AxeApplication[]
+  // Tous les axes de l'indicateur ont une colonne : sinon aucune ligne n'est complète.
+  complet: boolean
+  warnings: WarningApplication[]
+}
+
+// Indicateur à axes : retient la colonne de chaque axe proposée par Albert, puis
+// résout ses libellés contre les modalités de cet axe.
+const resoudreEtapeAxes = ({
+  indicateur,
+  plan,
+  rows,
+  headers,
+  axes,
+}: {
+  indicateur: { nom: string }
+  plan: Plan
+  rows: Array<Record<string, unknown>>
+  headers: string[]
+  axes: ReadonlyArray<AxePourImport>
+}): ResultAsync<ResolutionAxes, NormaliserValeursImportError> => {
+  if (axes.length === 0) return okAsync({ axes: [], complet: true, warnings: [] })
+  const { colonnes, warnings } = retenirColonnesAxes({ plan, headers, axes })
+  return ResultAsync.combine(
+    colonnes.map(({ colonne, axe }) =>
+      resoudreModalites({
+        indicateur,
+        axe,
+        colonne,
+        libellesSources: extraireLibellesSources(rows, colonne),
+      }).map((resolution): AxeApplication => ({
+        colonne,
+        axe: { publicId: axe.publicId, nom: axe.nom },
+        modalitesValides: new Set(axe.modalitesFeuilles.map((modalite) => modalite.publicId)),
+        resolution,
+      })),
+    ),
+  ).map((axesResolus) => ({
+    axes: axesResolus,
+    complet: axesResolus.length === axes.length,
+    warnings,
+  }))
+}
+
+const versResolutionColonneAxe = (axe: AxeApplication): ResolutionColonneAxe => ({
+  colonne: axe.colonne,
+  axe: axe.axe.publicId,
+  mapping: axe.resolution.mapping.map(({ libelleSource, publicId }) => ({
+    libelleSource,
+    modalitePublicId: publicId,
+  })),
+  nonResolus: [...axe.resolution.nonResolus],
+})
+
 export const normaliserValeursImport = (
   indicateurPublicId: string,
   { rows, nomFichier }: { rows: Array<Record<string, unknown>>; nomFichier: string },
 ): ResultAsync<NormaliserValeursImportResult, NormaliserValeursImportError> =>
   getIndicateurByPublicId(indicateurPublicId)
     .andThen((indicateur) =>
-      listIndividusForIndicateur(indicateurPublicId).map((individus) => ({
-        indicateur,
-        individus,
-      })),
+      ResultAsync.combine([
+        listIndividusForIndicateur(indicateurPublicId),
+        listAxesForIndicateur(indicateurPublicId),
+      ] as const).map(([individus, axes]) => ({ indicateur, individus, axes })),
     )
-    .andThen(({ indicateur, individus }) => {
+    .andThen(({ indicateur, individus, axes }) => {
       const headers = collectHeaders(rows)
       return decouvrirStructure({
         indicateur: { nom: indicateur.nom, uniteLibelle: indicateur.unite?.libelle ?? null },
         headers,
         rows,
         nomFichier,
+        axes,
       }).andThen((plan) => {
         const libellesSources = extraireLibellesSources(rows, plan.colonneIndividu)
 
@@ -120,32 +197,46 @@ export const normaliserValeursImport = (
             indicateur: { nom: indicateur.nom },
             individusValides: individus,
             libellesSources,
-          }).map((resolution) => {
-            const application = appliquerPlan({
+          }).andThen((resolution) =>
+            resoudreEtapeAxes({
+              indicateur: { nom: indicateur.nom },
               plan,
               rows,
-              resolution,
-              individusValides: individus,
-              typeValeur: resolutionTypeValeur,
-            })
-            return {
-              plan,
-              resolution: {
-                mapping: [...resolution.mapping],
-                nonResolus: [...resolution.nonResolus],
-              },
-              items: application.items,
-              warnings: application.warnings,
-              rapport: {
-                totalLignes: rows.length,
-                totalItemsProduits: application.items.length,
-                totalLibellesSources: libellesSources.length,
-                totalLibellesMappes: resolution.mapping.length,
-                totalLibellesNonResolus: resolution.nonResolus.length,
-              },
-              ...(resolutionTypeValeur ? { resolutionTypeValeur } : {}),
-            }
-          }),
+              headers,
+              axes,
+            }).map((resolutionAxes) => {
+              const application: ResultatApplication = resolutionAxes.complet
+                ? appliquerPlan({
+                    plan,
+                    rows,
+                    resolution,
+                    individusValides: individus,
+                    typeValeur: resolutionTypeValeur,
+                    axes: resolutionAxes.axes,
+                  })
+                : { items: [], warnings: [] }
+              return {
+                plan,
+                resolution: {
+                  mapping: [...resolution.mapping],
+                  nonResolus: [...resolution.nonResolus],
+                  ...(axes.length > 0
+                    ? { colonnesAxes: resolutionAxes.axes.map(versResolutionColonneAxe) }
+                    : {}),
+                },
+                items: application.items,
+                warnings: [...resolutionAxes.warnings, ...application.warnings],
+                rapport: {
+                  totalLignes: rows.length,
+                  totalItemsProduits: application.items.length,
+                  totalLibellesSources: libellesSources.length,
+                  totalLibellesMappes: resolution.mapping.length,
+                  totalLibellesNonResolus: resolution.nonResolus.length,
+                },
+                ...(resolutionTypeValeur ? { resolutionTypeValeur } : {}),
+              }
+            }),
+          ),
         )
       })
     })

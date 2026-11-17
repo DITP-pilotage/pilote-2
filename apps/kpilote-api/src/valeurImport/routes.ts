@@ -36,7 +36,10 @@ const normaliserRoute = createRoute({
     "Reçoit les lignes brutes (CSV/Excel parsé côté client) d'un fichier qui ne respecte pas le " +
     'format standard `individu/date/valeur`, et utilise Albert en 2 passes (découverte de structure ' +
     "puis résolution des individus) pour produire des triplets normalisés. N'écrit rien en base : " +
-    "l'écriture reste via `PUT /indicateurs/{id}/valeurs:batch`.",
+    "l'écriture reste via `PUT /indicateurs/{id}/valeurs:batch`. Indicateur à axes : Albert rattache " +
+    'une colonne du fichier à chaque axe, dont les libellés sont résolus contre les modalités feuilles ' +
+    'de cet axe ; les items portent alors `modalites` (une par axe), et les lignes incomplètes sont ' +
+    'écartées avec un avertissement.',
   middleware: [requireAuthentication],
   request: {
     params: z.object({ id: indicateurPublicIdSchema }),
