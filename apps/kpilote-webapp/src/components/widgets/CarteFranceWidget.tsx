@@ -15,6 +15,7 @@ import { referentielIndividusQueryOptions } from '@/queries/referentiels'
 export function CarteFranceWidget({
   indicateurId,
   referentielId,
+  modalites = [],
   mapName,
   geoJson,
   frontieres,
@@ -23,6 +24,8 @@ export function CarteFranceWidget({
   widget: WidgetApiModel
   indicateurId: string
   referentielId: string
+  /** Indicateur à axes : la carte porte sur ces modalités (vide : « Tous »). */
+  modalites?: ReadonlyArray<string>
   mapName: string
   geoJson: FranceGeoJson
   frontieres: FranceGeoJson
@@ -33,7 +36,7 @@ export function CarteFranceWidget({
   const [{ data: individus }, { data: remarquables }] = useSuspenseQueries({
     queries: [
       referentielIndividusQueryOptions(referentielId),
-      indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
+      indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId, modalites),
     ],
   })
 

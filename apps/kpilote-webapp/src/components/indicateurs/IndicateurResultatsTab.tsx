@@ -17,6 +17,8 @@ export function IndicateurResultatsTab({
   referentielId,
   unite,
   referentielNom,
+  modalites,
+  legend,
   sousOnglet,
   onSousOngletChange,
 }: {
@@ -25,6 +27,9 @@ export function IndicateurResultatsTab({
   referentielId: string
   unite: UniteIndicateurApiModel | null
   referentielNom: string | null
+  modalites: ReadonlyArray<string>
+  /** Indicateur à axes : la sélection en clair (« Ensemble », « Orange »…). */
+  legend: string | null
   sousOnglet: SousOnglet
   onSousOngletChange: (sousOnglet: SousOnglet) => void
 }) {
@@ -36,6 +41,8 @@ export function IndicateurResultatsTab({
         individuId={individuId}
         unite={unite}
         referentielNom={referentielNom}
+        modalites={modalites}
+        legend={legend}
       />
 
       <Tabs value={sousOnglet} onValueChange={(valeur) => onSousOngletChange(valeur as SousOnglet)}>
@@ -65,11 +72,17 @@ export function IndicateurResultatsTab({
               indicateurId={indicateurId}
               individuId={individuId}
               unite={unite}
+              modalites={modalites}
+              legend={legend}
             />
             {/* Données (referentiel, individus, valeurs remarquables) déjà
                 préfetchées par le loader de la route, et la carte est un import
                 statique : aucune suspension ici, donc pas de boundary. */}
-            <IndicateurWidgets indicateurId={indicateurId} referentielId={referentielId} />
+            <IndicateurWidgets
+              indicateurId={indicateurId}
+              referentielId={referentielId}
+              modalites={modalites}
+            />
           </div>
         </TabsContent>
 

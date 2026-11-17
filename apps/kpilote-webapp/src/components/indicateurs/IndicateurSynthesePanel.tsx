@@ -41,6 +41,8 @@ type IndicateurSynthesePanelProps = {
   individuId: string
   unite: UniteIndicateurApiModel | null
   referentielNom: string | null
+  modalites: ReadonlyArray<string>
+  legend: string | null
 }
 
 export function IndicateurSynthesePanel({
@@ -49,13 +51,15 @@ export function IndicateurSynthesePanel({
   individuId,
   unite,
   referentielNom,
+  modalites,
+  legend,
 }: IndicateurSynthesePanelProps) {
   const [{ data: remarquables }, { data: synthese }, { data: valeurs }, { data: tauxProgression }] =
     useSuspenseQueries({
       queries: [
-        indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
-        indicateurSyntheseIndividuQueryOptions(indicateurId, individuId),
-        indicateurValeursQueryOptions(indicateurId, individuId),
+        indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId, modalites),
+        indicateurSyntheseIndividuQueryOptions(indicateurId, individuId, modalites),
+        indicateurValeursQueryOptions(indicateurId, individuId, modalites),
         indicateurTauxProgressionQueryOptions(indicateurId, individuId),
       ],
     })
@@ -69,7 +73,8 @@ export function IndicateurSynthesePanel({
   const stats = remarquables.items[0] ?? { min: null, max: null, mediane: null }
 
   const dernierPoint = tauxProgression.items[tauxProgression.items.length - 1]
-  const taux = dernierPoint?.tauxProgression ?? null
+  // Le taux se calcule sur « Tous » (objectif de l'individu) : pas de taux pour une modalité.
+  const taux = modalites.length > 0 ? null : (dernierPoint?.tauxProgression ?? null)
 
   return (
     <section className="rounded-xl border border-border bg-surface p-6 sm:p-8">
@@ -79,6 +84,7 @@ export function IndicateurSynthesePanel({
           <div>
             <Text variant="kicker" as="p">
               Valeur d&apos;avancement
+              {legend && <span className="text-primary"> · {legend}</span>}
             </Text>
             {derniere ? (
               <>
@@ -131,6 +137,7 @@ export function IndicateurSynthesePanel({
           <Text variant="kicker" as="p">
             Données de comparaison
             {referentielNom && <span className="text-primary"> · {referentielNom}</span>}
+            {legend && <span className="text-primary"> · {legend}</span>}
           </Text>
           <ul className="mt-3 flex flex-col gap-0.5">
             <ComparaisonRow

@@ -68,13 +68,22 @@ export const indicateurIndividusQueryOptions = (indicateurId: string) =>
     staleTime: DEFAULT_STALE_TIME,
   })
 
-export const indicateurValeursQueryOptions = (indicateurId: string, individuId: string) =>
+// Sans modalité, la clé reste celle d'un indicateur sans axe : même cache, mêmes requêtes.
+const modalitesKey = (modalites: ReadonlyArray<string>) =>
+  modalites.length > 0 ? [{ modalites }] : []
+
+export const indicateurValeursQueryOptions = (
+  indicateurId: string,
+  individuId: string,
+  modalites: ReadonlyArray<string> = [],
+) =>
   queryOptions({
-    queryKey: ['indicateur', indicateurId, 'valeurs', individuId],
+    queryKey: ['indicateur', indicateurId, 'valeurs', individuId, ...modalitesKey(modalites)],
     queryFn: () =>
       fetchValeursForIndicateur(indicateurId, {
         individus: [individuId],
         dateTrunc: 'month',
+        modalites: [...modalites],
       }),
     staleTime: DEFAULT_STALE_TIME,
   })
@@ -82,22 +91,44 @@ export const indicateurValeursQueryOptions = (indicateurId: string, individuId: 
 export const indicateurValeursRemarquablesQueryOptions = (
   indicateurId: string,
   referentielId: string,
+  modalites: ReadonlyArray<string> = [],
 ) =>
   queryOptions({
-    queryKey: ['indicateur', indicateurId, 'valeurs-remarquables', referentielId],
+    queryKey: [
+      'indicateur',
+      indicateurId,
+      'valeurs-remarquables',
+      referentielId,
+      ...modalitesKey(modalites),
+    ],
     queryFn: () =>
       fetchValeursRemarquablesForIndicateur(indicateurId, {
         referentiels: [referentielId],
         dateTrunc: 'month',
+        modalites: [...modalites],
       }),
     staleTime: DEFAULT_STALE_TIME,
   })
 
-export const indicateurSyntheseIndividuQueryOptions = (indicateurId: string, individuId: string) =>
+export const indicateurSyntheseIndividuQueryOptions = (
+  indicateurId: string,
+  individuId: string,
+  modalites: ReadonlyArray<string> = [],
+) =>
   queryOptions({
-    queryKey: ['indicateur', indicateurId, 'synthese-individus', individuId],
+    queryKey: [
+      'indicateur',
+      indicateurId,
+      'synthese-individus',
+      individuId,
+      ...modalitesKey(modalites),
+    ],
     queryFn: () =>
-      fetchSyntheseIndividus(indicateurId, { individus: [individuId], dateTrunc: 'month' }),
+      fetchSyntheseIndividus(indicateurId, {
+        individus: [individuId],
+        dateTrunc: 'month',
+        modalites: [...modalites],
+      }),
     staleTime: DEFAULT_STALE_TIME,
   })
 
@@ -113,16 +144,22 @@ export const prefetchIndicateurValeursForIndividu = async ({
   indicateurId,
   individuId,
   referentielId,
+  modalites = [],
 }: {
   queryClient: QueryClient
   indicateurId: string
   individuId: string
   referentielId: string
+  modalites?: ReadonlyArray<string>
 }): Promise<void> => {
   await Promise.all([
-    queryClient.fetchQuery(indicateurValeursQueryOptions(indicateurId, individuId)),
-    queryClient.fetchQuery(indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId)),
-    queryClient.fetchQuery(indicateurSyntheseIndividuQueryOptions(indicateurId, individuId)),
+    queryClient.fetchQuery(indicateurValeursQueryOptions(indicateurId, individuId, modalites)),
+    queryClient.fetchQuery(
+      indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId, modalites),
+    ),
+    queryClient.fetchQuery(
+      indicateurSyntheseIndividuQueryOptions(indicateurId, individuId, modalites),
+    ),
     queryClient.fetchQuery(indicateurTauxProgressionQueryOptions(indicateurId, individuId)),
   ])
 }

@@ -68,6 +68,7 @@ export const fetchValeursForIndicateur = async (
         ...(params.dateDebut ? { dateDebut: params.dateDebut } : {}),
         ...(params.dateFin ? { dateFin: params.dateFin } : {}),
         ...(params.dateTrunc ? { dateTrunc: params.dateTrunc } : {}),
+        ...(params.modalites?.length ? { modalites: params.modalites.join(',') } : {}),
       },
     })
     .json()
@@ -83,6 +84,7 @@ export const fetchValeursRemarquablesForIndicateur = async (
       searchParams: {
         referentiels: params.referentiels.join(','),
         ...(params.dateTrunc ? { dateTrunc: params.dateTrunc } : {}),
+        ...(params.modalites?.length ? { modalites: params.modalites.join(',') } : {}),
       },
     })
     .json()
@@ -98,6 +100,7 @@ export const fetchSyntheseIndividus = async (
       searchParams: {
         individus: params.individus.join(','),
         ...(params.dateTrunc ? { dateTrunc: params.dateTrunc } : {}),
+        ...(params.modalites?.length ? { modalites: params.modalites.join(',') } : {}),
       },
     })
     .json()

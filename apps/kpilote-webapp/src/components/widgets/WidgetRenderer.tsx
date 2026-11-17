@@ -11,6 +11,7 @@ type WidgetRendererProps = {
   widget: WidgetApiModel
   indicateurId: string
   referentielId: string
+  modalites?: ReadonlyArray<string>
   interactive?: boolean
 }
 
