@@ -1,4 +1,5 @@
 import { type ArbreModalites, type AxeCalcul, descendDe, type Selection } from '@/axe/modalites'
+import { type Cellule } from '@/valeurAvancement/cellule'
 
 // Ce qui a été saisi pour un individu, toutes dates confondues (le « cube
 // creux ») : seules les modalités observées au moins une fois sont attendues.
@@ -8,6 +9,28 @@ import { type ArbreModalites, type AxeCalcul, descendDe, type Selection } from '
 export type CombinaisonObservee = {
   combinaisonId: string
   modaliteParAxe: ReadonlyMap<string, string>
+}
+
+// Les combinaisons observées de chaque individu, à partir des cellules qui
+// portent au moins une saisie. Une combinaison absente de
+// `modalitesParCombinaison` n'a pas de modalité (la combinaison vide).
+export const observerCombinaisons = ({
+  cellules,
+  modalitesParCombinaison,
+}: {
+  cellules: ReadonlyArray<Cellule>
+  modalitesParCombinaison: ReadonlyMap<string, ReadonlyMap<string, string>>
+}): Map<string, CombinaisonObservee[]> => {
+  const observeesParIndividu = new Map<string, CombinaisonObservee[]>()
+  for (const { individuId, combinaisonId } of cellules) {
+    const observees = observeesParIndividu.get(individuId) ?? []
+    observees.push({
+      combinaisonId,
+      modaliteParAxe: modalitesParCombinaison.get(combinaisonId) ?? new Map(),
+    })
+    observeesParIndividu.set(individuId, observees)
+  }
+  return observeesParIndividu
 }
 
 // Une sélection est attendue si une combinaison observée de l'individu tombe

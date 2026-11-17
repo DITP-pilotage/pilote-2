@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
 import { type AxeCalcul, type ModaliteCalcul } from '@/axe/modalites'
-import { type CombinaisonObservee } from '@/axe/observationsIndividu'
 import { compareBuckets, parseBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
-import { cleCellule } from '@/valeurAvancement/cellule'
+import { cleCellule, type SaisiesCellule } from '@/valeurAvancement/cellule'
 import {
   type IndividuRef,
   type PointInterne,
@@ -51,26 +50,20 @@ const cube = ({
   modalites: ReadonlyArray<ModaliteCalcul>
   valeurs: ReadonlyArray<Valeur>
 }) => {
-  const observeesParIndividu = new Map<string, CombinaisonObservee[]>()
-  const saisiesParCellule = new Map<string, SaisieTronquee[]>()
+  const modalitesParCombinaison = new Map<string, ReadonlyMap<string, string>>()
+  const cellules = new Map<string, SaisiesCellule & { saisies: SaisieTronquee[] }>()
   for (const { individu, modalites: parAxe, valeur, date = DATE } of valeurs) {
     const combinaisonId = Object.values(parAxe).sort().join(',')
-    const observees = observeesParIndividu.get(individu.id) ?? []
-    if (!observees.some((observee) => observee.combinaisonId === combinaisonId)) {
-      observees.push({ combinaisonId, modaliteParAxe: new Map(Object.entries(parAxe)) })
-    }
-    observeesParIndividu.set(individu.id, observees)
+    modalitesParCombinaison.set(combinaisonId, new Map(Object.entries(parAxe)))
     const cle = cleCellule({ individuId: individu.id, combinaisonId })
-    const saisies = saisiesParCellule.get(cle) ?? []
-    saisies.push({
+    const cellule = cellules.get(cle) ?? { individuId: individu.id, combinaisonId, saisies: [] }
+    cellule.saisies.push({
       bucket: parseBucket(date),
       dateOrigine: parseBucket(date),
       valeur: new Decimal(valeur),
     })
-    saisiesParCellule.set(
-      cle,
-      saisies.sort((a, b) => compareBuckets(a.bucket, b.bucket)),
-    )
+    cellule.saisies.sort((a, b) => compareBuckets(a.bucket, b.bucket))
+    cellules.set(cle, cellule)
   }
   return buildGrapheSerie({
     individus: [PACA, D84, D13],
@@ -78,8 +71,8 @@ const cube = ({
     fonctionAgregationParReferentiel: new Map([[REF_REG, fonctionReg]]),
     axes,
     modalites,
-    observeesParIndividu,
-    saisiesParCellule,
+    cellules: [...cellules.values()],
+    modalitesParCombinaison,
   })
 }
 

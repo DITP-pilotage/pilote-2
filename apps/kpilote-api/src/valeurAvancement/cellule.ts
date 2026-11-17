@@ -1,3 +1,5 @@
+import { type SaisieTronquee } from '@/valeurAvancement/resolveSerieIndividu'
+
 // Le point qui porte une valeur : un individu et une combinaison de modalités
 // (la combinaison vide pour un indicateur sans axe). Concept de domaine, pas
 // de table.
@@ -11,3 +13,6 @@ export type Cellule = {
 // dans une même lecture (ex. Orange, SFR et « Tous »).
 export const cleCellule = ({ individuId, combinaisonId }: Cellule): string =>
   `${individuId}~${combinaisonId}`
+
+// Les saisies d'une cellule, telles que chargées (tronquées par bucket).
+export type SaisiesCellule = Cellule & { saisies: ReadonlyArray<SaisieTronquee> }

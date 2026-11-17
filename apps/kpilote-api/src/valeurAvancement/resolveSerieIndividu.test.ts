@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest'
 import { parseBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
-import { cleCellule } from '@/valeurAvancement/cellule'
 import {
   type GrapheSerie,
   type IndividuRef,
@@ -60,18 +59,12 @@ const buildContext = (input: {
     ),
     axes: [],
     modalites: [],
-    observeesParIndividu: new Map(
-      saisies.map(([individuId]) => [
-        individuId,
-        [{ combinaisonId: COMBINAISON, modaliteParAxe: new Map() }],
-      ]),
-    ),
-    saisiesParCellule: new Map(
-      saisies.map(([individuId, liste]) => [
-        cleCellule({ individuId, combinaisonId: COMBINAISON }),
-        liste,
-      ]),
-    ),
+    cellules: saisies.map(([individuId, liste]) => ({
+      individuId,
+      combinaisonId: COMBINAISON,
+      saisies: liste,
+    })),
+    modalitesParCombinaison: new Map(),
   })
 }
 

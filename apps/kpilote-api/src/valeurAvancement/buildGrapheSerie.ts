@@ -13,9 +13,10 @@ import {
   combinaisonObserveeDe,
   type CombinaisonObservee,
   estObservee,
+  observerCombinaisons,
 } from '@/axe/observationsIndividu'
 import { getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
-import { cleCellule } from '@/valeurAvancement/cellule'
+import { cleCellule, type SaisiesCellule } from '@/valeurAvancement/cellule'
 import {
   type AgregationNoeud,
   type GrapheSerie,
@@ -84,8 +85,8 @@ export const buildGrapheSerie = ({
   fonctionAgregationParReferentiel,
   axes,
   modalites,
-  observeesParIndividu,
-  saisiesParCellule,
+  cellules,
+  modalitesParCombinaison,
 }: {
   individus: Iterable<IndividuRef>
   enfantsParParent: ReadonlyMap<string, ReadonlyArray<IndividuRef>>
@@ -93,10 +94,13 @@ export const buildGrapheSerie = ({
   // Dans l'ordre de déclaration ; vide pour un indicateur sans axe.
   axes: ReadonlyArray<AxeCalcul>
   modalites: ReadonlyArray<ModaliteCalcul>
-  observeesParIndividu: ReadonlyMap<string, ReadonlyArray<CombinaisonObservee>>
-  // Saisies par cellule (`cleCellule`).
-  saisiesParCellule: ReadonlyMap<string, ReadonlyArray<SaisieTronquee>>
+  // Les saisies chargées, par cellule (individu × combinaison).
+  cellules: ReadonlyArray<SaisiesCellule>
+  // combinaisonId → (axeId → modaliteId) ; vide pour un indicateur sans axe.
+  modalitesParCombinaison: ReadonlyMap<string, ReadonlyMap<string, string>>
 }): { graphe: GrapheSerie; noeud: (individu: IndividuRef, selection?: Selection) => Noeud } => {
+  // Une combinaison est observée pour un individu dès qu'elle porte une saisie.
+  const cellulesSaisies = cellules.filter((cellule) => cellule.saisies.length > 0)
   const contexte: Contexte = {
     axes,
     arbre: construireArbreModalites(modalites),
@@ -105,8 +109,13 @@ export const buildGrapheSerie = ({
       fonctionAgregationParReferentiel,
       referentielParIndividu: new Map([...individus].map((i) => [i.id, i.referentielId])),
     },
-    observeesParIndividu,
-    saisiesParCellule,
+    observeesParIndividu: observerCombinaisons({
+      cellules: cellulesSaisies,
+      modalitesParCombinaison,
+    }),
+    saisiesParCellule: new Map(
+      cellulesSaisies.map((cellule) => [cleCellule(cellule), cellule.saisies]),
+    ),
   }
   const graphe: GrapheEnConstruction = {
     agregationParNoeud: new Map(),

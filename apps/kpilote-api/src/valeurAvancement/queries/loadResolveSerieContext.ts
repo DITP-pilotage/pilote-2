@@ -8,7 +8,7 @@ import {
   loadSousArbre,
 } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
-import { cleCellule } from '@/valeurAvancement/cellule'
+import { type SaisiesCellule } from '@/valeurAvancement/cellule'
 import {
   type GrapheSerie,
   type IndividuRef,
@@ -46,33 +46,21 @@ export const loadResolveSerieContext = async ({
     loadSousArbre(individusCibles),
     loadFonctionsAgregation(indicateurId),
   ])
-  const saisiesParIndividu = await loadSaisiesTronquees({
+  const cellules = await loadSaisiesTronquees({
     indicateurId,
     individuIds: [...allNodes.keys()],
     dateTrunc,
     combinaisonId,
   })
 
-  // Sans axe, la combinaison vide est la seule observée, pour les individus qui
-  // ont des saisies.
   const { graphe, noeud } = buildGrapheSerie({
     individus: allNodes.values(),
     enfantsParParent,
     fonctionAgregationParReferentiel,
     axes: [],
     modalites: [],
-    observeesParIndividu: new Map(
-      [...saisiesParIndividu.keys()].map((individuId) => [
-        individuId,
-        [{ combinaisonId, modaliteParAxe: new Map() }],
-      ]),
-    ),
-    saisiesParCellule: new Map(
-      [...saisiesParIndividu].map(([individuId, saisies]) => [
-        cleCellule({ individuId, combinaisonId }),
-        saisies,
-      ]),
-    ),
+    cellules,
+    modalitesParCombinaison: new Map(),
   })
   return { graphe, noeud, allNodes }
 }
@@ -87,8 +75,8 @@ const loadSaisiesTronquees = async ({
   individuIds: ReadonlyArray<string>
   dateTrunc: DateTrunc
   combinaisonId: string
-}): Promise<Map<string, SaisieTronquee[]>> => {
-  if (individuIds.length === 0) return new Map()
+}): Promise<SaisiesCellule[]> => {
+  if (individuIds.length === 0) return []
   const rows = await db().$queryRawTyped(
     getValeursTronqueesPourIndividus(indicateurId, [...individuIds], dateTrunc, combinaisonId),
   )
@@ -103,5 +91,9 @@ const loadSaisiesTronquees = async ({
     })
     saisiesParIndividu.set(row.individuId, liste)
   }
-  return saisiesParIndividu
+  return [...saisiesParIndividu].map(([individuId, saisies]) => ({
+    individuId,
+    combinaisonId,
+    saisies,
+  }))
 }
