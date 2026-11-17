@@ -4,15 +4,54 @@ import { describe, expect, it } from 'vitest'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import {
+  testAxeId,
   testDeptId,
   testDeptIds,
   testIndicateurId,
   testIndividuId,
+  testModaliteId,
   testReferentielId,
   testReferentielIds,
 } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries/listValeursRemarquablesForIndicateur'
+
+// Indicateur à un axe « opérateur » : Orange n'a jamais de valeur dans C.
+//
+//            Orange   SFR    Tous
+//   A          10      5      15
+//   B          20      –      20
+//   C           –      7       7
+const trancheOrangeAbsentDeC = async () => {
+  const indId = testIndicateurId()
+  const refId = testReferentielId()
+  const [a, b, c] = testDeptIds(3)
+  const indicateur = { publicId: indId, nom: 'T', visibilite: 'PUBLIC' as const }
+  await fixtures.indicateurReferentiel({ indicateur, referentiel: { publicId: refId } })
+  const axe = { publicId: testAxeId() }
+  const [orange, sfr] = [testModaliteId(), testModaliteId()]
+  await fixtures.modalite(
+    { publicId: orange, nom: 'Orange', niveau: { axe } },
+    { publicId: sfr, nom: 'SFR', niveau: { axe } },
+  )
+  await fixtures.indicateurAxe({ indicateur, axe, fonction: 'SUM' })
+  for (const [individu, modalite, valeur] of [
+    [a, orange, 10],
+    [a, sfr, 5],
+    [b, orange, 20],
+    [c, sfr, 7],
+  ] as const) {
+    await fixtures.valeurAvancement({
+      indicateur,
+      individu: { publicId: individu, referentiel: { publicId: refId } },
+      date: '2026-01-01',
+      valeur,
+      combinaison: { modalites: [{ publicId: modalite }] },
+    })
+  }
+  const apiKey = await fixtures.apiKey()
+  return { indId, refId, a, b, c, orange, apiKeyId: apiKey.id }
+}
 
 describe.concurrent('listValeursRemarquablesForIndicateur', () => {
   it(
@@ -808,6 +847,61 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       )
 
       expect(result.isOk()).toBe(true)
+    }),
+  )
+
+  it(
+    'indicateur à axes, sans modalites : stats sur « Tous » de chaque individu',
+    integrationTest(async () => {
+      const t = await trancheOrangeAbsentDeC()
+
+      const result = await runAsPrincipal(t.apiKeyId, () =>
+        listValeursRemarquablesForIndicateur(t.indId, { referentiels: [t.refId] }),
+      )
+
+      expect(result._unsafeUnwrap()).toMatchObject({
+        items: [{ referentiel: t.refId, min: 7, max: 20, mediane: 15 }],
+      })
+    }),
+  )
+
+  it(
+    "avec modalites : un individu où la modalité n'a jamais été observée sort des stats et des contributions",
+    integrationTest(async () => {
+      const t = await trancheOrangeAbsentDeC()
+
+      const result = await runAsPrincipal(t.apiKeyId, () =>
+        listValeursRemarquablesForIndicateur(t.indId, {
+          referentiels: [t.refId],
+          modalites: [t.orange],
+        }),
+      )
+
+      const [item] = result._unsafeUnwrap().items
+      expect(item).toMatchObject({ referentiel: t.refId, min: 10, max: 20, mediane: 15 })
+      expect(item?.contributions.map((contribution) => contribution.individu).sort()).toEqual(
+        [t.a, t.b].sort(),
+      )
+    }),
+  )
+
+  it(
+    'avec modalites : renvoie MODALITE_INCONNUE pour une modalité inexistante',
+    integrationTest(async () => {
+      const t = await trancheOrangeAbsentDeC()
+      const inconnue = testModaliteId()
+
+      const result = await runAsPrincipal(t.apiKeyId, () =>
+        listValeursRemarquablesForIndicateur(t.indId, {
+          referentiels: [t.refId],
+          modalites: [inconnue],
+        }),
+      )
+
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'MODALITE_INCONNUE',
+        modalites: [inconnue],
+      })
     }),
   )
 })
