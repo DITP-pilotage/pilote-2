@@ -5,7 +5,9 @@ import { Decimal } from '@/framework/decimal'
 import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
 import { cleCellule } from '@/valeurAvancement/cellule'
 import {
+  type GrapheSerie,
   type IndividuRef,
+  type Noeud,
   type PointInterne,
   resolveSerieNoeud,
   type SaisieTronquee,
@@ -447,6 +449,54 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
     expect(serie[0]).toMatchObject({ bucket: b('2025-01-01'), valeur: d(5) })
     // 2025-03 : REG-N (carry-forward 5) + REG-S (50) → 55
     expect(serie[1]).toMatchObject({ bucket: b('2025-03-01'), valeur: d(55) })
+  })
+})
+
+// Nœud d'un indicateur à axes, construit à la main : le moteur ne lit que le
+// graphe, il ne sait pas d'où viennent les modalités.
+const noeudAvecModalites = (individu: IndividuRef, modalites: string[]): Noeud => ({
+  cle: [individu.id, ...modalites].join('~'),
+  individuPublicId: individu.publicId,
+  modalites,
+})
+
+describe('resolveSerieIndividu — nœuds avec modalités', () => {
+  it('porte les modalités de chaque enfant dans les contributions, triées après l’individu', async () => {
+    // DEPT-A · Tous = FT + CAF : deux enfants du même individu.
+    const tous = noeudAvecModalites(DEPT_A, [])
+    const ft = noeudAvecModalites(DEPT_A, ['FT'])
+    const caf = noeudAvecModalites(DEPT_A, ['CAF'])
+    const graphe: GrapheSerie = {
+      agregationParNoeud: new Map([[tous.cle, { fonction: 'SUM', enfants: [ft, caf] }]]),
+      saisiesParNoeud: new Map([
+        [ft.cle, [saisie('2025-01-01', 1)]],
+        [caf.cle, [saisie('2025-02-01', 2)]],
+      ]),
+    }
+
+    const serie = await resolveSerieNoeud(tous, graphe, new Map())
+
+    expect(serie).toHaveLength(2)
+    expect(serie[0]).toMatchObject({
+      valeur: d(1),
+      couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
+    })
+    expect((serie[1] as { contributions: unknown[] }).contributions).toEqual([
+      {
+        individuPublicId: 'DEPT-A',
+        modalites: ['CAF'],
+        valeur: d(2),
+        dateOrigine: b('2025-02-01'),
+        source: 'saisie',
+      },
+      {
+        individuPublicId: 'DEPT-A',
+        modalites: ['FT'],
+        valeur: d(1),
+        dateOrigine: b('2025-01-01'),
+        source: 'saisie',
+      },
+    ])
   })
 })
 
