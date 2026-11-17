@@ -47,29 +47,29 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
                                                   └──► T6.1 ──► T6.2 ──► T6.3 ──┘
 ```
 
-| Tâche | Ticket   | Titre                                                  | Statut          |
-| ----- | -------- | ------------------------------------------------------ | --------------- |
-| T0    | PIL-1979 | Snapshot des lectures et non-régression des écritures  | ✅ fait (#2674) |
-| —     | PIL-1980 | ~~Feature flag~~ : abandonné (D12), ticket à supprimer | abandonné       |
-| T1.1  | PIL-1981 | Migration : axes, niveaux et modalités                 | ✅ fait (#2675) |
-| T1.2  | PIL-1982 | API : CRUD des axes, niveaux et modalités              | ✅ fait (#2676) |
-| T1.3  | PIL-1983 | Admin : pages Axes                                     | ✅ fait (#2677) |
-| T2.1  | PIL-1984 | Migration : axes d'un indicateur                       | ✅ fait (#2678) |
-| T2.2  | PIL-1985 | API : déclarer les axes d'un indicateur                | ✅ fait (#2679) |
-| T2.3  | PIL-1986 | Admin : section Axes d'un indicateur                   | ✅ fait (#2680) |
-| T3.1  | PIL-1987 | Migration : combinaisons de modalités sur les valeurs  | ✅ fait (#2683) |
-| T3.2  | PIL-1988 | Écritures sur la nouvelle clé unique                   | ✅ fait (#2684) |
-| T3.3  | PIL-1989 | Suppression de l'ancien index unique des valeurs       | ✅ fait (#2685) |
-| T4.1  | PIL-1993 | Lectures de valeurs : combinaison explicite            | 🔄 en cours     |
-| T5.1  | PIL-1990 | Calcul de la marginale sur les axes (fonctions pures)  | 🔄 en cours     |
-| T5.2  | PIL-1991 | Lectures : marginale et sélection de modalités         | 🔄 en cours     |
-| T5.3  | PIL-1992 | Comparaison et carte pour une modalité                 | 🔄 en cours     |
-| T6.1  | PIL-1994 | Saisie de valeurs avec modalités                       | 🔄 en cours     |
-| T6.2  | PIL-1995 | Import Albert : colonnes d'axe                         | 🔄 en cours     |
-| T6.3  | PIL-1996 | Webapp : import avec colonnes d'axe                    | 🔄 en cours     |
-| T7.1  | PIL-1997 | Fiche indicateur : un sélecteur par axe                | à faire         |
-| T7.2  | PIL-1998 | Graphique « Décomposer par »                           | à faire         |
-| T8.1  | PIL-1999 | Mise en service des axes                               | à faire         |
+| Tâche | Ticket   | Titre                                                  | Statut              |
+| ----- | -------- | ------------------------------------------------------ | ------------------- |
+| T0    | PIL-1979 | Snapshot des lectures et non-régression des écritures  | ✅ fait (#2674)     |
+| —     | PIL-1980 | ~~Feature flag~~ : abandonné (D12), ticket à supprimer | abandonné           |
+| T1.1  | PIL-1981 | Migration : axes, niveaux et modalités                 | ✅ fait (#2675)     |
+| T1.2  | PIL-1982 | API : CRUD des axes, niveaux et modalités              | ✅ fait (#2676)     |
+| T1.3  | PIL-1983 | Admin : pages Axes                                     | ✅ fait (#2677)     |
+| T2.1  | PIL-1984 | Migration : axes d'un indicateur                       | ✅ fait (#2678)     |
+| T2.2  | PIL-1985 | API : déclarer les axes d'un indicateur                | ✅ fait (#2679)     |
+| T2.3  | PIL-1986 | Admin : section Axes d'un indicateur                   | ✅ fait (#2680)     |
+| T3.1  | PIL-1987 | Migration : combinaisons de modalités sur les valeurs  | ✅ fait (#2683)     |
+| T3.2  | PIL-1988 | Écritures sur la nouvelle clé unique                   | ✅ fait (#2684)     |
+| T3.3  | PIL-1989 | Suppression de l'ancien index unique des valeurs       | ✅ fait (#2685)     |
+| T4.1  | PIL-1993 | Lectures de valeurs : combinaison explicite            | ✅ fait (#2686)     |
+| T5.1  | PIL-1990 | Calcul de la marginale sur les axes (fonctions pures)  | ✅ fait (#2687)     |
+| T5.2  | PIL-1991 | Lectures : marginale et sélection de modalités         | ✅ fait (#2688)     |
+| T5.3  | PIL-1992 | Comparaison et carte pour une modalité                 | ✅ fait (#2689)     |
+| T6.1  | PIL-1994 | Saisie de valeurs avec modalités                       | 🔄 en revue (#2700) |
+| T6.2  | PIL-1995 | Import Albert : colonnes d'axe                         | 🔄 en revue (#2701) |
+| T6.3  | PIL-1996 | Webapp : import avec colonnes d'axe                    | 🔄 en revue (#2702) |
+| T7.1  | PIL-1997 | Fiche indicateur : un sélecteur par axe                | à faire             |
+| T7.2  | PIL-1998 | Graphique « Décomposer par »                           | à faire             |
+| T8.1  | PIL-1999 | Mise en service des axes                               | à faire             |
 
 ---
 
@@ -328,18 +328,18 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Étapes :**
 
-- [ ] Type `Cellule = { individuId, combinaisonId }` et `cleCellule`.
-- [ ] La requête des séries filtre sur `combinaison_id = $4` ; `loadResolveSerieContext` exige `combinaisonId` ; les saisies sont indexées par cellule.
-- [ ] `resolveSerieIndividu` reçoit une cellule ; cache par cellule ; les enfants sont les cellules des enfants territoriaux pour la même combinaison.
-- [ ] Les 5 lectures (et `computeTauxProgressionPoints`, partagé avec les collections) passent la combinaison vide.
-- [ ] `dateDerniereValeur` d'un indicateur reste calculée sur toutes les combinaisons.
-- [ ] Supprimer `getDernieresValeursPourIndividus.sql` (code mort).
-- [ ] Aucun contrat d'API modifié.
+- [x] Type `Cellule = { individuId, combinaisonId }` et `cleCellule`.
+- [x] La requête des séries filtre sur `combinaison_id = $4` ; `loadResolveSerieContext` exige `combinaisonId` ; les saisies sont indexées par cellule.
+- [x] `resolveSerieIndividu` reçoit une cellule ; cache par cellule ; les enfants sont les cellules des enfants territoriaux pour la même combinaison.
+- [x] Les 5 lectures (et `computeTauxProgressionPoints`, partagé avec les collections) passent la combinaison vide.
+- [x] `dateDerniereValeur` d'un indicateur reste calculée sur toutes les combinaisons.
+- [x] Supprimer `getDernieresValeursPourIndividus.sql` (code mort).
+- [x] Aucun contrat d'API modifié.
 
 **DoD :**
 
-- [ ] Commune ; snapshot : 0 différence, aucun champ ajouté.
-- [ ] Une valeur sur une autre combinaison est ignorée par les 5 lectures (tests).
+- [x] Commune ; snapshot : 0 différence, aucun champ ajouté.
+- [x] Une valeur sur une autre combinaison est ignorée par les 5 lectures (tests).
 
 ---
 
@@ -355,14 +355,14 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Étapes :**
 
-- [ ] Moteur : nœud = `{ cle, individuPublicId, modalites }` ; graphe = agrégation (fonction + enfants) ou saisies par nœud.
-- [ ] `buildGrapheSerie` : la décision « individu agrégé » sort du moteur ; sans axe, comportement identique (snapshot) ; avec axes, construction à la demande à partir des nœuds cibles, cube creux, individu saisi (NONE), profondeur d'axe libre.
+- [x] Moteur : nœud = `{ cle, individuPublicId, modalites }` ; graphe = agrégation (fonction + enfants) ou saisies par nœud.
+- [x] `buildGrapheSerie` : la décision « individu agrégé » sort du moteur ; sans axe, comportement identique (snapshot) ; avec axes, construction à la demande à partir des nœuds cibles, cube creux, individu saisi (NONE), profondeur d'axe libre.
 
 **DoD :**
 
-- [ ] Commune ; snapshot : 0 différence.
-- [ ] Tests unitaires : PACA (3), moyenne sur les deux (2,25), PACA · France Travail (2), modalité absente, axe imbriqué à 3 niveaux, deux axes (40 / 30 selon l'ordre), sélection partielle, individu saisi (NONE), feuille vide à une date sous un niveau intermédiaire.
-- [ ] Aucun branchement sur les routes.
+- [x] Commune ; snapshot : 0 différence.
+- [x] Tests unitaires : PACA (3), moyenne sur les deux (2,25), PACA · France Travail (2), modalité absente, axe imbriqué à 3 niveaux, deux axes (40 / 30 selon l'ordre), sélection partielle, individu saisi (NONE), feuille vide à une date sous un niveau intermédiaire.
+- [x] Aucun branchement sur les routes.
 
 ---
 
@@ -374,17 +374,17 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Étapes :**
 
-- [ ] Aiguillage dans `loadResolveSerieContext` : sans axe déclaré → saisies de la combinaison vide seule ; avec axes → saisies de toutes les combinaisons de l'indicateur (filtre SQL à `NULL`), puis modalités des combinaisons trouvées ; dans les deux cas, `buildGrapheSerie`, qui en déduit les combinaisons observées.
-- [ ] Sans `modalites`, une lecture d'individu renvoie « Tous » : taux de progression (D6), dernières valeurs et tableaux de bord fonctionnent sans modification.
-- [ ] `modalites=` sur `GET /indicateurs/{id}/valeurs` : publicIds séparés par une virgule, au plus un par axe, modalité parente acceptée ; un axe non cité vaut « Tous ».
-- [ ] Erreurs 400 : `MODALITE_INCONNUE`, `AXE_NON_DECLARE` (dont un indicateur sans axe), `MODALITES_MEME_AXE`.
-- [ ] Contributions : champ `modalites` optionnel, absent pour un indicateur sans axe.
-- [ ] Seed de démo : IND-101 (Territoire × Opérateur) et IND-102 (Territoire × Type de fraude imbriqué), en somme, avec des modalités absentes de certains départements.
+- [x] Aiguillage dans `loadResolveSerieContext` : sans axe déclaré → saisies de la combinaison vide seule ; avec axes → saisies de toutes les combinaisons de l'indicateur (filtre SQL à `NULL`), puis modalités des combinaisons trouvées ; dans les deux cas, `buildGrapheSerie`, qui en déduit les combinaisons observées.
+- [x] Sans `modalites`, une lecture d'individu renvoie « Tous » : taux de progression (D6), dernières valeurs et tableaux de bord fonctionnent sans modification.
+- [x] `modalites=` sur `GET /indicateurs/{id}/valeurs` : publicIds séparés par une virgule, au plus un par axe, modalité parente acceptée ; un axe non cité vaut « Tous ».
+- [x] Erreurs 400 : `MODALITE_INCONNUE`, `AXE_NON_DECLARE` (dont un indicateur sans axe), `MODALITES_MEME_AXE`.
+- [x] Contributions : champ `modalites` optionnel, absent pour un indicateur sans axe.
+- [x] Seed de démo : IND-101 (Territoire × Opérateur) et IND-102 (Territoire × Type de fraude imbriqué), en somme, avec des modalités absentes de certains départements.
 
 **DoD :**
 
-- [ ] Commune ; snapshot : 0 différence sur les indicateurs existants.
-- [ ] Tests : « Tous », modalité feuille, modalité parente, modalité jamais vue, taux de progression, chaque erreur.
+- [x] Commune ; snapshot : 0 différence sur les indicateurs existants.
+- [x] Tests : « Tous », modalité feuille, modalité parente, modalité jamais vue, taux de progression, chaque erreur.
 
 ---
 
@@ -396,14 +396,14 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Étapes :**
 
-- [ ] `valeurs-remarquables` et `synthese-individus` acceptent `modalites=` : la population est « individus du référentiel × modalité(s) fixée(s) ». Un individu où la modalité n'a jamais été observée n'a pas de valeur et sort des statistiques.
-- [ ] La carte lit les contributions de `valeurs-remarquables` : elle suit sans changement côté widget (paramètre côté webapp en T7.1).
-- [ ] Sans `modalites` : réponse identique à aujourd'hui.
+- [x] `valeurs-remarquables` et `synthese-individus` acceptent `modalites=` : la population est « individus du référentiel × modalité(s) fixée(s) ». Un individu où la modalité n'a jamais été observée n'a pas de valeur et sort des statistiques.
+- [x] La carte lit les contributions de `valeurs-remarquables` : elle suit sans changement côté widget (paramètre côté webapp en T7.1).
+- [x] Sans `modalites` : réponse identique à aujourd'hui.
 
 **DoD :**
 
-- [ ] Commune ; snapshot : 0 différence.
-- [ ] Tests sur une tranche où la modalité est absente de certains territoires.
+- [x] Commune ; snapshot : 0 différence.
+- [x] Tests sur une tranche où la modalité est absente de certains territoires.
 
 ---
 
