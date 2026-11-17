@@ -1,5 +1,6 @@
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
 
+import { trouverCombinaisonVideId } from '@/axe/combinaison'
 import { type BucketKey, compareBuckets } from '@/framework/bucket'
 import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/queries/loadResolveObjectifContext'
 import {
@@ -39,11 +40,15 @@ export const computeTauxProgressionPoints = async ({
 }): Promise<TauxProgressionPoint[]> => {
   if (individusCibles.length === 0) return []
 
+  // Le taux d'un indicateur sans axe se calcule sur la combinaison vide ; pour
+  // un indicateur à axes, PIL-1991 le calculera sur la marginale (D6).
+  const combinaisonId = await trouverCombinaisonVideId()
   const [{ ctx: serieCtx }, { ctx: objectifCtx }] = await Promise.all([
     loadResolveSerieContext({
       indicateurId,
       individusCibles,
       dateTrunc: dateTruncValeur,
+      combinaisonId,
     }),
     loadResolveObjectifContext({
       indicateurId,
@@ -58,7 +63,11 @@ export const computeTauxProgressionPoints = async ({
   const objectifsParIndividu = new Map<string, ObjectifBrut[]>()
 
   for (const cible of individusCibles) {
-    const serie = await resolveSerieIndividu(cible.id, serieCtx, serieCache)
+    const serie = await resolveSerieIndividu(
+      { individuId: cible.id, combinaisonId },
+      serieCtx,
+      serieCache,
+    )
     for (const point of serie) {
       valeurs.push({
         individuId: cible.id,

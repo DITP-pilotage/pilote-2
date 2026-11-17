@@ -45,6 +45,7 @@ export const listIndicateurs = (
     const [rows, total] = await Promise.all([fetchPage, fetchTotal])
     // Une seule requête pour toutes les dernières valeurs de la page (évite le N+1).
     // La date est en `YYYY-MM-DD` : MAX lexicographique = MAX chronologique.
+    // Toutes combinaisons confondues (cf. getIndicateurByPublicId).
     const maxDates = await db().valeurAvancement.groupBy({
       by: ['indicateurId'],
       where: { indicateurId: { in: rows.map((row) => row.id) } },

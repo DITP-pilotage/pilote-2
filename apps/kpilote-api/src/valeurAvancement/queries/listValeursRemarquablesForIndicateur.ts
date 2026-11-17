@@ -6,6 +6,7 @@ import {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { trouverCombinaisonVideId } from '@/axe/combinaison'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { formatBucket } from '@/framework/bucket'
 import { type Decimal } from '@/framework/decimal'
@@ -61,10 +62,13 @@ const buildStats = async ({
   const cibles: IndividuRef[] = referentiels.flatMap((r) => r.individus)
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
+  // Indicateur sans axe : la combinaison vide. PIL-1991 passera la combinaison sélectionnée.
+  const combinaisonId = await trouverCombinaisonVideId()
   const { ctx, allNodes } = await loadResolveSerieContext({
     indicateurId,
     individusCibles: cibles,
     dateTrunc,
+    combinaisonId,
   })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
@@ -73,7 +77,9 @@ const buildStats = async ({
     const contributions: ValeursRemarquablesContributionApiModel[] = []
     const valeurs: Decimal[] = []
     for (const individu of referentiel.individus) {
-      const dernierPoint = (await resolveSerieIndividu(individu.id, ctx, cache)).at(-1)
+      const dernierPoint = (
+        await resolveSerieIndividu({ individuId: individu.id, combinaisonId }, ctx, cache)
+      ).at(-1)
       if (!dernierPoint) continue
       valeurs.push(dernierPoint.valeur)
       contributions.push({
