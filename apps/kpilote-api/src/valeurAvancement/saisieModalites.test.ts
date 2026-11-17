@@ -134,7 +134,7 @@ describe.concurrent('saisie unitaire avec modalités', () => {
     'remplace la valeur de la même cellule, sans recréer la combinaison',
     integrationTest(async () => {
       const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
-      const saisir = (valeur: number) =>
+      const upsert = (valeur: number) =>
         runAsPrincipal(apiKey.id, () =>
           upsertValeurAvancement({
             indicateurPublicId: indicateurId,
@@ -142,8 +142,8 @@ describe.concurrent('saisie unitaire avec modalités', () => {
           }),
         )
 
-      await saisir(1)
-      await saisir(2)
+      await upsert(1)
+      await upsert(2)
 
       expect(await valeursByModalites(indicateurId)).toEqual(
         new Map([[key(ids.orange, ids.ir), 2]]),
@@ -155,8 +155,8 @@ describe.concurrent('saisie unitaire avec modalités', () => {
     'refuse chaque saisie incomplète ou invalide',
     integrationTest(async () => {
       const { indicateurId, individuId, apiKey, axes, ids } = await indicateurWithTwoAxes()
-      const inconnue = testModaliteId()
-      const saisir = (modalites: string[] | undefined) =>
+      const unknownModalite = testModaliteId()
+      const upsert = (modalites: string[] | undefined) =>
         runAsPrincipal(apiKey.id, () =>
           upsertValeurAvancement({
             indicateurPublicId: indicateurId,
@@ -164,28 +164,28 @@ describe.concurrent('saisie unitaire avec modalités', () => {
           }),
         )
 
-      expect((await saisir(undefined))._unsafeUnwrapErr()).toEqual({
+      expect((await upsert(undefined))._unsafeUnwrapErr()).toEqual({
         type: 'MODALITE_MANQUANTE',
         axes: [axes.operateur.publicId, axes.fraude.publicId],
       })
-      expect((await saisir([ids.orange]))._unsafeUnwrapErr()).toEqual({
+      expect((await upsert([ids.orange]))._unsafeUnwrapErr()).toEqual({
         type: 'MODALITE_MANQUANTE',
         axes: [axes.fraude.publicId],
       })
-      expect((await saisir([ids.orange, inconnue]))._unsafeUnwrapErr()).toEqual({
+      expect((await upsert([ids.orange, unknownModalite]))._unsafeUnwrapErr()).toEqual({
         type: 'MODALITE_INCONNUE',
-        modalites: [inconnue],
+        modalites: [unknownModalite],
       })
-      expect((await saisir([ids.orange, ids.tva, ids.autre]))._unsafeUnwrapErr()).toEqual({
+      expect((await upsert([ids.orange, ids.tva, ids.autre]))._unsafeUnwrapErr()).toEqual({
         type: 'AXE_NON_DECLARE',
         modalites: [ids.autre],
       })
-      expect((await saisir([ids.orange, ids.sfr, ids.tva]))._unsafeUnwrapErr()).toEqual({
+      expect((await upsert([ids.orange, ids.sfr, ids.tva]))._unsafeUnwrapErr()).toEqual({
         type: 'MODALITES_MEME_AXE',
         axe: axes.operateur.publicId,
         modalites: [ids.orange, ids.sfr].sort(),
       })
-      expect((await saisir([ids.orange, ids.fiscale]))._unsafeUnwrapErr()).toEqual({
+      expect((await upsert([ids.orange, ids.fiscale]))._unsafeUnwrapErr()).toEqual({
         type: 'MODALITE_NON_FEUILLE',
         modalites: [ids.fiscale],
       })
@@ -197,7 +197,7 @@ describe.concurrent('saisie unitaire avec modalités', () => {
     'garde le format historique pour un indicateur sans axe',
     integrationTest(async () => {
       const { indicateurId, individuId, apiKey, orange } = await indicateurWithoutAxe()
-      const saisir = (modalites: string[] | undefined) =>
+      const upsert = (modalites: string[] | undefined) =>
         runAsPrincipal(apiKey.id, () =>
           upsertValeurAvancement({
             indicateurPublicId: indicateurId,
@@ -205,9 +205,9 @@ describe.concurrent('saisie unitaire avec modalités', () => {
           }),
         )
 
-      expect((await saisir([]))._unsafeUnwrap()).not.toHaveProperty('modalites')
-      expect((await saisir(undefined))._unsafeUnwrap()).not.toHaveProperty('modalites')
-      expect((await saisir([orange]))._unsafeUnwrapErr()).toEqual({
+      expect((await upsert([]))._unsafeUnwrap()).not.toHaveProperty('modalites')
+      expect((await upsert(undefined))._unsafeUnwrap()).not.toHaveProperty('modalites')
+      expect((await upsert([orange]))._unsafeUnwrapErr()).toEqual({
         type: 'AXE_NON_DECLARE',
         modalites: [orange],
       })
@@ -245,7 +245,7 @@ describe.concurrent('suppression avec modalités', () => {
     'ne fait rien sur une combinaison jamais saisie, et refuse une cellule incomplète',
     integrationTest(async () => {
       const { indicateurId, individuId, apiKey, axes, ids } = await indicateurWithTwoAxes()
-      const supprimer = (modalites: string[]) =>
+      const remove = (modalites: string[]) =>
         runAsPrincipal(apiKey.id, () =>
           deleteValeurAvancement({
             indicateurPublicId: indicateurId,
@@ -253,8 +253,8 @@ describe.concurrent('suppression avec modalités', () => {
           }),
         )
 
-      expect((await supprimer([ids.sfr, ids.ir])).isOk()).toBe(true)
-      expect((await supprimer([ids.sfr]))._unsafeUnwrapErr()).toEqual({
+      expect((await remove([ids.sfr, ids.ir])).isOk()).toBe(true)
+      expect((await remove([ids.sfr]))._unsafeUnwrapErr()).toEqual({
         type: 'MODALITE_MANQUANTE',
         axes: [axes.fraude.publicId],
       })
@@ -267,7 +267,7 @@ describe.concurrent('saisie en lot avec modalités', () => {
     'écrit chaque cellule sur sa combinaison, et met à jour au second passage',
     integrationTest(async () => {
       const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
-      const lot = (valeur: number) =>
+      const batch = (valeur: number) =>
         runAsPrincipal(apiKey.id, () =>
           upsertValeursAvancementBatch(indicateurId, {
             items: [
@@ -278,8 +278,8 @@ describe.concurrent('saisie en lot avec modalités', () => {
           }),
         )
 
-      expect((await lot(1))._unsafeUnwrap()).toEqual({ total: 3, created: 3, updated: 0 })
-      expect((await lot(2))._unsafeUnwrap()).toEqual({ total: 3, created: 0, updated: 3 })
+      expect((await batch(1))._unsafeUnwrap()).toEqual({ total: 3, created: 3, updated: 0 })
+      expect((await batch(2))._unsafeUnwrap()).toEqual({ total: 3, created: 0, updated: 3 })
       expect(await valeursByModalites(indicateurId)).toEqual(
         new Map([
           [key(ids.orange, ids.tva), 2],
@@ -294,14 +294,24 @@ describe.concurrent('saisie en lot avec modalités', () => {
     'agrège les erreurs de modalités par cause et n’applique rien',
     integrationTest(async () => {
       const { indicateurId, individuId, apiKey, axes, ids } = await indicateurWithTwoAxes()
-      const inconnue = testModaliteId()
+      const unknownModalite = testModaliteId()
 
       const result = await runAsPrincipal(apiKey.id, () =>
         upsertValeursAvancementBatch(indicateurId, {
           items: [
-            { individu: individuId, modalites: [ids.orange, inconnue], date: DATE, valeur: 1 },
+            {
+              individu: individuId,
+              modalites: [ids.orange, unknownModalite],
+              date: DATE,
+              valeur: 1,
+            },
             { individu: individuId, modalites: [ids.orange], date: DATE, valeur: 1 },
-            { individu: individuId, modalites: [ids.sfr, inconnue], date: '2025-04-01', valeur: 1 },
+            {
+              individu: individuId,
+              modalites: [ids.sfr, unknownModalite],
+              date: '2025-04-01',
+              valeur: 1,
+            },
             { individu: individuId, modalites: [ids.sfr, ids.fiscale], date: DATE, valeur: 1 },
             { individu: individuId, modalites: [ids.sfr, ids.orange], date: DATE, valeur: 1 },
             { individu: individuId, modalites: [ids.autre], date: DATE, valeur: 1 },
@@ -313,7 +323,7 @@ describe.concurrent('saisie en lot avec modalités', () => {
       expect(result._unsafeUnwrapErr()).toEqual({
         type: 'BATCH_INVALID',
         errors: [
-          { code: 'MODALITE_INCONNUE', indices: [0, 2], modalite: inconnue },
+          { code: 'MODALITE_INCONNUE', indices: [0, 2], modalite: unknownModalite },
           { code: 'MODALITE_MANQUANTE', indices: [1], axe: axes.fraude.publicId },
           { code: 'MODALITE_NON_FEUILLE', indices: [3], modalite: ids.fiscale },
           { code: 'MODALITES_MEME_AXE', indices: [4], axe: axes.operateur.publicId },

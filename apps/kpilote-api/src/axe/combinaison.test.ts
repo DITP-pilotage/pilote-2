@@ -13,7 +13,7 @@ describe.concurrent('upsertCombinaisons', () => {
       const orange = await fixtures.modalite({ niveau: { axe: { publicId: testAxeId() } } })
       const tva = await fixtures.modalite({ niveau: { axe: { publicId: testAxeId() } } })
 
-      const premier = await upsertCombinaisons({ combinaisons: [[orange, tva]] })
+      const first = await upsertCombinaisons({ combinaisons: [[orange, tva]] })
       const second = await upsertCombinaisons({
         combinaisons: [
           [tva, orange],
@@ -21,14 +21,14 @@ describe.concurrent('upsertCombinaisons', () => {
         ],
       })
 
-      const cle = combinaisonKey({ modalites: [orange, tva] })
-      expect(second).toEqual(premier)
+      const key = combinaisonKey({ modalites: [orange, tva] })
+      expect(second).toEqual(first)
       const combinaisons = await db().combinaison.findMany({
-        where: { cle },
+        where: { cle: key },
         include: { modalites: true },
       })
       expect(combinaisons).toHaveLength(1)
-      expect(combinaisons[0]!.id).toBe(premier.get(cle))
+      expect(combinaisons[0]!.id).toBe(first.get(key))
       expect(
         combinaisons[0]!.modalites.map(({ axeId, modaliteId }) => ({ axeId, modaliteId })),
       ).toEqual(
@@ -43,10 +43,10 @@ describe.concurrent('upsertCombinaisons', () => {
   it(
     'retrouve la combinaison vide sans rien créer',
     integrationTest(async () => {
-      const idParCle = await upsertCombinaisons({ combinaisons: [[]] })
+      const idByKey = await upsertCombinaisons({ combinaisons: [[]] })
 
-      const vide = await db().combinaison.findUniqueOrThrow({ where: { cle: '' } })
-      expect(idParCle).toEqual(new Map([['', vide.id]]))
+      const empty = await db().combinaison.findUniqueOrThrow({ where: { cle: '' } })
+      expect(idByKey).toEqual(new Map([['', empty.id]]))
     }),
   )
 })

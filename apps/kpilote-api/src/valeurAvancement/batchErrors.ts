@@ -25,7 +25,7 @@ export const detectDuplicateKeys = ({
   modalitesByItem: ModalitesByItem
 }): BatchInvalidErrorEntryApiModel[] => {
   const KEY_SEP = '\u0000'
-  const entreesParCle = new Map<
+  const entriesByKey = new Map<
     string,
     { indices: number[]; individu: string; modalites: string[]; date: string }
   >()
@@ -33,19 +33,19 @@ export const detectDuplicateKeys = ({
     const modalites = modalitesByItem[index]!
     if (modalites.isErr()) return
     const publicIds = modalites.value.map((modalite) => modalite.publicId)
-    const cle = [item.individu, ...publicIds, item.date].join(KEY_SEP)
-    const entree = entreesParCle.get(cle)
-    if (entree) entree.indices.push(index)
+    const key = [item.individu, ...publicIds, item.date].join(KEY_SEP)
+    const entry = entriesByKey.get(key)
+    if (entry) entry.indices.push(index)
     else
-      entreesParCle.set(cle, {
+      entriesByKey.set(key, {
         indices: [index],
         individu: item.individu,
         modalites: publicIds,
         date: item.date,
       })
   })
-  return [...entreesParCle.values()]
-    .filter((entree) => entree.indices.length > 1)
+  return [...entriesByKey.values()]
+    .filter((entry) => entry.indices.length > 1)
     .map(({ indices, individu, modalites, date }) => ({
       code: 'DUPLICATE_KEY',
       indices,
@@ -62,7 +62,7 @@ export const aggregateModalitesErrors = ({
 }: {
   modalitesByItem: ModalitesByItem
 }): BatchInvalidErrorEntryApiModel[] => {
-  const entrees = new Map<string, BatchInvalidErrorEntryApiModel>()
+  const entries = new Map<string, BatchInvalidErrorEntryApiModel>()
   const addIndex = ({
     key,
     index,
@@ -72,42 +72,42 @@ export const aggregateModalitesErrors = ({
     index: number
     create: () => BatchInvalidErrorEntryApiModel
   }) => {
-    const entree = entrees.get(key) ?? create()
-    if (!entree.indices.includes(index)) entree.indices.push(index)
-    entrees.set(key, entree)
+    const entry = entries.get(key) ?? create()
+    if (!entry.indices.includes(index)) entry.indices.push(index)
+    entries.set(key, entry)
   }
-  modalitesByItem.forEach((resultat, index) => {
-    if (resultat.isOk()) return
-    const erreur = resultat.error
-    switch (erreur.type) {
+  modalitesByItem.forEach((result, index) => {
+    if (result.isOk()) return
+    const error = result.error
+    switch (error.type) {
       case 'MODALITE_INCONNUE':
       case 'AXE_NON_DECLARE':
       case 'MODALITE_NON_FEUILLE':
-        for (const modalite of erreur.modalites) {
+        for (const modalite of error.modalites) {
           addIndex({
-            key: `${erreur.type}|${modalite}`,
+            key: `${error.type}|${modalite}`,
             index,
-            create: () => ({ code: erreur.type, indices: [], modalite }),
+            create: () => ({ code: error.type, indices: [], modalite }),
           })
         }
         return
       case 'MODALITES_MEME_AXE':
         addIndex({
-          key: `${erreur.type}|${erreur.axe}`,
+          key: `${error.type}|${error.axe}`,
           index,
-          create: () => ({ code: erreur.type, indices: [], axe: erreur.axe }),
+          create: () => ({ code: error.type, indices: [], axe: error.axe }),
         })
         return
       case 'MODALITE_MANQUANTE':
-        for (const axe of erreur.axes) {
+        for (const axe of error.axes) {
           addIndex({
-            key: `${erreur.type}|${axe}`,
+            key: `${error.type}|${axe}`,
             index,
-            create: () => ({ code: erreur.type, indices: [], axe }),
+            create: () => ({ code: error.type, indices: [], axe }),
           })
         }
         return
     }
   })
-  return [...entrees.values()]
+  return [...entries.values()]
 }

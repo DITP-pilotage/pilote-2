@@ -3,7 +3,7 @@ import {
   type UpsertValeursAvancementBatchBody,
   type UpsertValeursAvancementBatchResultApiModel,
 } from '@pilote/kpilote-shared/valeurAvancement'
-import { err, ok, ResultAsync } from 'neverthrow'
+import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
 import { combinaisonKey, upsertCombinaisons } from '@/axe/combinaison'
@@ -35,14 +35,31 @@ type BatchItems = UpsertValeursAvancementBatchBody['items']
 // déclaré, dans l'ordre des axes ; aucune pour un indicateur sans axe).
 type ResolvedCellule = { individuId: string; modalites: RequestedModalite[] }
 
+const performBatch = async ({
+  indicateurPublicId,
+  items,
+}: {
+  indicateurPublicId: string
+  items: BatchItems
+}): Promise<
+  Result<UpsertValeursAvancementBatchResultApiModel, UpsertValeursAvancementBatchError>
+> => {
+  const resolved = await resolveIndicateurForWriteData({ indicateurPublicId })
+  if (resolved.isErr()) return err(resolved.error)
+  const indicateurId = resolved.value.indicateur.id
+
+  const cellules = await validateAndResolveCellules({ indicateurId, items })
+  if (cellules.isErr()) return err(cellules.error)
+
+  return ok(await executeBatch({ indicateurId, cellules: cellules.value, items }))
+}
+
 export const upsertValeursAvancementBatch = (
   indicateurPublicId: string,
   { items }: UpsertValeursAvancementBatchBody,
 ): ResultAsync<UpsertValeursAvancementBatchResultApiModel, UpsertValeursAvancementBatchError> =>
-  resolveIndicateurForWriteData({ indicateurPublicId }).andThen(({ indicateur }) =>
-    validateAndResolveCellules({ indicateurId: indicateur.id, items }).andThen((cellules) =>
-      executeBatch({ indicateurId: indicateur.id, cellules, items }),
-    ),
+  ResultAsync.fromSafePromise(performBatch({ indicateurPublicId, items })).andThen(
+    (result) => result,
   )
 
 // Pipeline de validation avant toute écriture en base. En pratique l'appelant
@@ -51,49 +68,44 @@ export const upsertValeursAvancementBatch = (
 // le premier INSERT : on rassemble toutes les erreurs détectées pour préserver
 // la garantie « tout-ou-rien transactionnel » promise au client (on ne veut
 // jamais aborter un INSERT à mi-parcours).
-const validateAndResolveCellules = ({
+const validateAndResolveCellules = async ({
   indicateurId,
   items,
 }: {
   indicateurId: string
   items: BatchItems
-}): ResultAsync<ResolvedCellule[], BatchInvalidError> =>
-  ResultAsync.fromSafePromise(
-    Promise.all([
-      loadIndividusContext({ indicateurId, items }),
-      loadModalitesContext({
-        indicateurId,
-        modalitePublicIds: items.flatMap((item) => item.modalites ?? []),
-      }),
-    ]),
-  ).andThen(([{ individuByPublicId, linkedReferentielIds }, contexteModalites]) => {
-    const modalitesByItem = validateItemsModalites({ items, contexte: contexteModalites })
-    const errors = [
-      ...detectDuplicateKeys({ items, modalitesByItem }),
-      ...detectIndividusInconnus({ items, individuByPublicId, linkedReferentielIds }),
-      ...aggregateModalitesErrors({ modalitesByItem }),
-    ]
-    if (errors.length > 0)
-      return err<ResolvedCellule[], BatchInvalidError>({ type: 'BATCH_INVALID', errors })
-    return ok<ResolvedCellule[], BatchInvalidError>(
-      items.map((item, index) => ({
-        individuId: individuByPublicId.get(item.individu)!.id,
-        // Aucune erreur à ce stade : chaque item a ses modalités.
-        modalites: modalitesByItem[index]!.unwrapOr([]),
-      })),
-    )
-  })
+}): Promise<Result<ResolvedCellule[], BatchInvalidError>> => {
+  const [{ individuByPublicId, linkedReferentielIds }, modalitesContext] = await Promise.all([
+    loadIndividusContext({ indicateurId, items }),
+    loadModalitesContext({
+      indicateurId,
+      modalitePublicIds: items.flatMap((item) => item.modalites ?? []),
+    }),
+  ])
+  const modalitesByItem = validateItemsModalites({ items, context: modalitesContext })
+  const errors = [
+    ...detectDuplicateKeys({ items, modalitesByItem }),
+    ...detectIndividusInconnus({ items, individuByPublicId, linkedReferentielIds }),
+    ...aggregateModalitesErrors({ modalitesByItem }),
+  ]
+  if (errors.length > 0) return err({ type: 'BATCH_INVALID', errors })
+  return ok(
+    items.map((item, index) => ({
+      individuId: individuByPublicId.get(item.individu)!.id,
+      // Aucune erreur à ce stade : chaque item a ses modalités.
+      modalites: modalitesByItem[index]!.unwrapOr([]),
+    })),
+  )
+}
 
 const validateItemsModalites = ({
   items,
-  contexte,
+  context,
 }: {
   items: BatchItems
-  contexte: ModalitesContext
+  context: ModalitesContext
 }): ModalitesByItem =>
-  items.map((item) =>
-    validateSaisieModalites({ contexte, modalitePublicIds: item.modalites ?? [] }),
-  )
+  items.map((item) => validateSaisieModalites({ context, modalitePublicIds: item.modalites ?? [] }))
 
 type IndividuRow = { id: string; publicId: string; referentielId: string }
 
@@ -175,7 +187,7 @@ type SqlBatchItem = {
 // atomique en un seul appel TypedSQL. Le `RETURNING (xmax = 0)` indique, ligne par ligne,
 // si l'opération a été un INSERT (true) ou un UPDATE (false). On agrège pour produire les
 // compteurs renvoyés au client.
-const executeBatch = ({
+const executeBatch = async ({
   indicateurId,
   cellules,
   items,
@@ -183,29 +195,24 @@ const executeBatch = ({
   indicateurId: string
   cellules: ReadonlyArray<ResolvedCellule>
   items: BatchItems
-}): ResultAsync<UpsertValeursAvancementBatchResultApiModel, never> =>
-  ResultAsync.fromSafePromise(
-    upsertCombinaisons({ combinaisons: cellules.map((cellule) => cellule.modalites) }),
+}): Promise<UpsertValeursAvancementBatchResultApiModel> => {
+  const idByKey = await upsertCombinaisons({
+    combinaisons: cellules.map((cellule) => cellule.modalites),
+  })
+  const sqlItems: SqlBatchItem[] = items.map((item, index) => {
+    const cellule = cellules[index]!
+    return {
+      id: uuidv7(),
+      individuId: cellule.individuId,
+      combinaisonId: idByKey.get(combinaisonKey({ modalites: cellule.modalites }))!,
+      date: item.date,
+      valeur: item.valeur.toString(),
+    }
+  })
+  const rows = await db().$queryRawTyped(
+    upsertValeursAvancementBatchQuery(indicateurId, { items: sqlItems }),
   )
-    .map((idParCle) =>
-      items.map((item, index): SqlBatchItem => {
-        const cellule = cellules[index]!
-        return {
-          id: uuidv7(),
-          individuId: cellule.individuId,
-          combinaisonId: idParCle.get(combinaisonKey({ modalites: cellule.modalites }))!,
-          date: item.date,
-          valeur: item.valeur.toString(),
-        }
-      }),
-    )
-    .andThen((sqlItems) =>
-      ResultAsync.fromSafePromise(
-        db().$queryRawTyped(upsertValeursAvancementBatchQuery(indicateurId, { items: sqlItems })),
-      ),
-    )
-    .map((rows) => {
-      const total = rows.length
-      const created = rows.reduce((sum, row) => sum + (row.created === true ? 1 : 0), 0)
-      return { total, created, updated: total - created }
-    })
+  const total = rows.length
+  const created = rows.reduce((sum, row) => sum + (row.created === true ? 1 : 0), 0)
+  return { total, created, updated: total - created }
+}

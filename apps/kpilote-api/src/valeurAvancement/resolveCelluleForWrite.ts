@@ -1,4 +1,4 @@
-import { ResultAsync } from 'neverthrow'
+import { err, type Result, ResultAsync } from 'neverthrow'
 
 import {
   loadModalitesContext,
@@ -16,26 +16,37 @@ type CelluleForWrite = {
   modalites: RequestedModalite[]
 }
 
-// Cible d'une écriture unitaire : l'individu (droits et rattachement à
-// l'indicateur) et les modalités qui complètent la cellule.
-export const resolveCelluleForWrite = ({
-  indicateurPublicId,
-  individuPublicId,
-  modalitePublicIds,
-}: {
+type ResolveCelluleForWriteParams = {
   indicateurPublicId: string
   individuPublicId: string
   modalitePublicIds: ReadonlyArray<string>
-}): ResultAsync<CelluleForWrite, IndividuInconnuError | SaisieModalitesError> =>
-  resolveIndicateurAndIndividuForWriteData({ indicateurPublicId, individuPublicId }).andThen(
-    ({ indicateur, individu }) =>
-      ResultAsync.fromSafePromise(
-        loadModalitesContext({ indicateurId: indicateur.id, modalitePublicIds }),
-      ).andThen((contexte) =>
-        validateSaisieModalites({ contexte, modalitePublicIds }).map((modalites) => ({
-          indicateur,
-          individu,
-          modalites,
-        })),
-      ),
-  )
+}
+
+type ResolveCelluleForWriteError = IndividuInconnuError | SaisieModalitesError
+
+const performResolve = async ({
+  indicateurPublicId,
+  individuPublicId,
+  modalitePublicIds,
+}: ResolveCelluleForWriteParams): Promise<Result<CelluleForWrite, ResolveCelluleForWriteError>> => {
+  const resolved = await resolveIndicateurAndIndividuForWriteData({
+    indicateurPublicId,
+    individuPublicId,
+  })
+  if (resolved.isErr()) return err(resolved.error)
+  const { indicateur, individu } = resolved.value
+
+  const context = await loadModalitesContext({ indicateurId: indicateur.id, modalitePublicIds })
+  return validateSaisieModalites({ context, modalitePublicIds }).map((modalites) => ({
+    indicateur,
+    individu,
+    modalites,
+  }))
+}
+
+// Cible d'une écriture unitaire : l'individu (droits et rattachement à
+// l'indicateur) et les modalités qui complètent la cellule.
+export const resolveCelluleForWrite = (
+  params: ResolveCelluleForWriteParams,
+): ResultAsync<CelluleForWrite, ResolveCelluleForWriteError> =>
+  ResultAsync.fromSafePromise(performResolve(params)).andThen((result) => result)

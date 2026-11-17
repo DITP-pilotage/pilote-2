@@ -49,41 +49,39 @@ export const upsertCombinaisons = async ({
 }: {
   combinaisons: ReadonlyArray<ModalitesCombinaison>
 }): Promise<Map<string, string>> => {
-  const modalitesParCle = new Map(
+  const modalitesByKey = new Map(
     combinaisons.map((modalites) => [combinaisonKey({ modalites }), modalites]),
   )
-  const keys = [...modalitesParCle.keys()]
+  const keys = [...modalitesByKey.keys()]
 
-  const existantes = await loadIdsByKey({ keys })
-  const manquantes = keys.filter((key) => !existantes.has(key))
-  if (manquantes.length === 0) return existantes
+  const existingIds = await loadIdsByKey({ keys })
+  const missingKeys = keys.filter((key) => !existingIds.has(key))
+  if (missingKeys.length === 0) return existingIds
 
   await db().combinaison.createMany({
-    data: manquantes.map((cle) => ({ id: uuidv7(), cle })),
+    data: missingKeys.map((key) => ({ id: uuidv7(), cle: key })),
     skipDuplicates: true,
   })
-  const idParCle = await loadIdsByKey({ keys })
+  const idByKey = await loadIdsByKey({ keys })
   await db().combinaisonModalite.createMany({
-    data: manquantes.flatMap((cle) =>
-      modalitesParCle.get(cle)!.map((modalite) => ({
-        combinaisonId: idParCle.get(cle)!,
+    data: missingKeys.flatMap((key) =>
+      modalitesByKey.get(key)!.map((modalite) => ({
+        combinaisonId: idByKey.get(key)!,
         axeId: modalite.axeId,
         modaliteId: modalite.id,
       })),
     ),
     skipDuplicates: true,
   })
-  return idParCle
+  return idByKey
 }
 
-// L'id de la combinaison de ces modalités, si elle existe déjà.
-export const getCombinaisonId = async ({
+// Une seule combinaison : son id, après l'avoir créée si besoin.
+export const upsertCombinaison = async ({
   modalites,
 }: {
   modalites: ModalitesCombinaison
-}): Promise<string | null> => {
-  const combinaison = await db().combinaison.findUnique({
-    where: { cle: combinaisonKey({ modalites }) },
-  })
-  return combinaison?.id ?? null
+}): Promise<string> => {
+  const idByKey = await upsertCombinaisons({ combinaisons: [modalites] })
+  return idByKey.get(combinaisonKey({ modalites }))!
 }

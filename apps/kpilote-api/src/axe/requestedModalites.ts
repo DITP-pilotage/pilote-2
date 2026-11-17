@@ -18,9 +18,9 @@ export type RequestedModalite = {
 
 export type ModalitesContext = {
   // Dans l'ordre de déclaration sur l'indicateur.
-  axesDeclares: ReadonlyArray<DeclaredAxe>
+  declaredAxes: ReadonlyArray<DeclaredAxe>
   // Les modalités citées qui existent (toutes, pas seulement celles des axes déclarés).
-  modaliteParPublicId: ReadonlyMap<string, RequestedModalite>
+  modaliteByPublicId: ReadonlyMap<string, RequestedModalite>
 }
 
 export const loadModalitesContext = async ({
@@ -44,8 +44,8 @@ export const loadModalitesContext = async ({
         }),
   ])
   return {
-    axesDeclares: declarations.map(({ axe }) => ({ id: axe.id, publicId: axe.publicId })),
-    modaliteParPublicId: new Map(
+    declaredAxes: declarations.map(({ axe }) => ({ id: axe.id, publicId: axe.publicId })),
+    modaliteByPublicId: new Map(
       modalites.map((modalite) => [
         modalite.publicId,
         {
@@ -69,36 +69,36 @@ export type ResolveModalitesError =
 // appartient à un axe déclaré, et au plus une modalité par axe. Renvoie la
 // modalité retenue pour chaque axe cité (axeId → modalité).
 export const resolveModalites = ({
-  contexte,
+  context,
   modalitePublicIds,
 }: {
-  contexte: ModalitesContext
+  context: ModalitesContext
   modalitePublicIds: ReadonlyArray<string>
 }): Result<Map<string, RequestedModalite>, ResolveModalitesError> => {
-  const demandees = [...new Set(modalitePublicIds)]
-  const inconnues = demandees.filter((publicId) => !contexte.modaliteParPublicId.has(publicId))
-  if (inconnues.length > 0) return err({ type: 'MODALITE_INCONNUE', modalites: inconnues.sort() })
+  const requested = [...new Set(modalitePublicIds)]
+  const unknown = requested.filter((publicId) => !context.modaliteByPublicId.has(publicId))
+  if (unknown.length > 0) return err({ type: 'MODALITE_INCONNUE', modalites: unknown.sort() })
 
-  const modalites = demandees.map((publicId) => contexte.modaliteParPublicId.get(publicId)!)
-  const axesDeclares = new Set(contexte.axesDeclares.map((axe) => axe.id))
-  const horsAxes = modalites.filter((modalite) => !axesDeclares.has(modalite.axeId))
-  if (horsAxes.length > 0) {
-    return err({ type: 'AXE_NON_DECLARE', modalites: horsAxes.map((m) => m.publicId).sort() })
+  const modalites = requested.map((publicId) => context.modaliteByPublicId.get(publicId)!)
+  const declaredAxeIds = new Set(context.declaredAxes.map((axe) => axe.id))
+  const outsideAxes = modalites.filter((modalite) => !declaredAxeIds.has(modalite.axeId))
+  if (outsideAxes.length > 0) {
+    return err({ type: 'AXE_NON_DECLARE', modalites: outsideAxes.map((m) => m.publicId).sort() })
   }
 
-  const parAxe = new Map<string, RequestedModalite>()
+  const modaliteByAxe = new Map<string, RequestedModalite>()
   for (const modalite of modalites) {
-    if (parAxe.has(modalite.axeId)) {
-      const memeAxe = modalites.filter((m) => m.axeId === modalite.axeId).map((m) => m.publicId)
+    if (modaliteByAxe.has(modalite.axeId)) {
+      const sameAxe = modalites.filter((m) => m.axeId === modalite.axeId).map((m) => m.publicId)
       return err({
         type: 'MODALITES_MEME_AXE',
         axe: modalite.axePublicId,
-        modalites: memeAxe.sort(),
+        modalites: sameAxe.sort(),
       })
     }
-    parAxe.set(modalite.axeId, modalite)
+    modaliteByAxe.set(modalite.axeId, modalite)
   }
-  return ok(parAxe)
+  return ok(modaliteByAxe)
 }
 
 export type SaisieModalitesError =
@@ -111,26 +111,26 @@ export type SaisieModalitesError =
 // parents et « Tous » se calculent, ils ne se saisissent pas (spec D9).
 // Renvoie les modalités dans l'ordre de déclaration des axes.
 export const validateSaisieModalites = ({
-  contexte,
+  context,
   modalitePublicIds,
 }: {
-  contexte: ModalitesContext
+  context: ModalitesContext
   modalitePublicIds: ReadonlyArray<string>
 }): Result<RequestedModalite[], SaisieModalitesError> =>
-  resolveModalites({ contexte, modalitePublicIds }).andThen(
-    (parAxe): Result<RequestedModalite[], SaisieModalitesError> => {
-      const manquants = contexte.axesDeclares.filter((axe) => !parAxe.has(axe.id))
-      if (manquants.length > 0) {
-        return err({ type: 'MODALITE_MANQUANTE', axes: manquants.map((axe) => axe.publicId) })
+  resolveModalites({ context, modalitePublicIds }).andThen(
+    (modaliteByAxe): Result<RequestedModalite[], SaisieModalitesError> => {
+      const missingAxes = context.declaredAxes.filter((axe) => !modaliteByAxe.has(axe.id))
+      if (missingAxes.length > 0) {
+        return err({ type: 'MODALITE_MANQUANTE', axes: missingAxes.map((axe) => axe.publicId) })
       }
-      const nonFeuilles = [...parAxe.values()].filter((modalite) => !modalite.isLeaf)
-      if (nonFeuilles.length > 0) {
+      const nonLeaves = [...modaliteByAxe.values()].filter((modalite) => !modalite.isLeaf)
+      if (nonLeaves.length > 0) {
         return err({
           type: 'MODALITE_NON_FEUILLE',
-          modalites: nonFeuilles.map((modalite) => modalite.publicId).sort(),
+          modalites: nonLeaves.map((modalite) => modalite.publicId).sort(),
         })
       }
-      return ok(contexte.axesDeclares.map((axe) => parAxe.get(axe.id)!))
+      return ok(context.declaredAxes.map((axe) => modaliteByAxe.get(axe.id)!))
     },
   )
 
