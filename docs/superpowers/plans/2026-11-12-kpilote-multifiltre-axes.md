@@ -347,22 +347,21 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 
 **Objectif :** le calcul de « Tous » et des modalités parentes, testé, non branché.
 
-**Règle (D8, chemin 1) :** pour une case (individu + une modalité ou « Tous » par axe), dans l'ordre : (1) l'individu se calcule à partir d'individus plus petits → mêmes cases pour chacun, fonction du référentiel ; (2) sinon, un axe est à « Tous » ou sur une modalité parente → on détaille le dernier axe déclaré d'un cran, modalités observées pour cet individu seulement, fonction de l'axe ; (3) sinon, saisie. Le premier axe déclaré est donc combiné en premier. Détail et exemples : spec §5.
+**Règle (D8, chemin 1) :** pour une case (individu + une modalité ou « Tous » par axe), dans l'ordre : (1) l'individu se calcule à partir de ses individus enfants → mêmes cases pour chacun, fonction du référentiel ; (2) sinon, un axe est à « Tous » ou sur une modalité parente → on descend le dernier axe déclaré d'un niveau dans l'arbre de ses modalités, modalités observées pour cet individu seulement, fonction de l'axe ; (3) sinon, saisie. Le premier axe déclaré est donc combiné en premier. Détail et exemples : spec §5.
 
-> **Écarts validés (2026-11-12) :** un seul moteur pour tous les indicateurs : `resolveSerieNoeud` calcule sur un graphe générique (`GrapheSerie`), construit par `buildGrapheTerritoire` (calcul historique, inchangé) ou `buildGrapheAxes`. Les contributions internes portent les modalités du nœud enfant.
+> **Écarts validés (2026-11-12) :** un seul moteur pour tous les indicateurs : `resolveSerieNoeud` calcule sur un graphe générique (`GrapheSerie`), construit par un seul constructeur, `buildGrapheSerie`, avec ou sans axe (sans axe : le calcul historique, inchangé). Les contributions internes portent les modalités du nœud enfant.
 
-**Fichiers :** Modify `src/valeurAvancement/resolveSerieIndividu.ts` (moteur sur graphe), `src/valeurAvancement/queries/loadResolveSerieContext.ts` et les 5 lectures ; Create `src/valeurAvancement/buildGrapheTerritoire.ts`, `src/axe/calculMarginale.ts` (+ tests).
+**Fichiers :** Modify `src/valeurAvancement/resolveSerieIndividu.ts` (moteur sur graphe), `src/valeurAvancement/queries/loadResolveSerieContext.ts` et les 5 lectures ; Create `src/valeurAvancement/buildGrapheSerie.ts` (+ tests).
 
 **Étapes :**
 
 - [ ] Moteur : nœud = `{ cle, individuPublicId, modalites }` ; graphe = agrégation (fonction + enfants) ou saisies par nœud.
-- [ ] `buildGrapheTerritoire` : la décision « individu agrégé » sort du moteur ; comportement identique (snapshot).
-- [ ] `buildGrapheAxes` : construction à la demande à partir des nœuds cibles, cube creux, niveau saisi (NONE), profondeur d'axe libre.
+- [ ] `buildGrapheSerie` : la décision « individu agrégé » sort du moteur ; sans axe, comportement identique (snapshot) ; avec axes, construction à la demande à partir des nœuds cibles, cube creux, individu saisi (NONE), profondeur d'axe libre.
 
 **DoD :**
 
 - [ ] Commune ; snapshot : 0 différence.
-- [ ] Tests unitaires : PACA (3), moyenne sur les deux (2,25), PACA · France Travail (2), modalité absente, axe imbriqué à 3 niveaux, deux axes (40 / 30 selon l'ordre), sélection partielle, niveau saisi.
+- [ ] Tests unitaires : PACA (3), moyenne sur les deux (2,25), PACA · France Travail (2), modalité absente, axe imbriqué à 3 niveaux, deux axes (40 / 30 selon l'ordre), sélection partielle, individu saisi (NONE), feuille vide à une date sous un niveau intermédiaire.
 - [ ] Aucun branchement sur les routes.
 
 ---

@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest'
 
 import { parseBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
-import { buildGrapheTerritoire } from '@/valeurAvancement/buildGrapheTerritoire'
+import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
+import { cleCellule } from '@/valeurAvancement/cellule'
 import {
   type IndividuRef,
   type PointInterne,
@@ -34,9 +35,10 @@ const DEPT_D: IndividuRef = { id: 'i-dept-d', publicId: 'DEPT-D', referentielId:
 const COMBINAISON = 'combinaison-test'
 const TOUS: ReadonlyArray<IndividuRef> = [FRANCE, REG_N, REG_S, DEPT_A, DEPT_B, DEPT_C, DEPT_D]
 
-// Graphe territorial construit comme en production (`buildGrapheTerritoire`).
-// Un individu absent de `individusReferentiel` n'a pas de référentiel : il est
-// saisi, comme un individu dont le référentiel n'est pas lié à l'indicateur.
+// Graphe d'un indicateur sans axe, construit comme en production
+// (`buildGrapheSerie`, combinaison vide). Un individu absent de
+// `individusReferentiel` n'a pas de référentiel : il est saisi, comme un
+// individu dont le référentiel n'est pas lié à l'indicateur.
 const buildContext = (input: {
   enfantsParParent?: Record<string, IndividuRef[]>
   fonctionAgregationParReferentiel?: Record<string, 'SUM' | 'AVG' | 'NONE'>
@@ -44,7 +46,8 @@ const buildContext = (input: {
   individusReferentiel?: Record<string, string>
 }) => {
   const referentiels = input.individusReferentiel ?? {}
-  return buildGrapheTerritoire({
+  const saisies = Object.entries(input.serieFeuilleParIndividu ?? {})
+  return buildGrapheSerie({
     individus: TOUS.map((individu) => ({
       ...individu,
       referentielId: referentiels[individu.id] ?? '',
@@ -53,8 +56,20 @@ const buildContext = (input: {
     fonctionAgregationParReferentiel: new Map(
       Object.entries(input.fonctionAgregationParReferentiel ?? {}),
     ),
-    saisiesParIndividu: new Map(Object.entries(input.serieFeuilleParIndividu ?? {})),
-    combinaisonId: COMBINAISON,
+    axes: [],
+    modalites: [],
+    observeesParIndividu: new Map(
+      saisies.map(([individuId]) => [
+        individuId,
+        [{ combinaisonId: COMBINAISON, modaliteParAxe: new Map() }],
+      ]),
+    ),
+    saisiesParCellule: new Map(
+      saisies.map(([individuId, liste]) => [
+        cleCellule({ individuId, combinaisonId: COMBINAISON }),
+        liste,
+      ]),
+    ),
   })
 }
 

@@ -54,7 +54,7 @@ export type AgregationNoeud = {
 
 // Graphe consommé par le moteur : un nœud agrégé a ses enfants et la fonction
 // qui les combine ; un nœud absent de `agregationParNoeud` est saisi. Construit
-// par `buildGrapheTerritoire` (indicateur sans axe) ou `buildGrapheAxes`.
+// par `buildGrapheSerie`, avec ou sans axe.
 export type GrapheSerie = {
   agregationParNoeud: ReadonlyMap<string, AgregationNoeud>
   saisiesParNoeud: ReadonlyMap<string, ReadonlyArray<SaisieTronquee>>

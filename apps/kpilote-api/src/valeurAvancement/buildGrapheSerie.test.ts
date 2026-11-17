@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest'
 
 import {
   type AxeCalcul,
-  buildGrapheAxes,
+  buildGrapheSerie,
   type CombinaisonObservee,
   type ModaliteCalcul,
-} from '@/axe/calculMarginale'
-import { parseBucket } from '@/framework/bucket'
+} from '@/valeurAvancement/buildGrapheSerie'
+import { compareBuckets, parseBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 import { cleCellule } from '@/valeurAvancement/cellule'
 import {
@@ -34,10 +34,15 @@ const modalite = (id: string, axeId: string, parentId: string | null = null): Mo
   parentId,
 })
 
-type Valeur = { individu: IndividuRef; modalites: Record<string, string>; valeur: number }
+type Valeur = {
+  individu: IndividuRef
+  modalites: Record<string, string>
+  valeur: number
+  date?: string
+}
 
-// Construit le graphe des axes à partir de valeurs saisies sur des combinaisons
-// complètes (une modalité feuille par axe).
+// Construit le graphe à partir de valeurs saisies sur des combinaisons
+// complètes (une modalité feuille par axe), à `DATE` sauf mention contraire.
 const cube = ({
   fonctionReg,
   axes,
@@ -51,16 +56,27 @@ const cube = ({
 }) => {
   const observeesParIndividu = new Map<string, CombinaisonObservee[]>()
   const saisiesParCellule = new Map<string, SaisieTronquee[]>()
-  for (const { individu, modalites: parAxe, valeur } of valeurs) {
+  for (const { individu, modalites: parAxe, valeur, date = DATE } of valeurs) {
     const combinaisonId = Object.values(parAxe).sort().join(',')
     const observees = observeesParIndividu.get(individu.id) ?? []
-    observees.push({ combinaisonId, modaliteParAxe: new Map(Object.entries(parAxe)) })
+    if (!observees.some((observee) => observee.combinaisonId === combinaisonId)) {
+      observees.push({ combinaisonId, modaliteParAxe: new Map(Object.entries(parAxe)) })
+    }
     observeesParIndividu.set(individu.id, observees)
-    saisiesParCellule.set(cleCellule({ individuId: individu.id, combinaisonId }), [
-      { bucket: parseBucket(DATE), dateOrigine: parseBucket(DATE), valeur: new Decimal(valeur) },
-    ])
+    const cle = cleCellule({ individuId: individu.id, combinaisonId })
+    const saisies = saisiesParCellule.get(cle) ?? []
+    saisies.push({
+      bucket: parseBucket(date),
+      dateOrigine: parseBucket(date),
+      valeur: new Decimal(valeur),
+    })
+    saisiesParCellule.set(
+      cle,
+      saisies.sort((a, b) => compareBuckets(a.bucket, b.bucket)),
+    )
   }
-  return buildGrapheAxes({
+  return buildGrapheSerie({
+    individus: [PACA, D84, D13],
     enfantsParParent: new Map([[PACA.id, [D84, D13]]]),
     fonctionAgregationParReferentiel: new Map([[REF_REG, fonctionReg]]),
     axes,
@@ -92,7 +108,7 @@ const valeursPaca: Valeur[] = [
   { individu: D13, modalites: { [OPERATEUR]: 'ft' }, valeur: 3 },
 ]
 
-describe('buildGrapheAxes — un axe', () => {
+describe('buildGrapheSerie — un axe', () => {
   const paca = (fonctionReg: 'SUM' | 'AVG', fonctionAxe: 'SUM' | 'AVG') =>
     cube({
       fonctionReg,
@@ -101,7 +117,7 @@ describe('buildGrapheAxes — un axe', () => {
       valeurs: valeursPaca,
     })
 
-  it('combine les axes avant le territoire : PACA = (1 + 2 + 3) / 2 = 3', async () => {
+  it('combine les axes avant la hiérarchie des individus : PACA = (1 + 2 + 3) / 2 = 3', async () => {
     const graphe = paca('AVG', 'SUM')
 
     expect(await valeurDe(graphe, D84)).toBe(3)
@@ -142,7 +158,7 @@ describe('buildGrapheAxes — un axe', () => {
     expect(await dernierPoint(paca('AVG', 'SUM'), D13, { [OPERATEUR]: 'caf' })).toBeUndefined()
   })
 
-  it('niveau territorial saisi (NONE) : « Tous » se calcule à ce niveau', async () => {
+  it('individu saisi (NONE) : « Tous » se calcule à son niveau', async () => {
     const graphe = cube({
       fonctionReg: 'NONE',
       axes: [{ id: OPERATEUR, fonction: 'SUM' }],
@@ -160,7 +176,7 @@ describe('buildGrapheAxes — un axe', () => {
 
 // --- Axe imbriqué sur trois niveaux ------------------------------------------
 
-describe('buildGrapheAxes — axe imbriqué', () => {
+describe('buildGrapheSerie — axe imbriqué', () => {
   const FRAUDE = 'fraude'
   const graphe = cube({
     fonctionReg: 'SUM',
@@ -200,11 +216,54 @@ describe('buildGrapheAxes — axe imbriqué', () => {
       couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 1 },
     })
   })
+
+  it('niveau intermédiaire dont une feuille est vide à une date : manquante, puis report', async () => {
+    // a1x saisie en janvier seulement, a1y à partir de mars : les deux sont attendues.
+    const avecDates = cube({
+      fonctionReg: 'SUM',
+      axes: [{ id: FRAUDE, fonction: 'SUM' }],
+      modalites: [
+        modalite('a', FRAUDE),
+        modalite('a1', FRAUDE, 'a'),
+        modalite('a1x', FRAUDE, 'a1'),
+        modalite('a1y', FRAUDE, 'a1'),
+      ],
+      valeurs: [
+        { individu: D84, modalites: { [FRAUDE]: 'a1x' }, valeur: 1, date: '2025-01-01' },
+        { individu: D84, modalites: { [FRAUDE]: 'a1y' }, valeur: 2, date: '2025-03-01' },
+      ],
+    })
+    const serieDe = async (selection: Record<string, string>) =>
+      resolveSerieNoeud(
+        avecDates.noeud(D84, new Map(Object.entries(selection))),
+        avecDates.graphe,
+        new Map(),
+      )
+
+    const [janvier, mars] = await serieDe({ [FRAUDE]: 'a1' })
+    expect(janvier).toMatchObject({
+      valeur: new Decimal(1),
+      couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
+      contributions: [
+        { modalites: ['A1X'], source: 'saisie' },
+        { modalites: ['A1Y'], source: 'manquante', valeur: null },
+      ],
+    })
+    expect(mars).toMatchObject({
+      valeur: new Decimal(3),
+      couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
+      contributions: [
+        { modalites: ['A1X'], valeur: new Decimal(1), dateOrigine: parseBucket('2025-01-01') },
+        { modalites: ['A1Y'], valeur: new Decimal(2) },
+      ],
+    })
+    expect((await serieDe({})).map((point) => point.valeur.toNumber())).toEqual([1, 3])
+  })
 })
 
 // --- Deux axes (point n°2 de PIL-1963) ----------------------------------------
 
-describe('buildGrapheAxes — deux axes', () => {
+describe('buildGrapheSerie — deux axes', () => {
   const OP = 'op'
   const FR = 'fr'
   const modalitesDeuxAxes = [

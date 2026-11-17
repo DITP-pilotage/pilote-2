@@ -7,7 +7,8 @@ import {
   loadFonctionsAgregation,
   loadSousArbre,
 } from '@/indicateur/queries/loadIndicateurIndividuContext'
-import { buildGrapheTerritoire } from '@/valeurAvancement/buildGrapheTerritoire'
+import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
+import { cleCellule } from '@/valeurAvancement/cellule'
 import {
   type GrapheSerie,
   type IndividuRef,
@@ -52,12 +53,26 @@ export const loadResolveSerieContext = async ({
     combinaisonId,
   })
 
-  const { graphe, noeud } = buildGrapheTerritoire({
+  // Sans axe, la combinaison vide est la seule observée, pour les individus qui
+  // ont des saisies.
+  const { graphe, noeud } = buildGrapheSerie({
     individus: allNodes.values(),
     enfantsParParent,
     fonctionAgregationParReferentiel,
-    saisiesParIndividu,
-    combinaisonId,
+    axes: [],
+    modalites: [],
+    observeesParIndividu: new Map(
+      [...saisiesParIndividu.keys()].map((individuId) => [
+        individuId,
+        [{ combinaisonId, modaliteParAxe: new Map() }],
+      ]),
+    ),
+    saisiesParCellule: new Map(
+      [...saisiesParIndividu].map(([individuId, saisies]) => [
+        cleCellule({ individuId, combinaisonId }),
+        saisies,
+      ]),
+    ),
   })
   return { graphe, noeud, allNodes }
 }
