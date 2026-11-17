@@ -6,8 +6,14 @@ import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
 import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
 import { fixtures } from '@/test/fixtures'
+import {
+  indicateurWithoutAxe,
+  indicateurWithTwoAxes,
+  modalitesKey,
+  valeursByModalites,
+} from '@/test/indicateurWithAxes'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testIndicateurId, testReferentielId } from '@/test/randomIds'
+import { testDeptId, testIndicateurId, testModaliteId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('upsertValeurAvancement', () => {
@@ -251,6 +257,120 @@ describe.concurrent('upsertValeurAvancement', () => {
       expect(result._unsafeUnwrapErr()).toEqual({
         type: 'INDIVIDU_INCONNU',
         individu: individuId,
+      })
+    }),
+  )
+})
+
+describe.concurrent('saisie unitaire avec modalités', () => {
+  const DATE = '2025-03-01'
+
+  it(
+    'saisit sur une cellule complète et renvoie les modalités dans l’ordre des axes',
+    integrationTest(async () => {
+      const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        upsertValeurAvancement({
+          indicateurPublicId: indicateurId,
+          body: { individu: individuId, modalites: [ids.tva, ids.orange], date: DATE, valeur: 42 },
+        }),
+      )
+
+      expect(result._unsafeUnwrap()).toEqual({
+        indicateur: indicateurId,
+        individu: individuId,
+        modalites: [ids.orange, ids.tva],
+        date: DATE,
+        valeur: 42,
+        type: 'saisie',
+      })
+      expect(await valeursByModalites(indicateurId)).toEqual(
+        new Map([[modalitesKey(ids.orange, ids.tva), 42]]),
+      )
+    }),
+  )
+
+  it(
+    'remplace la valeur de la même cellule, sans recréer la combinaison',
+    integrationTest(async () => {
+      const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
+      const upsert = (valeur: number) =>
+        runAsPrincipal(apiKey.id, () =>
+          upsertValeurAvancement({
+            indicateurPublicId: indicateurId,
+            body: { individu: individuId, modalites: [ids.orange, ids.ir], date: DATE, valeur },
+          }),
+        )
+
+      await upsert(1)
+      await upsert(2)
+
+      expect(await valeursByModalites(indicateurId)).toEqual(
+        new Map([[modalitesKey(ids.orange, ids.ir), 2]]),
+      )
+    }),
+  )
+
+  it(
+    'refuse chaque saisie incomplète ou invalide',
+    integrationTest(async () => {
+      const { indicateurId, individuId, apiKey, axes, ids } = await indicateurWithTwoAxes()
+      const unknownModalite = testModaliteId()
+      const upsert = (modalites: string[] | undefined) =>
+        runAsPrincipal(apiKey.id, () =>
+          upsertValeurAvancement({
+            indicateurPublicId: indicateurId,
+            body: { individu: individuId, modalites, date: DATE, valeur: 1 },
+          }),
+        )
+
+      expect((await upsert(undefined))._unsafeUnwrapErr()).toEqual({
+        type: 'MODALITE_MANQUANTE',
+        axes: [axes.operateur.publicId, axes.fraude.publicId],
+      })
+      expect((await upsert([ids.orange]))._unsafeUnwrapErr()).toEqual({
+        type: 'MODALITE_MANQUANTE',
+        axes: [axes.fraude.publicId],
+      })
+      expect((await upsert([ids.orange, unknownModalite]))._unsafeUnwrapErr()).toEqual({
+        type: 'MODALITE_INCONNUE',
+        modalites: [unknownModalite],
+      })
+      expect((await upsert([ids.orange, ids.tva, ids.autre]))._unsafeUnwrapErr()).toEqual({
+        type: 'AXE_NON_DECLARE',
+        modalites: [ids.autre],
+      })
+      expect((await upsert([ids.orange, ids.sfr, ids.tva]))._unsafeUnwrapErr()).toEqual({
+        type: 'MODALITES_MEME_AXE',
+        axe: axes.operateur.publicId,
+        modalites: [ids.orange, ids.sfr].sort(),
+      })
+      expect((await upsert([ids.orange, ids.fiscale]))._unsafeUnwrapErr()).toEqual({
+        type: 'MODALITE_NON_FEUILLE',
+        modalites: [ids.fiscale],
+      })
+      expect(await valeursByModalites(indicateurId)).toEqual(new Map())
+    }),
+  )
+
+  it(
+    'garde le format historique pour un indicateur sans axe',
+    integrationTest(async () => {
+      const { indicateurId, individuId, apiKey, orange } = await indicateurWithoutAxe()
+      const upsert = (modalites: string[] | undefined) =>
+        runAsPrincipal(apiKey.id, () =>
+          upsertValeurAvancement({
+            indicateurPublicId: indicateurId,
+            body: { individu: individuId, modalites, date: DATE, valeur: 5 },
+          }),
+        )
+
+      expect((await upsert([]))._unsafeUnwrap()).not.toHaveProperty('modalites')
+      expect((await upsert(undefined))._unsafeUnwrap()).not.toHaveProperty('modalites')
+      expect((await upsert([orange]))._unsafeUnwrapErr()).toEqual({
+        type: 'AXE_NON_DECLARE',
+        modalites: [orange],
       })
     }),
   )

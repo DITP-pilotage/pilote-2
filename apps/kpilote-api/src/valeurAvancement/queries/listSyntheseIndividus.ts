@@ -6,7 +6,7 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { type Selection } from '@/axe/modalites'
-import { type ResoudreSelectionError, resoudreSelection } from '@/axe/resoudreSelection'
+import { type ResolveSelectionError, resolveSelection } from '@/axe/resolveSelection'
 import { unique } from '@/framework/array'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Decimal } from '@/framework/decimal'
@@ -32,7 +32,7 @@ const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 export const listSyntheseIndividus = (
   indicateurPublicId: string,
   params: ListSyntheseIndividusQuery,
-): ResultAsync<SyntheseIndividusListApiModel, ResoudreSelectionError> => {
+): ResultAsync<SyntheseIndividusListApiModel, ResolveSelectionError> => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({
@@ -40,7 +40,7 @@ export const listSyntheseIndividus = (
       select: { id: true },
     }),
   ).andThen((indicateur) =>
-    resoudreSelection({
+    resolveSelection({
       indicateurId: indicateur.id,
       modalitePublicIds: params.modalites ?? [],
     }).andThen((selection) =>

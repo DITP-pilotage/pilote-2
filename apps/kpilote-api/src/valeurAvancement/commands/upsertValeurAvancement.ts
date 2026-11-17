@@ -2,56 +2,68 @@ import {
   type UpsertValeurAvancementBody,
   type ValeurSaisieApiModel,
 } from '@pilote/kpilote-shared/valeurAvancement'
-import { ResultAsync } from 'neverthrow'
+import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { trouverCombinaisonVideId } from '@/axe/combinaison'
+import { upsertCombinaison } from '@/axe/combinaison'
+import { type SaisieModalitesError } from '@/axe/requestedModalites'
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
-import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
+import { resolveCelluleForWrite } from '@/valeurAvancement/resolveCelluleForWrite'
 import { toValeurSaisieApiModel } from '@/valeurAvancement/utils'
 
-export type UpsertValeurAvancementError = IndividuInconnuError
+export type UpsertValeurAvancementError = IndividuInconnuError | SaisieModalitesError
 
 type UpsertValeurAvancementParams = {
   indicateurPublicId: string
   body: UpsertValeurAvancementBody
 }
 
-export const upsertValeurAvancement = ({
+const performUpsert = async ({
   indicateurPublicId,
   body,
-}: UpsertValeurAvancementParams): ResultAsync<ValeurSaisieApiModel, UpsertValeurAvancementError> =>
-  resolveIndicateurAndIndividuForWriteData({
+}: UpsertValeurAvancementParams): Promise<
+  Result<ValeurSaisieApiModel, UpsertValeurAvancementError>
+> => {
+  const cellule = await resolveCelluleForWrite({
     indicateurPublicId,
     individuPublicId: body.individu,
-  }).andThen(({ indicateur, individu }) =>
-    ResultAsync.fromSafePromise(
-      trouverCombinaisonVideId().then((combinaisonId) =>
-        db().valeurAvancement.upsert({
-          where: {
-            valeur_avancement_cellule_unique: {
-              indicateurId: indicateur.id,
-              individuId: individu.id,
-              combinaisonId,
-              date: body.date,
-            },
-          },
-          update: { valeur: new Decimal(body.valeur) },
-          create: {
-            id: uuidv7(),
-            indicateurId: indicateur.id,
-            individuId: individu.id,
-            combinaisonId,
-            date: body.date,
-            valeur: new Decimal(body.valeur),
-          },
-          include: {
-            indicateur: { select: { publicId: true } },
-            individu: { select: { publicId: true } },
-          },
-        }),
-      ),
-    ).map(toValeurSaisieApiModel),
+    modalitePublicIds: body.modalites ?? [],
+  })
+  if (cellule.isErr()) return err(cellule.error)
+  const { indicateur, individu, modalites } = cellule.value
+
+  const combinaisonId = await upsertCombinaison({ modalites })
+  const valeur = await db().valeurAvancement.upsert({
+    where: {
+      valeur_avancement_cellule_unique: {
+        indicateurId: indicateur.id,
+        individuId: individu.id,
+        combinaisonId,
+        date: body.date,
+      },
+    },
+    update: { valeur: new Decimal(body.valeur) },
+    create: {
+      id: uuidv7(),
+      indicateurId: indicateur.id,
+      individuId: individu.id,
+      combinaisonId,
+      date: body.date,
+      valeur: new Decimal(body.valeur),
+    },
+    include: {
+      indicateur: { select: { publicId: true } },
+      individu: { select: { publicId: true } },
+    },
+  })
+  return ok(
+    toValeurSaisieApiModel(valeur, { modalites: modalites.map((modalite) => modalite.publicId) }),
   )
+}
+
+export const upsertValeurAvancement = (
+  params: UpsertValeurAvancementParams,
+): ResultAsync<ValeurSaisieApiModel, UpsertValeurAvancementError> =>
+  ResultAsync.fromSafePromise(performUpsert(params)).andThen((result) => result)

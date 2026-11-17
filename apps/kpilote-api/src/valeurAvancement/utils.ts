@@ -11,11 +11,14 @@ export type ValeurAvancementWithRelations = ValeurAvancementModel & {
   individu: { publicId: string }
 }
 
+// `modalites` n'apparaît que pour un indicateur à axes.
 export const toValeurSaisieApiModel = (
   valeur: ValeurAvancementWithRelations,
+  { modalites }: { modalites: ReadonlyArray<string> } = { modalites: [] },
 ): ValeurSaisieApiModel => ({
   indicateur: valeur.indicateur.publicId,
   individu: valeur.individu.publicId,
+  ...(modalites.length > 0 ? { modalites: [...modalites] } : {}),
   date: valeur.date,
   valeur: valeur.valeur.toNumber(),
   type: 'saisie',

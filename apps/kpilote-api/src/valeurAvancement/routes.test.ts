@@ -16,6 +16,7 @@ import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import {
   testApiKeyRawKey,
+  testAxeId,
   testCollectionNumericId,
   testDeptIds,
   testReferentielId,
@@ -202,6 +203,32 @@ describe.concurrent('PUT /indicateurs/{id}/valeurs:batch — contrat de l’impo
       // même date peut porter plusieurs issues (format, puis date calendaire).
       expect(body.details.issues.length).toBeGreaterThan(0)
       for (const issue of body.details.issues) expect(issue.path).toEqual(['items', 1, 'date'])
+      expect(await compterValeurs({ indicateur })).toBe(0)
+    }),
+  )
+})
+
+describe.concurrent('PUT /indicateurs/{id}/valeurs — modalités', () => {
+  it(
+    'répond 400 avec le code et les axes sans modalité',
+    integrationTest(async () => {
+      const { indicateur, dept1, rawKey } = await indicateurAvecDeuxDepartements()
+      const axe = testAxeId()
+      await fixtures.modalite({ niveau: { axe: { publicId: axe } } })
+      await fixtures.indicateurAxe({ indicateur: { publicId: indicateur }, axe: { publicId: axe } })
+
+      const response = await buildApp().request(`/indicateurs/${indicateur}/valeurs`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${rawKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ individu: dept1, date: '2025-01-01', valeur: 1 }),
+      })
+
+      expect(response.status).toBe(400)
+      expect(await response.json()).toEqual({
+        code: 'MODALITE_MANQUANTE',
+        message: expect.stringContaining(axe),
+        details: { axes: [axe] },
+      })
       expect(await compterValeurs({ indicateur })).toBe(0)
     }),
   )

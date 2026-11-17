@@ -6,8 +6,14 @@ import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
 import { upsertValeursAvancementBatch } from '@/valeurAvancement/commands/upsertValeursAvancementBatch'
 import { fixtures } from '@/test/fixtures'
+import {
+  indicateurWithoutAxe,
+  indicateurWithTwoAxes,
+  modalitesKey,
+  valeursByModalites,
+} from '@/test/indicateurWithAxes'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptIds, testIndicateurId, testReferentielId } from '@/test/randomIds'
+import { testDeptIds, testIndicateurId, testModaliteId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('upsertValeursAvancementBatch', () => {
@@ -302,6 +308,132 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       })
       expect(rows).toHaveLength(2)
       expect(rows.map((row) => row.valeur.toNumber()).sort((a, b) => a - b)).toEqual([11, 22])
+    }),
+  )
+})
+
+describe.concurrent('saisie en lot avec modalités', () => {
+  const DATE = '2025-03-01'
+
+  it(
+    'écrit chaque cellule sur sa combinaison, et met à jour au second passage',
+    integrationTest(async () => {
+      const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
+      const batch = (valeur: number) =>
+        runAsPrincipal(apiKey.id, () =>
+          upsertValeursAvancementBatch(indicateurId, {
+            items: [
+              { individu: individuId, modalites: [ids.orange, ids.tva], date: DATE, valeur },
+              { individu: individuId, modalites: [ids.sfr, ids.tva], date: DATE, valeur },
+              { individu: individuId, modalites: [ids.ir, ids.sfr], date: DATE, valeur },
+            ],
+          }),
+        )
+
+      expect((await batch(1))._unsafeUnwrap()).toEqual({ total: 3, created: 3, updated: 0 })
+      expect((await batch(2))._unsafeUnwrap()).toEqual({ total: 3, created: 0, updated: 3 })
+      expect(await valeursByModalites(indicateurId)).toEqual(
+        new Map([
+          [modalitesKey(ids.orange, ids.tva), 2],
+          [modalitesKey(ids.sfr, ids.tva), 2],
+          [modalitesKey(ids.sfr, ids.ir), 2],
+        ]),
+      )
+    }),
+  )
+
+  it(
+    'agrège les erreurs de modalités par cause et n’applique rien',
+    integrationTest(async () => {
+      const { indicateurId, individuId, apiKey, axes, ids } = await indicateurWithTwoAxes()
+      const unknownModalite = testModaliteId()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        upsertValeursAvancementBatch(indicateurId, {
+          items: [
+            {
+              individu: individuId,
+              modalites: [ids.orange, unknownModalite],
+              date: DATE,
+              valeur: 1,
+            },
+            { individu: individuId, modalites: [ids.orange], date: DATE, valeur: 1 },
+            {
+              individu: individuId,
+              modalites: [ids.sfr, unknownModalite],
+              date: '2025-04-01',
+              valeur: 1,
+            },
+            { individu: individuId, modalites: [ids.sfr, ids.fiscale], date: DATE, valeur: 1 },
+            { individu: individuId, modalites: [ids.sfr, ids.orange], date: DATE, valeur: 1 },
+            { individu: individuId, modalites: [ids.autre], date: DATE, valeur: 1 },
+            { individu: individuId, modalites: [ids.sfr, ids.ir], date: DATE, valeur: 1 },
+          ],
+        }),
+      )
+
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'BATCH_INVALID',
+        errors: [
+          { code: 'MODALITE_INCONNUE', indices: [0, 2], modalite: unknownModalite },
+          { code: 'MODALITE_MANQUANTE', indices: [1], axe: axes.fraude.publicId },
+          { code: 'MODALITE_NON_FEUILLE', indices: [3], modalite: ids.fiscale },
+          { code: 'MODALITES_MEME_AXE', indices: [4], axe: axes.operateur.publicId },
+          { code: 'AXE_NON_DECLARE', indices: [5], modalite: ids.autre },
+        ],
+      })
+      expect(await valeursByModalites(indicateurId)).toEqual(new Map())
+    }),
+  )
+
+  it(
+    'refuse un doublon de cellule, quel que soit l’ordre des modalités',
+    integrationTest(async () => {
+      const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        upsertValeursAvancementBatch(indicateurId, {
+          items: [
+            { individu: individuId, modalites: [ids.orange, ids.tva], date: DATE, valeur: 1 },
+            { individu: individuId, modalites: [ids.sfr, ids.tva], date: DATE, valeur: 2 },
+            { individu: individuId, modalites: [ids.tva, ids.orange], date: DATE, valeur: 3 },
+          ],
+        }),
+      )
+
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'BATCH_INVALID',
+        errors: [
+          {
+            code: 'DUPLICATE_KEY',
+            indices: [0, 2],
+            individu: individuId,
+            modalites: [ids.orange, ids.tva],
+            date: DATE,
+          },
+        ],
+      })
+    }),
+  )
+
+  it(
+    'refuse des modalités sur un indicateur sans axe',
+    integrationTest(async () => {
+      const { indicateurId, individuId, apiKey, orange } = await indicateurWithoutAxe()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        upsertValeursAvancementBatch(indicateurId, {
+          items: [
+            { individu: individuId, date: DATE, valeur: 1 },
+            { individu: individuId, modalites: [orange], date: '2025-04-01', valeur: 1 },
+          ],
+        }),
+      )
+
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'BATCH_INVALID',
+        errors: [{ code: 'AXE_NON_DECLARE', indices: [1], modalite: orange }],
+      })
     }),
   )
 })

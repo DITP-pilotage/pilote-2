@@ -8,7 +8,7 @@ import { indicateursCsvSchema, MAX_INDICATEURS_PAR_REQUETE } from './indicateurs
 // Ré-export pour les consommateurs front qui plafonnent leur taille de batch
 // sur la même valeur que celle imposée par l'API.
 export { MAX_INDICATEURS_PAR_REQUETE } from './indicateursCsv'
-import { indicateurPublicIdSchema } from './publicIds'
+import { axePublicIdSchema, indicateurPublicIdSchema } from './publicIds'
 import { individuApiModelSchema, individuPublicIdSchema } from './individu'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
 import { createPaginatedApiListSchema, pageSizeSchema, paginationCursorSchema } from './pagination'
@@ -22,8 +22,17 @@ export const valeurDateApiModelSchema = z.object({
 })
 export type ValeurDateApiModel = z.infer<typeof valeurDateApiModelSchema>
 
+// Modalités qui précisent la cellule écrite, en plus de l'individu.
+export const modalitesSaisieSchema = z
+  .array(modalitePublicIdSchema)
+  .describe(
+    "Modalités de la cellule (publicIds) : exactement une modalité feuille par axe déclaré sur l'indicateur. " +
+      'Sans axe : absent ou vide.',
+  )
+
 export const upsertValeurAvancementBodySchema = z.object({
   individu: individuPublicIdSchema,
+  modalites: modalitesSaisieSchema.optional(),
   date: dateSchema,
   valeur: valeurSchema,
 })
@@ -31,6 +40,7 @@ export type UpsertValeurAvancementBody = z.infer<typeof upsertValeurAvancementBo
 
 export const deleteValeurAvancementBodySchema = z.object({
   individu: individuPublicIdSchema,
+  modalites: modalitesSaisieSchema.optional(),
   date: dateSchema,
 })
 export type DeleteValeurAvancementBody = z.infer<typeof deleteValeurAvancementBodySchema>
@@ -43,7 +53,7 @@ export const upsertValeursAvancementBatchBodySchema = z.object({
     .min(1, 'Au moins une entrée est requise')
     .max(MAX_VALEURS_PAR_BATCH, `Au plus ${MAX_VALEURS_PAR_BATCH} entrées par requête`)
     .describe(
-      `Entrées à upserter sur l'indicateur (clé unique \`(individu, date)\`). 1..${MAX_VALEURS_PAR_BATCH} entrées.`,
+      `Entrées à upserter sur l'indicateur (clé unique \`(individu, modalites, date)\`). 1..${MAX_VALEURS_PAR_BATCH} entrées.`,
     ),
 })
 export type UpsertValeursAvancementBatchBody = z.infer<
@@ -77,6 +87,8 @@ export const batchInvalidIssueApiModelSchema = z.object({
 })
 export type BatchInvalidIssueApiModel = z.infer<typeof batchInvalidIssueApiModelSchema>
 
+const errorIndicesSchema = z.array(z.number().int().nonnegative()).min(1)
+
 export const batchInvalidErrorEntryApiModelSchema = z.discriminatedUnion('code', [
   z.object({
     code: z.literal('INVALID_ITEM'),
@@ -104,9 +116,42 @@ export const batchInvalidErrorEntryApiModelSchema = z.discriminatedUnion('code',
     indices: z
       .array(z.number().int().nonnegative())
       .min(2)
-      .describe('Les index où le couple `(individu, date)` apparaît (au moins 2).'),
+      .describe('Les index où la cellule `(individu, modalites, date)` apparaît (au moins 2).'),
     individu: individuPublicIdSchema,
+    modalites: z
+      .array(modalitePublicIdSchema)
+      .optional()
+      .describe('Modalités de la cellule en doublon, dans l’ordre des axes. Absent sans axe.'),
     date: dateSchema,
+  }),
+  z.object({
+    code: z.literal('MODALITE_INCONNUE'),
+    indices: errorIndicesSchema.describe('Tous les index où cette modalité apparaît.'),
+    modalite: modalitePublicIdSchema,
+  }),
+  z.object({
+    code: z.literal('AXE_NON_DECLARE'),
+    indices: errorIndicesSchema.describe('Tous les index où cette modalité apparaît.'),
+    modalite: modalitePublicIdSchema.describe('Modalité d’un axe que l’indicateur ne déclare pas.'),
+  }),
+  z.object({
+    code: z.literal('MODALITES_MEME_AXE'),
+    indices: errorIndicesSchema.describe(
+      'Les index des entrées qui citent plusieurs modalités de cet axe.',
+    ),
+    axe: axePublicIdSchema,
+  }),
+  z.object({
+    code: z.literal('MODALITE_MANQUANTE'),
+    indices: errorIndicesSchema.describe('Les index des entrées sans modalité pour cet axe.'),
+    axe: axePublicIdSchema,
+  }),
+  z.object({
+    code: z.literal('MODALITE_NON_FEUILLE'),
+    indices: errorIndicesSchema.describe('Tous les index où cette modalité apparaît.'),
+    modalite: modalitePublicIdSchema.describe(
+      'Modalité qui a des enfants : sa valeur se calcule, elle ne se saisit pas.',
+    ),
   }),
 ])
 export type BatchInvalidErrorEntryApiModel = z.infer<typeof batchInvalidErrorEntryApiModelSchema>
@@ -390,6 +435,10 @@ export type CouvertureApiModel = z.infer<typeof couvertureApiModelSchema>
 export const valeurSaisieApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
   individu: individuPublicIdSchema,
+  modalites: z
+    .array(modalitePublicIdSchema)
+    .optional()
+    .describe('Modalités de la cellule, dans l’ordre des axes de l’indicateur. Absent sans axe.'),
   date: dateSchema.describe(
     "Date du point. Égale à la date de la saisie d'origine si `dateTrunc=day`, sinon date du " +
       'bucket post-troncature (la valeur retenue dans le bucket est la plus récente).',

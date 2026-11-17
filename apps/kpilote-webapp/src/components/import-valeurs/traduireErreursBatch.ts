@@ -21,8 +21,20 @@ const traduireEntree = (entree: BatchInvalidErrorEntryApiModel): string => {
     }
     case 'INDIVIDU_INCONNU':
       return `Individu inconnu « ${entree.individu} » (${libelleLignes(entree.indices)}).`
-    case 'DUPLICATE_KEY':
-      return `Doublon ${entree.individu} / ${entree.date} (${libelleLignes(entree.indices)}).`
+    case 'DUPLICATE_KEY': {
+      const cellule = [entree.individu, ...(entree.modalites ?? []), entree.date].join(' / ')
+      return `Doublon ${cellule} (${libelleLignes(entree.indices)}).`
+    }
+    case 'MODALITE_INCONNUE':
+      return `Modalité inconnue « ${entree.modalite} » (${libelleLignes(entree.indices)}).`
+    case 'AXE_NON_DECLARE':
+      return `Modalité « ${entree.modalite} » d’un axe que l’indicateur ne déclare pas (${libelleLignes(entree.indices)}).`
+    case 'MODALITES_MEME_AXE':
+      return `Plusieurs modalités de l’axe ${entree.axe} (${libelleLignes(entree.indices)}).`
+    case 'MODALITE_MANQUANTE':
+      return `Modalité manquante pour l’axe ${entree.axe} (${libelleLignes(entree.indices)}).`
+    case 'MODALITE_NON_FEUILLE':
+      return `Modalité « ${entree.modalite} » non saisissable : sa valeur se calcule à partir de ses sous-modalités (${libelleLignes(entree.indices)}).`
     default: {
       const exhaustif: never = entree
       return exhaustif
