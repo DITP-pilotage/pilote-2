@@ -17,6 +17,11 @@ import {
 
 import { type ModaliteSeed, axesSeed } from './seedData/axes.js'
 import {
+  buildObjectifsAxes,
+  buildValeursAxes,
+  indicateursAxesSeed,
+} from './seedData/indicateursAxes.js'
+import {
   buildObjectifsPourIndicateur,
   buildValeursPourIndicateur,
   individusSeed,
@@ -393,6 +398,35 @@ const upsertValeurs = async (
     combinaisonId: combinaisonVide.id,
   })
   return { ecrites, supprimees }
+}
+
+// Valeurs des indicateurs à axes : une combinaison par ligne (cf.
+// seedData/indicateursAxes.ts). Seules les lignes qui changent sont réécrites.
+const upsertValeursAxes = async (
+  rows: ReadonlyArray<{
+    id: string
+    indicateurId: string
+    individuId: string
+    combinaisonId: string
+    date: string
+    valeur: Prisma.Decimal
+  }>,
+): Promise<number> => {
+  let ecrites = 0
+  for (const lot of parLots(rows)) {
+    const tuples = lot.map(
+      (row) =>
+        Prisma.sql`(${row.id}::uuid, ${row.indicateurId}::uuid, ${row.individuId}::uuid, ${row.combinaisonId}::uuid, ${row.date}, ${row.valeur.toString()}::decimal, NOW())`,
+    )
+    ecrites += await prisma.$executeRaw`
+      INSERT INTO valeur_avancement (id, indicateur_id, individu_id, combinaison_id, "date", valeur, updated_at)
+      VALUES ${Prisma.join(tuples)}
+      ON CONFLICT (indicateur_id, individu_id, combinaison_id, "date") DO UPDATE
+        SET valeur = EXCLUDED.valeur, updated_at = NOW()
+        WHERE valeur_avancement.valeur IS DISTINCT FROM EXCLUDED.valeur
+    `
+  }
+  return ecrites
 }
 
 const upsertObjectifs = async (
@@ -911,6 +945,114 @@ const main = async () => {
     objectifsHorsJeuCount += ecriture.supprimees
   }
 
+  // ── Indicateurs à axes (multifiltre) ──────────────────────────────────────────
+  // Saisis par département et par modalité feuille ; régions et France en
+  // somme. Accessibles à ditp.admin comme les indicateurs de démonstration.
+  const departementPublicIds = individusSeed
+    .filter((individu) => individu.referentiel === 'REF-DEPT')
+    .map((individu) => individu.publicId)
+  let valeursAxesCount = 0
+  for (const [index, item] of indicateursAxesSeed.entries()) {
+    const { createdAt, updatedAt } = indicateurDates(indicateursSeed.length + index)
+    const indicateur = await prisma.indicateur.upsert({
+      where: { publicId: item.publicId },
+      update: { nom: item.nom, unite: item.unite, description: item.description },
+      create: {
+        id: uuidv7(),
+        publicId: item.publicId,
+        nom: item.nom,
+        visibilite: 'PRIVE',
+        unite: item.unite,
+        description: item.description,
+        createdAt,
+        updatedAt,
+      },
+    })
+    for (const refPublicId of ['REF-DEPT', 'REF-REG', 'REF-NAT']) {
+      const referentielId = referentielParPublicId.get(refPublicId)
+      if (!referentielId) continue
+      await prisma.indicateurReferentiel.upsert({
+        where: { indicateurId_referentielId: { indicateurId: indicateur.id, referentielId } },
+        update: { fonctionAgregation: 'SUM' },
+        create: { indicateurId: indicateur.id, referentielId, fonctionAgregation: 'SUM' },
+      })
+    }
+    const axe = await prisma.axe.findUniqueOrThrow({ where: { publicId: item.axe } })
+    await prisma.indicateurAxe.upsert({
+      where: { indicateurId_axeId: { indicateurId: indicateur.id, axeId: axe.id } },
+      update: { ordre: 1, fonction: 'SUM' },
+      create: { indicateurId: indicateur.id, axeId: axe.id, ordre: 1, fonction: 'SUM' },
+    })
+    for (const action of [
+      IndicateurPermissionAction.READ,
+      IndicateurPermissionAction.WRITE_DATA,
+      IndicateurPermissionAction.WRITE_COMMENT,
+    ]) {
+      await prisma.indicateurPermission.upsert({
+        where: {
+          principalId_indicateurId_action: {
+            principalId: ditpAdmin.id,
+            indicateurId: indicateur.id,
+            action,
+          },
+        },
+        update: {},
+        create: { principalId: ditpAdmin.id, indicateurId: indicateur.id, action },
+      })
+    }
+
+    // Une combinaison par modalité feuille (axe unique) : sa clé est l'id de la
+    // modalité (cf. src/axe/combinaison.ts).
+    const combinaisonParModalite = new Map<string, string>()
+    for (const { publicId } of item.modalites) {
+      const modalite = await prisma.modalite.findUniqueOrThrow({ where: { publicId } })
+      const combinaison = await prisma.combinaison.upsert({
+        where: { cle: modalite.id },
+        update: {},
+        create: {
+          id: uuidv7(),
+          cle: modalite.id,
+          modalites: { create: { axeId: modalite.axeId, modaliteId: modalite.id } },
+        },
+      })
+      combinaisonParModalite.set(publicId, combinaison.id)
+    }
+
+    const valeurs = buildValeursAxes({ indicateur: item, departementPublicIds }).flatMap((v) => {
+      const individu = individusParPublicId.get(v.individuPublicId)
+      const combinaisonId = combinaisonParModalite.get(v.modalitePublicId)
+      if (!individu || !combinaisonId) return []
+      return [
+        {
+          id: uuidv7(),
+          indicateurId: indicateur.id,
+          individuId: individu.id,
+          combinaisonId,
+          date: v.date,
+          valeur: new Prisma.Decimal(v.valeur),
+        },
+      ]
+    })
+    valeursAxesCount += await upsertValeursAxes(valeurs)
+
+    const objectifs = buildObjectifsAxes({ indicateur: item, departementPublicIds }).flatMap(
+      (o) => {
+        const individu = individusParPublicId.get(o.individuPublicId)
+        if (!individu) return []
+        return [
+          {
+            id: uuidv7(),
+            indicateurId: indicateur.id,
+            individuId: individu.id,
+            dateCible: o.dateCible,
+            valeurCible: new Prisma.Decimal(o.valeurCible),
+          },
+        ]
+      },
+    )
+    objectifsCount += (await upsertObjectifs(objectifs)).ecrites
+  }
+
   // Collections d'indicateurs : collections thématiques pour le front. L'ordre
   // du tableau `indicateurPublicIds` détermine l'ordre d'affichage (via createdAt
   // ASC de la jonction).
@@ -1166,7 +1308,7 @@ const main = async () => {
 
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs écrites, ${objectifsCount} objectifs écrits (créés ou restaurés ; les lignes déjà conformes ne sont pas réécrites), ${valeursHorsJeuCount} valeurs et ${objectifsHorsJeuCount} objectifs hors jeu supprimés,${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${axesSeed.length} axes (${niveauxAxeCount} niveaux, ${modalitesCount} modalités), ${collectionsSeed.length} collections (${collectionLiaisonsCount} liaisons collection-indicateur, ${collectionPermissionsCount} permissions collection, ${collectionResponsablesCount} responsable collection, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs écrites, ${objectifsCount} objectifs écrits (créés ou restaurés ; les lignes déjà conformes ne sont pas réécrites), ${valeursHorsJeuCount} valeurs et ${objectifsHorsJeuCount} objectifs hors jeu supprimés,${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${axesSeed.length} axes (${niveauxAxeCount} niveaux, ${modalitesCount} modalités), ${indicateursAxesSeed.length} indicateurs à axes (${valeursAxesCount} valeurs écrites), ${collectionsSeed.length} collections (${collectionLiaisonsCount} liaisons collection-indicateur, ${collectionPermissionsCount} permissions collection, ${collectionResponsablesCount} responsable collection, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
   )
 }
 

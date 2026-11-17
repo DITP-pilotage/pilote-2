@@ -1,5 +1,6 @@
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
 
+import { trouverCombinaisonVideId } from '@/axe/combinaison'
 import { parseBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
 import { getValeursTronqueesPourIndividus } from '@/generated/prisma/sql'
@@ -7,14 +8,23 @@ import {
   loadFonctionsAgregation,
   loadSousArbre,
 } from '@/indicateur/queries/loadIndicateurIndividuContext'
+import { type ModaliteCalcul, type Selection } from '@/axe/modalites'
 import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
-import { type SaisiesCellule } from '@/valeurAvancement/cellule'
+import { cleCellule, type SaisiesCellule } from '@/valeurAvancement/cellule'
 import {
   type GrapheSerie,
   type IndividuRef,
   type Noeud,
   type SaisieTronquee,
 } from '@/valeurAvancement/resolveSerieNoeud'
+
+export type ContexteSerie = {
+  graphe: GrapheSerie
+  // Nœud à résoudre pour un individu cible ; sans sélection, « Tous » sur
+  // chaque axe. Sélection toujours vide pour un indicateur sans axe.
+  noeud: (params: { individu: IndividuRef; selection?: Selection }) => Noeud
+  allNodes: Map<string, IndividuRef>
+}
 
 // Charge en bulk tout ce dont le moteur (`resolveSerieNoeud`) a besoin pour
 // calculer une série (dérivée ou feuille) à partir d'un ensemble d'individus
@@ -24,76 +34,141 @@ import {
 // DB est concentré ici pour que le functional core reste pur et mémoïsable
 // côté appelant.
 //
-// Les saisies chargées sont celles d'une seule combinaison, `combinaisonId`,
-// passée explicitement (la combinaison vide pour un indicateur sans axe).
-// `noeud` donne le nœud du graphe à résoudre pour un individu cible.
+// Un seul constructeur (`buildGrapheSerie`) : un indicateur sans axe n'a que la
+// combinaison vide, et le graphe reprend le calcul historique ; un indicateur à
+// axes calcule « Tous » et les modalités parentes à partir des combinaisons
+// observées (chemin 1).
 export const loadResolveSerieContext = async ({
   indicateurId,
   individusCibles,
   dateTrunc,
-  combinaisonId,
 }: {
   indicateurId: string
   individusCibles: ReadonlyArray<IndividuRef>
   dateTrunc: DateTrunc
-  combinaisonId: string
-}): Promise<{
-  graphe: GrapheSerie
-  noeud: (params: { individu: IndividuRef }) => Noeud
-  allNodes: Map<string, IndividuRef>
-}> => {
-  const [{ allNodes, enfantsParParent }, fonctionAgregationParReferentiel] = await Promise.all([
-    loadSousArbre(individusCibles),
-    loadFonctionsAgregation(indicateurId),
-  ])
-  const cellules = await loadSaisiesTronquees({
-    indicateurId,
-    individuIds: [...allNodes.keys()],
-    dateTrunc,
-    combinaisonId,
-  })
+}): Promise<ContexteSerie> => {
+  const [{ allNodes, enfantsParParent }, fonctionAgregationParReferentiel, declarations] =
+    await Promise.all([
+      loadSousArbre(individusCibles),
+      loadFonctionsAgregation(indicateurId),
+      db().indicateurAxe.findMany({ where: { indicateurId }, orderBy: { ordre: 'asc' } }),
+    ])
+  const individuIds = [...allNodes.keys()]
+
+  const { modalites, cellules, modalitesParCombinaison } =
+    declarations.length === 0
+      ? await loadCombinaisonVide({ indicateurId, individuIds, dateTrunc })
+      : await loadCombinaisonsAxes({
+          indicateurId,
+          individuIds,
+          dateTrunc,
+          axeIds: declarations.map((declaration) => declaration.axeId),
+        })
 
   const { graphe, noeud } = buildGrapheSerie({
     individus: allNodes.values(),
     enfantsParParent,
     fonctionAgregationParReferentiel,
-    axes: [],
-    modalites: [],
+    axes: declarations.map((declaration) => ({
+      id: declaration.axeId,
+      fonction: declaration.fonction,
+    })),
+    modalites,
     cellules,
-    modalitesParCombinaison: new Map(),
+    modalitesParCombinaison,
   })
   return { graphe, noeud, allNodes }
 }
 
-const loadSaisiesTronquees = async ({
+type DonneesCombinaisons = {
+  modalites: ReadonlyArray<ModaliteCalcul>
+  cellules: ReadonlyArray<SaisiesCellule>
+  modalitesParCombinaison: ReadonlyMap<string, ReadonlyMap<string, string>>
+}
+
+// Indicateur sans axe : les saisies de la combinaison vide seule.
+const loadCombinaisonVide = async ({
   indicateurId,
   individuIds,
   dateTrunc,
-  combinaisonId,
 }: {
   indicateurId: string
   individuIds: ReadonlyArray<string>
   dateTrunc: DateTrunc
-  combinaisonId: string
+}): Promise<DonneesCombinaisons> => {
+  const combinaisonId = await trouverCombinaisonVideId()
+  const cellules = await loadSaisiesTronquees({
+    indicateurId,
+    individuIds,
+    dateTrunc,
+    combinaisonIds: [combinaisonId],
+  })
+  return { modalites: [], cellules, modalitesParCombinaison: new Map() }
+}
+
+// Indicateur à axes : ses modalités, les saisies de toutes ses combinaisons,
+// puis les modalités des combinaisons trouvées.
+const loadCombinaisonsAxes = async ({
+  indicateurId,
+  individuIds,
+  dateTrunc,
+  axeIds,
+}: {
+  indicateurId: string
+  individuIds: ReadonlyArray<string>
+  dateTrunc: DateTrunc
+  axeIds: ReadonlyArray<string>
+}): Promise<DonneesCombinaisons> => {
+  const [modalites, cellules] = await Promise.all([
+    db().modalite.findMany({ where: { axeId: { in: [...axeIds] } } }),
+    loadSaisiesTronquees({ indicateurId, individuIds, dateTrunc, combinaisonIds: null }),
+  ])
+  const lignes = await db().combinaisonModalite.findMany({
+    where: { combinaisonId: { in: [...new Set(cellules.map((c) => c.combinaisonId))] } },
+  })
+  const modalitesParCombinaison = new Map<string, Map<string, string>>()
+  for (const ligne of lignes) {
+    const parAxe = modalitesParCombinaison.get(ligne.combinaisonId) ?? new Map<string, string>()
+    parAxe.set(ligne.axeId, ligne.modaliteId)
+    modalitesParCombinaison.set(ligne.combinaisonId, parAxe)
+  }
+  return { modalites, cellules, modalitesParCombinaison }
+}
+
+// Saisies tronquées, par cellule. `combinaisonIds` à null : toutes les
+// combinaisons de l'indicateur.
+const loadSaisiesTronquees = async ({
+  indicateurId,
+  individuIds,
+  dateTrunc,
+  combinaisonIds,
+}: {
+  indicateurId: string
+  individuIds: ReadonlyArray<string>
+  dateTrunc: DateTrunc
+  combinaisonIds: ReadonlyArray<string> | null
 }): Promise<SaisiesCellule[]> => {
   if (individuIds.length === 0) return []
   const rows = await db().$queryRawTyped(
-    getValeursTronqueesPourIndividus(indicateurId, [...individuIds], dateTrunc, combinaisonId),
+    getValeursTronqueesPourIndividus(
+      indicateurId,
+      [...individuIds],
+      dateTrunc,
+      combinaisonIds === null ? null : [...combinaisonIds],
+    ),
   )
-  const saisiesParIndividu = new Map<string, SaisieTronquee[]>()
+  const cellules = new Map<string, SaisiesCellule & { saisies: SaisieTronquee[] }>()
   for (const row of rows) {
     if (!row.bucket) continue
-    const liste = saisiesParIndividu.get(row.individuId) ?? []
-    liste.push({
+    const cellule = { individuId: row.individuId, combinaisonId: row.combinaisonId }
+    const cle = cleCellule(cellule)
+    const courante = cellules.get(cle) ?? { ...cellule, saisies: [] }
+    courante.saisies.push({
       bucket: parseBucket(row.bucket),
       dateOrigine: parseBucket(row.dateOrigine),
       valeur: row.valeur,
     })
-    saisiesParIndividu.set(row.individuId, liste)
+    cellules.set(cle, courante)
   }
-  return [...saisiesParIndividu].map(([individuId, saisies]) => ({
-    individuId,
-    combinaisonId,
-    saisies,
-  }))
+  return [...cellules.values()]
 }

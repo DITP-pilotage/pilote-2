@@ -6,7 +6,6 @@ import {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
-import { trouverCombinaisonVideId } from '@/axe/combinaison'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { formatBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
@@ -48,15 +47,12 @@ const build = async (
 
   const startedAt = performance.now()
   const dateTrunc = DEFAULT_DATE_TRUNC
-  // Indicateur sans axe : la combinaison vide. PIL-1991 passera la combinaison sélectionnée.
-  const combinaisonId = await trouverCombinaisonVideId()
   const resolus = await Promise.all(
     indicateurs.map(async (indicateur) => {
       const { graphe: serieGraphe, noeud } = await loadResolveSerieContext({
         indicateurId: indicateur.id,
         individusCibles: [individu],
         dateTrunc,
-        combinaisonId,
       })
 
       const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
