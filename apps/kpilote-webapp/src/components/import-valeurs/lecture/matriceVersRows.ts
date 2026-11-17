@@ -66,7 +66,7 @@ export function matriceVersRows({
 
   const entetes = ligneEntetes.map((cellule) => celluleVersTexte(cellule).trim().toLowerCase())
   const indexParColonne = new Map(COLONNES.map((nom) => [nom, entetes.indexOf(nom)]))
-  const indexParAxe = axes.map((axe) => entetes.indexOf(axe.id.toLowerCase()))
+  const indexByAxe = axes.map((axe) => entetes.indexOf(axe.id.toLowerCase()))
   const missing = expectedColumns({ axes }).filter((nom) => !entetes.includes(nom.toLowerCase()))
   if (missing.length > 0) return { ok: false, error: { code: 'MISSING_COLUMNS', missing } }
 
@@ -98,7 +98,7 @@ export function matriceVersRows({
     if (axes.length === 0) return row
     // Une cellule d'axe vide est omise : l'API la signale (modalité manquante
     // pour l'axe, avec le numéro de ligne).
-    const modalites = indexParAxe
+    const modalites = indexByAxe
       .map((index) => celluleVersTexte(ligne[index]).trim())
       .filter((modalite) => modalite.length > 0)
     return { individu: row.individu, modalites, date: row.date, valeur: row.valeur }

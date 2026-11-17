@@ -21,10 +21,10 @@ describe('importValeursBatch', () => {
   })
 
   it('envoie les modalités des lignes d’un indicateur à axes, et rien de plus sans axe', async () => {
-    const corps: unknown[] = []
+    const bodies: unknown[] = []
     server.use(
       http.put(apiUrl('/indicateurs/IND-1/valeurs:batch'), async ({ request }) => {
-        corps.push(await request.json())
+        bodies.push(await request.json())
         return HttpResponse.json({ total: 2, created: 2, updated: 0 })
       }),
     )
@@ -35,7 +35,7 @@ describe('importValeursBatch', () => {
         { individu: 'DEPT-13', date: '2024-01-15', valeur: 3 },
       ],
     })
-    expect(corps).toEqual([
+    expect(bodies).toEqual([
       {
         items: [
           { individu: 'DEPT-84', modalites: ['OP-ORANGE'], date: '2024-01-15', valeur: 7.2 },

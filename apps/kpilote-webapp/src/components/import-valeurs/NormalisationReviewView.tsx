@@ -34,33 +34,35 @@ function AxesResolution({
   return (
     <div className="space-y-3 text-sm">
       {axes.map((axe) => {
-        const colonne = colonnesAxes.find((entree) => entree.axe === axe.id)
+        const axeColumn = colonnesAxes.find((entry) => entry.axe === axe.id)
         return (
           <div key={axe.id}>
             <div className="font-medium text-text">
               Axe « {axe.nom} »{' '}
-              {colonne ? (
-                <span className="font-normal text-text-muted">— colonne « {colonne.colonne} »</span>
+              {axeColumn ? (
+                <span className="font-normal text-text-muted">
+                  — colonne « {axeColumn.colonne} »
+                </span>
               ) : (
                 <span className="font-normal text-red-marianne">— aucune colonne du fichier</span>
               )}
             </div>
-            {colonne && colonne.mapping.length + colonne.nonResolus.length > 0 ? (
+            {axeColumn && axeColumn.mapping.length + axeColumn.nonResolus.length > 0 ? (
               <div className="mt-1 max-h-48 overflow-y-auto rounded-md border border-border">
                 <table className="w-full text-left text-[13px]">
                   <tbody className="divide-y divide-border">
-                    {colonne.mapping.map((entree) => (
-                      <tr key={entree.libelleSource}>
-                        <td className="px-3 py-1.5 text-text-muted">{entree.libelleSource}</td>
+                    {axeColumn.mapping.map((entry) => (
+                      <tr key={entry.libelleSource}>
+                        <td className="px-3 py-1.5 text-text-muted">{entry.libelleSource}</td>
                         <td className="px-3 py-1.5 text-text-subtle">→</td>
                         <td className="px-3 py-1.5 font-mono text-text">
-                          {entree.modalitePublicId}
+                          {entry.modalitePublicId}
                         </td>
                       </tr>
                     ))}
-                    {colonne.nonResolus.map((entree) => (
-                      <tr key={entree.libelleSource}>
-                        <td className="px-3 py-1.5 text-text-muted">{entree.libelleSource}</td>
+                    {axeColumn.nonResolus.map((entry) => (
+                      <tr key={entry.libelleSource}>
+                        <td className="px-3 py-1.5 text-text-muted">{entry.libelleSource}</td>
                         <td className="px-3 py-1.5 text-text-subtle">→</td>
                         <td className="px-3 py-1.5 text-red-marianne">non reconnu</td>
                       </tr>
