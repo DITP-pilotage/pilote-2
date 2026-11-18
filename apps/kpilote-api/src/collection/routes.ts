@@ -255,8 +255,7 @@ const createCollectionRoute = createRoute({
 
 collectionRoutes.openapi(createCollectionRoute, async (context) => {
   const body = context.req.valid('json')
-  const result = withTransaction(() => createCollection(body))
-  return result.match(
+  return withTransaction(() => createCollection(body)).match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 201 }),
     never,
   )
@@ -292,8 +291,7 @@ const upsertCollectionRoute = createRoute({
 collectionRoutes.openapi(upsertCollectionRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = withTransaction(() => upsertCollection(id, body))
-  return result.match(
+  return withTransaction(() => upsertCollection(id, body)).match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
     never,
   )
@@ -318,8 +316,7 @@ const deleteCollectionRoute = createRoute({
 
 collectionRoutes.openapi(deleteCollectionRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const result = withTransaction(() => deleteCollection(id))
-  return result.match(() => context.body(null, 204), never)
+  return withTransaction(() => deleteCollection(id)).match(() => context.body(null, 204), never)
 })
 
 // --- POST /collections/:id/indicateurs -------------------------------------------
@@ -354,8 +351,7 @@ const addCollectionIndicateurRoute = createRoute({
 collectionRoutes.openapi(addCollectionIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = withTransaction(() => addCollectionIndicateur(id, body))
-  return result.match(
+  return withTransaction(() => addCollectionIndicateur(id, body)).match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
     never,
   )
@@ -392,10 +388,7 @@ const updateCollectionIndicateurPonderationRoute = createRoute({
 collectionRoutes.openapi(updateCollectionIndicateurPonderationRoute, async (context) => {
   const { id, indicateurId } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = withTransaction(() =>
-    updateCollectionIndicateurPonderation(id, indicateurId, body),
-  )
-  return result.match(
+  return withTransaction(() => updateCollectionIndicateurPonderation(id, indicateurId, body)).match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
     never,
   )
@@ -420,8 +413,10 @@ const removeCollectionIndicateurRoute = createRoute({
 
 collectionRoutes.openapi(removeCollectionIndicateurRoute, async (context) => {
   const { id, indicateurId } = context.req.valid('param')
-  const result = withTransaction(() => removeCollectionIndicateur(id, indicateurId))
-  return result.match(() => context.body(null, 204), never)
+  return withTransaction(() => removeCollectionIndicateur(id, indicateurId)).match(
+    () => context.body(null, 204),
+    never,
+  )
 })
 
 // --- POST /collections/:id/responsables ------------------------------------------
@@ -456,8 +451,7 @@ const addCollectionResponsableRoute = createRoute({
 collectionRoutes.openapi(addCollectionResponsableRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = withTransaction(() => addCollectionResponsable(id, body))
-  return result.match(
+  return withTransaction(() => addCollectionResponsable(id, body)).match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
     never,
   )
@@ -482,8 +476,10 @@ const removeCollectionResponsableRoute = createRoute({
 
 collectionRoutes.openapi(removeCollectionResponsableRoute, async (context) => {
   const { id, utilisateurId } = context.req.valid('param')
-  const result = withTransaction(() => removeCollectionResponsable(id, utilisateurId))
-  return result.match(() => context.body(null, 204), never)
+  return withTransaction(() => removeCollectionResponsable(id, utilisateurId)).match(
+    () => context.body(null, 204),
+    never,
+  )
 })
 
 // --- GET /collections/:id/permissions --------------------------------------------
@@ -544,8 +540,7 @@ const creerCollectionCommentaireRoute = createRoute({
 collectionRoutes.openapi(creerCollectionCommentaireRoute, async (context) => {
   const params = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = withTransaction(() => creerCollectionCommentaire({ params, body }))
-  return result.match(
+  return withTransaction(() => creerCollectionCommentaire({ params, body })).match(
     (data) => jsonResponseOk({ context, data, schema: CommentaireApiModelSchema, status: 200 }),
     (error) => {
       const { status, message, details } = describeCreerCommentaireError(error)
