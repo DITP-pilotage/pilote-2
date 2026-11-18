@@ -67,6 +67,12 @@ const toApiBody = (principalId: string, values: PermissionsFormValues) => ({
   })),
 })
 
+const submitLabel = ({ pending, isProd }: { pending: boolean; isProd: boolean }): string => {
+  if (pending) return 'Enregistrement…'
+  if (isProd) return '🚨 Enregistrer en Prod'
+  return 'Enregistrer'
+}
+
 export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const queryClient = useQueryClient()
   const toast = useToast()
@@ -271,11 +277,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
               Annuler
             </Button>
             <Button size="sm" type="submit" disabled={disabled || locked || !aDesModifications}>
-              {mutation.isPending
-                ? 'Enregistrement…'
-                : isProd
-                  ? '🚨 Enregistrer en Prod'
-                  : 'Enregistrer'}
+              {submitLabel({ pending: mutation.isPending, isProd })}
             </Button>
           </span>
         </div>

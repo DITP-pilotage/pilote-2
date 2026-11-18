@@ -32,16 +32,17 @@ function StateIcon({ part }: { part: SourceToolPart }) {
 const formatValue = (value: unknown): string =>
   typeof value === 'string' || typeof value === 'number' ? String(value) : JSON.stringify(value)
 
+const rawOutputOf = (part: SourceToolPart): unknown => {
+  if (part.state === 'output-available') return part.output
+  if (part.state === 'output-error') return part.errorText
+  return undefined
+}
+
 function SourceDetail({ part }: { part: SourceToolPart }) {
   const params = Object.entries(
     typeof part.input === 'object' && part.input !== null ? part.input : {},
   )
-  const output =
-    part.state === 'output-available'
-      ? part.output
-      : part.state === 'output-error'
-        ? part.errorText
-        : undefined
+  const output = rawOutputOf(part)
 
   return (
     <div className="border border-border text-xs leading-[18px] text-text-muted">

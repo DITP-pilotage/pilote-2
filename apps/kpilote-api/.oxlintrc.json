@@ -52,7 +52,8 @@
       "error",
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
     ],
-    "import/no-default-export": "error"
+    "import/no-default-export": "error",
+    "no-nested-ternary": "error"
   },
   "overrides": [
     {

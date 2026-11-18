@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { type UtilisateurApiModel } from '@pilote/kpilote-shared/utilisateur'
 import { z } from 'zod'
 
 import { updateUtilisateur } from '@/api/utilisateurs'
@@ -88,28 +89,48 @@ function EditUtilisateurComponent() {
       </Tabs>
 
       {onglet === 'identite' ? (
-        utilisateur ? (
-          <UtilisateurForm
-            mode="update"
-            initialValues={{
-              email: utilisateur.email,
-              nom: utilisateur.nom,
-              prenom: utilisateur.prenom,
-              service: utilisateur.service,
-              fonction: utilisateur.fonction,
-            }}
-            pending={mutation.isPending}
-            onCancel={() => void navigate({ to: '/utilisateurs' })}
-            onSubmit={(values) => mutation.mutate(values)}
-          />
-        ) : (
-          <p className="text-sm font-medium text-red-marianne">Utilisateur introuvable.</p>
-        )
+        <OngletIdentite
+          utilisateur={utilisateur}
+          pending={mutation.isPending}
+          onCancel={() => void navigate({ to: '/utilisateurs' })}
+          onSubmit={(values) => mutation.mutate(values)}
+        />
       ) : (
         <div>
           <PrincipalPermissions principalId={id} />
         </div>
       )}
     </div>
+  )
+}
+
+function OngletIdentite({
+  utilisateur,
+  pending,
+  onCancel,
+  onSubmit,
+}: {
+  utilisateur: UtilisateurApiModel | null
+  pending: boolean
+  onCancel: () => void
+  onSubmit: (values: UtilisateurFormValues) => void
+}) {
+  if (!utilisateur) {
+    return <p className="text-sm font-medium text-red-marianne">Utilisateur introuvable.</p>
+  }
+  return (
+    <UtilisateurForm
+      mode="update"
+      initialValues={{
+        email: utilisateur.email,
+        nom: utilisateur.nom,
+        prenom: utilisateur.prenom,
+        service: utilisateur.service,
+        fonction: utilisateur.fonction,
+      }}
+      pending={pending}
+      onCancel={onCancel}
+      onSubmit={onSubmit}
+    />
   )
 }

@@ -19,6 +19,12 @@ const KIND_TO_STATUS: Record<ErrorKind, 400 | 401 | 403 | 404 | 409 | 500 | 501>
 
 export const mapAppErrorToHttpStatus = (error: AppError) => KIND_TO_STATUS[error.kind]
 
+const httpExceptionCode = (status: number): string => {
+  if (status === 401) return 'UNAUTHENTICATED'
+  if (status === 403) return 'FORBIDDEN'
+  return 'HTTP_EXCEPTION'
+}
+
 export const registerErrorHandler = (app: OpenAPIHono): void => {
   app.onError((error, context) => {
     const url = context.req.url
@@ -42,12 +48,7 @@ export const registerErrorHandler = (app: OpenAPIHono): void => {
       logger.warn({ method, url, status: error.status }, error.message)
       return context.json(
         {
-          code:
-            error.status === 401
-              ? 'UNAUTHENTICATED'
-              : error.status === 403
-                ? 'FORBIDDEN'
-                : 'HTTP_EXCEPTION',
+          code: httpExceptionCode(error.status),
           message: error.message,
         },
         error.status,

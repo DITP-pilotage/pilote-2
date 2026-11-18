@@ -31,6 +31,12 @@ const buildReferentielFormSchema = (mode: 'create' | 'edit') =>
 
 export type ReferentielFormValues = z.infer<ReturnType<typeof buildReferentielFormSchema>>
 
+const submitLabel = ({ pending, isProd }: { pending: boolean; isProd: boolean }): string => {
+  if (pending) return 'Enregistrement…'
+  if (isProd) return '🚨 Enregistrer en Prod'
+  return 'Enregistrer'
+}
+
 export function ReferentielForm({
   mode,
   initial,
@@ -159,7 +165,7 @@ export function ReferentielForm({
           disabled={!isValid || pending}
           className={clsxm(isProd && 'bg-red-marianne hover:bg-red-marianne')}
         >
-          {pending ? 'Enregistrement…' : isProd ? '🚨 Enregistrer en Prod' : 'Enregistrer'}
+          {submitLabel({ pending, isProd })}
         </Button>
       </div>
     </form>

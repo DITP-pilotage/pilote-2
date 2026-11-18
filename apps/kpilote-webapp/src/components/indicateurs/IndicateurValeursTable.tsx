@@ -13,7 +13,7 @@ type IndicateurValeursTableProps = {
 export function IndicateurValeursTable({ indicateurId, individuId }: IndicateurValeursTableProps) {
   const { data } = useSuspenseQuery(indicateurValeursQueryOptions(indicateurId, individuId))
 
-  const rows = [...data.items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+  const rows = [...data.items].sort((a, b) => b.date.localeCompare(a.date))
 
   if (rows.length === 0) {
     return <EmptyState title="Aucune valeur pour cet individu." />

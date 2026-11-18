@@ -42,6 +42,18 @@ type CommandPaletteProps = {
 
 const preventDefault = (event: Event) => event.preventDefault()
 
+const emptyMessageOf = ({
+  hasActiveItem,
+  isLoading,
+}: {
+  hasActiveItem: boolean
+  isLoading: boolean
+}): string => {
+  if (hasActiveItem) return 'Aucune action.'
+  if (isLoading) return 'Recherche…'
+  return 'Aucun résultat.'
+}
+
 const NAVIGATION_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End'])
 
 const GROUP_HEADING_CLASS =
@@ -314,7 +326,7 @@ export function CommandPalette({
               onPointerMove={() => setInList(true)}
             >
               <CommandPrimitive.Empty className="px-3 py-8 text-center text-sm text-text-muted">
-                {activeItem ? 'Aucune action.' : isLoading ? 'Recherche…' : 'Aucun résultat.'}
+                {emptyMessageOf({ hasActiveItem: activeItem !== null, isLoading })}
               </CommandPrimitive.Empty>
 
               {activeItem ? (

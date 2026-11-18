@@ -33,6 +33,20 @@ const KEYBOARD_STEP_PX = 20
 // qu'on ouvre depuis l'assistant restent devant lui.
 const LAYER = 'z-[35]'
 
+const keyboardDirectionOf = ({
+  key,
+  grow,
+  shrink,
+}: {
+  key: string
+  grow: string
+  shrink: string
+}): number => {
+  if (key === grow) return 1
+  if (key === shrink) return -1
+  return 0
+}
+
 const boundPanel = (width: number) => boundPanelWidth(width, window.innerWidth)
 const readPanel = () => readPanelWidth() ?? PANEL_WIDTH.default
 
@@ -48,7 +62,11 @@ function SidePanel({ conversationId }: { conversationId: string }) {
     useResizable<number, 'left'>({ read: readPanel, bound: boundPanel, persist: writePanelWidth })
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const direction = event.key === 'ArrowLeft' ? 1 : event.key === 'ArrowRight' ? -1 : 0
+    const direction = keyboardDirectionOf({
+      key: event.key,
+      grow: 'ArrowLeft',
+      shrink: 'ArrowRight',
+    })
     if (direction === 0) return
     event.preventDefault()
     resizeAndPersist(latestSize.current + direction * KEYBOARD_STEP_PX)
@@ -123,7 +141,7 @@ function FloatingWindow({ conversationId }: { conversationId: string }) {
   const onKeyDown = (dimension: keyof WindowSize) => (event: KeyboardEvent<HTMLDivElement>) => {
     const grow = dimension === 'width' ? 'ArrowLeft' : 'ArrowUp'
     const shrink = dimension === 'width' ? 'ArrowRight' : 'ArrowDown'
-    const direction = event.key === grow ? 1 : event.key === shrink ? -1 : 0
+    const direction = keyboardDirectionOf({ key: event.key, grow, shrink })
     if (direction === 0) return
     event.preventDefault()
     resizeAndPersist({

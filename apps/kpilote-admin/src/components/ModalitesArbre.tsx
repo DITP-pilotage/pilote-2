@@ -182,35 +182,17 @@ export function ModalitesArbre({
             >
               <Pencil />
             </IconButton>
-            {enfants.length > 0 ? null : confirmation === modalite.id ? (
-              <>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setConfirmation(null)}
-                  disabled={supprimer.isPending}
-                >
-                  Annuler
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => supprimer.mutate(modalite.id)}
-                  disabled={occupe}
-                  className="bg-red-marianne hover:bg-red-marianne"
-                >
-                  Supprimer
-                </Button>
-              </>
-            ) : (
-              <IconButton
-                variant="danger"
-                label={`Supprimer ${modalite.id}`}
-                disabled={occupe}
-                onClick={() => setConfirmation(modalite.id)}
-              >
-                <Trash2 />
-              </IconButton>
-            )}
+            {enfants.length === 0 ? (
+              <SuppressionModalite
+                modaliteId={modalite.id}
+                isConfirming={confirmation === modalite.id}
+                isPending={supprimer.isPending}
+                isBusy={occupe}
+                onRequest={() => setConfirmation(modalite.id)}
+                onCancel={() => setConfirmation(null)}
+                onConfirm={() => supprimer.mutate(modalite.id)}
+              />
+            ) : null}
           </span>
         </div>
         {(enfants.length > 0 || ajout?.parent === modalite.id) && (
@@ -248,5 +230,51 @@ export function ModalitesArbre({
         <ul className="m-0 list-none p-0">{racines.map(noeud)}</ul>
       )}
     </div>
+  )
+}
+
+function SuppressionModalite({
+  modaliteId,
+  isConfirming,
+  isPending,
+  isBusy,
+  onRequest,
+  onCancel,
+  onConfirm,
+}: {
+  modaliteId: string
+  isConfirming: boolean
+  isPending: boolean
+  isBusy: boolean
+  onRequest: () => void
+  onCancel: () => void
+  onConfirm: () => void
+}) {
+  if (!isConfirming) {
+    return (
+      <IconButton
+        variant="danger"
+        label={`Supprimer ${modaliteId}`}
+        disabled={isBusy}
+        onClick={onRequest}
+      >
+        <Trash2 />
+      </IconButton>
+    )
+  }
+  return (
+    <>
+      <Button variant="secondary" size="sm" onClick={onCancel} disabled={isPending}>
+        Annuler
+      </Button>
+      <Button
+        size="sm"
+        onClick={onConfirm}
+        disabled={isBusy}
+        className="bg-red-marianne hover:bg-red-marianne"
+      >
+        Supprimer
+      </Button>
+    </>
   )
 }

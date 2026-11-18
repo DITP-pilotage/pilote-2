@@ -25,7 +25,15 @@ type ValeurDate = { date: string; valeur: number }
 // [1] = valeur précédente. La « valeur précédente » du ticket est dérivée ici,
 // sans appel API dédié (la série est déjà en cache).
 const valeursTrieesDesc = (items: ReadonlyArray<ValeurDate>): ValeurDate[] =>
-  [...items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+  [...items].sort((a, b) => b.date.localeCompare(a.date))
+
+const describeEcartMediane = (
+  ecartMediane: number,
+): { tone: 'success' | 'warning' | 'info'; libelle: string } => {
+  if (ecartMediane > 0) return { tone: 'success', libelle: 'en avance' }
+  if (ecartMediane < 0) return { tone: 'warning', libelle: 'en retard' }
+  return { tone: 'info', libelle: 'à la médiane' }
+}
 
 type IndicateurSynthesePanelProps = {
   indicateurId: string
@@ -150,9 +158,9 @@ export function IndicateurSynthesePanel({
               <Text variant="body" tone="muted" className="font-bold">
                 Écart à la médiane
               </Text>
-              <Pill tone={ecartMediane > 0 ? 'success' : ecartMediane < 0 ? 'warning' : 'info'}>
+              <Pill tone={describeEcartMediane(ecartMediane).tone}>
                 {formatVariationAvecUniteFr(ecartMediane, unite)} ·{' '}
-                {ecartMediane > 0 ? 'en avance' : ecartMediane < 0 ? 'en retard' : 'à la médiane'}
+                {describeEcartMediane(ecartMediane).libelle}
               </Pill>
             </div>
           )}

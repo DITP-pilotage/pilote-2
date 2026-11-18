@@ -34,6 +34,12 @@ const formatDelai = (delai: DelaiMiseADisposition | null): string =>
 const formatDateMoisAnnee = (date: string | null): string =>
   date ? formatMoisAnneeLongFr(date) : VALEUR_VIDE
 
+const formatUnite = (unite: UniteIndicateurApiModel | null): string => {
+  if (!unite) return VALEUR_VIDE
+  if (unite.abbreviation) return `${unite.libelle} (${unite.abbreviation})`
+  return unite.libelle
+}
+
 type IndicateurMetadonneesProps = {
   indicateur: {
     id: string
@@ -61,13 +67,7 @@ export function IndicateurMetadonnees({ indicateur }: IndicateurMetadonneesProps
       <DescriptionList>
         <DescriptionList.Item label="ID">{indicateur.id}</DescriptionList.Item>
         <DescriptionList.Item label="Nom">{indicateur.nom}</DescriptionList.Item>
-        <DescriptionList.Item label="Unité">
-          {indicateur.unite
-            ? indicateur.unite.abbreviation
-              ? `${indicateur.unite.libelle} (${indicateur.unite.abbreviation})`
-              : indicateur.unite.libelle
-            : VALEUR_VIDE}
-        </DescriptionList.Item>
+        <DescriptionList.Item label="Unité">{formatUnite(indicateur.unite)}</DescriptionList.Item>
         <DescriptionList.Item label="Description">
           <span className="whitespace-pre-line">{indicateur.description ?? VALEUR_VIDE}</span>
         </DescriptionList.Item>

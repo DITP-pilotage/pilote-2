@@ -26,13 +26,33 @@ et réciproquement.** Ne propose jamais de factoriser du code entre les deux mon
 
 ## Conventions de nommage
 
-Verbes et termes techniques en anglais, **noms d'entités métier en français** :
-`getIndicateurById`, `listerIndicateurIndividuCommentaires`,
-`MesureIndicateurTemporaireRepository`, `valeurAvancement`, `habilitation`.
-C'est délibéré — ne le signale pas comme une incohérence.
+Verbes et termes techniques en anglais, **noms d'entités métier en français**.
+C'est délibéré : ne le signale pas comme une incohérence.
 
-Les accents sont autorisés dans les identifiants (`UtilisateurÀCréerOuMettreÀJour`),
-sauf dans les noms de fichiers d'assets.
+- **kpilote** : tout ce qui est technique est en anglais, y compris les mots de liaison
+  (`By`, `For`, `key`, `context`) ; seuls les termes du domaine restent en français.
+  `loadModalitesContext`, `findOrCreateCombinaisons`, `idByKey` ; pas `chargerContexteModalites`
+  ni `idParCle`. **Aucun accent** dans les identifiants. Signale les nouveaux identifiants qui
+  dérogent ; l'existant n'est renommé que dans le périmètre de la PR.
+- **pilote-ppg** : l'existant mêle verbes français et anglais (`getIndicateurById`,
+  `listerIndicateurIndividuCommentaires`, `MesureIndicateurTemporaireRepository`). Les accents
+  sont autorisés dans les identifiants (`UtilisateurÀCréerOuMettreÀJour`), sauf dans les noms de
+  fichiers d'assets.
+
+## Conventions de code kpilote
+
+Elles font foi et vivent dans `.claude/rules/kpilote-*.md` (commun, api, react, webapp, admin,
+shared) : appuie tes revues kpilote dessus. Les points qui reviennent le plus en revue :
+
+- pas de ternaire imbriqué (oxlint `no-nested-ternary`), pas de `&&` et `||` mélangés dans une
+  même expression, pas d'IIFE : une fonction nommée à retours anticipés ou des booléens nommés ;
+- paramètres passés en objet nommé dès deux paramètres ;
+- pas de tiret cadratin « — » dans les textes affichés ; une valeur absente s'affiche `-` ;
+- un hook React ne fait que lire les requêtes, la dérivation va dans une fonction pure testée ;
+- transformations de collection avec `es-toolkit` (`keyBy`, `groupBy`…) plutôt qu'à la main ;
+- commands de l'API : une fonction `async` linéaire, `err(...)` avant toute écriture, un seul
+  `ResultAsync` à la sortie (modèle : `apps/kpilote-api/src/axe/commands/deleteModalite.ts`) ;
+- vocabulaire : « individu », jamais « territoire » ni « maille ».
 
 ## Architecture
 
