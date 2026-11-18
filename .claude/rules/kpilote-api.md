@@ -44,21 +44,22 @@ Pourquoi : une route se lit d'un bloc ; la séparation par fichier n'apporte que
 Une fonction `describeXError(error)` par union d'erreur, avec un `switch (error.type)` qui renvoie toujours `{ status, message, details }`, même quand tous les cas ont le même statut. La route répond `jsonResponseError({ context, error: { code: error.type, message, details }, schema: ErrorApiModelSchema, status })`.
 Pourquoi : toutes les routes traduisent leurs erreurs de la même façon ; le statut se décide cas par cas, au même endroit que le message.
 
-### Les écritures passent par `withTransaction` dans la route, et s'enchaînent par `.andThen`
-`withTransaction(() => …)` prend et renvoie un `ResultAsync` : il commit sur `ok`, et annule la transaction sur `err` comme sur une exception. On enchaîne la command puis la query de relecture avec `.andThen`, sans `if (isErr())` ni `_unsafeUnwrap`, et sans `await` d'une command dont on jette le `Result`. La transaction s'ouvre dans la route (ou un job), jamais dans une command.
+### Les écritures passent par `withTransaction` dans la route, la relecture se fait après
+`withTransaction(() => …)` prend et renvoie un `ResultAsync` : il commit sur `ok`, et annule la transaction sur `err` comme sur une exception. La transaction n'enveloppe que la command ; la query de relecture s'enchaîne **après**, par `.andThen`, une fois la transaction committée. Pas de `if (isErr())` ni de `_unsafeUnwrap`, pas d'`await` d'une command dont on jette le `Result`. La transaction s'ouvre dans la route (ou un job), jamais dans une command.
+Pourquoi : la transaction reste aussi courte que l'écriture ; la relecture voit l'état committé, comme n'importe quel client.
 - À faire :
   ```ts
-  withTransaction(() =>
-    upsertAxe({ publicId: id, body }).andThen(() => getAxeByPublicId({ publicId: id })),
-  ).match(
-    (data) => jsonResponseOk({ context, data, schema: AxeApiModelSchema, status: 200 }),
-    (error) => {
-      const { status, message, details } = describeUpsertAxeError(error)
-      return jsonResponseError({ context, error: { code: error.type, message, details }, schema: ErrorApiModelSchema, status })
-    },
-  )
+  withTransaction(() => upsertAxe({ publicId: id, body }))
+    .andThen(() => getAxeByPublicId({ publicId: id }))
+    .match(
+      (data) => jsonResponseOk({ context, data, schema: AxeApiModelSchema, status: 200 }),
+      (error) => {
+        const { status, message, details } = describeUpsertAxeError(error)
+        return jsonResponseError({ context, error: { code: error.type, message, details }, schema: ErrorApiModelSchema, status })
+      },
+    )
   ```
-- À éviter : `withTransaction(async () => { await command(); return query() })` (le `Result` de la command est perdu).
+- À éviter : `withTransaction(() => command().andThen(() => query()))` (la relecture tient la transaction ouverte) et `withTransaction(async () => { await command(); return query() })` (le `Result` de la command est perdu).
 
 ### API agnostique de l'UI
 Pas de champ ni de route qui matérialise un choix de présentation (`estParDefaut`, `GET /default-individu`). L'API expose des primitives métier ; le défaut d'écran se décide dans la webapp.

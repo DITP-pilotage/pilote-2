@@ -264,18 +264,18 @@ axeRoutes.openapi(upsertAxeRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  return withTransaction(() =>
-    upsertAxe({ publicId: id, body }).andThen(() => getAxeByPublicId({ publicId: id })),
-  ).match(
-    (data) => jsonResponseOk({ context, data, schema: AxeApiModelSchema, status: 200 }),
-    (error) =>
-      jsonResponseError({
-        context,
-        error: { code: error.type, ...describeUpsertAxeError(error) },
-        schema: ErrorApiModelSchema,
-        status: 409,
-      }),
-  )
+  return withTransaction(() => upsertAxe({ publicId: id, body }))
+    .andThen(() => getAxeByPublicId({ publicId: id }))
+    .match(
+      (data) => jsonResponseOk({ context, data, schema: AxeApiModelSchema, status: 200 }),
+      (error) =>
+        jsonResponseError({
+          context,
+          error: { code: error.type, ...describeUpsertAxeError(error) },
+          schema: ErrorApiModelSchema,
+          status: 409,
+        }),
+    )
 })
 
 axeRoutes.openapi(listModalitesRoute, async (context) =>
@@ -289,22 +289,20 @@ axeRoutes.openapi(upsertModaliteRoute, async (context) => {
   const { id, modaliteId } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  return withTransaction(() =>
-    upsertModalite({ axePublicId: id, publicId: modaliteId, body }).andThen(() =>
-      getModaliteByPublicId({ publicId: modaliteId }),
-    ),
-  ).match(
-    (data) => jsonResponseOk({ context, data, schema: ModaliteApiModelSchema, status: 200 }),
-    (error) => {
-      const { status, message, details } = describeUpsertModaliteError(error)
-      return jsonResponseError({
-        context,
-        error: { code: error.type, message, details },
-        schema: ErrorApiModelSchema,
-        status,
-      })
-    },
-  )
+  return withTransaction(() => upsertModalite({ axePublicId: id, publicId: modaliteId, body }))
+    .andThen(() => getModaliteByPublicId({ publicId: modaliteId }))
+    .match(
+      (data) => jsonResponseOk({ context, data, schema: ModaliteApiModelSchema, status: 200 }),
+      (error) => {
+        const { status, message, details } = describeUpsertModaliteError(error)
+        return jsonResponseError({
+          context,
+          error: { code: error.type, message, details },
+          schema: ErrorApiModelSchema,
+          status,
+        })
+      },
+    )
 })
 
 axeRoutes.openapi(deleteModaliteRoute, async (context) => {

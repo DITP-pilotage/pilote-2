@@ -160,28 +160,28 @@ referentielRoutes.openapi(upsertReferentielRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  return withTransaction(() =>
-    upsertReferentiel(id, body).andThen(() => getReferentielByPublicId(id)),
-  ).match(
-    (data) =>
-      jsonResponseOk({
-        context,
-        data,
-        schema: ReferentielApiModelSchema,
-        status: 200,
-      }),
-    (error) =>
-      jsonResponseError({
-        context,
-        error: {
-          code: error.type,
-          message: `Les individus suivants sont déjà rattachés à un autre référentiel : ${error.individuIds.join(', ')}`,
-          details: { individuIds: error.individuIds },
-        },
-        schema: ErrorApiModelSchema,
-        status: 409,
-      }),
-  )
+  return withTransaction(() => upsertReferentiel(id, body))
+    .andThen(() => getReferentielByPublicId(id))
+    .match(
+      (data) =>
+        jsonResponseOk({
+          context,
+          data,
+          schema: ReferentielApiModelSchema,
+          status: 200,
+        }),
+      (error) =>
+        jsonResponseError({
+          context,
+          error: {
+            code: error.type,
+            message: `Les individus suivants sont déjà rattachés à un autre référentiel : ${error.individuIds.join(', ')}`,
+            details: { individuIds: error.individuIds },
+          },
+          schema: ErrorApiModelSchema,
+          status: 409,
+        }),
+    )
 })
 
 referentielRoutes.openapi(getIndividusForReferentielRoute, async (context) => {

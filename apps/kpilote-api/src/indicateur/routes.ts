@@ -197,26 +197,26 @@ indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  return withTransaction(() =>
-    upsertIndicateur(id, body).andThen(() => getIndicateurByPublicId(id)),
-  ).match(
-    (data) =>
-      jsonResponseOk({
-        context,
-        data,
-        schema: IndicateurApiModelSchema,
-        status: 200,
-      }),
-    (error) => {
-      const { status, message, details } = describeUpsertIndicateurError(error)
-      return jsonResponseError({
-        context,
-        error: { code: error.type, message, details },
-        schema: ErrorApiModelSchema,
-        status,
-      })
-    },
-  )
+  return withTransaction(() => upsertIndicateur(id, body))
+    .andThen(() => getIndicateurByPublicId(id))
+    .match(
+      (data) =>
+        jsonResponseOk({
+          context,
+          data,
+          schema: IndicateurApiModelSchema,
+          status: 200,
+        }),
+      (error) => {
+        const { status, message, details } = describeUpsertIndicateurError(error)
+        return jsonResponseError({
+          context,
+          error: { code: error.type, message, details },
+          schema: ErrorApiModelSchema,
+          status,
+        })
+      },
+    )
 })
 
 // --- POST /indicateurs/:id/individus/:individuId/commentaires ----------------
