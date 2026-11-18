@@ -10,7 +10,7 @@ Quatre PR empilées. Chacune est cadrée en détail au moment de la commencer.
 
 | # | PR | Ticket | Base | Branche | Lien | Statut |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Tables, données fictives, onglet Séances à venir | PIL-1883 | `dev` | `feat/PIL-1883-formations-tables-seances` | – | En cours : [plan](./2026-11-18-formations-rdv-sp-pr1.md) |
+| 1 | Tables, données fictives, onglet Séances à venir | PIL-1883 | `dev` | `feat/PIL-1883-formations-tables-seances` | [#2707](https://github.com/DITP-pilotage/pilote-2/pull/2707) | En relecture : [plan](./2026-11-18-formations-rdv-sp-pr1.md) |
 | 2 | Onglets Profils et Périodes d'information | PIL-1883 | PR 1 | à créer | – | À faire |
 | 3 | Slide-in sur l'accueil | PIL-1923 | PR 2 | à créer | – | À faire |
 | 4 | Mesure d'usage dans Matomo | PIL-1923 | PR 3 | à créer | – | À faire |
