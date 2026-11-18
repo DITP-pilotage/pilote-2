@@ -82,7 +82,9 @@ Contrat avec copilot :
 - À chaque passage, dans une seule transaction : vider les deux tables (`TRUNCATE formation_seance, formation_motif`), insérer les motifs puis les séances.
 - Ne pas modifier la structure des tables (pas de colonnes `_dlt_*` ajoutées par dlt).
 - Laisser `date_import` à sa valeur par défaut (ou la renseigner à l'heure de l'import) : l'onglet Séances à venir affiche la plus récente, pour voir d'un coup d'œil si le DAG a tourné.
-- Écrire tous les motifs de l'organisation, même sans séance à venir : l'admin doit pouvoir les paramétrer à l'avance.
+- Écrire tous les motifs de l'organisation, même sans séance à venir : l'admin doit pouvoir les paramétrer à l'avance. Le motif de chaque séance écrite doit figurer dans le même chargement, motif supprimé compris, sinon la clé étrangère fait échouer toute la transaction (la date d'import cesse alors d'avancer dans l'onglet Séances à venir).
+- Renseigner `date_annulation` (le `cancelled_at` de RDV-SP) pour toute séance annulée : c'est la seule source de l'annulation pour PILOTE, qui ne lit pas `statut`.
+- Si l'écriture passe par dlt, sa stratégie de remplacement ne doit ni vider les tables une à une, ni charger en jobs parallèles : c'est incompatible avec la transaction unique et la clé étrangère.
 - Les séances peuvent être limitées à celles à venir. PILOTE refiltre de toute façon à l'affichage (passées, annulées, complètes), puisque les données ne sont rafraîchies qu'une fois par jour.
 
 ### Paramétrage DITP (PIL-1883)
@@ -115,7 +117,8 @@ Clé (`utilisateur_id`, `periode_id`). Pas de ligne : jamais présentée. `date_
 
 - Script `src/database/prisma/seed-formations.ts`, sur le modèle de `seed-evaluation.ts`, lancé par un script pnpm dédié. Jamais appelé par `seed.ts` ni par le build.
 - Refuse de tourner si `DATABASE_URL` ne pointe pas sur `localhost` ou `127.0.0.1` (même garde que `tests/seed/seed.sh`).
-- Rejouable : il remplace ses propres lignes à chaque passage.
+- Refuse aussi, avant toute écriture, si `formation_motif` ou `formation_periode_information` contient des lignes hors du jeu fictif : un tunnel vers la recette ou la prod expose la base distante sur `127.0.0.1`.
+- Rejouable : il remplace ses propres lignes à chaque passage, et seulement elles.
 - Contenu :
   - les six motifs Campus PILOTE du ticket, avec des identifiants fictifs ;
   - la matrice motif ↔ profils validée dans PIL-1883 ;

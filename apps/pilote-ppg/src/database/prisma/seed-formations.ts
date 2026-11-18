@@ -192,13 +192,37 @@ async function main() {
     process.exit(1);
   }
 
+  const idsMotifs = MOTIFS.map((motif) => motif.id);
+  const idsPeriodes = PERIODES.map((periode) => periode.id);
+
+  // Un tunnel vers la recette ou la prod expose aussi la base sur 127.0.0.1 : des motifs
+  // ou des périodes hors du jeu fictif signalent un vrai environnement.
+  const [motifsHorsJeu, periodesHorsJeu] = await Promise.all([
+    prisma.formation_motif.count({ where: { id: { notIn: idsMotifs } } }),
+    prisma.formation_periode_information.count({
+      where: { id: { notIn: idsPeriodes } },
+    }),
+  ]);
+  if (motifsHorsJeu > 0 || periodesHorsJeu > 0) {
+    // eslint-disable-next-line no-console
+    console.error(
+      `seed-formations : la base contient ${motifsHorsJeu} motif(s) et ${periodesHorsJeu} période(s) hors du jeu fictif, abandon.`,
+    );
+    process.exit(1);
+  }
+
   await prisma.$transaction(async (transaction) => {
-    await transaction.formation_periode_information_utilisateur.deleteMany();
-    await transaction.formation_periode_information_motif.deleteMany();
-    await transaction.formation_periode_information.deleteMany();
-    await transaction.formation_motif_profil.deleteMany();
-    await transaction.formation_seance.deleteMany();
-    await transaction.formation_motif.deleteMany();
+    // Les suppressions en cascade emportent les séances, les motifs des périodes et
+    // les lignes d'état de la slide-in rattachées à ces lignes.
+    await transaction.formation_periode_information.deleteMany({
+      where: { id: { in: idsPeriodes } },
+    });
+    await transaction.formation_motif_profil.deleteMany({
+      where: { motif_id: { in: idsMotifs } },
+    });
+    await transaction.formation_motif.deleteMany({
+      where: { id: { in: idsMotifs } },
+    });
 
     await transaction.formation_motif.createMany({ data: MOTIFS });
     await transaction.formation_motif_profil.createMany({
