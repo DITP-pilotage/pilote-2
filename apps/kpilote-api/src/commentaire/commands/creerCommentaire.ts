@@ -55,4 +55,4 @@ export const creerCommentaire = <P extends Record<string, string>>(
   config: SujetCommentaireConfig<P>,
   { params, body }: CreerCommentaireParams<P>,
 ): ResultAsync<CommentaireApiModel, CreerCommentaireError> =>
-  ResultAsync.fromSafePromise(performCreer({ config, params, body })).andThen((result) => result)
+  new ResultAsync(performCreer({ config, params, body }))

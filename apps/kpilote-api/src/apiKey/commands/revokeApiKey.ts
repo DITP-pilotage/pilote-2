@@ -26,4 +26,4 @@ const performRevoke = async (id: string): Promise<Result<ApiKeyApiModel, RevokeA
 }
 
 export const revokeApiKey = (id: string): ResultAsync<ApiKeyApiModel, RevokeApiKeyError> =>
-  ResultAsync.fromSafePromise(performRevoke(id)).andThen((result) => result)
+  new ResultAsync(performRevoke(id))

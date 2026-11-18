@@ -77,22 +77,23 @@ Pourquoi : un `ResultAsync<T, never>` intermédiaire n'apporte rien et pousse à
 - À éviter : `resolveIndicateurForWriteData` qui renvoie `ResultAsync<ResolvedIndicateur, never>` et enchaîne `.andThen` (`src/indicateur/resolveIndicateurForWrite.ts`).
 
 ### Une command est une fonction `async` linéaire, avec un seul passage en `ResultAsync` à la sortie
-La fonction interne `perform…` `await` chaque étape, renvoie `err({ type })` sur un refus métier et `ok(...)` à la fin ; l'export l'enveloppe une seule fois : `ResultAsync.fromSafePromise(perform(params)).andThen((result) => result)`. Pas d'IIFE, pas de chaînes de `.andThen` / `fromSafePromise` imbriquées.
+La fonction interne `perform…` `await` chaque étape, renvoie `err({ type })` sur un refus métier et `ok(...)` à la fin ; l'export l'enveloppe une seule fois : `new ResultAsync(perform(params))`. Sans erreur métier, `perform` renvoie `Promise<T>` et l'export fait `ResultAsync.fromSafePromise(perform(params))`. `perform` est annoté `Promise<Result<T, E>>` : le constructeur ne vérifie rien à l'exécution, le typage est le seul garde-fou. Pas d'IIFE, pas de chaînes de `.andThen` / `fromSafePromise` imbriquées.
 Pourquoi : une command se lit de haut en bas comme un script ; les chaînes imbriquées cachent l'ordre des étapes et l'endroit où l'erreur naît.
-- À faire : `src/axe/commands/deleteModalite.ts`
+- À faire : `src/apiKey/commands/revokeApiKey.ts`
   ```ts
-  const performDelete = async ({ axePublicId, publicId }: {...}): Promise<Result<void, DeleteModaliteError>> => {
-    ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
-    const modalite = await db().modalite.findFirst({ ... })
-    if (!modalite) throw new NotFoundError('Modalité introuvable dans cet axe.', { ... })
-    if (modalite.enfants.length > 0) return err({ type: 'MODALITE_A_DES_ENFANTS', enfants: ... })
-    ...
-    return ok()
+  const performRevoke = async (id: string): Promise<Result<ApiKeyApiModel, RevokeApiKeyError>> => {
+    ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+    if (id === requireCurrentPrincipalId()) return err({ type: 'CLE_API_COURANTE' })
+    const existing = await db().apiKey.findUniqueOrThrow({ where: { id } })
+    if (existing.revokedAt) return err({ type: 'CLE_API_DEJA_REVOQUEE' })
+    const revoked = await db().apiKey.update({ ... })
+    return ok(toApiKeyApiModel(revoked))
   }
 
-  export const deleteModalite = (params: {...}): ResultAsync<void, DeleteModaliteError> =>
-    ResultAsync.fromSafePromise(performDelete(params)).andThen((result) => result)
+  export const revokeApiKey = (id: string): ResultAsync<ApiKeyApiModel, RevokeApiKeyError> =>
+    new ResultAsync(performRevoke(id))
   ```
+- À éviter : `ResultAsync.fromSafePromise(perform(params)).andThen((result) => result)` (même effet, en plus long).
 - À éviter : `resolveIndicateurAndIndividuForWriteData(...).andThen(({ indicateur, individu }) => ResultAsync.fromSafePromise(db().objectifIndicateurIndividu.upsert(...)).map(...))` (`src/objectifIndicateurIndividu/commands/upsertObjectifIndicateurIndividu.ts`)
 
 ### Un `err` annule la transaction : les contrôles se placent au plus lisible

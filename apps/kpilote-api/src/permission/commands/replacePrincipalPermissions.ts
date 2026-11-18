@@ -90,4 +90,4 @@ const performReplace = async (
 export const replacePrincipalPermissions = (
   body: ReplacePrincipalPermissionsBody,
 ): ResultAsync<PrincipalPermissionsApiModel, ReplacePrincipalPermissionsError> =>
-  ResultAsync.fromSafePromise(performReplace(body)).andThen((result) => result)
+  new ResultAsync(performReplace(body))
