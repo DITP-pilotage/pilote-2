@@ -138,11 +138,9 @@ objectifIndicateurIndividuRoutes.openapi(upsertObjectifIndicateurIndividuRoute, 
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  const result = withTransaction(() =>
+  return withTransaction(() =>
     upsertObjectifIndicateurIndividu({ indicateurPublicId: id, body }),
-  )
-
-  return result.match(
+  ).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -169,11 +167,9 @@ objectifIndicateurIndividuRoutes.openapi(deleteObjectifIndicateurIndividuRoute, 
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  const result = withTransaction(() =>
+  return withTransaction(() =>
     deleteObjectifIndicateurIndividu({ indicateurPublicId: id, body }),
-  )
-
-  return result.match(
+  ).match(
     () => context.body(null, 204),
     (error) =>
       jsonResponseError({

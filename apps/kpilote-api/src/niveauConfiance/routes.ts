@@ -34,8 +34,7 @@ const creerRoute = createRoute({
 
 niveauConfianceRoutes.openapi(creerRoute, async (context) => {
   const body = context.req.valid('json')
-  const result = withTransaction(() => creerNiveauConfiance(body))
-  return result.match(
+  return withTransaction(() => creerNiveauConfiance(body)).match(
     (data) => jsonResponseOk({ context, data, schema: NiveauConfianceApiModelSchema, status: 200 }),
     never,
   )
@@ -62,8 +61,7 @@ const modifierRoute = createRoute({
 niveauConfianceRoutes.openapi(modifierRoute, async (context) => {
   const { niveauConfianceId } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = withTransaction(() => modifierNiveauConfiance(niveauConfianceId, body))
-  return result.match(
+  return withTransaction(() => modifierNiveauConfiance(niveauConfianceId, body)).match(
     (data) => jsonResponseOk({ context, data, schema: NiveauConfianceApiModelSchema, status: 200 }),
     never,
   )

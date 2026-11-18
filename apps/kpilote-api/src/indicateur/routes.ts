@@ -245,8 +245,7 @@ const creerIndicateurIndividuCommentaireRoute = createRoute({
 indicateurRoutes.openapi(creerIndicateurIndividuCommentaireRoute, async (context) => {
   const params = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = withTransaction(() => creerIndicateurIndividuCommentaire({ params, body }))
-  return result.match(
+  return withTransaction(() => creerIndicateurIndividuCommentaire({ params, body })).match(
     (data) => jsonResponseOk({ context, data, schema: CommentaireApiModelSchema, status: 200 }),
     (error) => {
       const { status, message, details } = describeCreerCommentaireError(error)
