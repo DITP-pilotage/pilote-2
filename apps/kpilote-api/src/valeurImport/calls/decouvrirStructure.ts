@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { logger } from '@/framework/logger/logger'
 import { startTimer } from '@/framework/timer'
 import { createAlbertModel, STRUCTURED_TEMPERATURE } from '@/framework/llm/albert'
+import { type AxeForImport } from '@/valeurImport/queries/listAxesForIndicateur'
 
 const colonneDateSchema = z.object({
   nom: z.string().describe('Nom exact du header de colonne contenant la date (recopie exacte).'),
@@ -74,39 +75,81 @@ const planPivotSchema = z.object({
     ),
 })
 
+const failureSchema = z.object({
+  statut: z
+    .literal('echec')
+    .describe(
+      'À utiliser uniquement si la structure du fichier ne permet pas de produire un plan exploitable.',
+    ),
+  raison: z
+    .enum([
+      'PAS_DE_COLONNE_VALEUR',
+      'PAS_DE_COLONNE_INDIVIDU',
+      'PAS_DE_COLONNE_DATE',
+      'STRUCTURE_NON_RECONNUE',
+    ])
+    .describe('Code court identifiant la cause principale.'),
+  explication: z
+    .string()
+    .describe(
+      "Phrase courte en français destinée à l'utilisateur final. " +
+        'Doit expliquer le problème et suggérer une correction (ex: « renomme la colonne X »).',
+    ),
+})
+
+// Indicateur sans axe : le schéma historique, inchangé.
 export const decouverteOutputSchema = z.discriminatedUnion('statut', [
   z.object({
     statut: z.literal('reconnu'),
     plan: z.discriminatedUnion('layout', [planLongSchema, planPivotSchema]),
   }),
-  z.object({
-    statut: z
-      .literal('echec')
-      .describe(
-        'À utiliser uniquement si la structure du fichier ne permet pas de produire un plan exploitable.',
-      ),
-    raison: z
-      .enum([
-        'PAS_DE_COLONNE_VALEUR',
-        'PAS_DE_COLONNE_INDIVIDU',
-        'PAS_DE_COLONNE_DATE',
-        'STRUCTURE_NON_RECONNUE',
-      ])
-      .describe('Code court identifiant la cause principale.'),
-    explication: z
-      .string()
-      .describe(
-        "Phrase courte en français destinée à l'utilisateur final. " +
-          'Doit expliquer le problème et suggérer une correction (ex: « renomme la colonne X »).',
-      ),
-  }),
+  failureSchema,
 ])
 
 export type DecouverteOutput = z.infer<typeof decouverteOutputSchema>
 type DecouverteEchec = Extract<DecouverteOutput, { statut: 'echec' }>
-export type Plan = Extract<DecouverteOutput, { statut: 'reconnu' }>['plan']
+
+// Colonne du fichier qui porte les modalités d'un axe (publicId de l'axe).
+export type PlanAxeColumn = { colonne: string; axe: string }
+
+export type Plan = Extract<DecouverteOutput, { statut: 'reconnu' }>['plan'] & {
+  colonnesAxes?: PlanAxeColumn[]
+}
 export type PlanLong = Extract<Plan, { layout: 'long' }>
 export type PlanPivot = Extract<Plan, { layout: 'pivot' }>
+
+type DecouverteResult = { statut: 'reconnu'; plan: Plan } | DecouverteEchec
+
+// Indicateur à axes : le plan dit aussi quelle colonne porte chaque axe.
+export const makeDecouverteOutputSchemaWithAxes = ({
+  axePublicIds,
+}: {
+  axePublicIds: ReadonlyArray<string>
+}) => {
+  const colonnesAxes = z
+    .array(
+      z.object({
+        colonne: z.string().describe('Header exact de la colonne (recopie exacte).'),
+        axe: z
+          .enum(axePublicIds)
+          .describe("publicId de l'axe dont les cellules de cette colonne désignent une modalité."),
+      }),
+    )
+    .describe(
+      "Une entrée par colonne du fichier qui porte les modalités d'un axe de l'indicateur " +
+        '(au plus une colonne par axe). Ni la colonne individu, ni la date, ni la valeur.',
+    )
+  return z.discriminatedUnion('statut', [
+    z.object({
+      statut: z.literal('reconnu'),
+      plan: z.discriminatedUnion('layout', [
+        planLongSchema.extend({ colonnesAxes }),
+        planPivotSchema.extend({ colonnesAxes }),
+      ]),
+    }),
+    failureSchema,
+  ])
+}
 
 const SYSTEM_PROMPT =
   'Tu reçois des données tabulaires hétérogènes téléversées par un agent territorial.\n' +
@@ -129,6 +172,18 @@ const SYSTEM_PROMPT =
   '\n' +
   'Ne renvoie jamais un plan dont les noms de colonnes ne correspondent pas aux headers fournis.'
 
+// Ajouté au prompt système pour un indicateur à axes seulement.
+const SYSTEM_PROMPT_AXES =
+  '\n\n' +
+  "AXES DE L'INDICATEUR :\n" +
+  "L'indicateur est découpé par des axes (ex. opérateur, type de fraude) en plus de l'individu. " +
+  "Le fichier porte en général une colonne par axe, dont chaque cellule désigne une modalité de l'axe. " +
+  'Pour chaque colonne de ce type, ajoute une entrée à `colonnesAxes` avec son header exact et le ' +
+  "publicId de l'axe. Une colonne d'axe n'est ni la colonne individu, ni la date, ni la valeur. " +
+  "N'invente pas de colonne pour un axe absent du fichier."
+
+const MAX_MODALITE_EXAMPLES = 10
+
 const MAX_LIGNES_ECHANTILLON = 8
 
 export type DecouvrirStructureError = {
@@ -137,19 +192,26 @@ export type DecouvrirStructureError = {
   explication: string
 }
 
+// Sans axe, le prompt et le schéma sont ceux d'avant les axes, à l'identique.
 export const decouvrirStructure = ({
   indicateur,
   headers,
   rows,
   nomFichier,
+  axes = [],
 }: {
   indicateur: { nom: string; uniteLibelle: string | null }
   headers: ReadonlyArray<string>
   rows: ReadonlyArray<Record<string, unknown>>
   nomFichier: string
+  axes?: ReadonlyArray<AxeForImport>
 }): ResultAsync<Plan, DecouvrirStructureError> => {
   const model = createAlbertModel()
   const echantillon = rows.slice(0, MAX_LIGNES_ECHANTILLON)
+  const schema: z.ZodType<DecouverteResult> =
+    axes.length === 0
+      ? decouverteOutputSchema
+      : makeDecouverteOutputSchemaWithAxes({ axePublicIds: axes.map((axe) => axe.publicId) })
 
   const prompt = [
     `Indicateur ciblé : « ${indicateur.nom} »${
@@ -161,6 +223,23 @@ export const decouvrirStructure = ({
     '',
     `Échantillon des ${echantillon.length} premières lignes :`,
     JSON.stringify(echantillon, null, 2),
+    ...(axes.length > 0
+      ? [
+          '',
+          `Axes de l'indicateur (${axes.length}) :`,
+          JSON.stringify(
+            axes.map((axe) => ({
+              publicId: axe.publicId,
+              nom: axe.nom,
+              exemplesModalites: axe.modalitesFeuilles
+                .slice(0, MAX_MODALITE_EXAMPLES)
+                .map((modalite) => modalite.nom),
+            })),
+            null,
+            2,
+          ),
+        ]
+      : []),
   ]
     .filter(Boolean)
     .join('\n')
@@ -181,8 +260,8 @@ export const decouvrirStructure = ({
   return ResultAsync.fromSafePromise(
     generateObject({
       model,
-      schema: decouverteOutputSchema,
-      system: SYSTEM_PROMPT,
+      schema,
+      system: axes.length > 0 ? SYSTEM_PROMPT + SYSTEM_PROMPT_AXES : SYSTEM_PROMPT,
       prompt,
       temperature: STRUCTURED_TEMPERATURE,
     }).then((result) => {
@@ -206,6 +285,9 @@ export const decouvrirStructure = ({
                       colonneValeur: output.plan.colonneValeur,
                     }
                   : { nbColonnesPivot: output.plan.colonnesPivot.length }),
+                ...(output.plan.colonnesAxes
+                  ? { nbColonnesAxes: output.plan.colonnesAxes.length }
+                  : {}),
               }
             : { raison: output.raison, explication: output.explication }),
         },

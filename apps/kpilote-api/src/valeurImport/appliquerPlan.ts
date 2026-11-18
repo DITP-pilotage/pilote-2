@@ -1,10 +1,22 @@
+import { keyBy, mapValues } from 'es-toolkit'
+
 import { type Plan, type PlanLong, type PlanPivot } from '@/valeurImport/calls/decouvrirStructure'
 import { type ResolutionResult } from '@/valeurImport/calls/resoudreIndividus'
+import { type LabelResolution } from '@/valeurImport/calls/resolveLabels'
 import { safeStringify } from '@/valeurImport/helpers/safeStringify'
 import { parseFrLibre } from '@/valeurImport/parsers/parseFrLibre'
 import { parseNombre } from '@/valeurImport/parsers/parseNombre'
 
-export type ItemNormalise = { individu: string; date: string; valeur: number }
+// `modalites` : une par axe de l'indicateur, dans l'ordre des axes ; absent sans axe.
+export type ItemNormalise = { individu: string; modalites?: string[]; date: string; valeur: number }
+
+// Colonne d'axe retenue dans le fichier, avec la résolution de ses libellés.
+export type AxeColumn = {
+  column: string
+  axe: { publicId: string; nom: string }
+  validModalites: ReadonlySet<string>
+  resolution: LabelResolution
+}
 
 export type WarningApplication = {
   code:
@@ -14,6 +26,10 @@ export type WarningApplication = {
     | 'VALEUR_INVALIDE'
     | 'CELLULE_VIDE'
     | 'LIGNE_IGNOREE'
+    | 'MODALITE_NON_RESOLUE'
+    | 'LIGNE_PARTIELLE'
+    | 'AXE_NON_COUVERT'
+    | 'COLONNE_AXE_IGNOREE'
   message: string
   ligneSource?: number
   libelleSource?: string
@@ -77,6 +93,39 @@ const warnIndividuNonResolu = ({
   message: `« ${libelle} » : ${raison}`,
   libelleSource: libelle,
   ligneSource: ligne,
+})
+
+const warnUnresolvedModalite = ({
+  label,
+  row,
+  column,
+  reason,
+}: {
+  label: string
+  row: number
+  column: string
+  reason: string
+}): WarningApplication => ({
+  code: 'MODALITE_NON_RESOLUE',
+  message: `« ${label} » (colonne « ${column} ») : ${reason}`,
+  libelleSource: label,
+  ligneSource: row,
+  colonneSource: column,
+})
+
+const warnPartialRow = ({
+  index,
+  column,
+  axe,
+}: {
+  index: number
+  column: string
+  axe: string
+}): WarningApplication => ({
+  code: 'LIGNE_PARTIELLE',
+  message: `Ligne ${index} : pas de modalité pour l'axe « ${axe} » (colonne « ${column} »). Ligne écartée.`,
+  ligneSource: index,
+  colonneSource: column,
 })
 
 const warnCelluleVide = ({
@@ -146,12 +195,15 @@ export const appliquerPlan = ({
   resolution,
   individusValides,
   typeValeur,
+  axes = [],
 }: {
   plan: Plan
   rows: ReadonlyArray<Record<string, unknown>>
   resolution: ResolutionResult
   individusValides: ReadonlyArray<{ publicId: string }>
   typeValeur: { colonne: string; typesValeurRetenus: ReadonlyArray<string> } | null
+  // Une entrée par axe de l'indicateur (vide sans axe).
+  axes?: ReadonlyArray<AxeColumn>
 }): ResultatApplication => {
   const items: ItemNormalise[] = []
   const warnings: WarningApplication[] = []
@@ -217,6 +269,51 @@ export const appliquerPlan = ({
     return { individu: null }
   }
 
+  // Résolution des modalités de chaque colonne d'axe. Un publicId hors des
+  // modalités de l'axe (halluciné) vaut un libellé non résolu.
+  const indexedAxes = axes.map((axe) => ({
+    axe,
+    publicIdByLabel: mapValues(
+      keyBy(
+        axe.resolution.mapping.filter((entry) => axe.validModalites.has(entry.publicId)),
+        (entry) => entry.libelleSource,
+      ),
+      (entry) => entry.publicId,
+    ),
+    reasonByLabel: mapValues(
+      keyBy(axe.resolution.nonResolus, (entry) => entry.libelleSource),
+      (entry) => entry.raison,
+    ),
+  }))
+  const reportedModalites = new Set<string>()
+
+  // Les modalités d'une ligne, une par axe ; null si l'une manque ou n'est pas
+  // résolue (la ligne est écartée).
+  const rowModalites = (row: Record<string, unknown>, index: number): string[] | null => {
+    const modalites: string[] = []
+    for (const { axe, publicIdByLabel, reasonByLabel } of indexedAxes) {
+      const label = safeStringify(row[axe.column]).trim()
+      if (!label) {
+        warnings.push(warnPartialRow({ index, column: axe.column, axe: axe.axe.nom }))
+        return null
+      }
+      const publicId = publicIdByLabel[label]
+      if (!publicId) {
+        const key = `${axe.column}\u0000${label}`
+        if (!reportedModalites.has(key)) {
+          reportedModalites.add(key)
+          const reason =
+            reasonByLabel[label] ?? `Aucune modalité de l'axe « ${axe.axe.nom} » ne correspond.`
+          warnings.push(warnUnresolvedModalite({ label, row: index, column: axe.column, reason }))
+        }
+        return null
+      }
+      modalites.push(publicId)
+    }
+    return modalites
+  }
+  const withModalites = (modalites: string[]) => (modalites.length > 0 ? { modalites } : {})
+
   const appliquerLong = (planLong: PlanLong): void => {
     for (const [index, row] of rows.entries()) {
       if (ligneRejeteeParType(row, index)) continue
@@ -227,6 +324,8 @@ export const appliquerPlan = ({
       }
       const { individu } = signalerLibelleNonResolu(libelle, index)
       if (!individu) continue
+      const modalites = rowModalites(row, index)
+      if (!modalites) continue
 
       const date = parseFrLibre(row[planLong.colonneDate.nom])
       if (!date) {
@@ -255,7 +354,7 @@ export const appliquerPlan = ({
         continue
       }
 
-      items.push({ individu, date, valeur: valeurResult.valeur })
+      items.push({ individu, ...withModalites(modalites), date, valeur: valeurResult.valeur })
     }
   }
 
@@ -279,6 +378,8 @@ export const appliquerPlan = ({
       }
       const { individu } = signalerLibelleNonResolu(libelle, index)
       if (!individu) continue
+      const modalites = rowModalites(row, index)
+      if (!modalites) continue
 
       for (const colonnePivot of planPivot.colonnesPivot) {
         const valeurBrute = row[colonnePivot.nom]
@@ -305,6 +406,7 @@ export const appliquerPlan = ({
         }
         items.push({
           individu,
+          ...withModalites(modalites),
           date: dateParColonne.get(colonnePivot.nom)!,
           valeur: valeurResult.valeur,
         })
