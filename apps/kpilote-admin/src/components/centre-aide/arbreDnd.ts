@@ -60,6 +60,12 @@ export const retirerDescendants = (plat: NoeudPlat[], id: string): NoeudPlat[] =
 
 export type Projection = { depth: number; parentId: string | null; index: number }
 
+// Un parent ne peut être qu'un GROUPE : sous une PAGE, on reste au niveau frère.
+const maxDepthAfter = (precedent: NoeudPlat | undefined): number => {
+  if (!precedent) return 0
+  return precedent.type === 'GROUPE' ? precedent.depth + 1 : precedent.depth
+}
+
 // Calcule où l'élément déplacé atterrit : profondeur (via le décalage horizontal),
 // parent cible (uniquement un GROUPE ou la racine) et position parmi ses frères.
 export const projeter = (
@@ -80,12 +86,7 @@ export const projeter = (
 
   const profondeurDrag = Math.round(decalageX / indentation)
   const projetee = active.depth + profondeurDrag
-  // Un parent ne peut être qu'un GROUPE : sous une PAGE, on reste au niveau frère.
-  const maxDepth = precedent
-    ? precedent.type === 'GROUPE'
-      ? precedent.depth + 1
-      : precedent.depth
-    : 0
+  const maxDepth = maxDepthAfter(precedent)
   const minDepth = suivant ? suivant.depth : 0
   const depth = Math.max(minDepth, Math.min(projetee, maxDepth))
 

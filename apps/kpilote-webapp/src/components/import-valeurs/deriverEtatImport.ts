@@ -1,5 +1,11 @@
 import type { NormaliserValeursImportResponseApiModel } from '@pilote/kpilote-shared/valeurImport'
-import type { ParseError, ParsedRow, ParseResult } from './lecture/matriceVersRows'
+import type { LectureMatrice } from './lecture/fichierVersMatrice'
+import {
+  matriceVersRows,
+  type ParseError,
+  type ParsedRow,
+  type ParseResult,
+} from './lecture/matriceVersRows'
 
 export type EtatImport =
   | { kind: 'vide' }
@@ -9,6 +15,12 @@ export type EtatImport =
   | { kind: 'albertEnCours' }
   | { kind: 'albertRevue'; revue: NormaliserValeursImportResponseApiModel }
   | { kind: 'albertEchec'; error: ParseError }
+
+export const parseLecture = (lecture: LectureMatrice | undefined): ParseResult | undefined => {
+  if (!lecture) return undefined
+  if (!lecture.ok) return { ok: false, error: { code: 'UNREADABLE' } }
+  return matriceVersRows({ matrice: lecture.matrice })
+}
 
 export function deriverEtatImport({
   file,

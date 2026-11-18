@@ -153,22 +153,46 @@ function CentreAideComponent() {
         <section className="min-w-0 flex-1">
           {corbeilleOuverte ? (
             <Corbeille onRafraichir={rafraichir} />
-          ) : selectionne ? (
-            <EditionArticle
-              key={selectionne.id}
+          ) : (
+            <PanneauArticle
               article={selectionne}
               onEnregistre={rafraichir}
-              onSupprimer={() => miseEnCorbeille.mutate(selectionne)}
-              onBasculerVisibilite={() => visibilite.mutate(selectionne)}
+              onSupprimer={(article) => miseEnCorbeille.mutate(article)}
+              onBasculerVisibilite={(article) => visibilite.mutate(article)}
             />
-          ) : (
-            <div className="rounded-md border border-dashed border-border p-10 text-center text-sm text-text-muted">
-              Sélectionnez une page ou un groupe à gauche.
-            </div>
           )}
         </section>
       </div>
     </div>
+  )
+}
+
+function PanneauArticle({
+  article,
+  onEnregistre,
+  onSupprimer,
+  onBasculerVisibilite,
+}: {
+  article: ArticleCentreAideApiModel | null
+  onEnregistre: () => Promise<unknown>
+  onSupprimer: (article: ArticleCentreAideApiModel) => void
+  onBasculerVisibilite: (article: ArticleCentreAideApiModel) => void
+}) {
+  if (!article) {
+    return (
+      <div className="rounded-md border border-dashed border-border p-10 text-center text-sm text-text-muted">
+        Sélectionnez une page ou un groupe à gauche.
+      </div>
+    )
+  }
+  return (
+    <EditionArticle
+      key={article.id}
+      article={article}
+      onEnregistre={onEnregistre}
+      onSupprimer={() => onSupprimer(article)}
+      onBasculerVisibilite={() => onBasculerVisibilite(article)}
+    />
   )
 }
 
@@ -316,35 +340,50 @@ function Corbeille({ onRafraichir }: { onRafraichir: () => Promise<unknown> }) {
   return (
     <div>
       <h2 className="mb-3 text-lg font-bold">Corbeille</h2>
-      {!articles ? (
-        <p className="text-sm text-text-muted">Chargement…</p>
-      ) : articles.length === 0 ? (
-        <p className="text-sm text-text-muted">La corbeille est vide.</p>
-      ) : (
-        <ul className="space-y-1">
-          {articles.map((article) => (
-            <li
-              key={article.id}
-              className="flex items-center gap-2 rounded border border-border px-3 py-2 text-sm"
-            >
-              <span className="flex-1 truncate">
-                {article.titreBrouillon || article.titre || '(sans titre)'}
-              </span>
-              <Button size="sm" variant="secondary" onClick={() => restauration.mutate(article)}>
-                <RotateCcw className="size-4" /> Restaurer
-              </Button>
-              <Button
-                size="sm"
-                variant="tertiary"
-                className="text-red-marianne"
-                onClick={() => suppressionDefinitive.mutate(article.id)}
-              >
-                <Trash2 className="size-4" /> Supprimer
-              </Button>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ContenuCorbeille
+        articles={articles}
+        onRestaurer={(article) => restauration.mutate(article)}
+        onSupprimer={(id) => suppressionDefinitive.mutate(id)}
+      />
     </div>
+  )
+}
+
+function ContenuCorbeille({
+  articles,
+  onRestaurer,
+  onSupprimer,
+}: {
+  articles: ArticleCentreAideApiModel[] | undefined
+  onRestaurer: (article: ArticleCentreAideApiModel) => void
+  onSupprimer: (id: string) => void
+}) {
+  if (!articles) return <p className="text-sm text-text-muted">Chargement…</p>
+  if (articles.length === 0)
+    return <p className="text-sm text-text-muted">La corbeille est vide.</p>
+  return (
+    <ul className="space-y-1">
+      {articles.map((article) => (
+        <li
+          key={article.id}
+          className="flex items-center gap-2 rounded border border-border px-3 py-2 text-sm"
+        >
+          <span className="flex-1 truncate">
+            {article.titreBrouillon || article.titre || '(sans titre)'}
+          </span>
+          <Button size="sm" variant="secondary" onClick={() => onRestaurer(article)}>
+            <RotateCcw className="size-4" /> Restaurer
+          </Button>
+          <Button
+            size="sm"
+            variant="tertiary"
+            className="text-red-marianne"
+            onClick={() => onSupprimer(article.id)}
+          >
+            <Trash2 className="size-4" /> Supprimer
+          </Button>
+        </li>
+      ))}
+    </ul>
   )
 }

@@ -35,12 +35,11 @@ function KeyComponent() {
   })
   const remembered = rememberedQuery.data?.[env]
 
-  const errorMessageFor = (code: string | undefined): string =>
-    code === 'invalid_key'
-      ? `Clé invalide pour l'environnement ${ENV_LABEL[env]}.`
-      : code === 'environment_unreachable'
-        ? `Environnement ${ENV_LABEL[env]} injoignable.`
-        : 'Une erreur est survenue.'
+  const errorMessageFor = (code: string | undefined): string => {
+    if (code === 'invalid_key') return `Clé invalide pour l'environnement ${ENV_LABEL[env]}.`
+    if (code === 'environment_unreachable') return `Environnement ${ENV_LABEL[env]} injoignable.`
+    return 'Une erreur est survenue.'
+  }
 
   const submit = async () => {
     setPending(true)

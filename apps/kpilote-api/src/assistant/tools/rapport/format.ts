@@ -32,11 +32,15 @@ export const formatTaux = (taux: number | null): string =>
 // L'écart entre deux pourcentages se compte en points : « −1,5 % » se lirait comme relatif.
 export const formatEcart = (ecart: number | null, unite: string | null): string => {
   if (ecart === null) return 'non calculé'
-  const sign = ecart < 0 ? MINUS : ecart > 0 ? '+' : ''
-  const magnitude = Math.abs(ecart)
   if (ecart === 0) return '0'
-  const suffix = isPercent(unite) ? (magnitude >= 2 ? ' points' : ' point') : unitSuffix(unite)
-  return `${sign}${number(magnitude)}${suffix}`
+  const sign = ecart < 0 ? MINUS : '+'
+  const magnitude = Math.abs(ecart)
+  return `${sign}${number(magnitude)}${ecartSuffix({ magnitude, unite })}`
+}
+
+const ecartSuffix = ({ magnitude, unite }: { magnitude: number; unite: string | null }): string => {
+  if (!isPercent(unite)) return unitSuffix(unite)
+  return magnitude >= 2 ? ' points' : ' point'
 }
 
 export const formatPonderation = (ponderation: number): string => number(ponderation)

@@ -1,3 +1,4 @@
+import type { FeatureEtat } from '@pilote/kpilote-shared/feature'
 import type { UtilisateurApiModel } from '@pilote/kpilote-shared/utilisateur'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -28,6 +29,14 @@ const ETAT_OPTIONS = [
   { value: 'ACTIVE_POUR_UTILISATEUR', label: 'Utilisateurs autorisés' },
   { value: 'DESACTIVE', label: 'Désactivé' },
 ] as const
+
+const describeEtat = (etat: FeatureEtat): string => {
+  if (etat === 'ACTIVE') return 'Actif pour tous les utilisateurs.'
+  if (etat === 'ACTIVE_POUR_UTILISATEUR') {
+    return 'Actif uniquement pour les utilisateurs autorisés ci-dessous.'
+  }
+  return 'Inactif pour tous les utilisateurs.'
+}
 
 const initiales = (utilisateur: UtilisateurApiModel): string =>
   `${utilisateur.prenom.at(0) ?? ''}${utilisateur.nom.at(0) ?? ''}`.toUpperCase()
@@ -84,13 +93,7 @@ function FeatureDetailComponent() {
             onValueChange={(etat) => etatMutation.mutate({ id, etat })}
             options={ETAT_OPTIONS}
           />
-          <p className="mt-3 text-xs text-text-muted">
-            {feature.etat === 'ACTIVE'
-              ? 'Actif pour tous les utilisateurs.'
-              : feature.etat === 'ACTIVE_POUR_UTILISATEUR'
-                ? 'Actif uniquement pour les utilisateurs autorisés ci-dessous.'
-                : 'Inactif pour tous les utilisateurs.'}
-          </p>
+          <p className="mt-3 text-xs text-text-muted">{describeEtat(feature.etat)}</p>
         </section>
 
         <section className="rounded-xl border border-border bg-surface p-6">

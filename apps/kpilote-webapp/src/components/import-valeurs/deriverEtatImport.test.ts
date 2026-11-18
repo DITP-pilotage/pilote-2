@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import type { NormaliserValeursImportResponseApiModel } from '@pilote/kpilote-shared/valeurImport'
-import { deriverEtatImport, payloadDepuisEtat } from '@/components/import-valeurs/deriverEtatImport'
+import {
+  deriverEtatImport,
+  parseLecture,
+  payloadDepuisEtat,
+} from '@/components/import-valeurs/deriverEtatImport'
 import type { ParsedRow, ParseResult } from '@/components/import-valeurs/lecture/matriceVersRows'
 
 const fichier = (nom = 'valeurs.csv') => new File(['x'], nom)
@@ -121,5 +125,27 @@ describe('payloadDepuisEtat', () => {
     expect(payloadDepuisEtat({ kind: 'lecture' })).toBeNull()
     expect(payloadDepuisEtat({ kind: 'albertEnCours' })).toBeNull()
     expect(payloadDepuisEtat({ kind: 'illisible', error: { code: 'EMPTY' } })).toBeNull()
+  })
+})
+
+describe('parseLecture', () => {
+  it('renvoie undefined tant que la matrice n’est pas lue', () => {
+    expect(parseLecture(undefined)).toBeUndefined()
+  })
+
+  it('renvoie UNREADABLE quand le fichier n’a pas pu être lu', () => {
+    expect(parseLecture({ ok: false })).toEqual({ ok: false, error: { code: 'UNREADABLE' } })
+  })
+
+  it('parse la matrice quand la lecture a réussi', () => {
+    expect(
+      parseLecture({
+        ok: true,
+        matrice: [
+          ['individu', 'date', 'valeur'],
+          ['DEPT-84', '2024-01-15', 7.2],
+        ],
+      }),
+    ).toEqual({ ok: true, rows })
   })
 })

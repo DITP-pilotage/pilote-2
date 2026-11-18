@@ -2,9 +2,14 @@ import { useQuery } from '@tanstack/react-query'
 
 import { normaliserValeursQueryOptions } from '@/queries/valeursNormaliser'
 import { fichierVersMatrice } from './lecture/fichierVersMatrice'
-import { matriceVersRows, type ParsedRow, type ParseResult } from './lecture/matriceVersRows'
+import { type ParsedRow } from './lecture/matriceVersRows'
 import { matriceVersRecords } from './lecture/matriceVersRecords'
-import { deriverEtatImport, payloadDepuisEtat, type EtatImport } from './deriverEtatImport'
+import {
+  deriverEtatImport,
+  parseLecture,
+  payloadDepuisEtat,
+  type EtatImport,
+} from './deriverEtatImport'
 
 const cleDeFichier = (file: File): string => `${file.name}:${file.size}:${file.lastModified}`
 
@@ -30,11 +35,7 @@ export function useImportValeurs({
   })
 
   const lecture = matriceQuery.data
-  const parseResult: ParseResult | undefined = !lecture
-    ? undefined
-    : lecture.ok
-      ? matriceVersRows({ matrice: lecture.matrice })
-      : { ok: false, error: { code: 'UNREADABLE' } }
+  const parseResult = parseLecture(lecture)
 
   // Records dérivés seulement pour un fichier hors format standard (colonnes
   // manquantes) → c'est le seul cas qui déclenche Albert.

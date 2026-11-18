@@ -23,6 +23,9 @@ import { consoleMetaQueryOptions } from '@/queries/console'
 
 export const Route = createFileRoute('/_authed/console')({ component: ConsoleComponent })
 
+const toErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : 'Échec de l’appel'
+
 // Section réponse isolée : sa `key` (submittedAt) change à chaque envoi, ce qui
 // la remonte et redéclenche la callback ref → scroll vers le résultat.
 function ResponseSection({
@@ -75,11 +78,7 @@ function ConsoleComponent() {
   })
 
   const baseUrl = (meta?.baseUrl ?? '').replace(/\/+$/, '')
-  const errorMessage = mutation.isError
-    ? mutation.error instanceof Error
-      ? mutation.error.message
-      : 'Échec de l’appel'
-    : null
+  const errorMessage = mutation.isError ? toErrorMessage(mutation.error) : null
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6">

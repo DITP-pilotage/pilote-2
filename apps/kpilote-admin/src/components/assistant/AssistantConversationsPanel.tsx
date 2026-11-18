@@ -1,10 +1,11 @@
+import type { AdminConversationList } from '@pilote/kpilote-shared/assistant/admin'
 import {
   ISSUE_CATEGORIES,
   CATEGORY_LABELS,
   type IssueCategory,
 } from '@pilote/kpilote-shared/assistant/feedback'
 import { formatDate } from '@pilote/kpilote-shared/formatDate'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 
@@ -41,6 +42,103 @@ const isCategory = (value: string): value is IssueCategory =>
 
 const SEARCH_DEBOUNCE_MS = 300
 
+function ConversationsResults({
+  query,
+  filters,
+  onFiltersChange,
+}: {
+  query: UseQueryResult<AdminConversationList>
+  filters: ConversationsFilters
+  onFiltersChange: (filters: ConversationsFilters) => void
+}) {
+  const navigate = useNavigate()
+  const data = query.data
+
+  if (query.isPending) {
+    return (
+      <p className="py-10 text-center text-sm text-text-muted">Chargement des conversations…</p>
+    )
+  }
+  if (query.isError) {
+    return (
+      <EmptyState
+        title="Chargement impossible"
+        description="Les conversations n’ont pas pu être chargées."
+      />
+    )
+  }
+  if (data && data.items.length === 0 && data.total > 0) {
+    return (
+      <div className="flex flex-col items-center gap-4">
+        <EmptyState
+          title="Cette page est vide"
+          description={`Les ${data.total} conversations tiennent sur les pages précédentes.`}
+        />
+        <Button variant="secondary" onClick={() => onFiltersChange({ ...filters, page: 1 })}>
+          Revenir à la première page
+        </Button>
+      </div>
+    )
+  }
+  if (data && data.items.length === 0) {
+    return (
+      <EmptyState
+        title="Aucune conversation"
+        description="Aucune conversation ne correspond à ces filters."
+      />
+    )
+  }
+  return (
+    <div className={query.isPlaceholderData ? 'opacity-60' : undefined}>
+      <Table>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Conversation</Table.HeaderCell>
+            <Table.HeaderCell>Créée le</Table.HeaderCell>
+            <Table.HeaderCell>Mise à jour</Table.HeaderCell>
+            <Table.HeaderCell align="right">Réponses</Table.HeaderCell>
+            <Table.HeaderCell align="right">👍</Table.HeaderCell>
+            <Table.HeaderCell align="right">👎</Table.HeaderCell>
+            <Table.HeaderCell align="right">💬</Table.HeaderCell>
+            <Table.HeaderCell />
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          {(data?.items ?? []).map((conversation) => (
+            <Table.Row
+              key={conversation.id}
+              {...clickableRowProps(
+                () =>
+                  void navigate({
+                    to: '/assistant/conversations/$id',
+                    params: { id: conversation.id },
+                  }),
+              )}
+            >
+              <Table.Cell>
+                <span className="font-semibold">{conversation.titre}</span>
+              </Table.Cell>
+              <Table.Cell>
+                <span className="text-text-muted">{formatDate(conversation.createdAt)}</span>
+              </Table.Cell>
+              <Table.Cell>
+                <span className="text-text-muted">{formatDate(conversation.updatedAt)}</span>
+              </Table.Cell>
+              <Table.Cell align="right">{conversation.reponses}</Table.Cell>
+              <Table.Cell align="right">{conversation.positifs || '—'}</Table.Cell>
+              <Table.Cell align="right">{conversation.negatifs || '—'}</Table.Cell>
+              <Table.Cell align="right">{conversation.commentaires || '—'}</Table.Cell>
+              <Table.Cell align="right">
+                <span className="text-primary">→</span>
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
+    </div>
+  )
+}
+
 export function AssistantConversationsPanel({
   filters,
   onFiltersChange,
@@ -48,7 +146,6 @@ export function AssistantConversationsPanel({
   filters: ConversationsFilters
   onFiltersChange: (filters: ConversationsFilters) => void
 }) {
-  const navigate = useNavigate()
   const query = useQuery(assistantConversationsQueryOptions(filters))
   const [recherche, setRecherche] = useState(filters.recherche ?? '')
   const feedbacks = FEEDBACKS.filter((feedback) => filters[feedback] === true)
@@ -116,77 +213,7 @@ export function AssistantConversationsPanel({
         </Select>
       </div>
 
-      {query.isPending ? (
-        <p className="py-10 text-center text-sm text-text-muted">Chargement des conversations…</p>
-      ) : query.isError ? (
-        <EmptyState
-          title="Chargement impossible"
-          description="Les conversations n’ont pas pu être chargées."
-        />
-      ) : data && data.items.length === 0 && data.total > 0 ? (
-        <div className="flex flex-col items-center gap-4">
-          <EmptyState
-            title="Cette page est vide"
-            description={`Les ${data.total} conversations tiennent sur les pages précédentes.`}
-          />
-          <Button variant="secondary" onClick={() => onFiltersChange({ ...filters, page: 1 })}>
-            Revenir à la première page
-          </Button>
-        </div>
-      ) : data && data.items.length === 0 ? (
-        <EmptyState
-          title="Aucune conversation"
-          description="Aucune conversation ne correspond à ces filters."
-        />
-      ) : (
-        <div className={query.isPlaceholderData ? 'opacity-60' : undefined}>
-          <Table>
-            <Table.Head>
-              <Table.Row>
-                <Table.HeaderCell>Conversation</Table.HeaderCell>
-                <Table.HeaderCell>Créée le</Table.HeaderCell>
-                <Table.HeaderCell>Mise à jour</Table.HeaderCell>
-                <Table.HeaderCell align="right">Réponses</Table.HeaderCell>
-                <Table.HeaderCell align="right">👍</Table.HeaderCell>
-                <Table.HeaderCell align="right">👎</Table.HeaderCell>
-                <Table.HeaderCell align="right">💬</Table.HeaderCell>
-                <Table.HeaderCell />
-              </Table.Row>
-            </Table.Head>
-            <Table.Body>
-              {(data?.items ?? []).map((conversation) => (
-                <Table.Row
-                  key={conversation.id}
-                  {...clickableRowProps(
-                    () =>
-                      void navigate({
-                        to: '/assistant/conversations/$id',
-                        params: { id: conversation.id },
-                      }),
-                  )}
-                >
-                  <Table.Cell>
-                    <span className="font-semibold">{conversation.titre}</span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <span className="text-text-muted">{formatDate(conversation.createdAt)}</span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <span className="text-text-muted">{formatDate(conversation.updatedAt)}</span>
-                  </Table.Cell>
-                  <Table.Cell align="right">{conversation.reponses}</Table.Cell>
-                  <Table.Cell align="right">{conversation.positifs || '—'}</Table.Cell>
-                  <Table.Cell align="right">{conversation.negatifs || '—'}</Table.Cell>
-                  <Table.Cell align="right">{conversation.commentaires || '—'}</Table.Cell>
-                  <Table.Cell align="right">
-                    <span className="text-primary">→</span>
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
-        </div>
-      )}
+      <ConversationsResults query={query} filters={filters} onFiltersChange={onFiltersChange} />
 
       {data && data.total > 0 ? (
         <div className="flex items-center justify-between gap-4">

@@ -3,6 +3,7 @@ import {
   PERIMETRE_DESCRIPTION,
   type DatedValue,
   type EntityRef,
+  type Perimetre,
   type SyntheseIndicateurOutput,
 } from '@pilote/kpilote-shared/assistant/tools'
 import { type IndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
@@ -48,6 +49,19 @@ const withoutIndividus = (
   notFound: [],
   ...rest,
 })
+
+// Un périmètre explicite l'emporte ; à défaut, l'individu seul forme une sélection.
+const resolveCible = async ({
+  perimetre,
+  individuId,
+}: {
+  perimetre: Perimetre | undefined
+  individuId: string | undefined
+}): Promise<ResolvedPerimetre | null> => {
+  if (perimetre) return resolvePerimetre(perimetre)
+  if (individuId) return resolvePerimetre({ type: 'SELECTION', individuIds: [individuId] })
+  return null
+}
 
 const readIndividus = async ({
   indicateurId,
@@ -129,11 +143,7 @@ ${PERIMETRE_DESCRIPTION}`,
             mediane: item.mediane,
           }))
 
-    const cible: ResolvedPerimetre | null = perimetre
-      ? await resolvePerimetre(perimetre)
-      : individuId
-        ? await resolvePerimetre({ type: 'SELECTION', individuIds: [individuId] })
-        : null
+    const cible = await resolveCible({ perimetre, individuId })
     if (!cible) {
       return withoutIndividus(identite, {
         valeursRemarquables,

@@ -123,39 +123,14 @@ function ApiKeysListComponent() {
                   <span className="text-text-muted">{formatDate(apiKey.createdAt)}</span>
                 </Table.Cell>
                 <Table.Cell align="right" {...stopRowActivation}>
-                  {apiKey.status === 'revoked' ? (
-                    <span className="text-text-subtle">—</span>
-                  ) : confirmingId === apiKey.id ? (
-                    <span className="inline-flex items-center gap-2">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        type="button"
-                        disabled={revokeMutation.isPending}
-                        onClick={() => revokeMutation.mutate(apiKey.id)}
-                        className="border-red-marianne bg-red-marianne text-primary-foreground hover:bg-red-marianne"
-                      >
-                        Confirmer
-                      </Button>
-                      <Button
-                        variant="tertiary"
-                        size="sm"
-                        type="button"
-                        onClick={() => setConfirmingId(null)}
-                      >
-                        Annuler
-                      </Button>
-                    </span>
-                  ) : (
-                    <Button
-                      variant="tertiary"
-                      size="sm"
-                      type="button"
-                      onClick={() => setConfirmingId(apiKey.id)}
-                    >
-                      Révoquer
-                    </Button>
-                  )}
+                  <RevocationActions
+                    isRevoked={apiKey.status === 'revoked'}
+                    isConfirming={confirmingId === apiKey.id}
+                    isPending={revokeMutation.isPending}
+                    onRequest={() => setConfirmingId(apiKey.id)}
+                    onConfirm={() => revokeMutation.mutate(apiKey.id)}
+                    onCancel={() => setConfirmingId(null)}
+                  />
                 </Table.Cell>
                 <Table.Cell align="right">
                   <span className="text-primary">→</span>
@@ -166,5 +141,47 @@ function ApiKeysListComponent() {
         </Table>
       )}
     </div>
+  )
+}
+
+function RevocationActions({
+  isRevoked,
+  isConfirming,
+  isPending,
+  onRequest,
+  onConfirm,
+  onCancel,
+}: {
+  isRevoked: boolean
+  isConfirming: boolean
+  isPending: boolean
+  onRequest: () => void
+  onConfirm: () => void
+  onCancel: () => void
+}) {
+  if (isRevoked) return <span className="text-text-subtle">-</span>
+  if (!isConfirming) {
+    return (
+      <Button variant="tertiary" size="sm" type="button" onClick={onRequest}>
+        Révoquer
+      </Button>
+    )
+  }
+  return (
+    <span className="inline-flex items-center gap-2">
+      <Button
+        variant="secondary"
+        size="sm"
+        type="button"
+        disabled={isPending}
+        onClick={onConfirm}
+        className="border-red-marianne bg-red-marianne text-primary-foreground hover:bg-red-marianne"
+      >
+        Confirmer
+      </Button>
+      <Button variant="tertiary" size="sm" type="button" onClick={onCancel}>
+        Annuler
+      </Button>
+    </span>
   )
 }

@@ -15,6 +15,12 @@ const apiKeyFormSchema = z.object({
 
 export type ApiKeyFormValues = z.infer<typeof apiKeyFormSchema>
 
+const submitLabel = ({ pending, isProd }: { pending: boolean; isProd: boolean }): string => {
+  if (pending) return 'Création…'
+  if (isProd) return '🚨 Créer en Prod'
+  return 'Créer la clé'
+}
+
 export function ApiKeyForm({
   pending,
   onSubmit,
@@ -78,7 +84,7 @@ export function ApiKeyForm({
           disabled={!isValid || pending}
           className={clsxm(isProd && 'bg-red-marianne hover:bg-red-marianne')}
         >
-          {pending ? 'Création…' : isProd ? '🚨 Créer en Prod' : 'Créer la clé'}
+          {submitLabel({ pending, isProd })}
         </Button>
       </div>
     </form>

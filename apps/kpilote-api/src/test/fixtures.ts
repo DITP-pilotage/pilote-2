@@ -477,18 +477,22 @@ type ModaliteOverrides = Partial<{
   parent: ModaliteOverrides | null
 }>
 
+// `undefined` laisse le parent tel quel, `null` le retire, un objet le crée au besoin.
+const resolveParentId = async (
+  parent: ModaliteOverrides | null | undefined,
+): Promise<string | null | undefined> => {
+  if (parent === undefined) return undefined
+  if (parent === null) return null
+  return (await upsertModalite(parent)).id
+}
+
 const upsertModalite = async (o: ModaliteOverrides = {}): Promise<ModaliteModel> => {
   const publicId = o.publicId ?? testModaliteId()
   const existing = await db().modalite.findUnique({ where: { publicId } })
   const { id: _id, publicId: _pub, niveau: _niveau, parent: _parent, ...rest } = o
 
   const niveauRow = o.niveau || !existing ? await upsertNiveauAxe(o.niveau) : null
-  const parentId =
-    o.parent === undefined
-      ? undefined
-      : o.parent === null
-        ? null
-        : (await upsertModalite(o.parent)).id
+  const parentId = await resolveParentId(o.parent)
 
   if (existing) {
     const update = {

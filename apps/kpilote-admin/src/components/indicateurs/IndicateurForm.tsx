@@ -30,6 +30,12 @@ const VISIBILITE_OPTIONS = [
   { value: 'PRIVE', label: 'Privé' },
 ] as const
 
+const submitLabel = ({ pending, isProd }: { pending: boolean; isProd: boolean }): string => {
+  if (pending) return 'Enregistrement…'
+  if (isProd) return '🚨 Enregistrer en Prod'
+  return 'Enregistrer'
+}
+
 export function IndicateurForm({
   mode,
   initial,
@@ -238,7 +244,7 @@ export function IndicateurForm({
             disabled={!form.formState.isValid || pending}
             className={isProd ? 'bg-red-marianne hover:bg-red-marianne' : undefined}
           >
-            {pending ? 'Enregistrement…' : isProd ? '🚨 Enregistrer en Prod' : 'Enregistrer'}
+            {submitLabel({ pending, isProd })}
           </Button>
         </div>
       </form>

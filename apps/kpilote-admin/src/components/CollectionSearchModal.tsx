@@ -8,6 +8,37 @@ import { searchCollectionsInfiniteQueryOptions } from '@/queries/permissions'
 
 export type CollectionHit = { publicId: string; nom: string }
 
+function CollectionSearchResults({
+  isLoading,
+  hits,
+  onSelect,
+}: {
+  isLoading: boolean
+  hits: CollectionHit[]
+  onSelect: (hit: CollectionHit) => void
+}) {
+  if (isLoading) return <p className="py-6 text-center text-sm text-text-muted">Chargement…</p>
+  if (hits.length === 0) {
+    return <p className="py-6 text-center text-sm text-text-muted">Aucun résultat.</p>
+  }
+  return (
+    <ul className="divide-y divide-border">
+      {hits.map((hit) => (
+        <li key={hit.publicId}>
+          <button
+            type="button"
+            onClick={() => onSelect(hit)}
+            className="flex w-full items-center justify-between gap-3 px-2 py-3 text-left hover:bg-border/30"
+          >
+            <span className="truncate text-sm text-text">{hit.nom}</span>
+            <span className="shrink-0 font-mono text-xs text-text-muted">{hit.publicId}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 export function CollectionSearchModal({
   excludedPublicIds,
   onSelect,
@@ -80,28 +111,7 @@ export function CollectionSearchModal({
         </div>
 
         <div className="max-h-80 overflow-y-auto">
-          {query.isLoading ? (
-            <p className="py-6 text-center text-sm text-text-muted">Chargement…</p>
-          ) : hits.length === 0 ? (
-            <p className="py-6 text-center text-sm text-text-muted">Aucun résultat.</p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {hits.map((hit) => (
-                <li key={hit.publicId}>
-                  <button
-                    type="button"
-                    onClick={() => onSelect(hit)}
-                    className="flex w-full items-center justify-between gap-3 px-2 py-3 text-left hover:bg-border/30"
-                  >
-                    <span className="truncate text-sm text-text">{hit.nom}</span>
-                    <span className="shrink-0 font-mono text-xs text-text-muted">
-                      {hit.publicId}
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+          <CollectionSearchResults isLoading={query.isLoading} hits={hits} onSelect={onSelect} />
         </div>
 
         {query.hasNextPage ? (

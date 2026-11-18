@@ -17,6 +17,21 @@ const utilisateurFormSchema = z.object({
 
 export type UtilisateurFormValues = z.infer<typeof utilisateurFormSchema>
 
+const submitLabel = ({
+  pending,
+  mode,
+  isProd,
+}: {
+  pending: boolean
+  mode: 'create' | 'update'
+  isProd: boolean
+}): string => {
+  const isCreate = mode === 'create'
+  if (pending) return isCreate ? 'Création…' : 'Enregistrement…'
+  if (isProd) return isCreate ? '🚨 Créer en Prod' : '🚨 Enregistrer en Prod'
+  return isCreate ? "Créer l'utilisateur" : 'Enregistrer'
+}
+
 export function UtilisateurForm({
   mode,
   initialValues,
@@ -48,18 +63,6 @@ export function UtilisateurForm({
   })
 
   const emailReadOnly = mode === 'update'
-
-  const submitLabel = pending
-    ? mode === 'create'
-      ? 'Création…'
-      : 'Enregistrement…'
-    : isProd
-      ? mode === 'create'
-        ? '🚨 Créer en Prod'
-        : '🚨 Enregistrer en Prod'
-      : mode === 'create'
-        ? "Créer l'utilisateur"
-        : 'Enregistrer'
 
   return (
     <form onSubmit={(event) => void handleSubmit(onSubmit)(event)}>
@@ -124,7 +127,7 @@ export function UtilisateurForm({
           disabled={!isValid || pending}
           className={clsxm(isProd && 'bg-red-marianne hover:bg-red-marianne')}
         >
-          {submitLabel}
+          {submitLabel({ pending, mode, isProd })}
         </Button>
       </div>
     </form>

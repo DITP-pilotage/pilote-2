@@ -98,6 +98,18 @@ const aplatirNav = (articles: ArticlePublic[], replies: ReadonlySet<string>): No
   return sortie
 }
 
+const navItemClassName = ({
+  isGroupe,
+  isSelected,
+}: {
+  isGroupe: boolean
+  isSelected: boolean
+}): string => {
+  if (isGroupe) return 'font-semibold text-text hover:bg-surface-tinted'
+  if (isSelected) return 'bg-primary-tinted font-medium text-primary'
+  return 'text-text-muted hover:bg-surface-tinted hover:text-text'
+}
+
 // Arborescence de lecture : lignes de guidage + repli des groupes, alignée sur le
 // design de l'éditeur admin (lecture seule, sans drag).
 function NavCentreAide({
@@ -135,11 +147,7 @@ function NavCentreAide({
               style={{ paddingLeft: depth * INDENTATION_NAV + 6 }}
               className={clsxm(
                 'relative flex w-full cursor-pointer items-center gap-1 rounded-md py-1.5 pr-2 text-left',
-                !estGroupe && selectedId === article.id
-                  ? 'bg-primary-tinted font-medium text-primary'
-                  : estGroupe
-                    ? 'font-semibold text-text hover:bg-surface-tinted'
-                    : 'text-text-muted hover:bg-surface-tinted hover:text-text',
+                navItemClassName({ isGroupe: estGroupe, isSelected: selectedId === article.id }),
               )}
             >
               {Array.from({ length: depth }).map((_, niveau) => (

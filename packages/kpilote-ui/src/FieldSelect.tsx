@@ -11,6 +11,18 @@ export type FieldSelectOption = { value: string; label: ReactNode }
 // en '' en sortie — permet de garder une entrée sélectionnable (« Aucune »…).
 const EMPTY_SENTINEL = ' empty'
 
+// Sans option « vide » déclarée, '' laisse Radix afficher le placeholder.
+const toRadixValue = ({
+  value,
+  hasEmptyOption,
+}: {
+  value: string
+  hasEmptyOption: boolean
+}): string => {
+  if (value !== '') return value
+  return hasEmptyOption ? EMPTY_SENTINEL : ''
+}
+
 type FieldSelectProps = {
   value: string
   onValueChange: (value: string) => void
@@ -46,7 +58,7 @@ export function FieldSelect({
 }: FieldSelectProps) {
   const labelId = useId()
   const hasEmptyOption = options.some((option) => option.value === '')
-  const radixValue = value === '' ? (hasEmptyOption ? EMPTY_SENTINEL : '') : value
+  const radixValue = toRadixValue({ value, hasEmptyOption })
 
   return (
     <Field

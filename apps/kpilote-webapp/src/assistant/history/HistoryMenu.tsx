@@ -96,17 +96,12 @@ export function HistoryMenu({ conversationId, titre }: { conversationId: string;
             />
           </label>
           <nav aria-label="Conversations" className="min-h-0 flex-1 overflow-y-auto px-1.5 pb-2">
-            {isError ? (
-              <p className="m-0 px-2.5 py-3 text-xs text-error">
-                L&apos;historique n&apos;a pas pu être chargé.
-              </p>
-            ) : isPending ? (
-              <p className="m-0 px-2.5 py-3 text-xs text-text-subtle">Chargement…</p>
-            ) : groups.length === 0 ? (
-              <p className="m-0 px-2.5 py-3 text-xs text-text-subtle">
-                {search ? 'Aucune conversation trouvée.' : 'Aucune conversation.'}
-              </p>
-            ) : null}
+            <HistoryStatus
+              isError={isError}
+              isPending={isPending}
+              isEmpty={groups.length === 0}
+              search={search}
+            />
             {groups.map((group) => (
               <div key={group.label}>
                 <p className="m-0 px-2.5 pt-3 pb-1.5 text-xs leading-4 font-bold text-text-subtle">
@@ -161,5 +156,32 @@ export function HistoryMenu({ conversationId, titre }: { conversationId: string;
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
+  )
+}
+
+function HistoryStatus({
+  isError,
+  isPending,
+  isEmpty,
+  search,
+}: {
+  isError: boolean
+  isPending: boolean
+  isEmpty: boolean
+  search: string
+}) {
+  if (isError) {
+    return (
+      <p className="m-0 px-2.5 py-3 text-xs text-error">
+        L&apos;historique n&apos;a pas pu être chargé.
+      </p>
+    )
+  }
+  if (isPending) return <p className="m-0 px-2.5 py-3 text-xs text-text-subtle">Chargement…</p>
+  if (!isEmpty) return null
+  return (
+    <p className="m-0 px-2.5 py-3 text-xs text-text-subtle">
+      {search ? 'Aucune conversation trouvée.' : 'Aucune conversation.'}
+    </p>
   )
 }
