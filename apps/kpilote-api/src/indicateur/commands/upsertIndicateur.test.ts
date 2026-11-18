@@ -3,9 +3,9 @@ import { type UpsertIndicateurBody } from '@pilote/kpilote-shared/indicateur'
 import { describe, expect, it } from 'vitest'
 import { uuidv7 } from 'uuidv7'
 
-import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
+import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
-import { AxesVerrouillesError, upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
+import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testAxeId, testIndicateurId, testReferentielId } from '@/test/randomIds'
@@ -384,7 +384,7 @@ describe.concurrent('upsertIndicateur', () => {
   )
 
   it(
-    'rejette quand un id est inconnu, avec la liste des IDs manquants',
+    'refuse un référentiel inconnu, avec la liste des IDs manquants',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refKnownA = testReferentielId()
@@ -393,23 +393,22 @@ describe.concurrent('upsertIndicateur', () => {
       await fixtures.referentiel({ publicId: refKnownA })
       const apiKey = await fixtures.apiKey()
 
-      await expect(
-        runAsAdmin(apiKey.id, () =>
-          upsertIndicateur(indId, {
-            nom: 'I',
-            visibilite: 'PRIVE',
-            unite: null,
-            ...METADONNEES_VIDES,
-            referentiels: [
-              { id: refKnownA, fonctionAgregation: 'SUM' },
-              { id: refUnknownX, fonctionAgregation: 'SUM' },
-              { id: refUnknownY, fonctionAgregation: 'SUM' },
-            ],
-          }),
-        ),
-      ).rejects.toMatchObject({
-        constructor: ValidationError,
-        details: { unknownReferentielIds: [refUnknownX, refUnknownY].sort() },
+      const result = await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, {
+          nom: 'I',
+          visibilite: 'PRIVE',
+          unite: null,
+          ...METADONNEES_VIDES,
+          referentiels: [
+            { id: refKnownA, fonctionAgregation: 'SUM' },
+            { id: refUnknownX, fonctionAgregation: 'SUM' },
+            { id: refUnknownY, fonctionAgregation: 'SUM' },
+          ],
+        }),
+      )
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'REFERENTIELS_INCONNUS',
+        referentiels: [refUnknownX, refUnknownY].sort(),
       })
 
       const created = await db().indicateur.findUnique({ where: { publicId: indId } })
@@ -592,19 +591,18 @@ describe.concurrent('upsertIndicateur', () => {
   )
 
   it(
-    'échoue avec VALIDATION_ERROR quand un utilisateur est inconnu (aucun indicateur créé)',
+    'refuse un utilisateur inconnu (aucun indicateur créé)',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey()
       const inconnu = uuidv7()
 
-      await expect(
-        runAsAdmin(apiKey.id, () =>
-          upsertIndicateur(indId, { ...BODY_BASE, responsables: [inconnu] }),
-        ),
-      ).rejects.toMatchObject({
-        constructor: ValidationError,
-        details: { unknownUtilisateurIds: [inconnu] },
+      const result = await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, responsables: [inconnu] }),
+      )
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'UTILISATEURS_INCONNUS',
+        utilisateurs: [inconnu],
       })
 
       const created = await db().indicateur.findUnique({ where: { publicId: indId } })
@@ -811,14 +809,13 @@ describe.concurrent('upsertIndicateur — axes', () => {
       await upsert({ axes: [{ id: operateur.publicId, fonction: 'SUM' }] })
       await fixtures.valeurAvancement({ indicateur: { publicId: indId }, individu: {} })
 
-      await expect(
-        upsert({
-          axes: [
-            { id: operateur.publicId, fonction: 'SUM' },
-            { id: fraude.publicId, fonction: 'SUM' },
-          ],
-        }),
-      ).rejects.toMatchObject({ constructor: AxesVerrouillesError, details: { nombreValeurs: 1 } })
+      const result = await upsert({
+        axes: [
+          { id: operateur.publicId, fonction: 'SUM' },
+          { id: fraude.publicId, fonction: 'SUM' },
+        ],
+      })
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'AXES_VERROUILLES', nombreValeurs: 1 })
       expect(await axesDe(indId)).toEqual([{ id: operateur.publicId, ordre: 1, fonction: 'SUM' }])
     }),
   )
@@ -830,33 +827,30 @@ describe.concurrent('upsertIndicateur — axes', () => {
       await upsert({ axes: [{ id: operateur.publicId, fonction: 'SUM' }] })
       await fixtures.valeurAvancement({ indicateur: { publicId: indId }, individu: {} })
 
-      await expect(upsert({ axes: [] })).rejects.toBeInstanceOf(AxesVerrouillesError)
+      const result = await upsert({ axes: [] })
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'AXES_VERROUILLES', nombreValeurs: 1 })
       expect(await axesDe(indId)).toEqual([{ id: operateur.publicId, ordre: 1, fonction: 'SUM' }])
     }),
   )
 
   it(
-    'échoue avec VALIDATION_ERROR quand un axe est inconnu (aucun indicateur créé)',
+    'refuse un axe inconnu (aucun indicateur créé)',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey()
       const operateur = await fixtures.axe({ publicId: testAxeId() })
       const inconnu = testAxeId()
 
-      await expect(
-        runAsAdmin(apiKey.id, () =>
-          upsertIndicateur(indId, {
-            ...BODY_BASE,
-            axes: [
-              { id: inconnu, fonction: 'SUM' },
-              { id: operateur.publicId, fonction: 'SUM' },
-            ],
-          }),
-        ),
-      ).rejects.toMatchObject({
-        constructor: ValidationError,
-        details: { unknownAxeIds: [inconnu] },
-      })
+      const result = await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, {
+          ...BODY_BASE,
+          axes: [
+            { id: inconnu, fonction: 'SUM' },
+            { id: operateur.publicId, fonction: 'SUM' },
+          ],
+        }),
+      )
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'AXES_INCONNUS', axes: [inconnu] })
       expect(await db().indicateur.findUnique({ where: { publicId: indId } })).toBeNull()
     }),
   )

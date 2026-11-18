@@ -500,9 +500,7 @@ valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  const result = await withTransaction(async () =>
-    upsertValeurAvancement({ indicateurPublicId: id, body }),
-  )
+  const result = withTransaction(() => upsertValeurAvancement({ indicateurPublicId: id, body }))
 
   return result.match(
     (data) =>
@@ -541,9 +539,7 @@ valeurAvancementRoutes.openapi(deleteValeurAvancementRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  const result = await withTransaction(async () =>
-    deleteValeurAvancement({ indicateurPublicId: id, body }),
-  )
+  const result = withTransaction(() => deleteValeurAvancement({ indicateurPublicId: id, body }))
 
   return result.match(
     () => context.body(null, 204),
@@ -561,9 +557,7 @@ valeurAvancementRoutes.openapi(upsertValeursAvancementBatchRoute, async (context
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  const result = await withTransaction(async () =>
-    upsertValeursAvancementBatch(id, { items: body.items }),
-  )
+  const result = withTransaction(() => upsertValeursAvancementBatch(id, { items: body.items }))
 
   return result.match(
     (data) =>

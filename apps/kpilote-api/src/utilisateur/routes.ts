@@ -127,7 +127,7 @@ export const utilisateurRoutes = createOpenApiHono()
 
 utilisateurRoutes.openapi(createUtilisateurRoute, async (context) => {
   const body = context.req.valid('json')
-  return (await withTransaction(async () => createUtilisateur(body))).match(
+  return withTransaction(() => createUtilisateur(body)).match(
     (data) => jsonResponseOk({ context, data, schema: UtilisateurApiModelSchema, status: 201 }),
     never,
   )
@@ -152,7 +152,7 @@ utilisateurRoutes.openapi(getUtilisateurByIdRoute, async (context) => {
 utilisateurRoutes.openapi(updateUtilisateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  return (await withTransaction(async () => updateUtilisateur(id, body))).match(
+  return withTransaction(() => updateUtilisateur(id, body)).match(
     (data) => jsonResponseOk({ context, data, schema: UtilisateurApiModelSchema, status: 200 }),
     never,
   )

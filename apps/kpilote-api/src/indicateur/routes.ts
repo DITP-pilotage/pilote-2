@@ -17,18 +17,28 @@ import {
   BrouillonApiModelSchema,
   CommentaireApiModelSchema,
   CommentaireListApiModelSchema,
+  describeCreerCommentaireError,
   reponseBrouillon,
-  reponseCommentaire,
+  reponseCreationCommentaire,
   reponseListe,
 } from '@/commentaire/openapi'
 import { getDernierBrouillon } from '@/commentaire/queries/getDernierBrouillon'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
-import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { erreur400, erreur403, erreur404, erreur409 } from '@/framework/openapi/responses'
+import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import {
+  ErrorApiModelSchema,
+  erreur400,
+  erreur403,
+  erreur404,
+  erreur409,
+} from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
-import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
+import {
+  upsertIndicateur,
+  type UpsertIndicateurError,
+} from '@/indicateur/commands/upsertIndicateur'
 import {
   creerIndicateurIndividuCommentaire,
   indicateurIndividuConfig,
@@ -99,7 +109,7 @@ const upsertIndicateurRoute = createRoute({
   tags: ['Indicateur', 'Admin'],
   summary: 'Créer ou remplacer un indicateur (nom + référentiels liés)',
   description:
-    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Crée l'indicateur s'il n'existe pas, ou met à jour son `nom` si déjà présent. Le champ `referentielIds` est obligatoire et applique une sémantique replace-all : l'ensemble des liens devient strictement celui décrit dans le body (tableau vide pour aucun lien). Les doublons sont silencieusement dédupliqués. Si un `referentielId` n'existe pas, l'appel échoue avec 400 `VALIDATION_ERROR` et `details.unknownReferentielIds`. Le champ `axes` est optionnel (absent = inchangé, `[]` = aucun axe) et remplace la déclaration complète ; la position donne l'ordre de déclaration. Axe inconnu : 400 `VALIDATION_ERROR` avec `details.unknownAxeIds`. Ajouter ou retirer un axe sur un indicateur qui a déjà des valeurs : 409 `AXES_VERROUILLES` (changer la fonction ou l'ordre reste permis). L'opération est atomique (transaction unique).",
+    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Crée l'indicateur s'il n'existe pas, ou met à jour son `nom` si déjà présent. Le champ `referentielIds` est obligatoire et applique une sémantique replace-all : l'ensemble des liens devient strictement celui décrit dans le body (tableau vide pour aucun lien). Les doublons sont silencieusement dédupliqués. Si un `referentielId` n'existe pas, l'appel échoue avec 400 `REFERENTIELS_INCONNUS` et `details.unknownReferentielIds`. Le champ `axes` est optionnel (absent = inchangé, `[]` = aucun axe) et remplace la déclaration complète ; la position donne l'ordre de déclaration. Axe inconnu : 400 `AXES_INCONNUS` avec `details.unknownAxeIds`. Responsable inconnu : 400 `UTILISATEURS_INCONNUS` avec `details.unknownUtilisateurIds`. Ajouter ou retirer un axe sur un indicateur qui a déjà des valeurs : 409 `AXES_VERROUILLES` (changer la fonction ou l'ordre reste permis). L'opération est atomique (transaction unique).",
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
@@ -118,6 +128,36 @@ const upsertIndicateurRoute = createRoute({
     409: erreur409,
   },
 })
+
+// --- Erreurs métier ------------------------------------------------------------
+
+const describeUpsertIndicateurError = (
+  error: UpsertIndicateurError,
+): { status: 400 | 409; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'REFERENTIELS_INCONNUS':
+      return {
+        status: 400,
+        message: 'Référentiels inconnus',
+        details: { unknownReferentielIds: error.referentiels },
+      }
+    case 'UTILISATEURS_INCONNUS':
+      return {
+        status: 400,
+        message: 'Utilisateurs inconnus',
+        details: { unknownUtilisateurIds: error.utilisateurs },
+      }
+    case 'AXES_INCONNUS':
+      return { status: 400, message: 'Axes inconnus', details: { unknownAxeIds: error.axes } }
+    case 'AXES_VERROUILLES':
+      return {
+        status: 409,
+        message:
+          'Cet indicateur a déjà des valeurs : on ne peut plus lui ajouter ni lui retirer d’axe. Changer la fonction ou l’ordre des axes reste possible.',
+        details: { nombreValeurs: error.nombreValeurs },
+      }
+  }
+}
 
 // --- App registration --------------------------------------------------------
 
@@ -157,12 +197,9 @@ indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  const result = await withTransaction(async () => {
-    await upsertIndicateur(id, body)
-    return getIndicateurByPublicId(id)
-  })
-
-  return result.match(
+  return withTransaction(() =>
+    upsertIndicateur(id, body).andThen(() => getIndicateurByPublicId(id)),
+  ).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -170,7 +207,15 @@ indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
         schema: IndicateurApiModelSchema,
         status: 200,
       }),
-    never,
+    (error) => {
+      const { status, message, details } = describeUpsertIndicateurError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
   )
 })
 
@@ -194,18 +239,24 @@ const creerIndicateurIndividuCommentaireRoute = createRoute({
       required: true,
     },
   },
-  responses: reponseCommentaire,
+  responses: reponseCreationCommentaire,
 })
 
 indicateurRoutes.openapi(creerIndicateurIndividuCommentaireRoute, async (context) => {
   const params = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = await withTransaction(async () =>
-    creerIndicateurIndividuCommentaire({ params, body }),
-  )
+  const result = withTransaction(() => creerIndicateurIndividuCommentaire({ params, body }))
   return result.match(
     (data) => jsonResponseOk({ context, data, schema: CommentaireApiModelSchema, status: 200 }),
-    never,
+    (error) => {
+      const { status, message, details } = describeCreerCommentaireError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
   )
 })
 

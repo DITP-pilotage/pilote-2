@@ -34,16 +34,23 @@ import {
   BrouillonApiModelSchema,
   CommentaireApiModelSchema,
   CommentaireListApiModelSchema,
+  describeCreerCommentaireError,
   reponseBrouillon,
-  reponseCommentaire,
+  reponseCreationCommentaire,
   reponseListe,
 } from '@/commentaire/openapi'
 import { getDernierBrouillon } from '@/commentaire/queries/getDernierBrouillon'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
-import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { erreur400, erreur403, erreur404, erreur409 } from '@/framework/openapi/responses'
+import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import {
+  ErrorApiModelSchema,
+  erreur400,
+  erreur403,
+  erreur404,
+  erreur409,
+} from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { addCollectionIndicateur } from '@/collection/commands/addCollectionIndicateur'
 import { addCollectionResponsable } from '@/collection/commands/addCollectionResponsable'
@@ -248,7 +255,7 @@ const createCollectionRoute = createRoute({
 
 collectionRoutes.openapi(createCollectionRoute, async (context) => {
   const body = context.req.valid('json')
-  const result = await withTransaction(async () => createCollection(body))
+  const result = withTransaction(() => createCollection(body))
   return result.match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 201 }),
     never,
@@ -285,7 +292,7 @@ const upsertCollectionRoute = createRoute({
 collectionRoutes.openapi(upsertCollectionRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = await withTransaction(async () => upsertCollection(id, body))
+  const result = withTransaction(() => upsertCollection(id, body))
   return result.match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
     never,
@@ -311,7 +318,7 @@ const deleteCollectionRoute = createRoute({
 
 collectionRoutes.openapi(deleteCollectionRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const result = await withTransaction(async () => deleteCollection(id))
+  const result = withTransaction(() => deleteCollection(id))
   return result.match(() => context.body(null, 204), never)
 })
 
@@ -347,7 +354,7 @@ const addCollectionIndicateurRoute = createRoute({
 collectionRoutes.openapi(addCollectionIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = await withTransaction(async () => addCollectionIndicateur(id, body))
+  const result = withTransaction(() => addCollectionIndicateur(id, body))
   return result.match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
     never,
@@ -385,7 +392,7 @@ const updateCollectionIndicateurPonderationRoute = createRoute({
 collectionRoutes.openapi(updateCollectionIndicateurPonderationRoute, async (context) => {
   const { id, indicateurId } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = await withTransaction(async () =>
+  const result = withTransaction(() =>
     updateCollectionIndicateurPonderation(id, indicateurId, body),
   )
   return result.match(
@@ -413,7 +420,7 @@ const removeCollectionIndicateurRoute = createRoute({
 
 collectionRoutes.openapi(removeCollectionIndicateurRoute, async (context) => {
   const { id, indicateurId } = context.req.valid('param')
-  const result = await withTransaction(async () => removeCollectionIndicateur(id, indicateurId))
+  const result = withTransaction(() => removeCollectionIndicateur(id, indicateurId))
   return result.match(() => context.body(null, 204), never)
 })
 
@@ -449,7 +456,7 @@ const addCollectionResponsableRoute = createRoute({
 collectionRoutes.openapi(addCollectionResponsableRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = await withTransaction(async () => addCollectionResponsable(id, body))
+  const result = withTransaction(() => addCollectionResponsable(id, body))
   return result.match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
     never,
@@ -475,7 +482,7 @@ const removeCollectionResponsableRoute = createRoute({
 
 collectionRoutes.openapi(removeCollectionResponsableRoute, async (context) => {
   const { id, utilisateurId } = context.req.valid('param')
-  const result = await withTransaction(async () => removeCollectionResponsable(id, utilisateurId))
+  const result = withTransaction(() => removeCollectionResponsable(id, utilisateurId))
   return result.match(() => context.body(null, 204), never)
 })
 
@@ -531,16 +538,24 @@ const creerCollectionCommentaireRoute = createRoute({
       required: true,
     },
   },
-  responses: reponseCommentaire,
+  responses: reponseCreationCommentaire,
 })
 
 collectionRoutes.openapi(creerCollectionCommentaireRoute, async (context) => {
   const params = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = await withTransaction(async () => creerCollectionCommentaire({ params, body }))
+  const result = withTransaction(() => creerCollectionCommentaire({ params, body }))
   return result.match(
     (data) => jsonResponseOk({ context, data, schema: CommentaireApiModelSchema, status: 200 }),
-    never,
+    (error) => {
+      const { status, message, details } = describeCreerCommentaireError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
   )
 })
 

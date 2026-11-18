@@ -34,7 +34,7 @@ const modifierRoute = createRoute({
 commentaireRoutes.openapi(modifierRoute, async (context) => {
   const { commentaireId } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = await withTransaction(async () => modifierCommentaire(commentaireId, body))
+  const result = withTransaction(() => modifierCommentaire(commentaireId, body))
   return result.match(
     (data) => jsonResponseOk({ context, data, schema: CommentaireApiModelSchema, status: 200 }),
     never,
@@ -59,6 +59,6 @@ const supprimerRoute = createRoute({
 
 commentaireRoutes.openapi(supprimerRoute, async (context) => {
   const { commentaireId } = context.req.valid('param')
-  const result = await withTransaction(async () => supprimerCommentaire(commentaireId))
+  const result = withTransaction(() => supprimerCommentaire(commentaireId))
   return result.match(() => context.body(null, 204), never)
 })

@@ -138,7 +138,7 @@ objectifIndicateurIndividuRoutes.openapi(upsertObjectifIndicateurIndividuRoute, 
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  const result = await withTransaction(async () =>
+  const result = withTransaction(() =>
     upsertObjectifIndicateurIndividu({ indicateurPublicId: id, body }),
   )
 
@@ -169,7 +169,7 @@ objectifIndicateurIndividuRoutes.openapi(deleteObjectifIndicateurIndividuRoute, 
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  const result = await withTransaction(async () =>
+  const result = withTransaction(() =>
     deleteObjectifIndicateurIndividu({ indicateurPublicId: id, body }),
   )
 

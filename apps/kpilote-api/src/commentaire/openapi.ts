@@ -4,7 +4,14 @@ import {
   commentaireListApiModelSchema,
 } from '@pilote/kpilote-shared/commentaire'
 
-import { erreur400, erreur403, erreur404, succes200 } from '@/framework/openapi/responses'
+import { type CreerCommentaireError } from '@/commentaire/commands/creerCommentaire'
+import {
+  erreur400,
+  erreur403,
+  erreur404,
+  erreur409,
+  succes200,
+} from '@/framework/openapi/responses'
 
 export const CommentaireApiModelSchema = commentaireApiModelSchema.openapi('CommentaireApiModel')
 export const CommentaireListApiModelSchema =
@@ -16,6 +23,20 @@ export const reponseCommentaire = {
   400: erreur400,
   403: erreur403,
   404: erreur404,
+}
+
+export const reponseCreationCommentaire = {
+  ...reponseCommentaire,
+  409: erreur409,
+}
+
+export const describeCreerCommentaireError = (
+  error: CreerCommentaireError,
+): { status: 409; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'BROUILLON_EXISTANT':
+      return { status: 409, message: 'Un brouillon existe déjà pour ce type ; reprenez-le.' }
+  }
 }
 
 export const reponseListe = {

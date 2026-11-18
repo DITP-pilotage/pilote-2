@@ -6,14 +6,20 @@ import {
 } from '@pilote/kpilote-shared/apiKey'
 
 import { createApiKey } from '@/apiKey/commands/createApiKey'
-import { revokeApiKey } from '@/apiKey/commands/revokeApiKey'
+import { revokeApiKey, type RevokeApiKeyError } from '@/apiKey/commands/revokeApiKey'
 import { getApiKeyById } from '@/apiKey/queries/getApiKeyById'
 import { listApiKeys } from '@/apiKey/queries/listApiKeys'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
-import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { erreur403, erreur404, erreur409, succes200 } from '@/framework/openapi/responses'
+import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import {
+  ErrorApiModelSchema,
+  erreur403,
+  erreur404,
+  erreur409,
+  succes200,
+} from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 
 const ApiKeyApiModelSchema = apiKeyApiModelSchema.openapi('ApiKeyApiModel')
@@ -110,11 +116,27 @@ const revokeApiKeyRoute = createRoute({
   },
 })
 
+// --- Erreurs métier ------------------------------------------------------------
+
+const describeRevokeApiKeyError = (
+  error: RevokeApiKeyError,
+): { status: 409; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'CLE_API_COURANTE':
+      return {
+        status: 409,
+        message: 'Impossible de révoquer la clé API utilisée pour cette requête',
+      }
+    case 'CLE_API_DEJA_REVOQUEE':
+      return { status: 409, message: 'Cette clé API est déjà révoquée' }
+  }
+}
+
 export const apiKeyRoutes = createOpenApiHono()
 
 apiKeyRoutes.openapi(createApiKeyRoute, async (context) => {
   const body = context.req.valid('json')
-  return (await withTransaction(async () => createApiKey(body))).match(
+  return withTransaction(() => createApiKey(body)).match(
     (data) => jsonResponseOk({ context, data, schema: CreatedApiKeyApiModelSchema, status: 201 }),
     never,
   )
@@ -137,8 +159,16 @@ apiKeyRoutes.openapi(getApiKeyByIdRoute, async (context) => {
 
 apiKeyRoutes.openapi(revokeApiKeyRoute, async (context) => {
   const { id } = context.req.valid('param')
-  return (await withTransaction(async () => revokeApiKey(id))).match(
+  return withTransaction(() => revokeApiKey(id)).match(
     (data) => jsonResponseOk({ context, data, schema: ApiKeyApiModelSchema, status: 200 }),
-    never,
+    (error) => {
+      const { status, message, details } = describeRevokeApiKeyError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
   )
 })

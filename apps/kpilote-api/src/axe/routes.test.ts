@@ -1,4 +1,5 @@
 import { type AxeApiModel, type ModaliteListApiModel } from '@pilote/kpilote-shared/axe'
+import { type ResultAsync } from 'neverthrow'
 import { describe, expect, it, vi } from 'vitest'
 
 import { axeRoutes } from '@/axe/routes'
@@ -23,7 +24,7 @@ vi.mock('@/framework/persistence/withTransaction', async (importOriginal) => {
   const { db } = await import('@/framework/persistence/dbStore')
   return {
     ...original,
-    withTransaction: <T>(fn: () => Promise<T>): Promise<T> => {
+    withTransaction: <T, E>(fn: () => ResultAsync<T, E>): ResultAsync<T, E> => {
       try {
         db()
       } catch {

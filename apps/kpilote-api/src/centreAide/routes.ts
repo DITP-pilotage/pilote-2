@@ -201,7 +201,7 @@ centreAideRoutes.openapi(getByIdRoute, async (context) => {
 
 centreAideRoutes.openapi(creerRoute, async (context) => {
   const body = context.req.valid('json')
-  return (await withTransaction(async () => creerArticleCentreAide(body))).match(
+  return withTransaction(() => creerArticleCentreAide(body)).match(
     (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 201 }),
     never,
   )
@@ -210,7 +210,7 @@ centreAideRoutes.openapi(creerRoute, async (context) => {
 centreAideRoutes.openapi(modifierRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  return (await withTransaction(async () => modifierArticleCentreAide(id, body))).match(
+  return withTransaction(() => modifierArticleCentreAide(id, body)).match(
     (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
     never,
   )
@@ -218,7 +218,7 @@ centreAideRoutes.openapi(modifierRoute, async (context) => {
 
 centreAideRoutes.openapi(supprimerRoute, async (context) => {
   const { id } = context.req.valid('param')
-  return (await withTransaction(async () => supprimerArticleCentreAide(id))).match(
+  return withTransaction(() => supprimerArticleCentreAide(id)).match(
     () => context.body(null, 204),
     never,
   )

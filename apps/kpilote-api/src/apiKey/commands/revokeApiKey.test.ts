@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { revokeApiKey } from '@/apiKey/commands/revokeApiKey'
 import { parseIsoInstant, toDate } from '@/framework/date'
-import { ConflictError, ForbiddenError } from '@/framework/errors/AppError'
+import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -29,29 +29,27 @@ describe.concurrent('revokeApiKey', () => {
   )
 
   it(
-    'rejette une clé déjà révoquée (ConflictError)',
+    'refuse une clé déjà révoquée (CLE_API_DEJA_REVOQUEE)',
     integrationTest(async () => {
       const key = await fixtures.apiKey({
         label: 'already',
         rawKey: 'pilote_live_revoke_already_value_okk',
         revokedAt: toDate(parseIsoInstant('2024-01-01T00:00:00Z')),
       })
-      await expect(runAsAdmin(ADMIN_ID, () => revokeApiKey(key.id))).rejects.toBeInstanceOf(
-        ConflictError,
-      )
+      const result = await runAsAdmin(ADMIN_ID, () => revokeApiKey(key.id))
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'CLE_API_DEJA_REVOQUEE' })
     }),
   )
 
   it(
-    'interdit de révoquer sa propre clé (ConflictError)',
+    'interdit de révoquer sa propre clé (CLE_API_COURANTE)',
     integrationTest(async () => {
       const key = await fixtures.apiKey({
         label: 'self',
         rawKey: 'pilote_live_revoke_self_value_okokok',
       })
-      await expect(runAsAdmin(key.id, () => revokeApiKey(key.id))).rejects.toBeInstanceOf(
-        ConflictError,
-      )
+      const result = await runAsAdmin(key.id, () => revokeApiKey(key.id))
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'CLE_API_COURANTE' })
     }),
   )
 

@@ -12,12 +12,21 @@ import {
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
-import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { erreur400, erreur403, erreur404, succes200 } from '@/framework/openapi/responses'
+import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import {
+  ErrorApiModelSchema,
+  erreur400,
+  erreur403,
+  erreur404,
+  succes200,
+} from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { grantIndicateurPermission } from '@/permission/commands/grantIndicateurPermission'
 import { grantCollectionPermission } from '@/permission/commands/grantCollectionPermission'
-import { replacePrincipalPermissions } from '@/permission/commands/replacePrincipalPermissions'
+import {
+  replacePrincipalPermissions,
+  type ReplacePrincipalPermissionsError,
+} from '@/permission/commands/replacePrincipalPermissions'
 import { revokeIndicateurPermission } from '@/permission/commands/revokeIndicateurPermission'
 import { revokeCollectionPermission } from '@/permission/commands/revokeCollectionPermission'
 import { getPrincipalPermissions } from '@/permission/queries/getPrincipalPermissions'
@@ -162,6 +171,20 @@ const revokeCollectionPermissionRoute = createRoute({
   },
 })
 
+// --- Erreurs métier ------------------------------------------------------------
+
+const describeReplacePrincipalPermissionsError = (
+  error: ReplacePrincipalPermissionsError,
+): { status: 400; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'DOUBLONS':
+      return {
+        status: 400,
+        message: `Le payload contient plusieurs fois la même ${error.ressource}`,
+      }
+  }
+}
+
 export const permissionRoutes = createOpenApiHono()
 
 permissionRoutes.openapi(getPermissionsRoute, async (context) => {
@@ -175,16 +198,24 @@ permissionRoutes.openapi(getPermissionsRoute, async (context) => {
 
 permissionRoutes.openapi(replacePermissionsRoute, async (context) => {
   const body = context.req.valid('json')
-  return (await withTransaction(async () => replacePrincipalPermissions(body))).match(
+  return withTransaction(() => replacePrincipalPermissions(body)).match(
     (data) =>
       jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
-    never,
+    (error) => {
+      const { status, message, details } = describeReplacePrincipalPermissionsError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
   )
 })
 
 permissionRoutes.openapi(grantIndicateurPermissionRoute, async (context) => {
   const body = context.req.valid('json')
-  return (await withTransaction(async () => grantIndicateurPermission(body))).match(
+  return withTransaction(() => grantIndicateurPermission(body)).match(
     (data) =>
       jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
     never,
@@ -193,7 +224,7 @@ permissionRoutes.openapi(grantIndicateurPermissionRoute, async (context) => {
 
 permissionRoutes.openapi(revokeIndicateurPermissionRoute, async (context) => {
   const query = context.req.valid('query')
-  return (await withTransaction(async () => revokeIndicateurPermission(query))).match(
+  return withTransaction(() => revokeIndicateurPermission(query)).match(
     (data) =>
       jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
     never,
@@ -202,7 +233,7 @@ permissionRoutes.openapi(revokeIndicateurPermissionRoute, async (context) => {
 
 permissionRoutes.openapi(grantCollectionPermissionRoute, async (context) => {
   const body = context.req.valid('json')
-  return (await withTransaction(async () => grantCollectionPermission(body))).match(
+  return withTransaction(() => grantCollectionPermission(body)).match(
     (data) =>
       jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
     never,
@@ -211,7 +242,7 @@ permissionRoutes.openapi(grantCollectionPermissionRoute, async (context) => {
 
 permissionRoutes.openapi(revokeCollectionPermissionRoute, async (context) => {
   const query = context.req.valid('query')
-  return (await withTransaction(async () => revokeCollectionPermission(query))).match(
+  return withTransaction(() => revokeCollectionPermission(query)).match(
     (data) =>
       jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
     never,

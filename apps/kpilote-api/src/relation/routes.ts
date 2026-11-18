@@ -121,10 +121,8 @@ relationRoutes.openapi(upsertRelationRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  return (
-    await withTransaction(async () =>
-      upsertRelationParent(id, body).andThen(() => getRelationByEnfant(id)),
-    )
+  return withTransaction(() =>
+    upsertRelationParent(id, body).andThen(() => getRelationByEnfant(id)),
   ).match(
     (data) =>
       jsonResponseOk({
