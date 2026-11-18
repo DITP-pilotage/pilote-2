@@ -1,4 +1,5 @@
 import { type ResultAsync } from 'neverthrow'
+import { z } from 'zod'
 
 import {
   type ResolutionTarget,
@@ -16,7 +17,7 @@ export type ResolutionResult = {
 
 export type ResoudreIndividusError = ResolveLabelsError
 
-const INDIVIDUS_TARGET: ResolutionTarget = {
+const INDIVIDUS_TARGET: ResolutionTarget<{ libelleSource: string; individuPublicId: string }> = {
   systemPrompt:
     "Tu reçois une liste de libellés bruts (libellésSources) provenant d'une colonne d'un fichier " +
     'de données téléversé. Ces libellés font référence à des individus connus (territoires, entités).\n' +
@@ -30,7 +31,6 @@ const INDIVIDUS_TARGET: ResolutionTarget = {
     '\n' +
     "Quand tu as terminé, appelle l'outil `enregistrerMapping` avec ta proposition.\n" +
     "Si l'outil te signale des erreurs, corrige et rappelle-le.",
-  publicIdField: 'individuPublicId',
   labelDescription:
     "Libellé tel qu'apparu dans la colonne individu du fichier (recopie EXACTE, " +
     'pas de reformulation).',
@@ -40,6 +40,9 @@ const INDIVIDUS_TARGET: ResolutionTarget = {
   mappingDescription:
     'Liste des libellés que tu as su rattacher avec confiance à un individu connu. ' +
     'Un même libellé ne doit pas apparaître plusieurs fois.',
+  mappingEntrySchema: ({ libelleSource, publicId }) =>
+    z.object({ libelleSource, individuPublicId: publicId }),
+  publicIdOf: (entry) => entry.individuPublicId,
   logEvent: 'importPoc.resoudreIndividus',
   logLabel: 'Albert call 2 (résolution)',
 }

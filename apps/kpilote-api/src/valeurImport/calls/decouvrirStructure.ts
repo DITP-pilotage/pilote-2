@@ -124,7 +124,7 @@ type DecouverteResult = { statut: 'reconnu'; plan: Plan } | DecouverteEchec
 export const makeDecouverteOutputSchemaWithAxes = ({
   axePublicIds,
 }: {
-  axePublicIds: readonly [string, ...string[]]
+  axePublicIds: ReadonlyArray<string>
 }) => {
   const colonnesAxes = z
     .array(
@@ -208,11 +208,10 @@ export const decouvrirStructure = ({
 }): ResultAsync<Plan, DecouvrirStructureError> => {
   const model = createAlbertModel()
   const echantillon = rows.slice(0, MAX_LIGNES_ECHANTILLON)
-  const [firstAxe, ...otherAxes] = axes.map((axe) => axe.publicId)
   const schema: z.ZodType<DecouverteResult> =
-    firstAxe === undefined
+    axes.length === 0
       ? decouverteOutputSchema
-      : makeDecouverteOutputSchemaWithAxes({ axePublicIds: [firstAxe, ...otherAxes] })
+      : makeDecouverteOutputSchemaWithAxes({ axePublicIds: axes.map((axe) => axe.publicId) })
 
   const prompt = [
     `Indicateur ciblé : « ${indicateur.nom} »${

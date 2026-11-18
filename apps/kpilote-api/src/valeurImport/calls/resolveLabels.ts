@@ -31,29 +31,30 @@ export type ResolveLabelsError = {
   derniereErreur: ToolValidationError | null
 }
 
-// Ce qui distingue une résolution d'une autre : les textes vus par Albert, le
-// nom du champ d'identifiant dans l'outil et le préfixe des événements de log.
-export type ResolutionTarget = {
+// Ce qui distingue une résolution d'une autre : les textes vus par Albert, la
+// forme d'une entrée du mapping (le nom de son champ d'identifiant, propre à la
+// cible : `individuPublicId`, `modalitePublicId`) et le préfixe des logs.
+// `Entry` est le type d'une entrée telle qu'Albert la renvoie.
+export type ResolutionTarget<Entry extends { libelleSource: string }> = {
   systemPrompt: string
-  publicIdField: string
   labelDescription: string
   publicIdDescription: string
   mappingDescription: string
+  mappingEntrySchema: (fields: {
+    libelleSource: z.ZodType<string>
+    publicId: z.ZodType<string>
+  }) => z.ZodType<Entry>
+  publicIdOf: (entry: Entry) => string
   logEvent: string
   logLabel: string
 }
 
-// Entrée du mapping telle qu'Albert la renvoie : le libellé et le publicId,
-// sous le nom de champ propre à la cible (`individuPublicId`, `modalitePublicId`).
-type MappingEntry = { libelleSource: string } & Record<string, string>
-type ToolInput = { mapping: MappingEntry[]; nonResolus: UnresolvedLabel[] }
-
-const makeResolutionToolSchema = ({
+const makeResolutionToolSchema = <Entry extends { libelleSource: string }>({
   target,
   validPublicIds,
   labels,
 }: {
-  target: ResolutionTarget
+  target: ResolutionTarget<Entry>
   validPublicIds: ReadonlySet<string>
   labels: ReadonlyArray<string>
 }) => {
@@ -73,13 +74,12 @@ const makeResolutionToolSchema = ({
       message: 'publicId inconnu — doit appartenir à la liste fournie.',
     })
 
-  // Le nom du champ d'identifiant est dynamique : zod ne peut pas le typer.
   return z.object({
     mapping: z
       .array(
-        z.object({
+        target.mappingEntrySchema({
           libelleSource: libelleSourceSchema,
-          [target.publicIdField]: publicIdSchema,
+          publicId: publicIdSchema,
         }),
       )
       .describe(target.mappingDescription),
@@ -99,7 +99,7 @@ const makeResolutionToolSchema = ({
         "Libellés que tu n'as PAS su rattacher avec confiance. " +
           "L'union mapping + nonResolus doit couvrir EXACTEMENT tous les libellés fournis.",
       ),
-  }) as unknown as z.ZodType<ToolInput>
+  })
 }
 
 const validateCoverage = ({
@@ -130,14 +130,14 @@ const validateCoverage = ({
   }
 }
 
-export const resolveLabels = ({
+export const resolveLabels = <Entry extends { libelleSource: string }>({
   target,
   prompt,
   validPublicIds,
   labels,
   logContext,
 }: {
-  target: ResolutionTarget
+  target: ResolutionTarget<Entry>
   prompt: string
   validPublicIds: ReadonlySet<string>
   labels: ReadonlyArray<string>
@@ -199,7 +199,7 @@ export const resolveLabels = ({
             lastAttempt = {
               mapping: mapping.map((entry) => ({
                 libelleSource: entry.libelleSource,
-                publicId: entry[target.publicIdField]!,
+                publicId: target.publicIdOf(entry),
               })),
               nonResolus,
             }

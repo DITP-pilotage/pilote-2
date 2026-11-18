@@ -1,4 +1,5 @@
 import { okAsync, type ResultAsync } from 'neverthrow'
+import { z } from 'zod'
 
 import { matchModalites } from '@/valeurImport/axeColumns'
 import {
@@ -9,7 +10,7 @@ import {
 } from '@/valeurImport/calls/resolveLabels'
 import { type AxeForImport } from '@/valeurImport/queries/listAxesForIndicateur'
 
-const MODALITES_TARGET: ResolutionTarget = {
+const MODALITES_TARGET: ResolutionTarget<{ libelleSource: string; modalitePublicId: string }> = {
   systemPrompt:
     "Tu reçois une liste de libellés bruts (libellésSources) provenant d'une colonne d'un fichier " +
     "de données téléversé. Ces libellés désignent des modalités d'UN axe de l'indicateur " +
@@ -23,7 +24,6 @@ const MODALITES_TARGET: ResolutionTarget = {
     '\n' +
     "Quand tu as terminé, appelle l'outil `enregistrerMapping` avec ta proposition.\n" +
     "Si l'outil te signale des erreurs, corrige et rappelle-le.",
-  publicIdField: 'modalitePublicId',
   labelDescription:
     "Libellé tel qu'apparu dans la colonne de l'axe (recopie EXACTE, pas de reformulation).",
   publicIdDescription:
@@ -32,6 +32,9 @@ const MODALITES_TARGET: ResolutionTarget = {
   mappingDescription:
     "Liste des libellés que tu as su rattacher avec confiance à une modalité de l'axe. " +
     'Un même libellé ne doit pas apparaître plusieurs fois.',
+  mappingEntrySchema: ({ libelleSource, publicId }) =>
+    z.object({ libelleSource, modalitePublicId: publicId }),
+  publicIdOf: (entry) => entry.modalitePublicId,
   logEvent: 'importPoc.resolveColumnModalites',
   logLabel: 'Albert (résolution des modalités)',
 }
