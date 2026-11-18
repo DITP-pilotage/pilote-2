@@ -1,3 +1,5 @@
+import { groupBy, mapValues, partition, uniq } from 'es-toolkit'
+
 import { type WarningApplication } from '@/valeurImport/appliquerPlan'
 import { type Plan } from '@/valeurImport/calls/decouvrirStructure'
 import { type ResolvedLabel } from '@/valeurImport/calls/resolveLabels'
@@ -33,16 +35,18 @@ export const selectAxeColumns = ({
   const structure = structureColumns(plan)
   const columnByAxe = new Map<string, string>()
 
+  // Pourquoi la colonne proposée pour cet axe est écartée, ou null si on la garde.
+  const rejectionReason = ({ column, axe }: { column: string; axe: string }): string | null => {
+    if (!headerSet.has(column)) return "elle n'existe pas dans le fichier"
+    if (structure.has(column)) return "c'est une colonne d'individu, de date ou de valeur"
+    const existingColumn = columnByAxe.get(axe)
+    if (existingColumn !== undefined) return `l'axe ${axe} a déjà la colonne « ${existingColumn} »`
+    if ([...columnByAxe.values()].includes(column)) return 'elle porte déjà un autre axe'
+    return null
+  }
+
   for (const { colonne: column, axe } of plan.colonnesAxes ?? []) {
-    const reason = !headerSet.has(column)
-      ? "elle n'existe pas dans le fichier"
-      : structure.has(column)
-        ? "c'est une colonne d'individu, de date ou de valeur"
-        : columnByAxe.has(axe)
-          ? `l'axe ${axe} a déjà la colonne « ${columnByAxe.get(axe)} »`
-          : [...columnByAxe.values()].includes(column)
-            ? 'elle porte déjà un autre axe'
-            : null
+    const reason = rejectionReason({ column, axe })
     if (reason) {
       warnings.push({
         code: 'COLONNE_AXE_IGNOREE',
@@ -89,21 +93,22 @@ export const matchModalites = ({
   labels: ReadonlyArray<string>
   modalites: ReadonlyArray<{ publicId: string; nom: string }>
 }): { mapping: ResolvedLabel[]; remaining: string[] } => {
-  const candidatesByKey = new Map<string, Set<string>>()
-  for (const modalite of modalites) {
-    for (const key of [normalizeLabel(modalite.publicId), normalizeLabel(modalite.nom)]) {
-      candidatesByKey.set(key, (candidatesByKey.get(key) ?? new Set()).add(modalite.publicId))
-    }
+  // Chaque modalité se reconnaît à son publicId et à son nom normalisés.
+  const candidates = modalites.flatMap((modalite) =>
+    [normalizeLabel(modalite.publicId), normalizeLabel(modalite.nom)].map((key) => ({
+      key,
+      publicId: modalite.publicId,
+    })),
+  )
+  const publicIdsByKey = mapValues(
+    groupBy(candidates, (candidate) => candidate.key),
+    (group) => uniq(group.map((candidate) => candidate.publicId)),
+  )
+  const publicIdsOf = (label: string) => publicIdsByKey[normalizeLabel(label)] ?? []
+
+  const [matched, remaining] = partition(labels, (label) => publicIdsOf(label).length === 1)
+  return {
+    mapping: matched.map((label) => ({ libelleSource: label, publicId: publicIdsOf(label)[0]! })),
+    remaining,
   }
-  const mapping: ResolvedLabel[] = []
-  const remaining: string[] = []
-  for (const label of labels) {
-    const candidates = candidatesByKey.get(normalizeLabel(label))
-    if (candidates?.size === 1) {
-      mapping.push({ libelleSource: label, publicId: [...candidates][0]! })
-    } else {
-      remaining.push(label)
-    }
-  }
-  return { mapping, remaining }
 }

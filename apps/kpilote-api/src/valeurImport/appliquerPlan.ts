@@ -1,3 +1,5 @@
+import { keyBy, mapValues } from 'es-toolkit'
+
 import { type Plan, type PlanLong, type PlanPivot } from '@/valeurImport/calls/decouvrirStructure'
 import { type ResolutionResult } from '@/valeurImport/calls/resoudreIndividus'
 import { type LabelResolution } from '@/valeurImport/calls/resolveLabels'
@@ -121,7 +123,7 @@ const warnPartialRow = ({
   axe: string
 }): WarningApplication => ({
   code: 'LIGNE_PARTIELLE',
-  message: `Ligne ${index} : pas de modalité pour l'axe « ${axe} » (colonne « ${column} ») — ligne écartée.`,
+  message: `Ligne ${index} : pas de modalité pour l'axe « ${axe} » (colonne « ${column} »). Ligne écartée.`,
   ligneSource: index,
   colonneSource: column,
 })
@@ -267,44 +269,41 @@ export const appliquerPlan = ({
     return { individu: null }
   }
 
-  // Résolution des modalités, par colonne d'axe. Un publicId hors des modalités
-  // de l'axe (halluciné) vaut un libellé non résolu.
-  const modaliteByColumnAndLabel = new Map(
-    axes.map((axe) => [
-      axe.column,
-      new Map(
-        axe.resolution.mapping
-          .filter((entry) => axe.validModalites.has(entry.publicId))
-          .map((entry) => [entry.libelleSource, entry.publicId]),
+  // Résolution des modalités de chaque colonne d'axe. Un publicId hors des
+  // modalités de l'axe (halluciné) vaut un libellé non résolu.
+  const indexedAxes = axes.map((axe) => ({
+    axe,
+    publicIdByLabel: mapValues(
+      keyBy(
+        axe.resolution.mapping.filter((entry) => axe.validModalites.has(entry.publicId)),
+        (entry) => entry.libelleSource,
       ),
-    ]),
-  )
-  const unresolvedReasonByColumn = new Map(
-    axes.map((axe) => [
-      axe.column,
-      new Map(axe.resolution.nonResolus.map((entry) => [entry.libelleSource, entry.raison])),
-    ]),
-  )
+      (entry) => entry.publicId,
+    ),
+    reasonByLabel: mapValues(
+      keyBy(axe.resolution.nonResolus, (entry) => entry.libelleSource),
+      (entry) => entry.raison,
+    ),
+  }))
   const reportedModalites = new Set<string>()
 
   // Les modalités d'une ligne, une par axe ; null si l'une manque ou n'est pas
   // résolue (la ligne est écartée).
   const rowModalites = (row: Record<string, unknown>, index: number): string[] | null => {
     const modalites: string[] = []
-    for (const axe of axes) {
+    for (const { axe, publicIdByLabel, reasonByLabel } of indexedAxes) {
       const label = safeStringify(row[axe.column]).trim()
       if (!label) {
         warnings.push(warnPartialRow({ index, column: axe.column, axe: axe.axe.nom }))
         return null
       }
-      const publicId = modaliteByColumnAndLabel.get(axe.column)?.get(label)
+      const publicId = publicIdByLabel[label]
       if (!publicId) {
         const key = `${axe.column}\u0000${label}`
         if (!reportedModalites.has(key)) {
           reportedModalites.add(key)
           const reason =
-            unresolvedReasonByColumn.get(axe.column)?.get(label) ??
-            `Aucune modalité de l'axe « ${axe.axe.nom} » ne correspond.`
+            reasonByLabel[label] ?? `Aucune modalité de l'axe « ${axe.axe.nom} » ne correspond.`
           warnings.push(warnUnresolvedModalite({ label, row: index, column: axe.column, reason }))
         }
         return null
