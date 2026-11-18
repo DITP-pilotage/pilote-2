@@ -795,6 +795,43 @@ export const fixtures = {
     });
   },
 
+  async formationMotif(
+    overrides: Partial<Prisma.formation_motifUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const motifId =
+      overrides.id ?? BigInt(Math.floor(Math.random() * 900_000) + 100_000);
+    return prisma.formation_motif.create({
+      data: {
+        id: motifId,
+        nom: `Motif test ${motifId}`,
+        ...overrides,
+      },
+    });
+  },
+
+  async formationSeance(
+    overrides: Partial<Prisma.formation_seanceUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const motifId = overrides.motif_id ?? (await fixtures.formationMotif()).id;
+    const dansSeptJours = new Date();
+    dansSeptJours.setDate(dansSeptJours.getDate() + 7);
+    return prisma.formation_seance.create({
+      data: {
+        id: BigInt(Math.floor(Math.random() * 900_000) + 100_000),
+        motif_id: motifId,
+        date_debut: dansSeptJours,
+        duree_minutes: 45,
+        statut: "unknown",
+        nombre_inscrits: 0,
+        url_inscription:
+          "https://rdv.anct.gouv.fr/prendre_rdv?public_link_organisation_id=1453",
+        ...overrides,
+      },
+    });
+  },
+
   async metadataZonegroup(
     overrides: Partial<Prisma.metadata_zonegroupUncheckedCreateInput> = {},
   ) {

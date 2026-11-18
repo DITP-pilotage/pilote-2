@@ -28,6 +28,7 @@ export const moduleNames = [
   "parametrageChantier",
   "referentiels",
   "annuaire",
+  "formations",
 ] as const;
 
 export type ModuleName = (typeof moduleNames)[number];

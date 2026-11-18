@@ -16,6 +16,7 @@ const CATEGORIE_PAR_ROUTEUR_TRPC: Record<RouteurTRPC, CategorieLog> = {
   commentaire: "chantier",
   decisionStrategique: "chantier",
   evaluation: "evaluation",
+  formation: "formation",
   gestionContenu: "contenu",
   gestionTokenAPI: "auth",
   habilitationsCoordinateur: "utilisateur",

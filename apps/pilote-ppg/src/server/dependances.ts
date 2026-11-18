@@ -34,6 +34,7 @@ import { actualitesModule } from "./actualites/module";
 import { parametrageChantierModule } from "./parametrage-chantier/module";
 import { referentielsModule } from "./referentiels/module";
 import { annuaireModule } from "./annuaire/module";
+import { formationsModule } from "./formations/module";
 
 const allModules = [
   frameworkModule,
@@ -65,6 +66,7 @@ const allModules = [
   parametrageChantierModule,
   referentielsModule,
   annuaireModule,
+  formationsModule,
 ];
 
 // Compile-time check: errors with missing module name(s) if allModules is not exhaustive
@@ -114,6 +116,7 @@ function registerContainer(): ContainerDependencies {
     parametrageChantier: getContainer("parametrageChantier"),
     referentiels: getContainer("referentiels"),
     annuaire: getContainer("annuaire"),
+    formations: getContainer("formations"),
   };
 }
 

@@ -4,6 +4,7 @@ export const CATEGORIES_LOG = {
   chantier: "Chantiers",
   contenu: "Contenus éditoriaux",
   evaluation: "Évaluations",
+  formation: "Formations",
   import: "Imports de données",
   indicateur: "Indicateurs",
   maintenance: "Maintenance et purges",
