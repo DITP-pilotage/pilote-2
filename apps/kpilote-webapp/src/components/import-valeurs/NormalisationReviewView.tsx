@@ -1,8 +1,13 @@
+import { keyBy } from 'es-toolkit'
 import { useState } from 'react'
 import { type NormaliserValeursImportResponseApiModel } from '@pilote/kpilote-shared/valeurImport'
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@pilote/kpilote-ui/Collapsible'
 import { ImportPreviewTable } from './ImportPreviewTable'
+import { type AxeImport } from './lecture/matriceVersRows'
+
+type Resolution = NormaliserValeursImportResponseApiModel['resolution']
+type ResolvedAxeColumn = NonNullable<Resolution['colonnesAxes']>[number]
 
 const decrirePlan = (plan: NormaliserValeursImportResponseApiModel['plan']): string => {
   if (plan.layout === 'long') {
@@ -18,6 +23,63 @@ const decrirePlan = (plan: NormaliserValeursImportResponseApiModel['plan']): str
   )
 }
 
+// Indicateur à axes : pour chaque axe, la colonne du fichier qui le porte et la
+// correspondance de ses libellés avec les modalités.
+function AxesResolution({
+  axes,
+  colonnesAxes,
+}: {
+  axes: ReadonlyArray<AxeImport>
+  colonnesAxes: ReadonlyArray<ResolvedAxeColumn>
+}) {
+  const columnByAxe = keyBy(colonnesAxes, (axeColumn) => axeColumn.axe)
+  return (
+    <div className="space-y-3 text-sm">
+      {axes.map((axe) => {
+        const axeColumn = columnByAxe[axe.id]
+        return (
+          <div key={axe.id}>
+            <div className="font-medium text-text">
+              Axe « {axe.nom} » :{' '}
+              {axeColumn ? (
+                <span className="font-normal text-text-muted">colonne « {axeColumn.colonne} »</span>
+              ) : (
+                <span className="font-normal text-red-marianne">
+                  aucune colonne dans le fichier
+                </span>
+              )}
+            </div>
+            {axeColumn && axeColumn.mapping.length + axeColumn.nonResolus.length > 0 ? (
+              <div className="mt-1 max-h-48 overflow-y-auto rounded-md border border-border">
+                <table className="w-full text-left text-[13px]">
+                  <tbody className="divide-y divide-border">
+                    {axeColumn.mapping.map((entry) => (
+                      <tr key={entry.libelleSource}>
+                        <td className="px-3 py-1.5 text-text-muted">{entry.libelleSource}</td>
+                        <td className="px-3 py-1.5 text-text-subtle">→</td>
+                        <td className="px-3 py-1.5 font-mono text-text">
+                          {entry.modalitePublicId}
+                        </td>
+                      </tr>
+                    ))}
+                    {axeColumn.nonResolus.map((entry) => (
+                      <tr key={entry.libelleSource}>
+                        <td className="px-3 py-1.5 text-text-muted">{entry.libelleSource}</td>
+                        <td className="px-3 py-1.5 text-text-subtle">→</td>
+                        <td className="px-3 py-1.5 text-red-marianne">non reconnu</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function Stat({ libelle, valeur }: { libelle: string; valeur: number }) {
   return (
     <div className="rounded-md border border-border bg-surface px-3 py-2">
@@ -29,8 +91,10 @@ function Stat({ libelle, valeur }: { libelle: string; valeur: number }) {
 
 export function NormalisationReviewView({
   response,
+  axes = [],
 }: {
   response: NormaliserValeursImportResponseApiModel
+  axes?: ReadonlyArray<AxeImport>
 }) {
   const { items, warnings, plan, resolution, rapport, resolutionTypeValeur } = response
   const nbImportables = items.length
@@ -104,6 +168,10 @@ export function NormalisationReviewView({
               </div>
             ) : null}
 
+            {axes.length > 0 ? (
+              <AxesResolution axes={axes} colonnesAxes={resolution.colonnesAxes ?? []} />
+            ) : null}
+
             {resolution.mapping.length > 0 ? (
               <div className="text-sm">
                 <div className="font-medium text-text">
@@ -149,7 +217,7 @@ export function NormalisationReviewView({
       {nbImportables > 0 ? (
         <div>
           <h3 className="mb-2 text-sm font-semibold text-text">Valeurs détectées</h3>
-          <ImportPreviewTable rows={items} />
+          <ImportPreviewTable rows={items} axes={axes} />
         </div>
       ) : null}
     </div>

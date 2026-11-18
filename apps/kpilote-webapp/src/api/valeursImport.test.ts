@@ -20,6 +20,31 @@ describe('importValeursBatch', () => {
     }
   })
 
+  it('envoie les modalités des lignes d’un indicateur à axes, et rien de plus sans axe', async () => {
+    const bodies: unknown[] = []
+    server.use(
+      http.put(apiUrl('/indicateurs/IND-1/valeurs:batch'), async ({ request }) => {
+        bodies.push(await request.json())
+        return HttpResponse.json({ total: 2, created: 2, updated: 0 })
+      }),
+    )
+    await importValeursBatch({
+      indicateurId: 'IND-1',
+      rows: [
+        { individu: 'DEPT-84', modalites: ['OP-ORANGE'], date: '2024-01-15', valeur: 7.2 },
+        { individu: 'DEPT-13', date: '2024-01-15', valeur: 3 },
+      ],
+    })
+    expect(bodies).toEqual([
+      {
+        items: [
+          { individu: 'DEPT-84', modalites: ['OP-ORANGE'], date: '2024-01-15', valeur: 7.2 },
+          { individu: 'DEPT-13', date: '2024-01-15', valeur: 3 },
+        ],
+      },
+    ])
+  })
+
   it('retourne err BATCH_INVALID sur 400 BATCH_INVALID', async () => {
     server.use(
       http.put(apiUrl('/indicateurs/IND-1/valeurs:batch'), () =>

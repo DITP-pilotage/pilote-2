@@ -1,15 +1,17 @@
 import { ErreursServeurBloc } from './ErreursServeurBloc'
 import { ImportPreviewTable } from './ImportPreviewTable'
-import { type ParsedRow } from './lecture/matriceVersRows'
+import { type AxeImport, type ParsedRow } from './lecture/matriceVersRows'
 
 // Fichier au format standard : entête récapitulatif + aperçu des lignes.
 export function ImportFormatValide({
   nomFichier,
   rows,
+  axes,
   erreursServeur,
 }: {
   nomFichier: string | undefined
   rows: ParsedRow[]
+  axes: ReadonlyArray<AxeImport>
   erreursServeur: string[]
 }) {
   return (
@@ -20,7 +22,7 @@ export function ImportFormatValide({
         </span>
       </div>
       <ErreursServeurBloc messages={erreursServeur} />
-      <ImportPreviewTable rows={rows} />
+      <ImportPreviewTable rows={rows} axes={axes} />
     </>
   )
 }

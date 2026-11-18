@@ -98,3 +98,59 @@ describe('matriceVersRows', () => {
     })
   })
 })
+
+describe('matriceVersRows — indicateur à axes', () => {
+  const axes = [
+    { id: 'AXE-OPERATEUR', nom: 'Opérateur' },
+    { id: 'AXE-FRAUDE', nom: 'Type de fraude' },
+  ]
+
+  it('lit une colonne par axe, dans l’ordre des axes, quel que soit l’ordre des colonnes', () => {
+    const result = matriceVersRows({
+      matrice: [
+        ['axe-fraude', 'individu', 'date', 'AXE-OPERATEUR', 'valeur'],
+        ['FR-TVA', 'DEPT-84', '2024-01-15', ' OP-ORANGE ', 7.2],
+      ],
+      axes,
+    })
+    expect(result).toEqual({
+      ok: true,
+      rows: [
+        {
+          individu: 'DEPT-84',
+          modalites: ['OP-ORANGE', 'FR-TVA'],
+          date: '2024-01-15',
+          valeur: 7.2,
+        },
+      ],
+    })
+  })
+
+  it('omet une cellule d’axe vide (l’API signale la modalité manquante)', () => {
+    const result = matriceVersRows({
+      matrice: [
+        ['individu', 'AXE-OPERATEUR', 'AXE-FRAUDE', 'date', 'valeur'],
+        ['DEPT-84', '', 'FR-TVA', '2024-01-15', 1],
+      ],
+      axes,
+    })
+    expect(result).toEqual({
+      ok: true,
+      rows: [{ individu: 'DEPT-84', modalites: ['FR-TVA'], date: '2024-01-15', valeur: 1 }],
+    })
+  })
+
+  it('remonte MISSING_COLUMNS avec la colonne d’axe absente', () => {
+    const result = matriceVersRows({
+      matrice: [
+        ['individu', 'AXE-OPERATEUR', 'date', 'valeur'],
+        ['DEPT-84', 'OP-ORANGE', '2024-01-15', 1],
+      ],
+      axes,
+    })
+    expect(result).toEqual({
+      ok: false,
+      error: { code: 'MISSING_COLUMNS', missing: ['AXE-FRAUDE'] },
+    })
+  })
+})

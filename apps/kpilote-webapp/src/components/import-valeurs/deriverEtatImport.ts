@@ -1,6 +1,7 @@
 import type { NormaliserValeursImportResponseApiModel } from '@pilote/kpilote-shared/valeurImport'
 import type { LectureMatrice } from './lecture/fichierVersMatrice'
 import {
+  type AxeImport,
   matriceVersRows,
   type ParseError,
   type ParsedRow,
@@ -16,10 +17,18 @@ export type EtatImport =
   | { kind: 'albertRevue'; revue: NormaliserValeursImportResponseApiModel }
   | { kind: 'albertEchec'; error: ParseError }
 
-export const parseLecture = (lecture: LectureMatrice | undefined): ParseResult | undefined => {
-  if (!lecture) return undefined
+// `undefined` tant que le fichier n'est pas lu ou que les axes de l'indicateur,
+// qui fixent les colonnes attendues, ne sont pas chargés.
+export const parseLecture = ({
+  lecture,
+  axes,
+}: {
+  lecture: LectureMatrice | undefined
+  axes: ReadonlyArray<AxeImport> | undefined
+}): ParseResult | undefined => {
+  if (!lecture || !axes) return undefined
   if (!lecture.ok) return { ok: false, error: { code: 'UNREADABLE' } }
-  return matriceVersRows({ matrice: lecture.matrice })
+  return matriceVersRows({ matrice: lecture.matrice, axes })
 }
 
 export function deriverEtatImport({
