@@ -53,6 +53,7 @@
     "dotenv": "18.0.9",
     "echarts": "^6.1.0",
     "echarts-for-react": "3.0.6",
+    "es-toolkit": "^1.53.1",
     "hono": "^4.13.16",
     "hono-rate-limiter": "^0.5.4",
     "html-to-image": "1.11.13",
