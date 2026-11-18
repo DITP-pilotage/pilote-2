@@ -60,7 +60,7 @@ describe('traduireErreursBatch', () => {
   })
 })
 
-describe('traduireErreursBatch — nom des axes', () => {
+describe('traduireErreursBatch : nom des axes', () => {
   it('nomme l’axe par son nom quand l’indicateur le déclare', () => {
     const messages = traduireErreursBatch({
       details: {

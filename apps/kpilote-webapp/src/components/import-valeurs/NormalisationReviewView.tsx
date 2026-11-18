@@ -1,3 +1,4 @@
+import { keyBy } from 'es-toolkit'
 import { useState } from 'react'
 import { type NormaliserValeursImportResponseApiModel } from '@pilote/kpilote-shared/valeurImport'
 
@@ -31,20 +32,21 @@ function AxesResolution({
   axes: ReadonlyArray<AxeImport>
   colonnesAxes: ReadonlyArray<ResolvedAxeColumn>
 }) {
+  const columnByAxe = keyBy(colonnesAxes, (axeColumn) => axeColumn.axe)
   return (
     <div className="space-y-3 text-sm">
       {axes.map((axe) => {
-        const axeColumn = colonnesAxes.find((entry) => entry.axe === axe.id)
+        const axeColumn = columnByAxe[axe.id]
         return (
           <div key={axe.id}>
             <div className="font-medium text-text">
-              Axe « {axe.nom} »{' '}
+              Axe « {axe.nom} » :{' '}
               {axeColumn ? (
-                <span className="font-normal text-text-muted">
-                  — colonne « {axeColumn.colonne} »
-                </span>
+                <span className="font-normal text-text-muted">colonne « {axeColumn.colonne} »</span>
               ) : (
-                <span className="font-normal text-red-marianne">— aucune colonne du fichier</span>
+                <span className="font-normal text-red-marianne">
+                  aucune colonne dans le fichier
+                </span>
               )}
             </div>
             {axeColumn && axeColumn.mapping.length + axeColumn.nonResolus.length > 0 ? (

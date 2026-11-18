@@ -3,6 +3,7 @@ import type {
   BatchInvalidErrorEntryApiModel,
 } from '@pilote/kpilote-shared/valeurAvancement'
 import type { ValidationIssueApiModel } from '@pilote/kpilote-shared/error'
+import { keyBy } from 'es-toolkit'
 import type { AxeImport } from './lecture/matriceVersRows'
 
 const numeroLigne = (index: number): number => index + 2
@@ -54,8 +55,8 @@ export function traduireErreursBatch({
   details: BatchInvalidErrorDetailsApiModel
   axes?: ReadonlyArray<AxeImport>
 }): string[] {
-  const nameByAxe = new Map(axes.map((axe) => [axe.id, axe.nom]))
-  const axeName = (publicId: string): string => nameByAxe.get(publicId) ?? publicId
+  const axeById = keyBy(axes, (axe) => axe.id)
+  const axeName = (publicId: string): string => axeById[publicId]?.nom ?? publicId
   return details.errors.map((entree) => traduireEntree(entree, axeName))
 }
 
