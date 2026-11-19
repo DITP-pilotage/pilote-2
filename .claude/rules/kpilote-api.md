@@ -10,7 +10,7 @@ Hono + `@hono/zod-openapi`, Prisma 7, neverthrow, Vitest. L'API est une API pure
 ## Structure
 
 ### Un module par ressource
-`src/<module>/` contient `routes.ts`, `queries/`, `commands/`, `permissions.ts`, `utils.ts` (mappers `toXApiModel`, constantes `xInclude`), et des fichiers de logique pure nommés par ce qu'ils font (`combinaison.ts`, `resolveSelection.ts`). Le socle transverse est dans `src/framework/`, les helpers de test dans `src/test/`.
+`src/<module>/` contient `routes.ts`, `queries/`, `commands/`, `permissions.ts` (gardes d'accès), `rules.ts` (règles métier), `utils.ts` (mappers `toXApiModel`, constantes `xInclude`), et des fichiers de logique pure nommés par ce qu'ils font (`combinaison.ts`, `resolveSelection.ts`). Le socle transverse est dans `src/framework/`, les helpers de test dans `src/test/`.
 Pourquoi : CQS lite ; on trouve une lecture ou une écriture par son nom de fichier.
 - Exemple : `src/axe/` (`routes.ts`, `queries/getAxeByPublicId.ts`, `commands/deleteModalite.ts`, `utils.ts`).
 
@@ -98,11 +98,11 @@ Pourquoi : une command se lit de haut en bas comme un script ; les chaînes imbr
 - À éviter : `ResultAsync.fromSafePromise(perform(params)).andThen((result) => result)` (même effet, en plus long).
 - À éviter : `resolveIndicateurAndIndividuForWriteData(...).andThen(({ indicateur, individu }) => ResultAsync.fromSafePromise(db().objectifIndicateurIndividu.upsert(...)).map(...))` (`src/objectifIndicateurIndividu/commands/upsertObjectifIndicateurIndividu.ts`)
 
-### Un `err` annule la transaction : les contrôles se placent au plus lisible
-`withTransaction` rollback sur `err` : un `return err(...)` après une écriture est sûr. Vérifier avant d'écrire reste préférable quand c'est aussi lisible ; sinon le contrôle reste à côté de l'écriture qu'il protège (refuser de retirer un axe juste avant de remplacer les déclarations, par exemple).
+### Un `err` annule la transaction
+`withTransaction` rollback sur `err` : un `return err(...)` après une écriture est sûr. Les règles métier s'appliquent quand même avant la première écriture (voir « Une command : gardes, chargement, règles, écriture ») ; un contrôle placé après une écriture reste l'exception, quand il dépend de ce qu'elle a produit.
 
 ### Le principal se lit dans le contexte, pas en paramètre
-`ensurePrincipal(...)` / `requireCurrentPrincipalId()` en tête de la fonction ; les permissions de ressource passent par `with{Ressource}ReadPermission(where, principalId)` et `ensure{Ressource}WritePermission({ principalId, ... })` (`docs/architecture/permissions-design.md`).
+Les gardes (`ensureAdmin()`, `ensureAuteur(...)`, `requireCurrentPrincipalId()`) se placent en tête de la fonction ; les permissions de ressource passent par `with{Ressource}ReadPermission(where, principalId)` et `ensure{Ressource}WritePermission({ principalId, ... })` (`docs/architecture/permissions-design.md`).
 
 ## Gestion d'erreur
 
@@ -114,9 +114,90 @@ Pourquoi : un refus métier fait partie du contrat de la command ; l'appelant do
 `export type DeleteModaliteError = { type: 'MODALITE_A_DES_ENFANTS'; enfants: string[] } | { type: 'MODALITE_UTILISEE'; valeurs: number }`. Le `type` est en SCREAMING_SNAKE_CASE, en français, et devient le `code` de la réponse ; le payload est utile et liste **tous** les cas fautifs (pas seulement le premier).
 Pourquoi : l'appelant traite chaque cas par `switch`, et le client corrige tout en un aller-retour.
 
-### La command décide de ses `err`
-Un helper propre à une command renvoie une donnée (un `boolean`, la liste des inconnus) et la command fabrique l'`err`. Seul un helper partagé par plusieurs commands porte l'erreur lui-même (`resolveCelluleForWrite`, pour l'upsert et la suppression d'une valeur).
-Pourquoi : on lit dans la command tous les refus qu'elle peut renvoyer.
+### Une règle porte son erreur, un helper technique renvoie une donnée
+Une règle de `rules.ts` fabrique son `err`. Un helper technique (diff de liaisons, ids inconnus, remontée des ancêtres) renvoie une donnée, et la command ou la règle décide. Un helper partagé qui enchaîne chargement et règles peut porter leurs erreurs (`resolveCelluleForWrite`, pour l'upsert et la suppression d'une valeur).
+Pourquoi : on lit dans la command, ou dans les règles qu'elle appelle, tous les refus qu'elle peut renvoyer.
+
+### Une référence inconnue se refuse dans la command
+Vérifier qu'une liste d'ids existe relève de la validation d'entrée, pas d'une règle métier : la command appelle `findUnknown({ requested, found })` puis fait `if (inconnus.length > 0) return err({ type: 'REFERENTIELS_INCONNUS', referentiels: inconnus })`. Une référence isolée passe par `findUniqueOrThrow` (404).
+
+## Règles métier
+
+### Une règle métier est une fonction pure, dans `<module>/rules.ts`
+`check<Règle>(input): Result<T, XError>`, sans `db()` ni principal. Elle reçoit **seulement les champs dont elle a besoin**, pas l'entité Prisma entière : tout contexte qui les contient convient (typage structurel). Elle renvoie `ok()`, ou la donnée qu'elle a vérifiée (`ok(individu)`, les modalités dans l'ordre des axes) pour éviter un `!` derrière le contrôle. Chaque règle exporte son type d'erreur ; la command assemble l'union (`type UpsertAxeError = AxeUtiliseError | NiveauPorteModalitesError`). Le nom dit la règle (`checkNombreNiveauxModifiable`, `checkCleApiRevocable`) ; `ensure` reste réservé aux gardes qui lèvent une 403. Le commentaire qui explique le « pourquoi » de la règle se place au-dessus d'elle.
+Pourquoi : une règle se lit, se teste et se réutilise sans base ; `rules.ts` est le catalogue des règles du module.
+- À faire :
+  ```ts
+  export type AxeUtiliseError = { type: 'AXE_UTILISE'; indicateurs: string[] }
+
+  // Un indicateur qui déclare l'axe calcule ses totaux sur ses niveaux : en
+  // ajouter ou en retirer changerait ses résultats. Renommer reste permis.
+  export const checkNombreNiveauxModifiable = ({ nombreNiveauxActuel, nombreNiveauxCible, indicateursDeclarants }: {
+    nombreNiveauxActuel: number | null
+    nombreNiveauxCible: number
+    indicateursDeclarants: string[]
+  }): Result<void, AxeUtiliseError> => {
+    if (nombreNiveauxActuel === null) return ok()
+    if (nombreNiveauxActuel === nombreNiveauxCible) return ok()
+    if (indicateursDeclarants.length === 0) return ok()
+    return err({ type: 'AXE_UTILISE', indicateurs: indicateursDeclarants })
+  }
+  ```
+
+### Une règle s'écrit avec des `if` et des retours anticipés
+Une condition par `if`, un `return` par cas, `return ok()` en dernier.
+Pourquoi : chaque cas de la règle se lit sur sa ligne.
+- À éviter : un ternaire ou des conditions enchaînées par `&&` / `||` pour décider entre `ok` et `err`.
+
+### Une règle importée d'un autre module vient du module qui possède le concept
+Pas de dossier `rules/` transverse : le rattachement d'un individu vit dans `individu/rules.ts`, et `valeurAvancement` l'importe.
+
+### Une règle porte sur un élément ; un lot l'applique item par item
+La même règle sert à l'écriture unitaire et au lot ; seul le chargement change. Le chargeur d'un lot charge tout en un nombre fixe de requêtes (`Map` par publicId, `Set` des ids liés), la command applique la règle à chaque item, puis un helper de `batchErrors.ts` regroupe les erreurs avec leurs indices.
+- À faire : `checkIndividuRattache` (`individu/rules.ts`), appelé par `resolveCelluleForWrite` et par `upsertValeursAvancementBatch` sur le même chargeur `loadIndividusContext`.
+
+### Une command : gardes, chargement, règles, écriture
+`perform…` enchaîne quatre étapes :
+1. **Gardes** : `ensureAdmin()`, `ensure{Ressource}{Action}Permission(...)`, `ensureAuteur(...)` (403).
+2. **Chargement** : `load…Context(...)`, qui ne renvoie jamais d'`err` (404 par `findUniqueOrThrow`).
+3. **Règles** : `const x = checkY(...); if (x.isErr()) return err(x.error)`, une règle après l'autre.
+4. **Écritures** : elles réutilisent le contexte chargé, sans relire ce qu'il contient.
+
+Le chargeur est privé dans le fichier de la command ; il devient un fichier du module dès que deux commands le partagent. Il charge ce dont les règles et l'écriture ont besoin ; une requête de plus (`count`, `EXISTS`) vaut mieux qu'un chargement qui dépend des cas de la règle.
+Pourquoi : la command se lit comme un script dont chaque étape porte un nom ; les règles qu'elle applique se lisent dans l'ordre.
+- À faire :
+  ```ts
+  const performUpsert = async ({ publicId, body }: UpsertAxeParams): Promise<Result<void, UpsertAxeError>> => {
+    ensureAdmin()
+
+    const context = await loadUpsertAxeContext({ publicId })
+    const nombreNiveauxCible = body.niveaux.length
+
+    const modifiable = checkNombreNiveauxModifiable({
+      nombreNiveauxActuel: context.axe?.niveaux.length ?? null,
+      nombreNiveauxCible,
+      indicateursDeclarants: context.indicateursDeclarants,
+    })
+    if (modifiable.isErr()) return err(modifiable.error)
+
+    const supprimables = checkNiveauxSupprimables({
+      nombreNiveauxCible,
+      ordresPorteursDeModalites: context.ordresPorteursDeModalites,
+    })
+    if (supprimables.isErr()) return err(supprimables.error)
+
+    await saveAxe({ publicId, body, axeExistant: context.axe })
+    return ok()
+  }
+  ```
+
+### Les gardes d'accès lèvent une 403, sans `Result`
+`ensureAdmin()`, `ensureAdminOrOidcUser()` et `ensureAuteur({ createdBy, message })` vivent dans `framework/auth/principalPredicates.ts`, avec leur message ; pas de constante `MESSAGE_ADMIN` par module. Les gardes sur une ressource (`ensureIndicateurWriteDataPermission`) vivent dans `<module>/permissions.ts`, une seule fois par action.
+Pourquoi : une décision d'accès (qui a le droit, avec quel passe-droit) se prend à un seul endroit.
+- À éviter : `ensurePrincipal(isApiKeyAdmin, '…')` recopié dans chaque command, une vérification de permission réécrite dans une command (`assertWritePermission`).
+
+### Remplacer une liste de liaisons passe par `diff`
+`const { toAdd, toRemove } = diff(cibles, existantes)` (`framework/collections/diff.ts`), puis un `deleteMany` sur `toRemove` et un `createMany` sur `toAdd`. Pas de helper générique au-dessus des délégués Prisma.
 
 ## Prisma
 
@@ -143,6 +224,10 @@ Pas de prod réelle : pas d'expand/contract, pas de DEFAULT ni d'index conservé
 ### Les tests de comportement vivent au niveau de la query ou de la command
 `queries/<query>.test.ts` / `commands/<command>.test.ts` appellent la fonction directement, sous `runAsPrincipal` / `runAsAdmin`, et vérifient `_unsafeUnwrap()` / `_unsafeUnwrapErr()`. Les tests de route (`buildTestApp`) ne couvrent que le câblage HTTP (statut, sérialisation).
 Pourquoi : un test de query est rapide, ciblé, et ne dépend pas du transport.
+
+### Les cas d'une règle se testent dans `rules.test.ts`
+Les cas limites d'une règle se testent en unitaire, sans base ni `integrationTest` (`describe.concurrent`, assertions sur `_unsafeUnwrapErr()`). Le test de la command vérifie seulement qu'elle applique chaque règle : un cas par `err`.
+Pourquoi : la combinatoire d'une règle coûte peu en unitaire ; le test en base ne couvre que le câblage.
 
 ### `describe.concurrent` + `integrationTest`
 Chaque `it` est enveloppé dans `integrationTest(async () => ...)` (transaction annulée en fin de test), et le `describe` est `concurrent`. Noms de tests en français (« renvoie… », « rejette… »).
