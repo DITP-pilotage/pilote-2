@@ -6,11 +6,12 @@ import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
 import { type CommentaireType, hasBrouillon } from '@/commentaire/hasBrouillon'
+import { type BrouillonExistantError, checkBrouillonUnique } from '@/commentaire/rules'
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
 import { commentaireInclude, htmlToPlainText, toCommentaireApiModel } from '@/commentaire/utils'
 import { db } from '@/framework/persistence/dbStore'
 
-export type CreerCommentaireError = { type: 'BROUILLON_EXISTANT' }
+export type CreerCommentaireError = BrouillonExistantError
 
 type CreerCommentaireParams<P extends Record<string, string>> = {
   params: P
@@ -26,15 +27,15 @@ const performCreer = async <P extends Record<string, string>>({
 > => {
   const cible = await config.resoudreCibleEcriture(params)
 
-  if (body.statut === 'BROUILLON') {
-    const existe = await hasBrouillon({
-      config,
-      params,
-      principalId: cible.principalId,
-      type: body.type,
-    })
-    if (existe) return err({ type: 'BROUILLON_EXISTANT' })
-  }
+  const brouillonExistant = await hasBrouillon({
+    config,
+    params,
+    principalId: cible.principalId,
+    type: body.type,
+  })
+
+  const brouillonUnique = checkBrouillonUnique({ statut: body.statut, brouillonExistant })
+  if (brouillonUnique.isErr()) return err(brouillonUnique.error)
 
   const commentaire = await db().commentaire.create({
     data: {
