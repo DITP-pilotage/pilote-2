@@ -86,7 +86,7 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     watch,
     getValues,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useFormContext<UtilisateurFormInputs>();
 
   const [
@@ -343,6 +343,7 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     getValues,
     setValue,
     errors,
+    isSubmitting,
     optionsProfil,
     profilCodeSelectionne,
     changementProfilSelectionne,

@@ -22,6 +22,8 @@ import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
 import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
+import { ConflictError } from "@/shared/errors/conflict-error";
+import { NotFoundError } from "@/shared/errors/not-found-error";
 
 describe("CreerOuMettreAJourUnUtilisateurUseCase", () => {
   const fakeChantiers: InformationChantierUtilisateur[] = [
@@ -130,6 +132,7 @@ describe("CreerOuMettreAJourUnUtilisateurUseCase", () => {
     process.env = { ...oldEnv };
     process.env.IMPORT_KEYCLOAK_URL = "https://keycloak.net";
     (stubUtilisateurRepository.créerOuMettreÀJour as Mock).mockClear();
+    stubUtilisateurRepository.getAccountStatus.mockResolvedValue("inconnu");
     (stubUtilisateurIAMRepository.ajouteUtilisateurs as Mock).mockClear();
     (stubChantierRepository.récupérerChantiersSynthétisés as Mock).mockClear();
   });
@@ -193,6 +196,70 @@ describe("CreerOuMettreAJourUnUtilisateurUseCase", () => {
       },
     ]);
   }
+
+  describe("Si un compte existe déjà avec l'adresse", () => {
+    it.each([
+      {
+        statut: "actif" as const,
+        message: "Un compte a déjà été créé avec cette adresse électronique.",
+      },
+      {
+        statut: "desactive" as const,
+        message:
+          "Un compte désactivé existe avec cette adresse électronique : retrouvez-le parmi les comptes désactivés de la liste des comptes pour le réactiver.",
+      },
+    ])(
+      "refuse la création d'un compte $statut sans rien enregistrer",
+      async ({ statut, message }) => {
+        // Given
+        stubUtilisateurRepository.getAccountStatus.mockResolvedValue(statut);
+        const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
+          .avecProfil(ProfilEnum.DITP_ADMIN)
+          .build();
+
+        // When
+        const creation = créerOuMettreÀJourUnUtilisateurUseCase.run(
+          utilisateur,
+          randomUUID(),
+          false,
+          habilitations,
+          new ProfilBuilder().withCode(ProfilEnum.DITP_ADMIN).build(),
+        );
+
+        // Then
+        await expect(creation).rejects.toThrow(new ConflictError(message));
+        expect(
+          stubUtilisateurRepository.créerOuMettreÀJour,
+        ).not.toHaveBeenCalled();
+      },
+    );
+  });
+
+  describe("Si le compte à modifier n'existe pas", () => {
+    it("refuse la modification sans rien enregistrer", async () => {
+      // Given
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
+        .avecProfil(ProfilEnum.DITP_ADMIN)
+        .build();
+
+      // When
+      const modification = créerOuMettreÀJourUnUtilisateurUseCase.run(
+        utilisateur,
+        randomUUID(),
+        true,
+        habilitations,
+        new ProfilBuilder().withCode(ProfilEnum.DITP_ADMIN).build(),
+      );
+
+      // Then
+      await expect(modification).rejects.toThrow(
+        new NotFoundError("Le compte à modifier n'existe pas."),
+      );
+      expect(
+        stubUtilisateurRepository.créerOuMettreÀJour,
+      ).not.toHaveBeenCalled();
+    });
+  });
 
   describe("Si la variable d'env IMPORT_KEYCLOAK_URL n'est pas définie", () => {
     it("ne créé pas l'utilisateur sur Keycloak", async () => {

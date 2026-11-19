@@ -70,6 +70,17 @@ export const utilisateurRouter = createTRPCRouter({
           profilAuteur,
         );
     }),
+  getAccountStatus: protectedProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(({ input, ctx }) => {
+      const habilitation = new Habilitation(ctx.session.habilitations);
+      if (!habilitation.peutCréerEtModifierUnUtilisateur()) {
+        throw new TRPCError({ code: "FORBIDDEN" });
+      }
+      return getContainer("gestionUtilisateur")
+        .resolve("utilisateurRepository")
+        .getAccountStatus(input.email);
+    }),
   modifier: protectedProcedure
     .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {

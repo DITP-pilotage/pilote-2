@@ -28,6 +28,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
     getValues,
     setValue,
     errors,
+    isSubmitting,
     optionsProfil,
     profilCodeSelectionne,
     changementProfilSelectionne,
@@ -324,6 +325,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           iconRight={
             <Icone className="text-current h-4 w-4" icone={ArrowLine1Icon} />
           }
+          disabled={isSubmitting}
           title="Suivant"
           type="submit"
         >

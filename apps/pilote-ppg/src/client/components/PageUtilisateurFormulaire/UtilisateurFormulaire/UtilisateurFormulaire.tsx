@@ -7,7 +7,10 @@ import { useSession } from "next-auth/react";
 import { $Enums } from "@prisma/client";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { StepIndicator } from "@/components/shared/StepIndicator";
-import { donneValidationInfosBaseUtilisateur } from "@/validation/utilisateur";
+import {
+  donneValidationInfosBaseUtilisateur,
+  EMAIL_ALREADY_USED_MESSAGES,
+} from "@/validation/utilisateur";
 import RécapitulatifUtilisateur from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur";
 import { api } from "@/server/framework/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
@@ -38,6 +41,7 @@ const UtilisateurFormulaire: FunctionComponent<
       undefined,
       { staleTime: Number.POSITIVE_INFINITY },
     );
+  const getAccountStatus = api.utilisateur.getAccountStatus.useMutation();
   const { data: territoires } = api.territoire.list.useQuery(
     { territoireCodes: null },
     { staleTime: Number.POSITIVE_INFINITY },
@@ -79,7 +83,21 @@ const UtilisateurFormulaire: FunctionComponent<
     },
   });
 
-  const passerAuRécapitulatif = async () => {
+  const passerAuRécapitulatif = async ({ email }: UtilisateurFormInputs) => {
+    if (!utilisateur) {
+      // Si la vérification échoue, la confirmation refuse de toute façon le doublon.
+      const accountStatus = await getAccountStatus
+        .mutateAsync({ email })
+        .catch(() => "inconnu" as const);
+      if (accountStatus !== "inconnu") {
+        reactHookForm.setError(
+          "email",
+          { message: EMAIL_ALREADY_USED_MESSAGES[accountStatus] },
+          { shouldFocus: true },
+        );
+        return;
+      }
+    }
     setEtapeCourante(2);
   };
 

@@ -64,10 +64,19 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async selectProfil(profilName: string): Promise<void> {
-    await this.page.getByLabel("Profil", { exact: true }).click();
-    await this.page
-      .getByRole("option", { name: profilName, exact: true })
-      .click();
+    const option = this.page.getByRole("option", {
+      name: profilName,
+      exact: true,
+    });
+    // Les profils sont chargés après l'affichage du formulaire : ouverte trop tôt, la
+    // liste reste vide.
+    await expect(async () => {
+      if (!(await option.isVisible())) {
+        await this.page.getByLabel("Profil", { exact: true }).click();
+      }
+      await expect(option).toBeVisible({ timeout: 1_000 });
+    }).toPass({ timeout: 10_000 });
+    await option.click();
   }
 
   async clickNextToReview(): Promise<void> {
@@ -116,11 +125,14 @@ export class PageUtilisateurFormulaire extends BasePage {
     });
   }
 
-  async expectEmailAlreadyUsedError(): Promise<void> {
+  async expectEmailAlreadyUsedError(message: string): Promise<void> {
+    await expect(this.emailInput).toHaveAttribute("aria-invalid", "true");
+    await expect(this.emailInput).toBeFocused();
+    await expect(this.emailInput).toHaveAccessibleDescription(
+      new RegExp(RegExp.escape(message)),
+    );
     await expect(
-      this.page.getByRole("alert").getByRole("heading", {
-        name: "Un compte a déjà été créé avec cette adresse électronique.",
-      }),
+      this.page.getByRole("heading", { name: "Identification" }),
     ).toBeVisible();
   }
 }

@@ -118,9 +118,9 @@ export default class ImporterDesUtilisateursUseCase {
       }
 
       const utilisateurExistant =
-        await this.utilisateurRepository.verifierExistenceUtilisateur(
+        (await this.utilisateurRepository.getAccountStatus(
           utilisateur.email,
-        );
+        )) !== "inconnu";
 
       const utilisateurAvantModification = utilisateurExistant
         ? await this.utilisateurRepository.récupérer(

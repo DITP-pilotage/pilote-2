@@ -5,6 +5,7 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 import { PiloteError } from "@/shared/errors/pilote-error";
 import { CreateContextOptions } from "./trpc.interface";
+import { httpStatusFromTrpcError } from "./trpcErrorStatus";
 
 const createInternalTRPCContext = (opts: CreateContextOptions) => {
   return {
@@ -38,7 +39,7 @@ const trpc = initTRPC.context<typeof createTRPCContext>().create({
       message: piloteCause ? shape.message : "Une erreur est survenue",
       data: {
         ...formattedData,
-        httpStatus: piloteCause?.status ?? formattedData.httpStatus,
+        httpStatus: httpStatusFromTrpcError(error),
         code: piloteCause?.type ?? formattedData.code,
         zodError:
           error.cause instanceof ZodError ? error.cause.flatten() : null,
