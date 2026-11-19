@@ -43,6 +43,7 @@ Pourquoi : une route se lit d'un bloc ; la séparation par fichier n'apporte que
 ### Les erreurs métier se traduisent par `describeXError`
 Une fonction `describeXError(error)` par union d'erreur, avec un `switch (error.type)` qui renvoie toujours `{ status, message, details }`, même quand tous les cas ont le même statut. La route répond `jsonResponseError({ context, error: { code: error.type, message, details }, schema: ErrorApiModelSchema, status })`.
 Pourquoi : toutes les routes traduisent leurs erreurs de la même façon ; le statut se décide cas par cas, au même endroit que le message.
+Exception : une route dont le schéma d'erreur est une union discriminée sur `code` (`valeurImport/routes.ts`) construit sa réponse cas par cas, le typage ne pouvant pas relier `error.type` au schéma.
 
 ### Les écritures passent par `withTransaction` dans la route, la relecture se fait après
 `withTransaction(() => …)` prend et renvoie un `ResultAsync` : il commit sur `ok`, et annule la transaction sur `err` comme sur une exception. La transaction n'enveloppe que la command ; la query de relecture s'enchaîne **après**, par `.andThen`, une fois la transaction committée. Pas de `if (isErr())` ni de `_unsafeUnwrap`, pas d'`await` d'une command dont on jette le `Result`. La transaction s'ouvre dans la route (ou un job), jamais dans une command.

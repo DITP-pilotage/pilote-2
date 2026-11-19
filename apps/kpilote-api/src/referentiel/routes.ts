@@ -17,7 +17,10 @@ import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { ErrorApiModelSchema, erreur400, erreur403, erreur409 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
-import { upsertReferentiel } from '@/referentiel/commands/upsertReferentiel'
+import {
+  upsertReferentiel,
+  type UpsertReferentielError,
+} from '@/referentiel/commands/upsertReferentiel'
 import { getReferentielByPublicId } from '@/referentiel/queries/getReferentielByPublicId'
 import { listIndividusForReferentiel } from '@/referentiel/queries/listIndividusForReferentiel'
 import { listReferentiels } from '@/referentiel/queries/listReferentiels'
@@ -156,6 +159,19 @@ referentielRoutes.openapi(getReferentielByIdRoute, async (context) => {
   )
 })
 
+const describeUpsertReferentielError = (
+  error: UpsertReferentielError,
+): { status: 409; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'INDIVIDUS_ALREADY_ATTACHED':
+      return {
+        status: 409,
+        message: `Les individus suivants sont déjà rattachés à un autre référentiel : ${error.individuIds.join(', ')}`,
+        details: { individuIds: error.individuIds },
+      }
+  }
+}
+
 referentielRoutes.openapi(upsertReferentielRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
@@ -170,17 +186,15 @@ referentielRoutes.openapi(upsertReferentielRoute, async (context) => {
           schema: ReferentielApiModelSchema,
           status: 200,
         }),
-      (error) =>
-        jsonResponseError({
+      (error) => {
+        const { status, message, details } = describeUpsertReferentielError(error)
+        return jsonResponseError({
           context,
-          error: {
-            code: error.type,
-            message: `Les individus suivants sont déjà rattachés à un autre référentiel : ${error.individuIds.join(', ')}`,
-            details: { individuIds: error.individuIds },
-          },
+          error: { code: error.type, message, details },
           schema: ErrorApiModelSchema,
-          status: 409,
-        }),
+          status,
+        })
+      },
     )
 })
 
