@@ -108,21 +108,24 @@ const seededRandom = (seed: number) => {
 export const buildExempleSaisies = ({
   arbre,
   seed = 1,
+  complet = false,
 }: {
   arbre: Arbre
   seed?: number
+  // Sans trou : chaque feuille a une valeur à chaque période.
+  complet?: boolean
 }): SaisiesSerie => {
   const random = seededRandom(seed)
   const feuilles = [...arbre.values()].filter((node) => node.kind === 'feuille')
   return Object.fromEntries(
     feuilles.map((feuille, rang) => {
-      const jamaisSaisie = rang > 0 && random() < 0.15
+      const jamaisSaisie = !complet && rang > 0 && random() < 0.15
       if (jamaisSaisie) return [feuille.id, PERIODES.map(() => '')]
-      const debut = random() < 0.3 ? 1 + Math.floor(random() * 3) : 0
+      const debut = !complet && random() < 0.3 ? 1 + Math.floor(random() * 3) : 0
       let value = Math.round(random() * 80 + 10)
       const serie = PERIODES.map((_, index) => {
         if (index < debut) return ''
-        if (index > debut && random() < 0.25) return ''
+        if (!complet && index > debut && random() < 0.25) return ''
         value = Math.max(0, value + Math.round((random() - 0.4) * 12))
         return String(value)
       })

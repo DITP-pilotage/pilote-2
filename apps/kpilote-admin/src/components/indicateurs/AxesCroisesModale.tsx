@@ -1,14 +1,21 @@
 import { type AxeApiModel } from '@pilote/kpilote-shared/axe'
 import { type DeclarationAxeIndicateur } from '@pilote/kpilote-shared/indicateur'
 import { useSuspenseQueries } from '@tanstack/react-query'
-import { AlertTriangle, ChevronDown, ChevronRight, Dices, Eraser, X } from 'lucide-react'
-import { type ReactNode, Suspense, useMemo, useState } from 'react'
+import { AlertTriangle, ChevronDown, ChevronRight, Dices, Eraser, Grid3x3, X } from 'lucide-react'
+import { type ReactNode, Suspense, useId, useMemo, useState } from 'react'
 
 import { Button } from '@pilote/kpilote-ui/Button'
 import { Dialog } from '@pilote/kpilote-ui/Dialog'
+import { Field } from '@pilote/kpilote-ui/Field'
 import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import {
-  ancestorsOf,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@pilote/kpilote-ui/Select'
+import {
   type Arbre,
   type ArbreNode,
   buildArbre,
@@ -202,6 +209,10 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
   const [active, setActive] = useState<CelluleIds | null>(null)
 
   const resolve = useMemo(() => buildCroisement({ axes, saisies }), [axes, saisies])
+  const randomize = (complet: boolean) => {
+    setSeed(seed + 1)
+    setSaisies(buildExempleCroise({ axes, seed: seed + 1, complet }))
+  }
   const axeLignes = axes[disposition.lignes]
   const axeColonnes = disposition.colonnes === null ? undefined : axes[disposition.colonnes]
   const collapsedOf = (axe: AxeCroise | undefined) =>
@@ -284,13 +295,18 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
           <Button
             size="sm"
             variant="tertiary"
-            title="Un autre exemple"
-            onClick={() => {
-              setSeed(seed + 1)
-              setSaisies(buildExempleCroise({ axes, seed: seed + 1 }))
-            }}
+            title="Valeurs au hasard, avec des cases vides"
+            onClick={() => randomize(false)}
           >
             <Dices />
+          </Button>
+          <Button
+            size="sm"
+            variant="tertiary"
+            title="Valeurs au hasard, sans case vide"
+            onClick={() => randomize(true)}
+          >
+            <Grid3x3 />
           </Button>
           <Button size="sm" variant="tertiary" title="Vider" onClick={() => setSaisies({})}>
             <Eraser />
@@ -543,16 +559,6 @@ function Case({
   )
 }
 
-// Le chemin plutôt qu'une indentation : un select n'affiche pas l'arbre, et les espaces de
-// tête décalent la valeur sélectionnée.
-const cheminOf = ({ arbre, node }: { arbre: Arbre; node: ArbreNode }) =>
-  ancestorsOf({ arbre, id: node.id })
-    .filter((ancestor) => ancestor.id !== TOUS_ID)
-    .reverse()
-    .map((ancestor) => ancestor.nom)
-    .concat(node.nom)
-    .join(' › ')
-
 function TrancheSelect({
   axe,
   index,
@@ -564,9 +570,8 @@ function TrancheSelect({
   value: string
   onChange: (id: string) => void
 }) {
-  const options = depthFirst({ arbre: axe.arbre, id: TOUS_ID, isOpen: () => true }).map(
-    (option) => ({ value: option.id, label: cheminOf({ arbre: axe.arbre, node: option }) }),
-  )
+  const labelId = useId()
+  const options = depthFirst({ arbre: axe.arbre, id: TOUS_ID, isOpen: () => true })
   const node = axe.arbre.get(value)
   const effet =
     node && node.children.length > 0
@@ -574,12 +579,27 @@ function TrancheSelect({
       : 'Une feuille : les cases du tableau deviennent saisissables.'
   return (
     <div className="flex w-72 flex-col gap-1">
-      <FieldSelect
-        label={`Fixé · Axe ${index + 1} · ${axe.nom}`}
-        value={value}
-        onValueChange={onChange}
-        options={options}
-      />
+      <Field label={`Fixé · Axe ${index + 1} · ${axe.nom}`} labelId={labelId}>
+        <Select value={value} onValueChange={onChange}>
+          <SelectTrigger aria-labelledby={labelId} className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {/* Comme ModaliteSelect (webapp) : le retrait est posé sur la ligne, pas sur son
+                texte, que Radix recopie dans le bouton. */}
+            {options.map((option) => (
+              <SelectItem
+                key={option.id}
+                value={option.id}
+                className={clsxm(option.kind !== 'feuille' && 'font-semibold')}
+                style={{ paddingLeft: `${0.625 + option.niveau * 0.875}rem` }}
+              >
+                {option.nom}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </Field>
       <span className="text-[11px] text-text-subtle">{effet}</span>
     </div>
   )

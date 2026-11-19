@@ -110,9 +110,12 @@ const MAX_COMBINAISONS = 20_000
 export const buildExempleCroise = ({
   axes,
   seed = 1,
+  complet = false,
 }: {
   axes: ReadonlyArray<AxeCroise>
   seed?: number
+  // Sans trou : toutes les combinaisons de feuilles ont une valeur.
+  complet?: boolean
 }): Record<string, string> => {
   const random = seededRandom(seed)
   const combinaisons = axes.reduce<string[][]>(
@@ -126,7 +129,7 @@ export const buildExempleCroise = ({
   if (combinaisons[0]?.length !== axes.length) return {}
   return Object.fromEntries(
     combinaisons
-      .filter(() => random() > 0.25)
+      .filter(() => complet || random() > 0.25)
       .map((ids) => [celluleKey(ids), String(Math.round(random() * 80 + 10))]),
   )
 }

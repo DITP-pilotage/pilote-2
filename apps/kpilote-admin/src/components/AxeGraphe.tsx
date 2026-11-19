@@ -14,6 +14,7 @@ import {
   ChevronsUpDown,
   Dices,
   Eraser,
+  Grid3x3,
   Info,
   MousePointerClick,
   Plus,
@@ -347,9 +348,9 @@ function AxeGraphe({
     () => computeSerie({ arbre: tree, saisies: saisiesSerie, fonction }),
     [tree, saisiesSerie, fonction],
   )
-  const regenererExemple = () => {
+  const regenererExemple = (complet: boolean) => {
     setSeed(seed + 1)
-    setSaisiesSerie(buildExempleSaisies({ arbre: tree, seed: seed + 1 }))
+    setSaisiesSerie(buildExempleSaisies({ arbre: tree, seed: seed + 1, complet }))
   }
 
   const toggleCollapse = (id: string) =>
@@ -408,15 +409,17 @@ function AxeGraphe({
 
   const feuilles = [...tree.values()].filter((n) => n.kind === 'feuille')
   const parentes = [...tree.values()].filter((n) => n.kind === 'parente')
-  const fillRandom = () =>
+  const fillRandom = (complet: boolean) =>
     setSaisies(
       Object.fromEntries(
-        feuilles.map((f) => [
-          f.id,
-          Math.random() < 0.2 ? '' : String(Math.round(Math.random() * 90 + 10)),
-        ]),
+        feuilles.map((feuille) => {
+          const vide = !complet && Math.random() < 0.2
+          return [feuille.id, vide ? '' : String(Math.round(Math.random() * 90 + 10))]
+        }),
       ),
     )
+  const randomize = (complet: boolean) =>
+    tableau ? regenererExemple(complet) : fillRandom(complet)
 
   const niveauxVides = niveaux.filter((n) => !modalites.some((m) => m.niveau === n.ordre))
   const feuillesIntermediaires = feuilles.filter((f) => f.niveau < niveaux.length)
@@ -501,10 +504,18 @@ function AxeGraphe({
               <Button
                 size="sm"
                 variant="tertiary"
-                onClick={tableau ? regenererExemple : fillRandom}
-                title={tableau ? 'Un autre exemple' : 'Valeurs au hasard'}
+                onClick={() => randomize(false)}
+                title="Valeurs au hasard, avec des cases vides"
               >
                 <Dices />
+              </Button>
+              <Button
+                size="sm"
+                variant="tertiary"
+                onClick={() => randomize(true)}
+                title="Valeurs au hasard, sans case vide"
+              >
+                <Grid3x3 />
               </Button>
               <Button
                 size="sm"
