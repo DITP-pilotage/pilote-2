@@ -158,7 +158,7 @@ La même règle sert à l'écriture unitaire et au lot ; seul le chargement chan
 
 ### Une command : gardes, chargement, règles, écriture
 `perform…` enchaîne quatre étapes :
-1. **Gardes** : `ensureAdmin()`, `ensure{Ressource}{Action}Permission(...)`, `ensureAuteur(...)` (403).
+1. **Gardes** : `ensureAdmin()`, `ensure{Ressource}{Action}Permission(...)`, `ensureAuteur(...)` (403). Une garde qui porte sur un objet chargé (`ensureAuteur({ createdBy })`) se place juste après son chargement, avant les règles.
 2. **Chargement** : `load…Context(...)`, qui ne renvoie jamais d'`err` (404 par `findUniqueOrThrow`).
 3. **Règles** : `const x = checkY(...); if (x.isErr()) return err(x.error)`, une règle après l'autre.
 4. **Écritures** : elles réutilisent le contexte chargé, sans relire ce qu'il contient.
