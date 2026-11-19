@@ -1,10 +1,11 @@
 import { type AddCollectionIndicateurBody } from '@pilote/kpilote-shared/collection'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
+import { checkIndicateurNonAffecte, type IndicateurDejaAffecteError } from '@/collection/rules'
 import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
-export type AddCollectionIndicateurError = { type: 'INDICATEUR_DEJA_AFFECTE' }
+export type AddCollectionIndicateurError = IndicateurDejaAffecteError
 
 const performAdd = async (
   publicId: string,
@@ -26,7 +27,9 @@ const performAdd = async (
       collectionId_indicateurId: { collectionId: collection.id, indicateurId: indicateur.id },
     },
   })
-  if (existant) return err({ type: 'INDICATEUR_DEJA_AFFECTE' })
+
+  const nonAffecte = checkIndicateurNonAffecte({ dejaAffecte: existant !== null })
+  if (nonAffecte.isErr()) return err(nonAffecte.error)
 
   await db().collectionIndicateur.create({
     data: {

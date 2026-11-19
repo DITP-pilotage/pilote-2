@@ -4,43 +4,27 @@ import { uuidv7 } from 'uuidv7'
 
 import { ensureAdminOrOidcUser } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
+import { checkIndividusLibres, type IndividusDejaRattachesError } from '@/referentiel/rules'
 
-export type UpsertReferentielError = {
-  type: 'INDIVIDUS_ALREADY_ATTACHED'
-  individuIds: string[]
-}
-
-const detectConflicts = async (
-  referentielId: string | undefined,
-  individuPublicIds: string[],
-): Promise<string[]> => {
-  if (individuPublicIds.length === 0) return []
-  const conflicts = await db().individu.findMany({
-    where: {
-      publicId: { in: individuPublicIds },
-      ...(referentielId ? { referentielId: { not: referentielId } } : {}),
-    },
-    select: { publicId: true },
-    orderBy: { publicId: 'asc' },
-  })
-  return conflicts.map((row) => row.publicId)
-}
+export type UpsertReferentielError = IndividusDejaRattachesError
 
 const performUpsert = async (
   publicId: string,
   body: UpsertReferentielBody,
 ): Promise<Result<void, UpsertReferentielError>> => {
   ensureAdminOrOidcUser()
-  const existingReferentiel = await db().referentiel.findUnique({
-    where: { publicId },
-    select: { id: true },
+
+  const existant = await db().referentiel.findUnique({ where: { publicId }, select: { id: true } })
+  const individusExistants = await db().individu.findMany({
+    where: { publicId: { in: body.individus?.map((individu) => individu.publicId) ?? [] } },
+    select: { publicId: true, referentielId: true },
   })
 
-  const individuPublicIds = body.individus?.map((i) => i.publicId) ?? []
-  const conflicts = await detectConflicts(existingReferentiel?.id, individuPublicIds)
-  if (conflicts.length > 0) {
-    return err({ type: 'INDIVIDUS_ALREADY_ATTACHED', individuIds: conflicts })
-  }
+  const libres = checkIndividusLibres({
+    referentielId: existant?.id ?? null,
+    individusExistants,
+  })
+  if (libres.isErr()) return err(libres.error)
 
   const referentiel = await db().referentiel.upsert({
     where: { publicId },

@@ -2,7 +2,7 @@ import { type DeleteValeurAvancementBody } from '@pilote/kpilote-shared/valeurAv
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { combinaisonKey } from '@/axe/combinaison'
-import { type SaisieModalitesError } from '@/axe/requestedModalites'
+import { type SaisieModalitesError } from '@/axe/rules'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/rules'
 import { resolveCelluleForWrite } from '@/valeurAvancement/resolveCelluleForWrite'

@@ -1,10 +1,11 @@
 import { type AddCollectionResponsableBody } from '@pilote/kpilote-shared/collection'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
+import { checkResponsableNonAffecte, type ResponsableDejaAffecteError } from '@/collection/rules'
 import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
-export type AddCollectionResponsableError = { type: 'RESPONSABLE_DEJA_AFFECTE' }
+export type AddCollectionResponsableError = ResponsableDejaAffecteError
 
 const performAdd = async (
   publicId: string,
@@ -26,7 +27,9 @@ const performAdd = async (
       },
     },
   })
-  if (existant) return err({ type: 'RESPONSABLE_DEJA_AFFECTE' })
+
+  const nonAffecte = checkResponsableNonAffecte({ dejaAffecte: existant !== null })
+  if (nonAffecte.isErr()) return err(nonAffecte.error)
 
   await db().collectionResponsable.create({
     data: { collectionId: collection.id, utilisateurId: body.utilisateurId },

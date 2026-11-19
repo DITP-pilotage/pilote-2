@@ -1,11 +1,7 @@
 import { err, type Result } from 'neverthrow'
 
-import {
-  loadModalitesContext,
-  type RequestedModalite,
-  type SaisieModalitesError,
-  validateSaisieModalites,
-} from '@/axe/requestedModalites'
+import { loadModalitesContext, type RequestedModalite } from '@/axe/requestedModalites'
+import { type SaisieModalitesError, checkCelluleComplete } from '@/axe/rules'
 import { type IndividuInconnuError } from '@/individu/rules'
 import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
 
@@ -39,7 +35,7 @@ export const resolveCelluleForWrite = async ({
   const { indicateur, individu } = resolved.value
 
   const context = await loadModalitesContext({ indicateurId: indicateur.id, modalitePublicIds })
-  return validateSaisieModalites({ context, modalitePublicIds }).map((modalites) => ({
+  return checkCelluleComplete({ context, modalitePublicIds }).map((modalites) => ({
     indicateur,
     individu,
     modalites,

@@ -6,7 +6,7 @@ import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
 import { upsertCombinaison } from '@/axe/combinaison'
-import { type SaisieModalitesError } from '@/axe/requestedModalites'
+import { type SaisieModalitesError } from '@/axe/rules'
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/rules'

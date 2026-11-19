@@ -2,28 +2,47 @@ import { type UpsertModaliteBody } from '@pilote/kpilote-shared/axe'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
+import {
+  type ChangementParentInterditError,
+  checkModaliteDansAxe,
+  checkNiveauExiste,
+  checkParentInchange,
+  checkParentModalite,
+  type ModaliteAutreAxeError,
+  type NiveauInexistantError,
+  type ParentModaliteError,
+} from '@/axe/rules'
 import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
 export type UpsertModaliteError =
-  | { type: 'MODALITE_AUTRE_AXE'; axe: string }
-  | { type: 'CHANGEMENT_PARENT_INTERDIT'; parentActuel: string | null }
-  | { type: 'PARENT_INCONNU' }
-  | { type: 'PARENT_AUTRE_AXE'; axe: string }
-  | { type: 'NIVEAU_INEXISTANT'; ordre: number }
+  | ModaliteAutreAxeError
+  | ChangementParentInterditError
+  | ParentModaliteError
+  | NiveauInexistantError
 
-// Le niveau d'une modalité se déduit de son parent (premier niveau sans
-// parent, sinon niveau du parent + 1). Il est fixé à la création : une
-// modification ne change que le nom, le parent ne peut pas changer.
+type UpsertModaliteParams = { axePublicId: string; publicId: string; body: UpsertModaliteBody }
+
+const loadParent = async ({ publicId }: { publicId: string | null }) => {
+  if (publicId === null) return null
+  const parent = await db().modalite.findUnique({
+    where: { publicId },
+    include: { axe: true, niveauAxe: true },
+  })
+  if (!parent) return null
+  return {
+    id: parent.id,
+    axeId: parent.axeId,
+    axePublicId: parent.axe.publicId,
+    ordre: parent.niveauAxe.ordre,
+  }
+}
+
 const performUpsert = async ({
   axePublicId,
   publicId,
   body,
-}: {
-  axePublicId: string
-  publicId: string
-  body: UpsertModaliteBody
-}): Promise<Result<void, UpsertModaliteError>> => {
+}: UpsertModaliteParams): Promise<Result<void, UpsertModaliteError>> => {
   ensureAdmin()
 
   // Axe inconnu : P2025, converti en 404.
@@ -31,38 +50,37 @@ const performUpsert = async ({
     where: { publicId: axePublicId },
     include: { niveaux: true },
   })
-
-  const existing = await db().modalite.findUnique({
+  const existante = await db().modalite.findUnique({
     where: { publicId },
     include: { axe: true, parent: true },
   })
-  if (existing && existing.axeId !== axe.id) {
-    return err({ type: 'MODALITE_AUTRE_AXE', axe: existing.axe.publicId })
-  }
-  if (existing) {
-    const parentActuel = existing.parent?.publicId ?? null
-    if (parentActuel !== body.parent) {
-      return err({ type: 'CHANGEMENT_PARENT_INTERDIT', parentActuel })
-    }
-    await db().modalite.update({ where: { id: existing.id }, data: { nom: body.nom } })
+
+  const dansAxe = checkModaliteDansAxe({
+    axeId: axe.id,
+    existante: existante && { axeId: existante.axeId, axePublicId: existante.axe.publicId },
+  })
+  if (dansAxe.isErr()) return err(dansAxe.error)
+
+  if (existante) {
+    const parentInchange = checkParentInchange({
+      parentActuel: existante.parent?.publicId ?? null,
+      parentCible: body.parent,
+    })
+    if (parentInchange.isErr()) return err(parentInchange.error)
+
+    await db().modalite.update({ where: { id: existante.id }, data: { nom: body.nom } })
     return ok()
   }
 
-  let parentId: string | null = null
-  let ordre = 1
-  if (body.parent !== null) {
-    const parent = await db().modalite.findUnique({
-      where: { publicId: body.parent },
-      include: { axe: true, niveauAxe: true },
-    })
-    if (!parent) return err({ type: 'PARENT_INCONNU' })
-    if (parent.axeId !== axe.id) return err({ type: 'PARENT_AUTRE_AXE', axe: parent.axe.publicId })
-    parentId = parent.id
-    ordre = parent.niveauAxe.ordre + 1
-  }
+  const position = checkParentModalite({
+    axeId: axe.id,
+    parentPublicId: body.parent,
+    parent: await loadParent({ publicId: body.parent }),
+  })
+  if (position.isErr()) return err(position.error)
 
-  const niveau = axe.niveaux.find((n) => n.ordre === ordre)
-  if (!niveau) return err({ type: 'NIVEAU_INEXISTANT', ordre })
+  const niveau = checkNiveauExiste({ niveaux: axe.niveaux, ordre: position.value.ordre })
+  if (niveau.isErr()) return err(niveau.error)
 
   await db().modalite.create({
     data: {
@@ -70,15 +88,13 @@ const performUpsert = async ({
       publicId,
       nom: body.nom,
       axeId: axe.id,
-      niveauAxeId: niveau.id,
-      parentId,
+      niveauAxeId: niveau.value.id,
+      parentId: position.value.parentId,
     },
   })
   return ok()
 }
 
-export const upsertModalite = (params: {
-  axePublicId: string
-  publicId: string
-  body: UpsertModaliteBody
-}): ResultAsync<void, UpsertModaliteError> => new ResultAsync(performUpsert(params))
+export const upsertModalite = (
+  params: UpsertModaliteParams,
+): ResultAsync<void, UpsertModaliteError> => new ResultAsync(performUpsert(params))
