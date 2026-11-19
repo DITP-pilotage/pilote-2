@@ -266,7 +266,9 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
           axes={axes}
           value={disposition.lignes}
           onChange={(index) => {
-            if (index !== null) setDisposition(withLignes({ disposition, index }))
+            if (index === null) return
+            setDisposition(withLignes({ disposition, index }))
+            setActive(null)
           }}
         />
         {axes.length > 1 ? (
@@ -275,7 +277,10 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
             axes={axes}
             value={disposition.colonnes}
             allowNone
-            onChange={(index) => setDisposition(withColonnes({ disposition, index }))}
+            onChange={(index) => {
+              setDisposition(withColonnes({ disposition, index }))
+              setActive(null)
+            }}
           />
         ) : null}
         {fixes.map(({ axe, index }) => (
@@ -284,11 +289,12 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
             axe={axe}
             index={index}
             value={tranches[index] ?? TOUS_ID}
-            onChange={(id) =>
+            onChange={(id) => {
+              setActive(null)
               setTranches((current) =>
                 current.map((tranche, position) => (position === index ? id : tranche)),
               )
-            }
+            }}
           />
         ))}
         <span className="ml-auto flex items-center gap-1 self-center">
@@ -328,18 +334,18 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
       <BarreFormule axes={axes} active={active} cellule={activeCellule} resolve={resolve} />
 
       <div className="min-h-0 flex-1 overflow-auto">
-        <table className="w-max min-w-full border-separate border-spacing-0 text-sm">
+        <table className="w-max border-separate border-spacing-0 text-sm">
           <thead>
             <tr>
-              <th className="sticky top-0 left-0 z-30 min-w-64 border-r border-b border-border bg-surface-muted px-3 py-2 text-left text-xs font-semibold text-text-muted">
+              <th className="sticky top-0 left-0 z-30 min-w-56 border-r border-b border-border-strong bg-surface-muted px-3 py-2 text-left text-xs font-semibold text-text-muted">
                 {axeLignes.nom} ↓{axeColonnes ? ` · ${axeColonnes.nom} →` : ''}
               </th>
               {colonnes.map((col) => (
                 <th
                   key={col?.id ?? 'valeur'}
                   className={clsxm(
-                    'sticky top-0 z-20 w-28 border-r border-b border-border bg-surface-muted px-2 py-2 text-right align-bottom text-xs font-semibold whitespace-nowrap text-text',
-                    col?.kind === 'feuille' && 'font-normal',
+                    'sticky top-0 z-20 min-w-32 border-r border-b border-border-strong px-3 py-2 text-right align-bottom text-xs whitespace-nowrap text-text',
+                    EMPHASE_HEADER[emphaseOf(col?.kind)],
                   )}
                 >
                   {col && axeColonnes ? (
@@ -361,9 +367,8 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
               <tr key={row.id}>
                 <th
                   className={clsxm(
-                    'sticky left-0 z-10 border-r border-b border-border px-2 py-1 text-left text-sm',
-                    row.kind === 'tous' ? 'bg-surface-tinted' : 'bg-surface',
-                    row.kind === 'feuille' ? 'font-normal' : 'font-semibold',
+                    'sticky left-0 z-10 max-w-md border-r border-b border-r-border-strong border-b-border px-2 py-1 text-left text-sm',
+                    EMPHASE_HEADER[emphaseOf(row.kind)],
                   )}
                 >
                   <div style={{ paddingLeft: row.niveau * 16 }}>
@@ -381,6 +386,7 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
                     <Case
                       key={key}
                       cellule={resolve(ids)}
+                      emphase={Math.max(emphaseOf(row.kind), emphaseOf(col?.kind))}
                       saisie={saisies[key] ?? ''}
                       tone={toneOf({ key, activeKey, precedents })}
                       label={referenceOf({ axes, ids })}
@@ -396,11 +402,10 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
       </div>
 
       <p className="m-0 border-t border-border px-6 py-2 text-xs text-text-muted">
-        On saisit sur les cases dont chaque axe est sur une feuille (lignes et colonnes en vert,
-        axes fixés sur une feuille) ; « Tous » et les parentes se calculent. Case vide (·) :
-        combinaison jamais saisie, elle sort du calcul (ni 0, ni manquante). Avec une moyenne, ces
-        trous font dépendre « Tous » de l’ordre des axes : changez l’ordre dans le formulaire pour
-        le voir.
+        <b>Case blanche</b> : saisie (une feuille sur chaque axe). <b>Case teintée</b> : calculée,
+        plus foncée pour « Tous ». Une case blanche vide (·) est une combinaison jamais saisie :
+        elle sort du calcul (ni 0, ni manquante). Avec une moyenne, ces trous font dépendre « Tous »
+        de l’ordre des axes : changez l’ordre dans le formulaire pour le voir.
       </p>
     </div>
   )
@@ -504,8 +509,31 @@ const TONE_CLASS: Record<Exclude<Tone, undefined>, string> = {
   precedent: 'bg-primary-tinted',
 }
 
+// 0 : croise deux feuilles ; 1 : une parente ; 2 : « Tous ». Une case blanche se saisit, une
+// case teintée se calcule, plus foncée pour la marginale.
+type Emphase = number
+
+const emphaseOf = (kind: Kind | undefined): Emphase => {
+  if (kind === 'tous') return 2
+  if (kind === 'parente') return 1
+  return 0
+}
+
+const EMPHASE_HEADER: Record<Emphase, string> = {
+  0: 'bg-surface font-normal',
+  1: 'bg-surface-muted font-semibold',
+  2: 'bg-surface-tinted font-bold',
+}
+
+const EMPHASE_CELL: Record<Emphase, string> = {
+  0: 'bg-surface',
+  1: 'bg-surface-muted font-semibold',
+  2: 'bg-surface-tinted font-bold',
+}
+
 function Case({
   cellule,
+  emphase,
   saisie,
   tone,
   label,
@@ -513,6 +541,7 @@ function Case({
   onSaisie,
 }: {
   cellule: CelluleCroisee
+  emphase: Emphase
   saisie: string
   tone: Tone
   label: string
@@ -525,9 +554,9 @@ function Case({
   return (
     <td
       className={clsxm(
-        'h-8 w-28 border-r border-b border-border p-0 text-right tabular-nums',
-        isAbsente ? 'bg-surface-muted text-text-subtle' : 'bg-surface',
-        !isSaisissable && !isAbsente && 'font-semibold',
+        'h-8 min-w-32 border-r border-b border-border p-0 text-right tabular-nums',
+        EMPHASE_CELL[isSaisissable ? emphase : Math.max(emphase, 1)],
+        isAbsente && 'font-normal text-text-subtle',
         tone && TONE_CLASS[tone],
       )}
     >
