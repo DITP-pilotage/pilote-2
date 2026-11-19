@@ -65,4 +65,4 @@ export const upsertRelationParent = (
   enfantPublicId: string,
   body: UpsertRelationBody,
 ): ResultAsync<void, UpsertRelationParentError> =>
-  ResultAsync.fromSafePromise(performUpsert(enfantPublicId, body)).andThen((result) => result)
+  new ResultAsync(performUpsert(enfantPublicId, body))

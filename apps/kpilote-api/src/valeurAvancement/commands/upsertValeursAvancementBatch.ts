@@ -58,9 +58,7 @@ export const upsertValeursAvancementBatch = (
   indicateurPublicId: string,
   { items }: UpsertValeursAvancementBatchBody,
 ): ResultAsync<UpsertValeursAvancementBatchResultApiModel, UpsertValeursAvancementBatchError> =>
-  ResultAsync.fromSafePromise(performBatch({ indicateurPublicId, items })).andThen(
-    (result) => result,
-  )
+  new ResultAsync(performBatch({ indicateurPublicId, items }))
 
 // Pipeline de validation avant toute écriture en base. En pratique l'appelant
 // enveloppe la commande dans `withTransaction`, donc cette validation s'exécute

@@ -66,4 +66,4 @@ const performUpsert = async ({
 export const upsertValeurAvancement = (
   params: UpsertValeurAvancementParams,
 ): ResultAsync<ValeurSaisieApiModel, UpsertValeurAvancementError> =>
-  ResultAsync.fromSafePromise(performUpsert(params)).andThen((result) => result)
+  new ResultAsync(performUpsert(params))

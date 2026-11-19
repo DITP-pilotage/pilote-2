@@ -82,5 +82,4 @@ export const upsertModalite = (params: {
   axePublicId: string
   publicId: string
   body: UpsertModaliteBody
-}): ResultAsync<void, UpsertModaliteError> =>
-  ResultAsync.fromSafePromise(performUpsert(params)).andThen((r) => r)
+}): ResultAsync<void, UpsertModaliteError> => new ResultAsync(performUpsert(params))
