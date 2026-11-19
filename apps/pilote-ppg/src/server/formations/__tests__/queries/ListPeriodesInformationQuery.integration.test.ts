@@ -43,13 +43,18 @@ describe("ListPeriodesInformationQuery", () => {
         date_fin: new Date("2026-12-31T00:00:00Z"),
         motifIds: [BigInt(2)],
       });
+      const supprimee = await fixtures.formationPeriodeInformation({
+        date_debut: new Date("2026-11-20T00:00:00Z"),
+        date_fin: new Date("2026-12-10T00:00:00Z"),
+        deleted_at: new Date("2026-11-15T08:00:00Z"),
+        motifIds: [BigInt(1)],
+      });
 
       // When
       const resultat = await query.run({ maintenant });
 
       // Then
       expect(resultat).toEqual({
-        aujourdhui: "2026-11-18",
         periodes: [
           {
             id: aVenir.id,
@@ -57,6 +62,13 @@ describe("ListPeriodesInformationQuery", () => {
             dateFin: "2026-12-31",
             statut: "A_VENIR",
             motifs: [{ id: 2, nom: "B formation", retireeDeRdvSp: false }],
+          },
+          {
+            id: supprimee.id,
+            dateDebut: "2026-11-20",
+            dateFin: "2026-12-10",
+            statut: "SUPPRIMEE",
+            motifs: [{ id: 1, nom: "A formation", retireeDeRdvSp: false }],
           },
           {
             id: enCours.id,

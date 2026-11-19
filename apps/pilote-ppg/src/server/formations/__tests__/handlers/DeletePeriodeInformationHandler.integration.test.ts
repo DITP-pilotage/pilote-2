@@ -16,7 +16,7 @@ describe("DeletePeriodeInformationHandler", () => {
   });
 
   it(
-    "supprime une période à venir et ses formations",
+    "supprime une période à venir en gardant la ligne et ses formations",
     createIntegrationTest(async (prisma) => {
       // Given
       const periode = await fixtures.formationPeriodeInformation({
@@ -27,16 +27,22 @@ describe("DeletePeriodeInformationHandler", () => {
       await handler.execute({ id: periode.id, maintenant });
 
       // Then
-      expect(await prisma.formation_periode_information.findMany()).toEqual([]);
       expect(
-        await prisma.formation_periode_information_motif.findMany(),
-      ).toEqual([]);
+        await prisma.formation_periode_information.findMany({
+          select: { id: true, deleted_at: true },
+        }),
+      ).toEqual([{ id: periode.id, deleted_at: maintenant }]);
+      expect(
+        await prisma.formation_periode_information_motif.findMany({
+          select: { periode_id: true, motif_id: true },
+        }),
+      ).toEqual([{ periode_id: periode.id, motif_id: BigInt(1) }]);
     }),
   );
 
   it(
-    "refuse de supprimer une période en cours",
-    createIntegrationTest(async () => {
+    "supprime une période en cours",
+    createIntegrationTest(async (prisma) => {
       // Given
       const periode = await fixtures.formationPeriodeInformation({
         date_debut: new Date("2026-11-03T00:00:00Z"),
@@ -44,11 +50,50 @@ describe("DeletePeriodeInformationHandler", () => {
       });
 
       // When
+      await handler.execute({ id: periode.id, maintenant });
+
+      // Then
+      expect(
+        await prisma.formation_periode_information.findMany({
+          select: { id: true, deleted_at: true },
+        }),
+      ).toEqual([{ id: periode.id, deleted_at: maintenant }]);
+    }),
+  );
+
+  it(
+    "refuse de supprimer une période passée",
+    createIntegrationTest(async () => {
+      // Given
+      const periode = await fixtures.formationPeriodeInformation({
+        date_debut: new Date("2026-10-01T00:00:00Z"),
+        date_fin: new Date("2026-10-31T00:00:00Z"),
+      });
+
+      // When
       const execution = handler.execute({ id: periode.id, maintenant });
 
       // Then
       await expect(execution).rejects.toThrow(
-        "Seule une période à venir peut être supprimée.",
+        "Une période passée ne se supprime pas.",
+      );
+    }),
+  );
+
+  it(
+    "refuse de supprimer une période déjà supprimée",
+    createIntegrationTest(async () => {
+      // Given
+      const periode = await fixtures.formationPeriodeInformation({
+        deleted_at: new Date("2026-11-10T08:00:00Z"),
+      });
+
+      // When
+      const execution = handler.execute({ id: periode.id, maintenant });
+
+      // Then
+      await expect(execution).rejects.toThrow(
+        "Cette période est déjà supprimée.",
       );
     }),
   );

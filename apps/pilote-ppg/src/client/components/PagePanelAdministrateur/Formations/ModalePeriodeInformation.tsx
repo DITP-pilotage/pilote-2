@@ -1,26 +1,43 @@
-import { useState } from "react";
-import { toast } from "sonner";
-import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
+import { Controller } from "react-hook-form";
 import { Button } from "@/components/shared/Button";
 import { CheckboxField } from "@/components/shared/Checkbox";
+import { FormTextField } from "@/components/shared/FormTextField";
 import { Modale } from "@/components/shared/Modale";
 import { Notice } from "@/components/shared/Notice";
-import { TextField } from "@/components/shared/TextField";
-import {
-  validerPeriode,
-  type ErreursPeriode,
-} from "@/server/formations/domain/periodeInformation";
+import type { JourISO } from "@/server/formations/domain/periodeInformation";
 import type {
   PeriodeInformation,
   PeriodesInformation,
 } from "@/server/formations/queries/ListPeriodesInformationQuery";
+import { formaterJour, listerPeriodes } from "./formaterPeriodes";
+import { usePeriodeInformationForm } from "./usePeriodeInformationForm";
 
-const TOAST_OPTIONS = {
-  duration: 3000,
-  position: "top-right",
-  richColors: true,
-} as const;
+function avertissementRemplacement({
+  periodesRemplacees,
+  dateDebut,
+  aujourdhui,
+}: {
+  periodesRemplacees: PeriodeInformation[];
+  dateDebut: JourISO;
+  aujourdhui: JourISO;
+}): string {
+  const periodes = listerPeriodes(
+    periodesRemplacees.map((periode) => ({
+      ...periode,
+      precision: periode.statut === "EN_COURS" ? "en cours" : "à venir",
+    })),
+  );
+  const remplacement =
+    periodesRemplacees.length === 1
+      ? `Cette période chevauche celle ${periodes}. À l'enregistrement, elle la remplace : l'ancienne sera supprimée.`
+      : `Cette période chevauche celles ${periodes}. À l'enregistrement, elle les remplace : elles seront supprimées.`;
+  const remplaceLaPeriodeEnCoursPlusTard =
+    periodesRemplacees.some((periode) => periode.statut === "EN_COURS") &&
+    dateDebut > aujourdhui;
+  return remplaceLaPeriodeEnCoursPlusTard
+    ? `${remplacement} Aucune période ne sera en cours avant le ${formaterJour(dateDebut)}.`
+    : remplacement;
+}
 
 export const ModalePeriodeInformation = ({
   periode,
@@ -31,56 +48,15 @@ export const ModalePeriodeInformation = ({
   donnees: PeriodesInformation;
   onClose: () => void;
 }) => {
-  const utils = api.useUtils();
-  const [dateDebut, setDateDebut] = useState(periode?.dateDebut ?? "");
-  const [dateFin, setDateFin] = useState(periode?.dateFin ?? "");
-  const [motifIds, setMotifIds] = useState<number[]>(
-    periode?.motifs
-      .map((motif) => motif.id)
-      .filter((motifId) =>
-        donnees.motifsDisponibles.some((motif) => motif.id === motifId),
-      ) ?? [],
-  );
-  const [erreurs, setErreurs] = useState<ErreursPeriode>({});
+  const { reactHookForm, enregistrer, periodesRemplacees, aujourdhui } =
+    usePeriodeInformationForm({
+      periode,
+      periodes: donnees.periodes,
+      onClose,
+    });
+  const { control, watch } = reactHookForm;
   const formationsRetirees =
     periode?.motifs.filter((motif) => motif.retireeDeRdvSp) ?? [];
-
-  const savePeriode = api.formation.savePeriodeInformation.useMutation({
-    onSuccess: async () => {
-      await utils.formation.periodesInformation.invalidate();
-      toast.success("Période enregistrée.", TOAST_OPTIONS);
-      onClose();
-    },
-    onError: (error) => toast.error(error.message, TOAST_OPTIONS),
-  });
-
-  const basculerMotif = (motifId: number, coche: boolean) =>
-    setMotifIds((actuels) =>
-      coche
-        ? [...actuels, motifId]
-        : actuels.filter((actuel) => actuel !== motifId),
-    );
-
-  const enregistrer = () => {
-    if (savePeriode.isPending) return;
-    const erreursSaisie = validerPeriode({
-      saisie: { dateDebut, dateFin, motifIds },
-      periodeModifiee: periode,
-      autresPeriodes: donnees.periodes.filter(
-        (autre) => autre.id !== periode?.id,
-      ),
-      aujourdhui: donnees.aujourdhui,
-    });
-    setErreurs(erreursSaisie);
-    if (Object.keys(erreursSaisie).length > 0) return;
-    savePeriode.mutate({
-      id: periode?.id ?? null,
-      dateDebut,
-      dateFin,
-      motifIds,
-      csrf: récupérerUnCookie("csrf") ?? "",
-    });
-  };
 
   return (
     <Modale
@@ -95,29 +71,31 @@ export const ModalePeriodeInformation = ({
           : "Nouvelle période d'information"
       }
     >
-      <div className="flex flex-col gap-6">
-        {erreurs.periode ? (
-          <Notice containerClassName="px-4" variant="warning">
-            {erreurs.periode}
-          </Notice>
-        ) : null}
+      <form className="flex flex-col gap-6" noValidate onSubmit={enregistrer}>
         <div className="flex flex-wrap gap-6">
-          <TextField
-            errorMessage={erreurs.dateDebut}
+          <FormTextField
+            control={control}
             label="Du"
-            onChange={(event) => setDateDebut(event.target.value)}
+            name="dateDebut"
             readOnly={periode?.statut === "EN_COURS"}
             type="date"
-            value={dateDebut}
           />
-          <TextField
-            errorMessage={erreurs.dateFin}
+          <FormTextField
+            control={control}
             label="Au"
-            onChange={(event) => setDateFin(event.target.value)}
+            name="dateFin"
             type="date"
-            value={dateFin}
           />
         </div>
+        {periodesRemplacees.length > 0 ? (
+          <Notice containerClassName="px-4" variant="warning">
+            {avertissementRemplacement({
+              periodesRemplacees,
+              dateDebut: watch("dateDebut"),
+              aujourdhui,
+            })}
+          </Notice>
+        ) : null}
         {formationsRetirees.length > 0 ? (
           <Notice containerClassName="px-4" variant="warning">
             Retirées de RDV-SP, ces formations seront enlevées de la période à
@@ -128,34 +106,50 @@ export const ModalePeriodeInformation = ({
             .
           </Notice>
         ) : null}
-        <fieldset className="flex flex-col gap-3">
-          <legend className="mb-2 text-base text-dsfr-grey-50">
-            Formations proposées
-          </legend>
-          {donnees.motifsDisponibles.map((motif) => (
-            <CheckboxField
-              checked={motifIds.includes(motif.id)}
-              hint={
-                motif.aDesSeancesAVenir ? undefined : "aucune séance à venir"
-              }
-              key={motif.id}
-              label={motif.nom}
-              onCheckedChange={(etat) => basculerMotif(motif.id, etat === true)}
-            />
-          ))}
-          {erreurs.motifIds ? (
-            <p className="text-sm text-dsfr-error-425">{erreurs.motifIds}</p>
-          ) : null}
-        </fieldset>
+        <Controller
+          control={control}
+          name="motifIds"
+          render={({ field, fieldState }) => (
+            <fieldset className="flex flex-col gap-3">
+              <legend className="mb-2 text-base text-dsfr-grey-50">
+                Formations proposées
+              </legend>
+              {donnees.motifsDisponibles.map((motif) => (
+                <CheckboxField
+                  checked={field.value.includes(motif.id)}
+                  hint={
+                    motif.aDesSeancesAVenir
+                      ? undefined
+                      : "aucune séance à venir"
+                  }
+                  key={motif.id}
+                  label={motif.nom}
+                  onCheckedChange={(etat) =>
+                    field.onChange(
+                      etat === true
+                        ? [...field.value, motif.id]
+                        : field.value.filter((motifId) => motifId !== motif.id),
+                    )
+                  }
+                />
+              ))}
+              {fieldState.error ? (
+                <p className="text-sm text-dsfr-error-425">
+                  {fieldState.error.message}
+                </p>
+              ) : null}
+            </fieldset>
+          )}
+        />
         <div className="flex justify-end gap-4">
           <Button onClick={onClose} variant="secondary">
             Annuler
           </Button>
-          <Button onClick={enregistrer} variant="primary">
+          <Button type="submit" variant="primary">
             Enregistrer
           </Button>
         </div>
-      </div>
+      </form>
     </Modale>
   );
 };

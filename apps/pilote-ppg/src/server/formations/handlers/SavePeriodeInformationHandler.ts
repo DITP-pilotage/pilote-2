@@ -3,21 +3,18 @@ import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { BadRequestError } from "@/shared/errors/bad-request-error";
 import {
   aujourdhuiAParis,
-  validerPeriode,
+  jourISO,
+  schemaPeriode,
+  statutPeriode,
+  type Bornes,
 } from "@/server/formations/domain/periodeInformation";
-import {
-  bornesDepuisBase,
-  dateBaseDepuisJour,
-} from "@/server/formations/infrastructure/joursBase";
 import { verrouillerPeriodes } from "@/server/formations/infrastructure/verrouPeriodes";
 import type { Inject } from "@/server/formations/module";
 
-const jourISO = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
-
 export const savePeriodeInformationCommandSchema = z.object({
-  id: z.string().uuid().nullable(),
-  dateDebut: jourISO,
-  dateFin: jourISO,
+  id: z.uuid().nullable(),
+  dateDebut: z.iso.date(),
+  dateFin: z.iso.date(),
   motifIds: z.array(z.number().int()),
 });
 
@@ -41,17 +38,35 @@ export class SavePeriodeInformationHandler {
   }: {
     commande: SavePeriodeInformationCommand;
     maintenant: Date;
-  }): Promise<{ id: string }> {
+  }): Promise<{ id: string; periodesRemplacees: Bornes[] }> {
     return this.transaction.run(async () => {
       const client = this.prisma.getInstance();
       await verrouillerPeriodes(client);
+      const aujourdhui = aujourdhuiAParis(maintenant);
 
-      const periodes = await client.formation_periode_information.findMany();
       const periodeModifiee = commande.id
-        ? periodes.find((periode) => periode.id === commande.id)
+        ? await client.formation_periode_information.findUnique({
+            where: { id: commande.id },
+          })
         : null;
       if (commande.id && !periodeModifiee) {
         throw new BadRequestError("Cette période n'existe plus.");
+      }
+      const statut = periodeModifiee
+        ? statutPeriode(
+            {
+              dateDebut: jourISO(periodeModifiee.date_debut),
+              dateFin: jourISO(periodeModifiee.date_fin),
+              supprimee: periodeModifiee.deleted_at !== null,
+            },
+            aujourdhui,
+          )
+        : null;
+      if (statut === "SUPPRIMEE") {
+        throw new BadRequestError("Une période supprimée ne se modifie plus.");
+      }
+      if (statut === "PASSEE") {
+        throw new BadRequestError("Une période passée ne se modifie plus.");
       }
 
       const motifIds = [...new Set(commande.motifIds)];
@@ -67,29 +82,40 @@ export class SavePeriodeInformationHandler {
         );
       }
 
-      const erreurs = validerPeriode({
-        saisie: {
-          dateDebut: commande.dateDebut,
-          dateFin: commande.dateFin,
-          motifIds,
-        },
-        periodeModifiee: periodeModifiee
-          ? bornesDepuisBase(periodeModifiee)
-          : null,
-        autresPeriodes: periodes
-          .filter((periode) => periode.id !== commande.id)
-          .map(bornesDepuisBase),
-        aujourdhui: aujourdhuiAParis(maintenant),
-      });
-      const messages = Object.values(erreurs);
-      if (messages.length > 0) {
-        throw new BadRequestError(messages.join(" "));
+      const saisie = schemaPeriode({
+        aujourdhui,
+        debutFige:
+          statut === "EN_COURS" && periodeModifiee
+            ? jourISO(periodeModifiee.date_debut)
+            : null,
+      }).safeParse({ ...commande, motifIds });
+      if (!saisie.success) {
+        throw new BadRequestError(
+          saisie.error.issues.map((issue) => issue.message).join(" "),
+        );
       }
 
       const dates = {
-        date_debut: dateBaseDepuisJour(commande.dateDebut),
-        date_fin: dateBaseDepuisJour(commande.dateFin),
+        date_debut: new Date(commande.dateDebut),
+        date_fin: new Date(commande.dateFin),
       };
+      const periodesChevauchees =
+        await client.formation_periode_information.findMany({
+          where: {
+            id: commande.id ? { not: commande.id } : undefined,
+            deleted_at: null,
+            date_debut: { lte: dates.date_fin },
+            date_fin: { gte: dates.date_debut },
+          },
+          orderBy: { date_debut: "asc" },
+        });
+      await client.formation_periode_information.updateMany({
+        where: {
+          id: { in: periodesChevauchees.map((periode) => periode.id) },
+        },
+        data: { deleted_at: maintenant },
+      });
+
       const periode = periodeModifiee
         ? await client.formation_periode_information.update({
             where: { id: periodeModifiee.id },
@@ -107,7 +133,13 @@ export class SavePeriodeInformationHandler {
         })),
       });
 
-      return { id: periode.id };
+      return {
+        id: periode.id,
+        periodesRemplacees: periodesChevauchees.map((chevauchee) => ({
+          dateDebut: jourISO(chevauchee.date_debut),
+          dateFin: jourISO(chevauchee.date_fin),
+        })),
+      };
     });
   }
 }

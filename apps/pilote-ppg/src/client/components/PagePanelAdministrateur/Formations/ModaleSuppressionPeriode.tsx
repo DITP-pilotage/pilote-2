@@ -3,8 +3,8 @@ import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Button } from "@/components/shared/Button";
 import { Modale } from "@/components/shared/Modale";
-import { formaterJour } from "@/server/formations/domain/periodeInformation";
 import type { PeriodeInformation } from "@/server/formations/queries/ListPeriodesInformationQuery";
+import { formaterJour } from "./formaterPeriodes";
 
 const TOAST_OPTIONS = {
   duration: 3000,
@@ -40,7 +40,8 @@ export const ModaleSuppressionPeriode = ({
     >
       <p>
         Supprimer la période du {formaterJour(periode.dateDebut)} au{" "}
-        {formaterJour(periode.dateFin)} ?
+        {formaterJour(periode.dateFin)} ? Elle restera dans la liste, sans
+        pouvoir être modifiée.
       </p>
       <div className="mt-6 flex justify-end gap-4">
         <Button onClick={onClose} variant="secondary">

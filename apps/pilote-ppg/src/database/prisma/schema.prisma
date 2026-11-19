@@ -1466,6 +1466,7 @@ model formation_periode_information {
   date_fin     DateTime                                    @db.Date
   created_at   DateTime                                    @default(now()) @db.Timestamptz
   updated_at   DateTime                                    @default(now()) @updatedAt @db.Timestamptz
+  deleted_at   DateTime?                                   @db.Timestamptz
   motifs       formation_periode_information_motif[]
   utilisateurs formation_periode_information_utilisateur[]
 

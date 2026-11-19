@@ -22,9 +22,11 @@ describe("SetMotifProfilHandler", () => {
       await handler.execute(commande);
 
       // Then
-      expect(await prisma.formation_motif_profil.findMany()).toEqual([
-        { motif_id: BigInt(1), profil_code: "DITP_ADMIN" },
-      ]);
+      expect(
+        await prisma.formation_motif_profil.findMany({
+          select: { motif_id: true, profil_code: true },
+        }),
+      ).toEqual([{ motif_id: BigInt(1), profil_code: "DITP_ADMIN" }]);
     }),
   );
 

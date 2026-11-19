@@ -1,11 +1,12 @@
+import type { Prisma, formation_motif } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import {
   aujourdhuiAParis,
+  jourISO,
   statutPeriode,
   type JourISO,
   type StatutPeriode,
 } from "@/server/formations/domain/periodeInformation";
-import { bornesDepuisBase } from "@/server/formations/infrastructure/joursBase";
 import type { Inject } from "@/server/formations/module";
 
 export interface PeriodeInformation {
@@ -13,8 +14,6 @@ export interface PeriodeInformation {
   dateDebut: JourISO;
   dateFin: JourISO;
   statut: StatutPeriode;
-  // `retireeDeRdvSp` : motif supprimé dans RDV-SP ou disparu de formation_motif ;
-  // il n'est plus proposé et sera enlevé de la période au prochain enregistrement.
   motifs: { id: number; nom: string | null; retireeDeRdvSp: boolean }[];
 }
 
@@ -25,10 +24,13 @@ export interface MotifDisponible {
 }
 
 export interface PeriodesInformation {
-  aujourdhui: JourISO;
   periodes: PeriodeInformation[];
   motifsDisponibles: MotifDisponible[];
 }
+
+type PeriodeAvecMotifs = Prisma.formation_periode_informationGetPayload<{
+  include: { motifs: true };
+}>;
 
 type MotifDePeriode = PeriodeInformation["motifs"][number];
 
@@ -41,6 +43,37 @@ function comparerMotifs(premier: MotifDePeriode, second: MotifDePeriode) {
     );
   }
   return premier.nom.localeCompare(second.nom, "fr") || premier.id - second.id;
+}
+
+function toApiModel(
+  periode: PeriodeAvecMotifs,
+  {
+    aujourdhui,
+    motifsParId,
+  }: { aujourdhui: JourISO; motifsParId: Map<number, formation_motif> },
+): PeriodeInformation {
+  const dateDebut = jourISO(periode.date_debut);
+  const dateFin = jourISO(periode.date_fin);
+  return {
+    id: periode.id,
+    dateDebut,
+    dateFin,
+    statut: statutPeriode(
+      { dateDebut, dateFin, supprimee: periode.deleted_at !== null },
+      aujourdhui,
+    ),
+    motifs: periode.motifs
+      .map((motifDePeriode) => {
+        const motifId = Number(motifDePeriode.motif_id);
+        const motif = motifsParId.get(motifId);
+        return {
+          id: motifId,
+          nom: motif?.nom ?? null,
+          retireeDeRdvSp: !motif || motif.date_suppression !== null,
+        };
+      })
+      .sort(comparerMotifs),
+  };
 }
 
 export class ListPeriodesInformationQuery {
@@ -79,26 +112,9 @@ export class ListPeriodesInformationQuery {
     );
 
     return {
-      aujourdhui,
-      periodes: periodes.map((periode) => {
-        const bornes = bornesDepuisBase(periode);
-        return {
-          id: periode.id,
-          ...bornes,
-          statut: statutPeriode(bornes, aujourdhui),
-          motifs: periode.motifs
-            .map((motifDePeriode) => {
-              const motifId = Number(motifDePeriode.motif_id);
-              const motif = motifsParId.get(motifId);
-              return {
-                id: motifId,
-                nom: motif?.nom ?? null,
-                retireeDeRdvSp: !motif || motif.date_suppression !== null,
-              };
-            })
-            .sort(comparerMotifs),
-        };
-      }),
+      periodes: periodes.map((periode) =>
+        toApiModel(periode, { aujourdhui, motifsParId }),
+      ),
       motifsDisponibles: motifs
         .filter((motif) => motif.date_suppression === null)
         .map((motif) => ({

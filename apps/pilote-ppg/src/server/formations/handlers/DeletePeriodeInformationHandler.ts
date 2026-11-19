@@ -2,9 +2,9 @@ import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { BadRequestError } from "@/shared/errors/bad-request-error";
 import {
   aujourdhuiAParis,
+  jourISO,
   statutPeriode,
 } from "@/server/formations/domain/periodeInformation";
-import { bornesDepuisBase } from "@/server/formations/infrastructure/joursBase";
 import { verrouillerPeriodes } from "@/server/formations/infrastructure/verrouPeriodes";
 import type { Inject } from "@/server/formations/module";
 
@@ -35,18 +35,25 @@ export class DeletePeriodeInformationHandler {
       if (!periode) {
         throw new BadRequestError("Cette période n'existe plus.");
       }
-      if (
-        statutPeriode(
-          bornesDepuisBase(periode),
-          aujourdhuiAParis(maintenant),
-        ) !== "A_VENIR"
-      ) {
-        throw new BadRequestError(
-          "Seule une période à venir peut être supprimée.",
-        );
+      const statut = statutPeriode(
+        {
+          dateDebut: jourISO(periode.date_debut),
+          dateFin: jourISO(periode.date_fin),
+          supprimee: periode.deleted_at !== null,
+        },
+        aujourdhuiAParis(maintenant),
+      );
+      if (statut === "SUPPRIMEE") {
+        throw new BadRequestError("Cette période est déjà supprimée.");
       }
-      // La suppression emporte en cascade les motifs de la période.
-      await client.formation_periode_information.delete({ where: { id } });
+      if (statut === "PASSEE") {
+        throw new BadRequestError("Une période passée ne se supprime pas.");
+      }
+
+      await client.formation_periode_information.update({
+        where: { id },
+        data: { deleted_at: maintenant },
+      });
     });
   }
 }

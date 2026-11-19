@@ -153,7 +153,15 @@ const SEANCES: SeanceFictive[] = [
   },
 ];
 
-const PERIODES = [
+// Les périodes non supprimées ne se chevauchent pas ; la supprimée a été remplacée
+// par celle en cours.
+const PERIODES: {
+  id: string;
+  decalageDebut: number;
+  decalageFin: number;
+  decalageSuppression?: number;
+  motifs: bigint[];
+}[] = [
   {
     id: "11111111-1111-4111-8111-111111111111",
     decalageDebut: -7,
@@ -165,6 +173,19 @@ const PERIODES = [
     decalageDebut: -90,
     decalageFin: -60,
     motifs: [INTRODUCTION],
+  },
+  {
+    id: "33333333-3333-4333-8333-333333333333",
+    decalageDebut: 45,
+    decalageFin: 75,
+    motifs: [ROLES, IMPORT],
+  },
+  {
+    id: "44444444-4444-4444-8444-444444444444",
+    decalageDebut: -30,
+    decalageFin: 20,
+    decalageSuppression: -7,
+    motifs: [INTRODUCTION, ROLES],
   },
 ];
 
@@ -252,6 +273,10 @@ async function main() {
         id: periode.id,
         date_debut: jourDecale(periode.decalageDebut),
         date_fin: jourDecale(periode.decalageFin),
+        deleted_at:
+          periode.decalageSuppression === undefined
+            ? null
+            : aujourdhuiDecale(periode.decalageSuppression, 9),
       })),
     });
     await transaction.formation_periode_information_motif.createMany({

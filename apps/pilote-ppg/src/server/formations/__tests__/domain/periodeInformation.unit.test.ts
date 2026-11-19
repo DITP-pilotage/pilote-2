@@ -1,8 +1,11 @@
 import {
   aujourdhuiAParis,
-  jourPrecedent,
+  jourISO,
+  periodesChevauchees,
+  schemaPeriode,
   statutPeriode,
-  validerPeriode,
+  type JourISO,
+  type SaisiePeriode,
 } from "@/server/formations/domain/periodeInformation";
 
 const AUJOURDHUI = "2026-11-18";
@@ -11,6 +14,20 @@ const valide = {
   dateFin: "2026-12-31",
   motifIds: [900001],
 };
+
+function erreurs(
+  saisie: SaisiePeriode,
+  debutFige: JourISO | null = null,
+): Record<string, string> {
+  const resultat = schemaPeriode({
+    aujourdhui: AUJOURDHUI,
+    debutFige,
+  }).safeParse(saisie);
+  if (resultat.success) return {};
+  return Object.fromEntries(
+    resultat.error.issues.map((issue) => [issue.path.join("."), issue.message]),
+  );
+}
 
 describe("aujourdhuiAParis", () => {
   it("donne le jour à Paris, pas le jour UTC", () => {
@@ -26,43 +43,83 @@ describe("aujourdhuiAParis", () => {
   });
 });
 
-describe("jourPrecedent", () => {
-  it("recule d'un jour en changeant de mois", () => {
-    expect(jourPrecedent("2026-03-01")).toEqual("2026-02-28");
+describe("jourISO", () => {
+  it("donne le jour d'une date lue dans une colonne date", () => {
+    expect(jourISO(new Date("2026-11-03T00:00:00Z"))).toEqual("2026-11-03");
   });
 });
 
 describe("statutPeriode", () => {
   it("est à venir avant le premier jour, en cours du premier au dernier jour inclus, passée ensuite", () => {
-    const periode = { dateDebut: "2026-11-18", dateFin: "2026-11-30" };
+    const periode = {
+      dateDebut: "2026-11-18",
+      dateFin: "2026-11-30",
+      supprimee: false,
+    };
     expect(statutPeriode(periode, "2026-11-17")).toEqual("A_VENIR");
     expect(statutPeriode(periode, "2026-11-18")).toEqual("EN_COURS");
     expect(statutPeriode(periode, "2026-11-30")).toEqual("EN_COURS");
     expect(statutPeriode(periode, "2026-12-01")).toEqual("PASSEE");
   });
+
+  it("est supprimée quelles que soient ses dates", () => {
+    const periode = {
+      dateDebut: "2026-11-18",
+      dateFin: "2026-11-30",
+      supprimee: true,
+    };
+    expect(statutPeriode(periode, "2026-11-17")).toEqual("SUPPRIMEE");
+    expect(statutPeriode(periode, "2026-11-20")).toEqual("SUPPRIMEE");
+    expect(statutPeriode(periode, "2026-12-01")).toEqual("SUPPRIMEE");
+  });
 });
 
-describe("validerPeriode", () => {
-  it("accepte une nouvelle période valide", () => {
+describe("periodesChevauchees", () => {
+  it("garde les périodes qui partagent au moins un jour, bornes comprises", () => {
+    const finitLeJourDuDebut = {
+      id: "a",
+      dateDebut: "2026-11-03",
+      dateFin: "2026-12-01",
+    };
+    const englobee = {
+      id: "b",
+      dateDebut: "2026-12-10",
+      dateFin: "2026-12-12",
+    };
+    const commenceLeJourDeLaFin = {
+      id: "c",
+      dateDebut: "2026-12-31",
+      dateFin: "2027-01-15",
+    };
+
     expect(
-      validerPeriode({
-        saisie: valide,
-        periodeModifiee: null,
-        autresPeriodes: [],
-        aujourdhui: AUJOURDHUI,
-      }),
+      periodesChevauchees(valide, [
+        finitLeJourDuDebut,
+        englobee,
+        commenceLeJourDeLaFin,
+      ]),
+    ).toEqual([finitLeJourDuDebut, englobee, commenceLeJourDeLaFin]);
+  });
+
+  it("écarte les périodes accolées", () => {
+    expect(
+      periodesChevauchees(valide, [
+        { dateDebut: "2026-11-03", dateFin: "2026-11-30" },
+        { dateDebut: "2027-01-01", dateFin: "2027-01-31" },
+      ]),
+    ).toEqual([]);
+  });
+});
+
+describe("schemaPeriode", () => {
+  it("accepte une période d'un seul jour qui commence aujourd'hui", () => {
+    expect(
+      erreurs({ ...valide, dateDebut: AUJOURDHUI, dateFin: AUJOURDHUI }),
     ).toEqual({});
   });
 
   it("demande les deux dates et au moins une formation", () => {
-    expect(
-      validerPeriode({
-        saisie: { dateDebut: "", dateFin: "", motifIds: [] },
-        periodeModifiee: null,
-        autresPeriodes: [],
-        aujourdhui: AUJOURDHUI,
-      }),
-    ).toEqual({
+    expect(erreurs({ dateDebut: "", dateFin: "", motifIds: [] })).toEqual({
       dateDebut: "Indiquez une date de début.",
       dateFin: "Indiquez une date de fin.",
       motifIds: "Choisissez au moins une formation.",
@@ -70,94 +127,41 @@ describe("validerPeriode", () => {
   });
 
   it("refuse une fin avant le début", () => {
-    expect(
-      validerPeriode({
-        saisie: { ...valide, dateFin: "2026-11-30" },
-        periodeModifiee: null,
-        autresPeriodes: [],
-        aujourdhui: AUJOURDHUI,
-      }),
-    ).toEqual({
+    expect(erreurs({ ...valide, dateFin: "2026-11-30" })).toEqual({
       dateFin:
         "La date de fin doit être égale ou postérieure à la date de début.",
     });
   });
 
-  it("refuse une nouvelle période qui finit avant aujourd'hui", () => {
-    expect(
-      validerPeriode({
-        saisie: { ...valide, dateDebut: "2026-11-01", dateFin: "2026-11-17" },
-        periodeModifiee: null,
-        autresPeriodes: [],
-        aujourdhui: AUJOURDHUI,
-      }),
-    ).toEqual({ dateFin: "La date de fin ne peut pas être passée." });
-  });
-
-  it("refuse un chevauchement d'un seul jour, bornes comprises", () => {
-    expect(
-      validerPeriode({
-        saisie: { ...valide, dateDebut: "2026-11-30" },
-        periodeModifiee: null,
-        autresPeriodes: [{ dateDebut: "2026-11-03", dateFin: "2026-11-30" }],
-        aujourdhui: AUJOURDHUI,
-      }),
-    ).toEqual({
-      dateDebut: "Cette période chevauche celle du 03/11/2026 au 30/11/2026.",
+  it("refuse un début passé", () => {
+    expect(erreurs({ ...valide, dateDebut: "2026-11-17" })).toEqual({
+      dateDebut: "La date de début ne peut pas être passée.",
     });
   });
 
-  it("accepte une période qui commence le lendemain de la fin d'une autre", () => {
+  it("refuse une fin passée", () => {
     expect(
-      validerPeriode({
-        saisie: valide,
-        periodeModifiee: null,
-        autresPeriodes: [{ dateDebut: "2026-11-03", dateFin: "2026-11-30" }],
-        aujourdhui: AUJOURDHUI,
-      }),
+      erreurs({ ...valide, dateDebut: "2026-11-01", dateFin: "2026-11-17" }),
+    ).toEqual({
+      dateDebut: "La date de début ne peut pas être passée.",
+      dateFin: "La date de fin ne peut pas être passée.",
+    });
+  });
+
+  it("fige le début d'une période en cours et accepte de la finir aujourd'hui", () => {
+    expect(
+      erreurs(
+        { ...valide, dateDebut: "2026-11-03", dateFin: AUJOURDHUI },
+        "2026-11-03",
+      ),
     ).toEqual({});
-  });
-
-  it("refuse toute modification d'une période passée", () => {
     expect(
-      validerPeriode({
-        saisie: valide,
-        periodeModifiee: { dateDebut: "2026-10-01", dateFin: "2026-10-31" },
-        autresPeriodes: [],
-        aujourdhui: AUJOURDHUI,
-      }),
-    ).toEqual({ periode: "Une période passée ne se modifie plus." });
-  });
-
-  it("fige le début d'une période en cours et accepte de l'arrêter hier, pas avant", () => {
-    const enCours = { dateDebut: "2026-11-10", dateFin: "2026-11-30" };
-    expect(
-      validerPeriode({
-        saisie: { ...valide, dateDebut: "2026-11-12", dateFin: "2026-11-30" },
-        periodeModifiee: enCours,
-        autresPeriodes: [],
-        aujourdhui: AUJOURDHUI,
-      }),
+      erreurs(
+        { ...valide, dateDebut: "2026-11-04", dateFin: AUJOURDHUI },
+        "2026-11-03",
+      ),
     ).toEqual({
       dateDebut: "La date de début d'une période en cours ne se modifie plus.",
-    });
-    expect(
-      validerPeriode({
-        saisie: { ...valide, dateDebut: "2026-11-10", dateFin: "2026-11-17" },
-        periodeModifiee: enCours,
-        autresPeriodes: [],
-        aujourdhui: AUJOURDHUI,
-      }),
-    ).toEqual({});
-    expect(
-      validerPeriode({
-        saisie: { ...valide, dateDebut: "2026-11-10", dateFin: "2026-11-16" },
-        periodeModifiee: enCours,
-        autresPeriodes: [],
-        aujourdhui: AUJOURDHUI,
-      }),
-    ).toEqual({
-      dateFin: "La date de fin ne peut pas être antérieure à hier.",
     });
   });
 });
