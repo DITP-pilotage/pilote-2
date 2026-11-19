@@ -1,6 +1,7 @@
 import { err, ok, type Result } from 'neverthrow'
 
-import { type IndividuInconnuError, resolveAuthorizedIndividu } from '@/individu/permission'
+import { loadIndividusContext } from '@/individu/loadIndividusContext'
+import { checkIndividuRattache, type IndividuInconnuError } from '@/individu/rules'
 
 import { resolveIndicateurForWriteData } from './resolveIndicateurForWrite'
 
@@ -18,10 +19,18 @@ export const resolveIndicateurAndIndividuForWriteData = async ({
   individuPublicId: string
 }): Promise<Result<ResolvedContext, IndividuInconnuError>> => {
   const { indicateur, principalId } = await resolveIndicateurForWriteData({ indicateurPublicId })
-  const individu = await resolveAuthorizedIndividu({
-    individuPublicId,
+
+  const individus = await loadIndividusContext({
     indicateurId: indicateur.id,
+    individuPublicIds: [individuPublicId],
+  })
+
+  const individu = checkIndividuRattache({
+    individuPublicId,
+    individu: individus.individuByPublicId.get(individuPublicId),
+    referentielIdsLies: individus.referentielIdsLies,
   })
   if (individu.isErr()) return err(individu.error)
+
   return ok({ indicateur, individu: individu.value, principalId })
 }

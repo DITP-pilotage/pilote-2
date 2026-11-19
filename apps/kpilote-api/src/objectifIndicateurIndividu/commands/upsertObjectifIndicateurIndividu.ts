@@ -7,7 +7,7 @@ import { uuidv7 } from 'uuidv7'
 
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
-import { type IndividuInconnuError } from '@/individu/permission'
+import { type IndividuInconnuError } from '@/individu/rules'
 import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
 import { toObjectifIndicateurIndividuApiModel } from '@/objectifIndicateurIndividu/utils'
 

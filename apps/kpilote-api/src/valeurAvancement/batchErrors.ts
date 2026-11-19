@@ -5,6 +5,7 @@ import {
 import { type Result } from 'neverthrow'
 
 import { type RequestedModalite, type SaisieModalitesError } from '@/axe/requestedModalites'
+import { type IndividuInconnuError } from '@/individu/rules'
 
 // Erreurs d'un lot de valeurs, calculées sans base : chaque fonction reçoit les
 // items et, pour chacun, le résultat de la validation de ses modalités.
@@ -110,4 +111,25 @@ export const aggregateModalitesErrors = ({
     }
   })
   return [...entries.values()]
+}
+
+// Une entrée par individu refusé par `checkIndividuRattache`, qui pointe toutes
+// les lignes concernées (DX d'import).
+export const aggregateIndividusErrors = ({
+  individuByItem,
+}: {
+  individuByItem: ReadonlyArray<Result<unknown, IndividuInconnuError>>
+}): BatchInvalidErrorEntryApiModel[] => {
+  const indicesByIndividu = new Map<string, number[]>()
+  individuByItem.forEach((result, index) => {
+    if (result.isOk()) return
+    const indices = indicesByIndividu.get(result.error.individu) ?? []
+    indices.push(index)
+    indicesByIndividu.set(result.error.individu, indices)
+  })
+  return [...indicesByIndividu].map(([individu, indices]) => ({
+    code: 'INDIVIDU_INCONNU',
+    individu,
+    indices,
+  }))
 }

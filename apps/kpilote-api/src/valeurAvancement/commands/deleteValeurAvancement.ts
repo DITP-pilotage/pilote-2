@@ -4,7 +4,7 @@ import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { combinaisonKey } from '@/axe/combinaison'
 import { type SaisieModalitesError } from '@/axe/requestedModalites'
 import { db } from '@/framework/persistence/dbStore'
-import { type IndividuInconnuError } from '@/individu/permission'
+import { type IndividuInconnuError } from '@/individu/rules'
 import { resolveCelluleForWrite } from '@/valeurAvancement/resolveCelluleForWrite'
 
 export type DeleteValeurAvancementError = IndividuInconnuError | SaisieModalitesError

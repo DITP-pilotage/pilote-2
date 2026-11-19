@@ -16,7 +16,10 @@ import {
 import { db } from '@/framework/persistence/dbStore'
 import { upsertValeursAvancementBatch as upsertValeursAvancementBatchQuery } from '@/generated/prisma/sql'
 import { resolveIndicateurForWriteData } from '@/indicateur/resolveIndicateurForWrite'
+import { loadIndividusContext } from '@/individu/loadIndividusContext'
+import { checkIndividuRattache } from '@/individu/rules'
 import {
+  aggregateIndividusErrors,
   aggregateModalitesErrors,
   detectDuplicateKeys,
   type ModalitesByItem,
@@ -72,27 +75,40 @@ const validateAndResolveCellules = async ({
   indicateurId: string
   items: BatchItems
 }): Promise<Result<ResolvedCellule[], BatchInvalidError>> => {
-  const [{ individuByPublicId, linkedReferentielIds }, modalitesContext] = await Promise.all([
-    loadIndividusContext({ indicateurId, items }),
+  const [individus, modalitesContext] = await Promise.all([
+    loadIndividusContext({ indicateurId, individuPublicIds: items.map((item) => item.individu) }),
     loadModalitesContext({
       indicateurId,
       modalitePublicIds: items.flatMap((item) => item.modalites ?? []),
     }),
   ])
+
+  const individuByItem = items.map((item) =>
+    checkIndividuRattache({
+      individuPublicId: item.individu,
+      individu: individus.individuByPublicId.get(item.individu),
+      referentielIdsLies: individus.referentielIdsLies,
+    }),
+  )
   const modalitesByItem = validateItemsModalites({ items, context: modalitesContext })
+
   const errors = [
     ...detectDuplicateKeys({ items, modalitesByItem }),
-    ...detectIndividusInconnus({ items, individuByPublicId, linkedReferentielIds }),
+    ...aggregateIndividusErrors({ individuByItem }),
     ...aggregateModalitesErrors({ modalitesByItem }),
   ]
   if (errors.length > 0) return err({ type: 'BATCH_INVALID', errors })
-  return ok(
-    items.map((item, index) => ({
-      individuId: individuByPublicId.get(item.individu)!.id,
-      // Aucune erreur à ce stade : chaque item a ses modalités.
-      modalites: modalitesByItem[index]!.unwrapOr([]),
-    })),
-  )
+
+  // Aucune erreur à ce stade : chaque item a son individu et ses modalités.
+  const cellules: ResolvedCellule[] = []
+  items.forEach((_item, index) => {
+    const individu = individuByItem[index]!
+    const modalites = modalitesByItem[index]!
+    if (individu.isOk() && modalites.isOk()) {
+      cellules.push({ individuId: individu.value.id, modalites: modalites.value })
+    }
+  })
+  return ok(cellules)
 }
 
 const validateItemsModalites = ({
@@ -103,70 +119,6 @@ const validateItemsModalites = ({
   context: ModalitesContext
 }): ModalitesByItem =>
   items.map((item) => validateSaisieModalites({ context, modalitePublicIds: item.modalites ?? [] }))
-
-type IndividuRow = { id: string; publicId: string; referentielId: string }
-
-// Charge en deux requêtes ce qu'il faut pour valider chaque item :
-//  - tous les individus distincts présents dans le payload (par publicId), avec leur referentielId
-//  - parmi leurs référentiels, ceux qui sont effectivement liés à l'indicateur cible.
-// Les deux Map/Set permettent ensuite une vérification O(n) sans round-trip supplémentaire.
-const loadIndividusContext = async ({
-  indicateurId,
-  items,
-}: {
-  indicateurId: string
-  items: BatchItems
-}): Promise<{
-  individuByPublicId: Map<string, IndividuRow>
-  linkedReferentielIds: Set<string>
-}> => {
-  const distinctIndividuPublicIds = Array.from(new Set(items.map((item) => item.individu)))
-  const individus = await db().individu.findMany({
-    where: { publicId: { in: distinctIndividuPublicIds } },
-    select: { id: true, publicId: true, referentielId: true },
-  })
-  const individuByPublicId = new Map(individus.map((individu) => [individu.publicId, individu]))
-  const distinctReferentielIds = Array.from(
-    new Set(individus.map((individu) => individu.referentielId)),
-  )
-  const links = await db().indicateurReferentiel.findMany({
-    where: { indicateurId, referentielId: { in: distinctReferentielIds } },
-    select: { referentielId: true },
-  })
-  return {
-    individuByPublicId,
-    linkedReferentielIds: new Set(links.map((link) => link.referentielId)),
-  }
-}
-
-// Pour chaque item, l'individu doit (a) exister et (b) appartenir à un référentiel
-// effectivement lié à l'indicateur. Toute violation produit une seule erreur
-// `INDIVIDU_INCONNU` par publicId — agrégée pour pointer toutes les lignes
-// concernées en une seule entrée (DX d'import).
-const detectIndividusInconnus = ({
-  items,
-  individuByPublicId,
-  linkedReferentielIds,
-}: {
-  items: BatchItems
-  individuByPublicId: Map<string, IndividuRow>
-  linkedReferentielIds: Set<string>
-}): BatchInvalidErrorEntryApiModel[] => {
-  const indicesByInconnu = new Map<string, number[]>()
-  items.forEach((item, index) => {
-    const individu = individuByPublicId.get(item.individu)
-    if (!individu || !linkedReferentielIds.has(individu.referentielId)) {
-      const list = indicesByInconnu.get(item.individu)
-      if (list) list.push(index)
-      else indicesByInconnu.set(item.individu, [index])
-    }
-  })
-  const errors: BatchInvalidErrorEntryApiModel[] = []
-  for (const [individu, indices] of indicesByInconnu) {
-    errors.push({ code: 'INDIVIDU_INCONNU', individu, indices })
-  }
-  return errors
-}
 
 // Forme transmise au paramètre `payload.items` de la requête TypedSQL.
 // Doit rester en miroir de `prisma/sql/upsertValeursAvancementBatch.sql` (clés extraites
