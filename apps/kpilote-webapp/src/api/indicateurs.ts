@@ -15,12 +15,15 @@ import {
   individusWithValeursListApiModelSchema,
   type ListIndividusWithValeursQuery,
   type ListSyntheseIndividusQuery,
+  type ListValeursByCombinaisonQuery,
   type ListValeursForIndicateurQuery,
   type ListValeursRemarquablesForIndicateurQuery,
   type SyntheseIndividusListApiModel,
   syntheseIndividusListApiModelSchema,
   type ValeurAvancementListApiModel,
   valeurAvancementListApiModelSchema,
+  type ValeursByCombinaisonListApiModel,
+  valeursByCombinaisonListApiModelSchema,
   type ValeursRemarquablesListApiModel,
   valeursRemarquablesListApiModelSchema,
 } from '@pilote/kpilote-shared/valeurAvancement'
@@ -73,6 +76,19 @@ export const fetchValeursForIndicateur = async (
     })
     .json()
   return valeurAvancementListApiModelSchema.parse(json)
+}
+
+export const fetchValeursByCombinaison = async ({
+  indicateurId,
+  params,
+}: {
+  indicateurId: string
+  params: ListValeursByCombinaisonQuery
+}): Promise<ValeursByCombinaisonListApiModel> => {
+  const json = await apiClient
+    .get(`indicateurs/${indicateurId}/valeurs-par-combinaison`, { searchParams: params })
+    .json()
+  return valeursByCombinaisonListApiModelSchema.parse(json)
 }
 
 export const fetchValeursRemarquablesForIndicateur = async (
