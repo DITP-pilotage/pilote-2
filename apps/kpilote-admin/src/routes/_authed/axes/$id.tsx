@@ -74,7 +74,16 @@ function EditAxeComponent() {
         </Link>
         <span className="font-medium text-text">{id}</span>
       </Breadcrumb>
-      <PageHeading title="Modifier l’axe" subtitle={<code>PUT /axes/{id}</code>} />
+      <PageHeading
+        title="Modifier l’axe"
+        subtitle={<code>PUT /axes/{id}</code>}
+        action={
+          <Button onClick={() => setGrapheOuvert(true)}>
+            <Network />
+            Voir le graphe de calcul
+          </Button>
+        }
+      />
       <AxeForm
         key={axe.updatedAt}
         mode="edit"
@@ -93,12 +102,6 @@ function EditAxeComponent() {
           onUnlock={unlock}
           confirmation="Déverrouiller l'édition des modalités en PRODUCTION ?"
         />
-        <div className="flex justify-end">
-          <Button variant="secondary" size="sm" onClick={() => setGrapheOuvert(true)}>
-            <Network />
-            Voir le graphe de calcul
-          </Button>
-        </div>
         <ModalitesArbre axeId={id} niveaux={axe.niveaux} modalites={modalites} disabled={locked} />
       </div>
 

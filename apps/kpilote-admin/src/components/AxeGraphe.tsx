@@ -26,8 +26,26 @@ import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { deleteModalite, upsertAxe, upsertModalite } from '@/api/axes'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { Dialog } from '@pilote/kpilote-ui/Dialog'
+import { AxeTableur } from '@/components/AxeTableur'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
+import {
+  ancestorsOf,
+  type Arbre,
+  type ArbreNode,
+  buildArbre,
+  countDescendants,
+  type Fonction,
+  fonctionLabel,
+  formatValue,
+  type Kind,
+  nommerTous,
+  normalize,
+  pluriel,
+  relatedIds,
+  TOUS_ID,
+} from '@/lib/axeArbre'
+import { buildExempleSaisies, computeSerie, PERIODES, type SaisiesSerie } from '@/lib/axeSerie'
 import { clsxm } from '@/lib/clsxm'
 
 const NODE_H = 52
@@ -37,25 +55,14 @@ const HEADER_H = 64
 const MIN_COL_GAP = 48
 const MAX_NODE_W = 240
 const MIN_NODE_W = 150
-const TOUS_ID = '__TOUS__'
 const CHILD_LIMIT = 25
 const AUTO_COLLAPSE_AT = 60
 const ALERTES_LIMIT = 5
 
 type Mode = 'edition' | 'simulation'
-type Fonction = 'SUM' | 'AVG'
-type Kind = 'feuille' | 'parente' | 'tous'
+type Vue = 'graphe' | 'tableau'
 
-type LayoutNode = {
-  id: string
-  nom: string
-  kind: Kind
-  niveau: number
-  parent: string | null
-  children: string[]
-}
-
-type PlacedNode = LayoutNode & { x: number; y: number; hidden: number }
+type PlacedNode = ArbreNode & { x: number; y: number; hidden: number }
 
 type MoreNode = { parent: string; x: number; y: number; count: number }
 
@@ -67,46 +74,48 @@ type Selection =
 
 type Computed = { value: number | null; present: number; expected: number }
 
-const buildTree = (modalites: ReadonlyArray<ModaliteApiModel>) => {
-  const byParent = new Map<string | null, string[]>()
-  for (const m of modalites) {
-    byParent.set(m.parent, [...(byParent.get(m.parent) ?? []), m.id])
-  }
-  const tree = new Map<string, LayoutNode>()
-  for (const m of modalites) {
-    const children = byParent.get(m.id) ?? []
-    tree.set(m.id, {
-      id: m.id,
-      nom: m.nom,
-      kind: children.length === 0 ? 'feuille' : 'parente',
-      niveau: m.niveau,
-      parent: m.parent ?? TOUS_ID,
-      children,
-    })
-  }
-  tree.set(TOUS_ID, {
-    id: TOUS_ID,
-    nom: 'Tous',
-    kind: 'tous',
-    niveau: 0,
-    parent: null,
-    children: byParent.get(null) ?? [],
-  })
-  return tree
+const selectedNodeIdOf = (selection: Selection): string | null => {
+  if (selection?.type === 'node') return selection.id
+  if (selection?.type === 'ajout') return selection.parent ?? TOUS_ID
+  return null
 }
 
-const countDescendants = (tree: Map<string, LayoutNode>, id: string): number =>
-  (tree.get(id)?.children ?? []).reduce((total, c) => total + 1 + countDescendants(tree, c), 0)
+const highlightedIdsOf = ({
+  tree,
+  focus,
+  selection,
+}: {
+  tree: Arbre
+  focus: string | null
+  selection: Selection
+}): Set<string> | null => {
+  if (focus) return relatedIds({ arbre: tree, id: focus })
+  if (selection?.type !== 'niveau') return null
+  const membres = [...tree.values()].filter((node) => node.niveau === selection.ordre)
+  return new Set(membres.map((node) => node.id))
+}
 
 // Au-delà de quelques dizaines de modalités, on part replié au premier niveau.
-const initialCollapsed = (tree: Map<string, LayoutNode>) =>
+const initialCollapsed = (tree: Arbre) =>
   new Set(
     tree.size - 1 > AUTO_COLLAPSE_AT
       ? (tree.get(TOUS_ID)?.children ?? []).filter((id) => tree.get(id)?.kind === 'parente')
       : [],
   )
 
-const normalize = (value: string) => value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+const visibleChildren = ({
+  node,
+  isCollapsed,
+  visible,
+}: {
+  node: ArbreNode
+  isCollapsed: boolean
+  visible: ReadonlySet<string> | null
+}) => {
+  if (isCollapsed) return []
+  if (visible) return node.children.filter((child) => visible.has(child))
+  return node.children
+}
 
 const buildLayout = ({
   tree,
@@ -116,7 +125,7 @@ const buildLayout = ({
   showAll,
   visible,
 }: {
-  tree: Map<string, LayoutNode>
+  tree: Arbre
   depth: number
   availableWidth: number
   collapsed: ReadonlySet<string>
@@ -137,11 +146,7 @@ const buildLayout = ({
   const place = (id: string): number => {
     const node = tree.get(id)!
     const isCollapsed = !visible && collapsed.has(id)
-    const children = isCollapsed
-      ? []
-      : visible
-        ? node.children.filter((c) => visible.has(c))
-        : node.children
+    const children = visibleChildren({ node, isCollapsed, visible })
     const limited = !visible && !showAll.has(id) && children.length > CHILD_LIMIT
     const shown = limited ? children.slice(0, CHILD_LIMIT) : children
     const ys = shown.map(place)
@@ -160,7 +165,7 @@ const buildLayout = ({
       ...node,
       x: nodeX(colOf(node.niveau)),
       y,
-      hidden: isCollapsed ? countDescendants(tree, id) : 0,
+      hidden: isCollapsed ? countDescendants({ arbre: tree, id }) : 0,
     })
     return y
   }
@@ -176,39 +181,6 @@ const buildLayout = ({
     height: HEADER_H + LANE_PAD * 2 + Math.max(row, 1) * ROW_H - (ROW_H - NODE_H),
   }
 }
-
-const relatedIds = (nodes: Map<string, LayoutNode>, id: string) => {
-  const ids = new Set<string>([id])
-  const down = (current: string) => {
-    for (const child of nodes.get(current)?.children ?? []) {
-      ids.add(child)
-      down(child)
-    }
-  }
-  down(id)
-  let parent = nodes.get(id)?.parent ?? null
-  while (parent) {
-    ids.add(parent)
-    parent = nodes.get(parent)?.parent ?? null
-  }
-  return ids
-}
-
-const ancestorsOf = (nodes: Map<string, LayoutNode>, id: string) => {
-  const chain: LayoutNode[] = []
-  let parent = nodes.get(id)?.parent ?? null
-  while (parent) {
-    const node = nodes.get(parent)
-    if (!node) break
-    chain.push(node)
-    parent = node.parent
-  }
-  return chain
-}
-
-const formatValue = (value: number) => value.toLocaleString('fr-FR', { maximumFractionDigits: 2 })
-
-const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? 's' : ''}`
 
 const suggestId = (nom: string, parent: string | null) => {
   const slug = nom
@@ -329,7 +301,10 @@ function AxeGraphe({
 }) {
   const niveaux = axe.niveaux
   const depth = Math.max(niveaux.length, ...modalites.map((m) => m.niveau))
-  const tree = useMemo(() => buildTree(modalites), [modalites])
+  const tree = useMemo(
+    () => nommerTous({ arbre: buildArbre(modalites), axeNom: axe.nom }),
+    [modalites, axe.nom],
+  )
   const { ref, width: availableWidth } = useWidth()
   const [collapsed, setCollapsed] = useState<Set<string>>(() => initialCollapsed(tree))
   const [showAll, setShowAll] = useState<Set<string>>(() => new Set())
@@ -343,7 +318,7 @@ function AxeGraphe({
       if (node.kind === 'tous') continue
       if (!normalize(node.nom).includes(query) && !normalize(node.id).includes(query)) continue
       ids.add(node.id)
-      for (const ancestor of ancestorsOf(tree, node.id)) ids.add(ancestor.id)
+      for (const ancestor of ancestorsOf({ arbre: tree, id: node.id })) ids.add(ancestor.id)
     }
     return ids
   }, [tree, recherche])
@@ -359,8 +334,23 @@ function AxeGraphe({
   const [mode, setMode] = useState<Mode>('edition')
   const [fonction, setFonction] = useState<Fonction>('SUM')
   const [saisies, setSaisies] = useState<Record<string, string>>({})
-  const simulation = mode === 'simulation'
-  const editable = mode === 'edition' && !locked
+  const [vue, setVue] = useState<Vue>('graphe')
+  const [seed, setSeed] = useState(1)
+  const [saisiesSerie, setSaisiesSerie] = useState<SaisiesSerie>(() =>
+    buildExempleSaisies({ arbre: tree }),
+  )
+  const tableau = vue === 'tableau'
+  // Le tableau est toujours une simulation : le mode ne règle plus que l'édition du panneau.
+  const simulation = !tableau && mode === 'simulation'
+  const editable = !locked && (tableau || mode === 'edition')
+  const serie = useMemo(
+    () => computeSerie({ arbre: tree, saisies: saisiesSerie, fonction }),
+    [tree, saisiesSerie, fonction],
+  )
+  const regenererExemple = () => {
+    setSeed(seed + 1)
+    setSaisiesSerie(buildExempleSaisies({ arbre: tree, seed: seed + 1 }))
+  }
 
   const toggleCollapse = (id: string) =>
     setCollapsed((current) => {
@@ -372,7 +362,7 @@ function AxeGraphe({
 
   // Déplie les ancêtres d'une modalité (et lève la limite d'affichage) pour la rendre visible.
   const reveal = (id: string) => {
-    const chain = ancestorsOf(tree, id)
+    const chain = ancestorsOf({ arbre: tree, id })
     setCollapsed((current) => new Set([...current].filter((c) => !chain.some((a) => a.id === c))))
     setShowAll((current) => {
       const next = new Set(current)
@@ -390,18 +380,9 @@ function AxeGraphe({
     setSelection({ type: 'node', id })
   }
 
-  const selectedNodeId =
-    selection?.type === 'node'
-      ? selection.id
-      : selection?.type === 'ajout'
-        ? (selection.parent ?? TOUS_ID)
-        : null
+  const selectedNodeId = selectedNodeIdOf(selection)
   const focus = hovered ?? selectedNodeId
-  const highlighted = focus
-    ? relatedIds(tree, focus)
-    : selection?.type === 'niveau'
-      ? new Set([...tree.values()].filter((n) => n.niveau === selection.ordre).map((n) => n.id))
-      : null
+  const highlighted = highlightedIdsOf({ tree, focus, selection })
 
   const computed = useMemo(() => {
     const result = new Map<string, Computed>()
@@ -416,7 +397,8 @@ function AxeGraphe({
       }
       const values = node.children.map(compute).filter((v): v is number => v !== null)
       const sum = values.reduce((a, b) => a + b, 0)
-      const value = values.length === 0 ? null : fonction === 'SUM' ? sum : sum / values.length
+      const average = values.length === 0 ? null : sum / values.length
+      const value = fonction === 'SUM' && values.length > 0 ? sum : average
       result.set(id, { value, present: values.length, expected: node.children.length })
       return value
     }
@@ -444,7 +426,7 @@ function AxeGraphe({
   const nomNiveau = (ordre: number) =>
     niveaux.find((n) => n.ordre === ordre)?.nom ?? `Niveau ${ordre}`
 
-  const canAddChild = (node: LayoutNode) => node.kind === 'tous' || node.niveau < niveaux.length
+  const canAddChild = (node: ArbreNode) => node.kind === 'tous' || node.niveau < niveaux.length
 
   const ajouterNiveau = () =>
     edition.enregistrerNiveaux.mutate(
@@ -463,8 +445,10 @@ function AxeGraphe({
         <div className="mr-auto">
           <Dialog.Title>Axe {axe.nom}</Dialog.Title>
           <Dialog.Description className="text-xs">
-            {pluriel(tree.size - 1, 'modalité')} · les valeurs se saisissent sur les feuilles, à
-            gauche, et remontent vers la droite jusqu’à « Tous ».
+            {pluriel({ count: tree.size - 1, mot: 'modalité' })} ·{' '}
+            {tableau
+              ? 'un exemple de valeurs mois par mois : on saisit sur les feuilles, le reste se calcule.'
+              : 'les valeurs se saisissent sur les feuilles, à gauche, et remontent vers la droite jusqu’à « Tous ».'}
           </Dialog.Description>
         </div>
         <div className="flex items-center gap-4 text-xs text-text-muted">
@@ -474,17 +458,27 @@ function AxeGraphe({
         </div>
         <div className="flex items-center gap-2">
           <Segmented
-            value={mode}
-            onChange={(value) => {
-              setMode(value)
-              if (value === 'simulation' && selection?.type === 'ajout') setSelection(null)
-            }}
+            value={vue}
+            onChange={setVue}
             options={[
-              { value: 'edition', label: locked ? 'Lecture' : 'Modifier' },
-              { value: 'simulation', label: 'Simuler' },
+              { value: 'graphe', label: 'Graphe' },
+              { value: 'tableau', label: 'Tableau' },
             ]}
           />
-          {editable ? (
+          {tableau ? null : (
+            <Segmented
+              value={mode}
+              onChange={(value) => {
+                setMode(value)
+                if (value === 'simulation' && selection?.type === 'ajout') setSelection(null)
+              }}
+              options={[
+                { value: 'edition', label: locked ? 'Lecture' : 'Modifier' },
+                { value: 'simulation', label: 'Simuler' },
+              ]}
+            />
+          )}
+          {editable && !tableau ? (
             <Button
               size="sm"
               variant="secondary"
@@ -494,7 +488,7 @@ function AxeGraphe({
               <Plus /> Niveau
             </Button>
           ) : null}
-          {simulation ? (
+          {simulation || tableau ? (
             <>
               <Segmented
                 value={fonction}
@@ -504,10 +498,20 @@ function AxeGraphe({
                   { value: 'AVG', label: 'Moyenne' },
                 ]}
               />
-              <Button size="sm" variant="tertiary" onClick={fillRandom} title="Valeurs au hasard">
+              <Button
+                size="sm"
+                variant="tertiary"
+                onClick={tableau ? regenererExemple : fillRandom}
+                title={tableau ? 'Un autre exemple' : 'Valeurs au hasard'}
+              >
                 <Dices />
               </Button>
-              <Button size="sm" variant="tertiary" onClick={() => setSaisies({})} title="Vider">
+              <Button
+                size="sm"
+                variant="tertiary"
+                onClick={() => (tableau ? setSaisiesSerie({}) : setSaisies({}))}
+                title="Vider"
+              >
                 <Eraser />
               </Button>
             </>
@@ -538,7 +542,7 @@ function AxeGraphe({
           <span className="text-xs text-text-muted">
             {nbResultats === 0
               ? 'Aucune modalité ne correspond.'
-              : `${pluriel(nbResultats, 'modalité')} affichée${nbResultats > 1 ? 's' : ''} (résultats et leurs parents)`}
+              : `${pluriel({ count: nbResultats, mot: 'modalité' })} affichée${nbResultats > 1 ? 's' : ''} (résultats et leurs parents)`}
           </span>
         ) : (
           <>
@@ -563,157 +567,181 @@ function AxeGraphe({
       </div>
 
       <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,1fr)_380px]">
-        <div ref={ref} className="min-h-0 overflow-auto bg-surface-muted">
-          {availableWidth > 0 ? (
-            <div className="relative" style={{ width, height, minHeight: '100%' }}>
-              {lanes.map(({ col, ordre }) => {
-                const isTous = ordre === 0
-                const selected = selection?.type === 'niveau' && selection.ordre === ordre
-                return (
-                  <div
-                    key={col}
-                    className={clsxm(
-                      'absolute top-0 bottom-0 border-r border-border/70',
-                      selected
-                        ? 'bg-primary-tinted/40'
-                        : col % 2 === 0
-                          ? 'bg-surface'
-                          : 'bg-surface-muted',
-                    )}
-                    style={{ left: laneX(col), width: laneW }}
-                  >
-                    <button
-                      type="button"
-                      disabled={isTous}
-                      onClick={() => setSelection(selected ? null : { type: 'niveau', ordre })}
+        {tableau ? (
+          <AxeTableur
+            arbre={tree}
+            nomNiveau={nomNiveau}
+            collapsed={collapsed}
+            visible={visible}
+            fonction={fonction}
+            saisies={saisiesSerie}
+            serie={serie}
+            selectedNodeId={selectedNodeId}
+            onToggle={toggleCollapse}
+            onSelectNode={(id) =>
+              setSelection((current) =>
+                current?.type === 'node' && current.id === id ? null : { type: 'node', id },
+              )
+            }
+            onSaisie={({ id, index, value }) =>
+              setSaisiesSerie((current) => ({
+                ...current,
+                [id]: PERIODES.map((_, periode) =>
+                  periode === index ? value : (current[id]?.[periode] ?? ''),
+                ),
+              }))
+            }
+          />
+        ) : (
+          <div ref={ref} className="min-h-0 overflow-auto bg-surface-muted">
+            {availableWidth > 0 ? (
+              <div className="relative" style={{ width, height, minHeight: '100%' }}>
+                {lanes.map(({ col, ordre }) => {
+                  const isTous = ordre === 0
+                  const selected = selection?.type === 'niveau' && selection.ordre === ordre
+                  return (
+                    <div
+                      key={col}
                       className={clsxm(
-                        'sticky top-0 z-10 flex w-full flex-col items-center justify-center border-b border-border/70 bg-inherit text-center',
-                        !isTous && 'hover:bg-primary-tinted/40',
+                        'absolute top-0 bottom-0 border-r border-border/70',
+                        col % 2 === 0 ? 'bg-surface' : 'bg-surface-muted',
+                        selected && 'bg-primary-tinted/40',
                       )}
-                      style={{ height: HEADER_H }}
+                      style={{ left: laneX(col), width: laneW }}
                     >
-                      <span className="text-[11px] text-text-subtle">
-                        {isTous
-                          ? 'Résultat'
-                          : `Niveau ${ordre}${ordre === niveaux.length ? ' · le plus fin' : ''}`}
-                      </span>
-                      <span className="text-sm font-semibold text-text">
-                        {isTous ? 'Tous' : nomNiveau(ordre)}
-                      </span>
-                    </button>
-                  </div>
-                )
-              })}
+                      <button
+                        type="button"
+                        disabled={isTous}
+                        onClick={() => setSelection(selected ? null : { type: 'niveau', ordre })}
+                        className={clsxm(
+                          'sticky top-0 z-10 flex w-full flex-col items-center justify-center border-b border-border/70 bg-inherit text-center',
+                          !isTous && 'hover:bg-primary-tinted/40',
+                        )}
+                        style={{ height: HEADER_H }}
+                      >
+                        <span className="text-[11px] text-text-subtle">
+                          {isTous
+                            ? 'Résultat'
+                            : `Niveau ${ordre}${ordre === niveaux.length ? ' · le plus fin' : ''}`}
+                        </span>
+                        <span className="text-sm font-semibold text-text">
+                          {isTous ? 'Tous' : nomNiveau(ordre)}
+                        </span>
+                      </button>
+                    </div>
+                  )
+                })}
 
-              <svg
-                className="pointer-events-none absolute inset-0"
-                width={width}
-                height={height}
-                aria-hidden
-              >
-                <defs>
-                  {(['off', 'on'] as const).map((state) => (
-                    <marker
-                      key={state}
-                      id={`fleche-${state}`}
-                      viewBox="0 0 10 10"
-                      refX="9"
-                      refY="5"
-                      markerWidth="6"
-                      markerHeight="6"
-                      orient="auto-start-reverse"
-                    >
-                      <path
-                        d="M0,0 L10,5 L0,10 z"
-                        className={state === 'on' ? 'fill-primary' : 'fill-border-strong'}
-                      />
-                    </marker>
+                <svg
+                  className="pointer-events-none absolute inset-0"
+                  width={width}
+                  height={height}
+                  aria-hidden
+                >
+                  <defs>
+                    {(['off', 'on'] as const).map((state) => (
+                      <marker
+                        key={state}
+                        id={`fleche-${state}`}
+                        viewBox="0 0 10 10"
+                        refX="9"
+                        refY="5"
+                        markerWidth="6"
+                        markerHeight="6"
+                        orient="auto-start-reverse"
+                      >
+                        <path
+                          d="M0,0 L10,5 L0,10 z"
+                          className={state === 'on' ? 'fill-primary' : 'fill-border-strong'}
+                        />
+                      </marker>
+                    ))}
+                  </defs>
+                  {[...placed.values()]
+                    .filter((n) => n.parent && placed.has(n.parent))
+                    .map((n) => {
+                      const parent = placed.get(n.parent!)!
+                      const on = !!(focus && highlighted?.has(n.id) && highlighted.has(parent.id))
+                      return (
+                        <Lien
+                          key={n.id}
+                          from={n}
+                          to={parent}
+                          nodeW={nodeW}
+                          on={on}
+                          dimmed={!!highlighted && !on}
+                        />
+                      )
+                    })}
+                  {extras.map((more) => (
+                    <Lien
+                      key={`more-${more.parent}`}
+                      from={more}
+                      to={placed.get(more.parent)!}
+                      nodeW={nodeW}
+                      on={false}
+                      dimmed={!!highlighted}
+                      dashed
+                    />
                   ))}
-                </defs>
-                {[...placed.values()]
-                  .filter((n) => n.parent && placed.has(n.parent))
-                  .map((n) => {
-                    const parent = placed.get(n.parent!)!
-                    const on = !!(focus && highlighted?.has(n.id) && highlighted.has(parent.id))
-                    return (
-                      <Lien
-                        key={n.id}
-                        from={n}
-                        to={parent}
-                        nodeW={nodeW}
-                        on={on}
-                        dimmed={!!highlighted && !on}
-                      />
-                    )
-                  })}
-                {extras.map((more) => (
-                  <Lien
-                    key={`more-${more.parent}`}
-                    from={more}
-                    to={placed.get(more.parent)!}
-                    nodeW={nodeW}
-                    on={false}
-                    dimmed={!!highlighted}
-                    dashed
+                </svg>
+
+                {[...placed.values()].map((n) => (
+                  <GraphNode
+                    key={n.id}
+                    node={n}
+                    width={nodeW}
+                    selected={selectedNodeId === n.id}
+                    dimmed={highlighted ? !highlighted.has(n.id) : false}
+                    match={!!visible && n.kind !== 'tous'}
+                    simulation={simulation}
+                    fonction={fonction}
+                    saisie={saisies[n.id] ?? ''}
+                    computed={computed.get(n.id)}
+                    onHover={setHovered}
+                    onSelect={() =>
+                      setSelection((s) =>
+                        s?.type === 'node' && s.id === n.id ? null : { type: 'node', id: n.id },
+                      )
+                    }
+                    onToggle={
+                      !visible && n.kind !== 'feuille' && n.children.length > 0
+                        ? () => toggleCollapse(n.id)
+                        : undefined
+                    }
+                    onAddChild={
+                      editable && canAddChild(n)
+                        ? () => {
+                            if (collapsed.has(n.id)) toggleCollapse(n.id)
+                            setSelection({ type: 'ajout', parent: n.kind === 'tous' ? null : n.id })
+                          }
+                        : undefined
+                    }
+                    onSaisie={(value) => setSaisies((s) => ({ ...s, [n.id]: value }))}
                   />
                 ))}
-              </svg>
 
-              {[...placed.values()].map((n) => (
-                <GraphNode
-                  key={n.id}
-                  node={n}
-                  width={nodeW}
-                  selected={selectedNodeId === n.id}
-                  dimmed={highlighted ? !highlighted.has(n.id) : false}
-                  match={!!visible && n.kind !== 'tous'}
-                  simulation={simulation}
-                  fonction={fonction}
-                  saisie={saisies[n.id] ?? ''}
-                  computed={computed.get(n.id)}
-                  onHover={setHovered}
-                  onSelect={() =>
-                    setSelection((s) =>
-                      s?.type === 'node' && s.id === n.id ? null : { type: 'node', id: n.id },
-                    )
-                  }
-                  onToggle={
-                    !visible && n.kind !== 'feuille' && n.children.length > 0
-                      ? () => toggleCollapse(n.id)
-                      : undefined
-                  }
-                  onAddChild={
-                    editable && canAddChild(n)
-                      ? () => {
-                          if (collapsed.has(n.id)) toggleCollapse(n.id)
-                          setSelection({ type: 'ajout', parent: n.kind === 'tous' ? null : n.id })
-                        }
-                      : undefined
-                  }
-                  onSaisie={(value) => setSaisies((s) => ({ ...s, [n.id]: value }))}
-                />
-              ))}
-
-              {extras.map((more) => (
-                <button
-                  key={`more-${more.parent}`}
-                  type="button"
-                  onClick={() => setShowAll((current) => new Set(current).add(more.parent))}
-                  className={clsxm(
-                    'absolute flex flex-col items-start justify-center rounded-lg border border-dashed border-border-strong bg-surface/70 px-3 text-left transition-opacity hover:border-primary',
-                    highlighted && 'opacity-30',
-                  )}
-                  style={{ left: more.x, top: more.y, width: nodeW, height: NODE_H }}
-                >
-                  <span className="text-sm font-medium text-text">
-                    + {pluriel(more.count, 'autre modalité')}
-                  </span>
-                  <span className="text-[11px] text-primary">Tout afficher</span>
-                </button>
-              ))}
-            </div>
-          ) : null}
-        </div>
+                {extras.map((more) => (
+                  <button
+                    key={`more-${more.parent}`}
+                    type="button"
+                    onClick={() => setShowAll((current) => new Set(current).add(more.parent))}
+                    className={clsxm(
+                      'absolute flex flex-col items-start justify-center rounded-lg border border-dashed border-border-strong bg-surface/70 px-3 text-left transition-opacity hover:border-primary',
+                      highlighted && 'opacity-30',
+                    )}
+                    style={{ left: more.x, top: more.y, width: nodeW, height: NODE_H }}
+                  >
+                    <span className="text-sm font-medium text-text">
+                      + {pluriel({ count: more.count, mot: 'autre modalité' })}
+                    </span>
+                    <span className="text-[11px] text-primary">Tout afficher</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        )}
 
         <aside className="flex min-h-0 flex-col gap-6 overflow-y-auto border-l border-border px-6 py-5">
           {selection === null ? (
@@ -758,7 +786,8 @@ function AxeGraphe({
                   }}
                   onSupprime={() => setSelection(null)}
                 />
-              ) : selection.type === 'niveau' ? (
+              ) : null}
+              {selection.type === 'niveau' ? (
                 <DetailNiveau
                   key={selection.ordre}
                   ordre={selection.ordre}
@@ -771,7 +800,8 @@ function AxeGraphe({
                   onAjouter={(parent) => setSelection({ type: 'ajout', parent })}
                   onSupprime={() => setSelection(null)}
                 />
-              ) : selection.type === 'ajout' ? (
+              ) : null}
+              {selection.type === 'ajout' ? (
                 <FormulaireAjout
                   key={selection.parent ?? TOUS_ID}
                   parent={selection.parent ? (tree.get(selection.parent) ?? null) : null}
@@ -787,7 +817,7 @@ function AxeGraphe({
           {simulation ? (
             <Note icon={<Info className="size-4" />}>
               Une feuille vide est <strong>absente</strong>, pas nulle : comme une modalité jamais
-              observée pour un territoire, elle sort du calcul. Dans la vraie vie, somme ou moyenne
+              observée pour un individu, elle sort du calcul. Dans la vraie vie, somme ou moyenne
               est un choix de chaque indicateur qui utilise l’axe.
             </Note>
           ) : null}
@@ -921,7 +951,7 @@ function Glossaire({
 }: {
   axeNom: string
   niveaux: ReadonlyArray<NiveauAxeApiModel>
-  nodes: Map<string, LayoutNode>
+  nodes: Arbre
   editable: boolean
   vide: boolean
   onAjouterRacine: () => void
@@ -940,7 +970,7 @@ function Glossaire({
       <h3 className="text-sm font-semibold text-text">Comment lire ce graphe</h3>
       <dl className="flex flex-col gap-3.5 text-sm">
         <Definition terme="Axe" exemple={axeNom}>
-          Une façon de découper un indicateur, en plus du territoire.
+          Une façon de découper un indicateur, en plus des individus.
         </Definition>
         <Definition terme="Niveau" exemple={niveaux.map((n) => n.nom).join(' → ')}>
           Un étage de l’axe, du plus large au plus fin. Chaque colonne est un niveau.
@@ -1004,9 +1034,9 @@ function FormulaireAjout({
   edition,
   onCree,
 }: {
-  parent: LayoutNode | null
+  parent: ArbreNode | null
   nomNiveau: (ordre: number) => string
-  existants: Map<string, LayoutNode>
+  existants: Arbre
   edition: Edition
   onCree: (id: string) => void
 }) {
@@ -1094,8 +1124,8 @@ function DetailModalite({
   onAjouter,
   onSupprime,
 }: {
-  node: LayoutNode
-  nodes: Map<string, LayoutNode>
+  node: ArbreNode
+  nodes: Arbre
   niveaux: ReadonlyArray<NiveauAxeApiModel>
   nomNiveau: (ordre: number) => string
   simulation: boolean
@@ -1107,8 +1137,8 @@ function DetailModalite({
   onAjouter: (parent: string | null) => void
   onSupprime: () => void
 }) {
-  const children = node.children.map((id) => nodes.get(id)).filter((n): n is LayoutNode => !!n)
-  const chaine = ancestorsOf(nodes, node.id)
+  const children = node.children.map((id) => nodes.get(id)).filter((n): n is ArbreNode => !!n)
+  const chaine = ancestorsOf({ arbre: nodes, id: node.id })
   const separateur = fonction === 'SUM' ? ' + ' : ', '
   const valeur = (id: string) => {
     const v = computed.get(id)?.value
@@ -1116,6 +1146,9 @@ function DetailModalite({
   }
   const enveloppe = (contenu: string) => (fonction === 'AVG' ? `moyenne(${contenu})` : contenu)
   const isTous = node.kind === 'tous'
+  const isFeuille = node.kind === 'feuille'
+  const isParenteVide = !isFeuille && children.length === 0
+  const isCalculee = !isFeuille && children.length > 0
   const peutAvoirEnfants = isTous || node.niveau < niveaux.length
 
   return (
@@ -1139,21 +1172,23 @@ function DetailModalite({
       </div>
 
       <Section titre="D’où vient sa valeur">
-        {node.kind === 'feuille' ? (
+        {isFeuille ? (
           <p className="text-text-muted">
-            Elle est <strong className="text-text">saisie</strong> directement, pour chaque
-            territoire et chaque date. Rien ne la calcule.
+            Elle est <strong className="text-text">saisie</strong> directement, pour chaque individu
+            et chaque date. Rien ne la calcule.
           </p>
-        ) : children.length === 0 ? (
+        ) : null}
+        {isParenteVide ? (
           <p className="text-text-muted">Aucune modalité : rien à calculer pour l’instant.</p>
-        ) : (
+        ) : null}
+        {isCalculee ? (
           <>
             <p className="text-text-muted">
               Jamais saisie : c’est la{' '}
               <strong className="text-text">
-                {simulation ? (fonction === 'SUM' ? 'somme' : 'moyenne') : 'somme ou la moyenne'}
+                {simulation ? fonctionLabel(fonction) : 'somme ou la moyenne'}
               </strong>{' '}
-              de ses {pluriel(children.length, 'enfant')}
+              de ses {pluriel({ count: children.length, mot: 'enfant' })}
               {simulation ? '' : ', selon l’indicateur'}.
             </p>
             <div className="rounded-md bg-surface-muted px-3 py-2 font-mono text-xs leading-relaxed text-text">
@@ -1180,7 +1215,7 @@ function DetailModalite({
               ))}
             </div>
           </>
-        )}
+        ) : null}
       </Section>
 
       {!isTous ? (
@@ -1257,7 +1292,7 @@ function DetailNiveau({
 }: {
   ordre: number
   niveaux: ReadonlyArray<NiveauAxeApiModel>
-  nodes: Map<string, LayoutNode>
+  nodes: Arbre
   nomNiveau: (ordre: number) => string
   editable: boolean
   edition: Edition
@@ -1268,6 +1303,9 @@ function DetailNiveau({
   const membres = [...nodes.values()].filter((n) => n.niveau === ordre)
   const parentsPossibles = [...nodes.values()].filter((n) => n.niveau === ordre - 1)
   const dernier = ordre === niveaux.length
+  const isPremier = ordre === 1
+  const hasParentsPossibles = !isPremier && parentsPossibles.length > 0
+  const sansParentPossible = !isPremier && parentsPossibles.length === 0
   const noms = niveaux.map((n) => n.nom)
   return (
     <div className="flex flex-col gap-5 text-sm">
@@ -1290,7 +1328,7 @@ function DetailNiveau({
             : `Ses modalités se découpent au niveau « ${nomNiveau(ordre + 1)} » ; celles qui ne se découpent pas restent des feuilles.`}
         </p>
       </Section>
-      <Section titre={pluriel(membres.length, 'modalité')}>
+      <Section titre={pluriel({ count: membres.length, mot: 'modalité' })}>
         {membres.length === 0 ? (
           <p className="text-text-muted">Aucune modalité.</p>
         ) : (
@@ -1314,7 +1352,7 @@ function DetailNiveau({
               )
             }
           />
-          {ordre === 1 ? (
+          {isPremier ? (
             <Button
               size="sm"
               variant="secondary"
@@ -1323,7 +1361,8 @@ function DetailNiveau({
             >
               <Plus /> Ajouter une modalité
             </Button>
-          ) : parentsPossibles.length > 0 ? (
+          ) : null}
+          {hasParentsPossibles ? (
             <div className="flex flex-col gap-1.5">
               <span className="text-xs text-text-muted">Ajouter une modalité ici, sous :</span>
               <div className="flex flex-wrap gap-1.5">
@@ -1339,11 +1378,12 @@ function DetailNiveau({
                 ))}
               </div>
             </div>
-          ) : (
+          ) : null}
+          {sansParentPossible ? (
             <p className="text-xs text-text-muted">
               Ajoutez d’abord une modalité au niveau « {nomNiveau(ordre - 1)} ».
             </p>
-          )}
+          ) : null}
           {dernier && niveaux.length > 1 ? (
             <Supprimer
               label="Supprimer ce niveau"
@@ -1444,7 +1484,7 @@ function Section({ titre, children }: { titre: string; children: ReactNode }) {
   )
 }
 
-function ChipModalite({ node, onSelect }: { node: LayoutNode; onSelect: (id: string) => void }) {
+function ChipModalite({ node, onSelect }: { node: ArbreNode; onSelect: (id: string) => void }) {
   return (
     <button
       type="button"
@@ -1462,6 +1502,27 @@ function ChipModalite({ node, onSelect }: { node: LayoutNode; onSelect: (id: str
       {node.nom}
     </button>
   )
+}
+
+const nodeMetaOf = ({
+  node,
+  isCollapsed,
+  simulation,
+  fonction,
+}: {
+  node: PlacedNode
+  isCollapsed: boolean
+  simulation: boolean
+  fonction: Fonction
+}): string => {
+  if (node.kind === 'feuille') return 'Saisie'
+  if (node.children.length === 0) return 'Aucune modalité'
+  if (isCollapsed) {
+    return `${pluriel({ count: node.hidden, mot: 'modalité' })} repliée${node.hidden > 1 ? 's' : ''}`
+  }
+  const calcul = simulation ? fonctionLabel(fonction) : 'calcul'
+  const enfants = pluriel({ count: node.children.length, mot: 'enfant' })
+  return `${calcul.charAt(0).toUpperCase()}${calcul.slice(1)} de ${enfants}`
 }
 
 function GraphNode({
@@ -1498,14 +1559,7 @@ function GraphNode({
   const isTous = node.kind === 'tous'
   const isCollapsed = node.hidden > 0
   const incomplete = computed && node.kind !== 'feuille' && computed.present < computed.expected
-  const meta =
-    node.kind === 'feuille'
-      ? 'Saisie'
-      : node.children.length === 0
-        ? 'Aucune modalité'
-        : isCollapsed
-          ? `${pluriel(node.hidden, 'modalité')} repliée${node.hidden > 1 ? 's' : ''}`
-          : `${simulation ? (fonction === 'SUM' ? 'Somme' : 'Moyenne') : 'Calcul'} de ${pluriel(node.children.length, 'enfant')}`
+  const meta = nodeMetaOf({ node, isCollapsed, simulation, fonction })
   return (
     <div
       className={clsxm('group absolute transition-opacity', dimmed && 'opacity-30')}
@@ -1569,7 +1623,8 @@ function GraphNode({
               </span>
             )}
           </div>
-        ) : onAddChild ? (
+        ) : null}
+        {!simulation && onAddChild ? (
           <div className="flex shrink-0 items-center pr-2">
             <button
               type="button"

@@ -1,9 +1,12 @@
 import { type AxeApiModel, type FonctionAgregationAxe } from '@pilote/kpilote-shared/axe'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { ArrowDown, ArrowUp, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, Network, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 import { Controller, useFieldArray, useWatch } from 'react-hook-form'
 
+import { AxesCroisesModale } from '@/components/indicateurs/AxesCroisesModale'
 import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFormContext'
+import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { Picker } from '@pilote/kpilote-ui/Picker'
@@ -23,6 +26,7 @@ export function AdminAxes() {
   const { fields, append, remove, move } = useFieldArray({ control: form.control, name: 'axes' })
   const axesDeclares = useWatch({ control: form.control, name: 'axes' })
   const { data: axes } = useSuspenseQuery(axesAllQueryOptions())
+  const [croisementOuvert, setCroisementOuvert] = useState(false)
 
   const axeParId = new Map(axes.map((axe) => [axe.id, axe]))
   const idsDeclares = (axesDeclares ?? []).map((axe) => axe.id)
@@ -45,6 +49,24 @@ export function AdminAxes() {
         renderItem={(axe) => <PickerOptionNomId nom={axe.nom} id={axe.id} />}
         triggerLabel="Ajouter un axe"
         disabled={false}
+      />
+
+      {fields.length > 0 ? (
+        <Button
+          type="button"
+          size="sm"
+          variant="secondary"
+          className="mt-3"
+          onClick={() => setCroisementOuvert(true)}
+        >
+          <Network /> Voir le calcul croisé
+        </Button>
+      ) : null}
+      <AxesCroisesModale
+        open={croisementOuvert}
+        onClose={() => setCroisementOuvert(false)}
+        declarations={axesDeclares ?? []}
+        axes={axes}
       />
 
       {fields.length > 1 ? (
