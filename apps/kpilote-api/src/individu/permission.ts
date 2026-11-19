@@ -1,41 +1,28 @@
-import { errAsync, okAsync, ResultAsync } from 'neverthrow'
+import { err, ok, type Result } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
 
 export type IndividuInconnuError = { type: 'INDIVIDU_INCONNU'; individu: string }
 
-export const resolveAuthorizedIndividu = ({
+// Un individu inconnu et un individu hors des référentiels de l'indicateur
+// renvoient la même erreur.
+export const resolveAuthorizedIndividu = async ({
   individuPublicId,
   indicateurId,
 }: {
   individuPublicId: string
   indicateurId: string
-}): ResultAsync<{ id: string; publicId: string }, IndividuInconnuError> => {
-  const unknownOrUnauthorized = (): IndividuInconnuError => ({
-    type: 'INDIVIDU_INCONNU',
-    individu: individuPublicId,
+}): Promise<Result<{ id: string; publicId: string }, IndividuInconnuError>> => {
+  const individu = await db().individu.findUnique({
+    where: { publicId: individuPublicId },
+    select: { id: true, publicId: true, referentielId: true },
   })
-  return ResultAsync.fromSafePromise(
-    db().individu.findUnique({
-      where: { publicId: individuPublicId },
-      select: { id: true, publicId: true, referentielId: true },
-    }),
-  )
-    .andThen((individu) => (individu ? okAsync(individu) : errAsync(unknownOrUnauthorized())))
-    .andThen((individu) =>
-      ResultAsync.fromSafePromise(
-        db().indicateurReferentiel.findUnique({
-          where: {
-            indicateurId_referentielId: {
-              indicateurId,
-              referentielId: individu.referentielId,
-            },
-          },
-        }),
-      ).andThen((link) =>
-        link
-          ? okAsync({ id: individu.id, publicId: individu.publicId })
-          : errAsync(unknownOrUnauthorized()),
-      ),
-    )
+  if (!individu) return err({ type: 'INDIVIDU_INCONNU', individu: individuPublicId })
+  const link = await db().indicateurReferentiel.findUnique({
+    where: {
+      indicateurId_referentielId: { indicateurId, referentielId: individu.referentielId },
+    },
+  })
+  if (!link) return err({ type: 'INDIVIDU_INCONNU', individu: individuPublicId })
+  return ok({ id: individu.id, publicId: individu.publicId })
 }

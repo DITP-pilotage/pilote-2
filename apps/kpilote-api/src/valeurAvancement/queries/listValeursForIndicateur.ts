@@ -5,7 +5,7 @@ import {
   type ValeurAvancementApiModel,
   type ValeurAvancementListApiModel,
 } from '@pilote/kpilote-shared/valeurAvancement'
-import { ResultAsync } from 'neverthrow'
+import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { type Selection } from '@/axe/modalites'
 import { type ResolveSelectionError, resolveSelection } from '@/axe/resolveSelection'
@@ -22,27 +22,35 @@ import { type PointInterne, resolveSerieNoeud } from '@/valeurAvancement/resolve
 // avec saisies quotidiennes par département explose (cf. design doc D11).
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
+const performList = async (
+  indicateurPublicId: string,
+  params: ListValeursForIndicateurQuery,
+): Promise<Result<ValeurAvancementListApiModel, ResolveSelectionError>> => {
+  const principalId = requireCurrentPrincipalId()
+  const indicateur = await db().indicateur.findFirstOrThrow({
+    where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
+    select: { id: true },
+  })
+  const selection = await resolveSelection({
+    indicateurId: indicateur.id,
+    modalitePublicIds: params.modalites ?? [],
+  })
+  if (selection.isErr()) return err(selection.error)
+  return ok(
+    await buildSeries({
+      indicateurId: indicateur.id,
+      indicateurPublicId,
+      params,
+      selection: selection.value,
+    }),
+  )
+}
+
 export const listValeursForIndicateur = (
   indicateurPublicId: string,
   params: ListValeursForIndicateurQuery,
-): ResultAsync<ValeurAvancementListApiModel, ResolveSelectionError> => {
-  const principalId = requireCurrentPrincipalId()
-  return ResultAsync.fromSafePromise(
-    db().indicateur.findFirstOrThrow({
-      where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
-      select: { id: true },
-    }),
-  ).andThen((indicateur) =>
-    resolveSelection({
-      indicateurId: indicateur.id,
-      modalitePublicIds: params.modalites ?? [],
-    }).andThen((selection) =>
-      ResultAsync.fromSafePromise(
-        buildSeries({ indicateurId: indicateur.id, indicateurPublicId, params, selection }),
-      ),
-    ),
-  )
-}
+): ResultAsync<ValeurAvancementListApiModel, ResolveSelectionError> =>
+  new ResultAsync(performList(indicateurPublicId, params))
 
 // Orchestration en 3 phases : (1) résoudre les cibles publicId→id, (2) charger
 // en bulk le contexte de résolution (sous-arbre + saisies tronquées + fonctions

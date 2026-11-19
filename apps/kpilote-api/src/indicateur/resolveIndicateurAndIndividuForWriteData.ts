@@ -1,4 +1,4 @@
-import { type ResultAsync } from 'neverthrow'
+import { err, ok, type Result } from 'neverthrow'
 
 import { type IndividuInconnuError, resolveAuthorizedIndividu } from '@/individu/permission'
 
@@ -10,15 +10,18 @@ type ResolvedContext = {
   principalId: string
 }
 
-export const resolveIndicateurAndIndividuForWriteData = ({
+export const resolveIndicateurAndIndividuForWriteData = async ({
   indicateurPublicId,
   individuPublicId,
 }: {
   indicateurPublicId: string
   individuPublicId: string
-}): ResultAsync<ResolvedContext, IndividuInconnuError> =>
-  resolveIndicateurForWriteData({ indicateurPublicId }).andThen(({ indicateur, principalId }) =>
-    resolveAuthorizedIndividu({ individuPublicId, indicateurId: indicateur.id }).map(
-      (individu) => ({ indicateur, individu, principalId }),
-    ),
-  )
+}): Promise<Result<ResolvedContext, IndividuInconnuError>> => {
+  const { indicateur, principalId } = await resolveIndicateurForWriteData({ indicateurPublicId })
+  const individu = await resolveAuthorizedIndividu({
+    individuPublicId,
+    indicateurId: indicateur.id,
+  })
+  if (individu.isErr()) return err(individu.error)
+  return ok({ indicateur, individu: individu.value, principalId })
+}

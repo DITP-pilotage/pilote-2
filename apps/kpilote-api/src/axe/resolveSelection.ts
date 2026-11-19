@@ -1,4 +1,4 @@
-import { ok, type Result, ResultAsync } from 'neverthrow'
+import { ok, type Result } from 'neverthrow'
 
 import { type Selection } from '@/axe/modalites'
 import {
@@ -15,7 +15,11 @@ type ResolveSelectionParams = {
   modalitePublicIds: ReadonlyArray<string>
 }
 
-const performResolve = async ({
+// Transforme les modalités demandées dans une lecture (`modalites=`) en
+// sélection axe → modalité pour l'indicateur. Sans modalité : « Tous » sur
+// chaque axe (sélection vide), y compris pour un indicateur sans axe. Une
+// modalité parente est acceptée : sa valeur se calcule.
+export const resolveSelection = async ({
   indicateurId,
   modalitePublicIds,
 }: ResolveSelectionParams): Promise<Result<Selection, ResolveSelectionError>> => {
@@ -27,15 +31,6 @@ const performResolve = async ({
       new Map([...modaliteByAxe].map(([axeId, modalite]) => [axeId, modalite.id])),
   )
 }
-
-// Transforme les modalités demandées dans une lecture (`modalites=`) en
-// sélection axe → modalité pour l'indicateur. Sans modalité : « Tous » sur
-// chaque axe (sélection vide), y compris pour un indicateur sans axe. Une
-// modalité parente est acceptée : sa valeur se calcule.
-export const resolveSelection = (
-  params: ResolveSelectionParams,
-): ResultAsync<Selection, ResolveSelectionError> =>
-  ResultAsync.fromSafePromise(performResolve(params)).andThen((result) => result)
 
 export const selectionErrorMessage = (error: ResolveSelectionError): string =>
   modalitesErrorMessage(error)

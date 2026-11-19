@@ -1,5 +1,3 @@
-import { ResultAsync } from 'neverthrow'
-
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
@@ -29,29 +27,25 @@ export const withCollectionReadPermission = (
   ],
 })
 
-export const ensureCollectionWriteCommentPermission = ({
+export const ensureCollectionWriteCommentPermission = async ({
   collectionId,
   principalId,
 }: {
   collectionId: string
   principalId: string
-}): ResultAsync<void, never> =>
-  ResultAsync.fromSafePromise(
-    db()
-      .collectionPermission.findUnique({
-        where: {
-          principalId_collectionId_action: {
-            principalId,
-            collectionId,
-            action: CollectionPermissionAction.WRITE_COMMENT,
-          },
-        },
-      })
-      .then((hasWrite) => {
-        if (!hasWrite) {
-          throw new ForbiddenError(
-            "Vous n'avez pas la permission d'écrire un commentaire sur cette collection",
-          )
-        }
-      }),
-  )
+}): Promise<void> => {
+  const hasWrite = await db().collectionPermission.findUnique({
+    where: {
+      principalId_collectionId_action: {
+        principalId,
+        collectionId,
+        action: CollectionPermissionAction.WRITE_COMMENT,
+      },
+    },
+  })
+  if (!hasWrite) {
+    throw new ForbiddenError(
+      "Vous n'avez pas la permission d'écrire un commentaire sur cette collection",
+    )
+  }
+}

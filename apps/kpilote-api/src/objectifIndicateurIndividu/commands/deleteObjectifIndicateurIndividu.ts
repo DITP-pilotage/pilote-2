@@ -1,5 +1,5 @@
 import { type DeleteObjectifIndicateurIndividuBody } from '@pilote/kpilote-shared/objectifIndicateurIndividu'
-import { ResultAsync } from 'neverthrow'
+import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
@@ -12,24 +12,26 @@ type DeleteObjectifIndicateurIndividuParams = {
   body: DeleteObjectifIndicateurIndividuBody
 }
 
-export const deleteObjectifIndicateurIndividu = ({
+const performDelete = async ({
   indicateurPublicId,
   body,
-}: DeleteObjectifIndicateurIndividuParams): ResultAsync<
-  void,
-  DeleteObjectifIndicateurIndividuError
-> =>
-  resolveIndicateurAndIndividuForWriteData({
+}: DeleteObjectifIndicateurIndividuParams): Promise<
+  Result<void, DeleteObjectifIndicateurIndividuError>
+> => {
+  const resolved = await resolveIndicateurAndIndividuForWriteData({
     indicateurPublicId,
     individuPublicId: body.individu,
-  }).andThen(({ indicateur, individu }) =>
-    ResultAsync.fromSafePromise(
-      db().objectifIndicateurIndividu.deleteMany({
-        where: {
-          indicateurId: indicateur.id,
-          individuId: individu.id,
-          dateCible: body.dateCible,
-        },
-      }),
-    ).map(() => undefined),
-  )
+  })
+  if (resolved.isErr()) return err(resolved.error)
+  const { indicateur, individu } = resolved.value
+
+  await db().objectifIndicateurIndividu.deleteMany({
+    where: { indicateurId: indicateur.id, individuId: individu.id, dateCible: body.dateCible },
+  })
+  return ok()
+}
+
+export const deleteObjectifIndicateurIndividu = (
+  params: DeleteObjectifIndicateurIndividuParams,
+): ResultAsync<void, DeleteObjectifIndicateurIndividuError> =>
+  new ResultAsync(performDelete(params))
