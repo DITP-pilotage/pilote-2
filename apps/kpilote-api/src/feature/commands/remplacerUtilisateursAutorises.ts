@@ -5,6 +5,8 @@ import {
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { ensureAdmin } from '@/framework/auth/principalPredicates'
+import { diff } from '@/framework/collections/diff'
+import { findUnknown } from '@/framework/collections/findUnknown'
 import { db } from '@/framework/persistence/dbStore'
 import { featureInclude, toFeatureDetailApiModel } from '@/feature/utils'
 
@@ -18,37 +20,26 @@ const ensureFeatureExiste = async (id: string): Promise<void> => {
   await db().feature.findUniqueOrThrow({ where: { id }, select: { id: true } })
 }
 
-const resoudreUtilisateurs = async (
-  utilisateurIds: ReadonlyArray<string>,
-): Promise<{ resolus: string[]; inconnus: string[] }> => {
-  const idsUniques = [...new Set(utilisateurIds)]
-  if (idsUniques.length === 0) return { resolus: [], inconnus: [] }
-  const utilisateurs = await db().utilisateur.findMany({ where: { id: { in: idsUniques } } })
-  const idsTrouves = new Set(utilisateurs.map((utilisateur) => utilisateur.id))
-  return { resolus: idsUniques, inconnus: idsUniques.filter((id) => !idsTrouves.has(id)).sort() }
-}
-
-const remplacerLiaisons = async (
-  featureId: string,
-  utilisateurIdsCibles: string[],
-): Promise<void> => {
-  const cibles = new Set(utilisateurIdsCibles)
-  const existantes = await db().featureUtilisateur.findMany({
-    where: { featureId },
-  })
-  const aSupprimer = existantes
-    .filter((liaison) => !cibles.has(liaison.utilisateurId))
-    .map((liaison) => liaison.utilisateurId)
-  if (aSupprimer.length > 0) {
+const replaceUtilisateursAutorises = async ({
+  featureId,
+  utilisateurIds,
+}: {
+  featureId: string
+  utilisateurIds: ReadonlyArray<string>
+}): Promise<void> => {
+  const existantes = await db().featureUtilisateur.findMany({ where: { featureId } })
+  const { toAdd, toRemove } = diff(
+    [...new Set(utilisateurIds)],
+    existantes.map((liaison) => liaison.utilisateurId),
+  )
+  if (toRemove.length > 0) {
     await db().featureUtilisateur.deleteMany({
-      where: { featureId, utilisateurId: { in: aSupprimer } },
+      where: { featureId, utilisateurId: { in: toRemove } },
     })
   }
-  for (const utilisateurId of utilisateurIdsCibles) {
-    await db().featureUtilisateur.upsert({
-      where: { featureId_utilisateurId: { featureId, utilisateurId } },
-      update: {},
-      create: { featureId, utilisateurId },
+  if (toAdd.length > 0) {
+    await db().featureUtilisateur.createMany({
+      data: toAdd.map((utilisateurId) => ({ featureId, utilisateurId })),
     })
   }
 }
@@ -59,11 +50,17 @@ const performRemplacer = async (
 ): Promise<Result<FeatureDetailApiModel, RemplacerUtilisateursAutorisesError>> => {
   ensureAdmin()
   await ensureFeatureExiste(id)
-  const utilisateurs = await resoudreUtilisateurs(body.utilisateurIds)
-  if (utilisateurs.inconnus.length > 0) {
-    return err({ type: 'UTILISATEURS_INCONNUS', utilisateurs: utilisateurs.inconnus })
-  }
-  await remplacerLiaisons(id, utilisateurs.resolus)
+
+  const utilisateurs = await db().utilisateur.findMany({
+    where: { id: { in: body.utilisateurIds } },
+  })
+  const inconnus = findUnknown({
+    requested: body.utilisateurIds,
+    found: utilisateurs.map((utilisateur) => utilisateur.id),
+  })
+  if (inconnus.length > 0) return err({ type: 'UTILISATEURS_INCONNUS', utilisateurs: inconnus })
+
+  await replaceUtilisateursAutorises({ featureId: id, utilisateurIds: body.utilisateurIds })
   const row = await db().feature.findUniqueOrThrow({
     where: { id },
     include: featureInclude,
