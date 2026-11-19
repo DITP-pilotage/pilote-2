@@ -48,17 +48,19 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
   )
 
   it(
-    'rejette quand un utilisateur est inconnu',
+    'refuse un utilisateur inconnu',
     integrationTest(async () => {
       const feature = await fixtures.feature()
 
-      await expect(
-        runAsAdmin(ADMIN_ID, () =>
-          remplacerUtilisateursAutorises(feature.id, {
-            utilisateurIds: ['00000000-0000-0000-0000-000000000000'],
-          }),
-        ),
-      ).rejects.toThrow()
+      const result = await runAsAdmin(ADMIN_ID, () =>
+        remplacerUtilisateursAutorises(feature.id, {
+          utilisateurIds: ['00000000-0000-0000-0000-000000000000'],
+        }),
+      )
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'UTILISATEURS_INCONNUS',
+        utilisateurs: ['00000000-0000-0000-0000-000000000000'],
+      })
     }),
   )
 

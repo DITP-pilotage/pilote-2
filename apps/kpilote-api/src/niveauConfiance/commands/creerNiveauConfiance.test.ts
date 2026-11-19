@@ -63,14 +63,13 @@ describe.concurrent('creerNiveauConfiance', () => {
         }),
       )
 
-      await expect(
-        runAsPrincipal(apiKey.id, () =>
-          creerNiveauConfiance({
-            commentaireId: commentaire._unsafeUnwrap().id,
-            indice: 'OBJECTIF_COMPROMIS',
-          }),
-        ),
-      ).rejects.toMatchObject({ code: 'VALIDATION_ERROR' })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        creerNiveauConfiance({
+          commentaireId: commentaire._unsafeUnwrap().id,
+          indice: 'OBJECTIF_COMPROMIS',
+        }),
+      )
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'COMMENTAIRE_PAS_CONFIANCE' })
     }),
   )
 

@@ -36,11 +36,10 @@ describe.concurrent('addCollectionResponsable', () => {
       })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
-      await expect(
-        runAsAdmin(apiKey.id, () =>
-          addCollectionResponsable(publicId, { utilisateurId: utilisateur.id }),
-        ),
-      ).rejects.toThrow('Cet utilisateur est déjà responsable de la collection')
+      const result = await runAsAdmin(apiKey.id, () =>
+        addCollectionResponsable(publicId, { utilisateurId: utilisateur.id }),
+      )
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'RESPONSABLE_DEJA_AFFECTE' })
     }),
   )
 
