@@ -3,7 +3,7 @@ import {
   type ListSyntheseIndividusQuery,
   type SyntheseIndividusListApiModel,
 } from '@pilote/kpilote-shared/valeurAvancement'
-import { ResultAsync } from 'neverthrow'
+import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { type Selection } from '@/axe/modalites'
 import { type ResolveSelectionError, resolveSelection } from '@/axe/resolveSelection'
@@ -29,27 +29,30 @@ import {
 // pour les agrégés (cf. doc d'archi `indicateur-derives.md`).
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
+const performList = async (
+  indicateurPublicId: string,
+  params: ListSyntheseIndividusQuery,
+): Promise<Result<SyntheseIndividusListApiModel, ResolveSelectionError>> => {
+  const principalId = requireCurrentPrincipalId()
+  const indicateur = await db().indicateur.findFirstOrThrow({
+    where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
+    select: { id: true },
+  })
+  const selection = await resolveSelection({
+    indicateurId: indicateur.id,
+    modalitePublicIds: params.modalites ?? [],
+  })
+  if (selection.isErr()) return err(selection.error)
+  return ok(
+    await buildSynthese({ indicateurId: indicateur.id, params, selection: selection.value }),
+  )
+}
+
 export const listSyntheseIndividus = (
   indicateurPublicId: string,
   params: ListSyntheseIndividusQuery,
-): ResultAsync<SyntheseIndividusListApiModel, ResolveSelectionError> => {
-  const principalId = requireCurrentPrincipalId()
-  return ResultAsync.fromSafePromise(
-    db().indicateur.findFirstOrThrow({
-      where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
-      select: { id: true },
-    }),
-  ).andThen((indicateur) =>
-    resolveSelection({
-      indicateurId: indicateur.id,
-      modalitePublicIds: params.modalites ?? [],
-    }).andThen((selection) =>
-      ResultAsync.fromSafePromise(
-        buildSynthese({ indicateurId: indicateur.id, params, selection }),
-      ),
-    ),
-  )
-}
+): ResultAsync<SyntheseIndividusListApiModel, ResolveSelectionError> =>
+  new ResultAsync(performList(indicateurPublicId, params))
 
 // Pour chaque individu demandé : variation (derniers 2 buckets de sa série) et
 // écart à la médiane des dernières valeurs des pairs de son référentiel.

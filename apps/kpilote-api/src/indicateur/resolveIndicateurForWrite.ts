@@ -1,5 +1,3 @@
-import { ResultAsync } from 'neverthrow'
-
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 
@@ -10,21 +8,16 @@ type ResolvedIndicateur = {
   principalId: string
 }
 
-export const resolveIndicateurForWriteData = ({
+export const resolveIndicateurForWriteData = async ({
   indicateurPublicId,
 }: {
   indicateurPublicId: string
-}): ResultAsync<ResolvedIndicateur, never> => {
+}): Promise<ResolvedIndicateur> => {
   const principalId = requireCurrentPrincipalId()
-  return ResultAsync.fromSafePromise(
-    db().indicateur.findFirstOrThrow({
-      where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
-      select: { id: true, publicId: true },
-    }),
-  ).andThen((indicateur) =>
-    ensureIndicateurWriteDataPermission({ indicateurId: indicateur.id, principalId }).map(() => ({
-      indicateur,
-      principalId,
-    })),
-  )
+  const indicateur = await db().indicateur.findFirstOrThrow({
+    where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
+    select: { id: true, publicId: true },
+  })
+  await ensureIndicateurWriteDataPermission({ indicateurId: indicateur.id, principalId })
+  return { indicateur, principalId }
 }

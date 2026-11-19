@@ -44,9 +44,8 @@ const performBatch = async ({
 }): Promise<
   Result<UpsertValeursAvancementBatchResultApiModel, UpsertValeursAvancementBatchError>
 > => {
-  const resolved = await resolveIndicateurForWriteData({ indicateurPublicId })
-  if (resolved.isErr()) return err(resolved.error)
-  const indicateurId = resolved.value.indicateur.id
+  const { indicateur } = await resolveIndicateurForWriteData({ indicateurPublicId })
+  const indicateurId = indicateur.id
 
   const cellules = await validateAndResolveCellules({ indicateurId, items })
   if (cellules.isErr()) return err(cellules.error)

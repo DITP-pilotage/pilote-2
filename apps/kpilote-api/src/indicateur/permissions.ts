@@ -1,5 +1,3 @@
-import { ResultAsync } from 'neverthrow'
-
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
@@ -55,56 +53,46 @@ export const withIndicateurReadPermission = (
   }
 }
 
-export const ensureIndicateurWriteDataPermission = ({
+export const ensureIndicateurWriteDataPermission = async ({
   indicateurId,
   principalId,
 }: {
   indicateurId: string
   principalId: string
-}): ResultAsync<void, never> =>
-  ResultAsync.fromSafePromise(
-    db()
-      .indicateurPermission.findUnique({
-        where: {
-          principalId_indicateurId_action: {
-            principalId,
-            indicateurId,
-            action: IndicateurPermissionAction.WRITE_DATA,
-          },
-        },
-      })
-      .then((hasWrite) => {
-        if (!hasWrite) {
-          throw new ForbiddenError(
-            "Vous n'avez pas la permission de modifier les données de cet indicateur",
-          )
-        }
-      }),
-  )
+}): Promise<void> => {
+  const hasWrite = await db().indicateurPermission.findUnique({
+    where: {
+      principalId_indicateurId_action: {
+        principalId,
+        indicateurId,
+        action: IndicateurPermissionAction.WRITE_DATA,
+      },
+    },
+  })
+  if (!hasWrite)
+    throw new ForbiddenError(
+      "Vous n'avez pas la permission de modifier les données de cet indicateur",
+    )
+}
 
-export const ensureIndicateurWriteCommentPermission = ({
+export const ensureIndicateurWriteCommentPermission = async ({
   indicateurId,
   principalId,
 }: {
   indicateurId: string
   principalId: string
-}): ResultAsync<void, never> =>
-  ResultAsync.fromSafePromise(
-    db()
-      .indicateurPermission.findUnique({
-        where: {
-          principalId_indicateurId_action: {
-            principalId,
-            indicateurId,
-            action: IndicateurPermissionAction.WRITE_COMMENT,
-          },
-        },
-      })
-      .then((hasWrite) => {
-        if (!hasWrite) {
-          throw new ForbiddenError(
-            "Vous n'avez pas la permission d'écrire un commentaire sur cet indicateur",
-          )
-        }
-      }),
-  )
+}): Promise<void> => {
+  const hasWrite = await db().indicateurPermission.findUnique({
+    where: {
+      principalId_indicateurId_action: {
+        principalId,
+        indicateurId,
+        action: IndicateurPermissionAction.WRITE_COMMENT,
+      },
+    },
+  })
+  if (!hasWrite)
+    throw new ForbiddenError(
+      "Vous n'avez pas la permission d'écrire un commentaire sur cet indicateur",
+    )
+}

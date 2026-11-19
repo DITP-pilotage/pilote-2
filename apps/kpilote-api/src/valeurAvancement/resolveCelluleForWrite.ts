@@ -1,4 +1,4 @@
-import { err, type Result, ResultAsync } from 'neverthrow'
+import { err, type Result } from 'neverthrow'
 
 import {
   loadModalitesContext,
@@ -24,7 +24,9 @@ type ResolveCelluleForWriteParams = {
 
 type ResolveCelluleForWriteError = IndividuInconnuError | SaisieModalitesError
 
-const performResolve = async ({
+// Cible d'une écriture unitaire : l'individu (droits et rattachement à
+// l'indicateur) et les modalités qui complètent la cellule.
+export const resolveCelluleForWrite = async ({
   indicateurPublicId,
   individuPublicId,
   modalitePublicIds,
@@ -43,10 +45,3 @@ const performResolve = async ({
     modalites,
   }))
 }
-
-// Cible d'une écriture unitaire : l'individu (droits et rattachement à
-// l'indicateur) et les modalités qui complètent la cellule.
-export const resolveCelluleForWrite = (
-  params: ResolveCelluleForWriteParams,
-): ResultAsync<CelluleForWrite, ResolveCelluleForWriteError> =>
-  ResultAsync.fromSafePromise(performResolve(params)).andThen((result) => result)

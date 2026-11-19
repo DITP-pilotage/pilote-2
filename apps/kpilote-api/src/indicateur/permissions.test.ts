@@ -204,12 +204,12 @@ describe.concurrent('ensureIndicateurWriteDataPermission', () => {
         ],
       })
 
-      const result = await ensureIndicateurWriteDataPermission({
-        indicateurId: indicateur.id,
-        principalId: apiKey.id,
-      })
-
-      expect(result.isOk()).toBe(true)
+      await expect(
+        ensureIndicateurWriteDataPermission({
+          indicateurId: indicateur.id,
+          principalId: apiKey.id,
+        }),
+      ).resolves.toBeUndefined()
     }),
   )
 
@@ -309,12 +309,12 @@ describe.concurrent('ensureIndicateurWriteCommentPermission', () => {
         ],
       })
 
-      const result = await ensureIndicateurWriteCommentPermission({
-        indicateurId: indicateur.id,
-        principalId: apiKey.id,
-      })
-
-      expect(result.isOk()).toBe(true)
+      await expect(
+        ensureIndicateurWriteCommentPermission({
+          indicateurId: indicateur.id,
+          principalId: apiKey.id,
+        }),
+      ).resolves.toBeUndefined()
     }),
   )
 

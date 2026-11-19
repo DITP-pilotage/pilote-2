@@ -4,7 +4,7 @@ import {
   type ValeursRemarquablesContributionApiModel,
   type ValeursRemarquablesListApiModel,
 } from '@pilote/kpilote-shared/valeurAvancement'
-import { ResultAsync } from 'neverthrow'
+import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { type Selection } from '@/axe/modalites'
 import { type ResolveSelectionError, resolveSelection } from '@/axe/resolveSelection'
@@ -28,25 +28,28 @@ import {
 // pour les agrégés (cf. doc d'archi `indicateur-derives.md`).
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
+const performList = async (
+  indicateurPublicId: string,
+  params: ListValeursRemarquablesForIndicateurQuery,
+): Promise<Result<ValeursRemarquablesListApiModel, ResolveSelectionError>> => {
+  const principalId = requireCurrentPrincipalId()
+  const indicateur = await db().indicateur.findFirstOrThrow({
+    where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
+    select: { id: true },
+  })
+  const selection = await resolveSelection({
+    indicateurId: indicateur.id,
+    modalitePublicIds: params.modalites ?? [],
+  })
+  if (selection.isErr()) return err(selection.error)
+  return ok(await buildStats({ indicateurId: indicateur.id, params, selection: selection.value }))
+}
+
 export const listValeursRemarquablesForIndicateur = (
   indicateurPublicId: string,
   params: ListValeursRemarquablesForIndicateurQuery,
-): ResultAsync<ValeursRemarquablesListApiModel, ResolveSelectionError> => {
-  const principalId = requireCurrentPrincipalId()
-  return ResultAsync.fromSafePromise(
-    db().indicateur.findFirstOrThrow({
-      where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
-      select: { id: true },
-    }),
-  ).andThen((indicateur) =>
-    resolveSelection({
-      indicateurId: indicateur.id,
-      modalitePublicIds: params.modalites ?? [],
-    }).andThen((selection) =>
-      ResultAsync.fromSafePromise(buildStats({ indicateurId: indicateur.id, params, selection })),
-    ),
-  )
-}
+): ResultAsync<ValeursRemarquablesListApiModel, ResolveSelectionError> =>
+  new ResultAsync(performList(indicateurPublicId, params))
 
 // Pour chaque référentiel demandé, on calcule min/max/médiane sur la dernière
 // valeur connue de chaque individu — saisie pour les feuilles, dérivée pour les

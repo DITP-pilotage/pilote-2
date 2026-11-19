@@ -136,12 +136,12 @@ describe.concurrent('ensureCollectionWriteCommentPermission', () => {
         ],
       })
 
-      const result = await ensureCollectionWriteCommentPermission({
-        collectionId: collection.id,
-        principalId: apiKey.id,
-      })
-
-      expect(result.isOk()).toBe(true)
+      await expect(
+        ensureCollectionWriteCommentPermission({
+          collectionId: collection.id,
+          principalId: apiKey.id,
+        }),
+      ).resolves.toBeUndefined()
     }),
   )
 
