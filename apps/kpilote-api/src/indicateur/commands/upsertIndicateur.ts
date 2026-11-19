@@ -6,7 +6,7 @@ import {
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { ensurePrincipal, isApiKeyAdmin, isOidcUser } from '@/framework/auth/principalPredicates'
+import { ensureAdminOrOidcUser } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
@@ -342,10 +342,7 @@ const performUpsert = async (
   publicId: string,
   body: UpsertIndicateurBody,
 ): Promise<Result<void, UpsertIndicateurError>> => {
-  ensurePrincipal(
-    (principal) => isApiKeyAdmin(principal) || isOidcUser(principal),
-    'Cette opération requiert un utilisateur OIDC ou une clé API de rôle ADMIN',
-  )
+  ensureAdminOrOidcUser()
   const principalId = requireCurrentPrincipalId()
   const existant = await db().indicateur.findUnique({ where: { publicId } })
   if (existant) return updateIndicateurExistant(publicId, existant.id, body, principalId)

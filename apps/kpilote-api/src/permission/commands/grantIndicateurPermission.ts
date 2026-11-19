@@ -1,11 +1,11 @@
 import { type GrantIndicateurPermissionBody } from '@pilote/kpilote-shared/permission'
 import { ResultAsync } from 'neverthrow'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
 const performGrant = async (body: GrantIndicateurPermissionBody): Promise<void> => {
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+  ensureAdmin()
   await db().principal.findUniqueOrThrow({ where: { id: body.principalId } })
   const indicateur = await db().indicateur.findUniqueOrThrow({
     where: { publicId: body.indicateurPublicId },

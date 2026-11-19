@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import { type RequestedModalite } from '@/axe/requestedModalites'
 import {
+  aggregateIndividusErrors,
   aggregateModalitesErrors,
   detectDuplicateKeys,
   type ModalitesByItem,
@@ -93,5 +94,23 @@ describe('aggregateModalitesErrors', () => {
 
   it('rien sans erreur', () => {
     expect(aggregateModalitesErrors({ modalitesByItem: [ok([]), ok([orange])] })).toEqual([])
+  })
+})
+
+describe('aggregateIndividusErrors', () => {
+  it('regroupe les lignes d’un même individu inconnu, dans l’ordre d’apparition', () => {
+    const inconnu = (individu: string) => err({ type: 'INDIVIDU_INCONNU' as const, individu })
+    expect(
+      aggregateIndividusErrors({
+        individuByItem: [inconnu('DEPT-99'), ok(undefined), inconnu('DEPT-98'), inconnu('DEPT-99')],
+      }),
+    ).toEqual([
+      { code: 'INDIVIDU_INCONNU', individu: 'DEPT-99', indices: [0, 3] },
+      { code: 'INDIVIDU_INCONNU', individu: 'DEPT-98', indices: [2] },
+    ])
+  })
+
+  it('rien sans erreur', () => {
+    expect(aggregateIndividusErrors({ individuByItem: [ok(undefined)] })).toEqual([])
   })
 })

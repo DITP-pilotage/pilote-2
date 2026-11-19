@@ -1,9 +1,8 @@
 import { type AddCollectionResponsableBody } from '@pilote/kpilote-shared/collection'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
-import { MESSAGE_ADMIN } from '@/collection/utils'
 
 export type AddCollectionResponsableError = { type: 'RESPONSABLE_DEJA_AFFECTE' }
 
@@ -11,7 +10,7 @@ const performAdd = async (
   publicId: string,
   body: AddCollectionResponsableBody,
 ): Promise<Result<void, AddCollectionResponsableError>> => {
-  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
+  ensureAdmin()
 
   const collection = await db().collection.findUniqueOrThrow({
     where: { publicId },

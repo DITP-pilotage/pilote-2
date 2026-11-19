@@ -6,7 +6,7 @@ import {
   type SaisieModalitesError,
   validateSaisieModalites,
 } from '@/axe/requestedModalites'
-import { type IndividuInconnuError } from '@/individu/permission'
+import { type IndividuInconnuError } from '@/individu/rules'
 import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
 
 type CelluleForWrite = {

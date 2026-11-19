@@ -9,7 +9,7 @@ import { upsertCombinaison } from '@/axe/combinaison'
 import { type SaisieModalitesError } from '@/axe/requestedModalites'
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
-import { type IndividuInconnuError } from '@/individu/permission'
+import { type IndividuInconnuError } from '@/individu/rules'
 import { resolveCelluleForWrite } from '@/valeurAvancement/resolveCelluleForWrite'
 import { toValeurSaisieApiModel } from '@/valeurAvancement/utils'
 

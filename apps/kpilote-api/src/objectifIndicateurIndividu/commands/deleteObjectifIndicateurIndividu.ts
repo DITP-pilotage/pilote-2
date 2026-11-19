@@ -2,7 +2,7 @@ import { type DeleteObjectifIndicateurIndividuBody } from '@pilote/kpilote-share
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
-import { type IndividuInconnuError } from '@/individu/permission'
+import { type IndividuInconnuError } from '@/individu/rules'
 import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
 
 export type DeleteObjectifIndicateurIndividuError = IndividuInconnuError

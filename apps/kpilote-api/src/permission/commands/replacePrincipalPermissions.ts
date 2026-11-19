@@ -1,7 +1,7 @@
 import { type ReplacePrincipalPermissionsBody } from '@pilote/kpilote-shared/permission'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 
@@ -34,7 +34,7 @@ const indexerParPublicId = (
 const performReplace = async (
   body: ReplacePrincipalPermissionsBody,
 ): Promise<Result<void, ReplacePrincipalPermissionsError>> => {
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+  ensureAdmin()
   await db().principal.findUniqueOrThrow({ where: { id: body.principalId } })
 
   // Toute la validation avant la moindre écriture : un payload invalide laisse

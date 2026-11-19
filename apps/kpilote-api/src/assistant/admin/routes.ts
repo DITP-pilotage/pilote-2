@@ -9,15 +9,14 @@ import {
 
 import { grantAccess, readAccess, revokeAccess, setActif } from '@/assistant/admin/access'
 import { getAdminConversation, listAdminConversations } from '@/assistant/admin/conversations'
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { erreur400, erreur403, erreur404, succes200 } from '@/framework/openapi/responses'
 
 export const assistantAdminRoutes = createOpenApiHono()
 
-const requireAdmin = () =>
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+const requireAdmin = () => ensureAdmin()
 
 const AccessSchema = assistantAccesSchema.openapi('AssistantAcces')
 const accessResponses = { 200: succes200('Accès à l’assistant', AccessSchema), 403: erreur403 }

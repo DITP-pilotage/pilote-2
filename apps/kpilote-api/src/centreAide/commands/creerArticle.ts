@@ -5,15 +5,15 @@ import {
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { MESSAGE_ADMIN, toArticleCentreAideApiModel } from '@/centreAide/utils'
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { toArticleCentreAideApiModel } from '@/centreAide/utils'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 
 const performCreer = async (
   body: CreerArticleCentreAideBody,
 ): Promise<ArticleCentreAideApiModel> => {
-  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
+  ensureAdmin()
   const principalId = requireCurrentPrincipalId()
   const parentId = body.parentId ?? null
 

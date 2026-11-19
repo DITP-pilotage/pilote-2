@@ -2,8 +2,6 @@ import { type AxeApiModel, type ModaliteApiModel } from '@pilote/kpilote-shared/
 
 import { type AxeModel, type ModaliteModel, type NiveauAxeModel } from '@/generated/prisma/models'
 
-export const MESSAGE_ADMIN = 'Cette opération requiert une clé API de rôle ADMIN'
-
 export type AxeAvecNiveaux = AxeModel & {
   niveaux: ReadonlyArray<NiveauAxeModel>
   _count: { modalites: number }

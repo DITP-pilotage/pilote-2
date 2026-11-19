@@ -1,7 +1,6 @@
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
-import { MESSAGE_ADMIN } from '@/centreAide/utils'
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
 export type SupprimerArticleError = { type: 'ARTICLE_HORS_CORBEILLE' }
@@ -9,7 +8,7 @@ export type SupprimerArticleError = { type: 'ARTICLE_HORS_CORBEILLE' }
 // Suppression réelle (DELETE), possible uniquement depuis la corbeille. Le
 // onDelete: Cascade de la self-relation supprime aussi les descendants.
 const performSupprimer = async (id: string): Promise<Result<void, SupprimerArticleError>> => {
-  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
+  ensureAdmin()
   const article = await db().articleCentreAide.findUniqueOrThrow({ where: { id } })
   if (article.statut !== 'CORBEILLE') return err({ type: 'ARTICLE_HORS_CORBEILLE' })
   await db().articleCentreAide.delete({ where: { id } })

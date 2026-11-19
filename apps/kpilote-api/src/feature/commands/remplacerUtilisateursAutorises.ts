@@ -4,7 +4,7 @@ import {
 } from '@pilote/kpilote-shared/feature'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 import { featureInclude, toFeatureDetailApiModel } from '@/feature/utils'
 
@@ -57,7 +57,7 @@ const performRemplacer = async (
   id: string,
   body: RemplacerUtilisateursAutorisesBody,
 ): Promise<Result<FeatureDetailApiModel, RemplacerUtilisateursAutorisesError>> => {
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+  ensureAdmin()
   await ensureFeatureExiste(id)
   const utilisateurs = await resoudreUtilisateurs(body.utilisateurIds)
   if (utilisateurs.inconnus.length > 0) {

@@ -12,7 +12,7 @@ import {
   upsertDimension,
   type UpsertDimensionError,
 } from '@/analytics/dimensions'
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
@@ -44,8 +44,7 @@ const describeUpsertDimensionError = (
   }
 }
 
-const requireAdmin = () =>
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+const requireAdmin = () => ensureAdmin()
 
 const params = z.object({ cle: analyticsDimensionKeySchema })
 

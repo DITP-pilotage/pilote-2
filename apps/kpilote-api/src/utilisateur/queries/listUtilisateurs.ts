@@ -4,7 +4,7 @@ import {
 } from '@pilote/kpilote-shared/utilisateur'
 import { ResultAsync } from 'neverthrow'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
 import { type Prisma } from '@/generated/prisma/client'
@@ -17,7 +17,7 @@ const buildWhere = (recherche: string | undefined): Prisma.UtilisateurWhereInput
 }
 
 const performList = async (params: ListUtilisateursQuery): Promise<UtilisateurListApiModel> => {
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+  ensureAdmin()
 
   const where = buildWhere(params.recherche)
   const [rows, total] = await Promise.all([

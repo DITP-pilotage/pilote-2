@@ -2,7 +2,7 @@ import { type ApiKeyListApiModel } from '@pilote/kpilote-shared/apiKey'
 import { ResultAsync } from 'neverthrow'
 
 import { toApiKeyApiModel } from '@/apiKey/utils'
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
 // Garde ADMIN comme les commandes : les 3 endpoints de gestion des clés sont
@@ -10,7 +10,7 @@ import { db } from '@/framework/persistence/dbStore'
 // `toApiKeyApiModel` lit l'horloge via son défaut interne (dans utils.ts, chemin
 // autorisé) ; l'écart de quelques microsecondes entre lignes est sans effet.
 const performList = async (): Promise<ApiKeyListApiModel> => {
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+  ensureAdmin()
   const rows = await db().apiKey.findMany({ orderBy: { createdAt: 'desc' } })
   return rows.map((row) => toApiKeyApiModel(row))
 }

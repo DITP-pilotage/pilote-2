@@ -2,9 +2,8 @@ import { type CreateCollectionBody } from '@pilote/kpilote-shared/collection'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
-import { MESSAGE_ADMIN } from '@/collection/utils'
 
 // TODO PIL-1688 : remplacer ce calcul de MAX + verrou consultatif par une vraie
 // séquence Postgres. https://data-ditp.atlassian.net/browse/PIL-1688
@@ -29,7 +28,7 @@ const nextPublicId = async (): Promise<string> => {
 }
 
 const performCreate = async (body: CreateCollectionBody): Promise<string> => {
-  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
+  ensureAdmin()
 
   await lockPublicIdSequence()
   const publicId = await nextPublicId()

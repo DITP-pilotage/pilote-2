@@ -4,22 +4,17 @@ import {
 } from '@pilote/kpilote-shared/niveauConfiance'
 import { ResultAsync } from 'neverthrow'
 
+import { ensureAuteur } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { niveauConfianceInclude, toNiveauConfianceApiModel } from '@/niveauConfiance/utils'
 
-const ensureAuteurDuNiveau = async (
-  niveauConfianceId: string,
-  principalId: string,
-): Promise<void> => {
+const ensureAuteurDuNiveau = async (niveauConfianceId: string): Promise<void> => {
   const { createdBy } = await db().niveauConfiance.findUniqueOrThrow({
     where: { id: niveauConfianceId },
     select: { createdBy: true },
   })
-  if (createdBy !== principalId) {
-    throw new ForbiddenError('Seul l’auteur peut modifier ce niveau de confiance')
-  }
+  ensureAuteur({ createdBy, message: 'Seul l’auteur peut modifier ce niveau de confiance' })
 }
 
 const updateIndice = ({
@@ -42,7 +37,7 @@ const performModifier = async (
   body: ModifierNiveauConfianceBody,
 ): Promise<NiveauConfianceApiModel> => {
   const principalId = requireCurrentPrincipalId()
-  await ensureAuteurDuNiveau(niveauConfianceId, principalId)
+  await ensureAuteurDuNiveau(niveauConfianceId)
   const niveau = await updateIndice({ niveauConfianceId, indice: body.indice, principalId })
   return toNiveauConfianceApiModel(niveau)
 }
