@@ -41,6 +41,7 @@ import {
   prefetchIndicateurValeursForIndividu,
 } from '@/queries/indicateurs'
 import { useCanWriteDataIndicateur } from '@/queries/mePermissions'
+import { useFeature } from '@/queries/meFeature'
 
 const paramsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -161,6 +162,7 @@ function IndicateurDetailComponent() {
   const canWrite = useCanWriteDataIndicateur(id)
   const { open, target } = useImportModal()
   const [isTableauOpen, setIsTableauOpen] = useState(false)
+  const hasTableauValeurs = useFeature('TABLEAU_VALEURS')
 
   const onFile = useCallback(
     (file: File) =>
@@ -271,7 +273,7 @@ function IndicateurDetailComponent() {
                   />
                 </div>
               ))}
-              {axes.length > 0 ? (
+              {hasTableauValeurs && axes.length > 0 ? (
                 <Button variant="secondary" size="md" onClick={() => setIsTableauOpen(true)}>
                   <Table2 />
                   Tableau des valeurs
@@ -283,6 +285,7 @@ function IndicateurDetailComponent() {
               onClose={() => setIsTableauOpen(false)}
               indicateurId={id}
               individuId={individuId}
+              referentielIds={referentielIds}
               declarations={indicateur.axes}
             />
             <IndicateurResultatsTab

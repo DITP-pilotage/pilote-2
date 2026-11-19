@@ -69,3 +69,7 @@ const moisAnneeLongOptions = { month: 'long', year: 'numeric' } as const
 // "décembre 2024" — entrée ISO YYYY-MM-DD (dates dérivées de l'indicateur).
 export const formatMoisAnneeLongFr = (value: string): string =>
   Temporal.PlainDate.from(value).toLocaleString('fr-FR', moisAnneeLongOptions)
+
+const percentFr = new Intl.NumberFormat('fr-FR', { style: 'percent', maximumFractionDigits: 0 })
+
+export const formatPercentFr = (value: number): string => percentFr.format(value)

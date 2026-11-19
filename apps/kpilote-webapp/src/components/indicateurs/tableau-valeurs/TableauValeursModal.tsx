@@ -1,4 +1,5 @@
 import { type DeclarationAxeIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import { type IndividuApiModel } from '@pilote/kpilote-shared/individu'
 import { depthFirst, type ModaliteKind, TOUS_ID } from '@pilote/kpilote-shared/modaliteTree'
 import {
   type CelluleValeur,
@@ -8,7 +9,7 @@ import {
   resolveCellule,
 } from '@pilote/kpilote-shared/valeursCombinaison'
 import { Temporal } from '@js-temporal/polyfill'
-import { useQuery } from '@tanstack/react-query'
+import { useQueries, useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { X } from 'lucide-react'
 import { useId, useMemo, useState } from 'react'
 
@@ -29,7 +30,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@pilote/kpilote-ui/Select'
+import { CelluleReference } from '@/components/indicateurs/tableau-valeurs/CelluleReference'
 import { ExplicationCellule } from '@/components/indicateurs/tableau-valeurs/ExplicationCellule'
+import { buildNomOfIndividu, referenceLinesOf } from '@/lib/axes/explicationCellule'
 import { clsxm } from '@/lib/clsxm'
 import { formatMonthYearShortFr, formatNumberFr } from '@/lib/format'
 import {
@@ -46,20 +49,36 @@ import {
 } from '@/lib/axes/tableauValeurs'
 import { useAxesWithModalites } from '@/queries/axes'
 import { indicateurValeursByCombinaisonQueryOptions } from '@/queries/indicateurs'
+import { referentielIndividusQueryOptions } from '@/queries/referentiels'
+
+// Hors du composant : une fonction stable laisse useQueries mémoriser le résultat.
+const individusOf = (results: ReadonlyArray<UseQueryResult<ReadonlyArray<IndividuApiModel>>>) =>
+  results.flatMap((result) => result.data ?? [])
 
 export function TableauValeursModal({
   open,
   onClose,
   indicateurId,
   individuId,
+  referentielIds,
   declarations,
 }: {
   open: boolean
   onClose: () => void
   indicateurId: string
   individuId: string
+  // Tous les référentiels de l'indicateur : les individus enfants peuvent être dans un autre.
+  referentielIds: ReadonlyArray<string>
   declarations: ReadonlyArray<DeclarationAxeIndicateurApiModel>
 }) {
+  const individus = useQueries({
+    queries: referentielIds.map((referentielId) => ({
+      ...referentielIndividusQueryOptions(referentielId),
+      enabled: open,
+    })),
+    combine: individusOf,
+  })
+  const nomOfIndividu = useMemo(() => buildNomOfIndividu(individus), [individus])
   return (
     <Dialog open={open} onOpenChange={(ouvert: boolean) => (ouvert ? undefined : onClose())}>
       <Dialog.Portal>
@@ -70,8 +89,9 @@ export function TableauValeursModal({
               <div className="mr-auto">
                 <Dialog.Title>Tableau des valeurs</Dialog.Title>
                 <Dialog.Description className="text-xs">
-                  Les valeurs de l’individu {individuId}, découpées par les axes de l’indicateur.
-                  Lecture seule : cliquez sur une cellule pour voir d’où vient sa valeur.
+                  Les valeurs de l’individu {nomOfIndividu(individuId)}, découpées par les axes de
+                  l’indicateur. Lecture seule : cliquez sur une cellule pour voir d’où vient sa
+                  valeur.
                 </Dialog.Description>
               </div>
               <button
@@ -87,6 +107,7 @@ export function TableauValeursModal({
               indicateurId={indicateurId}
               individuId={individuId}
               declarations={declarations}
+              nomOfIndividu={nomOfIndividu}
             />
           </div>
         </Dialog.Content>
@@ -99,10 +120,12 @@ function TableauValeursContent({
   indicateurId,
   individuId,
   declarations,
+  nomOfIndividu,
 }: {
   indicateurId: string
   individuId: string
   declarations: ReadonlyArray<DeclarationAxeIndicateurApiModel>
+  nomOfIndividu: (individuId: string) => string
 }) {
   const axesWithModalites = useAxesWithModalites(declarations)
   // `useQuery` plutôt que la suspense : un refus de l'API (trop de combinaisons) s'affiche
@@ -138,7 +161,7 @@ function TableauValeursContent({
   if (context.periodes.length === 0) {
     return <p className="p-6 text-sm text-text-muted">Aucune valeur pour cet individu.</p>
   }
-  return <TableauValeurs key={individuId} context={context} />
+  return <TableauValeurs key={individuId} context={context} nomOfIndividu={nomOfIndividu} />
 }
 
 const KIND_DOT: Record<ModaliteKind, string> = {
@@ -167,7 +190,13 @@ type ActiveCellule = { ids: CombinaisonIds; periode: string }
 
 const formatPeriode = (periode: string) => formatMonthYearShortFr(Temporal.PlainDate.from(periode))
 
-function TableauValeurs({ context }: { context: TableauValeursContext }) {
+function TableauValeurs({
+  context,
+  nomOfIndividu,
+}: {
+  context: TableauValeursContext
+  nomOfIndividu: (individuId: string) => string
+}) {
   const { axes, series, periodes, axeIndexByModalite } = context
   const [disposition, setDisposition] = useState<Disposition>(INITIAL_DISPOSITION)
   const [periode, setPeriode] = useState(() => periodes.at(-1) ?? '')
@@ -322,12 +351,24 @@ function TableauValeurs({ context }: { context: TableauValeursContext }) {
         ))}
       </div>
 
-      <FormulaBar reference={active ? referenceActive({ axes, active }) : 'Aucune cellule'}>
+      <FormulaBar
+        reference={
+          active ? (
+            <CelluleReference
+              lines={referenceLinesOf({ axes, ids: active.ids })}
+              periode={formatPeriode(active.periode)}
+            />
+          ) : (
+            'Aucune cellule'
+          )
+        }
+      >
         <ExplicationCellule
           axes={axes}
           explication={explication}
           cellule={activeCellule}
           periode={active?.periode ?? null}
+          nomOfIndividu={nomOfIndividu}
         />
       </FormulaBar>
 
@@ -389,14 +430,6 @@ const referenceOf = ({ axes, ids }: { axes: ReadonlyArray<AxeTableau>; ids: Comb
       return id === TOUS_ID ? nom : `${axe?.nom ?? ''} : ${nom}`
     })
     .join(' × ')
-
-const referenceActive = ({
-  axes,
-  active,
-}: {
-  axes: ReadonlyArray<AxeTableau>
-  active: ActiveCellule
-}) => `${referenceOf({ axes, ids: active.ids })} · ${formatPeriode(active.periode)}`
 
 function FixeeSelect({
   axe,
