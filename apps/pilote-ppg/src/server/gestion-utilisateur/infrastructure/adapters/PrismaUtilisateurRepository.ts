@@ -280,7 +280,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async verifierExistenceUtilisateur(email: string): Promise<boolean> {
     const utilisateur = await this.prisma.utilisateur.findFirst({
       where: {
-        email,
+        email: email.toLowerCase(),
       },
     });
 

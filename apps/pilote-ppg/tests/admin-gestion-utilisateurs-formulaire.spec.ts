@@ -54,7 +54,7 @@ test("doit valider les champs obligatoires Service et Fonction à la création",
   );
 });
 
-test("doit créer un compte puis refuser un second compte avec la même adresse", async ({
+test("doit créer un compte puis refuser dès l'identification un second compte avec la même adresse, quelle que soit sa casse", async ({
   page,
   e2eContext,
   step,
@@ -64,18 +64,19 @@ test("doit créer un compte puis refuser un second compte avec la même adresse"
   const appActions = new AppActions(page, e2eContext);
   const pageFormulaire = new PageUtilisateurFormulaire(page, e2eContext);
 
-  async function submitForm(): Promise<void> {
+  async function fillIdentificationStep(
+    typedEmail: string,
+    prenom: string,
+  ): Promise<void> {
     await pageFormulaire.gotoCreate();
     await pageFormulaire.fillIdentification({
-      email,
+      email: typedEmail,
       nom: "Creation",
-      prenom: "E2E",
+      prenom,
     });
     await pageFormulaire.selectProfil("DITP - Pilotage");
     await pageFormulaire.fillFonction("Testeur E2E");
     await pageFormulaire.selectService("Préfecture de région");
-    await pageFormulaire.clickNextToReview();
-    await pageFormulaire.confirm();
   }
 
   await step("Connexion en tant que DITP Admin", async () => {
@@ -83,7 +84,9 @@ test("doit créer un compte puis refuser un second compte avec la même adresse"
   });
 
   await step("Création du compte", async () => {
-    await submitForm();
+    await fillIdentificationStep(email, "E2E");
+    await pageFormulaire.clickNextToReview();
+    await pageFormulaire.confirm();
     await pageFormulaire.expectUpdateSuccess();
     const utilisateur = await prisma.utilisateur.findUniqueOrThrow({
       where: { email },
@@ -96,11 +99,25 @@ test("doit créer un compte puis refuser un second compte avec la même adresse"
   });
 
   await step(
-    "Une seconde création avec la même adresse est refusée",
+    "Une seconde création avec la même adresse est refusée dès l'identification",
     async () => {
-      await submitForm();
+      await fillIdentificationStep(email, "Doublon");
+      await pageFormulaire.clickNext();
       await pageFormulaire.expectEmailAlreadyUsedError();
-      expect(await prisma.utilisateur.count({ where: { email } })).toBe(1);
+    },
+  );
+
+  await step(
+    "Une seconde création avec la même adresse en majuscules est refusée et le compte d'origine reste intact",
+    async () => {
+      await fillIdentificationStep(email.toUpperCase(), "Doublon");
+      await pageFormulaire.clickNext();
+      await pageFormulaire.expectEmailAlreadyUsedError();
+      const utilisateurs = await prisma.utilisateur.findMany({
+        where: { email: { equals: email, mode: "insensitive" } },
+        select: { email: true, prenom: true },
+      });
+      expect(utilisateurs).toEqual([{ email, prenom: "E2E" }]);
     },
   );
 });

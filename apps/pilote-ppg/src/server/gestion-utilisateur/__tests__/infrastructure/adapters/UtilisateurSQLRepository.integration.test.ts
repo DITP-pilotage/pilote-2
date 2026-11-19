@@ -95,6 +95,24 @@ describe("PrismaUtilisateurRepository", () => {
     );
   });
 
+  describe("verifierExistenceUtilisateur", function () {
+    it(
+      "reconnaît un compte existant quelle que soit la casse de l'adresse saisie",
+      createIntegrationTest(async () => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+
+        // When
+        const existe = await repository.verifierExistenceUtilisateur(
+          utilisateur.email.toUpperCase(),
+        );
+
+        // Then
+        expect(existe).toBe(true);
+      }),
+    );
+  });
+
   describe("desactiver", function () {
     it(
       "si l'email n'existe pas, ne fait rien",

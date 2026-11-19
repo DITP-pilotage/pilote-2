@@ -7,7 +7,10 @@ import { useSession } from "next-auth/react";
 import { $Enums } from "@prisma/client";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { StepIndicator } from "@/components/shared/StepIndicator";
-import { donneValidationInfosBaseUtilisateur } from "@/validation/utilisateur";
+import {
+  donneValidationInfosBaseUtilisateur,
+  EMAIL_ALREADY_USED_MESSAGE,
+} from "@/validation/utilisateur";
 import RécapitulatifUtilisateur from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur";
 import { api } from "@/server/framework/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
@@ -38,6 +41,7 @@ const UtilisateurFormulaire: FunctionComponent<
       undefined,
       { staleTime: Number.POSITIVE_INFINITY },
     );
+  const trpcUtils = api.useUtils();
   const { data: territoires } = api.territoire.list.useQuery(
     { territoireCodes: null },
     { staleTime: Number.POSITIVE_INFINITY },
@@ -79,7 +83,17 @@ const UtilisateurFormulaire: FunctionComponent<
     },
   });
 
-  const passerAuRécapitulatif = async () => {
+  const passerAuRécapitulatif = async ({ email }: UtilisateurFormInputs) => {
+    if (!utilisateur) {
+      const emailAlreadyUsed =
+        await trpcUtils.utilisateur.emailAlreadyUsed.fetch({ email });
+      if (emailAlreadyUsed) {
+        reactHookForm.setError("email", {
+          message: EMAIL_ALREADY_USED_MESSAGE,
+        });
+        return;
+      }
+    }
     setEtapeCourante(2);
   };
 

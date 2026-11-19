@@ -117,10 +117,12 @@ export class PageUtilisateurFormulaire extends BasePage {
   }
 
   async expectEmailAlreadyUsedError(): Promise<void> {
+    await expect(this.emailInput).toHaveAttribute("aria-invalid", "true");
+    await expect(this.emailInput).toHaveAccessibleDescription(
+      /Un compte a déjà été créé avec cette adresse électronique\./,
+    );
     await expect(
-      this.page.getByRole("alert").getByRole("heading", {
-        name: "Un compte a déjà été créé avec cette adresse électronique.",
-      }),
+      this.page.getByRole("heading", { name: "Identification" }),
     ).toBeVisible();
   }
 }

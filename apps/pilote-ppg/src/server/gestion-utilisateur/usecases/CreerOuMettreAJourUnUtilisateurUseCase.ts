@@ -9,7 +9,10 @@ import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJourCalculées,
 } from "@/shared/utilisateur/habilitation/Habilitation.interface";
-import { codesTerritoiresDROM } from "@/validation/utilisateur";
+import {
+  codesTerritoiresDROM,
+  EMAIL_ALREADY_USED_MESSAGE,
+} from "@/validation/utilisateur";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { PérimètreMinistériel } from "@/shared/perimetreMinisteriel/PerimetreMinisteriel.interface";
@@ -577,9 +580,7 @@ export default class CreerOuMettreAJourUnUtilisateurUseCase {
     }
 
     if (!utilisateurExistant && utilisateurExiste) {
-      throw new ConflictError(
-        "Un compte a déjà été créé avec cette adresse électronique.",
-      );
+      throw new ConflictError(EMAIL_ALREADY_USED_MESSAGE);
     }
   }
 }

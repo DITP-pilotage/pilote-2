@@ -6,6 +6,9 @@ import {
 } from "@/shared/utilisateur/Utilisateur.interface";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 
+export const EMAIL_ALREADY_USED_MESSAGE =
+  "Un compte a déjà été créé avec cette adresse électronique.";
+
 const customErrorMail =
   "Vous essayez de créer un compte pour une adresse dont le domaine n'est pas en .gouv.fr. Veuillez contacter pilote.ditp@modernisation.gouv.fr pour plus d'informations.";
 
