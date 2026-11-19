@@ -65,7 +65,7 @@ export const SearchPicker = <T,>({
         <Popover.Content
           aria-label={searchPlaceholder}
           align="start"
-          className="z-50 w-[var(--radix-popover-trigger-width)] min-w-80 bg-white border border-solid border-dsfr-grey-900 shadow-lg"
+          className="z-[1800] w-[var(--radix-popover-trigger-width)] min-w-80 bg-white border border-solid border-dsfr-grey-900 shadow-lg"
           sideOffset={4}
         >
           <Command label={searchPlaceholder} shouldFilter={false}>
