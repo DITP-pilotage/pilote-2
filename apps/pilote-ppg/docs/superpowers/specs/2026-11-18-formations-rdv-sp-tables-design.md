@@ -92,9 +92,9 @@ Contrat avec copilot :
 
 `formation_motif_profil` : `motif_id` (bigint), `profil_code` (FK `profil`). Clé (`motif_id`, `profil_code`).
 
-`formation_periode_information` : `id` (uuid), `date_debut` (date), `date_fin` (date). Pas de libellé : une période se reconnaît à ses dates dans la liste de l'admin.
+`formation_periode_information` : `id` (uuid), `date_debut` (date), `date_fin` (date), `deleted_at` (timestamptz, nullable, ajoutée par la PR 2). Pas de libellé : une période se reconnaît à ses dates dans la liste de l'admin.
 
-Deux périodes ne peuvent pas se chevaucher (décision du 2026-11-18). La règle sera appliquée par la création et la modification de période, avec l'écran d'admin. Pas de contrainte d'exclusion en base pour l'instant : aucune migration du projet n'en contient, et Prisma ne la modélise pas. Les données fictives la respectent.
+Une période n'est jamais effacée : la supprimer renseigne `deleted_at` (décision du 2026-11-19). Deux périodes non supprimées ne se chevauchent jamais : une période enregistrée remplace celles qu'elle chevauche, qui sont supprimées (voir les règles plus bas). Les écritures passent l'une après l'autre sous un verrou PostgreSQL de transaction. Pas de contrainte d'exclusion en base : aucune migration du projet n'en contient, et Prisma ne la modélise pas. Les données fictives respectent la règle.
 
 `formation_periode_information_motif` : `periode_id` (FK `formation_periode_information`, suppression en cascade), `motif_id` (bigint). Clé (`periode_id`, `motif_id`).
 
@@ -124,7 +124,7 @@ Clé (`utilisateur_id`, `periode_id`). Pas de ligne : jamais présentée. `date_
   - les six motifs Campus PILOTE du ticket, avec des identifiants fictifs ;
   - la matrice motif ↔ profils validée dans PIL-1883 ;
   - des séances datées par rapport au jour du lancement : à venir, passée, annulée, complète, pour exercer les filtres ;
-  - une période en cours avec une partie des motifs, une période passée ;
+  - une période en cours avec une partie des motifs, une période à venir, une période passée, une période supprimée ;
   - aucune ligne d'état : la slide-in s'affiche pour tout le monde.
 
 ## Écran d'admin (PR 1 pour Séances à venir, PR 2 pour le reste)
@@ -132,7 +132,7 @@ Clé (`utilisateur_id`, `periode_id`). Pas de ligne : jamais présentée. `date_
 Une entrée « Formations » dans le menu latéral du panel administrateur, réservée à DITP Admin, avec des onglets sur le modèle de la page Albert (`AlbertPanel`, onglet dans l'URL via `?onglet=`) :
 
 1. **Profils** : la matrice du ticket, profils en lignes, motifs en colonnes, une case par croisement, enregistrée au clic avec un toast (comme « Permissions profils » d'Albert). Les motifs supprimés dans RDV-SP n'apparaissent pas.
-2. **Périodes d'information** : liste (du, au, formations, statut calculé : à venir, en cours, passée), ajout et modification par un formulaire (dates et une case par motif), suppression. Une période passée reste visible mais ne se modifie plus. Le formulaire refuse un chevauchement.
+2. **Périodes d'information** : liste dans un `TableauAdmin` (du, au, formations, statut calculé : à venir, en cours, passée, supprimée ; recherche sur les formations, filtre par statut), ajout et modification par un formulaire (dates et une case par motif), suppression. Une période passée ou supprimée reste visible mais ne se modifie plus. Le formulaire prévient quand la période en remplace d'autres.
 3. **Séances à venir** : lecture seule, pour vérifier ce que copilot a ramené de RDV-SP. Toutes les séances qui n'ont pas commencé, avec un statut calculé (Ouverte, Complète, Annulée), dans un `TableauAdmin` (recherche, filtres, tri), et la date du dernier import en tête.
 
 ```
@@ -145,14 +145,19 @@ Direction d'administration centrale  [x]       [x]        [x]    [x]       [x]  
 …
 ```
 
-### Règles des périodes d'information (validées le 2026-11-18)
+### Règles des périodes d'information (validées le 2026-11-19, remplacent celles du 2026-11-18)
 
-- Statut calculé sur la date du jour, heure de Paris : À venir, En cours (du premier au dernier jour inclus), Passée.
-- À l'enregistrement : fin ≥ début, au moins une formation, aucun chevauchement avec une autre période, bornes comprises.
-- Création, ou période À venir : la fin ne peut pas être passée ; tout se modifie ; suppression possible.
-- En cours : la fin et les formations se modifient, le début est figé, pas de suppression ; pour l'arrêter, on avance la fin à hier.
-- Passée : lecture seule.
+- Statut : Supprimée si `deleted_at` est renseignée ; sinon calculé sur la date du jour, heure de Paris : À venir, En cours (du premier au dernier jour inclus), Passée.
+- Passée ou Supprimée : lecture seule.
+- Début : pas dans le passé ; figé pour une période en cours.
+- Fin : égale ou postérieure au début, pas dans le passé.
+- Au moins une formation.
+- Chevauchement : une période enregistrée (création ou modification) remplace les périodes non supprimées qu'elle chevauche, bornes comprises ; elles sont supprimées. Comme le début n'est jamais dans le passé, une période passée n'est jamais remplacée.
+- Avertissement dans le formulaire dès que les dates chevauchent une autre période : il cite les périodes qui seront supprimées et, si une période en cours est remplacée par une période qui commence plus tard, annonce qu'aucune période ne sera en cours d'ici là. Après l'enregistrement, le toast cite les périodes supprimées, telles que le serveur les a déterminées.
+- Suppression : période à venir ou en cours, en renseignant `deleted_at`. Pas de restauration. Pour arrêter une période en cours, on la supprime.
 - Formulaire en modale, erreurs sous les champs au clic sur Enregistrer, boutons jamais désactivés.
+
+Modifier une période garde la même campagne : un utilisateur qui a fermé la slide-in ne la revoit pas. Une période de remplacement est une nouvelle campagne (à reprendre dans la PR 3, règle de nouvelle présentation).
 
 ## Laissé à la construction
 

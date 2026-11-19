@@ -40,17 +40,18 @@ Périmètre :
 
 - Onglet « Profils » : matrice profils en lignes, motifs en colonnes, une case par croisement, enregistrée au clic avec un toast.
 - Onglet « Périodes d'information » : liste (du, au, formations, statut calculé), ajout, modification, suppression. Une période passée reste visible mais ne se modifie plus.
-- Refus du chevauchement de deux périodes.
+- Une période enregistrée remplace celles qu'elle chevauche, qui sont supprimées (soft delete, colonne `deleted_at`), avec un avertissement dans le formulaire.
 
 À cadrer :
 
 - [x] Plan détaillé : [2026-11-18-formations-rdv-sp-pr2.md](./2026-11-18-formations-rdv-sp-pr2.md), avec les règles des périodes validées le 2026-11-18
+- [x] Mise à plat des règles des périodes et relecture (2026-11-19) : [2026-11-19-formations-rdv-sp-pr2-periodes.md](./2026-11-19-formations-rdv-sp-pr2-periodes.md)
 
 ## PR 3 : slide-in sur l'accueil
 
 Périmètre :
 
-- Formations à proposer : période active, motifs de la période associés au profil de l'utilisateur, séances ouvertes à l'inscription.
+- Formations à proposer : période active, motifs de la période associés au profil de l'utilisateur, séances ouvertes à l'inscription. Période active = non supprimée (`deleted_at IS NULL`) et en cours : réutiliser `statutPeriode`. Une période supprimée ne présente plus la slide-in.
 - Slide-in sur l'accueil, d'après le prototype joint à PIL-1923.
 - « Plus tard », fermeture, lien d'inscription par séance.
 - Ligne d'état par utilisateur et par période (`formation_periode_information_utilisateur`).
@@ -82,4 +83,4 @@ Périmètre :
 | --- | --- | --- |
 | Écriture des motifs et séances par copilot, selon le contrat du design | à définir | À faire |
 | Mise à jour de PIL-1883 : l'arbitrage « pas de stockage des séances » ne tient plus | à définir | À faire |
-| Mise à plat des règles des périodes d'information (décidée le 2026-11-19, après la relecture de la PR 2) : une période en cours créée par erreur ne peut ni se supprimer ni se corriger ; une période en cours dont toutes les formations ont disparu de RDV-SP ne peut pas s'arrêter | Tristan | À faire |
+| Mise à plat des règles des périodes d'information (décidée le 2026-11-19, après la relecture de la PR 2) : une période en cours créée par erreur ne peut ni se supprimer ni se corriger ; une période en cours dont toutes les formations ont disparu de RDV-SP ne peut pas s'arrêter | Tristan | Faite dans la PR 2 (soft delete et remplacement) |
