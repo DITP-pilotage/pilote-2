@@ -8,14 +8,15 @@ import { uuidv7 } from 'uuidv7'
 import { ensureAuteur } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
+import {
+  checkCommentaireConfiance,
+  type CommentairePasConfianceError,
+} from '@/niveauConfiance/rules'
 import { niveauConfianceInclude, toNiveauConfianceApiModel } from '@/niveauConfiance/utils'
 
-export type CreerNiveauConfianceError = { type: 'COMMENTAIRE_PAS_CONFIANCE' }
+export type CreerNiveauConfianceError = CommentairePasConfianceError
 
-// L'auteur du commentaire est implicitement habilité à y attacher son indice :
-// s'il a pu poster le commentaire CONFIANCE, il a déjà la permission. Renvoie
-// si le commentaire est bien de type CONFIANCE.
-const isCommentaireConfianceDeLAuteur = async (commentaireId: string): Promise<boolean> => {
+const loadCommentaire = async (commentaireId: string) => {
   const commentaire = await db().commentaire.findUniqueOrThrow({
     where: { id: commentaireId },
     select: {
@@ -24,12 +25,10 @@ const isCommentaireConfianceDeLAuteur = async (commentaireId: string): Promise<b
       collection: { select: { type: true } },
     },
   })
-  ensureAuteur({
+  return {
     createdBy: commentaire.createdBy,
-    message: 'Seul l’auteur du commentaire peut y attacher un niveau de confiance',
-  })
-  const typeSatellite = commentaire.indicateurIndividu?.type ?? commentaire.collection?.type
-  return typeSatellite === 'CONFIANCE'
+    type: commentaire.indicateurIndividu?.type ?? commentaire.collection?.type ?? null,
+  }
 }
 
 const insertNiveauConfiance = ({
@@ -56,8 +55,17 @@ const performCreer = async (
   body: CreerNiveauConfianceBody,
 ): Promise<Result<NiveauConfianceApiModel, CreerNiveauConfianceError>> => {
   const principalId = requireCurrentPrincipalId()
-  const estConfiance = await isCommentaireConfianceDeLAuteur(body.commentaireId)
-  if (!estConfiance) return err({ type: 'COMMENTAIRE_PAS_CONFIANCE' })
+  const commentaire = await loadCommentaire(body.commentaireId)
+  // L'auteur du commentaire est implicitement habilité à y attacher son indice :
+  // s'il a pu poster le commentaire CONFIANCE, il a déjà la permission.
+  ensureAuteur({
+    createdBy: commentaire.createdBy,
+    message: 'Seul l’auteur du commentaire peut y attacher un niveau de confiance',
+  })
+
+  const confiance = checkCommentaireConfiance({ typeCommentaire: commentaire.type })
+  if (confiance.isErr()) return err(confiance.error)
+
   const niveau = await insertNiveauConfiance({
     commentaireId: body.commentaireId,
     indice: body.indice,
