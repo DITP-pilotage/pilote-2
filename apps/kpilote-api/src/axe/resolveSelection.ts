@@ -1,14 +1,10 @@
 import { ok, type Result } from 'neverthrow'
 
 import { type Selection } from '@/axe/modalites'
-import {
-  loadModalitesContext,
-  modalitesErrorMessage,
-  type ResolveModalitesError,
-  resolveModalites,
-} from '@/axe/requestedModalites'
+import { loadModalitesContext, modalitesErrorMessage } from '@/axe/requestedModalites'
+import { type ModalitesDeclareesError, checkModalitesDeclarees } from '@/axe/rules'
 
-export type ResolveSelectionError = ResolveModalitesError
+export type ResolveSelectionError = ModalitesDeclareesError
 
 type ResolveSelectionParams = {
   indicateurId: string
@@ -26,7 +22,7 @@ export const resolveSelection = async ({
   // Sans modalité, rien à lire : « Tous » sur chaque axe.
   if (modalitePublicIds.length === 0) return ok(new Map())
   const context = await loadModalitesContext({ indicateurId, modalitePublicIds })
-  return resolveModalites({ context, modalitePublicIds }).map(
+  return checkModalitesDeclarees({ context, modalitePublicIds }).map(
     (modaliteByAxe): Selection =>
       new Map([...modaliteByAxe].map(([axeId, modalite]) => [axeId, modalite.id])),
   )

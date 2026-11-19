@@ -1,10 +1,10 @@
-import { err, ok, type Result } from 'neverthrow'
-
+import { type SaisieModalitesError } from '@/axe/rules'
 import { db } from '@/framework/persistence/dbStore'
 
 // Modalités citées par un appel (lecture `modalites=` ou écriture `modalites`),
 // confrontées aux axes que l'indicateur déclare. Le chargement est fait une
-// fois, pour une écriture comme pour un lot entier ; les contrôles sont purs.
+// fois, pour une écriture comme pour un lot entier ; les contrôles sont des
+// règles pures (`checkModalitesDeclarees`, `checkCelluleComplete` dans `axe/rules.ts`).
 
 export type DeclaredAxe = { id: string; publicId: string }
 
@@ -59,80 +59,6 @@ export const loadModalitesContext = async ({
     ),
   }
 }
-
-export type ResolveModalitesError =
-  | { type: 'MODALITE_INCONNUE'; modalites: string[] }
-  | { type: 'AXE_NON_DECLARE'; modalites: string[] }
-  | { type: 'MODALITES_MEME_AXE'; axe: string; modalites: string[] }
-
-// Contrôles communs aux lectures et aux écritures : chaque modalité existe,
-// appartient à un axe déclaré, et au plus une modalité par axe. Renvoie la
-// modalité retenue pour chaque axe cité (axeId → modalité).
-export const resolveModalites = ({
-  context,
-  modalitePublicIds,
-}: {
-  context: ModalitesContext
-  modalitePublicIds: ReadonlyArray<string>
-}): Result<Map<string, RequestedModalite>, ResolveModalitesError> => {
-  const requested = [...new Set(modalitePublicIds)]
-  const unknown = requested.filter((publicId) => !context.modaliteByPublicId.has(publicId))
-  if (unknown.length > 0) return err({ type: 'MODALITE_INCONNUE', modalites: unknown.sort() })
-
-  const modalites = requested.map((publicId) => context.modaliteByPublicId.get(publicId)!)
-  const declaredAxeIds = new Set(context.declaredAxes.map((axe) => axe.id))
-  const outsideAxes = modalites.filter((modalite) => !declaredAxeIds.has(modalite.axeId))
-  if (outsideAxes.length > 0) {
-    return err({ type: 'AXE_NON_DECLARE', modalites: outsideAxes.map((m) => m.publicId).sort() })
-  }
-
-  const modaliteByAxe = new Map<string, RequestedModalite>()
-  for (const modalite of modalites) {
-    if (modaliteByAxe.has(modalite.axeId)) {
-      const sameAxe = modalites.filter((m) => m.axeId === modalite.axeId).map((m) => m.publicId)
-      return err({
-        type: 'MODALITES_MEME_AXE',
-        axe: modalite.axePublicId,
-        modalites: sameAxe.sort(),
-      })
-    }
-    modaliteByAxe.set(modalite.axeId, modalite)
-  }
-  return ok(modaliteByAxe)
-}
-
-export type SaisieModalitesError =
-  | ResolveModalitesError
-  | { type: 'MODALITE_MANQUANTE'; axes: string[] }
-  | { type: 'MODALITE_NON_FEUILLE'; modalites: string[] }
-
-// Une valeur se saisit sur une cellule complète : exactement une modalité
-// feuille par axe déclaré (aucune pour un indicateur sans axe). Les niveaux
-// parents et « Tous » se calculent, ils ne se saisissent pas (spec D9).
-// Renvoie les modalités dans l'ordre de déclaration des axes.
-export const validateSaisieModalites = ({
-  context,
-  modalitePublicIds,
-}: {
-  context: ModalitesContext
-  modalitePublicIds: ReadonlyArray<string>
-}): Result<RequestedModalite[], SaisieModalitesError> =>
-  resolveModalites({ context, modalitePublicIds }).andThen(
-    (modaliteByAxe): Result<RequestedModalite[], SaisieModalitesError> => {
-      const missingAxes = context.declaredAxes.filter((axe) => !modaliteByAxe.has(axe.id))
-      if (missingAxes.length > 0) {
-        return err({ type: 'MODALITE_MANQUANTE', axes: missingAxes.map((axe) => axe.publicId) })
-      }
-      const nonLeaves = [...modaliteByAxe.values()].filter((modalite) => !modalite.isLeaf)
-      if (nonLeaves.length > 0) {
-        return err({
-          type: 'MODALITE_NON_FEUILLE',
-          modalites: nonLeaves.map((modalite) => modalite.publicId).sort(),
-        })
-      }
-      return ok(context.declaredAxes.map((axe) => modaliteByAxe.get(axe.id)!))
-    },
-  )
 
 export const modalitesErrorMessage = (error: SaisieModalitesError): string => {
   switch (error.type) {

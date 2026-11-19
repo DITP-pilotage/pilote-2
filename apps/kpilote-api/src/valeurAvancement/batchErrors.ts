@@ -4,7 +4,8 @@ import {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { type Result } from 'neverthrow'
 
-import { type RequestedModalite, type SaisieModalitesError } from '@/axe/requestedModalites'
+import { type RequestedModalite } from '@/axe/requestedModalites'
+import { type SaisieModalitesError } from '@/axe/rules'
 import { type IndividuInconnuError } from '@/individu/rules'
 
 // Erreurs d'un lot de valeurs, calculées sans base : chaque fonction reçoit les

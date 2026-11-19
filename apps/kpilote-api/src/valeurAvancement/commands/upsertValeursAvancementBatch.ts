@@ -11,8 +11,8 @@ import {
   loadModalitesContext,
   type ModalitesContext,
   type RequestedModalite,
-  validateSaisieModalites,
 } from '@/axe/requestedModalites'
+import { checkCelluleComplete } from '@/axe/rules'
 import { db } from '@/framework/persistence/dbStore'
 import { upsertValeursAvancementBatch as upsertValeursAvancementBatchQuery } from '@/generated/prisma/sql'
 import { resolveIndicateurForWriteData } from '@/indicateur/resolveIndicateurForWrite'
@@ -118,7 +118,7 @@ const validateItemsModalites = ({
   items: BatchItems
   context: ModalitesContext
 }): ModalitesByItem =>
-  items.map((item) => validateSaisieModalites({ context, modalitePublicIds: item.modalites ?? [] }))
+  items.map((item) => checkCelluleComplete({ context, modalitePublicIds: item.modalites ?? [] }))
 
 // Forme transmise au paramètre `payload.items` de la requête TypedSQL.
 // Doit rester en miroir de `prisma/sql/upsertValeursAvancementBatch.sql` (clés extraites

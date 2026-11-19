@@ -1,12 +1,11 @@
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
+import { checkModaliteSupprimable, type ModaliteNonSupprimableError } from '@/axe/rules'
 import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 
-export type DeleteModaliteError =
-  | { type: 'MODALITE_A_DES_ENFANTS'; enfants: string[] }
-  | { type: 'MODALITE_UTILISEE'; valeurs: number }
+export type DeleteModaliteError = ModaliteNonSupprimableError
 
 const performDelete = async ({
   axePublicId,
@@ -24,15 +23,15 @@ const performDelete = async ({
   if (!modalite) {
     throw new NotFoundError('Modalité introuvable dans cet axe.', { axe: axePublicId, publicId })
   }
-  if (modalite.enfants.length > 0) {
-    return err({ type: 'MODALITE_A_DES_ENFANTS', enfants: modalite.enfants.map((e) => e.publicId) })
-  }
-
-  // Supprimer une modalité qui précise des valeurs les rendrait orphelines.
-  const valeurs = await db().valeurAvancement.count({
+  const nombreValeurs = await db().valeurAvancement.count({
     where: { combinaison: { modalites: { some: { modaliteId: modalite.id } } } },
   })
-  if (valeurs > 0) return err({ type: 'MODALITE_UTILISEE', valeurs })
+
+  const supprimable = checkModaliteSupprimable({
+    enfants: modalite.enfants.map((enfant) => enfant.publicId),
+    nombreValeurs,
+  })
+  if (supprimable.isErr()) return err(supprimable.error)
 
   // Les combinaisons de la modalité ne portent aucune valeur : elles
   // disparaissent avec elle (le cascade retire leurs lignes, y compris celles
