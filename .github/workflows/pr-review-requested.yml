@@ -17,18 +17,21 @@ jobs:
         with:
           github-token: ${{ github.token }}
           sha: ${{ github.event.pull_request.head.sha }}
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+      - name: "checkout"
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts
       - name: "Envoi message Tchap"
         env:
-          TCHAP_URL: "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/${{ secrets.TCHAP_ROOM_ID_REVIEW }}/send/m.room.message"
-          TCHAP_ACCESS_TOKEN: ${{ secrets.TCHAP_ACCESS_TOKEN }}
+          TCHAP_BASE_URL: ${{ secrets.TCHAP_BASE_URL }}
+          TCHAP_ROOM_ID: ${{ secrets.TCHAP_ROOM_ID_REVIEW }}
+          TCHAP_BOT_USER_ID: ${{ secrets.TCHAP_BOT_USER_ID }}
+          TCHAP_BOT_DEVICE_ID: ${{ secrets.TCHAP_BOT_DEVICE_ID }}
+          TCHAP_BOT_ACCESS_TOKEN: ${{ secrets.TCHAP_BOT_ACCESS_TOKEN }}
+          TCHAP_BOT_OLM_ACCOUNT: ${{ secrets.TCHAP_BOT_OLM_ACCOUNT }}
           BODY: ""
           FORMATTED_BODY: >-
             <h2>[review] ${{ steps.PR.outputs.pr_title }}</h2> Une review est demandée sur cette PR. <br> <blockquote><a href="${{ steps.PR.outputs.pr_url }}">PR ${{ steps.PR.outputs.number }}</a></blockquote>
-        run: |
-          jq -n --arg body "$BODY" --arg formatted "$FORMATTED_BODY" \
-            '{body: $body, format: "org.matrix.custom.html", formatted_body: $formatted, msgtype: "m.text"}' |
-            curl --fail-with-body --silent --show-error --max-time 6 --retry 3 --retry-all-errors \
-              -X POST "$TCHAP_URL" \
-              -H "Authorization: Bearer $TCHAP_ACCESS_TOKEN" \
-              -H "Content-Type: application/json" \
-              --data-binary @-
+        run: uv run --with "matrix-nio[e2e]~=0.26.0" python .github/scripts/send_tchap.py
