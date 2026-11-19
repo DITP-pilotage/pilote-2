@@ -1,16 +1,15 @@
 import { type UpdateCollectionIndicateurPonderationBody } from '@pilote/kpilote-shared/collection'
 import { ResultAsync } from 'neverthrow'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
-import { MESSAGE_ADMIN } from '@/collection/utils'
 
 const performUpdate = async (
   publicId: string,
   indicateurPublicId: string,
   body: UpdateCollectionIndicateurPonderationBody,
 ): Promise<void> => {
-  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
+  ensureAdmin()
 
   const collection = await db().collection.findUniqueOrThrow({
     where: { publicId },

@@ -5,9 +5,8 @@ import {
 } from '@pilote/kpilote-shared/permission'
 import { ResultAsync } from 'neverthrow'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
-import { MESSAGE_ADMIN } from '@/collection/utils'
 import { sortByOrder } from '@/permission/order'
 
 type Entree = CollectionPermissionsApiModel['items'][number]
@@ -20,7 +19,7 @@ const ORDRE_ACTIONS: CollectionPermissionActionValue[] = [
 const performList = async (publicId: string): Promise<CollectionPermissionsApiModel> => {
   // Réservé aux clés ADMIN comme le reste de la gestion des collections : la
   // réponse expose les emails des utilisateurs et les libellés des clés API.
-  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
+  ensureAdmin()
 
   const lignes = await db().collectionPermission.findMany({
     where: { collection: { publicId } },

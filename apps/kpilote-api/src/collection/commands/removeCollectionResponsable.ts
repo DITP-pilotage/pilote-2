@@ -1,11 +1,10 @@
 import { ResultAsync } from 'neverthrow'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
-import { MESSAGE_ADMIN } from '@/collection/utils'
 
 const performRemove = async (publicId: string, utilisateurId: string): Promise<void> => {
-  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
+  ensureAdmin()
 
   await db().collectionResponsable.deleteMany({
     where: { collection: { publicId }, utilisateurId },

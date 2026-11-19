@@ -5,8 +5,6 @@ import {
 
 import { type ArticleCentreAide } from '@/generated/prisma/client'
 
-export const MESSAGE_ADMIN = 'Cette opération requiert une clé API de rôle ADMIN'
-
 // Dérive un texte brut cherchable depuis le contenu HTML riche du centre d'aide.
 // Version durcie (vs le helper commentaire) : conserve les titres d'accordéon
 // (attribut data-title) et insère des espaces aux frontières de bloc pour ne pas

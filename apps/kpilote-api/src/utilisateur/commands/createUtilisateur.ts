@@ -5,12 +5,12 @@ import {
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 import { toUtilisateurApiModel } from '@/utilisateur/utils'
 
 const performCreate = async (body: CreateUtilisateurBody): Promise<UtilisateurApiModel> => {
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+  ensureAdmin()
 
   const id = uuidv7()
   await db().principal.create({ data: { id } })

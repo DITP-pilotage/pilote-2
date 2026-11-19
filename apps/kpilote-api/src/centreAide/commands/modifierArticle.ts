@@ -4,8 +4,8 @@ import {
 } from '@pilote/kpilote-shared/centreAide'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
-import { htmlToPlainText, MESSAGE_ADMIN, toArticleCentreAideApiModel } from '@/centreAide/utils'
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { htmlToPlainText, toArticleCentreAideApiModel } from '@/centreAide/utils'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 
@@ -22,7 +22,7 @@ const performModifier = async (
   id: string,
   body: ModifierArticleBody,
 ): Promise<Result<ArticleCentreAideApiModel, ModifierArticleError>> => {
-  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
+  ensureAdmin()
   const principalId = requireCurrentPrincipalId()
   const { parentId, ordre } = body
 

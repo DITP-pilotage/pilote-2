@@ -2,9 +2,8 @@ import { type UpsertRelationBody } from '@pilote/kpilote-shared/relation'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
-import { MESSAGE_ADMIN } from '@/relation/utils'
 
 export type UpsertRelationParentError = { type: 'AUTO_PARENT' } | { type: 'CYCLE_DETECTE' }
 
@@ -31,7 +30,7 @@ const performUpsert = async (
   enfantPublicId: string,
   body: UpsertRelationBody,
 ): Promise<Result<void, UpsertRelationParentError>> => {
-  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
+  ensureAdmin()
 
   if (enfantPublicId === body.parent) return err({ type: 'AUTO_PARENT' })
 

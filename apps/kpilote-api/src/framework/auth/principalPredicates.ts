@@ -1,4 +1,8 @@
-import { requirePrincipal, type Principal } from '@/framework/auth/userContext'
+import {
+  requireCurrentPrincipalId,
+  requirePrincipal,
+  type Principal,
+} from '@/framework/auth/userContext'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { ApiKeyRole } from '@/generated/prisma/enums'
 
@@ -20,4 +24,24 @@ export const ensurePrincipal = (
 ): void => {
   const principal = requirePrincipal()
   if (!predicate(principal)) throw new ForbiddenError(message)
+}
+
+export const ensureAdmin = (): void =>
+  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+
+export const ensureAdminOrOidcUser = (): void =>
+  ensurePrincipal(
+    (principal) => isApiKeyAdmin(principal) || isOidcUser(principal),
+    'Cette opération requiert un utilisateur OIDC ou une clé API de rôle ADMIN',
+  )
+
+// Seul l'auteur d'un objet agit dessus, ADMIN compris.
+export const ensureAuteur = ({
+  createdBy,
+  message,
+}: {
+  createdBy: string
+  message: string
+}): void => {
+  if (createdBy !== requireCurrentPrincipalId()) throw new ForbiddenError(message)
 }

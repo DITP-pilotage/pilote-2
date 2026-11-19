@@ -1,11 +1,11 @@
 import { type RevokeIndicateurPermissionQuery } from '@pilote/kpilote-shared/permission'
 import { ResultAsync } from 'neverthrow'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
 const performRevoke = async (query: RevokeIndicateurPermissionQuery): Promise<void> => {
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+  ensureAdmin()
   await db().principal.findUniqueOrThrow({ where: { id: query.principalId } })
   const indicateur = await db().indicateur.findUniqueOrThrow({
     where: { publicId: query.indicateurPublicId },

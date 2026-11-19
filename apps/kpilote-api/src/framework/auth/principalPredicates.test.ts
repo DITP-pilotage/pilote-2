@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  ensureAdmin,
+  ensureAdminOrOidcUser,
+  ensureAuteur,
   ensurePrincipal,
   isApiKey,
   isApiKeyAdmin,
@@ -77,5 +80,43 @@ describe('ensurePrincipal', () => {
 
   it('lève UnauthorizedError sans principal', () => {
     expect(() => ensurePrincipal(isApiKeyAdmin, 'nope')).toThrow(UnauthorizedError)
+  })
+})
+
+describe('ensureAdmin', () => {
+  it('laisse passer une clé ADMIN', () => {
+    expect(() => runAsAdmin(ID, () => ensureAdmin())).not.toThrow()
+  })
+
+  it('rejette (ForbiddenError) une clé CONTRIBUTOR et un utilisateur OIDC', () => {
+    expect(() => runAsContributor(ID, () => ensureAdmin())).toThrow(ForbiddenError)
+    expect(() => runAsUser(ID, () => ensureAdmin())).toThrow(ForbiddenError)
+  })
+})
+
+describe('ensureAdminOrOidcUser', () => {
+  it('laisse passer une clé ADMIN et un utilisateur OIDC', () => {
+    expect(() => runAsAdmin(ID, () => ensureAdminOrOidcUser())).not.toThrow()
+    expect(() => runAsUser(ID, () => ensureAdminOrOidcUser())).not.toThrow()
+  })
+
+  it('rejette (ForbiddenError) une clé CONTRIBUTOR', () => {
+    expect(() => runAsContributor(ID, () => ensureAdminOrOidcUser())).toThrow(ForbiddenError)
+  })
+})
+
+describe('ensureAuteur', () => {
+  const AUTRE_ID = '00000000-0000-0000-0000-000000000002'
+
+  it("laisse passer l'auteur", () => {
+    expect(() =>
+      runAsUser(ID, () => ensureAuteur({ createdBy: ID, message: 'nope' })),
+    ).not.toThrow()
+  })
+
+  it("rejette (ForbiddenError) un autre principal, même ADMIN, avec le message de l'appelant", () => {
+    expect(() =>
+      runAsAdmin(ID, () => ensureAuteur({ createdBy: AUTRE_ID, message: 'nope' })),
+    ).toThrow(new ForbiddenError('nope'))
   })
 })

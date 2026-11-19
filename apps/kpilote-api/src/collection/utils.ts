@@ -10,8 +10,6 @@ import {
   type UtilisateurModel,
 } from '@/generated/prisma/models'
 
-export const MESSAGE_ADMIN = 'Cette opération requiert une clé API de rôle ADMIN'
-
 type ContactUtileLien = { contactUtile: ContactUtileModel & { organisme: OrganismeModel } }
 
 export type CollectionWithIndicateurs = CollectionModel & {

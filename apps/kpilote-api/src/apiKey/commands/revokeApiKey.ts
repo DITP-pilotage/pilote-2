@@ -2,7 +2,7 @@ import { type ApiKeyApiModel } from '@pilote/kpilote-shared/apiKey'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { toApiKeyApiModel } from '@/apiKey/utils'
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { now, toDate } from '@/framework/date'
 import { db } from '@/framework/persistence/dbStore'
@@ -10,7 +10,7 @@ import { db } from '@/framework/persistence/dbStore'
 export type RevokeApiKeyError = { type: 'CLE_API_COURANTE' } | { type: 'CLE_API_DEJA_REVOQUEE' }
 
 const performRevoke = async (id: string): Promise<Result<ApiKeyApiModel, RevokeApiKeyError>> => {
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+  ensureAdmin()
 
   if (id === requireCurrentPrincipalId()) return err({ type: 'CLE_API_COURANTE' })
 

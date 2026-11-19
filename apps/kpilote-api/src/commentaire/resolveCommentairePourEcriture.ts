@@ -1,3 +1,4 @@
+import { ensureAuteur } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
@@ -18,9 +19,10 @@ export const resolveCommentairePourEcriture = async (
       collection: { select: { collectionId: true } },
     },
   })
-  if (commentaire.createdBy !== principalId) {
-    throw new ForbiddenError("Seul l'auteur peut modifier ce commentaire")
-  }
+  ensureAuteur({
+    createdBy: commentaire.createdBy,
+    message: "Seul l'auteur peut modifier ce commentaire",
+  })
   if (commentaire.indicateurIndividu) {
     await ensureIndicateurWriteCommentPermission({
       indicateurId: commentaire.indicateurIndividu.indicateurId,

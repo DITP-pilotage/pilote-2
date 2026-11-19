@@ -1,12 +1,12 @@
 import { type FeatureDetailApiModel } from '@pilote/kpilote-shared/feature'
 import { ResultAsync } from 'neverthrow'
 
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 import { featureInclude, toFeatureDetailApiModel } from '@/feature/utils'
 
 const performGet = async (id: string): Promise<FeatureDetailApiModel> => {
-  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+  ensureAdmin()
   const row = await db().feature.findUniqueOrThrow({
     where: { id },
     include: featureInclude,

@@ -2,8 +2,7 @@ import { type UpsertAxeBody } from '@pilote/kpilote-shared/axe'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { MESSAGE_ADMIN } from '@/axe/utils'
-import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
 export type UpsertAxeError =
@@ -20,7 +19,7 @@ const performUpsert = async ({
   publicId: string
   body: UpsertAxeBody
 }): Promise<Result<void, UpsertAxeError>> => {
-  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
+  ensureAdmin()
 
   const existing = await db().axe.findUnique({ where: { publicId }, include: { niveaux: true } })
 
