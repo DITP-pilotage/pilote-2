@@ -148,6 +148,26 @@
       "types": "./src/valeurImport.ts",
       "default": "./src/valeurImport.ts"
     },
+    "./valeurImport/applyPlan": {
+      "types": "./src/valeurImport/applyPlan.ts",
+      "default": "./src/valeurImport/applyPlan.ts"
+    },
+    "./valeurImport/buildPlan": {
+      "types": "./src/valeurImport/buildPlan.ts",
+      "default": "./src/valeurImport/buildPlan.ts"
+    },
+    "./valeurImport/matchLibellesExact": {
+      "types": "./src/valeurImport/matchLibellesExact.ts",
+      "default": "./src/valeurImport/matchLibellesExact.ts"
+    },
+    "./valeurImport/parseDate": {
+      "types": "./src/valeurImport/parseDate.ts",
+      "default": "./src/valeurImport/parseDate.ts"
+    },
+    "./valeurImport/parseNombre": {
+      "types": "./src/valeurImport/parseNombre.ts",
+      "default": "./src/valeurImport/parseNombre.ts"
+    },
     "./objectifIndicateurIndividu": {
       "types": "./src/objectifIndicateurIndividu.ts",
       "default": "./src/objectifIndicateurIndividu.ts"
