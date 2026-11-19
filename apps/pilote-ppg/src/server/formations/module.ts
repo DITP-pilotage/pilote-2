@@ -6,9 +6,19 @@ import {
 } from "@/server/module-system";
 import type { FrameworkDependencies } from "@/server/framework/module";
 import { ListSeancesAVenirQuery } from "./queries/ListSeancesAVenirQuery";
+import { GetMatriceProfilsQuery } from "./queries/GetMatriceProfilsQuery";
+import { SetMotifProfilHandler } from "./handlers/SetMotifProfilHandler";
+import { ListPeriodesInformationQuery } from "./queries/ListPeriodesInformationQuery";
+import { SavePeriodeInformationHandler } from "./handlers/SavePeriodeInformationHandler";
+import { DeletePeriodeInformationHandler } from "./handlers/DeletePeriodeInformationHandler";
 
 type FormationsOwnCradle = {
   listSeancesAVenirQuery: ListSeancesAVenirQuery;
+  getMatriceProfilsQuery: GetMatriceProfilsQuery;
+  setMotifProfilHandler: SetMotifProfilHandler;
+  listPeriodesInformationQuery: ListPeriodesInformationQuery;
+  savePeriodeInformationHandler: SavePeriodeInformationHandler;
+  deletePeriodeInformationHandler: DeletePeriodeInformationHandler;
 };
 
 type FormationsCradle = FormationsOwnCradle & FrameworkDependencies;
@@ -20,6 +30,15 @@ export const formationsModule = defineModule<NoExports, FormationsCradle>()({
   register: (container, { asModuleClass }) => {
     container.register({
       listSeancesAVenirQuery: asModuleClass(ListSeancesAVenirQuery),
+      getMatriceProfilsQuery: asModuleClass(GetMatriceProfilsQuery),
+      setMotifProfilHandler: asModuleClass(SetMotifProfilHandler),
+      listPeriodesInformationQuery: asModuleClass(ListPeriodesInformationQuery),
+      savePeriodeInformationHandler: asModuleClass(
+        SavePeriodeInformationHandler,
+      ),
+      deletePeriodeInformationHandler: asModuleClass(
+        DeletePeriodeInformationHandler,
+      ),
     } satisfies VerifyCradle<FormationsOwnCradle>);
   },
 });

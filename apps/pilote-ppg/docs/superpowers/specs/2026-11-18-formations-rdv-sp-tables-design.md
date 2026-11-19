@@ -145,6 +145,15 @@ Direction d'administration centrale  [x]       [x]        [x]    [x]       [x]  
 …
 ```
 
+### Règles des périodes d'information (validées le 2026-11-18)
+
+- Statut calculé sur la date du jour, heure de Paris : À venir, En cours (du premier au dernier jour inclus), Passée.
+- À l'enregistrement : fin ≥ début, au moins une formation, aucun chevauchement avec une autre période, bornes comprises.
+- Création, ou période À venir : la fin ne peut pas être passée ; tout se modifie ; suppression possible.
+- En cours : la fin et les formations se modifient, le début est figé, pas de suppression ; pour l'arrêter, on avance la fin à hier.
+- Passée : lecture seule.
+- Formulaire en modale, erreurs sous les champs au clic sur Enregistrer, boutons jamais désactivés.
+
 ## Laissé à la construction
 
 - Noms exacts des modèles Prisma et des index.
