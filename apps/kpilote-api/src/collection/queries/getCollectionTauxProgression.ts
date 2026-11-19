@@ -43,18 +43,23 @@ const collectionTauxProgressionArgs = {
 
 type CollectionRow = Prisma.CollectionGetPayload<typeof collectionTauxProgressionArgs>
 
+const performGet = async (
+  collectionPublicId: string,
+  params: GetCollectionTauxProgressionQuery,
+): Promise<CollectionTauxProgressionApiModel> => {
+  const principalId = requireCurrentPrincipalId()
+  const collection = await db().collection.findFirstOrThrow({
+    where: withCollectionReadPermission({ publicId: collectionPublicId }, principalId),
+    ...collectionTauxProgressionArgs,
+  })
+  return buildResult({ collection, params })
+}
+
 export const getCollectionTauxProgression = (
   collectionPublicId: string,
   params: GetCollectionTauxProgressionQuery,
-): ResultAsync<CollectionTauxProgressionApiModel, never> => {
-  const principalId = requireCurrentPrincipalId()
-  return ResultAsync.fromSafePromise(
-    db().collection.findFirstOrThrow({
-      where: withCollectionReadPermission({ publicId: collectionPublicId }, principalId),
-      ...collectionTauxProgressionArgs,
-    }),
-  ).andThen((collection) => ResultAsync.fromSafePromise(buildResult({ collection, params })))
-}
+): ResultAsync<CollectionTauxProgressionApiModel, never> =>
+  ResultAsync.fromSafePromise(performGet(collectionPublicId, params))
 
 const buildResult = async ({
   collection,
