@@ -5,6 +5,7 @@ import { UtilisateurExportCSV } from "@/server/gestion-utilisateur/domain/Utilis
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
 import { HabilitationsÀCréerOuMettreÀJourCalculées } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/shared/utilisateur/Utilisateur.interface";
+import { StatutCompte } from "@/server/gestion-utilisateur/domain/StatutCompte";
 
 export interface UtilisateurRepository {
   récupérer(
@@ -61,7 +62,7 @@ export interface UtilisateurRepository {
     emailAuteurRemplacement: string,
   ): Promise<void>;
   supprimerListeUtilisateur(utilisateursASupprimerIds: string[]): Promise<void>;
-  verifierExistenceUtilisateur(email: string): Promise<boolean>;
+  getAccountStatus(email: string): Promise<StatutCompte>;
   créerOuMettreÀJour(
     u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & {
       habilitations: HabilitationsÀCréerOuMettreÀJourCalculées;

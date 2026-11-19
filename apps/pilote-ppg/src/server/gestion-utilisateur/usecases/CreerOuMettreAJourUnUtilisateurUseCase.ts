@@ -11,7 +11,7 @@ import {
 } from "@/shared/utilisateur/habilitation/Habilitation.interface";
 import {
   codesTerritoiresDROM,
-  EMAIL_ALREADY_USED_MESSAGE,
+  EMAIL_ALREADY_USED_MESSAGES,
 } from "@/validation/utilisateur";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { Territoire } from "@/shared/territoire/Territoire.interface";
@@ -572,15 +572,15 @@ export default class CreerOuMettreAJourUnUtilisateurUseCase {
     email: string,
     utilisateurExistant: boolean,
   ) {
-    const utilisateurExiste =
-      await this.utilisateurRepository.verifierExistenceUtilisateur(email);
+    const accountStatus =
+      await this.utilisateurRepository.getAccountStatus(email);
 
-    if (utilisateurExistant && !utilisateurExiste) {
+    if (utilisateurExistant && accountStatus === "inconnu") {
       throw new NotFoundError("Le compte à modifier n'existe pas.");
     }
 
-    if (!utilisateurExistant && utilisateurExiste) {
-      throw new ConflictError(EMAIL_ALREADY_USED_MESSAGE);
+    if (!utilisateurExistant && accountStatus !== "inconnu") {
+      throw new ConflictError(EMAIL_ALREADY_USED_MESSAGES[accountStatus]);
     }
   }
 }

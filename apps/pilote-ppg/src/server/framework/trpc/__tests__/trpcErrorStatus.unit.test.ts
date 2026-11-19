@@ -1,7 +1,27 @@
 import { TRPCError } from "@trpc/server";
-import { logLevelFromTrpcError } from "@/server/framework/trpc/logLevelFromTrpcError";
+import {
+  httpStatusFromTrpcError,
+  logLevelFromTrpcError,
+} from "@/server/framework/trpc/trpcErrorStatus";
 import { ConflictError } from "@/shared/errors/conflict-error";
 import { PiloteError } from "@/shared/errors/pilote-error";
+
+describe("httpStatusFromTrpcError", () => {
+  it("retourne le statut porté par une erreur métier", () => {
+    const error = new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      cause: new ConflictError("Un compte existe déjà."),
+    });
+
+    expect(httpStatusFromTrpcError(error)).toBe(409);
+  });
+
+  it("retourne le statut du code tRPC sinon", () => {
+    expect(httpStatusFromTrpcError(new TRPCError({ code: "FORBIDDEN" }))).toBe(
+      403,
+    );
+  });
+});
 
 describe("logLevelFromTrpcError", () => {
   it.each([

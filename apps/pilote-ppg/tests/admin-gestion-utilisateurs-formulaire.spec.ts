@@ -103,7 +103,9 @@ test("doit créer un compte puis refuser dès l'identification un second compte 
     async () => {
       await fillIdentificationStep(email, "Doublon");
       await pageFormulaire.clickNext();
-      await pageFormulaire.expectEmailAlreadyUsedError();
+      await pageFormulaire.expectEmailAlreadyUsedError(
+        "Un compte a déjà été créé avec cette adresse électronique.",
+      );
     },
   );
 
@@ -112,12 +114,46 @@ test("doit créer un compte puis refuser dès l'identification un second compte 
     async () => {
       await fillIdentificationStep(email.toUpperCase(), "Doublon");
       await pageFormulaire.clickNext();
-      await pageFormulaire.expectEmailAlreadyUsedError();
+      await pageFormulaire.expectEmailAlreadyUsedError(
+        "Un compte a déjà été créé avec cette adresse électronique.",
+      );
       const utilisateurs = await prisma.utilisateur.findMany({
         where: { email: { equals: email, mode: "insensitive" } },
         select: { email: true, prenom: true },
       });
       expect(utilisateurs).toEqual([{ email, prenom: "E2E" }]);
+    },
+  );
+});
+
+test("doit refuser dès l'identification la création d'un compte dont l'adresse appartient à un compte désactivé", async ({
+  page,
+  e2eContext,
+  step,
+}) => {
+  const appActions = new AppActions(page, e2eContext);
+  const pageFormulaire = new PageUtilisateurFormulaire(page, e2eContext);
+
+  await step("Connexion en tant que DITP Admin", async () => {
+    await appActions.loginAs();
+  });
+
+  await step(
+    "Saisie de l'adresse d'un compte désactivé — invitation à le réactiver",
+    async () => {
+      await pageFormulaire.gotoCreate();
+      await pageFormulaire.fillIdentification({
+        email: "compte.desactive@example.com",
+        nom: "Desactive",
+        prenom: "Compte",
+      });
+      await pageFormulaire.selectProfil("DITP - Pilotage");
+      await pageFormulaire.fillFonction("Testeur E2E");
+      await pageFormulaire.selectService("Préfecture de région");
+      await pageFormulaire.clickNext();
+      await pageFormulaire.expectEmailAlreadyUsedError(
+        "Un compte désactivé existe avec cette adresse électronique : retrouvez-le parmi les comptes désactivés de la liste des comptes pour le réactiver.",
+      );
     },
   );
 });

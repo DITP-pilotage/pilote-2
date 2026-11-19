@@ -160,6 +160,24 @@ test.describe("Gestion des comptes utilisateurs", () => {
     expect(await utilisateurExists(email)).toBe(false);
   });
 
+  test("un profil sans gestion des comptes ne vérifie pas si une adresse a déjà un compte", async ({
+    page,
+    e2eContext,
+  }) => {
+    const trpc = await trpcAs(
+      page,
+      e2eContext,
+      "prefet.departement@example.com",
+    );
+
+    const result = await trpc.mutation("utilisateur.getAccountStatus", {
+      email: "compte.desactive@example.com",
+    });
+
+    expect(result.status).toBe(403);
+    expect(result.data).toBeNull();
+  });
+
   test("un profil sans gestion des comptes ne crée pas de compte", async ({
     page,
     e2eContext,

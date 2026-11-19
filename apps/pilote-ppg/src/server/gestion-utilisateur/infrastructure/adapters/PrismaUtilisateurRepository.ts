@@ -14,6 +14,7 @@ import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { Territoire } from "@/shared/territoire/Territoire.interface";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
+import { StatutCompte } from "@/server/gestion-utilisateur/domain/StatutCompte";
 import { UtilisateurListeGestion } from "@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface";
 import { removeAccents } from "@/server/utils/remove-accents";
 import { estUnProfilTerritorialise } from "@/server/app/domain/ProfilTerritorialise";
@@ -277,14 +278,17 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     return this.deps.prisma.getInstance();
   }
 
-  async verifierExistenceUtilisateur(email: string): Promise<boolean> {
+  async getAccountStatus(email: string): Promise<StatutCompte> {
     const utilisateur = await this.prisma.utilisateur.findFirst({
-      where: {
-        email: email.toLowerCase(),
-      },
+      where: { email: { equals: email.trim(), mode: "insensitive" } },
+      select: { date_desactivation: true },
     });
 
-    return utilisateur !== null;
+    if (!utilisateur) {
+      return "inconnu";
+    }
+
+    return utilisateur.date_desactivation === null ? "actif" : "desactive";
   }
 
   async desactiver(email: string, auteurId: string): Promise<void> {

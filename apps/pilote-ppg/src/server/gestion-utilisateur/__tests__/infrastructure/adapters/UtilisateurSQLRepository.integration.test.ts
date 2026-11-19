@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
 import { PrismaUtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaUtilisateurRepository";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
@@ -95,20 +96,68 @@ describe("PrismaUtilisateurRepository", () => {
     );
   });
 
-  describe("verifierExistenceUtilisateur", function () {
+  describe("getAccountStatus", function () {
     it(
-      "reconnaît un compte existant quelle que soit la casse de l'adresse saisie",
+      "reconnaît un compte actif quelle que soit la casse de l'adresse saisie",
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
 
         // When
-        const existe = await repository.verifierExistenceUtilisateur(
+        const statut = await repository.getAccountStatus(
           utilisateur.email.toUpperCase(),
         );
 
         // Then
-        expect(existe).toBe(true);
+        expect(statut).toBe("actif");
+      }),
+    );
+
+    it(
+      "reconnaît un compte dont l'adresse a été enregistrée avec des majuscules",
+      createIntegrationTest(async () => {
+        // Given
+        // Adresse enregistrée avant la mise en minuscules systématique
+        const utilisateur = await fixtures.utilisateur({
+          email: `Jean.Dupont-${randomUUID().slice(0, 8)}@example.com`,
+        });
+
+        // When
+        const statut = await repository.getAccountStatus(
+          utilisateur.email.toLowerCase(),
+        );
+
+        // Then
+        expect(statut).toBe("actif");
+      }),
+    );
+
+    it(
+      "reconnaît un compte désactivé",
+      createIntegrationTest(async () => {
+        // Given
+        const utilisateur = await fixtures.utilisateur({
+          date_desactivation: new Date(),
+        });
+
+        // When
+        const statut = await repository.getAccountStatus(utilisateur.email);
+
+        // Then
+        expect(statut).toBe("desactive");
+      }),
+    );
+
+    it(
+      "ne reconnaît pas une adresse sans compte",
+      createIntegrationTest(async () => {
+        // When
+        const statut = await repository.getAccountStatus(
+          `inconnu-${randomUUID().slice(0, 8)}@example.com`,
+        );
+
+        // Then
+        expect(statut).toBe("inconnu");
       }),
     );
   });

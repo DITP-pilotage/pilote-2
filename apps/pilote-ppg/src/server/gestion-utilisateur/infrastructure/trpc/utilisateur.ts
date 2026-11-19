@@ -70,17 +70,16 @@ export const utilisateurRouter = createTRPCRouter({
           profilAuteur,
         );
     }),
-  emailAlreadyUsed: protectedProcedure
+  getAccountStatus: protectedProcedure
     .input(z.object({ email: z.string().email() }))
-    .query(async ({ input, ctx }) => {
+    .mutation(({ input, ctx }) => {
       const habilitation = new Habilitation(ctx.session.habilitations);
       if (!habilitation.peutCréerEtModifierUnUtilisateur()) {
         throw new TRPCError({ code: "FORBIDDEN" });
       }
-      const accountStatus = await getContainer("gestionUtilisateur")
-        .resolve("statutCompteQuery")
-        .recuperer({ email: input.email });
-      return accountStatus !== "inconnu";
+      return getContainer("gestionUtilisateur")
+        .resolve("utilisateurRepository")
+        .getAccountStatus(input.email);
     }),
   modifier: protectedProcedure
     .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
