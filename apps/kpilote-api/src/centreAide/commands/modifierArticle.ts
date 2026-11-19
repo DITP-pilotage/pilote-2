@@ -4,15 +4,48 @@ import {
 } from '@pilote/kpilote-shared/centreAide'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
+import {
+  checkParentEstUnGroupe,
+  checkSansDeplacementCirculaire,
+  type DeplacementCirculaireError,
+  type ParentInvalideError,
+} from '@/centreAide/rules'
 import { htmlToPlainText, toArticleCentreAideApiModel } from '@/centreAide/utils'
 import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
+import { type ArticleCentreAideType } from '@/generated/prisma/enums'
 
-export type ModifierArticleError =
-  | { type: 'PARENT_INTROUVABLE' }
-  | { type: 'PARENT_PAS_UN_GROUPE' }
-  | { type: 'DEPLACEMENT_CIRCULAIRE' }
+export type ModifierArticleError = ParentInvalideError | DeplacementCirculaireError
+
+type ArticleActif = {
+  id: string
+  parentId: string | null
+  type: ArticleCentreAideType
+  ordre: number
+}
+
+// Le parent puis ses ancêtres jusqu'à la racine, parmi les articles actifs.
+// Le Set de visités protège d'un cycle déjà présent en base.
+const cheminVersRacine = ({
+  depuis,
+  articleById,
+}: {
+  depuis: string | null
+  articleById: ReadonlyMap<string, ArticleActif>
+}): string[] => {
+  const chemin: string[] = []
+  const visites = new Set<string>()
+  for (
+    let courant = depuis;
+    courant && !visites.has(courant);
+    courant = articleById.get(courant)?.parentId ?? null
+  ) {
+    chemin.push(courant)
+    visites.add(courant)
+  }
+  return chemin
+}
 
 // Remplacement complet et idempotent de l'état éditable d'un article. Le client possède
 // l'instantané publié (titre/titreAffiche/contenu) ; le serveur dérive contenuTexte et
@@ -28,25 +61,23 @@ const performModifier = async (
 
   await db().articleCentreAide.findUniqueOrThrow({ where: { id } })
 
-  const tous = await db().articleCentreAide.findMany({
+  const tous: ArticleActif[] = await db().articleCentreAide.findMany({
     where: { statut: 'ACTIF' },
     select: { id: true, parentId: true, type: true, ordre: true },
   })
-  const parId = new Map(tous.map((article) => [article.id, article]))
+  const articleById = new Map(tous.map((article) => [article.id, article]))
 
-  if (parentId !== null) {
-    const parent = parId.get(parentId)
-    if (!parent) return err({ type: 'PARENT_INTROUVABLE' })
-    if (parent.type !== 'GROUPE') return err({ type: 'PARENT_PAS_UN_GROUPE' })
-    // Interdit de déplacer un noeud dans lui-même ou l'un de ses descendants.
-    for (
-      let courant: string | null = parentId;
-      courant;
-      courant = parId.get(courant)?.parentId ?? null
-    ) {
-      if (courant === id) return err({ type: 'DEPLACEMENT_CIRCULAIRE' })
-    }
-  }
+  const parentValide = checkParentEstUnGroupe({
+    parentId,
+    parent: parentId === null ? undefined : articleById.get(parentId),
+  })
+  if (parentValide.isErr()) return err(parentValide.error)
+
+  const sansCycle = checkSansDeplacementCirculaire({
+    articleId: id,
+    cheminDuParent: cheminVersRacine({ depuis: parentId, articleById }),
+  })
+  if (sansCycle.isErr()) return err(sansCycle.error)
 
   await db().articleCentreAide.update({
     where: { id },
