@@ -121,26 +121,24 @@ relationRoutes.openapi(upsertRelationRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  return (
-    await withTransaction(async () =>
-      upsertRelationParent(id, body).andThen(() => getRelationByEnfant(id)),
+  return withTransaction(() => upsertRelationParent(id, body))
+    .andThen(() => getRelationByEnfant(id))
+    .match(
+      (data) =>
+        jsonResponseOk({
+          context,
+          data,
+          schema: RelationApiModelSchema,
+          status: 200,
+        }),
+      (error) =>
+        jsonResponseError({
+          context,
+          error: { code: error.type, message: MESSAGES_ERREUR[error.type] },
+          schema: ErrorApiModelSchema,
+          status: 400,
+        }),
     )
-  ).match(
-    (data) =>
-      jsonResponseOk({
-        context,
-        data,
-        schema: RelationApiModelSchema,
-        status: 200,
-      }),
-    (error) =>
-      jsonResponseError({
-        context,
-        error: { code: error.type, message: MESSAGES_ERREUR[error.type] },
-        schema: ErrorApiModelSchema,
-        status: 400,
-      }),
-  )
 })
 
 relationRoutes.openapi(supprimerRelationRoute, async (context) => {

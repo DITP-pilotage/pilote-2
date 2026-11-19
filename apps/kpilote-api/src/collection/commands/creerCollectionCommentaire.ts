@@ -1,8 +1,7 @@
 import { type CreerCommentaireBody } from '@pilote/kpilote-shared/commentaire'
-import { ResultAsync } from 'neverthrow'
 
 import { creerCommentaire } from '@/commentaire/commands/creerCommentaire'
-import { type CommentaireType } from '@/commentaire/ensureBrouillonUnique'
+import { type CommentaireType } from '@/commentaire/hasBrouillon'
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
@@ -14,25 +13,21 @@ import {
 type Params = { collectionId: string }
 
 export const collectionConfig: SujetCommentaireConfig<Params> = {
-  resoudreCibleEcriture: ({ collectionId }) => {
+  resoudreCibleEcriture: async ({ collectionId }) => {
     const principalId = requireCurrentPrincipalId()
-    return ResultAsync.fromSafePromise(
-      db().collection.findFirstOrThrow({
-        where: withCollectionReadPermission({ publicId: collectionId }, principalId),
-        select: { id: true },
+    const collection = await db().collection.findFirstOrThrow({
+      where: withCollectionReadPermission({ publicId: collectionId }, principalId),
+      select: { id: true },
+    })
+    await ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId })
+    return {
+      principalId,
+      satelliteCreate: (type: CommentaireType) => ({
+        collection: {
+          create: { collectionId: collection.id, type: type },
+        },
       }),
-    ).andThen((collection) =>
-      ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId }).map(
-        () => ({
-          principalId,
-          satelliteCreate: (type: CommentaireType) => ({
-            collection: {
-              create: { collectionId: collection.id, type: type },
-            },
-          }),
-        }),
-      ),
-    )
+    }
   },
   whereLecture: ({ collectionId }, principalId) => ({
     collection: {

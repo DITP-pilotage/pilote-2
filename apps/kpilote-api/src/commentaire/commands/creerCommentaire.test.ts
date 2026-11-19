@@ -64,7 +64,7 @@ describe.concurrent('creerCommentaire', () => {
   )
 
   it(
-    'refuse un second brouillon pour le même (scope, auteur) — ConflictError (PIL-1585/1592)',
+    'refuse un second brouillon pour le même (scope, auteur) : BROUILLON_EXISTANT (PIL-1585/1592)',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const indivId = testIndividuId()
@@ -85,7 +85,8 @@ describe.concurrent('creerCommentaire', () => {
 
       const premier = await creerBrouillon()
       expect(premier.isOk()).toBe(true)
-      await expect(creerBrouillon()).rejects.toMatchObject({ code: 'CONFLICT' })
+      const second = await creerBrouillon()
+      expect(second._unsafeUnwrapErr()).toEqual({ type: 'BROUILLON_EXISTANT' })
 
       // Un PUBLIE supplémentaire reste autorisé (la contrainte ne vise que les brouillons).
       const publie = await runAsPrincipal(apiKey.id, () =>

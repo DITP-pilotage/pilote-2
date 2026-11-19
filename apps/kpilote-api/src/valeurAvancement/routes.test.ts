@@ -1,3 +1,4 @@
+import { type ResultAsync } from 'neverthrow'
 import { describe, expect, it, vi } from 'vitest'
 
 // En premier : la route charge `@hono/zod-openapi`, qui doit étendre Zod avant
@@ -31,7 +32,7 @@ vi.mock('@/framework/persistence/withTransaction', async (importOriginal) => {
   const { db } = await import('@/framework/persistence/dbStore')
   return {
     ...original,
-    withTransaction: <T>(fn: () => Promise<T>): Promise<T> => {
+    withTransaction: <T, E>(fn: () => ResultAsync<T, E>): ResultAsync<T, E> => {
       try {
         db()
       } catch {

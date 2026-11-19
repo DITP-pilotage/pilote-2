@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { ForbiddenError, NotFoundError, ValidationError } from '@/framework/errors/AppError'
+import { ForbiddenError, NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { CollectionPermissionAction, IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { replacePrincipalPermissions } from '@/permission/commands/replacePrincipalPermissions'
@@ -174,18 +174,17 @@ describe.concurrent('replacePrincipalPermissions', () => {
         action: IndicateurPermissionAction.READ,
       })
 
-      await expect(
-        runAsAdmin(CALLER_ID, () =>
-          replacePrincipalPermissions({
-            principalId: target.id,
-            collections: [],
-            indicateurs: [
-              { publicId: doublon.publicId, actions: [IndicateurPermissionAction.READ] },
-              { publicId: doublon.publicId, actions: [IndicateurPermissionAction.WRITE_DATA] },
-            ],
-          }),
-        ),
-      ).rejects.toBeInstanceOf(ValidationError)
+      const result = await runAsAdmin(CALLER_ID, () =>
+        replacePrincipalPermissions({
+          principalId: target.id,
+          collections: [],
+          indicateurs: [
+            { publicId: doublon.publicId, actions: [IndicateurPermissionAction.READ] },
+            { publicId: doublon.publicId, actions: [IndicateurPermissionAction.WRITE_DATA] },
+          ],
+        }),
+      )
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'DOUBLONS', ressource: 'indicateur' })
 
       const restantes = await db().indicateurPermission.count({
         where: { principalId: target.id },
@@ -195,26 +194,25 @@ describe.concurrent('replacePrincipalPermissions', () => {
   )
 
   it(
-    'rejette une collection listée deux fois',
+    'refuse une collection listée deux fois',
     integrationTest(async () => {
       const target = await fixtures.utilisateur({})
       const collection = await fixtures.collection({ nom: 'En double' })
 
-      await expect(
-        runAsAdmin(CALLER_ID, () =>
-          replacePrincipalPermissions({
-            principalId: target.id,
-            collections: [
-              { publicId: collection.publicId, actions: [CollectionPermissionAction.READ] },
-              {
-                publicId: collection.publicId,
-                actions: [CollectionPermissionAction.WRITE_COMMENT],
-              },
-            ],
-            indicateurs: [],
-          }),
-        ),
-      ).rejects.toBeInstanceOf(ValidationError)
+      const result = await runAsAdmin(CALLER_ID, () =>
+        replacePrincipalPermissions({
+          principalId: target.id,
+          collections: [
+            { publicId: collection.publicId, actions: [CollectionPermissionAction.READ] },
+            {
+              publicId: collection.publicId,
+              actions: [CollectionPermissionAction.WRITE_COMMENT],
+            },
+          ],
+          indicateurs: [],
+        }),
+      )
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'DOUBLONS', ressource: 'collection' })
     }),
   )
 

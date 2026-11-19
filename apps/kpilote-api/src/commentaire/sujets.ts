@@ -1,5 +1,3 @@
-import { type ResultAsync } from 'neverthrow'
-
 import { type Prisma } from '@/generated/prisma/client'
 import {
   type CollectionCommentaireType,
@@ -21,7 +19,7 @@ type CibleEcriture = {
 // (cf. indicateur/commands/creer*, collection/commands/creer*).
 export type SujetCommentaireConfig<P extends Record<string, string> = Record<string, string>> = {
   // Résout le path en ids internes + vérifie la permission WRITE ; throw ForbiddenError/404 sinon.
-  resoudreCibleEcriture: (params: P) => ResultAsync<CibleEcriture, never>
+  resoudreCibleEcriture: (params: P) => Promise<CibleEcriture>
   // Construit le `where` Prisma sur Commentaire pour le listing (READ permission + scope).
   whereLecture: (params: P, principalId: string) => Prisma.CommentaireWhereInput
 }

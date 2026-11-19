@@ -2,19 +2,23 @@ import {
   type PrincipalPermissionsApiModel,
   type ReplacePrincipalPermissionsBody,
 } from '@pilote/kpilote-shared/permission'
-import { ResultAsync } from 'neverthrow'
+import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
-import { NotFoundError, ValidationError } from '@/framework/errors/AppError'
+import { NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { loadPrincipalPermissions } from '@/permission/queries/loadPrincipalPermissions'
 
+export type ReplacePrincipalPermissionsError = {
+  type: 'DOUBLONS'
+  ressource: 'indicateur' | 'collection'
+}
+
 type Entree = { publicId: string; actions: string[] }
 
-const ensureAucunDoublon = (entrees: Entree[], libelle: string): void => {
+const hasDoublons = (entrees: Entree[]): boolean => {
   const publicIds = entrees.map((entree) => entree.publicId)
-  if (new Set(publicIds).size !== publicIds.length)
-    throw new ValidationError(`Le payload contient plusieurs fois la même ${libelle}`)
+  return new Set(publicIds).size !== publicIds.length
 }
 
 const indexerParPublicId = (
@@ -33,14 +37,14 @@ const indexerParPublicId = (
 
 const performReplace = async (
   body: ReplacePrincipalPermissionsBody,
-): Promise<PrincipalPermissionsApiModel> => {
+): Promise<Result<PrincipalPermissionsApiModel, ReplacePrincipalPermissionsError>> => {
   ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
   await db().principal.findUniqueOrThrow({ where: { id: body.principalId } })
 
   // Toute la validation avant la moindre écriture : un payload invalide laisse
   // l'état existant intact, sans dépendre du rollback de la transaction.
-  ensureAucunDoublon(body.indicateurs, 'indicateur')
-  ensureAucunDoublon(body.collections, 'collection')
+  if (hasDoublons(body.indicateurs)) return err({ type: 'DOUBLONS', ressource: 'indicateur' })
+  if (hasDoublons(body.collections)) return err({ type: 'DOUBLONS', ressource: 'collection' })
 
   const [lignesIndicateur, lignesCollection] = await Promise.all([
     db().indicateur.findMany({
@@ -80,10 +84,10 @@ const performReplace = async (
     skipDuplicates: true,
   })
 
-  return loadPrincipalPermissions(body.principalId)
+  return ok(await loadPrincipalPermissions(body.principalId))
 }
 
 export const replacePrincipalPermissions = (
   body: ReplacePrincipalPermissionsBody,
-): ResultAsync<PrincipalPermissionsApiModel, never> =>
-  ResultAsync.fromSafePromise(performReplace(body))
+): ResultAsync<PrincipalPermissionsApiModel, ReplacePrincipalPermissionsError> =>
+  new ResultAsync(performReplace(body))

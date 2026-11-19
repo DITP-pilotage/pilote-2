@@ -1,4 +1,5 @@
 import { type IndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import { type ResultAsync } from 'neverthrow'
 import { describe, expect, it, vi } from 'vitest'
 
 import { ApiKeyRole } from '@/generated/prisma/enums'
@@ -17,7 +18,7 @@ vi.mock('@/framework/persistence/withTransaction', async (importOriginal) => {
   const { db } = await import('@/framework/persistence/dbStore')
   return {
     ...original,
-    withTransaction: <T>(fn: () => Promise<T>): Promise<T> => {
+    withTransaction: <T, E>(fn: () => ResultAsync<T, E>): ResultAsync<T, E> => {
       try {
         db()
       } catch {

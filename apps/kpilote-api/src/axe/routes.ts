@@ -264,20 +264,18 @@ axeRoutes.openapi(upsertAxeRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  return (
-    await withTransaction(async () =>
-      upsertAxe({ publicId: id, body }).andThen(() => getAxeByPublicId({ publicId: id })),
+  return withTransaction(() => upsertAxe({ publicId: id, body }))
+    .andThen(() => getAxeByPublicId({ publicId: id }))
+    .match(
+      (data) => jsonResponseOk({ context, data, schema: AxeApiModelSchema, status: 200 }),
+      (error) =>
+        jsonResponseError({
+          context,
+          error: { code: error.type, ...describeUpsertAxeError(error) },
+          schema: ErrorApiModelSchema,
+          status: 409,
+        }),
     )
-  ).match(
-    (data) => jsonResponseOk({ context, data, schema: AxeApiModelSchema, status: 200 }),
-    (error) =>
-      jsonResponseError({
-        context,
-        error: { code: error.type, ...describeUpsertAxeError(error) },
-        schema: ErrorApiModelSchema,
-        status: 409,
-      }),
-  )
 })
 
 axeRoutes.openapi(listModalitesRoute, async (context) =>
@@ -291,32 +289,26 @@ axeRoutes.openapi(upsertModaliteRoute, async (context) => {
   const { id, modaliteId } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  return (
-    await withTransaction(async () =>
-      upsertModalite({ axePublicId: id, publicId: modaliteId, body }).andThen(() =>
-        getModaliteByPublicId({ publicId: modaliteId }),
-      ),
+  return withTransaction(() => upsertModalite({ axePublicId: id, publicId: modaliteId, body }))
+    .andThen(() => getModaliteByPublicId({ publicId: modaliteId }))
+    .match(
+      (data) => jsonResponseOk({ context, data, schema: ModaliteApiModelSchema, status: 200 }),
+      (error) => {
+        const { status, message, details } = describeUpsertModaliteError(error)
+        return jsonResponseError({
+          context,
+          error: { code: error.type, message, details },
+          schema: ErrorApiModelSchema,
+          status,
+        })
+      },
     )
-  ).match(
-    (data) => jsonResponseOk({ context, data, schema: ModaliteApiModelSchema, status: 200 }),
-    (error) => {
-      const { status, message, details } = describeUpsertModaliteError(error)
-      return jsonResponseError({
-        context,
-        error: { code: error.type, message, details },
-        schema: ErrorApiModelSchema,
-        status,
-      })
-    },
-  )
 })
 
 axeRoutes.openapi(deleteModaliteRoute, async (context) => {
   const { id, modaliteId } = context.req.valid('param')
 
-  return (
-    await withTransaction(async () => deleteModalite({ axePublicId: id, publicId: modaliteId }))
-  ).match(
+  return withTransaction(() => deleteModalite({ axePublicId: id, publicId: modaliteId })).match(
     () => context.body(null, 204),
     (error) =>
       jsonResponseError({

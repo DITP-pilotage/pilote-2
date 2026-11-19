@@ -1,8 +1,7 @@
 import { type CreerCommentaireBody } from '@pilote/kpilote-shared/commentaire'
-import { ResultAsync } from 'neverthrow'
 
 import { creerCommentaire } from '@/commentaire/commands/creerCommentaire'
-import { type CommentaireType } from '@/commentaire/ensureBrouillonUnique'
+import { type CommentaireType } from '@/commentaire/hasBrouillon'
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
 import { type IndicateurIndividuCommentaireType } from '@/generated/prisma/enums'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
@@ -15,33 +14,29 @@ import {
 type Params = { indicateurId: string; individuId: string }
 
 export const indicateurIndividuConfig: SujetCommentaireConfig<Params> = {
-  resoudreCibleEcriture: ({ indicateurId, individuId }) => {
+  resoudreCibleEcriture: async ({ indicateurId, individuId }) => {
     const principalId = requireCurrentPrincipalId()
-    return ResultAsync.fromSafePromise(
-      db().indicateur.findFirstOrThrow({
-        where: withIndicateurReadPermission({ publicId: indicateurId }, principalId),
-        select: { id: true },
+    const indicateur = await db().indicateur.findFirstOrThrow({
+      where: withIndicateurReadPermission({ publicId: indicateurId }, principalId),
+      select: { id: true },
+    })
+    const individu = await db().individu.findFirstOrThrow({
+      where: { publicId: individuId },
+      select: { id: true },
+    })
+    await ensureIndicateurWriteCommentPermission({ indicateurId: indicateur.id, principalId })
+    return {
+      principalId,
+      satelliteCreate: (type: CommentaireType) => ({
+        indicateurIndividu: {
+          create: {
+            indicateurId: indicateur.id,
+            individuId: individu.id,
+            type: type as IndicateurIndividuCommentaireType,
+          },
+        },
       }),
-    )
-      .andThen((indicateur) =>
-        ResultAsync.fromSafePromise(
-          db().individu.findFirstOrThrow({ where: { publicId: individuId }, select: { id: true } }),
-        ).map((individu) => ({ indId: indicateur.id, indivId: individu.id })),
-      )
-      .andThen(({ indId, indivId }) =>
-        ensureIndicateurWriteCommentPermission({ indicateurId: indId, principalId }).map(() => ({
-          principalId,
-          satelliteCreate: (type: CommentaireType) => ({
-            indicateurIndividu: {
-              create: {
-                indicateurId: indId,
-                individuId: indivId,
-                type: type as IndicateurIndividuCommentaireType,
-              },
-            },
-          }),
-        })),
-      )
+    }
   },
   whereLecture: ({ indicateurId, individuId }, principalId) => ({
     indicateurIndividu: {

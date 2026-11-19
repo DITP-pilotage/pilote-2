@@ -77,8 +77,7 @@ const modifierEtatRoute = createRoute({
 featureRoutes.openapi(modifierEtatRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = await withTransaction(async () => modifierEtatFeature(id, body))
-  return result.match(
+  return withTransaction(() => modifierEtatFeature(id, body)).match(
     (data) => jsonResponseOk({ context, data, schema: FeatureDetailApiModelSchema, status: 200 }),
     never,
   )
@@ -103,8 +102,7 @@ const remplacerUtilisateursRoute = createRoute({
 featureRoutes.openapi(remplacerUtilisateursRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  const result = await withTransaction(async () => remplacerUtilisateursAutorises(id, body))
-  return result.match(
+  return withTransaction(() => remplacerUtilisateursAutorises(id, body)).match(
     (data) => jsonResponseOk({ context, data, schema: FeatureDetailApiModelSchema, status: 200 }),
     never,
   )
