@@ -1,4 +1,4 @@
-import { err, ResultAsync } from 'neverthrow'
+import { err, ok, ResultAsync } from 'neverthrow'
 
 import { db, runWithDb } from '@/framework/persistence/dbStore'
 import { prisma } from '@/framework/persistence/prisma'
@@ -23,15 +23,18 @@ export const runInTransaction = <T>(fn: () => Promise<T>): Promise<T> =>
  * continue jusqu'au gestionnaire d'erreurs global.
  */
 export const withTransaction = <T, E>(fn: () => ResultAsync<T, E>): ResultAsync<T, E> =>
-  new ResultAsync<T, E>(
-    runInTransaction(async () =>
-      fn().orElse((error) => {
-        throw new RollbackSignal(error)
-      }),
-    ).catch((error: unknown) => {
-      if (error instanceof RollbackSignal) return err(error.error as E)
-      throw error
-    }),
+  new ResultAsync(
+    runInTransaction(async () => {
+      const result = await fn()
+      if (result.isErr()) throw new RollbackSignal(result.error)
+      return result.value
+    }).then(
+      (value) => ok<T, E>(value),
+      (error: unknown) => {
+        if (error instanceof RollbackSignal) return err<T, E>(error.error as E)
+        throw error
+      },
+    ),
   )
 
 /**
