@@ -1,124 +1,178 @@
 import { z } from 'zod'
 
 import { dateSchema } from './dates'
-import { axePublicIdSchema, individuPublicIdSchema, modalitePublicIdSchema } from './publicIds'
+import {
+  axePublicIdSchema,
+  individuPublicIdSchema,
+  modalitePublicIdSchema,
+  referentielPublicIdSchema,
+} from './publicIds'
 
-const colonneDateSchema = z.object({
-  nom: z.string(),
+// Import de valeurs : le fichier lu (tableau source), le plan de transformation
+// produit par Albert, et le flux de la route qui construit ce plan.
+// Voir `valeurImport/applyPlan.ts` pour l'application du plan au tableau.
+
+export const MAX_LIGNES_TABLEAU = 1000
+export const MAX_COLONNES_TABLEAU = 100
+
+export const celluleSourceSchema = z
+  .union([z.string(), z.number(), z.null()])
+  .describe('Cellule du fichier. Une date de tableur arrive en chaîne ISO.')
+export type CelluleSource = z.infer<typeof celluleSourceSchema>
+
+export const tableauSourceSchema = z.object({
+  entetes: z
+    .array(z.string())
+    .min(1)
+    .max(MAX_COLONNES_TABLEAU)
+    .describe('En-têtes du fichier, dans l’ordre des colonnes.'),
+  lignes: z
+    .array(z.array(celluleSourceSchema).max(MAX_COLONNES_TABLEAU))
+    .min(1)
+    .max(MAX_LIGNES_TABLEAU)
+    .describe('Lignes de données : `lignes[i][j]` est la cellule de la colonne `entetes[j]`.'),
 })
+export type TableauSource = z.infer<typeof tableauSourceSchema>
 
-const colonneTypeValeurSchema = z.object({ nom: z.string() })
+export const origineRapprochementSchema = z
+  .enum(['EXACT', 'ALBERT', 'UTILISATEUR'])
+  .describe(
+    'Qui a rapproché le libellé : une correspondance exacte, l’assistant IA, ou l’utilisateur.',
+  )
+export type OrigineRapprochement = z.infer<typeof origineRapprochementSchema>
 
-// Indicateur à axes seulement : la colonne qui porte les modalités de chaque axe.
-const axeColumnsSchema = z.array(z.object({ colonne: z.string(), axe: axePublicIdSchema }))
-
-const planLongSchema = z.object({
-  layout: z.literal('long'),
-  colonneIndividu: z.string(),
-  colonneDate: colonneDateSchema,
-  colonneValeur: z.string(),
-  colonneTypeValeur: colonneTypeValeurSchema.optional(),
-  colonnesAxes: axeColumnsSchema.optional(),
-})
-
-const planPivotSchema = z.object({
-  layout: z.literal('pivot'),
-  colonneIndividu: z.string(),
-  colonnesPivot: z.array(z.object({ nom: z.string(), dateIso: z.string() })).min(1),
-  colonneTypeValeur: colonneTypeValeurSchema.optional(),
-  colonnesAxes: axeColumnsSchema.optional(),
-})
-
-export const normaliserPlanSchema = z.discriminatedUnion('layout', [
-  planLongSchema,
-  planPivotSchema,
+export const rapprochementSchema = z.discriminatedUnion('statut', [
+  z.object({
+    statut: z.literal('RESOLU'),
+    publicId: z.string().describe('Identifiant public de l’individu ou de la modalité.'),
+    par: origineRapprochementSchema,
+  }),
+  z.object({
+    statut: z.literal('AMBIGU'),
+    candidats: z.array(z.string()).describe('Identifiants publics possibles pour ce libellé.'),
+  }),
+  z.object({ statut: z.literal('INCONNU') }),
 ])
-export type NormaliserPlan = z.infer<typeof normaliserPlanSchema>
+export type Rapprochement = z.infer<typeof rapprochementSchema>
 
-export const itemNormaliseApiModelSchema = z.object({
-  individu: individuPublicIdSchema,
-  // Une modalité par axe de l'indicateur, dans l'ordre des axes ; absent sans axe.
-  modalites: z.array(modalitePublicIdSchema).optional(),
-  date: dateSchema,
-  valeur: z.number(),
+export const colonneRapprocheeSchema = z.object({
+  colonne: z.string().describe('En-tête de la colonne du fichier.'),
+  rapprochements: z
+    .record(z.string(), rapprochementSchema)
+    .describe('Un rapprochement par libellé distinct de la colonne.'),
 })
-export type ItemNormaliseApiModel = z.infer<typeof itemNormaliseApiModelSchema>
+export type ColonneRapprochee = z.infer<typeof colonneRapprocheeSchema>
 
-export const normaliserWarningSchema = z.object({
-  code: z.enum([
-    'INDIVIDU_NON_RESOLU',
-    'INDIVIDU_HALLUCINE',
-    'DATE_INVALIDE',
-    'VALEUR_INVALIDE',
-    'CELLULE_VIDE',
-    'LIGNE_IGNOREE',
-    'MODALITE_NON_RESOLUE',
-    'LIGNE_PARTIELLE',
-    'AXE_NON_COUVERT',
-    'COLONNE_AXE_IGNOREE',
-  ]),
-  message: z.string(),
-  ligneSource: z.number().int().optional(),
-  libelleSource: z.string().optional(),
-  colonneSource: z.string().optional(),
+export const dispositionValeursSchema = z.discriminatedUnion('disposition', [
+  z.object({
+    disposition: z.literal('LIGNES').describe('Une ligne du fichier porte une valeur.'),
+    colonneDate: z.string(),
+    colonneValeur: z.string(),
+  }),
+  z.object({
+    disposition: z
+      .literal('COLONNES')
+      .describe('Une ligne du fichier porte une valeur par colonne de date.'),
+    colonnes: z.array(z.object({ colonne: z.string(), date: dateSchema })).min(1),
+  }),
+])
+export type DispositionValeurs = z.infer<typeof dispositionValeursSchema>
+
+export const filtreLignesSchema = z
+  .object({
+    colonne: z.string(),
+    valeursRetenues: z.array(z.string()),
+  })
+  .describe(
+    'Lignes à garder : celles dont la cellule de `colonne` est dans `valeursRetenues` ' +
+      '(exports qui mêlent valeurs initiales, cibles et d’avancement).',
+  )
+export type FiltreLignes = z.infer<typeof filtreLignesSchema>
+
+export const planTransformationSchema = z.object({
+  individu: colonneRapprocheeSchema,
+  axes: z
+    .array(colonneRapprocheeSchema.extend({ axe: axePublicIdSchema }))
+    .describe('Une colonne par axe de l’indicateur, dans l’ordre des axes.'),
+  valeurs: dispositionValeursSchema,
+  filtre: filtreLignesSchema.optional(),
 })
-export type NormaliserWarning = z.infer<typeof normaliserWarningSchema>
+export type PlanTransformation = z.infer<typeof planTransformationSchema>
 
-const unresolvedLabelsSchema = z.array(z.object({ libelleSource: z.string(), raison: z.string() }))
+export const motifPlanImpossibleSchema = z.enum([
+  'PAS_D_INDIVIDU',
+  'PAS_DE_DATE',
+  'PAS_DE_VALEUR',
+  'AXE_SANS_COLONNE',
+  'STRUCTURE_NON_RECONNUE',
+  'ASSISTANT_INDISPONIBLE',
+])
+export type MotifPlanImpossible = z.infer<typeof motifPlanImpossibleSchema>
 
-const resolutionApiSchema = z.object({
-  mapping: z.array(z.object({ libelleSource: z.string(), individuPublicId: z.string() })),
-  nonResolus: unresolvedLabelsSchema,
-  // Indicateur à axes seulement : la résolution de chaque colonne d'axe retenue.
-  colonnesAxes: z
+export const planImpossibleErrorSchema = z.object({
+  type: z.literal('FICHIER_INEXPLOITABLE'),
+  motif: motifPlanImpossibleSchema,
+  axes: z.array(axePublicIdSchema).optional().describe('Axes sans colonne (`AXE_SANS_COLONNE`).'),
+  explication: z.string().describe('Phrase destinée à l’utilisateur.'),
+})
+export type PlanImpossibleError = z.infer<typeof planImpossibleErrorSchema>
+
+const statutEtapeSchema = z.enum(['EN_COURS', 'TERMINEE'])
+
+export const etapePlanSchema = z.discriminatedUnion('etape', [
+  z.object({
+    etape: z.literal('STRUCTURE'),
+    statut: statutEtapeSchema,
+    valeurs: dispositionValeursSchema.optional(),
+  }),
+  z.object({
+    etape: z.literal('INDIVIDUS'),
+    statut: statutEtapeSchema,
+    resolus: z.number().int().nonnegative().optional(),
+    aVerifier: z.number().int().nonnegative().optional(),
+  }),
+  z.object({
+    etape: z.literal('AXE'),
+    axe: axePublicIdSchema,
+    statut: statutEtapeSchema,
+    resolus: z.number().int().nonnegative().optional(),
+    aVerifier: z.number().int().nonnegative().optional(),
+  }),
+])
+export type EtapePlan = z.infer<typeof etapePlanSchema>
+
+// Un message du flux SSE de `valeurs:plan-import`.
+export const planImportEventSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('ETAPE'), etape: etapePlanSchema }),
+  z.object({ type: z.literal('PLAN'), plan: planTransformationSchema }),
+  z.object({ type: z.literal('ECHEC'), erreur: planImpossibleErrorSchema }),
+])
+export type PlanImportEvent = z.infer<typeof planImportEventSchema>
+
+export const planImportBodySchema = z.object({
+  tableau: tableauSourceSchema,
+  nomFichier: z.string().max(255).describe('Nom du fichier, donné à Albert comme contexte.'),
+})
+export type PlanImportBody = z.infer<typeof planImportBodySchema>
+
+// Ce sur quoi on peut saisir une valeur de l'indicateur : les individus de ses
+// référentiels, et les modalités feuilles de chacun de ses axes.
+export const ciblesSaisieApiModelSchema = z.object({
+  individus: z.array(
+    z.object({
+      id: individuPublicIdSchema,
+      nom: z.string(),
+      referentiel: referentielPublicIdSchema,
+    }),
+  ),
+  axes: z
     .array(
       z.object({
-        colonne: z.string(),
-        axe: axePublicIdSchema,
-        mapping: z.array(z.object({ libelleSource: z.string(), modalitePublicId: z.string() })),
-        nonResolus: unresolvedLabelsSchema,
+        id: axePublicIdSchema,
+        nom: z.string(),
+        modalites: z.array(z.object({ id: modalitePublicIdSchema, nom: z.string() })),
       }),
     )
-    .optional(),
+    .describe('Axes de l’indicateur, dans l’ordre de déclaration, avec leurs modalités feuilles.'),
 })
-
-const rapportSchema = z.object({
-  totalLignes: z.number().int().nonnegative(),
-  totalItemsProduits: z.number().int().nonnegative(),
-  totalLibellesSources: z.number().int().nonnegative(),
-  totalLibellesMappes: z.number().int().nonnegative(),
-  totalLibellesNonResolus: z.number().int().nonnegative(),
-})
-
-export const normaliserValeursImportResponseApiModelSchema = z.object({
-  plan: normaliserPlanSchema,
-  resolution: resolutionApiSchema,
-  items: z.array(itemNormaliseApiModelSchema),
-  warnings: z.array(normaliserWarningSchema),
-  rapport: rapportSchema,
-  resolutionTypeValeur: z
-    .object({
-      colonne: z.string(),
-      typesValeurDistincts: z.array(z.string()),
-      typesValeurRetenus: z.array(z.string()),
-    })
-    .optional(),
-})
-export type NormaliserValeursImportResponseApiModel = z.infer<
-  typeof normaliserValeursImportResponseApiModelSchema
->
-
-// Erreurs métier 422 de la normalisation. Source de vérité partagée back/front :
-// la route type ses réponses contre ce schéma, le client parse le body avec.
-export const normaliserErrorApiModelSchema = z.discriminatedUnion('code', [
-  z.object({
-    code: z.literal('PLAN_ECHEC'),
-    message: z.string(),
-    details: z.object({ raison: z.string(), explication: z.string() }),
-  }),
-  z.object({
-    code: z.literal('RESOLUTION_ECHEC'),
-    message: z.string(),
-  }),
-])
-export type NormaliserErrorApiModel = z.infer<typeof normaliserErrorApiModelSchema>
+export type CiblesSaisieApiModel = z.infer<typeof ciblesSaisieApiModelSchema>
