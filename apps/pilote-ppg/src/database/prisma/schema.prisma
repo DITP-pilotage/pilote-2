@@ -1422,10 +1422,12 @@ model albert_access_utilisateur {
 model formation_motif {
   id               BigInt             @id
   nom              String
-  date_suppression DateTime?          @db.Timestamptz
-  created_at       DateTime           @default(now()) @db.Timestamptz
-  updated_at       DateTime           @default(now()) @updatedAt @db.Timestamptz
+  date_suppression DateTime?                             @db.Timestamptz
+  created_at       DateTime                              @default(now()) @db.Timestamptz
+  updated_at       DateTime                              @default(now()) @updatedAt @db.Timestamptz
   seances          formation_seance[]
+  profils          formation_motif_profil[]
+  periodes         formation_periode_information_motif[]
 
   @@schema("public")
 }
@@ -1452,9 +1454,10 @@ model formation_seance {
 model formation_motif_profil {
   motif_id    BigInt
   profil_code String
-  created_at  DateTime @default(now()) @db.Timestamptz
-  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz
-  profil      profil   @relation(fields: [profil_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  created_at  DateTime        @default(now()) @db.Timestamptz
+  updated_at  DateTime        @default(now()) @updatedAt @db.Timestamptz
+  motif       formation_motif @relation(fields: [motif_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  profil      profil          @relation(fields: [profil_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([motif_id, profil_code])
   @@schema("public")
@@ -1478,6 +1481,7 @@ model formation_periode_information_motif {
   motif_id   BigInt
   created_at DateTime                      @default(now()) @db.Timestamptz
   updated_at DateTime                      @default(now()) @updatedAt @db.Timestamptz
+  motif      formation_motif               @relation(fields: [motif_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
   periode    formation_periode_information @relation(fields: [periode_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([periode_id, motif_id])

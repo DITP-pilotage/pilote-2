@@ -281,6 +281,31 @@ describe("SavePeriodeInformationHandler", () => {
   );
 
   it(
+    "refuse des formations introuvables en les citant, sans rien enregistrer",
+    createIntegrationTest(async (prisma) => {
+      // Given
+      await fixtures.formationMotif({ id: BigInt(1) });
+
+      // When
+      const execution = handler.execute({
+        commande: {
+          id: null,
+          dateDebut: "2026-12-01",
+          dateFin: "2026-12-31",
+          motifIds: [1, 900007, 900008],
+        },
+        maintenant,
+      });
+
+      // Then
+      await expect(execution).rejects.toThrow(
+        "Formations introuvables : 900007, 900008.",
+      );
+      expect(await prisma.formation_periode_information.findMany()).toEqual([]);
+    }),
+  );
+
+  it(
     "refuse une période qui commence dans le passé",
     createIntegrationTest(async () => {
       // Given

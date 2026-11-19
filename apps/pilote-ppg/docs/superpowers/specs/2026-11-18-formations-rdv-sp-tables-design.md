@@ -80,7 +80,7 @@ Toutes dans `public`, avec `created_at` et `updated_at` (défaut `now()`). Les i
 
 Contrat avec copilot :
 
-- Stratégie d'écriture pas encore tranchée (décision du 2026-11-19) : vider puis recharger (`TRUNCATE formation_seance, formation_motif` puis insertion des motifs et des séances, dans une seule transaction) ou upsert. Elle se décidera avec copilot, comme les éventuels ajustements de `created_at` et `updated_at`.
+- Stratégie d'écriture pas encore tranchée (décision du 2026-11-19) : elle se décidera avec copilot, comme les éventuels ajustements de `created_at` et `updated_at`. Contrainte posée par la PR 2 : le paramétrage a une clé étrangère vers `formation_motif` (`ON DELETE RESTRICT`), donc les motifs ne peuvent plus être vidés ni effacés quand ils sont utilisés ; il faudra les écrire par upsert. Les séances peuvent toujours être vidées puis rechargées. Les motifs supprimés dans RDV-SP sont à traiter avec la passerelle copilot → PILOTE (décision du 2026-11-19 : aujourd'hui, aucun motif ne peut être supprimé).
 - Ne pas modifier la structure des tables (pas de colonnes `_dlt_*` ajoutées par dlt).
 - Renseigner `updated_at` à l'heure de l'import sur chaque motif écrit (la valeur par défaut suffit en insertion, pas en mise à jour) : l'onglet Séances à venir affiche la plus récente, pour voir d'un coup d'œil si le DAG a tourné.
 - Écrire tous les motifs de l'organisation, même sans séance à venir : l'admin doit pouvoir les paramétrer à l'avance. Le motif de chaque séance écrite doit figurer dans le même chargement, motif supprimé compris, sinon la clé étrangère fait échouer toute la transaction (la date d'import cesse alors d'avancer dans l'onglet Séances à venir).
@@ -90,15 +90,15 @@ Contrat avec copilot :
 
 ### Paramétrage DITP (PIL-1883)
 
-`formation_motif_profil` : `motif_id` (bigint), `profil_code` (FK `profil`). Clé (`motif_id`, `profil_code`).
+`formation_motif_profil` : `motif_id` (bigint, FK `formation_motif`, `ON DELETE RESTRICT`), `profil_code` (FK `profil`). Clé (`motif_id`, `profil_code`).
 
 `formation_periode_information` : `id` (uuid), `date_debut` (date), `date_fin` (date), `deleted_at` (timestamptz, nullable, ajoutée par la PR 2). Pas de libellé : une période se reconnaît à ses dates dans la liste de l'admin.
 
-Une période n'est jamais effacée : la supprimer renseigne `deleted_at` (décision du 2026-11-19). Deux périodes non supprimées ne se chevauchent jamais : une période enregistrée remplace celles qu'elle chevauche, qui sont supprimées (voir les règles plus bas). Les écritures passent l'une après l'autre sous un verrou PostgreSQL de transaction. Pas de contrainte d'exclusion en base : aucune migration du projet n'en contient, et Prisma ne la modélise pas. Les données fictives respectent la règle.
+Une période n'est jamais effacée : la supprimer renseigne `deleted_at` (décision du 2026-11-19). Deux périodes non supprimées ne se chevauchent jamais : une période enregistrée remplace celles qu'elle chevauche, qui sont supprimées (voir les règles plus bas). Rien ne le garantit en base : ni contrainte d'exclusion (aucune migration du projet n'en contient, et Prisma ne la modélise pas), ni verrou (retiré le 2026-11-19, à la demande de Tristan). Deux enregistrements simultanés peuvent donc laisser deux périodes non supprimées qui se chevauchent ; le risque est jugé faible (quelques admins DITP, quelques périodes par an). Si plusieurs périodes sont en cours, la slide-in prend la plus récemment créée (`created_at`). Les données fictives respectent la règle.
 
-`formation_periode_information_motif` : `periode_id` (FK `formation_periode_information`, suppression en cascade), `motif_id` (bigint). Clé (`periode_id`, `motif_id`).
+`formation_periode_information_motif` : `periode_id` (FK `formation_periode_information`, suppression en cascade), `motif_id` (bigint, FK `formation_motif`, `ON DELETE RESTRICT`). Clé (`periode_id`, `motif_id`).
 
-Aucune clé étrangère du paramétrage vers `formation_motif` : sinon le `TRUNCATE` de copilot échoue ou, en cascade, efface le paramétrage. Une association vers un motif disparu de RDV-SP reste en base et ne ressort simplement plus des jointures.
+Le paramétrage ne référence que des motifs existants (décision du 2026-11-19, qui remplace « aucune clé étrangère vers `formation_motif` ») : un motif utilisé ne peut pas disparaître sans que le paramétrage le sache.
 
 ### État de la slide-in (PIL-1923)
 

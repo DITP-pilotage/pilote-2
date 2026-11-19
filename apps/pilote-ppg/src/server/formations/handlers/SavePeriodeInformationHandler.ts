@@ -1,5 +1,8 @@
+import { randomUUID } from "node:crypto";
 import { z } from "zod";
+import type { formation_periode_information } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import type { PilotePrismaClient } from "@/server/framework/persistence/PrismaTransaction";
 import { BadRequestError } from "@/shared/errors/bad-request-error";
 import {
   aujourdhuiAParis,
@@ -7,8 +10,8 @@ import {
   schemaPeriode,
   statutPeriode,
   type Bornes,
+  type JourISO,
 } from "@/server/formations/domain/periodeInformation";
-import { verrouillerPeriodes } from "@/server/formations/infrastructure/verrouPeriodes";
 import type { Inject } from "@/server/formations/module";
 
 export const savePeriodeInformationCommandSchema = z.object({
@@ -41,105 +44,140 @@ export class SavePeriodeInformationHandler {
   }): Promise<{ id: string; periodesRemplacees: Bornes[] }> {
     return this.transaction.run(async () => {
       const client = this.prisma.getInstance();
-      await verrouillerPeriodes(client);
       const aujourdhui = aujourdhuiAParis(maintenant);
-
-      const periodeModifiee = commande.id
-        ? await client.formation_periode_information.findUnique({
-            where: { id: commande.id },
-          })
-        : null;
-      if (commande.id && !periodeModifiee) {
-        throw new BadRequestError("Cette période n'existe plus.");
-      }
-      const statut = periodeModifiee
-        ? statutPeriode(
-            {
-              dateDebut: jourISO(periodeModifiee.date_debut),
-              dateFin: jourISO(periodeModifiee.date_fin),
-              supprimee: periodeModifiee.deleted_at !== null,
-            },
-            aujourdhui,
-          )
-        : null;
-      if (statut === "SUPPRIMEE") {
-        throw new BadRequestError("Une période supprimée ne se modifie plus.");
-      }
-      if (statut === "PASSEE") {
-        throw new BadRequestError("Une période passée ne se modifie plus.");
-      }
-
       const motifIds = [...new Set(commande.motifIds)];
-      const nombreMotifsValides = await client.formation_motif.count({
-        where: {
-          id: { in: motifIds.map((motifId) => BigInt(motifId)) },
-          date_suppression: null,
-        },
-      });
-      if (nombreMotifsValides !== motifIds.length) {
-        throw new BadRequestError(
-          "Une des formations choisies n'existe plus dans RDV-SP.",
-        );
-      }
 
-      const saisie = schemaPeriode({
+      const periodeEnCours = await this.periodeEnCoursAModifier(
+        client,
+        commande.id,
         aujourdhui,
-        debutFige:
-          statut === "EN_COURS" && periodeModifiee
-            ? jourISO(periodeModifiee.date_debut)
-            : null,
-      }).safeParse({ ...commande, motifIds });
-      if (!saisie.success) {
-        throw new BadRequestError(
-          saisie.error.issues.map((issue) => issue.message).join(" "),
-        );
-      }
+      );
+      await this.verifierFormations(client, motifIds);
+      this.validerSaisie(
+        { ...commande, motifIds },
+        { aujourdhui, periodeEnCours },
+      );
 
-      const dates = {
-        date_debut: new Date(commande.dateDebut),
-        date_fin: new Date(commande.dateFin),
-      };
-      const periodesChevauchees =
-        await client.formation_periode_information.findMany({
-          where: {
-            id: commande.id ? { not: commande.id } : undefined,
-            deleted_at: null,
-            date_debut: { lte: dates.date_fin },
-            date_fin: { gte: dates.date_debut },
-          },
-          orderBy: { date_debut: "asc" },
-        });
-      await client.formation_periode_information.updateMany({
-        where: {
-          id: { in: periodesChevauchees.map((periode) => periode.id) },
-        },
-        data: { deleted_at: maintenant },
-      });
+      const periodesRemplacees = await this.supprimerPeriodesChevauchees(
+        client,
+        commande,
+        maintenant,
+      );
+      const id = await this.enregistrer(client, { ...commande, motifIds });
 
-      const periode = periodeModifiee
-        ? await client.formation_periode_information.update({
-            where: { id: periodeModifiee.id },
-            data: dates,
-          })
-        : await client.formation_periode_information.create({ data: dates });
-
-      await client.formation_periode_information_motif.deleteMany({
-        where: { periode_id: periode.id },
-      });
-      await client.formation_periode_information_motif.createMany({
-        data: motifIds.map((motifId) => ({
-          periode_id: periode.id,
-          motif_id: BigInt(motifId),
-        })),
-      });
-
-      return {
-        id: periode.id,
-        periodesRemplacees: periodesChevauchees.map((chevauchee) => ({
-          dateDebut: jourISO(chevauchee.date_debut),
-          dateFin: jourISO(chevauchee.date_fin),
-        })),
-      };
+      return { id, periodesRemplacees };
     });
   }
+
+  // Refuse une période passée ou supprimée ; renvoie les bornes de la période
+  // modifiée si elle est en cours, pour figer son début.
+  private async periodeEnCoursAModifier(
+    client: PilotePrismaClient,
+    id: string | null,
+    aujourdhui: JourISO,
+  ): Promise<Bornes | null> {
+    if (!id) return null;
+    const periode = await client.formation_periode_information.findUnique({
+      where: { id },
+    });
+    if (!periode) {
+      throw new BadRequestError("Cette période n'existe plus.");
+    }
+    const bornes = bornesDe(periode);
+    const statut = statutPeriode(
+      { ...bornes, supprimee: periode.deleted_at !== null },
+      aujourdhui,
+    );
+    if (statut === "SUPPRIMEE") {
+      throw new BadRequestError("Une période supprimée ne se modifie plus.");
+    }
+    if (statut === "PASSEE") {
+      throw new BadRequestError("Une période passée ne se modifie plus.");
+    }
+    return statut === "EN_COURS" ? bornes : null;
+  }
+
+  private async verifierFormations(
+    client: PilotePrismaClient,
+    motifIds: number[],
+  ): Promise<void> {
+    const existants = await client.formation_motif.findMany({
+      where: { id: { in: motifIds.map((motifId) => BigInt(motifId)) } },
+      select: { id: true },
+    });
+    const idsExistants = new Set(existants.map((motif) => Number(motif.id)));
+    const introuvables = motifIds.filter(
+      (motifId) => !idsExistants.has(motifId),
+    );
+    if (introuvables.length > 0) {
+      throw new BadRequestError(
+        `Formations introuvables : ${introuvables.join(", ")}.`,
+      );
+    }
+  }
+
+  private validerSaisie(
+    saisie: SavePeriodeInformationCommand,
+    contexte: { aujourdhui: JourISO; periodeEnCours: Bornes | null },
+  ): void {
+    const resultat = schemaPeriode(contexte).safeParse(saisie);
+    if (!resultat.success) {
+      throw new BadRequestError(
+        resultat.error.issues.map((issue) => issue.message).join(" "),
+      );
+    }
+  }
+
+  // Bornes comprises, en excluant la période modifiée elle-même.
+  private async supprimerPeriodesChevauchees(
+    client: PilotePrismaClient,
+    commande: SavePeriodeInformationCommand,
+    maintenant: Date,
+  ): Promise<Bornes[]> {
+    const chevauchees = await client.formation_periode_information.findMany({
+      where: {
+        id: commande.id ? { not: commande.id } : undefined,
+        deleted_at: null,
+        date_debut: { lte: new Date(commande.dateFin) },
+        date_fin: { gte: new Date(commande.dateDebut) },
+      },
+      orderBy: { date_debut: "asc" },
+    });
+    if (chevauchees.length > 0) {
+      await client.formation_periode_information.updateMany({
+        where: { id: { in: chevauchees.map((periode) => periode.id) } },
+        data: { deleted_at: maintenant },
+      });
+    }
+    return chevauchees.map(bornesDe);
+  }
+
+  private async enregistrer(
+    client: PilotePrismaClient,
+    commande: SavePeriodeInformationCommand,
+  ): Promise<string> {
+    const id = commande.id ?? randomUUID();
+    const dates = {
+      date_debut: new Date(commande.dateDebut),
+      date_fin: new Date(commande.dateFin),
+    };
+    const motifs = {
+      create: commande.motifIds.map((motifId) => ({
+        motif_id: BigInt(motifId),
+      })),
+    };
+    await client.formation_periode_information.upsert({
+      where: { id },
+      create: { id, ...dates, motifs },
+      update: { ...dates, motifs: { deleteMany: {}, ...motifs } },
+    });
+    return id;
+  }
+}
+
+function bornesDe(periode: formation_periode_information): Bornes {
+  return {
+    dateDebut: jourISO(periode.date_debut),
+    dateFin: jourISO(periode.date_fin),
+  };
 }

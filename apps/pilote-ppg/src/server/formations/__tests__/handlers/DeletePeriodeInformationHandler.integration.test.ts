@@ -19,6 +19,7 @@ describe("DeletePeriodeInformationHandler", () => {
     "supprime une période à venir en gardant la ligne et ses formations",
     createIntegrationTest(async (prisma) => {
       // Given
+      await fixtures.formationMotif({ id: BigInt(1) });
       const periode = await fixtures.formationPeriodeInformation({
         motifIds: [BigInt(1)],
       });

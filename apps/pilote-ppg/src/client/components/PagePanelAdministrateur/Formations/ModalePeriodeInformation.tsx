@@ -55,8 +55,6 @@ export const ModalePeriodeInformation = ({
       onClose,
     });
   const { control, watch } = reactHookForm;
-  const formationsRetirees =
-    periode?.motifs.filter((motif) => motif.retireeDeRdvSp) ?? [];
 
   return (
     <Modale
@@ -94,16 +92,6 @@ export const ModalePeriodeInformation = ({
               dateDebut: watch("dateDebut"),
               aujourdhui,
             })}
-          </Notice>
-        ) : null}
-        {formationsRetirees.length > 0 ? (
-          <Notice containerClassName="px-4" variant="warning">
-            Retirées de RDV-SP, ces formations seront enlevées de la période à
-            l'enregistrement :{" "}
-            {formationsRetirees
-              .map((motif) => motif.nom ?? "Formation inconnue")
-              .join(", ")}
-            .
           </Notice>
         ) : null}
         <Controller

@@ -5,7 +5,6 @@ import {
   jourISO,
   statutPeriode,
 } from "@/server/formations/domain/periodeInformation";
-import { verrouillerPeriodes } from "@/server/formations/infrastructure/verrouPeriodes";
 import type { Inject } from "@/server/formations/module";
 
 export class DeletePeriodeInformationHandler {
@@ -27,8 +26,6 @@ export class DeletePeriodeInformationHandler {
   }): Promise<void> {
     await this.transaction.run(async () => {
       const client = this.prisma.getInstance();
-      await verrouillerPeriodes(client);
-
       const periode = await client.formation_periode_information.findUnique({
         where: { id },
       });

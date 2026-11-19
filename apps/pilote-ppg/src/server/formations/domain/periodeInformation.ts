@@ -40,52 +40,39 @@ export function periodesChevauchees<T extends Bornes>(
   );
 }
 
-// `debutFige` : début d'une période en cours qu'on modifie, qui ne bouge plus.
+// `periodeEnCours` : la période modifiée, si elle est en cours ; son début ne bouge plus.
 export function schemaPeriode({
   aujourdhui,
-  debutFige,
+  periodeEnCours,
 }: {
   aujourdhui: JourISO;
-  debutFige: JourISO | null;
+  periodeEnCours: Bornes | null;
 }) {
+  const pasPassee = (message: string) =>
+    z.string().refine((jour) => jour >= aujourdhui, message);
+
   return z
     .object({
-      dateDebut: z.string().min(1, "Indiquez une date de début."),
-      dateFin: z.string().min(1, "Indiquez une date de fin."),
+      dateDebut: periodeEnCours
+        ? z.literal(
+            periodeEnCours.dateDebut,
+            "La date de début d'une période en cours ne se modifie plus.",
+          )
+        : z
+            .string()
+            .min(1, { error: "Indiquez une date de début.", abort: true })
+            .pipe(pasPassee("La date de début ne peut pas être passée.")),
+      dateFin: z
+        .string()
+        .min(1, { error: "Indiquez une date de fin.", abort: true })
+        .pipe(pasPassee("La date de fin ne peut pas être passée.")),
       motifIds: z
         .array(z.number().int())
         .min(1, "Choisissez au moins une formation."),
     })
-    .superRefine(({ dateDebut, dateFin }, contexte) => {
-      if (debutFige !== null && dateDebut !== debutFige) {
-        contexte.addIssue({
-          code: "custom",
-          path: ["dateDebut"],
-          message:
-            "La date de début d'une période en cours ne se modifie plus.",
-        });
-      } else if (debutFige === null && dateDebut && dateDebut < aujourdhui) {
-        contexte.addIssue({
-          code: "custom",
-          path: ["dateDebut"],
-          message: "La date de début ne peut pas être passée.",
-        });
-      }
-
-      if (!dateFin) return;
-      if (dateDebut && dateFin < dateDebut) {
-        contexte.addIssue({
-          code: "custom",
-          path: ["dateFin"],
-          message:
-            "La date de fin doit être égale ou postérieure à la date de début.",
-        });
-      } else if (dateFin < aujourdhui) {
-        contexte.addIssue({
-          code: "custom",
-          path: ["dateFin"],
-          message: "La date de fin ne peut pas être passée.",
-        });
-      }
+    .refine(({ dateDebut, dateFin }) => dateFin >= dateDebut, {
+      path: ["dateFin"],
+      message:
+        "La date de fin doit être égale ou postérieure à la date de début.",
     });
 }

@@ -51,7 +51,7 @@ Périmètre :
 
 Périmètre :
 
-- Formations à proposer : période active, motifs de la période associés au profil de l'utilisateur, séances ouvertes à l'inscription. Période active = non supprimée (`deleted_at IS NULL`) et en cours : réutiliser `statutPeriode`. Une période supprimée ne présente plus la slide-in.
+- Formations à proposer : période active, motifs de la période associés au profil de l'utilisateur, séances ouvertes à l'inscription. Période active = non supprimée (`deleted_at IS NULL`) et en cours : réutiliser `statutPeriode`. Une période supprimée ne présente plus la slide-in. Sans verrou, deux périodes peuvent être en cours en même temps : prendre la plus récemment créée (`created_at`).
 - Slide-in sur l'accueil, d'après le prototype joint à PIL-1923.
 - « Plus tard », fermeture, lien d'inscription par séance.
 - Ligne d'état par utilisateur et par période (`formation_periode_information_utilisateur`).

@@ -17,6 +17,7 @@ describe("ListPeriodesInformationQuery", () => {
       // Given
       await fixtures.formationMotif({ id: BigInt(1), nom: "A formation" });
       await fixtures.formationMotif({ id: BigInt(2), nom: "B formation" });
+      // Le motif 3 est supprimé dans RDV-SP : il n'est plus proposé
       await fixtures.formationMotif({
         id: BigInt(3),
         nom: "C supprimée",
@@ -32,11 +33,10 @@ describe("ListPeriodesInformationQuery", () => {
         date_debut: new Date("2026-11-21T13:00:00Z"),
         date_annulation: new Date("2026-11-15T08:00:00Z"),
       });
-      // Le motif 3 est supprimé dans RDV-SP, le motif 99 n'existe plus dans formation_motif
       const enCours = await fixtures.formationPeriodeInformation({
         date_debut: new Date("2026-11-03T00:00:00Z"),
         date_fin: new Date("2026-11-30T00:00:00Z"),
-        motifIds: [BigInt(1), BigInt(3), BigInt(99)],
+        motifIds: [BigInt(2), BigInt(1)],
       });
       const aVenir = await fixtures.formationPeriodeInformation({
         date_debut: new Date("2026-12-01T00:00:00Z"),
@@ -61,14 +61,14 @@ describe("ListPeriodesInformationQuery", () => {
             dateDebut: "2026-12-01",
             dateFin: "2026-12-31",
             statut: "A_VENIR",
-            motifs: [{ id: 2, nom: "B formation", retireeDeRdvSp: false }],
+            motifs: [{ id: 2, nom: "B formation" }],
           },
           {
             id: supprimee.id,
             dateDebut: "2026-11-20",
             dateFin: "2026-12-10",
             statut: "SUPPRIMEE",
-            motifs: [{ id: 1, nom: "A formation", retireeDeRdvSp: false }],
+            motifs: [{ id: 1, nom: "A formation" }],
           },
           {
             id: enCours.id,
@@ -76,9 +76,8 @@ describe("ListPeriodesInformationQuery", () => {
             dateFin: "2026-11-30",
             statut: "EN_COURS",
             motifs: [
-              { id: 1, nom: "A formation", retireeDeRdvSp: false },
-              { id: 3, nom: "C supprimée", retireeDeRdvSp: true },
-              { id: 99, nom: null, retireeDeRdvSp: true },
+              { id: 1, nom: "A formation" },
+              { id: 2, nom: "B formation" },
             ],
           },
         ],

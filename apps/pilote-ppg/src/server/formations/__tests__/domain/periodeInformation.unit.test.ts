@@ -4,7 +4,7 @@ import {
   periodesChevauchees,
   schemaPeriode,
   statutPeriode,
-  type JourISO,
+  type Bornes,
   type SaisiePeriode,
 } from "@/server/formations/domain/periodeInformation";
 
@@ -17,11 +17,11 @@ const valide = {
 
 function erreurs(
   saisie: SaisiePeriode,
-  debutFige: JourISO | null = null,
+  periodeEnCours: Bornes | null = null,
 ): Record<string, string> {
   const resultat = schemaPeriode({
     aujourdhui: AUJOURDHUI,
-    debutFige,
+    periodeEnCours,
   }).safeParse(saisie);
   if (resultat.success) return {};
   return Object.fromEntries(
@@ -126,6 +126,15 @@ describe("schemaPeriode", () => {
     });
   });
 
+  it("ne signale que la date manquante quand l'autre est renseignée", () => {
+    expect(erreurs({ ...valide, dateFin: "" })).toEqual({
+      dateFin: "Indiquez une date de fin.",
+    });
+    expect(erreurs({ ...valide, dateDebut: "" })).toEqual({
+      dateDebut: "Indiquez une date de début.",
+    });
+  });
+
   it("refuse une fin avant le début", () => {
     expect(erreurs({ ...valide, dateFin: "2026-11-30" })).toEqual({
       dateFin:
@@ -149,16 +158,17 @@ describe("schemaPeriode", () => {
   });
 
   it("fige le début d'une période en cours et accepte de la finir aujourd'hui", () => {
+    const enCours = { dateDebut: "2026-11-03", dateFin: "2026-11-30" };
     expect(
       erreurs(
         { ...valide, dateDebut: "2026-11-03", dateFin: AUJOURDHUI },
-        "2026-11-03",
+        enCours,
       ),
     ).toEqual({});
     expect(
       erreurs(
         { ...valide, dateDebut: "2026-11-04", dateFin: AUJOURDHUI },
-        "2026-11-03",
+        enCours,
       ),
     ).toEqual({
       dateDebut: "La date de début d'une période en cours ne se modifie plus.",

@@ -23,10 +23,7 @@ const estModifiable = (periode: PeriodeInformation) =>
   periode.statut === "A_VENIR" || periode.statut === "EN_COURS";
 
 const nomsFormations = (periode: PeriodeInformation) =>
-  periode.motifs.map(
-    (motif) =>
-      `${motif.nom ?? "Formation inconnue"}${motif.retireeDeRdvSp ? " (retirée de RDV-SP)" : ""}`,
-  );
+  periode.motifs.map((motif) => motif.nom);
 
 const columnHelper = tableauAdmin.createColumnHelper<PeriodeInformation>();
 

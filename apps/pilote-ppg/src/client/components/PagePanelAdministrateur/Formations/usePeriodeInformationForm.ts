@@ -43,16 +43,13 @@ export const usePeriodeInformationForm = ({
     resolver: zodResolver(
       schemaPeriode({
         aujourdhui,
-        debutFige: periode?.statut === "EN_COURS" ? periode.dateDebut : null,
+        periodeEnCours: periode?.statut === "EN_COURS" ? periode : null,
       }),
     ),
     defaultValues: {
       dateDebut: periode?.dateDebut ?? "",
       dateFin: periode?.dateFin ?? "",
-      motifIds:
-        periode?.motifs
-          .filter((motif) => !motif.retireeDeRdvSp)
-          .map((motif) => motif.id) ?? [],
+      motifIds: periode?.motifs.map((motif) => motif.id) ?? [],
     },
   });
 
