@@ -32,7 +32,7 @@ export const NomUtilisateurAvecTooltip = ({
         </Tooltip.Trigger>
         <Tooltip.Portal>
           <RadixTooltip.Content
-            className="z-50 max-w-[400px] text-dsfr-grey-50 bg-dsfr-alt-blue-france rounded-lg p-3 border border-primary"
+            className="z-[1800] max-w-[400px] text-dsfr-grey-50 bg-dsfr-alt-blue-france rounded-lg p-3 border border-primary"
             sideOffset={5}
           >
             <p className="text-sm mb-0">

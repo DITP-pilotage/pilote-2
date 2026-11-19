@@ -80,7 +80,7 @@ export const MultiSelect: FunctionComponent<MultiSelectProps> = ({
         <Popover.Portal>
           <Popover.Content
             align="start"
-            className="z-50 w-[var(--radix-popover-trigger-width)] max-h-96 overflow-y-auto rounded-md border border-gray-100 bg-white p-4 shadow-md data-[state=open]:animate-dropdown-fade-in data-[state=closed]:animate-dropdown-fade-out"
+            className="z-[1800] w-[var(--radix-popover-trigger-width)] max-h-96 overflow-y-auto rounded-md border border-gray-100 bg-white p-4 shadow-md data-[state=open]:animate-dropdown-fade-in data-[state=closed]:animate-dropdown-fade-out"
             sideOffset={4}
           >
             <SearchInput

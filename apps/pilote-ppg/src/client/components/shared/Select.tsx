@@ -14,7 +14,7 @@ export const LINK_BUTTON_TRIGGER_CLASSES =
   "bg-transparent border-none p-0 text-xs cursor-pointer text-primary hover:underline";
 
 export const SELECT_CONTENT_CLASSES = clsxm(
-  "bg-white rounded-md shadow-md border border-gray-100 z-50",
+  "bg-white rounded-md shadow-md border border-gray-100 z-[1800]",
   "md:min-w-[400px] max-w-[450px]",
   "data-[state=open]:animate-dropdown-fade-in data-[state=closed]:animate-dropdown-fade-out",
 );

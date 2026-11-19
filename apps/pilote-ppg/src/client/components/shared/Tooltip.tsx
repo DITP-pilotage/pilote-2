@@ -17,7 +17,7 @@ export const Tooltip = Object.assign({}, RadixTooltip, {
       <RadixTooltip.Content
         {...props}
         className={clsxm(
-          "bg-gray-900 text-white rounded px-3 py-2 text-sm z-50 max-w-96",
+          "bg-gray-900 text-white rounded px-3 py-2 text-sm z-[1800] max-w-96",
           props.className,
         )}
         sideOffset={5}
