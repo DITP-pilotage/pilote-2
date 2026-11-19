@@ -22,8 +22,18 @@ import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
+import { ModaliteSelect } from '@/components/indicateurs/ModaliteSelect'
+import {
+  parseModalitesParam,
+  readSelection,
+  selectedModalites,
+  selectionLabel,
+  setModalite,
+  writeSelection,
+} from '@/lib/axes/selection'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { useRecordVisit } from '@/lib/recentlyVisited'
+import { loadAxesWithModalites, useAxesWithModalites } from '@/queries/axes'
 import {
   indicateurQueryOptions,
   loadIndicateur,
@@ -38,6 +48,8 @@ const paramsSchema = z.object({
 const searchSchema = z.object({
   individu: individuPublicIdSchema.optional(),
   referentiel: referentielPublicIdSchema.optional(),
+  // Modalités séparées par une virgule, au plus une par axe ; un axe absent vaut « Tous ».
+  modalites: z.string().optional(),
   onglet: z.enum(['resultats', 'metadonnees']).default('resultats'),
   sousOnglet: z.enum(['confiance', 'evolution', 'commentaire']).default('confiance'),
 })
@@ -53,10 +65,28 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     stringify: ({ id }) => ({ id }),
   },
   validateSearch: searchSchema,
-  loaderDeps: ({ search }) => ({ individu: search.individu, referentiel: search.referentiel }),
+  loaderDeps: ({ search }) => ({
+    individu: search.individu,
+    referentiel: search.referentiel,
+    modalites: search.modalites,
+  }),
   loader: async ({ context, params, deps, location }) => {
     const { queryClient } = context
     const indicateur = await loadIndicateur({ queryClient, indicateurId: params.id })
+
+    // Une modalité inconnue ou en double sur un axe ferait échouer les lectures (400) :
+    // on la retire de l'URL plutôt que d'afficher une erreur.
+    const axes = await loadAxesWithModalites({ queryClient, axes: indicateur.axes })
+    const selection = readSelection({ axes, modalites: parseModalitesParam(deps.modalites) })
+    const modalites = writeSelection({ axes, selection })
+    if (modalites !== deps.modalites) {
+      throw redirect({
+        to: '/indicateurs/$id',
+        params,
+        search: { ...location.search, modalites },
+        replace: true,
+      })
+    }
 
     const referentielIds = indicateur.referentiels.map((configuration) => configuration.id)
     const pair = await ensureIndividuReferentielPair({
@@ -82,6 +112,7 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
         indicateurId: params.id,
         individuId: pair.individu,
         referentielId: pair.referentiel,
+        modalites: selectedModalites({ axes, selection }),
       })
     }
 
@@ -99,6 +130,10 @@ function IndicateurDetailComponent() {
 
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
   useRecordVisit({ type: 'indicateur', id: indicateur.id, label: indicateur.nom })
+
+  const axes = useAxesWithModalites(indicateur.axes)
+  const selection = readSelection({ axes, modalites: parseModalitesParam(search.modalites) })
+  const modalites = selectedModalites({ axes, selection })
 
   // Les événements de consultation partent aussi à l'arrivée sur la page, pas
   // seulement au changement d'onglet : un lien profond ou l'onglet par défaut
@@ -195,23 +230,45 @@ function IndicateurDetailComponent() {
 
         <TabsContent value="resultats">
           <div className="flex flex-col gap-8">
-            {/* Sélecteur d'individu propre à l'onglet Résultats : positionné sous la
-                navigation primaire et masqué sur l'onglet Informations. */}
-            <div className="max-w-md">
-              <FieldIndividuSelect
-                referentielIds={referentielIds}
-                value={individuId}
-                onChange={({ individu, referentiel }) => {
-                  analytics.trackEvent(
-                    analyticsEvents.indicateur.individuChange({ referentiel_id: referentiel }),
-                  )
-                  startTransition(() => {
-                    void navigate({
-                      search: (prev) => ({ ...prev, individu, referentiel }),
+            {/* Sélecteurs propres à l'onglet Résultats : positionnés sous la
+                navigation primaire et masqués sur l'onglet Informations. */}
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="w-full max-w-md">
+                <FieldIndividuSelect
+                  referentielIds={referentielIds}
+                  value={individuId}
+                  onChange={({ individu, referentiel }) => {
+                    analytics.trackEvent(
+                      analyticsEvents.indicateur.individuChange({ referentiel_id: referentiel }),
+                    )
+                    startTransition(() => {
+                      void navigate({
+                        search: (prev) => ({ ...prev, individu, referentiel }),
+                      })
                     })
-                  })
-                }}
-              />
+                  }}
+                />
+              </div>
+              {axes.map((axe) => (
+                <div key={axe.id} className="min-w-[14rem]">
+                  <ModaliteSelect
+                    axe={axe}
+                    value={selection.get(axe.id) ?? null}
+                    onChange={(modalite) => {
+                      const next = setModalite({ selection, axeId: axe.id, modalite })
+                      startTransition(() => {
+                        void navigate({
+                          search: (prev) => ({
+                            ...prev,
+                            modalites: writeSelection({ axes, selection: next }),
+                          }),
+                          resetScroll: false,
+                        })
+                      })
+                    }}
+                  />
+                </div>
+              ))}
             </div>
             <IndicateurResultatsTab
               indicateurId={id}
@@ -219,6 +276,8 @@ function IndicateurDetailComponent() {
               referentielId={referentielId}
               unite={indicateur.unite}
               referentielNom={referentielNom}
+              modalites={modalites}
+              legend={selectionLabel({ axes, selection })}
               sousOnglet={search.sousOnglet}
               onSousOngletChange={(sousOnglet) => {
                 void navigate({ search: (prev) => ({ ...prev, sousOnglet }), resetScroll: false })

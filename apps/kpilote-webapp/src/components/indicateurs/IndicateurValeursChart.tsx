@@ -1,5 +1,6 @@
 import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 import { useSuspenseQueries } from '@tanstack/react-query'
+import { format } from 'echarts/core'
 import ReactECharts from 'echarts-for-react'
 import { useMemo } from 'react'
 
@@ -25,6 +26,9 @@ type IndicateurValeursChartProps = {
   indicateurId: string
   individuId: string
   unite: UniteIndicateurApiModel | null
+  modalites?: ReadonlyArray<string>
+  /** Indicateur à axes : nom de la série (« Ensemble », « Orange »…). */
+  legend?: string | null
 }
 
 type AxisTooltipParam = {
@@ -40,7 +44,7 @@ type AxisTooltipParam = {
 // - une ligne par série affichée (Valeur, Objectif) avec son marqueur coloré ;
 // - ligne supplémentaire pour le taux de progression résolu sur le bucket
 //   courant, uniquement si un taux est applicable.
-const renderTooltip = ({
+export const renderTooltip = ({
   params,
   labels,
   valeursByIndex,
@@ -59,7 +63,7 @@ const renderTooltip = ({
   const monthLabel = head.axisValueLabel ?? labels[dataIndex] ?? ''
   const lines = params.map((p) => {
     const marker = p.marker ?? ''
-    const name = p.seriesName ?? ''
+    const name = format.encodeHTML(p.seriesName ?? '')
     const value = typeof p.value === 'number' ? formatNumberAvecUniteFr(p.value, unite) : '—'
     return `${marker}${name} : <strong>${value}</strong>`
   })
@@ -84,11 +88,13 @@ export function IndicateurValeursChart({
   indicateurId,
   individuId,
   unite,
+  modalites = [],
+  legend = null,
 }: IndicateurValeursChartProps) {
   // useSuspenseQueries pour lancer les 2 requêtes en parallèle (pas de waterfall).
   const [{ data: valeurs }, { data: taux }] = useSuspenseQueries({
     queries: [
-      indicateurValeursQueryOptions(indicateurId, individuId),
+      indicateurValeursQueryOptions(indicateurId, individuId, modalites),
       indicateurTauxProgressionQueryOptions(indicateurId, individuId),
     ],
   })
@@ -97,10 +103,11 @@ export function IndicateurValeursChart({
     () =>
       buildMonthlySeries({
         valeurs: valeurs.items,
-        tauxProgression: taux.items,
+        // L'objectif et le taux portent sur « Tous » : on ne les trace pas pour une modalité.
+        tauxProgression: modalites.length > 0 ? [] : taux.items,
         windowSize: DEFAULT_WINDOW,
       }),
-    [valeurs.items, taux.items],
+    [valeurs.items, taux.items, modalites.length],
   )
 
   const labels = series.months.map((month) => formatMonthYearShortFr(month.bucket))
@@ -109,7 +116,7 @@ export function IndicateurValeursChart({
 
   const option = {
     grid: { top: 32, right: 24, bottom: showSlider ? 60 : 32, left: 56 },
-    legend: hasObjectif ? { top: 0 } : undefined,
+    legend: hasObjectif || legend ? { top: 0 } : undefined,
     tooltip: {
       trigger: 'axis',
       formatter: (params: ReadonlyArray<AxisTooltipParam>) =>
@@ -150,7 +157,7 @@ export function IndicateurValeursChart({
       : undefined,
     series: [
       {
-        name: SERIES_VALEUR,
+        name: legend ?? SERIES_VALEUR,
         type: 'line',
         smooth: false,
         showSymbol: true,

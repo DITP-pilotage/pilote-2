@@ -7,9 +7,14 @@ import { referentielQueryOptions } from '@/queries/referentiels'
 type IndicateurWidgetsProps = {
   indicateurId: string
   referentielId: string
+  modalites: ReadonlyArray<string>
 }
 
-export function IndicateurWidgets({ indicateurId, referentielId }: IndicateurWidgetsProps) {
+export function IndicateurWidgets({
+  indicateurId,
+  referentielId,
+  modalites,
+}: IndicateurWidgetsProps) {
   const { data: referentiel } = useSuspenseQuery(referentielQueryOptions(referentielId))
 
   if (referentiel.widgets.length === 0) return null
@@ -22,6 +27,7 @@ export function IndicateurWidgets({ indicateurId, referentielId }: IndicateurWid
             widget={widget}
             indicateurId={indicateurId}
             referentielId={referentielId}
+            modalites={modalites}
           />
         </Card>
       ))}
