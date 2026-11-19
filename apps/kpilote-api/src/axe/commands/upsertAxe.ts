@@ -2,54 +2,61 @@ import { type UpsertAxeBody } from '@pilote/kpilote-shared/axe'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
+import {
+  type AxeUtiliseError,
+  checkNiveauxSupprimables,
+  checkNombreNiveauxModifiable,
+  type NiveauPorteModalitesError,
+} from '@/axe/rules'
 import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
-export type UpsertAxeError =
-  | { type: 'NIVEAU_PORTE_MODALITES'; ordres: number[] }
-  | { type: 'AXE_UTILISE'; indicateurs: string[] }
+export type UpsertAxeError = AxeUtiliseError | NiveauPorteModalitesError
+
+type UpsertAxeParams = { publicId: string; body: UpsertAxeBody }
+
+type AxeExistant = { id: string; niveaux: Array<{ id: string; ordre: number }> }
+
+type UpsertAxeContext = {
+  axe: AxeExistant | null
+  indicateursDeclarants: string[]
+  ordresPorteursDeModalites: number[]
+}
+
+const loadUpsertAxeContext = async ({
+  publicId,
+}: {
+  publicId: string
+}): Promise<UpsertAxeContext> => {
+  const axe = await db().axe.findUnique({ where: { publicId }, include: { niveaux: true } })
+  if (!axe) return { axe: null, indicateursDeclarants: [], ordresPorteursDeModalites: [] }
+
+  const declarations = await db().indicateurAxe.findMany({
+    where: { axeId: axe.id },
+    include: { indicateur: true },
+  })
+  // `modalites: { some: {} }` : niveaux qui portent au moins une modalité (EXISTS).
+  const porteurs = await db().niveauAxe.findMany({
+    where: { axeId: axe.id, modalites: { some: {} } },
+    orderBy: { ordre: 'asc' },
+  })
+  return {
+    axe,
+    indicateursDeclarants: declarations
+      .map((declaration) => declaration.indicateur.publicId)
+      .sort(),
+    ordresPorteursDeModalites: porteurs.map((niveau) => niveau.ordre),
+  }
+}
 
 // Les niveaux sont identifiés par leur position : `niveaux[i]` devient le
 // niveau d'ordre i + 1 (créé ou renommé). Les niveaux au-delà de la liste sont
-// supprimés, sauf s'ils portent des modalités.
-const performUpsert = async ({
+// supprimés.
+const saveAxe = async ({
   publicId,
   body,
-}: {
-  publicId: string
-  body: UpsertAxeBody
-}): Promise<Result<void, UpsertAxeError>> => {
-  ensureAdmin()
-
-  const existing = await db().axe.findUnique({ where: { publicId }, include: { niveaux: true } })
-
-  // Un indicateur qui déclare l'axe s'appuie sur ses niveaux pour calculer les
-  // totaux : ajouter ou retirer un niveau changerait ses résultats. Renommer
-  // reste permis.
-  if (existing && existing.niveaux.length !== body.niveaux.length) {
-    const declarations = await db().indicateurAxe.findMany({
-      where: { axeId: existing.id },
-      include: { indicateur: true },
-    })
-    if (declarations.length > 0) {
-      return err({
-        type: 'AXE_UTILISE',
-        indicateurs: declarations.map((d) => d.indicateur.publicId).sort(),
-      })
-    }
-  }
-  const niveauxEnTrop = (existing?.niveaux ?? []).filter((n) => n.ordre > body.niveaux.length)
-  if (niveauxEnTrop.length > 0) {
-    // `modalites: { some: {} }` : niveaux qui portent au moins une modalité (EXISTS).
-    const porteurs = await db().niveauAxe.findMany({
-      where: { id: { in: niveauxEnTrop.map((n) => n.id) }, modalites: { some: {} } },
-      orderBy: { ordre: 'asc' },
-    })
-    if (porteurs.length > 0) {
-      return err({ type: 'NIVEAU_PORTE_MODALITES', ordres: porteurs.map((n) => n.ordre) })
-    }
-  }
-
+  axeExistant,
+}: UpsertAxeParams & { axeExistant: AxeExistant | null }): Promise<void> => {
   const axe = await db().axe.upsert({
     where: { publicId },
     update: { nom: body.nom, description: body.description },
@@ -65,14 +72,39 @@ const performUpsert = async ({
     })
   }
 
+  const niveauxEnTrop = (axeExistant?.niveaux ?? []).filter(
+    (niveau) => niveau.ordre > body.niveaux.length,
+  )
   if (niveauxEnTrop.length > 0) {
     await db().niveauAxe.deleteMany({ where: { id: { in: niveauxEnTrop.map((n) => n.id) } } })
   }
+}
 
+const performUpsert = async ({
+  publicId,
+  body,
+}: UpsertAxeParams): Promise<Result<void, UpsertAxeError>> => {
+  ensureAdmin()
+
+  const context = await loadUpsertAxeContext({ publicId })
+  const nombreNiveauxCible = body.niveaux.length
+
+  const modifiable = checkNombreNiveauxModifiable({
+    nombreNiveauxActuel: context.axe?.niveaux.length ?? null,
+    nombreNiveauxCible,
+    indicateursDeclarants: context.indicateursDeclarants,
+  })
+  if (modifiable.isErr()) return err(modifiable.error)
+
+  const supprimables = checkNiveauxSupprimables({
+    nombreNiveauxCible,
+    ordresPorteursDeModalites: context.ordresPorteursDeModalites,
+  })
+  if (supprimables.isErr()) return err(supprimables.error)
+
+  await saveAxe({ publicId, body, axeExistant: context.axe })
   return ok()
 }
 
-export const upsertAxe = (params: {
-  publicId: string
-  body: UpsertAxeBody
-}): ResultAsync<void, UpsertAxeError> => new ResultAsync(performUpsert(params))
+export const upsertAxe = (params: UpsertAxeParams): ResultAsync<void, UpsertAxeError> =>
+  new ResultAsync(performUpsert(params))
