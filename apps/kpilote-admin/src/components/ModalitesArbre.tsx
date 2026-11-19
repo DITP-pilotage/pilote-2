@@ -1,14 +1,12 @@
 import { type ModaliteApiModel, type NiveauAxeApiModel } from '@pilote/kpilote-shared/axe'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
-import { deleteModalite, upsertModalite } from '@/api/axes'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { useToast } from '@pilote/kpilote-ui/Toast'
-import { extractApiError } from '@/lib/apiError'
+import { useDeleteModalite, useUpsertModalite } from '@/mutations/axes'
 
 const INPUT =
   'rounded-md border border-border bg-surface px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none'
@@ -30,55 +28,42 @@ export function ModalitesArbre({
   modalites: ReadonlyArray<ModaliteApiModel>
   disabled: boolean
 }) {
-  const queryClient = useQueryClient()
   const toast = useToast()
   const [ajout, setAjout] = useState<Ajout | null>(null)
   const [renommage, setRenommage] = useState<Renommage | null>(null)
   const [confirmation, setConfirmation] = useState<string | null>(null)
 
-  const enfantsDe = (parent: string | null) => modalites.filter((m) => m.parent === parent)
+  const enfantsDe = (parent: string | null) =>
+    modalites.filter((modalite) => modalite.parent === parent)
   const nomNiveau = (ordre: number) =>
-    niveaux.find((n) => n.ordre === ordre)?.nom ?? `Niveau ${ordre}`
+    niveaux.find((niveau) => niveau.ordre === ordre)?.nom ?? `Niveau ${ordre}`
 
-  const onError = (error: unknown) => toast({ title: extractApiError(error), variant: 'error' })
-  const refresh = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['axe', axeId] })
-    await queryClient.invalidateQueries({ queryKey: ['axes'] })
-  }
+  const upsert = useUpsertModalite(axeId)
+  const remove = useDeleteModalite(axeId)
 
-  const enregistrer = useMutation({
-    mutationFn: ({
-      id,
-      nom,
-      parent,
-    }: {
-      id: string
-      nom: string
-      parent: string | null
-      renommage: boolean
-    }) => upsertModalite({ axeId, id, body: { nom: nom.trim(), parent } }),
-    onSuccess: async (_data, variables) => {
-      await refresh()
-      toast({
-        title: variables.renommage ? 'Modalité renommée.' : `Modalité ${variables.id} ajoutée.`,
-      })
-      setAjout(null)
-      setRenommage(null)
-    },
-    onError,
-  })
+  const saveModalite = ({
+    id,
+    nom,
+    parent,
+    isRename,
+  }: {
+    id: string
+    nom: string
+    parent: string | null
+    isRename: boolean
+  }) =>
+    upsert.mutate(
+      { id, nom, parent },
+      {
+        onSuccess: () => {
+          toast({ title: isRename ? 'Modalité renommée.' : `Modalité ${id} ajoutée.` })
+          setAjout(null)
+          setRenommage(null)
+        },
+      },
+    )
 
-  const supprimer = useMutation({
-    mutationFn: (id: string) => deleteModalite({ axeId, id }),
-    onSuccess: async () => {
-      await refresh()
-      setConfirmation(null)
-      toast({ title: 'Modalité supprimée.' })
-    },
-    onError,
-  })
-
-  const occupe = disabled || enregistrer.isPending || supprimer.isPending
+  const occupe = disabled || upsert.isPending || remove.isPending
 
   const formulaireAjout = (niveau: number) =>
     ajout ? (
@@ -86,11 +71,11 @@ export function ModalitesArbre({
         className="my-2 flex flex-wrap items-center gap-2 rounded-lg border border-primary/30 bg-surface-tinted px-3 py-2"
         onSubmit={(event) => {
           event.preventDefault()
-          enregistrer.mutate({
+          saveModalite({
             id: ajout.id,
             nom: ajout.nom,
             parent: ajout.parent,
-            renommage: false,
+            isRename: false,
           })
         }}
       >
@@ -126,6 +111,8 @@ export function ModalitesArbre({
     const enfants = enfantsDe(modalite.id)
     const peutAvoirEnfants = modalite.niveau < niveaux.length
     const enRenommage = renommage?.id === modalite.id
+    const isAddingChild = ajout?.parent === modalite.id
+    const showChildren = enfants.length > 0 || isAddingChild
 
     return (
       <li key={modalite.id}>
@@ -136,11 +123,11 @@ export function ModalitesArbre({
               className="flex flex-1 items-center gap-2"
               onSubmit={(event) => {
                 event.preventDefault()
-                enregistrer.mutate({
+                saveModalite({
                   id: modalite.id,
                   nom: renommage.nom,
                   parent: modalite.parent,
-                  renommage: true,
+                  isRename: true,
                 })
               }}
             >
@@ -186,21 +173,23 @@ export function ModalitesArbre({
               <SuppressionModalite
                 modaliteId={modalite.id}
                 isConfirming={confirmation === modalite.id}
-                isPending={supprimer.isPending}
+                isPending={remove.isPending}
                 isBusy={occupe}
                 onRequest={() => setConfirmation(modalite.id)}
                 onCancel={() => setConfirmation(null)}
-                onConfirm={() => supprimer.mutate(modalite.id)}
+                onConfirm={() =>
+                  remove.mutate(modalite.id, { onSuccess: () => setConfirmation(null) })
+                }
               />
             ) : null}
           </span>
         </div>
-        {(enfants.length > 0 || ajout?.parent === modalite.id) && (
+        {showChildren ? (
           <div className="ml-6 border-l border-border pl-4">
-            {ajout?.parent === modalite.id ? formulaireAjout(modalite.niveau + 1) : null}
+            {isAddingChild ? formulaireAjout(modalite.niveau + 1) : null}
             <ul className="m-0 list-none p-0">{enfants.map(noeud)}</ul>
           </div>
-        )}
+        ) : null}
       </li>
     )
   }

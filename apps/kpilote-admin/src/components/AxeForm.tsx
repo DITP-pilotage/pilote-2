@@ -59,6 +59,10 @@ export function AxeForm({
     resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: initial,
+    // Les niveaux peuvent changer ailleurs (graphe de l'axe) pendant qu'on édite : on reprend
+    // les valeurs du serveur sans écraser les champs que l'utilisateur a déjà modifiés.
+    values: initial,
+    resetOptions: { keepDirtyValues: true },
   })
   const { fields, append, remove } = useFieldArray({ control, name: 'niveaux' })
 

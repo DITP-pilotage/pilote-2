@@ -1,4 +1,8 @@
-import { type Arbre, type Fonction, TOUS_ID } from '@/lib/axeArbre'
+import { type FonctionAgregationAxe } from '@pilote/kpilote-shared/axe'
+import { mapValues } from 'es-toolkit'
+
+import { aggregate, parseSaisie, seededRandom } from '@/lib/aggregation'
+import { type Arbre, nodesOfKind, TOUS_ID } from '@/lib/axeArbre'
 
 export const PERIODES = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin'] as const
 
@@ -10,46 +14,50 @@ export type SaisiesSerie = Record<string, ReadonlyArray<string>>
 // - manquante : attendue (saisie à une autre période) mais pas encore de valeur ;
 // - absente : jamais saisie, elle n'existe pas pour l'individu et sort du calcul ;
 // - calculee : parente ou « Tous », agrégée depuis ses enfants.
-export type StatutCellule = 'saisie' | 'reportee' | 'manquante' | 'absente' | 'calculee'
+export type CelluleStatut = 'saisie' | 'reportee' | 'manquante' | 'absente' | 'calculee'
 
 export type Cellule = {
   value: number | null
-  statut: StatutCellule
+  statut: CelluleStatut
   present: number
   expected: number
 }
 
-const parseSaisie = (raw: string | undefined): number | null => {
-  const normalized = raw?.replace(',', '.').trim()
-  if (!normalized) return null
-  const value = Number(normalized)
-  return Number.isNaN(value) ? null : value
-}
+const ABSENTE: Cellule = { value: null, statut: 'absente', present: 0, expected: 0 }
 
-const feuilleSerie = (saisies: ReadonlyArray<string> | undefined): Cellule[] => {
+const serieOfFeuille = (saisies: ReadonlyArray<string> | undefined): Cellule[] => {
   const values = PERIODES.map((_, index) => parseSaisie(saisies?.[index]))
-  const observee = values.some((value) => value !== null)
-  let derniere: number | null = null
+  const isObserved = values.some((value) => value !== null)
+  let last: number | null = null
   return values.map((value) => {
     if (value !== null) {
-      derniere = value
+      last = value
       return { value, statut: 'saisie', present: 1, expected: 1 }
     }
-    if (!observee) return { value: null, statut: 'absente', present: 0, expected: 0 }
-    if (derniere === null) return { value: null, statut: 'manquante', present: 0, expected: 1 }
-    return { value: derniere, statut: 'reportee', present: 1, expected: 1 }
+    if (!isObserved) return ABSENTE
+    if (last === null) return { value: null, statut: 'manquante', present: 0, expected: 1 }
+    return { value: last, statut: 'reportee', present: 1, expected: 1 }
   })
 }
 
-const aggregate = ({
-  values,
+const combineChildren = ({
+  cellules,
   fonction,
 }: {
-  values: ReadonlyArray<number>
-  fonction: Fonction
-}): number => {
-  const sum = values.reduce((total, value) => total + value, 0)
-  return fonction === 'SUM' ? sum : sum / values.length
+  cellules: ReadonlyArray<Cellule>
+  fonction: FonctionAgregationAxe
+}): Cellule => {
+  const expectedCellules = cellules.filter((cellule) => cellule.statut !== 'absente')
+  if (expectedCellules.length === 0) return ABSENTE
+  const values = expectedCellules.flatMap((cellule) =>
+    cellule.value === null ? [] : [cellule.value],
+  )
+  return {
+    value: values.length === 0 ? null : aggregate({ values, fonction }),
+    statut: 'calculee',
+    present: values.length,
+    expected: expectedCellules.length,
+  }
 }
 
 // Sémantique du moteur pour un individu saisi (spec multifiltre §5) : une modalité jamais
@@ -63,30 +71,24 @@ export const computeSerie = ({
 }: {
   arbre: Arbre
   saisies: SaisiesSerie
-  fonction: Fonction
+  fonction: FonctionAgregationAxe
 }): Map<string, Cellule[]> => {
   const result = new Map<string, Cellule[]>()
   const visit = (id: string): Cellule[] => {
     const node = arbre.get(id)
     if (!node) return []
     if (node.kind === 'feuille') {
-      const serie = feuilleSerie(saisies[id])
+      const serie = serieOfFeuille(saisies[id])
       result.set(id, serie)
       return serie
     }
-    const enfants = node.children.map(visit)
-    const serie = PERIODES.map((_, index): Cellule => {
-      const cellules = enfants.map((enfant) => enfant[index]).filter((cellule) => !!cellule)
-      const attendues = cellules.filter((cellule) => cellule.statut !== 'absente')
-      const values = attendues.flatMap((cellule) => (cellule.value === null ? [] : [cellule.value]))
-      if (attendues.length === 0) return { value: null, statut: 'absente', present: 0, expected: 0 }
-      return {
-        value: values.length === 0 ? null : aggregate({ values, fonction }),
-        statut: 'calculee',
-        present: values.length,
-        expected: attendues.length,
-      }
-    })
+    const childSeries = node.children.map(visit)
+    const serie = PERIODES.map((_, index) =>
+      combineChildren({
+        cellules: childSeries.flatMap((childSerie) => childSerie[index] ?? []),
+        fonction,
+      }),
+    )
     result.set(id, serie)
     return serie
   }
@@ -94,42 +96,68 @@ export const computeSerie = ({
   return result
 }
 
-// Générateur pseudo-aléatoire déterministe : le même axe donne toujours le même exemple.
-const seededRandom = (seed: number) => {
-  let state = seed
-  return () => {
-    state = (state * 1664525 + 1013904223) % 4294967296
-    return state / 4294967296
-  }
+// Une seule date : la même sémantique, où une feuille vide est absente et sort du calcul.
+export const computeValeurs = ({
+  arbre,
+  saisies,
+  fonction,
+}: {
+  arbre: Arbre
+  saisies: Readonly<Record<string, string>>
+  fonction: FonctionAgregationAxe
+}): Map<string, Cellule> => {
+  const serie = computeSerie({
+    arbre,
+    saisies: mapValues(saisies, (saisie) => [saisie]),
+    fonction,
+  })
+  return new Map([...serie].map(([id, cellules]) => [id, cellules[0] ?? ABSENTE]))
 }
 
 // Un exemple qui montre tous les cas : des feuilles jamais saisies, d'autres qui démarrent en
 // cours de période, et des trous comblés par le report.
-export const buildExempleSaisies = ({
+export const buildSampleSaisies = ({
   arbre,
   seed = 1,
-  complet = false,
+  full = false,
 }: {
   arbre: Arbre
   seed?: number
   // Sans trou : chaque feuille a une valeur à chaque période.
-  complet?: boolean
+  full?: boolean
 }): SaisiesSerie => {
   const random = seededRandom(seed)
-  const feuilles = [...arbre.values()].filter((node) => node.kind === 'feuille')
   return Object.fromEntries(
-    feuilles.map((feuille, rang) => {
-      const jamaisSaisie = !complet && rang > 0 && random() < 0.15
-      if (jamaisSaisie) return [feuille.id, PERIODES.map(() => '')]
-      const debut = !complet && random() < 0.3 ? 1 + Math.floor(random() * 3) : 0
+    nodesOfKind({ arbre, kind: 'feuille' }).map((feuille, rank) => {
+      const isNeverSaisie = !full && rank > 0 && random() < 0.15
+      if (isNeverSaisie) return [feuille.id, PERIODES.map(() => '')]
+      const start = !full && random() < 0.3 ? 1 + Math.floor(random() * 3) : 0
       let value = Math.round(random() * 80 + 10)
       const serie = PERIODES.map((_, index) => {
-        if (index < debut) return ''
-        if (!complet && index > debut && random() < 0.25) return ''
+        if (index < start) return ''
+        if (!full && index > start && random() < 0.25) return ''
         value = Math.max(0, value + Math.round((random() - 0.4) * 12))
         return String(value)
       })
       return [feuille.id, serie]
+    }),
+  )
+}
+
+export const buildSampleValeurs = ({
+  arbre,
+  seed = 1,
+  full = false,
+}: {
+  arbre: Arbre
+  seed?: number
+  full?: boolean
+}): Record<string, string> => {
+  const random = seededRandom(seed)
+  return Object.fromEntries(
+    nodesOfKind({ arbre, kind: 'feuille' }).map((feuille) => {
+      const isEmpty = !full && random() < 0.2
+      return [feuille.id, isEmpty ? '' : String(Math.round(random() * 90 + 10))]
     }),
   )
 }

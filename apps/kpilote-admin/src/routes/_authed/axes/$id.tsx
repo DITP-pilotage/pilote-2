@@ -1,19 +1,18 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Network } from 'lucide-react'
 import { useState } from 'react'
 
-import { upsertAxe } from '@/api/axes'
 import { AxeForm, type AxeFormValues } from '@/components/AxeForm'
-import { AxeGrapheModale } from '@/components/AxeGraphe'
+import { AxeGrapheModale } from '@/components/axe-graphe/AxeGrapheModale'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { ModalitesArbre } from '@/components/ModalitesArbre'
 import { PageHeading } from '@/components/PageHeading'
 import { ProdEditSectionHeader } from '@/components/ProdEditSectionHeader'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { useToast } from '@pilote/kpilote-ui/Toast'
-import { extractApiError } from '@/lib/apiError'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
+import { useUpsertAxe } from '@/mutations/axes'
 import { axeModalitesQueryOptions, axeQueryOptions } from '@/queries/axes'
 
 export const Route = createFileRoute('/_authed/axes/$id')({
@@ -29,12 +28,11 @@ export const Route = createFileRoute('/_authed/axes/$id')({
 function EditAxeComponent() {
   const { id } = Route.useParams()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const toast = useToast()
   const { isProd, locked, unlock } = useProdEditUnlock()
   const { data: axe } = useSuspenseQuery(axeQueryOptions(id))
   const { data: modalites } = useSuspenseQuery(axeModalitesQueryOptions(id))
-  const [grapheOuvert, setGrapheOuvert] = useState(false)
+  const [isGrapheOpen, setIsGrapheOpen] = useState(false)
 
   const initial: AxeFormValues = {
     id: axe.id,
@@ -43,25 +41,16 @@ function EditAxeComponent() {
     niveaux: axe.niveaux.map((niveau) => ({ nom: niveau.nom })),
   }
 
-  const mutation = useMutation({
-    mutationFn: (values: AxeFormValues) =>
-      upsertAxe({
-        id,
-        body: {
-          nom: values.nom.trim(),
-          description: values.description.trim() === '' ? null : values.description,
-          niveaux: values.niveaux.map((niveau) => ({ nom: niveau.nom.trim() })),
-        },
-      }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['axes'] })
-      await queryClient.invalidateQueries({ queryKey: ['axe', id] })
-      toast({ title: 'Axe modifié.' })
-    },
-    onError: (err: unknown) => {
-      toast({ title: extractApiError(err), variant: 'error' })
-    },
-  })
+  const mutation = useUpsertAxe(id)
+  const saveAxe = (values: AxeFormValues) =>
+    mutation.mutate(
+      {
+        nom: values.nom.trim(),
+        description: values.description.trim() === '' ? null : values.description,
+        niveaux: values.niveaux.map((niveau) => ({ nom: niveau.nom.trim() })),
+      },
+      { onSuccess: () => toast({ title: 'Axe modifié.' }) },
+    )
 
   return (
     <div>
@@ -78,20 +67,19 @@ function EditAxeComponent() {
         title="Modifier l’axe"
         subtitle={<code>PUT /axes/{id}</code>}
         action={
-          <Button onClick={() => setGrapheOuvert(true)}>
+          <Button onClick={() => setIsGrapheOpen(true)}>
             <Network />
             Voir le graphe de calcul
           </Button>
         }
       />
       <AxeForm
-        key={axe.updatedAt}
         mode="edit"
         initial={initial}
         pending={mutation.isPending}
         isProd={isProd}
         onCancel={() => void navigate({ to: '/axes' })}
-        onSubmit={(values) => mutation.mutate(values)}
+        onSubmit={saveAxe}
       />
 
       <div className="mt-10 flex flex-col gap-4">
@@ -106,8 +94,8 @@ function EditAxeComponent() {
       </div>
 
       <AxeGrapheModale
-        open={grapheOuvert}
-        onClose={() => setGrapheOuvert(false)}
+        open={isGrapheOpen}
+        onClose={() => setIsGrapheOpen(false)}
         axe={axe}
         modalites={modalites}
         locked={locked}

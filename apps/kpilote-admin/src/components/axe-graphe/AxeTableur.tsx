@@ -1,36 +1,33 @@
+import { type FonctionAgregationAxe } from '@pilote/kpilote-shared/axe'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 
+import { KindMarker } from '@/components/axe-graphe/KindMarker'
 import {
+  ancestorsOf,
   type Arbre,
   type ArbreNode,
-  ancestorsOf,
   depthFirst,
-  type Fonction,
   formatValue,
+  formulaOf,
   type Kind,
+  pluralSuffix,
   TOUS_ID,
 } from '@/lib/axeArbre'
-import { type Cellule, PERIODES, type SaisiesSerie, type StatutCellule } from '@/lib/axeSerie'
+import { type Cellule, type CelluleStatut, PERIODES, type SaisiesSerie } from '@/lib/axeSerie'
 import { clsxm } from '@/lib/clsxm'
 
 type CelluleRef = { id: string; index: number }
 
-const KIND_DOT: Record<Kind, string> = {
-  feuille: 'bg-success-425',
-  parente: 'bg-primary',
-  tous: 'bg-text',
-}
-
-const STATUT_LEGENDE: ReadonlyArray<{ statut: StatutCellule; label: string; exemple: string }> = [
-  { statut: 'saisie', label: 'Saisie', exemple: '42' },
-  { statut: 'reportee', label: 'Reportée', exemple: '↳ 42' },
-  { statut: 'manquante', label: 'Manquante', exemple: '?' },
-  { statut: 'absente', label: 'Jamais saisie', exemple: '·' },
-  { statut: 'calculee', label: 'Calculée', exemple: '84' },
+const STATUT_LEGEND: ReadonlyArray<{ statut: CelluleStatut; label: string; example: string }> = [
+  { statut: 'saisie', label: 'Saisie', example: '42' },
+  { statut: 'reportee', label: 'Reportée', example: '↳ 42' },
+  { statut: 'manquante', label: 'Manquante', example: '?' },
+  { statut: 'absente', label: 'Jamais saisie', example: '·' },
+  { statut: 'calculee', label: 'Calculée', example: '84' },
 ]
 
-const STATUT_CELL: Record<StatutCellule, string> = {
+const STATUT_CLASS: Record<CelluleStatut, string> = {
   saisie: 'text-text',
   reportee: 'text-text-subtle italic',
   manquante: 'bg-warning-tinted/60 text-warning',
@@ -42,15 +39,23 @@ const ROW_INDENT = 16
 
 // Même règle que le calcul croisé : une ligne blanche se saisit, une ligne teintée se calcule,
 // plus foncée pour la marginale « Tous ».
-const KIND_ROW: Record<Kind, string> = {
+const KIND_ROW_CLASS: Record<Kind, string> = {
   feuille: 'bg-surface',
   parente: 'bg-surface-muted font-semibold',
   tous: 'bg-surface-tinted font-bold',
 }
 
+type Tone = 'active' | 'precedent' | 'dependent'
+
+const TONE_CLASS: Record<Tone, string> = {
+  active: 'relative z-10 outline-2 -outline-offset-2 outline-primary',
+  precedent: 'bg-primary-tinted',
+  dependent: 'bg-primary-tinted/40',
+}
+
 export function AxeTableur({
   arbre,
-  nomNiveau,
+  niveauNomOf,
   collapsed,
   visible,
   fonction,
@@ -62,10 +67,10 @@ export function AxeTableur({
   onSaisie,
 }: {
   arbre: Arbre
-  nomNiveau: (ordre: number) => string
+  niveauNomOf: (ordre: number) => string
   collapsed: ReadonlySet<string>
   visible: ReadonlySet<string> | null
-  fonction: Fonction
+  fonction: FonctionAgregationAxe
   saisies: SaisiesSerie
   serie: Map<string, Cellule[]>
   selectedNodeId: string | null
@@ -82,20 +87,20 @@ export function AxeTableur({
 
   const activeNode = active ? arbre.get(active.id) : undefined
   const precedents = new Set(activeNode?.children ?? [])
-  const dependants = new Set(
+  const dependents = new Set(
     activeNode ? ancestorsOf({ arbre, id: activeNode.id }).map((node) => node.id) : [],
   )
-  const tone = (ref: CelluleRef) => {
+  const toneOf = (ref: CelluleRef): Tone | undefined => {
     if (!active || ref.index !== active.index) return undefined
     if (ref.id === active.id) return 'active'
     if (precedents.has(ref.id)) return 'precedent'
-    if (dependants.has(ref.id)) return 'dependant'
+    if (dependents.has(ref.id)) return 'dependent'
     return undefined
   }
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <BarreFormule
+      <FormulaBar
         arbre={arbre}
         active={active}
         fonction={fonction}
@@ -123,38 +128,37 @@ export function AxeTableur({
             </tr>
           </thead>
           <tbody>
-            {rows.map((node, rang) => (
-              <Ligne
+            {rows.map((node, rank) => (
+              <TableRow
                 key={node.id}
                 node={node}
-                rang={rang + 1}
-                depth={node.niveau === 0 ? 0 : node.niveau}
-                niveau={node.kind === 'tous' ? 'Résultat' : nomNiveau(node.niveau)}
+                rank={rank + 1}
+                niveauNom={node.kind === 'tous' ? 'Résultat' : niveauNomOf(node.niveau)}
                 isCollapsed={!visible && collapsed.has(node.id)}
                 canToggle={!visible && node.kind !== 'feuille' && node.children.length > 0}
-                selected={selectedNodeId === node.id}
+                isSelected={selectedNodeId === node.id}
                 saisies={saisies[node.id]}
                 cellules={serie.get(node.id) ?? []}
-                tone={(index) => tone({ id: node.id, index })}
+                toneOf={(index) => toneOf({ id: node.id, index })}
                 onToggle={() => onToggle(node.id)}
                 onSelect={() => onSelectNode(node.id)}
                 onActivate={(index) => setActive({ id: node.id, index })}
-                onSaisie={(index, value) => onSaisie({ id: node.id, index, value })}
+                onSaisie={({ index, value }) => onSaisie({ id: node.id, index, value })}
               />
             ))}
           </tbody>
         </table>
       </div>
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-border px-6 py-2 text-xs text-text-muted">
-        {STATUT_LEGENDE.map(({ statut, label, exemple }) => (
+        {STATUT_LEGEND.map(({ statut, label, example }) => (
           <span key={statut} className="inline-flex items-center gap-1.5">
             <span
               className={clsxm(
                 'inline-flex h-5 min-w-9 items-center justify-end rounded-sm border border-border px-1.5 tabular-nums',
-                statut === 'calculee' ? KIND_ROW.parente : STATUT_CELL[statut],
+                statut === 'calculee' ? KIND_ROW_CLASS.parente : STATUT_CLASS[statut],
               )}
             >
-              {exemple}
+              {example}
             </span>
             {label}
           </span>
@@ -181,65 +185,49 @@ function HeaderCell({ className, children }: { className?: string; children: Rea
   )
 }
 
-type Tone = 'active' | 'precedent' | 'dependant' | undefined
-
-const TONE_CLASS: Record<Exclude<Tone, undefined>, string> = {
-  active: 'relative z-10 outline-2 -outline-offset-2 outline-primary',
-  precedent: 'bg-primary-tinted',
-  dependant: 'bg-primary-tinted/40',
-}
-
-function Ligne({
+function TableRow({
   node,
-  rang,
-  depth,
-  niveau,
+  rank,
+  niveauNom,
   isCollapsed,
   canToggle,
-  selected,
+  isSelected,
   saisies,
   cellules,
-  tone,
+  toneOf,
   onToggle,
   onSelect,
   onActivate,
   onSaisie,
 }: {
   node: ArbreNode
-  rang: number
-  depth: number
-  niveau: string
+  rank: number
+  niveauNom: string
   isCollapsed: boolean
   canToggle: boolean
-  selected: boolean
+  isSelected: boolean
   saisies: ReadonlyArray<string> | undefined
   cellules: ReadonlyArray<Cellule>
-  tone: (index: number) => Tone
+  toneOf: (index: number) => Tone | undefined
   onToggle: () => void
   onSelect: () => void
   onActivate: (index: number) => void
-  onSaisie: (index: number, value: string) => void
+  onSaisie: (input: { index: number; value: string }) => void
 }) {
-  const isTous = node.kind === 'tous'
-  const isFeuille = node.kind === 'feuille'
-  const rowBg = KIND_ROW[node.kind]
+  const rowClass = KIND_ROW_CLASS[node.kind]
   return (
     <tr className="group">
-      <td
-        className={clsxm(
-          'sticky left-0 z-10 w-10 border-r border-b border-border bg-surface-muted text-center text-[11px] text-text-subtle tabular-nums',
-        )}
-      >
-        {rang}
+      <td className="sticky left-0 z-10 w-10 border-r border-b border-border bg-surface-muted text-center text-[11px] text-text-subtle tabular-nums">
+        {rank}
       </td>
       <td
         className={clsxm(
           'sticky left-10 z-10 border-r border-b border-border px-2 py-1',
-          rowBg,
-          selected && 'bg-primary-tinted',
+          rowClass,
+          isSelected && 'bg-primary-tinted',
         )}
       >
-        <div className="flex items-center gap-1" style={{ paddingLeft: depth * ROW_INDENT }}>
+        <div className="flex items-center gap-1" style={{ paddingLeft: node.niveau * ROW_INDENT }}>
           {canToggle ? (
             <button
               type="button"
@@ -261,8 +249,10 @@ function Ligne({
             onClick={onSelect}
             className="flex min-w-0 items-center gap-2 text-left hover:text-primary"
           >
-            <span className={clsxm('size-2 shrink-0 rounded-full', KIND_DOT[node.kind])} />
-            <span className={clsxm('truncate', isTous && 'font-semibold')}>{node.nom}</span>
+            <KindMarker kind={node.kind} />
+            <span className={clsxm('truncate', node.kind === 'tous' && 'font-semibold')}>
+              {node.nom}
+            </span>
             {isCollapsed ? (
               <span className="shrink-0 text-[11px] font-normal text-text-subtle">
                 ({node.children.length} enfants repliés)
@@ -274,29 +264,29 @@ function Ligne({
       <td
         className={clsxm(
           'border-r border-b border-border px-3 py-1 text-xs font-normal whitespace-nowrap text-text-muted',
-          rowBg,
+          rowClass,
         )}
       >
-        {niveau}
+        {niveauNom}
       </td>
       {PERIODES.map((periode, index) => {
         const cellule = cellules[index]
-        const toneClass = tone(index)
+        const tone = toneOf(index)
         return (
           <td
             key={periode}
             className={clsxm(
               'h-8 min-w-28 border-r border-b border-border p-0 text-right tabular-nums',
-              rowBg,
-              cellule && STATUT_CELL[cellule.statut],
-              toneClass && TONE_CLASS[toneClass],
+              rowClass,
+              cellule && STATUT_CLASS[cellule.statut],
+              tone && TONE_CLASS[tone],
             )}
           >
-            {isFeuille ? (
+            {node.kind === 'feuille' ? (
               <input
                 value={saisies?.[index] ?? ''}
                 onFocus={() => onActivate(index)}
-                onChange={(event) => onSaisie(index, event.target.value)}
+                onChange={(event) => onSaisie({ index, value: event.target.value })}
                 placeholder={placeholderOf(cellule)}
                 inputMode="decimal"
                 aria-label={`${node.nom}, ${periode}`}
@@ -308,7 +298,7 @@ function Ligne({
                 onClick={() => onActivate(index)}
                 className="flex h-full w-full items-center justify-end gap-1 px-3"
               >
-                <ValeurCalculee cellule={cellule} />
+                <ComputedValue cellule={cellule} />
               </button>
             )}
           </td>
@@ -328,12 +318,12 @@ const placeholderOf = (cellule: Cellule | undefined): string => {
   return ''
 }
 
-function ValeurCalculee({ cellule }: { cellule: Cellule | undefined }) {
+function ComputedValue({ cellule }: { cellule: Cellule | undefined }) {
   if (!cellule || cellule.statut === 'absente') return <span className="font-normal">·</span>
-  const incomplete = cellule.present < cellule.expected
+  const isIncomplete = cellule.present < cellule.expected
   return (
     <>
-      {incomplete ? (
+      {isIncomplete ? (
         <span className="text-[10px] font-normal text-warning-425">
           {cellule.present}/{cellule.expected}
         </span>
@@ -345,7 +335,7 @@ function ValeurCalculee({ cellule }: { cellule: Cellule | undefined }) {
   )
 }
 
-function BarreFormule({
+function FormulaBar({
   arbre,
   active,
   fonction,
@@ -354,22 +344,23 @@ function BarreFormule({
 }: {
   arbre: Arbre
   active: CelluleRef | null
-  fonction: Fonction
+  fonction: FonctionAgregationAxe
   saisies: SaisiesSerie
   serie: Map<string, Cellule[]>
 }) {
   const node = active ? arbre.get(active.id) : undefined
+  const reference = node && active ? `${node.nom} · ${PERIODES[active.index]}` : 'Aucune cellule'
   return (
     <div className="flex min-h-12 items-stretch border-b border-border bg-surface text-sm">
       <div className="flex w-56 shrink-0 items-center border-r border-border px-3 text-xs font-medium text-text-muted">
-        {node && active ? `${node.nom} · ${PERIODES[active.index]}` : 'Aucune cellule'}
+        {reference}
       </div>
       <div className="flex shrink-0 items-center border-r border-border px-3 font-serif text-text-subtle italic">
         fx
       </div>
       <div className="flex min-w-0 flex-1 items-center px-3 py-2 text-text">
         {node && active ? (
-          <Explication
+          <Explanation
             arbre={arbre}
             node={node}
             index={active.index}
@@ -400,7 +391,7 @@ const lastSaisieBefore = ({
   return null
 }
 
-function Explication({
+function Explanation({
   arbre,
   node,
   index,
@@ -411,79 +402,47 @@ function Explication({
   arbre: Arbre
   node: ArbreNode
   index: number
-  fonction: Fonction
+  fonction: FonctionAgregationAxe
   saisies: SaisiesSerie
   serie: Map<string, Cellule[]>
 }) {
   const cellule = serie.get(node.id)?.[index]
   if (!cellule) return null
-  const periode = PERIODES[index]
-
   if (node.kind === 'feuille') {
-    switch (cellule.statut) {
-      case 'saisie':
-        return (
-          <span>
-            Saisie : {formatValue(cellule.value ?? 0)}. C’est une feuille, rien ne la calcule.
-          </span>
-        )
-      case 'reportee': {
-        const source = lastSaisieBefore({ saisies: saisies[node.id], index })
-        return (
-          <span>
-            Rien de saisi en {periode} : la dernière valeur connue
-            {source === null ? '' : ` (${PERIODES[source]})`},{' '}
-            <strong>{formatValue(cellule.value ?? 0)}</strong>, est reportée.
-          </span>
-        )
-      }
-      case 'manquante':
-        return (
-          <span className="text-warning">
-            Saisie à d’autres périodes, donc attendue, mais pas encore de valeur en {periode} : elle
-            manque, et la couverture de ses parents baisse.
-          </span>
-        )
-      default:
-        return (
-          <span className="text-text-muted">
-            Jamais saisie : elle n’existe pas pour cet individu. Elle ne compte ni comme 0, ni comme
-            une valeur manquante.
-          </span>
-        )
-    }
+    return (
+      <FeuilleExplanation
+        cellule={cellule}
+        index={index}
+        source={lastSaisieBefore({ saisies: saisies[node.id], index })}
+      />
+    )
   }
 
-  const enfants = node.children
-    .map((id) => ({ node: arbre.get(id), cellule: serie.get(id)?.[index] }))
-    .filter(
-      (enfant): enfant is { node: ArbreNode; cellule: Cellule } =>
-        !!enfant.node && !!enfant.cellule,
-    )
-  const comptees = enfants.filter((enfant) => enfant.cellule.value !== null)
-  const manquantes = enfants.filter(
-    (enfant) => enfant.cellule.value === null && enfant.cellule.statut !== 'absente',
+  const children = node.children.flatMap((id) => {
+    const child = arbre.get(id)
+    const childCellule = serie.get(id)?.[index]
+    return child && childCellule ? [{ node: child, cellule: childCellule }] : []
+  })
+  const counted = children.filter((child) => child.cellule.value !== null)
+  const missing = children.filter(
+    (child) => child.cellule.value === null && child.cellule.statut !== 'absente',
   )
-  const ignorees = enfants.filter((enfant) => enfant.cellule.statut === 'absente')
-  if (comptees.length === 0 && manquantes.length === 0) {
+  const ignored = children.filter((child) => child.cellule.statut === 'absente')
+  if (counted.length === 0 && missing.length === 0) {
     return (
       <span className="text-text-muted">
         Aucun enfant saisi : elle n’existe pas pour cet individu.
       </span>
     )
   }
-  const separateur = fonction === 'SUM' ? ' + ' : ', '
-  const termes = comptees
-    .map(
-      (enfant) =>
-        `${enfant.node.nom} ${formatValue(enfant.cellule.value ?? 0)}${enfant.cellule.statut === 'reportee' ? ' (reportée)' : ''}`,
-    )
-    .join(separateur)
-  const formule = fonction === 'AVG' ? `moyenne(${termes})` : termes
+  const terms = counted.map((child) => {
+    const reporteeSuffix = child.cellule.statut === 'reportee' ? ' (reportée)' : ''
+    return `${child.node.nom} ${formatValue(child.cellule.value ?? 0)}${reporteeSuffix}`
+  })
   return (
     <span className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
       <span className="font-mono text-xs">
-        = {formule || '∅'}
+        = {terms.length === 0 ? '∅' : formulaOf({ terms, fonction })}
         {cellule.value === null ? null : (
           <strong className="text-sm"> = {formatValue(cellule.value)}</strong>
         )}
@@ -491,18 +450,60 @@ function Explication({
       <span className="text-xs text-text-muted">
         couverture {cellule.present}/{cellule.expected}
       </span>
-      {manquantes.length > 0 ? (
+      {missing.length > 0 ? (
         <span className="text-xs text-warning">
-          manquante{manquantes.length > 1 ? 's' : ''} :{' '}
-          {manquantes.map((enfant) => enfant.node.nom).join(', ')}
+          manquante{pluralSuffix(missing.length)} :{' '}
+          {missing.map((child) => child.node.nom).join(', ')}
         </span>
       ) : null}
-      {ignorees.length > 0 ? (
+      {ignored.length > 0 ? (
         <span className="text-xs text-text-subtle">
-          ignorée{ignorees.length > 1 ? 's' : ''} (jamais saisie{ignorees.length > 1 ? 's' : ''}) :{' '}
-          {ignorees.map((enfant) => enfant.node.nom).join(', ')}
+          ignorée{pluralSuffix(ignored.length)} (jamais saisie{pluralSuffix(ignored.length)}) :{' '}
+          {ignored.map((child) => child.node.nom).join(', ')}
         </span>
       ) : null}
     </span>
   )
+}
+
+function FeuilleExplanation({
+  cellule,
+  index,
+  source,
+}: {
+  cellule: Cellule
+  index: number
+  source: number | null
+}) {
+  const periode = PERIODES[index]
+  switch (cellule.statut) {
+    case 'saisie':
+      return (
+        <span>
+          Saisie : {formatValue(cellule.value ?? 0)}. C’est une feuille, rien ne la calcule.
+        </span>
+      )
+    case 'reportee':
+      return (
+        <span>
+          Rien de saisi en {periode} : la dernière valeur connue
+          {source === null ? '' : ` (${PERIODES[source]})`},{' '}
+          <strong>{formatValue(cellule.value ?? 0)}</strong>, est reportée.
+        </span>
+      )
+    case 'manquante':
+      return (
+        <span className="text-warning">
+          Saisie à d’autres périodes, donc attendue, mais pas encore de valeur en {periode} : elle
+          manque, et la couverture de ses parents baisse.
+        </span>
+      )
+    default:
+      return (
+        <span className="text-text-muted">
+          Jamais saisie : elle n’existe pas pour cet individu. Elle ne compte ni comme 0, ni comme
+          une valeur manquante.
+        </span>
+      )
+  }
 }

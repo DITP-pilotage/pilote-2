@@ -2,7 +2,7 @@ import { type ModaliteApiModel } from '@pilote/kpilote-shared/axe'
 import { describe, expect, it } from 'vitest'
 
 import { buildArbre, TOUS_ID } from '@/lib/axeArbre'
-import { computeSerie } from '@/lib/axeSerie'
+import { computeSerie, computeValeurs } from '@/lib/axeSerie'
 
 const modalite = ({
   id,
@@ -61,5 +61,14 @@ describe('computeSerie', () => {
 
     expect(serie.get('MSA')?.[0]?.statut).toBe('absente')
     expect(serie.get(TOUS_ID)?.[0]).toMatchObject({ value: 15, present: 2, expected: 2 })
+  })
+})
+
+describe('computeValeurs', () => {
+  it('sort une feuille vide du calcul de sa parente', () => {
+    const valeurs = computeValeurs({ arbre, saisies: { CPAM: '10', CAF: '' }, fonction: 'SUM' })
+
+    expect(valeurs.get('CAF')?.statut).toBe('absente')
+    expect(valeurs.get(TOUS_ID)).toMatchObject({ value: 10, present: 1, expected: 1 })
   })
 })

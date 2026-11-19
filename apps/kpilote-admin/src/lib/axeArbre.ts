@@ -1,9 +1,8 @@
-import { type ModaliteApiModel } from '@pilote/kpilote-shared/axe'
+import { type FonctionAgregationAxe, type ModaliteApiModel } from '@pilote/kpilote-shared/axe'
 import { groupBy } from 'es-toolkit'
 
 export const TOUS_ID = '__TOUS__'
 
-export type Fonction = 'SUM' | 'AVG'
 export type Kind = 'feuille' | 'parente' | 'tous'
 
 export type ArbreNode = {
@@ -43,6 +42,9 @@ export const buildArbre = (modalites: ReadonlyArray<ModaliteApiModel>): Arbre =>
   })
   return arbre
 }
+
+export const nodesOfKind = ({ arbre, kind }: { arbre: Arbre; kind: Kind }): ArbreNode[] =>
+  [...arbre.values()].filter((node) => node.kind === kind)
 
 export const countDescendants = ({ arbre, id }: { arbre: Arbre; id: string }): number =>
   (arbre.get(id)?.children ?? []).reduce(
@@ -92,18 +94,51 @@ export const depthFirst = ({
   return [node, ...children.flatMap((child) => depthFirst({ arbre, id: child, isOpen }))]
 }
 
-export const normalize = (value: string) => value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+// Au-delà de `threshold` modalités, un axe s'ouvre replié au premier niveau.
+export const initialCollapsed = ({
+  arbre,
+  threshold,
+}: {
+  arbre: Arbre
+  threshold: number
+}): Set<string> => {
+  if (arbre.size - 1 <= threshold) return new Set()
+  const roots = arbre.get(TOUS_ID)?.children ?? []
+  return new Set(roots.filter((id) => arbre.get(id)?.kind === 'parente'))
+}
 
-export const formatValue = (value: number) =>
+export const toggleInSet = ({ set, id }: { set: ReadonlySet<string>; id: string }): Set<string> => {
+  const next = new Set(set)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  return next
+}
+
+export const normalize = (value: string): string =>
+  value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
+export const formatValue = (value: number): string =>
   value.toLocaleString('fr-FR', { maximumFractionDigits: 2 })
 
-export const pluriel = ({ count, mot }: { count: number; mot: string }) =>
-  `${count} ${mot}${count > 1 ? 's' : ''}`
+export const pluralize = ({ count, word }: { count: number; word: string }): string =>
+  `${count} ${word}${count > 1 ? 's' : ''}`
 
-export const fonctionLabel = (fonction: Fonction) => (fonction === 'SUM' ? 'somme' : 'moyenne')
+export const pluralSuffix = (count: number): string => (count > 1 ? 's' : '')
+
+export const fonctionLabel = (fonction: FonctionAgregationAxe): string =>
+  fonction === 'SUM' ? 'somme' : 'moyenne'
+
+// Formule lisible d'une parente : « A + B » en somme, « moyenne(A, B) » en moyenne.
+export const formulaOf = ({
+  terms,
+  fonction,
+}: {
+  terms: ReadonlyArray<string>
+  fonction: FonctionAgregationAxe
+}): string => (fonction === 'AVG' ? `moyenne(${terms.join(', ')})` : terms.join(' + '))
 
 // « Tous » est la marginale d'un axe : avec plusieurs axes, son nom doit dire lequel.
-export const nommerTous = ({ arbre, axeNom }: { arbre: Arbre; axeNom: string }): Arbre => {
+export const withTousNamed = ({ arbre, axeNom }: { arbre: Arbre; axeNom: string }): Arbre => {
   const tous = arbre.get(TOUS_ID)
   if (!tous) return arbre
   return new Map(arbre).set(TOUS_ID, { ...tous, nom: `Tous (${axeNom})` })

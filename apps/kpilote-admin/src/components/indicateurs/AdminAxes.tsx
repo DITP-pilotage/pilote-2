@@ -26,7 +26,7 @@ export function AdminAxes() {
   const { fields, append, remove, move } = useFieldArray({ control: form.control, name: 'axes' })
   const axesDeclares = useWatch({ control: form.control, name: 'axes' })
   const { data: axes } = useSuspenseQuery(axesAllQueryOptions())
-  const [croisementOuvert, setCroisementOuvert] = useState(false)
+  const [isCroisementOpen, setIsCroisementOpen] = useState(false)
 
   const axeParId = new Map(axes.map((axe) => [axe.id, axe]))
   const idsDeclares = (axesDeclares ?? []).map((axe) => axe.id)
@@ -57,14 +57,14 @@ export function AdminAxes() {
           size="sm"
           variant="secondary"
           className="mt-3"
-          onClick={() => setCroisementOuvert(true)}
+          onClick={() => setIsCroisementOpen(true)}
         >
           <Network /> Voir le calcul croisé
         </Button>
       ) : null}
       <AxesCroisesModale
-        open={croisementOuvert}
-        onClose={() => setCroisementOuvert(false)}
+        open={isCroisementOpen}
+        onClose={() => setIsCroisementOpen(false)}
         declarations={axesDeclares ?? []}
         axes={axes}
       />

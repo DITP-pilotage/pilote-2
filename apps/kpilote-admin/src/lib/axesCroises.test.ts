@@ -2,7 +2,15 @@ import { type ModaliteApiModel } from '@pilote/kpilote-shared/axe'
 import { describe, expect, it } from 'vitest'
 
 import { buildArbre, TOUS_ID } from '@/lib/axeArbre'
-import { type AxeCroise, buildCroisement, celluleKey } from '@/lib/axesCroises'
+import {
+  type AxeCroise,
+  buildCroisement,
+  buildSampleCroise,
+  celluleKey,
+  MAX_COMBINAISONS,
+  withColumnsAxe,
+  withRowsAxe,
+} from '@/lib/axesCroises'
 
 const modalite = (id: string): ModaliteApiModel => ({
   id,
@@ -23,23 +31,23 @@ const saisies = {
   [celluleKey(['SFR', 'TVA'])]: '30',
 }
 
-const axes = ({ premier, second }: { premier: AxeCroise; second: AxeCroise }) => [premier, second]
-const opAvg: AxeCroise = { id: 'OP', nom: 'Opérateur', arbre: operateur, fonction: 'AVG' }
+const operateurAvg: AxeCroise = { id: 'OP', nom: 'Opérateur', arbre: operateur, fonction: 'AVG' }
 const fraudeAvg: AxeCroise = { id: 'FR', nom: 'Fraude', arbre: fraude, fonction: 'AVG' }
+const axeVide: AxeCroise = { id: 'VIDE', nom: 'Vide', arbre: buildArbre([]), fonction: 'SUM' }
 
 describe('buildCroisement', () => {
   it('descend le dernier axe déclaré et combine donc le premier au plus près des saisies', () => {
-    const resolve = buildCroisement({ axes: axes({ premier: opAvg, second: fraudeAvg }), saisies })
+    const resolve = buildCroisement({ axes: [operateurAvg, fraudeAvg], saisies })
 
     const tous = resolve([TOUS_ID, TOUS_ID])
-    expect(tous.axeDescendu).toBe(1)
+    expect(tous.descendedAxe).toBe(1)
     // moyenne(TVA = moyenne(10, 30), IR = moyenne(20)) = moyenne(20, 20)
     expect(tous.value).toBe(20)
   })
 
   it('donne un autre « Tous » en moyenne quand on inverse l’ordre et qu’il manque une combinaison', () => {
     const resolve = buildCroisement({
-      axes: axes({ premier: fraudeAvg, second: opAvg }),
+      axes: [fraudeAvg, operateurAvg],
       saisies: Object.fromEntries(
         Object.entries(saisies).map(([key, value]) => [key.split('|').reverse().join('|'), value]),
       ),
@@ -50,9 +58,67 @@ describe('buildCroisement', () => {
   })
 
   it('sort une combinaison jamais saisie du calcul', () => {
-    const resolve = buildCroisement({ axes: axes({ premier: opAvg, second: fraudeAvg }), saisies })
+    const resolve = buildCroisement({ axes: [operateurAvg, fraudeAvg], saisies })
 
     expect(resolve(['SFR', 'IR']).statut).toBe('absente')
     expect(resolve(['SFR', TOUS_ID])).toMatchObject({ value: 30, present: 1, expected: 1 })
+  })
+
+  it('ne rend pas saisissable le « Tous » d’un axe sans modalité', () => {
+    const resolve = buildCroisement({
+      axes: [operateurAvg, axeVide],
+      saisies: { [celluleKey(['ORANGE', TOUS_ID])]: '10' },
+    })
+
+    expect(resolve(['ORANGE', TOUS_ID])).toMatchObject({ isSaisissable: false, value: null })
+    expect(resolve(['ORANGE', 'X'])).toMatchObject({ isSaisissable: false })
+  })
+})
+
+describe('buildSampleCroise', () => {
+  it('ne remplit rien quand un axe n’a aucune feuille', () => {
+    expect(buildSampleCroise({ axes: [operateurAvg, axeVide], full: true })).toEqual({})
+  })
+
+  it('tire au hasard un échantillon plafonné au-delà du maximum de combinaisons', () => {
+    const grandesFeuilles = Array.from({ length: 200 }, (_, index) => modalite(`M${index}`))
+    const grandAxe = (id: string): AxeCroise => ({
+      id,
+      nom: id,
+      arbre: buildArbre(grandesFeuilles),
+      fonction: 'SUM',
+    })
+
+    const sample = buildSampleCroise({ axes: [grandAxe('A'), grandAxe('B')], full: true })
+
+    expect(Object.keys(sample).length).toBeGreaterThan(0)
+    expect(Object.keys(sample).length).toBeLessThanOrEqual(MAX_COMBINAISONS)
+  })
+})
+
+describe('disposition des axes', () => {
+  it('échange lignes et colonnes quand on met en lignes l’axe des colonnes', () => {
+    expect(withRowsAxe({ layout: { rows: 0, columns: 1 }, index: 1 })).toEqual({
+      rows: 1,
+      columns: 0,
+    })
+  })
+
+  it('échange lignes et colonnes quand on met en colonnes l’axe des lignes', () => {
+    expect(withColumnsAxe({ layout: { rows: 0, columns: 1 }, index: 0 })).toEqual({
+      rows: 1,
+      columns: 0,
+    })
+  })
+
+  it('ne croise jamais un axe avec lui-même quand les colonnes étaient vides', () => {
+    expect(withColumnsAxe({ layout: { rows: 0, columns: null }, index: 0 })).toEqual({
+      rows: 1,
+      columns: 0,
+    })
+    expect(withColumnsAxe({ layout: { rows: 1, columns: null }, index: 1 })).toEqual({
+      rows: 0,
+      columns: 1,
+    })
   })
 })

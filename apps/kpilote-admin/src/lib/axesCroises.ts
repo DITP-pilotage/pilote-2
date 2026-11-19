@@ -1,6 +1,9 @@
-import { type Arbre, type Fonction } from '@/lib/axeArbre'
+import { type FonctionAgregationAxe } from '@pilote/kpilote-shared/axe'
 
-export type AxeCroise = { id: string; nom: string; arbre: Arbre; fonction: Fonction }
+import { aggregate, parseSaisie, seededRandom } from '@/lib/aggregation'
+import { type Arbre, nodesOfKind } from '@/lib/axeArbre'
+
+export type AxeCroise = { id: string; nom: string; arbre: Arbre; fonction: FonctionAgregationAxe }
 
 // Une cellule : pour chaque axe déclaré, l'id d'une modalité ou de « Tous », dans l'ordre de
 // déclaration.
@@ -11,30 +14,28 @@ export type CelluleCroisee = {
   statut: 'saisie' | 'absente' | 'calculee'
   present: number
   expected: number
-  // Index de l'axe que le moteur a descendu pour calculer la cellule (null pour une saisie).
-  axeDescendu: number | null
-  enfants: ReadonlyArray<CelluleIds>
+  // Une feuille sur chaque axe : la seule cellule où l'on saisit.
+  isSaisissable: boolean
+  // Index de l'axe que le moteur a descendu pour calculer la cellule (null sans calcul).
+  descendedAxe: number | null
+  children: ReadonlyArray<CelluleIds>
 }
 
-export const celluleKey = (ids: CelluleIds) => ids.join('|')
+export const celluleKey = (ids: CelluleIds): string => ids.join('|')
 
-const aggregate = ({
-  values,
-  fonction,
-}: {
-  values: ReadonlyArray<number>
-  fonction: Fonction
-}): number => {
-  const sum = values.reduce((total, value) => total + value, 0)
-  return fonction === 'SUM' ? sum : sum / values.length
-}
-
-const parseSaisie = (raw: string | undefined): number | null => {
-  const normalized = raw?.replace(',', '.').trim()
-  if (!normalized) return null
-  const value = Number(normalized)
-  return Number.isNaN(value) ? null : value
-}
+const absenteOf = ({
+  isSaisissable,
+  descendedAxe,
+  children,
+}: Pick<CelluleCroisee, 'isSaisissable' | 'descendedAxe' | 'children'>): CelluleCroisee => ({
+  value: null,
+  statut: 'absente',
+  present: 0,
+  expected: 0,
+  isSaisissable,
+  descendedAxe,
+  children,
+})
 
 // Moteur de la spec multifiltre (§5, plusieurs axes) pour un individu saisi : tant qu'un axe
 // reste à « Tous » ou sur une parente, on descend d'un niveau le dernier axe déclaré concerné,
@@ -46,7 +47,7 @@ export const buildCroisement = ({
 }: {
   axes: ReadonlyArray<AxeCroise>
   saisies: Readonly<Record<string, string>>
-}) => {
+}): ((ids: CelluleIds) => CelluleCroisee) => {
   const cache = new Map<string, CelluleCroisee>()
 
   const resolve = (ids: CelluleIds): CelluleCroisee => {
@@ -59,77 +60,109 @@ export const buildCroisement = ({
   }
 
   const compute = (ids: CelluleIds): CelluleCroisee => {
-    const axeDescendu = ids.findLastIndex(
+    const descendedAxe = ids.findLastIndex(
       (id, index) => (axes[index]?.arbre.get(id)?.children.length ?? 0) > 0,
     )
-    if (axeDescendu === -1) {
-      const value = parseSaisie(saisies[celluleKey(ids)])
-      if (value === null) {
-        return { value, statut: 'absente', present: 0, expected: 0, axeDescendu: null, enfants: [] }
+    if (descendedAxe === -1) {
+      // Un « Tous » sans enfant (axe sans modalité) n'est pas une feuille : rien n'y est saisi.
+      const isSaisissable = ids.every((id, index) => axes[index]?.arbre.get(id)?.kind === 'feuille')
+      const value = isSaisissable ? parseSaisie(saisies[celluleKey(ids)]) : null
+      if (value === null) return absenteOf({ isSaisissable, descendedAxe: null, children: [] })
+      return {
+        value,
+        statut: 'saisie',
+        present: 1,
+        expected: 1,
+        isSaisissable,
+        descendedAxe: null,
+        children: [],
       }
-      return { value, statut: 'saisie', present: 1, expected: 1, axeDescendu: null, enfants: [] }
     }
-    const axe = axes[axeDescendu]
-    const node = axe?.arbre.get(ids[axeDescendu] ?? '')
-    const enfants = (node?.children ?? []).map((child) =>
-      ids.map((id, index) => (index === axeDescendu ? child : id)),
+    const axe = axes[descendedAxe]
+    const node = axe?.arbre.get(ids[descendedAxe] ?? '')
+    const children = (node?.children ?? []).map((child) =>
+      ids.map((id, index) => (index === descendedAxe ? child : id)),
     )
-    const observes = enfants.map(resolve).filter((enfant) => enfant.statut !== 'absente')
-    const values = observes.flatMap((enfant) => (enfant.value === null ? [] : [enfant.value]))
-    if (observes.length === 0) {
-      return { value: null, statut: 'absente', present: 0, expected: 0, axeDescendu, enfants }
-    }
+    const observed = children.map(resolve).filter((child) => child.statut !== 'absente')
+    if (observed.length === 0) return absenteOf({ isSaisissable: false, descendedAxe, children })
+    const values = observed.flatMap((child) => (child.value === null ? [] : [child.value]))
     return {
       value: values.length === 0 ? null : aggregate({ values, fonction: axe?.fonction ?? 'SUM' }),
       statut: 'calculee',
       present: values.length,
-      expected: observes.length,
-      axeDescendu,
-      enfants,
+      expected: observed.length,
+      isSaisissable: false,
+      descendedAxe,
+      children,
     }
   }
 
   return resolve
 }
 
-const leavesOf = (arbre: Arbre) =>
-  [...arbre.values()].filter((node) => node.kind === 'feuille').map((node) => node.id)
+// Plafond de l'exemple : au-delà, on tire au hasard ce nombre de combinaisons de feuilles.
+export const MAX_COMBINAISONS = 20_000
 
-const seededRandom = (seed: number) => {
-  let state = seed
-  return () => {
-    state = (state * 1664525 + 1013904223) % 4294967296
-    return state / 4294967296
-  }
-}
+export const countCombinaisons = (axes: ReadonlyArray<AxeCroise>): number =>
+  axes.reduce(
+    (product, axe) => product * nodesOfKind({ arbre: axe.arbre, kind: 'feuille' }).length,
+    1,
+  )
 
-// Plafond de l'exemple : au-delà, le produit des feuilles devient illisible et coûteux.
-const MAX_COMBINAISONS = 20_000
+const cartesian = (lists: ReadonlyArray<ReadonlyArray<string>>): string[][] =>
+  lists.reduce<string[][]>(
+    (prefixes, list) => prefixes.flatMap((prefix) => list.map((item) => [...prefix, item])),
+    [[]],
+  )
 
 // Un cube creux d'exemple : une partie des combinaisons de feuilles n'est jamais saisie.
-export const buildExempleCroise = ({
+export const buildSampleCroise = ({
   axes,
   seed = 1,
-  complet = false,
+  full = false,
 }: {
   axes: ReadonlyArray<AxeCroise>
   seed?: number
-  // Sans trou : toutes les combinaisons de feuilles ont une valeur.
-  complet?: boolean
+  // Sans trou : toutes les combinaisons de feuilles ont une valeur (dans la limite du plafond).
+  full?: boolean
 }): Record<string, string> => {
   const random = seededRandom(seed)
-  const combinaisons = axes.reduce<string[][]>(
-    (acc, axe) => {
-      const feuilles = leavesOf(axe.arbre)
-      if (feuilles.length === 0 || acc.length * feuilles.length > MAX_COMBINAISONS) return acc
-      return acc.flatMap((prefix) => feuilles.map((feuille) => [...prefix, feuille]))
-    },
-    [[]],
+  const feuillesByAxe = axes.map((axe) =>
+    nodesOfKind({ arbre: axe.arbre, kind: 'feuille' }).map((node) => node.id),
   )
-  if (combinaisons[0]?.length !== axes.length) return {}
+  const pick = (feuilles: ReadonlyArray<string>) =>
+    feuilles[Math.floor(random() * feuilles.length)] ?? ''
+  const combinaisons =
+    countCombinaisons(axes) <= MAX_COMBINAISONS
+      ? cartesian(feuillesByAxe)
+      : Array.from({ length: MAX_COMBINAISONS }, () => feuillesByAxe.map(pick))
   return Object.fromEntries(
     combinaisons
-      .filter(() => complet || random() > 0.25)
+      .filter(() => full || random() > 0.25)
       .map((ids) => [celluleKey(ids), String(Math.round(random() * 80 + 10))]),
   )
+}
+
+// Quel axe va en lignes, lequel en colonnes (null : une seule colonne de valeurs) ; les autres
+// sont fixés sur une modalité.
+export type Layout = { rows: number; columns: number | null }
+
+// Choisir pour les lignes l'axe déjà en colonnes échange les deux.
+export const withRowsAxe = ({ layout, index }: { layout: Layout; index: number }): Layout => {
+  if (index === layout.columns) return { rows: index, columns: layout.rows }
+  return { ...layout, rows: index }
+}
+
+// Choisir pour les colonnes l'axe des lignes échange les deux ; sans axe en colonnes, les lignes
+// prennent un autre axe pour ne jamais croiser un axe avec lui-même.
+export const withColumnsAxe = ({
+  layout,
+  index,
+}: {
+  layout: Layout
+  index: number | null
+}): Layout => {
+  if (index !== layout.rows) return { ...layout, columns: index }
+  const otherAxe = index === 0 ? 1 : 0
+  return { rows: layout.columns ?? otherAxe, columns: index }
 }
