@@ -33,6 +33,9 @@ export function ImportDropZone({
         <p className="mt-1 text-xs text-text-subtle">
           CSV ou Excel · colonnes {colonnes.join(', ')} · 1000 lignes max
         </p>
+        <p className="mt-1 text-xs text-text-subtle">
+          Un tableau organisé autrement est lu par l’assistant IA, puis vous le vérifiez.
+        </p>
       </div>
       <input type="file" accept=".csv,.xlsx" className="hidden" onChange={onInputChange} />
     </label>
