@@ -30,8 +30,7 @@ describe("ListSeancesAVenirQuery", () => {
         date_debut: new Date("2026-11-20T13:00:00Z"),
         nombre_inscrits: 12,
         nombre_places_max: 20,
-        lieu: "Visioconférence",
-        animateurs: "Équipe PILOTE",
+        animateurs: ["Camille Martin", "Alex Durand"],
       });
       await fixtures.formationSeance({
         id: BigInt(12),
@@ -44,7 +43,7 @@ describe("ListSeancesAVenirQuery", () => {
         id: BigInt(13),
         motif_id: BigInt(1),
         date_debut: new Date("2026-11-25T13:00:00Z"),
-        date_annulation: new Date("2026-11-15T08:00:00Z"),
+        cancelled_at: new Date("2026-11-15T08:00:00Z"),
       });
       // Séance commencée une minute avant `maintenant` : elle n'est plus à venir
       await fixtures.formationSeance({
@@ -65,8 +64,7 @@ describe("ListSeancesAVenirQuery", () => {
             formation: INTRODUCTION,
             dateDebut: "2026-11-19T13:00:00.000Z",
             dureeMinutes: 45,
-            lieu: null,
-            animateurs: null,
+            animateurs: [],
             nombreInscrits: 20,
             nombrePlacesMax: 20,
             urlInscription: URL_INSCRIPTION,
@@ -77,8 +75,7 @@ describe("ListSeancesAVenirQuery", () => {
             formation: INTRODUCTION,
             dateDebut: "2026-11-20T13:00:00.000Z",
             dureeMinutes: 45,
-            lieu: "Visioconférence",
-            animateurs: "Équipe PILOTE",
+            animateurs: ["Camille Martin", "Alex Durand"],
             nombreInscrits: 12,
             nombrePlacesMax: 20,
             urlInscription: URL_INSCRIPTION,
@@ -89,8 +86,7 @@ describe("ListSeancesAVenirQuery", () => {
             formation: INTRODUCTION,
             dateDebut: "2026-11-25T13:00:00.000Z",
             dureeMinutes: 45,
-            lieu: null,
-            animateurs: null,
+            animateurs: [],
             nombreInscrits: 0,
             nombrePlacesMax: null,
             urlInscription: URL_INSCRIPTION,

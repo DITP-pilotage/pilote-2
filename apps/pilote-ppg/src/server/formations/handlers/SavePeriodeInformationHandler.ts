@@ -101,7 +101,8 @@ export class SavePeriodeInformationHandler {
   ): Promise<void> {
     const existants = await client.formation_motif.findMany({
       where: { id: { in: motifIds.map((motifId) => BigInt(motifId)) } },
-      select: { id: true },
+      select: { id: true, nom: true, deleted_at: true },
+      orderBy: { nom: "asc" },
     });
     const idsExistants = new Set(existants.map((motif) => Number(motif.id)));
     const introuvables = motifIds.filter(
@@ -110,6 +111,12 @@ export class SavePeriodeInformationHandler {
     if (introuvables.length > 0) {
       throw new BadRequestError(
         `Formations introuvables : ${introuvables.join(", ")}.`,
+      );
+    }
+    const retirees = existants.filter((motif) => motif.deleted_at !== null);
+    if (retirees.length > 0) {
+      throw new BadRequestError(
+        `Formations retirées de RDV-SP : ${retirees.map((motif) => motif.nom).join(", ")}.`,
       );
     }
   }

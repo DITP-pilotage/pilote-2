@@ -306,6 +306,36 @@ describe("SavePeriodeInformationHandler", () => {
   );
 
   it(
+    "refuse des formations retirées de RDV-SP en les citant, sans rien enregistrer",
+    createIntegrationTest(async (prisma) => {
+      // Given
+      await fixtures.formationMotif({ id: BigInt(1) });
+      await fixtures.formationMotif({
+        id: BigInt(2),
+        nom: "Formation retirée",
+        deleted_at: new Date("2026-11-10T00:00:00Z"),
+      });
+
+      // When
+      const execution = handler.execute({
+        commande: {
+          id: null,
+          dateDebut: "2026-12-01",
+          dateFin: "2026-12-31",
+          motifIds: [1, 2],
+        },
+        maintenant,
+      });
+
+      // Then
+      await expect(execution).rejects.toThrow(
+        "Formations retirées de RDV-SP : Formation retirée.",
+      );
+      expect(await prisma.formation_periode_information.findMany()).toEqual([]);
+    }),
+  );
+
+  it(
     "refuse une période qui commence dans le passé",
     createIntegrationTest(async () => {
       // Given

@@ -24,7 +24,7 @@ export class SetMotifProfilHandler {
 
     const [motif, profil] = await Promise.all([
       client.formation_motif.findFirst({
-        where: { id: motifId, date_suppression: null },
+        where: { id: motifId, deleted_at: null },
       }),
       client.profil.findUnique({ where: { code: commande.profilCode } }),
     ]);

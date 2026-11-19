@@ -22,7 +22,7 @@ export class GetMatriceProfilsQuery {
         orderBy: { nom: "asc" },
       }),
       client.formation_motif.findMany({
-        where: { date_suppression: null },
+        where: { deleted_at: null },
         select: {
           id: true,
           nom: true,

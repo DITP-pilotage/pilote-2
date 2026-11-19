@@ -19,7 +19,7 @@ describe("GetMatriceProfilsQuery", () => {
       await fixtures.formationMotif({
         id: BigInt(3),
         nom: "C supprimée",
-        date_suppression: new Date("2026-11-01T00:00:00Z"),
+        deleted_at: new Date("2026-11-01T00:00:00Z"),
       });
       await prisma.formation_motif_profil.createMany({
         data: [
