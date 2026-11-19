@@ -7,6 +7,7 @@ import {
   fetchIndividusForIndicateur,
   fetchSyntheseIndividus,
   fetchTauxProgressionForIndicateur,
+  fetchValeursByCombinaison,
   fetchValeursForIndicateur,
   fetchValeursRemarquablesForIndicateur,
 } from '@/api/indicateurs'
@@ -84,6 +85,23 @@ export const indicateurValeursQueryOptions = (
         individus: [individuId],
         dateTrunc: 'month',
         modalites: [...modalites],
+      }),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
+export const indicateurValeursByCombinaisonQueryOptions = ({
+  indicateurId,
+  individuId,
+}: {
+  indicateurId: string
+  individuId: string
+}) =>
+  queryOptions({
+    queryKey: ['indicateur', indicateurId, 'valeurs-par-combinaison', individuId],
+    queryFn: () =>
+      fetchValeursByCombinaison({
+        indicateurId,
+        params: { individu: individuId, dateTrunc: 'month' },
       }),
     staleTime: DEFAULT_STALE_TIME,
   })
