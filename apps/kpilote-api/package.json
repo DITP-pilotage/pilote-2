@@ -19,6 +19,7 @@
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:albert": "vitest run -c vitest.albert.config.ts",
     "lint": "oxlint --type-aware src scripts && tsc --noEmit && prettier --check .",
     "lint:fix": "oxlint --type-aware src scripts --fix",
     "format": "prettier --write .",
