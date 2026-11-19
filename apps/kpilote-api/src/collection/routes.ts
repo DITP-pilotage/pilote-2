@@ -261,10 +261,12 @@ const createCollectionRoute = createRoute({
 
 collectionRoutes.openapi(createCollectionRoute, async (context) => {
   const body = context.req.valid('json')
-  return withTransaction(() => createCollection(body)).match(
-    (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 201 }),
-    never,
-  )
+  return withTransaction(() => createCollection(body))
+    .andThen((publicId) => getCollectionByPublicId(publicId))
+    .match(
+      (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 201 }),
+      never,
+    )
 })
 
 // --- PUT /collections/:id --------------------------------------------------------
@@ -297,10 +299,12 @@ const upsertCollectionRoute = createRoute({
 collectionRoutes.openapi(upsertCollectionRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  return withTransaction(() => upsertCollection(id, body)).match(
-    (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
-    never,
-  )
+  return withTransaction(() => upsertCollection(id, body))
+    .andThen(() => getCollectionByPublicId(id))
+    .match(
+      (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
+      never,
+    )
 })
 
 // --- DELETE /collections/:id -----------------------------------------------------
@@ -366,18 +370,20 @@ const describeAddCollectionIndicateurError = (
 collectionRoutes.openapi(addCollectionIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  return withTransaction(() => addCollectionIndicateur(id, body)).match(
-    (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
-    (error) => {
-      const { status, message, details } = describeAddCollectionIndicateurError(error)
-      return jsonResponseError({
-        context,
-        error: { code: error.type, message, details },
-        schema: ErrorApiModelSchema,
-        status,
-      })
-    },
-  )
+  return withTransaction(() => addCollectionIndicateur(id, body))
+    .andThen(() => getCollectionByPublicId(id))
+    .match(
+      (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
+      (error) => {
+        const { status, message, details } = describeAddCollectionIndicateurError(error)
+        return jsonResponseError({
+          context,
+          error: { code: error.type, message, details },
+          schema: ErrorApiModelSchema,
+          status,
+        })
+      },
+    )
 })
 
 // --- PATCH /collections/:id/indicateurs/:indicateurId ----------------------------
@@ -411,10 +417,12 @@ const updateCollectionIndicateurPonderationRoute = createRoute({
 collectionRoutes.openapi(updateCollectionIndicateurPonderationRoute, async (context) => {
   const { id, indicateurId } = context.req.valid('param')
   const body = context.req.valid('json')
-  return withTransaction(() => updateCollectionIndicateurPonderation(id, indicateurId, body)).match(
-    (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
-    never,
-  )
+  return withTransaction(() => updateCollectionIndicateurPonderation(id, indicateurId, body))
+    .andThen(() => getCollectionByPublicId(id))
+    .match(
+      (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
+      never,
+    )
 })
 
 // --- DELETE /collections/:id/indicateurs/:indicateurId ---------------------------
@@ -483,18 +491,20 @@ const describeAddCollectionResponsableError = (
 collectionRoutes.openapi(addCollectionResponsableRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  return withTransaction(() => addCollectionResponsable(id, body)).match(
-    (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
-    (error) => {
-      const { status, message, details } = describeAddCollectionResponsableError(error)
-      return jsonResponseError({
-        context,
-        error: { code: error.type, message, details },
-        schema: ErrorApiModelSchema,
-        status,
-      })
-    },
-  )
+  return withTransaction(() => addCollectionResponsable(id, body))
+    .andThen(() => getCollectionByPublicId(id))
+    .match(
+      (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
+      (error) => {
+        const { status, message, details } = describeAddCollectionResponsableError(error)
+        return jsonResponseError({
+          context,
+          error: { code: error.type, message, details },
+          schema: ErrorApiModelSchema,
+          status,
+        })
+      },
+    )
 })
 
 // --- DELETE /collections/:id/responsables/:utilisateurId -------------------------

@@ -1,12 +1,8 @@
-import {
-  type AddCollectionIndicateurBody,
-  type CollectionApiModel,
-} from '@pilote/kpilote-shared/collection'
+import { type AddCollectionIndicateurBody } from '@pilote/kpilote-shared/collection'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
-import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { MESSAGE_ADMIN } from '@/collection/utils'
 
 export type AddCollectionIndicateurError = { type: 'INDICATEUR_DEJA_AFFECTE' }
@@ -46,5 +42,4 @@ const performAdd = async (
 export const addCollectionIndicateur = (
   publicId: string,
   body: AddCollectionIndicateurBody,
-): ResultAsync<CollectionApiModel, AddCollectionIndicateurError> =>
-  new ResultAsync(performAdd(publicId, body)).andThen(() => getCollectionByPublicId(publicId))
+): ResultAsync<void, AddCollectionIndicateurError> => new ResultAsync(performAdd(publicId, body))

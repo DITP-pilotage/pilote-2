@@ -2,9 +2,14 @@ import { describe, expect, it } from 'vitest'
 
 import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { revokeIndicateurPermission } from '@/permission/commands/revokeIndicateurPermission'
+import { getPrincipalPermissions } from '@/permission/queries/getPrincipalPermissions'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { runAsAdmin } from '@/test/runAsPrincipal'
+
+const revokeIndicateurPermissionAndRead = (
+  input: Parameters<typeof revokeIndicateurPermission>[0],
+) => revokeIndicateurPermission(input).andThen(() => getPrincipalPermissions(input.principalId))
 
 const CALLER_ID = '00000000-0000-0000-0000-0000000000a1'
 
@@ -30,7 +35,7 @@ describe.concurrent('revokeIndicateurPermission', () => {
       await grantReadWrite(target.id, ind.publicId)
 
       const result = await runAsAdmin(CALLER_ID, () =>
-        revokeIndicateurPermission({
+        revokeIndicateurPermissionAndRead({
           principalId: target.id,
           indicateurPublicId: ind.publicId,
           action: IndicateurPermissionAction.WRITE_DATA,
@@ -51,7 +56,10 @@ describe.concurrent('revokeIndicateurPermission', () => {
       await grantReadWrite(target.id, ind.publicId)
 
       const result = await runAsAdmin(CALLER_ID, () =>
-        revokeIndicateurPermission({ principalId: target.id, indicateurPublicId: ind.publicId }),
+        revokeIndicateurPermissionAndRead({
+          principalId: target.id,
+          indicateurPublicId: ind.publicId,
+        }),
       )
 
       expect(result._unsafeUnwrap().indicateurs).toEqual([])

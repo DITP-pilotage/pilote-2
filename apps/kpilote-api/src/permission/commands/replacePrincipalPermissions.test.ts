@@ -4,9 +4,14 @@ import { ForbiddenError, NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { CollectionPermissionAction, IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { replacePrincipalPermissions } from '@/permission/commands/replacePrincipalPermissions'
+import { getPrincipalPermissions } from '@/permission/queries/getPrincipalPermissions'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
+
+const replacePrincipalPermissionsAndRead = (
+  input: Parameters<typeof replacePrincipalPermissions>[0],
+) => replacePrincipalPermissions(input).andThen(() => getPrincipalPermissions(input.principalId))
 
 const CALLER_ID = '00000000-0000-0000-0000-0000000000b1'
 
@@ -31,7 +36,7 @@ describe.concurrent('replacePrincipalPermissions', () => {
       )
 
       const result = await runAsAdmin(CALLER_ID, () =>
-        replacePrincipalPermissions({
+        replacePrincipalPermissionsAndRead({
           principalId: target.id,
           collections: [],
           indicateurs: [{ publicId: garde.publicId, actions: [IndicateurPermissionAction.READ] }],
@@ -61,7 +66,7 @@ describe.concurrent('replacePrincipalPermissions', () => {
       })
 
       const result = await runAsAdmin(CALLER_ID, () =>
-        replacePrincipalPermissions({
+        replacePrincipalPermissionsAndRead({
           principalId: target.id,
           collections: [],
           indicateurs: [
@@ -99,8 +104,8 @@ describe.concurrent('replacePrincipalPermissions', () => {
         ],
       }
 
-      const premier = await runAsAdmin(CALLER_ID, () => replacePrincipalPermissions(body))
-      const second = await runAsAdmin(CALLER_ID, () => replacePrincipalPermissions(body))
+      const premier = await runAsAdmin(CALLER_ID, () => replacePrincipalPermissionsAndRead(body))
+      const second = await runAsAdmin(CALLER_ID, () => replacePrincipalPermissionsAndRead(body))
 
       expect(second._unsafeUnwrap()).toEqual(premier._unsafeUnwrap())
     }),
@@ -113,7 +118,7 @@ describe.concurrent('replacePrincipalPermissions', () => {
       const ind = await fixtures.indicateur({ nom: 'Sans lecture' })
 
       const result = await runAsAdmin(CALLER_ID, () =>
-        replacePrincipalPermissions({
+        replacePrincipalPermissionsAndRead({
           principalId: target.id,
           collections: [],
           indicateurs: [
@@ -145,7 +150,7 @@ describe.concurrent('replacePrincipalPermissions', () => {
 
       await expect(
         runAsAdmin(CALLER_ID, () =>
-          replacePrincipalPermissions({
+          replacePrincipalPermissionsAndRead({
             principalId: target.id,
             collections: [],
             indicateurs: [
@@ -175,7 +180,7 @@ describe.concurrent('replacePrincipalPermissions', () => {
       })
 
       const result = await runAsAdmin(CALLER_ID, () =>
-        replacePrincipalPermissions({
+        replacePrincipalPermissionsAndRead({
           principalId: target.id,
           collections: [],
           indicateurs: [
@@ -200,7 +205,7 @@ describe.concurrent('replacePrincipalPermissions', () => {
       const collection = await fixtures.collection({ nom: 'En double' })
 
       const result = await runAsAdmin(CALLER_ID, () =>
-        replacePrincipalPermissions({
+        replacePrincipalPermissionsAndRead({
           principalId: target.id,
           collections: [
             { publicId: collection.publicId, actions: [CollectionPermissionAction.READ] },
@@ -223,7 +228,7 @@ describe.concurrent('replacePrincipalPermissions', () => {
 
       await expect(
         runAsContributor(CALLER_ID, () =>
-          replacePrincipalPermissions({
+          replacePrincipalPermissionsAndRead({
             principalId: target.id,
             collections: [],
             indicateurs: [],
@@ -243,7 +248,7 @@ describe.concurrent('replacePrincipalPermissions', () => {
       })
 
       const result = await runAsAdmin(CALLER_ID, () =>
-        replacePrincipalPermissions({
+        replacePrincipalPermissionsAndRead({
           principalId: target.id,
           collections: [
             { publicId: collection.publicId, actions: [CollectionPermissionAction.READ] },

@@ -3,9 +3,14 @@ import { describe, expect, it } from 'vitest'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { CollectionPermissionAction } from '@/generated/prisma/enums'
 import { revokeCollectionPermission } from '@/permission/commands/revokeCollectionPermission'
+import { getPrincipalPermissions } from '@/permission/queries/getPrincipalPermissions'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
+
+const revokeCollectionPermissionAndRead = (
+  input: Parameters<typeof revokeCollectionPermission>[0],
+) => revokeCollectionPermission(input).andThen(() => getPrincipalPermissions(input.principalId))
 
 const CALLER_ID = '00000000-0000-0000-0000-0000000000a1'
 
@@ -22,7 +27,10 @@ describe.concurrent('revokeCollectionPermission', () => {
       })
 
       const result = await runAsAdmin(CALLER_ID, () =>
-        revokeCollectionPermission({ principalId: target.id, collectionPublicId: dos.publicId }),
+        revokeCollectionPermissionAndRead({
+          principalId: target.id,
+          collectionPublicId: dos.publicId,
+        }),
       )
 
       expect(result._unsafeUnwrap().collections).toEqual([])
@@ -36,7 +44,7 @@ describe.concurrent('revokeCollectionPermission', () => {
       const dos = await fixtures.collection({})
       await expect(
         runAsContributor(CALLER_ID, () =>
-          revokeCollectionPermission({
+          revokeCollectionPermissionAndRead({
             principalId: target.id,
             collectionPublicId: dos.publicId,
             action: CollectionPermissionAction.READ,

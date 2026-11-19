@@ -1,13 +1,9 @@
-import {
-  type CollectionApiModel,
-  type UpsertCollectionBody,
-} from '@pilote/kpilote-shared/collection'
+import { type UpsertCollectionBody } from '@pilote/kpilote-shared/collection'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
-import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { MESSAGE_ADMIN } from '@/collection/utils'
 
 // Seuls les champs scalaires sont remplacés : les affectations (indicateurs,
@@ -27,7 +23,4 @@ const performUpsert = async (publicId: string, body: UpsertCollectionBody): Prom
 export const upsertCollection = (
   publicId: string,
   body: UpsertCollectionBody,
-): ResultAsync<CollectionApiModel, never> =>
-  ResultAsync.fromSafePromise(performUpsert(publicId, body)).andThen(() =>
-    getCollectionByPublicId(publicId),
-  )
+): ResultAsync<void, never> => ResultAsync.fromSafePromise(performUpsert(publicId, body))
