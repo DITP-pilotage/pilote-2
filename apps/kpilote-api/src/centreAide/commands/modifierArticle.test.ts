@@ -3,7 +3,7 @@ import { uuidv7 } from 'uuidv7'
 import { describe, expect, it } from 'vitest'
 
 import { modifierArticleCentreAide } from '@/centreAide/commands/modifierArticle'
-import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
+import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { type ArticleCentreAideType } from '@/generated/prisma/enums'
 import { fixtures } from '@/test/fixtures'
@@ -99,11 +99,10 @@ describe.concurrent('modifierArticleCentreAide', () => {
       const page = await seed(admin.id, { type: 'PAGE' })
       const cible = await seed(admin.id, { type: 'PAGE' })
 
-      await expect(
-        runAsAdmin(admin.id, () =>
-          modifierArticleCentreAide(page.id, { ...base, parentId: cible.id }),
-        ),
-      ).rejects.toBeInstanceOf(ValidationError)
+      const result = await runAsAdmin(admin.id, () =>
+        modifierArticleCentreAide(page.id, { ...base, parentId: cible.id }),
+      )
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'PARENT_PAS_UN_GROUPE' })
     }),
   )
 
@@ -114,11 +113,10 @@ describe.concurrent('modifierArticleCentreAide', () => {
       const parent = await seed(admin.id, { type: 'GROUPE' })
       const enfant = await seed(admin.id, { type: 'GROUPE', parentId: parent.id })
 
-      await expect(
-        runAsAdmin(admin.id, () =>
-          modifierArticleCentreAide(parent.id, { ...base, parentId: enfant.id }),
-        ),
-      ).rejects.toBeInstanceOf(ValidationError)
+      const result = await runAsAdmin(admin.id, () =>
+        modifierArticleCentreAide(parent.id, { ...base, parentId: enfant.id }),
+      )
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'DEPLACEMENT_CIRCULAIRE' })
     }),
   )
 

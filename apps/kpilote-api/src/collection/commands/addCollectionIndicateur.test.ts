@@ -49,9 +49,10 @@ describe.concurrent('addCollectionIndicateur', () => {
       await fixtures.collection({ publicId, indicateurs: [{ publicId: indicateurId }] })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
-      await expect(
-        runAsAdmin(apiKey.id, () => addCollectionIndicateur(publicId, { indicateurId })),
-      ).rejects.toThrow('Cet indicateur est déjà affecté à la collection')
+      const result = await runAsAdmin(apiKey.id, () =>
+        addCollectionIndicateur(publicId, { indicateurId }),
+      )
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'INDICATEUR_DEJA_AFFECTE' })
     }),
   )
 

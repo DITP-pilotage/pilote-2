@@ -52,8 +52,14 @@ import {
   erreur409,
 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
-import { addCollectionIndicateur } from '@/collection/commands/addCollectionIndicateur'
-import { addCollectionResponsable } from '@/collection/commands/addCollectionResponsable'
+import {
+  addCollectionIndicateur,
+  type AddCollectionIndicateurError,
+} from '@/collection/commands/addCollectionIndicateur'
+import {
+  addCollectionResponsable,
+  type AddCollectionResponsableError,
+} from '@/collection/commands/addCollectionResponsable'
 import { createCollection } from '@/collection/commands/createCollection'
 import { deleteCollection } from '@/collection/commands/deleteCollection'
 import { removeCollectionIndicateur } from '@/collection/commands/removeCollectionIndicateur'
@@ -348,12 +354,29 @@ const addCollectionIndicateurRoute = createRoute({
   },
 })
 
+const describeAddCollectionIndicateurError = (
+  error: AddCollectionIndicateurError,
+): { status: 409; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'INDICATEUR_DEJA_AFFECTE':
+      return { status: 409, message: 'Cet indicateur est déjà affecté à la collection' }
+  }
+}
+
 collectionRoutes.openapi(addCollectionIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
   return withTransaction(() => addCollectionIndicateur(id, body)).match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
-    never,
+    (error) => {
+      const { status, message, details } = describeAddCollectionIndicateurError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
   )
 })
 
@@ -448,12 +471,29 @@ const addCollectionResponsableRoute = createRoute({
   },
 })
 
+const describeAddCollectionResponsableError = (
+  error: AddCollectionResponsableError,
+): { status: 409; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'RESPONSABLE_DEJA_AFFECTE':
+      return { status: 409, message: 'Cet utilisateur est déjà responsable de la collection' }
+  }
+}
+
 collectionRoutes.openapi(addCollectionResponsableRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
   return withTransaction(() => addCollectionResponsable(id, body)).match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
-    never,
+    (error) => {
+      const { status, message, details } = describeAddCollectionResponsableError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
   )
 })
 

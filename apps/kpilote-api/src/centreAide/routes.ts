@@ -8,8 +8,14 @@ import {
 } from '@pilote/kpilote-shared/centreAide'
 
 import { creerArticleCentreAide } from '@/centreAide/commands/creerArticle'
-import { modifierArticleCentreAide } from '@/centreAide/commands/modifierArticle'
-import { supprimerArticleCentreAide } from '@/centreAide/commands/supprimerArticle'
+import {
+  modifierArticleCentreAide,
+  type ModifierArticleError,
+} from '@/centreAide/commands/modifierArticle'
+import {
+  supprimerArticleCentreAide,
+  type SupprimerArticleError,
+} from '@/centreAide/commands/supprimerArticle'
 import { getArticleCentreAideById } from '@/centreAide/queries/getArticleById'
 import { listerArticlesCentreAide } from '@/centreAide/queries/listerArticles'
 import { listerArticlesCentreAideCorbeille } from '@/centreAide/queries/listerArticlesCorbeille'
@@ -17,8 +23,9 @@ import { listerArticlesCentreAidePublies } from '@/centreAide/queries/listerArti
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
-import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import {
+  ErrorApiModelSchema,
   erreur400,
   erreur403,
   erreur404,
@@ -207,19 +214,60 @@ centreAideRoutes.openapi(creerRoute, async (context) => {
   )
 })
 
+const describeModifierArticleError = (
+  error: ModifierArticleError,
+): { status: 400; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'PARENT_INTROUVABLE':
+      return { status: 400, message: 'Le parent cible est introuvable.' }
+    case 'PARENT_PAS_UN_GROUPE':
+      return { status: 400, message: 'Un article ne peut être rangé que dans un groupe.' }
+    case 'DEPLACEMENT_CIRCULAIRE':
+      return { status: 400, message: 'Déplacement circulaire impossible.' }
+  }
+}
+
 centreAideRoutes.openapi(modifierRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
   return withTransaction(() => modifierArticleCentreAide(id, body)).match(
     (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
-    never,
+    (error) => {
+      const { status, message, details } = describeModifierArticleError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
   )
 })
+
+const describeSupprimerArticleError = (
+  error: SupprimerArticleError,
+): { status: 409; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'ARTICLE_HORS_CORBEILLE':
+      return {
+        status: 409,
+        message: 'L’article doit être en corbeille avant sa suppression définitive.',
+      }
+  }
+}
 
 centreAideRoutes.openapi(supprimerRoute, async (context) => {
   const { id } = context.req.valid('param')
   return withTransaction(() => supprimerArticleCentreAide(id)).match(
     () => context.body(null, 204),
-    never,
+    (error) => {
+      const { status, message, details } = describeSupprimerArticleError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
   )
 })

@@ -5,7 +5,10 @@ import {
 } from '@pilote/kpilote-shared/feature'
 
 import { modifierEtatFeature } from '@/feature/commands/modifierEtatFeature'
-import { remplacerUtilisateursAutorises } from '@/feature/commands/remplacerUtilisateursAutorises'
+import {
+  remplacerUtilisateursAutorises,
+  type RemplacerUtilisateursAutorisesError,
+} from '@/feature/commands/remplacerUtilisateursAutorises'
 import {
   FeatureDetailApiModelSchema,
   FeatureListApiModelSchema,
@@ -17,7 +20,8 @@ import { listerFeatures } from '@/feature/queries/listerFeatures'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
-import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { ErrorApiModelSchema } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 
 export const featureRoutes = createOpenApiHono()
@@ -99,11 +103,32 @@ const remplacerUtilisateursRoute = createRoute({
   responses: reponseDetailFeature,
 })
 
+const describeRemplacerUtilisateursAutorisesError = (
+  error: RemplacerUtilisateursAutorisesError,
+): { status: 400; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'UTILISATEURS_INCONNUS':
+      return {
+        status: 400,
+        message: 'Utilisateurs inconnus',
+        details: { unknownUtilisateurIds: error.utilisateurs },
+      }
+  }
+}
+
 featureRoutes.openapi(remplacerUtilisateursRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
   return withTransaction(() => remplacerUtilisateursAutorises(id, body)).match(
     (data) => jsonResponseOk({ context, data, schema: FeatureDetailApiModelSchema, status: 200 }),
-    never,
+    (error) => {
+      const { status, message, details } = describeRemplacerUtilisateursAutorisesError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
   )
 })

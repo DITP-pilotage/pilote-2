@@ -4,13 +4,17 @@ import {
   modifierNiveauConfianceBodySchema,
 } from '@pilote/kpilote-shared/niveauConfiance'
 
-import { creerNiveauConfiance } from '@/niveauConfiance/commands/creerNiveauConfiance'
+import {
+  creerNiveauConfiance,
+  type CreerNiveauConfianceError,
+} from '@/niveauConfiance/commands/creerNiveauConfiance'
 import { modifierNiveauConfiance } from '@/niveauConfiance/commands/modifierNiveauConfiance'
 import { NiveauConfianceApiModelSchema, reponseNiveauConfiance } from '@/niveauConfiance/openapi'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
-import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { ErrorApiModelSchema } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 
 export const niveauConfianceRoutes = createOpenApiHono()
@@ -32,11 +36,28 @@ const creerRoute = createRoute({
   responses: reponseNiveauConfiance,
 })
 
+const describeCreerNiveauConfianceError = (
+  error: CreerNiveauConfianceError,
+): { status: 400; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'COMMENTAIRE_PAS_CONFIANCE':
+      return { status: 400, message: 'Le commentaire ciblé n’est pas de type CONFIANCE' }
+  }
+}
+
 niveauConfianceRoutes.openapi(creerRoute, async (context) => {
   const body = context.req.valid('json')
   return withTransaction(() => creerNiveauConfiance(body)).match(
     (data) => jsonResponseOk({ context, data, schema: NiveauConfianceApiModelSchema, status: 200 }),
-    never,
+    (error) => {
+      const { status, message, details } = describeCreerNiveauConfianceError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
   )
 })
 

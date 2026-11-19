@@ -2,30 +2,30 @@ import {
   type FeatureDetailApiModel,
   type RemplacerUtilisateursAutorisesBody,
 } from '@pilote/kpilote-shared/feature'
-import { ResultAsync } from 'neverthrow'
+import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
-import { ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { featureInclude, toFeatureDetailApiModel } from '@/feature/utils'
+
+export type RemplacerUtilisateursAutorisesError = {
+  type: 'UTILISATEURS_INCONNUS'
+  utilisateurs: string[]
+}
 
 // findUniqueOrThrow lève Prisma P2025 (→ 404) si la feature n'existe pas.
 const ensureFeatureExiste = async (id: string): Promise<void> => {
   await db().feature.findUniqueOrThrow({ where: { id }, select: { id: true } })
 }
 
-const resoudreUtilisateurs = async (utilisateurIds: ReadonlyArray<string>): Promise<string[]> => {
+const resoudreUtilisateurs = async (
+  utilisateurIds: ReadonlyArray<string>,
+): Promise<{ resolus: string[]; inconnus: string[] }> => {
   const idsUniques = [...new Set(utilisateurIds)]
-  if (idsUniques.length === 0) return []
+  if (idsUniques.length === 0) return { resolus: [], inconnus: [] }
   const utilisateurs = await db().utilisateur.findMany({ where: { id: { in: idsUniques } } })
   const idsTrouves = new Set(utilisateurs.map((utilisateur) => utilisateur.id))
-  const idsInconnus = idsUniques.filter((id) => !idsTrouves.has(id))
-  if (idsInconnus.length > 0) {
-    throw new ValidationError('Utilisateurs inconnus', {
-      unknownUtilisateurIds: idsInconnus.sort(),
-    })
-  }
-  return idsUniques
+  return { resolus: idsUniques, inconnus: idsUniques.filter((id) => !idsTrouves.has(id)).sort() }
 }
 
 const remplacerLiaisons = async (
@@ -56,20 +56,23 @@ const remplacerLiaisons = async (
 const performRemplacer = async (
   id: string,
   body: RemplacerUtilisateursAutorisesBody,
-): Promise<FeatureDetailApiModel> => {
+): Promise<Result<FeatureDetailApiModel, RemplacerUtilisateursAutorisesError>> => {
   ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
   await ensureFeatureExiste(id)
-  const utilisateurIds = await resoudreUtilisateurs(body.utilisateurIds)
-  await remplacerLiaisons(id, utilisateurIds)
+  const utilisateurs = await resoudreUtilisateurs(body.utilisateurIds)
+  if (utilisateurs.inconnus.length > 0) {
+    return err({ type: 'UTILISATEURS_INCONNUS', utilisateurs: utilisateurs.inconnus })
+  }
+  await remplacerLiaisons(id, utilisateurs.resolus)
   const row = await db().feature.findUniqueOrThrow({
     where: { id },
     include: featureInclude,
   })
-  return toFeatureDetailApiModel(row)
+  return ok(toFeatureDetailApiModel(row))
 }
 
 export const remplacerUtilisateursAutorises = (
   id: string,
   body: RemplacerUtilisateursAutorisesBody,
-): ResultAsync<FeatureDetailApiModel, never> =>
-  ResultAsync.fromSafePromise(performRemplacer(id, body))
+): ResultAsync<FeatureDetailApiModel, RemplacerUtilisateursAutorisesError> =>
+  new ResultAsync(performRemplacer(id, body))

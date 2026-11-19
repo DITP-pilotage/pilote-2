@@ -2,13 +2,17 @@ import {
   type ArticleCentreAideApiModel,
   type ModifierArticleBody,
 } from '@pilote/kpilote-shared/centreAide'
-import { ResultAsync } from 'neverthrow'
+import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { htmlToPlainText, MESSAGE_ADMIN, toArticleCentreAideApiModel } from '@/centreAide/utils'
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
+
+export type ModifierArticleError =
+  | { type: 'PARENT_INTROUVABLE' }
+  | { type: 'PARENT_PAS_UN_GROUPE' }
+  | { type: 'DEPLACEMENT_CIRCULAIRE' }
 
 // Remplacement complet et idempotent de l'état éditable d'un article. Le client possède
 // l'instantané publié (titre/titreAffiche/contenu) ; le serveur dérive contenuTexte et
@@ -17,7 +21,7 @@ import { db } from '@/framework/persistence/dbStore'
 const performModifier = async (
   id: string,
   body: ModifierArticleBody,
-): Promise<ArticleCentreAideApiModel> => {
+): Promise<Result<ArticleCentreAideApiModel, ModifierArticleError>> => {
   ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
   const principalId = requireCurrentPrincipalId()
   const { parentId, ordre } = body
@@ -32,17 +36,15 @@ const performModifier = async (
 
   if (parentId !== null) {
     const parent = parId.get(parentId)
-    if (!parent) throw new ValidationError('Le parent cible est introuvable.')
-    if (parent.type !== 'GROUPE') {
-      throw new ValidationError('Un article ne peut être rangé que dans un groupe.')
-    }
+    if (!parent) return err({ type: 'PARENT_INTROUVABLE' })
+    if (parent.type !== 'GROUPE') return err({ type: 'PARENT_PAS_UN_GROUPE' })
     // Interdit de déplacer un noeud dans lui-même ou l'un de ses descendants.
     for (
       let courant: string | null = parentId;
       courant;
       courant = parId.get(courant)?.parentId ?? null
     ) {
-      if (courant === id) throw new ValidationError('Déplacement circulaire impossible.')
+      if (courant === id) return err({ type: 'DEPLACEMENT_CIRCULAIRE' })
     }
   }
 
@@ -79,11 +81,11 @@ const performModifier = async (
   }
 
   const maj = await db().articleCentreAide.findUniqueOrThrow({ where: { id } })
-  return toArticleCentreAideApiModel(maj)
+  return ok(toArticleCentreAideApiModel(maj))
 }
 
 export const modifierArticleCentreAide = (
   id: string,
   body: ModifierArticleBody,
-): ResultAsync<ArticleCentreAideApiModel, never> =>
-  ResultAsync.fromSafePromise(performModifier(id, body))
+): ResultAsync<ArticleCentreAideApiModel, ModifierArticleError> =>
+  new ResultAsync(performModifier(id, body))
