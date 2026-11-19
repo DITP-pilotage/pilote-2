@@ -49,5 +49,4 @@ const performDelete = async ({
 export const deleteModalite = (params: {
   axePublicId: string
   publicId: string
-}): ResultAsync<void, DeleteModaliteError> =>
-  ResultAsync.fromSafePromise(performDelete(params)).andThen((r) => r)
+}): ResultAsync<void, DeleteModaliteError> => new ResultAsync(performDelete(params))

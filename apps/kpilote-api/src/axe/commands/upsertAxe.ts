@@ -76,5 +76,4 @@ const performUpsert = async ({
 export const upsertAxe = (params: {
   publicId: string
   body: UpsertAxeBody
-}): ResultAsync<void, UpsertAxeError> =>
-  ResultAsync.fromSafePromise(performUpsert(params)).andThen((r) => r)
+}): ResultAsync<void, UpsertAxeError> => new ResultAsync(performUpsert(params))

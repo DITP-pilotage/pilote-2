@@ -44,5 +44,4 @@ const performDelete = async ({
 
 export const deleteValeurAvancement = (
   params: DeleteValeurAvancementParams,
-): ResultAsync<void, DeleteValeurAvancementError> =>
-  ResultAsync.fromSafePromise(performDelete(params)).andThen((result) => result)
+): ResultAsync<void, DeleteValeurAvancementError> => new ResultAsync(performDelete(params))
