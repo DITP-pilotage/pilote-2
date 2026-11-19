@@ -3,8 +3,8 @@ import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
 import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
-import { Upload } from 'lucide-react'
-import { startTransition, useCallback, useEffect } from 'react'
+import { Table2, Upload } from 'lucide-react'
+import { startTransition, useCallback, useEffect, useState } from 'react'
 import { z } from 'zod'
 
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
@@ -15,6 +15,7 @@ import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
 import { IndicateurResultatsTab } from '@/components/indicateurs/IndicateurResultatsTab'
 import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelect'
+import { TableauValeursModal } from '@/components/indicateurs/tableau-valeurs/TableauValeursModal'
 import { useImportModal } from '@/components/import-valeurs/useImportModal'
 import { usePageFileDrop } from '@/components/import-valeurs/usePageFileDrop'
 import { BackLink } from '@pilote/kpilote-ui/BackLink'
@@ -40,6 +41,7 @@ import {
   prefetchIndicateurValeursForIndividu,
 } from '@/queries/indicateurs'
 import { useCanWriteDataIndicateur } from '@/queries/mePermissions'
+import { useFeature } from '@/queries/meFeature'
 
 const paramsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -159,6 +161,8 @@ function IndicateurDetailComponent() {
 
   const canWrite = useCanWriteDataIndicateur(id)
   const { open, target } = useImportModal()
+  const [isTableauOpen, setIsTableauOpen] = useState(false)
+  const hasTableauValeurs = useFeature('TABLEAU_VALEURS')
 
   const onFile = useCallback(
     (file: File) =>
@@ -269,7 +273,21 @@ function IndicateurDetailComponent() {
                   />
                 </div>
               ))}
+              {hasTableauValeurs && axes.length > 0 ? (
+                <Button variant="secondary" size="md" onClick={() => setIsTableauOpen(true)}>
+                  <Table2 />
+                  Tableau des valeurs
+                </Button>
+              ) : null}
             </div>
+            <TableauValeursModal
+              open={isTableauOpen}
+              onClose={() => setIsTableauOpen(false)}
+              indicateurId={id}
+              individuId={individuId}
+              referentielIds={referentielIds}
+              declarations={indicateur.axes}
+            />
             <IndicateurResultatsTab
               indicateurId={id}
               individuId={individuId}

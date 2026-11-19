@@ -144,6 +144,14 @@
       "types": "./src/valeurAvancement.ts",
       "default": "./src/valeurAvancement.ts"
     },
+    "./modaliteTree": {
+      "types": "./src/modaliteTree.ts",
+      "default": "./src/modaliteTree.ts"
+    },
+    "./valeursCombinaison": {
+      "types": "./src/valeursCombinaison.ts",
+      "default": "./src/valeursCombinaison.ts"
+    },
     "./valeurImport": {
       "types": "./src/valeurImport.ts",
       "default": "./src/valeurImport.ts"
