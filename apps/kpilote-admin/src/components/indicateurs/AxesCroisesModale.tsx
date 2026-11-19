@@ -1,12 +1,14 @@
 import { type AxeApiModel } from '@pilote/kpilote-shared/axe'
 import { type DeclarationAxeIndicateur } from '@pilote/kpilote-shared/indicateur'
 import { useSuspenseQueries } from '@tanstack/react-query'
-import { ChevronDown, ChevronRight, Dices, Eraser, X } from 'lucide-react'
+import { AlertTriangle, ChevronDown, ChevronRight, Dices, Eraser, X } from 'lucide-react'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
 
 import { Button } from '@pilote/kpilote-ui/Button'
 import { Dialog } from '@pilote/kpilote-ui/Dialog'
+import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import {
+  ancestorsOf,
   type Arbre,
   type ArbreNode,
   buildArbre,
@@ -157,24 +159,67 @@ const rowsOf = ({
   collapsed: ReadonlySet<string>
 }) => (arbre ? depthFirst({ arbre, id: TOUS_ID, isOpen: (id) => !collapsed.has(id) }) : [])
 
+const firstFeuilleOf = (arbre: Arbre) =>
+  depthFirst({ arbre, id: TOUS_ID, isOpen: () => true }).find((node) => node.kind === 'feuille')?.id
+
+const countFeuilles = (arbre: Arbre) =>
+  [...arbre.values()].filter((node) => node.kind === 'feuille').length
+
+type Disposition = { lignes: number; colonnes: number | null }
+
+// Choisir comme lignes l'axe déjà en colonnes (ou l'inverse) échange les deux.
+const withLignes = ({ disposition, index }: { disposition: Disposition; index: number }) => {
+  if (index === disposition.colonnes) return { lignes: index, colonnes: disposition.lignes }
+  return { ...disposition, lignes: index }
+}
+
+const withColonnes = ({
+  disposition,
+  index,
+}: {
+  disposition: Disposition
+  index: number | null
+}) => {
+  if (index === disposition.lignes)
+    return { lignes: disposition.colonnes ?? index, colonnes: index }
+  return { ...disposition, colonnes: index }
+}
+
 function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
   const [seed, setSeed] = useState(1)
   const [saisies, setSaisies] = useState(() => buildExempleCroise({ axes }))
-  const [rowsCollapsed, setRowsCollapsed] = useState(() => initialCollapsed(axes[0]?.arbre))
-  const [colsCollapsed, setColsCollapsed] = useState(() => initialCollapsed(axes[1]?.arbre))
-  const [tranches, setTranches] = useState<ReadonlyArray<string>>(() => axes.map(() => TOUS_ID))
+  const [disposition, setDisposition] = useState<Disposition>({
+    lignes: 0,
+    colonnes: axes.length > 1 ? 1 : null,
+  })
+  const [collapsedByAxe, setCollapsedByAxe] = useState<Record<string, ReadonlySet<string>>>(() =>
+    Object.fromEntries(axes.map((axe) => [axe.id, initialCollapsed(axe.arbre)])),
+  )
+  // Un axe fixé part sur sa première feuille : les cases feuille × feuille sont saisissables.
+  const [tranches, setTranches] = useState<ReadonlyArray<string>>(() =>
+    axes.map((axe) => firstFeuilleOf(axe.arbre) ?? TOUS_ID),
+  )
   const [active, setActive] = useState<CelluleIds | null>(null)
 
   const resolve = useMemo(() => buildCroisement({ axes, saisies }), [axes, saisies])
-  const axeLignes = axes[0]
-  const axeColonnes = axes[1]
-  const rows = rowsOf({ arbre: axeLignes?.arbre, collapsed: rowsCollapsed })
-  const cols = axeColonnes ? rowsOf({ arbre: axeColonnes.arbre, collapsed: colsCollapsed }) : []
+  const axeLignes = axes[disposition.lignes]
+  const axeColonnes = disposition.colonnes === null ? undefined : axes[disposition.colonnes]
+  const collapsedOf = (axe: AxeCroise | undefined) =>
+    (axe ? collapsedByAxe[axe.id] : undefined) ?? new Set<string>()
+  const toggleNode = ({ axe, id }: { axe: AxeCroise; id: string }) =>
+    setCollapsedByAxe((current) => ({
+      ...current,
+      [axe.id]: toggle(current[axe.id] ?? new Set(), id),
+    }))
+  const rows = rowsOf({ arbre: axeLignes?.arbre, collapsed: collapsedOf(axeLignes) })
+  const cols = axeColonnes
+    ? rowsOf({ arbre: axeColonnes.arbre, collapsed: collapsedOf(axeColonnes) })
+    : []
 
   const idsOf = ({ row, col }: { row: string; col: string | undefined }): CelluleIds =>
     axes.map((_, index) => {
-      if (index === 0) return row
-      if (index === 1) return col ?? TOUS_ID
+      if (index === disposition.lignes) return row
+      if (index === disposition.colonnes) return col ?? TOUS_ID
       return tranches[index] ?? TOUS_ID
     })
 
@@ -187,23 +232,55 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
   }
 
   const colonnes: ReadonlyArray<ArbreNode | undefined> = axeColonnes ? cols : [undefined]
+  const fixes = axes
+    .map((axe, index) => ({ axe, index }))
+    .filter(({ index }) => index !== disposition.lignes && index !== disposition.colonnes)
+  const alertes = axes.flatMap((axe, index) => {
+    const feuilles = countFeuilles(axe.arbre)
+    if (feuilles === 0)
+      return [`L’axe ${index + 1} « ${axe.nom} » n’a aucune modalité : rien à saisir.`]
+    if (feuilles === 1) {
+      return [
+        `L’axe ${index + 1} « ${axe.nom} » n’a qu’une modalité feuille : le découper ne change aucune valeur, « Tous » vaut cette modalité.`,
+      ]
+    }
+    return []
+  })
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex flex-wrap items-center gap-3 border-b border-border px-6 py-2">
-        {axes.slice(2).map((axe, offset) => (
+      <div className="flex flex-wrap items-start gap-x-6 gap-y-3 border-b border-border px-6 py-3">
+        <AxeSelect
+          label="Lignes"
+          axes={axes}
+          value={disposition.lignes}
+          onChange={(index) => {
+            if (index !== null) setDisposition(withLignes({ disposition, index }))
+          }}
+        />
+        {axes.length > 1 ? (
+          <AxeSelect
+            label="Colonnes"
+            axes={axes}
+            value={disposition.colonnes}
+            allowNone
+            onChange={(index) => setDisposition(withColonnes({ disposition, index }))}
+          />
+        ) : null}
+        {fixes.map(({ axe, index }) => (
           <TrancheSelect
             key={axe.id}
             axe={axe}
-            value={tranches[offset + 2] ?? TOUS_ID}
+            index={index}
+            value={tranches[index] ?? TOUS_ID}
             onChange={(id) =>
               setTranches((current) =>
-                current.map((tranche, index) => (index === offset + 2 ? id : tranche)),
+                current.map((tranche, position) => (position === index ? id : tranche)),
               )
             }
           />
         ))}
-        <span className="ml-auto flex items-center gap-1">
+        <span className="ml-auto flex items-center gap-1 self-center">
           <Button
             size="sm"
             variant="tertiary"
@@ -220,6 +297,17 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
           </Button>
         </span>
       </div>
+
+      {alertes.length > 0 ? (
+        <ul className="m-0 flex flex-col gap-1 border-b border-border bg-warning-tinted px-6 py-2 text-xs text-warning">
+          {alertes.map((alerte) => (
+            <li key={alerte} className="flex items-center gap-2">
+              <AlertTriangle className="size-3.5 shrink-0" />
+              {alerte}
+            </li>
+          ))}
+        </ul>
+      ) : null}
 
       <BarreFormule axes={axes} active={active} cellule={activeCellule} resolve={resolve} />
 
@@ -238,11 +326,11 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
                     col?.kind === 'feuille' && 'font-normal',
                   )}
                 >
-                  {col ? (
+                  {col && axeColonnes ? (
                     <EnteteNode
                       node={col}
-                      isCollapsed={colsCollapsed.has(col.id)}
-                      onToggle={() => setColsCollapsed((current) => toggle(current, col.id))}
+                      isCollapsed={collapsedOf(axeColonnes).has(col.id)}
+                      onToggle={() => toggleNode({ axe: axeColonnes, id: col.id })}
                       align="right"
                     />
                   ) : (
@@ -265,8 +353,8 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
                   <div style={{ paddingLeft: row.niveau * 16 }}>
                     <EnteteNode
                       node={row}
-                      isCollapsed={rowsCollapsed.has(row.id)}
-                      onToggle={() => setRowsCollapsed((current) => toggle(current, row.id))}
+                      isCollapsed={collapsedOf(axeLignes).has(row.id)}
+                      onToggle={() => toggleNode({ axe: axeLignes, id: row.id })}
                     />
                   </div>
                 </th>
@@ -279,7 +367,7 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
                       cellule={resolve(ids)}
                       saisie={saisies[key] ?? ''}
                       tone={toneOf({ key, activeKey, precedents })}
-                      label={ids.join(' × ')}
+                      label={referenceOf({ axes, ids })}
                       onActivate={() => setActive(ids)}
                       onSaisie={(value) => setSaisies((current) => ({ ...current, [key]: value }))}
                     />
@@ -292,13 +380,55 @@ function TableauCroise({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
       </div>
 
       <p className="m-0 border-t border-border px-6 py-2 text-xs text-text-muted">
-        Case vide (·) : combinaison jamais saisie, elle sort du calcul (ni 0, ni manquante). Avec
-        une moyenne, ces trous font dépendre « Tous » de l’ordre des axes : changez l’ordre dans le
-        formulaire pour le voir.
+        On saisit sur les cases dont chaque axe est sur une feuille (lignes et colonnes en vert,
+        axes fixés sur une feuille) ; « Tous » et les parentes se calculent. Case vide (·) :
+        combinaison jamais saisie, elle sort du calcul (ni 0, ni manquante). Avec une moyenne, ces
+        trous font dépendre « Tous » de l’ordre des axes : changez l’ordre dans le formulaire pour
+        le voir.
       </p>
     </div>
   )
 }
+
+const AUCUN_AXE = ''
+
+function AxeSelect({
+  label,
+  axes,
+  value,
+  allowNone = false,
+  onChange,
+}: {
+  label: string
+  axes: ReadonlyArray<AxeCroise>
+  value: number | null
+  allowNone?: boolean
+  onChange: (index: number | null) => void
+}) {
+  const options = axes.map((axe, index) => ({
+    value: String(index),
+    label: `Axe ${index + 1} · ${axe.nom}`,
+  }))
+  return (
+    <div className="w-56">
+      <FieldSelect
+        label={label}
+        value={value === null ? AUCUN_AXE : String(value)}
+        onValueChange={(next) => onChange(next === AUCUN_AXE ? null : Number(next))}
+        options={allowNone ? [{ value: AUCUN_AXE, label: 'Aucun axe' }, ...options] : options}
+      />
+    </div>
+  )
+}
+
+const referenceOf = ({ axes, ids }: { axes: ReadonlyArray<AxeCroise>; ids: CelluleIds }) =>
+  ids
+    .map((id, index) => {
+      const axe = axes[index]
+      const nom = axe?.arbre.get(id)?.nom ?? id
+      return id === TOUS_ID ? nom : `${axe?.nom ?? ''} : ${nom}`
+    })
+    .join(' × ')
 
 type Tone = 'active' | 'precedent' | undefined
 
@@ -413,31 +543,45 @@ function Case({
   )
 }
 
+// Le chemin plutôt qu'une indentation : un select n'affiche pas l'arbre, et les espaces de
+// tête décalent la valeur sélectionnée.
+const cheminOf = ({ arbre, node }: { arbre: Arbre; node: ArbreNode }) =>
+  ancestorsOf({ arbre, id: node.id })
+    .filter((ancestor) => ancestor.id !== TOUS_ID)
+    .reverse()
+    .map((ancestor) => ancestor.nom)
+    .concat(node.nom)
+    .join(' › ')
+
 function TrancheSelect({
   axe,
+  index,
   value,
   onChange,
 }: {
   axe: AxeCroise
+  index: number
   value: string
   onChange: (id: string) => void
 }) {
-  const options = depthFirst({ arbre: axe.arbre, id: TOUS_ID, isOpen: () => true })
+  const options = depthFirst({ arbre: axe.arbre, id: TOUS_ID, isOpen: () => true }).map(
+    (option) => ({ value: option.id, label: cheminOf({ arbre: axe.arbre, node: option }) }),
+  )
+  const node = axe.arbre.get(value)
+  const effet =
+    node && node.children.length > 0
+      ? `Chaque case fait la ${fonctionLabel(axe.fonction)} de ses ${node.children.length} modalité${node.children.length > 1 ? 's' : ''}.`
+      : 'Une feuille : les cases du tableau deviennent saisissables.'
   return (
-    <label className="flex items-center gap-2 text-xs text-text-muted">
-      <span className="font-semibold text-text">{axe.nom}</span>
-      <select
+    <div className="flex w-72 flex-col gap-1">
+      <FieldSelect
+        label={`Fixé · Axe ${index + 1} · ${axe.nom}`}
         value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="rounded-md border border-border bg-surface px-2 py-1 text-sm text-text focus:border-primary focus:outline-none"
-      >
-        {options.map((node) => (
-          <option key={node.id} value={node.id}>
-            {`${'  '.repeat(node.niveau)}${node.nom}`}
-          </option>
-        ))}
-      </select>
-    </label>
+        onValueChange={onChange}
+        options={options}
+      />
+      <span className="text-[11px] text-text-subtle">{effet}</span>
+    </div>
   )
 }
 
@@ -455,9 +599,7 @@ function BarreFormule({
   cellule: CelluleCroisee | null
   resolve: (ids: CelluleIds) => CelluleCroisee
 }) {
-  const reference = active
-    ? active.map((id, index) => nomOf({ axe: axes[index], id })).join(' × ')
-    : 'Aucune cellule'
+  const reference = active ? referenceOf({ axes, ids: active }) : 'Aucune cellule'
   return (
     <div className="flex min-h-12 items-stretch border-b border-border bg-surface text-sm">
       <div className="flex w-72 shrink-0 items-center border-r border-border px-3 text-xs font-medium text-text-muted">
