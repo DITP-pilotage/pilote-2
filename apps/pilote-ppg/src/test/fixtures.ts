@@ -11,6 +11,12 @@ import { ContenuRapport } from "@/server/rapports-hebdomadaires/infrastructure/a
  *   const rattachement = await f.rattachement();
  *   const fiche = await f.fiche({ rattachement_code: rattachement.code });
  */
+
+// Identifiants RDV-SP (motifs, séances) : un compteur par processus de test, parti d'un
+// point tiré au hasard pour que deux fichiers lancés en parallèle n'insèrent pas les mêmes.
+let prochainIdRdvSp = BigInt(Math.floor(Math.random() * 1e12) + 1e9);
+const nouvelIdRdvSp = () => prochainIdRdvSp++;
+
 export const fixtures = {
   async utilisateur(
     overrides: Partial<Prisma.utilisateurUncheckedCreateInput> = {},
@@ -799,8 +805,7 @@ export const fixtures = {
     overrides: Partial<Prisma.formation_motifUncheckedCreateInput> = {},
   ) {
     const prisma = getPrisma();
-    const motifId =
-      overrides.id ?? BigInt(Math.floor(Math.random() * 900_000) + 100_000);
+    const motifId = overrides.id ?? nouvelIdRdvSp();
     return prisma.formation_motif.create({
       data: {
         id: motifId,
@@ -819,7 +824,7 @@ export const fixtures = {
     dansSeptJours.setDate(dansSeptJours.getDate() + 7);
     return prisma.formation_seance.create({
       data: {
-        id: BigInt(Math.floor(Math.random() * 900_000) + 100_000),
+        id: nouvelIdRdvSp(),
         motif_id: motifId,
         date_debut: dansSeptJours,
         duree_minutes: 45,
