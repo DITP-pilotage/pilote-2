@@ -34,11 +34,19 @@ const STATUT_CELL: Record<StatutCellule, string> = {
   saisie: 'text-text',
   reportee: 'text-text-subtle italic',
   manquante: 'bg-warning-tinted/60 text-warning',
-  absente: 'bg-surface-muted text-text-subtle',
-  calculee: 'font-semibold text-text',
+  absente: 'text-text-subtle',
+  calculee: 'text-text',
 }
 
 const ROW_INDENT = 16
+
+// Même règle que le calcul croisé : une ligne blanche se saisit, une ligne teintée se calcule,
+// plus foncée pour la marginale « Tous ».
+const KIND_ROW: Record<Kind, string> = {
+  feuille: 'bg-surface',
+  parente: 'bg-surface-muted font-semibold',
+  tous: 'bg-surface-tinted font-bold',
+}
 
 export function AxeTableur({
   arbre,
@@ -95,17 +103,17 @@ export function AxeTableur({
         serie={serie}
       />
       <div className="min-h-0 flex-1 overflow-auto">
-        <table className="w-max min-w-full border-separate border-spacing-0 text-sm">
+        <table className="w-max border-separate border-spacing-0 text-sm">
           <thead>
             <tr>
               <HeaderCell className="left-0 z-30 w-10 text-center"> </HeaderCell>
-              <HeaderCell className="left-10 z-30 min-w-72 text-left">Modalité</HeaderCell>
+              <HeaderCell className="left-10 z-30 min-w-56 text-left">Modalité</HeaderCell>
               <HeaderCell className="text-left">Niveau</HeaderCell>
               {PERIODES.map((periode, index) => (
                 <HeaderCell
                   key={periode}
                   className={clsxm(
-                    'w-28 text-right',
+                    'min-w-28 text-right',
                     active?.index === index && 'bg-primary-tinted text-primary',
                   )}
                 >
@@ -143,7 +151,7 @@ export function AxeTableur({
             <span
               className={clsxm(
                 'inline-flex h-5 min-w-9 items-center justify-end rounded-sm border border-border px-1.5 tabular-nums',
-                STATUT_CELL[statut],
+                statut === 'calculee' ? KIND_ROW.parente : STATUT_CELL[statut],
               )}
             >
               {exemple}
@@ -152,7 +160,8 @@ export function AxeTableur({
           </span>
         ))}
         <span className="ml-auto">
-          Un seul individu, valeurs d’exemple : rien n’est enregistré.
+          Case blanche : saisie ; teintée : calculée, plus foncée pour « Tous ». Un seul individu,
+          valeurs d’exemple : rien n’est enregistré.
         </span>
       </div>
     </div>
@@ -163,7 +172,7 @@ function HeaderCell({ className, children }: { className?: string; children: Rea
   return (
     <th
       className={clsxm(
-        'sticky top-0 z-20 border-r border-b border-border bg-surface-muted px-3 py-2 text-xs font-semibold whitespace-nowrap text-text-muted',
+        'sticky top-0 z-20 border-r border-b border-r-border border-b-border-strong bg-surface-muted px-3 py-2 text-xs font-semibold whitespace-nowrap text-text-muted',
         className,
       )}
     >
@@ -213,9 +222,9 @@ function Ligne({
 }) {
   const isTous = node.kind === 'tous'
   const isFeuille = node.kind === 'feuille'
-  const rowBg = isTous ? 'bg-surface-tinted' : 'bg-surface'
+  const rowBg = KIND_ROW[node.kind]
   return (
-    <tr className={clsxm('group', !isFeuille && 'font-medium')}>
+    <tr className="group">
       <td
         className={clsxm(
           'sticky left-0 z-10 w-10 border-r border-b border-border bg-surface-muted text-center text-[11px] text-text-subtle tabular-nums',
@@ -277,7 +286,7 @@ function Ligne({
           <td
             key={periode}
             className={clsxm(
-              'h-8 w-28 border-r border-b border-border p-0 text-right tabular-nums',
+              'h-8 min-w-28 border-r border-b border-border p-0 text-right tabular-nums',
               rowBg,
               cellule && STATUT_CELL[cellule.statut],
               toneClass && TONE_CLASS[toneClass],
