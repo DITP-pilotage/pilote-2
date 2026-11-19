@@ -1,8 +1,7 @@
 import { type NiveauAxeApiModel } from '@pilote/kpilote-shared/axe'
 import { MousePointerClick, Plus } from 'lucide-react'
-import { type ReactNode } from 'react'
 
-import { KindMarker } from '@/components/axe-graphe/KindMarker'
+import { Definition } from '@/components/axe-graphe/Definition'
 import { Note } from '@/components/axe-graphe/Note'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { type Arbre, type Kind, nodesOfKind } from '@/lib/axeArbre'
@@ -63,30 +62,5 @@ export function Glossary({
           : 'Cliquez sur une boîte ou sur l’en-tête d’une colonne pour l’expliquer.'}
       </Note>
     </section>
-  )
-}
-
-function Definition({
-  term,
-  kind,
-  example,
-  children,
-}: {
-  term: string
-  kind?: Kind
-  example?: string | undefined
-  children: ReactNode
-}) {
-  return (
-    <div>
-      <dt className="flex items-center gap-1.5 font-medium text-text">
-        {kind ? <KindMarker kind={kind} shape="large-dot" /> : null}
-        {term}
-      </dt>
-      <dd className="text-text-muted">
-        {children}
-        {example ? <span className="text-text-subtle"> Ex. : {example}.</span> : null}
-      </dd>
-    </div>
   )
 }

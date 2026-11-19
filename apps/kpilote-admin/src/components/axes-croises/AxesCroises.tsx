@@ -2,52 +2,21 @@ import { type AxeApiModel, type ModaliteApiModel } from '@pilote/kpilote-shared/
 import { type DeclarationAxeIndicateur } from '@pilote/kpilote-shared/indicateur'
 import { useSuspenseQueries, type UseSuspenseQueryResult } from '@tanstack/react-query'
 import { X } from 'lucide-react'
-import { Suspense, useMemo } from 'react'
+import { useMemo } from 'react'
 
-import { CroisementTable } from '@/components/indicateurs/CroisementTable'
+import { AxesOrder } from '@/components/axes-croises/AxesOrder'
+import { CroisementTable } from '@/components/axes-croises/CroisementTable'
 import { Dialog } from '@pilote/kpilote-ui/Dialog'
-import { buildArbre, fonctionLabel, withTousNamed } from '@/lib/axeArbre'
+import { buildArbre, withTousNamed } from '@/lib/axeArbre'
 import { type AxeCroise } from '@/lib/axesCroises'
 import { axeModalitesQueryOptions } from '@/queries/axes'
-
-export function AxesCroisesModale({
-  open,
-  onClose,
-  declarations,
-  axes,
-}: {
-  open: boolean
-  onClose: () => void
-  declarations: ReadonlyArray<DeclarationAxeIndicateur>
-  axes: ReadonlyArray<AxeApiModel>
-}) {
-  return (
-    <Dialog
-      open={open}
-      onOpenChange={(isOpen: boolean) => {
-        if (!isOpen) onClose()
-      }}
-    >
-      <Dialog.Portal>
-        <Dialog.Overlay />
-        <Dialog.Content className="top-4 h-[calc(100dvh-2rem)] max-h-none w-[calc(100vw-2rem)]">
-          <Suspense
-            fallback={<p className="p-6 text-sm text-text-muted">Chargement des modalités…</p>}
-          >
-            <AxesCroises declarations={declarations} axes={axes} onClose={onClose} />
-          </Suspense>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog>
-  )
-}
 
 // Hors du composant : une fonction stable laisse useSuspenseQueries mémoriser le résultat, et
 // garde le cache du moteur croisé d'un rendu à l'autre.
 const dataOf = (results: ReadonlyArray<UseSuspenseQueryResult<ModaliteApiModel[]>>) =>
   results.map((result) => result.data)
 
-function AxesCroises({
+export function AxesCroises({
   declarations,
   axes,
   onClose,
@@ -97,23 +66,5 @@ function AxesCroises({
       </header>
       <CroisementTable key={orderKey} axes={axesCroises} />
     </div>
-  )
-}
-
-function AxesOrder({ axes }: { axes: ReadonlyArray<AxeCroise> }) {
-  return (
-    <ol className="m-0 flex flex-wrap items-center gap-1.5 p-0 text-xs">
-      {axes.map((axe, index) => (
-        <li key={axe.id} className="flex items-center gap-1.5">
-          {index > 0 ? <span className="text-text-subtle">puis</span> : null}
-          <span className="rounded-full border border-border bg-surface-muted px-2.5 py-0.5">
-            <b>
-              {index + 1}. {axe.nom}
-            </b>{' '}
-            <span className="text-text-muted">({fonctionLabel(axe.fonction)})</span>
-          </span>
-        </li>
-      ))}
-    </ol>
   )
 }

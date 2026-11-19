@@ -2,7 +2,18 @@ import { type ModaliteApiModel } from '@pilote/kpilote-shared/axe'
 import { describe, expect, it } from 'vitest'
 
 import { buildArbre, TOUS_ID } from '@/lib/axeArbre'
-import { CHILD_LIMIT, matchingIds, revealNode, suggestModaliteId } from '@/lib/axeGraphe'
+import {
+  axeWarningsOf,
+  CHILD_LIMIT,
+  edgesOf,
+  lanesOf,
+  matchingIds,
+  nodeMetaOf,
+  type PlacedNode,
+  revealNode,
+  searchSummaryOf,
+  suggestModaliteId,
+} from '@/lib/axeGraphe'
 
 const modalite = ({
   id,
@@ -65,5 +76,87 @@ describe('revealNode', () => {
 
     expect(display.collapsed.has('P')).toBe(false)
     expect(display.showAll.has('P')).toBe(true)
+  })
+})
+
+describe('searchSummaryOf', () => {
+  it('dit qu’aucune modalité ne correspond', () => {
+    expect(searchSummaryOf(0)).toBe('Aucune modalité ne correspond.')
+  })
+
+  it('accorde le nombre de modalités affichées', () => {
+    expect(searchSummaryOf(1)).toBe('1 modalité affichée (résultats et leurs parents)')
+    expect(searchSummaryOf(3)).toBe('3 modalités affichées (résultats et leurs parents)')
+  })
+})
+
+describe('axeWarningsOf', () => {
+  const niveau = (ordre: number) => ({ ordre, nom: `Niveau ${ordre}` })
+
+  it('signale un niveau vide, une feuille trop haute et une parente à enfant unique', () => {
+    const arbre = buildArbre([
+      modalite({ id: 'OP' }),
+      modalite({ id: 'OP-ORANGE', parent: 'OP', niveau: 2 }),
+      modalite({ id: 'SEULE' }),
+    ])
+    const warnings = axeWarningsOf({ arbre, niveaux: [niveau(1), niveau(2), niveau(3)] })
+    expect(warnings.emptyNiveaux.map((empty) => empty.ordre)).toEqual([3])
+    expect(warnings.earlyFeuilles.map((feuille) => feuille.id)).toEqual(['OP-ORANGE', 'SEULE'])
+    expect(warnings.singleChildParentes.map((parente) => parente.id)).toEqual(['OP'])
+    expect(warnings.count).toBe(4)
+    expect(warnings.isTruncated).toBe(false)
+  })
+
+  it('ne signale rien sur un axe complet', () => {
+    const arbre = buildArbre([modalite({ id: 'A' }), modalite({ id: 'B' })])
+    expect(axeWarningsOf({ arbre, niveaux: [niveau(1)] }).count).toBe(0)
+  })
+})
+
+describe('lanesOf', () => {
+  it('range le niveau le plus fin à gauche et « Tous » dans la dernière colonne', () => {
+    expect(lanesOf(2)).toEqual([
+      { column: 0, ordre: 2 },
+      { column: 1, ordre: 1 },
+      { column: 2, ordre: 0 },
+    ])
+  })
+})
+
+const placedOf = (node: { id: string; parent: string | null; children?: string[] }) =>
+  ({
+    nom: node.id,
+    kind: 'parente',
+    niveau: 1,
+    children: [],
+    x: 0,
+    y: 0,
+    hidden: 0,
+    ...node,
+  }) satisfies PlacedNode
+
+describe('edgesOf', () => {
+  it('relie chaque nœud placé à sa parente placée', () => {
+    const placed = new Map([
+      [TOUS_ID, placedOf({ id: TOUS_ID, parent: null })],
+      ['A', placedOf({ id: 'A', parent: TOUS_ID })],
+      ['B', placedOf({ id: 'B', parent: 'CACHEE' })],
+    ])
+    expect(edgesOf(placed).map(({ node, parent }) => `${node.id}>${parent.id}`)).toEqual([
+      `A>${TOUS_ID}`,
+    ])
+  })
+})
+
+describe('nodeMetaOf', () => {
+  it('nomme l’opération seulement en simulation', () => {
+    const node = placedOf({ id: 'A', parent: TOUS_ID, children: ['A1', 'A2'] })
+    expect(nodeMetaOf({ node, isSimulating: false, fonction: 'AVG' })).toBe('Calcul de 2 enfants')
+    expect(nodeMetaOf({ node, isSimulating: true, fonction: 'AVG' })).toBe('Moyenne de 2 enfants')
+  })
+
+  it('compte les modalités repliées', () => {
+    const node = { ...placedOf({ id: 'A', parent: TOUS_ID, children: ['A1'] }), hidden: 3 }
+    expect(nodeMetaOf({ node, isSimulating: false, fonction: 'SUM' })).toBe('3 modalités repliées')
   })
 })

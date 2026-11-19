@@ -1,33 +1,8 @@
+import { UncomputedExplanation } from '@/components/axes-croises/UncomputedExplanation'
 import { fonctionLabel, formatValue, formulaOf, pluralSuffix } from '@/lib/axeArbre'
 import { type AxeCroise, type CelluleCroisee, type CelluleIds } from '@/lib/axesCroises'
 
-export function CroisementFormulaBar({
-  axes,
-  reference,
-  cellule,
-  resolve,
-}: {
-  axes: ReadonlyArray<AxeCroise>
-  reference: string
-  cellule: CelluleCroisee | null
-  resolve: (ids: CelluleIds) => CelluleCroisee
-}) {
-  return (
-    <div className="flex min-h-12 items-stretch border-b border-border bg-surface text-sm">
-      <div className="flex w-72 shrink-0 items-center border-r border-border px-3 text-xs font-medium text-text-muted">
-        {reference}
-      </div>
-      <div className="flex shrink-0 items-center border-r border-border px-3 font-serif text-text-subtle italic">
-        fx
-      </div>
-      <div className="flex min-w-0 flex-1 items-center px-3 py-2 text-text">
-        <Explanation axes={axes} cellule={cellule} resolve={resolve} />
-      </div>
-    </div>
-  )
-}
-
-function Explanation({
+export function CroisementExplanation({
   axes,
   cellule,
   resolve,
@@ -78,22 +53,4 @@ function Explanation({
       ) : null}
     </span>
   )
-}
-
-function UncomputedExplanation({ cellule }: { cellule: CelluleCroisee }) {
-  if (!cellule.isSaisissable) {
-    return (
-      <span className="text-text-muted">
-        Un axe n’a aucune modalité : cette case n’a rien à saisir ni à calculer.
-      </span>
-    )
-  }
-  if (cellule.statut === 'absente') {
-    return (
-      <span className="text-text-muted">
-        Combinaison jamais saisie : elle n’existe pas pour cet individu.
-      </span>
-    )
-  }
-  return <span>Saisie, sur une feuille de chaque axe : rien ne la calcule.</span>
 }

@@ -1,9 +1,15 @@
+import { type FonctionAgregationAxe, type NiveauAxeApiModel } from '@pilote/kpilote-shared/axe'
+
 import {
   type Arbre,
   ancestorsOf,
   type ArbreNode,
   countDescendants,
+  fonctionLabel,
+  nodesOfKind,
   normalize,
+  pluralize,
+  pluralSuffix,
   relatedIds,
   TOUS_ID,
 } from '@/lib/axeArbre'
@@ -215,4 +221,98 @@ export const buildGraphLayout = ({
     height:
       HEADER_HEIGHT + LANE_PADDING * 2 + Math.max(row, 1) * ROW_HEIGHT - (ROW_HEIGHT - NODE_HEIGHT),
   }
+}
+
+export const searchSummaryOf = (count: number): string => {
+  if (count === 0) return 'Aucune modalité ne correspond.'
+  const shown = `affichée${pluralSuffix(count)}`
+  return `${pluralize({ count, word: 'modalité' })} ${shown} (résultats et leurs parents)`
+}
+
+export const WARNINGS_LIMIT = 5
+
+export type AxeWarnings = {
+  emptyNiveaux: NiveauAxeApiModel[]
+  earlyFeuilles: ArbreNode[]
+  singleChildParentes: ArbreNode[]
+  count: number
+  isTruncated: boolean
+}
+
+export const axeWarningsOf = ({
+  arbre,
+  niveaux,
+}: {
+  arbre: Arbre
+  niveaux: ReadonlyArray<NiveauAxeApiModel>
+}): AxeWarnings => {
+  const nodes = [...arbre.values()]
+  const emptyNiveaux = niveaux.filter(
+    (niveau) => !nodes.some((node) => node.kind !== 'tous' && node.niveau === niveau.ordre),
+  )
+  const earlyFeuilles = nodesOfKind({ arbre, kind: 'feuille' }).filter(
+    (feuille) => feuille.niveau < niveaux.length,
+  )
+  const singleChildParentes = nodesOfKind({ arbre, kind: 'parente' }).filter(
+    (parente) => parente.children.length === 1,
+  )
+  return {
+    emptyNiveaux,
+    earlyFeuilles,
+    singleChildParentes,
+    count: emptyNiveaux.length + earlyFeuilles.length + singleChildParentes.length,
+    isTruncated: earlyFeuilles.length + singleChildParentes.length > WARNINGS_LIMIT * 2,
+  }
+}
+
+// Une colonne par niveau : le plus fin à gauche, « Tous » (ordre 0) dans la dernière.
+export const lanesOf = (depth: number): Array<{ column: number; ordre: number }> =>
+  Array.from({ length: depth + 1 }, (_, column) => ({
+    column,
+    ordre: column === depth ? 0 : depth - column,
+  }))
+
+export const edgesOf = (
+  placed: ReadonlyMap<string, PlacedNode>,
+): Array<{ node: PlacedNode; parent: PlacedNode }> =>
+  [...placed.values()].flatMap((node) => {
+    const parent = node.parent ? placed.get(node.parent) : undefined
+    return parent ? [{ node, parent }] : []
+  })
+
+// Courbe de Bézier du bord droit d'un nœud vers le bord gauche de sa parente.
+export const edgePathOf = ({
+  from,
+  to,
+  nodeWidth,
+}: {
+  from: { x: number; y: number }
+  to: { x: number; y: number }
+  nodeWidth: number
+}): string => {
+  const startX = from.x + nodeWidth
+  const startY = from.y + NODE_HEIGHT / 2
+  const endX = to.x - 2
+  const endY = to.y + NODE_HEIGHT / 2
+  const midX = (startX + endX) / 2
+  return `M${startX},${startY} C${midX},${startY} ${midX},${endY} ${endX},${endY}`
+}
+
+export const nodeMetaOf = ({
+  node,
+  isSimulating,
+  fonction,
+}: {
+  node: PlacedNode
+  isSimulating: boolean
+  fonction: FonctionAgregationAxe
+}): string => {
+  if (node.kind === 'feuille') return 'Saisie'
+  if (node.children.length === 0) return 'Aucune modalité'
+  if (node.hidden > 0) {
+    return `${pluralize({ count: node.hidden, word: 'modalité' })} repliée${pluralSuffix(node.hidden)}`
+  }
+  const operation = isSimulating ? fonctionLabel(fonction) : 'calcul'
+  const children = pluralize({ count: node.children.length, word: 'enfant' })
+  return `${operation.charAt(0).toUpperCase()}${operation.slice(1)} de ${children}`
 }

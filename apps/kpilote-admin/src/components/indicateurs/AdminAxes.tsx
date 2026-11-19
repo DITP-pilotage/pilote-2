@@ -4,7 +4,7 @@ import { ArrowDown, ArrowUp, Network, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useFieldArray, useWatch } from 'react-hook-form'
 
-import { AxesCroisesModale } from '@/components/indicateurs/AxesCroisesModale'
+import { AxesCroisesModale } from '@/components/axes-croises/AxesCroisesModale'
 import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFormContext'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
