@@ -176,15 +176,17 @@ const deleteModaliteRoute = createRoute({
 
 const describeUpsertAxeError = (
   error: UpsertAxeError,
-): { message: string; details: Record<string, unknown> } => {
+): { status: 409; message: string; details?: Record<string, unknown> } => {
   switch (error.type) {
     case 'NIVEAU_PORTE_MODALITES':
       return {
+        status: 409,
         message: `Ces niveaux portent des modalités et ne peuvent pas être supprimés : ${error.ordres.join(', ')}.`,
         details: { ordres: error.ordres },
       }
     case 'AXE_UTILISE':
       return {
+        status: 409,
         message: `Cet axe est déclaré par des indicateurs (${error.indicateurs.join(', ')}) : on ne peut plus ajouter ni retirer de niveau. Le renommage reste possible.`,
         details: { indicateurs: error.indicateurs },
       }
@@ -193,15 +195,17 @@ const describeUpsertAxeError = (
 
 const describeDeleteModaliteError = (
   error: DeleteModaliteError,
-): { message: string; details: Record<string, unknown> } => {
+): { status: 409; message: string; details?: Record<string, unknown> } => {
   switch (error.type) {
     case 'MODALITE_A_DES_ENFANTS':
       return {
+        status: 409,
         message: `Cette modalité a des enfants : les supprimer d’abord (${error.enfants.join(', ')}).`,
         details: { enfants: error.enfants },
       }
     case 'MODALITE_UTILISEE':
       return {
+        status: 409,
         message: `Cette modalité précise ${error.valeurs} valeur(s) : elle ne peut pas être supprimée.`,
         details: { valeurs: error.valeurs },
       }
@@ -268,13 +272,15 @@ axeRoutes.openapi(upsertAxeRoute, async (context) => {
     .andThen(() => getAxeByPublicId({ publicId: id }))
     .match(
       (data) => jsonResponseOk({ context, data, schema: AxeApiModelSchema, status: 200 }),
-      (error) =>
-        jsonResponseError({
+      (error) => {
+        const { status, message, details } = describeUpsertAxeError(error)
+        return jsonResponseError({
           context,
-          error: { code: error.type, ...describeUpsertAxeError(error) },
+          error: { code: error.type, message, details },
           schema: ErrorApiModelSchema,
-          status: 409,
-        }),
+          status,
+        })
+      },
     )
 })
 
@@ -310,12 +316,14 @@ axeRoutes.openapi(deleteModaliteRoute, async (context) => {
 
   return withTransaction(() => deleteModalite({ axePublicId: id, publicId: modaliteId })).match(
     () => context.body(null, 204),
-    (error) =>
-      jsonResponseError({
+    (error) => {
+      const { status, message, details } = describeDeleteModaliteError(error)
+      return jsonResponseError({
         context,
-        error: { code: error.type, ...describeDeleteModaliteError(error) },
+        error: { code: error.type, message, details },
         schema: ErrorApiModelSchema,
-        status: 409,
-      }),
+        status,
+      })
+    },
   )
 })

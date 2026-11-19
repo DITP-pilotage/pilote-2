@@ -14,7 +14,10 @@ import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonRespo
 import { ErrorApiModelSchema, erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { supprimerRelation } from '@/relation/commands/supprimerRelation'
-import { upsertRelationParent } from '@/relation/commands/upsertRelationParent'
+import {
+  upsertRelationParent,
+  type UpsertRelationParentError,
+} from '@/relation/commands/upsertRelationParent'
 import { getRelationByEnfant } from '@/relation/queries/getRelationByEnfant'
 import { listRelations } from '@/relation/queries/listRelations'
 
@@ -92,10 +95,19 @@ const supprimerRelationRoute = createRoute({
   },
 })
 
-const MESSAGES_ERREUR: Record<'AUTO_PARENT' | 'CYCLE_DETECTE', string> = {
-  AUTO_PARENT: 'Un individu ne peut pas être son propre parent',
-  CYCLE_DETECTE:
-    "Le parent choisi est un descendant de l'individu : la hiérarchie formerait un cycle",
+const describeUpsertRelationParentError = (
+  error: UpsertRelationParentError,
+): { status: 400; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'AUTO_PARENT':
+      return { status: 400, message: 'Un individu ne peut pas être son propre parent' }
+    case 'CYCLE_DETECTE':
+      return {
+        status: 400,
+        message:
+          "Le parent choisi est un descendant de l'individu : la hiérarchie formerait un cycle",
+      }
+  }
 }
 
 // --- App registration --------------------------------------------------------
@@ -131,13 +143,15 @@ relationRoutes.openapi(upsertRelationRoute, async (context) => {
           schema: RelationApiModelSchema,
           status: 200,
         }),
-      (error) =>
-        jsonResponseError({
+      (error) => {
+        const { status, message, details } = describeUpsertRelationParentError(error)
+        return jsonResponseError({
           context,
-          error: { code: error.type, message: MESSAGES_ERREUR[error.type] },
+          error: { code: error.type, message, details },
           schema: ErrorApiModelSchema,
-          status: 400,
-        }),
+          status,
+        })
+      },
     )
 })
 

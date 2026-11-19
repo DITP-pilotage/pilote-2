@@ -14,6 +14,7 @@ import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { ErrorApiModelSchema, erreur400, erreur403 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
+import { type IndividuInconnuError } from '@/individu/permission'
 import { deleteObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/deleteObjectifIndicateurIndividu'
 import { upsertObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/upsertObjectifIndicateurIndividu'
 import { listObjectifsForIndicateur } from '@/objectifIndicateurIndividu/queries/listObjectifsForIndicateur'
@@ -116,6 +117,20 @@ const deleteObjectifIndicateurIndividuRoute = createRoute({
 
 // --- App registration --------------------------------------------------------
 
+// Upsert et suppression partagent la même erreur : l'individu de la cellule.
+const describeObjectifIndicateurIndividuError = (
+  error: IndividuInconnuError,
+): { status: 400; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'INDIVIDU_INCONNU':
+      return {
+        status: 400,
+        message: "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur",
+        details: { individu: error.individu },
+      }
+  }
+}
+
 export const objectifIndicateurIndividuRoutes = createOpenApiHono()
 
 objectifIndicateurIndividuRoutes.openapi(getObjectifsForIndicateurRoute, async (context) => {
@@ -148,18 +163,15 @@ objectifIndicateurIndividuRoutes.openapi(upsertObjectifIndicateurIndividuRoute, 
         schema: ObjectifIndicateurIndividuApiModelSchema,
         status: 200,
       }),
-    (error) =>
-      jsonResponseError({
+    (error) => {
+      const { status, message, details } = describeObjectifIndicateurIndividuError(error)
+      return jsonResponseError({
         context,
-        error: {
-          code: error.type,
-          message:
-            "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur",
-          details: { individu: error.individu },
-        },
+        error: { code: error.type, message, details },
         schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+        status,
+      })
+    },
   )
 })
 
@@ -171,17 +183,14 @@ objectifIndicateurIndividuRoutes.openapi(deleteObjectifIndicateurIndividuRoute, 
     deleteObjectifIndicateurIndividu({ indicateurPublicId: id, body }),
   ).match(
     () => context.body(null, 204),
-    (error) =>
-      jsonResponseError({
+    (error) => {
+      const { status, message, details } = describeObjectifIndicateurIndividuError(error)
+      return jsonResponseError({
         context,
-        error: {
-          code: error.type,
-          message:
-            "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur",
-          details: { individu: error.individu },
-        },
+        error: { code: error.type, message, details },
         schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+        status,
+      })
+    },
   )
 })

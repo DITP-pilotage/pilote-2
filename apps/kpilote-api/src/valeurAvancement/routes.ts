@@ -32,7 +32,7 @@ import {
 } from '@pilote/kpilote-shared/collectionTauxProgression'
 
 import { modalitesErrorMessage } from '@/axe/requestedModalites'
-import { selectionErrorMessage } from '@/axe/resolveSelection'
+import { type ResolveSelectionError, selectionErrorMessage } from '@/axe/resolveSelection'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
@@ -47,7 +47,10 @@ import {
   type UpsertValeurAvancementError,
   upsertValeurAvancement,
 } from '@/valeurAvancement/commands/upsertValeurAvancement'
-import { upsertValeursAvancementBatch } from '@/valeurAvancement/commands/upsertValeursAvancementBatch'
+import {
+  upsertValeursAvancementBatch,
+  type UpsertValeursAvancementBatchError,
+} from '@/valeurAvancement/commands/upsertValeursAvancementBatch'
 import { listDernieresValeursForIndividu } from '@/valeurAvancement/queries/listDernieresValeursForIndividu'
 import { listTauxProgressionForIndividu } from '@/valeurAvancement/queries/listTauxProgressionForIndividu'
 import { listCollectionTauxProgressionForIndividu } from '@/collection/queries/listCollectionTauxProgressionForIndividu'
@@ -482,17 +485,15 @@ valeurAvancementRoutes.openapi(getValeursForIndicateurRoute, async (context) => 
         schema: ValeurAvancementListApiModelSchema,
         status: 200,
       }),
-    (error) =>
-      jsonResponseError({
+    (error) => {
+      const { status, message, details } = describeSelectionError(error)
+      return jsonResponseError({
         context,
-        error: {
-          code: error.type,
-          message: selectionErrorMessage(error),
-          details: { modalites: error.modalites },
-        },
+        error: { code: error.type, message, details },
         schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+        status,
+      })
+    },
   )
 })
 
@@ -508,28 +509,57 @@ valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
         schema: ValeurSaisieApiModelSchema,
         status: 200,
       }),
-    (error) =>
-      jsonResponseError({
+    (error) => {
+      const { status, message, details } = describeCelluleWriteError(error)
+      return jsonResponseError({
         context,
-        error: celluleWriteError(error),
+        error: { code: error.type, message, details },
         schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+        status,
+      })
+    },
   )
 })
 
-// Erreur 400 d'une écriture unitaire : individu inconnu ou modalités invalides.
-const celluleWriteError = (
+// Erreur d'une écriture unitaire : individu inconnu ou modalités invalides.
+const describeCelluleWriteError = (
   error: UpsertValeurAvancementError | DeleteValeurAvancementError,
-): { code: string; message: string; details: Record<string, unknown> } => {
-  const { type, ...details } = error
+): { status: 400; message: string; details?: Record<string, unknown> } => {
+  const { type: _type, ...details } = error
   return {
-    code: type,
+    status: 400,
     message:
       error.type === 'INDIVIDU_INCONNU'
         ? "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur"
         : modalitesErrorMessage(error),
     details,
+  }
+}
+
+// Erreur d'une lecture filtrée par modalités (`modalites=`).
+const describeSelectionError = (
+  error: ResolveSelectionError,
+): { status: 400; message: string; details?: Record<string, unknown> } => ({
+  status: 400,
+  message: selectionErrorMessage(error),
+  details: { modalites: error.modalites },
+})
+
+// Le détail reprend toutes les lignes refusées : le schéma de réponse est typé.
+const describeBatchInvalidError = (
+  error: UpsertValeursAvancementBatchError,
+): {
+  status: 400
+  message: string
+  details: { errors: UpsertValeursAvancementBatchError['errors'] }
+} => {
+  switch (error.type) {
+    case 'BATCH_INVALID':
+      return {
+        status: 400,
+        message: "Aucune valeur n'a été appliquée.",
+        details: { errors: error.errors },
+      }
   }
 }
 
@@ -539,13 +569,15 @@ valeurAvancementRoutes.openapi(deleteValeurAvancementRoute, async (context) => {
 
   return withTransaction(() => deleteValeurAvancement({ indicateurPublicId: id, body })).match(
     () => context.body(null, 204),
-    (error) =>
-      jsonResponseError({
+    (error) => {
+      const { status, message, details } = describeCelluleWriteError(error)
+      return jsonResponseError({
         context,
-        error: celluleWriteError(error),
+        error: { code: error.type, message, details },
         schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+        status,
+      })
+    },
   )
 })
 
@@ -561,17 +593,15 @@ valeurAvancementRoutes.openapi(upsertValeursAvancementBatchRoute, async (context
         schema: UpsertValeursAvancementBatchResultApiModelSchema,
         status: 200,
       }),
-    (error) =>
-      jsonResponseError({
+    (error) => {
+      const { status, message, details } = describeBatchInvalidError(error)
+      return jsonResponseError({
         context,
-        error: {
-          code: error.type,
-          message: "Aucune valeur n'a été appliquée.",
-          details: { errors: error.errors },
-        },
+        error: { code: error.type, message, details },
         schema: BatchInvalidErrorApiModelSchema,
-        status: 400,
-      }),
+        status,
+      })
+    },
   )
 })
 
@@ -603,17 +633,15 @@ valeurAvancementRoutes.openapi(getValeursRemarquablesForIndicateurRoute, async (
         schema: ValeursRemarquablesListApiModelSchema,
         status: 200,
       }),
-    (error) =>
-      jsonResponseError({
+    (error) => {
+      const { status, message, details } = describeSelectionError(error)
+      return jsonResponseError({
         context,
-        error: {
-          code: error.type,
-          message: selectionErrorMessage(error),
-          details: { modalites: error.modalites },
-        },
+        error: { code: error.type, message, details },
         schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+        status,
+      })
+    },
   )
 })
 
@@ -629,17 +657,15 @@ valeurAvancementRoutes.openapi(getSyntheseIndividusRoute, async (context) => {
         schema: SyntheseIndividusListApiModelSchema,
         status: 200,
       }),
-    (error) =>
-      jsonResponseError({
+    (error) => {
+      const { status, message, details } = describeSelectionError(error)
+      return jsonResponseError({
         context,
-        error: {
-          code: error.type,
-          message: selectionErrorMessage(error),
-          details: { modalites: error.modalites },
-        },
+        error: { code: error.type, message, details },
         schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+        status,
+      })
+    },
   )
 })
 
