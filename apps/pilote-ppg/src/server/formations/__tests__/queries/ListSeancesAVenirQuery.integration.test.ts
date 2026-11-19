@@ -22,7 +22,7 @@ describe("ListSeancesAVenirQuery", () => {
       await fixtures.formationMotif({
         id: BigInt(1),
         nom: INTRODUCTION,
-        date_import: new Date("2026-11-18T05:02:00Z"),
+        updated_at: new Date("2026-11-18T05:02:00Z"),
       });
       await fixtures.formationSeance({
         id: BigInt(11),
@@ -45,7 +45,6 @@ describe("ListSeancesAVenirQuery", () => {
         motif_id: BigInt(1),
         date_debut: new Date("2026-11-25T13:00:00Z"),
         date_annulation: new Date("2026-11-15T08:00:00Z"),
-        statut: "revoked",
       });
       // Séance commencée une minute avant `maintenant` : elle n'est plus à venir
       await fixtures.formationSeance({

@@ -241,7 +241,6 @@ async function main() {
         duree_minutes: 45,
         lieu: "Visioconférence",
         animateurs: "Équipe PILOTE",
-        statut: seance.annulee ? "revoked" : "unknown",
         date_annulation: seance.annulee ? aujourdhuiDecale(-1, 9) : null,
         nombre_places_max: seance.nombrePlacesMax,
         nombre_inscrits: seance.nombreInscrits,

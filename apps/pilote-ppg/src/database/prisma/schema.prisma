@@ -1423,7 +1423,8 @@ model formation_motif {
   id               BigInt             @id
   nom              String
   date_suppression DateTime?          @db.Timestamptz
-  date_import      DateTime           @default(now()) @db.Timestamptz
+  created_at       DateTime           @default(now()) @db.Timestamptz
+  updated_at       DateTime           @default(now()) @updatedAt @db.Timestamptz
   seances          formation_seance[]
 
   @@schema("public")
@@ -1436,12 +1437,12 @@ model formation_seance {
   duree_minutes     Int
   lieu              String?
   animateurs        String?
-  statut            String
   date_annulation   DateTime?       @db.Timestamptz
   nombre_places_max Int?
   nombre_inscrits   Int
   url_inscription   String
-  date_import       DateTime        @default(now()) @db.Timestamptz
+  created_at        DateTime        @default(now()) @db.Timestamptz
+  updated_at        DateTime        @default(now()) @updatedAt @db.Timestamptz
   motif             formation_motif @relation(fields: [motif_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([date_debut])
@@ -1451,7 +1452,9 @@ model formation_seance {
 model formation_motif_profil {
   motif_id    BigInt
   profil_code String
-  profil      profil @relation(fields: [profil_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  created_at  DateTime @default(now()) @db.Timestamptz
+  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz
+  profil      profil   @relation(fields: [profil_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([motif_id, profil_code])
   @@schema("public")
@@ -1461,6 +1464,8 @@ model formation_periode_information {
   id           String                                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   date_debut   DateTime                                    @db.Date
   date_fin     DateTime                                    @db.Date
+  created_at   DateTime                                    @default(now()) @db.Timestamptz
+  updated_at   DateTime                                    @default(now()) @updatedAt @db.Timestamptz
   motifs       formation_periode_information_motif[]
   utilisateurs formation_periode_information_utilisateur[]
 
@@ -1470,6 +1475,8 @@ model formation_periode_information {
 model formation_periode_information_motif {
   periode_id String                        @db.Uuid
   motif_id   BigInt
+  created_at DateTime                      @default(now()) @db.Timestamptz
+  updated_at DateTime                      @default(now()) @updatedAt @db.Timestamptz
   periode    formation_periode_information @relation(fields: [periode_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([periode_id, motif_id])
@@ -1482,6 +1489,8 @@ model formation_periode_information_utilisateur {
   date_presentation DateTime                      @db.Timestamptz
   date_report       DateTime?                     @db.Timestamptz
   date_fermeture    DateTime?                     @db.Timestamptz
+  created_at        DateTime                      @default(now()) @db.Timestamptz
+  updated_at        DateTime                      @default(now()) @updatedAt @db.Timestamptz
   utilisateur       utilisateur                   @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   periode           formation_periode_information @relation(fields: [periode_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 

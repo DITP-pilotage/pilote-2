@@ -47,7 +47,7 @@ Le ticket avait tranché « séances récupérées à la volée, pas de stockage
 
 ## Tables
 
-Toutes dans `public`. Les identifiants de motif et de séance sont ceux de RDV-SP (`bigint`).
+Toutes dans `public`, avec `created_at` et `updated_at` (défaut `now()`). Les identifiants de motif et de séance sont ceux de RDV-SP (`bigint`).
 
 ### Remplies par copilot
 
@@ -58,7 +58,8 @@ Toutes dans `public`. Les identifiants de motif et de séance sont ceux de RDV-S
 | `id` | bigint, clé | identifiant RDV-SP du motif |
 | `nom` | text | ex. « CAMPUS PILOTE : Introduction à l'outil » |
 | `date_suppression` | timestamptz, nullable | motif supprimé dans RDV-SP |
-| `date_import` | timestamptz, défaut `now()` | moment de l'écriture par copilot |
+| `created_at` | timestamptz, défaut `now()` | |
+| `updated_at` | timestamptz, défaut `now()` | dernière écriture par copilot |
 
 `formation_seance`
 
@@ -70,20 +71,20 @@ Toutes dans `public`. Les identifiants de motif et de séance sont ceux de RDV-S
 | `duree_minutes` | integer | |
 | `lieu` | text, nullable | adresse ou visioconférence |
 | `animateurs` | text, nullable | noms des agents, pour « Animé par… » |
-| `statut` | text | statut RDV-SP |
-| `date_annulation` | timestamptz, nullable | |
+| `date_annulation` | timestamptz, nullable | `cancelled_at`, seule source de l'annulation |
 | `nombre_places_max` | integer, nullable | `max_participants_count` |
 | `nombre_inscrits` | integer | `users_count` |
 | `url_inscription` | text | lien d'inscription pour l'utilisateur |
-| `date_import` | timestamptz, défaut `now()` | moment de l'écriture par copilot |
+| `created_at` | timestamptz, défaut `now()` | |
+| `updated_at` | timestamptz, défaut `now()` | dernière écriture par copilot |
 
 Contrat avec copilot :
 
-- À chaque passage, dans une seule transaction : vider les deux tables (`TRUNCATE formation_seance, formation_motif`), insérer les motifs puis les séances.
+- Stratégie d'écriture pas encore tranchée (décision du 2026-11-19) : vider puis recharger (`TRUNCATE formation_seance, formation_motif` puis insertion des motifs et des séances, dans une seule transaction) ou upsert. Elle se décidera avec copilot, comme les éventuels ajustements de `created_at` et `updated_at`.
 - Ne pas modifier la structure des tables (pas de colonnes `_dlt_*` ajoutées par dlt).
-- Laisser `date_import` à sa valeur par défaut (ou la renseigner à l'heure de l'import) : l'onglet Séances à venir affiche la plus récente, pour voir d'un coup d'œil si le DAG a tourné.
+- Renseigner `updated_at` à l'heure de l'import sur chaque motif écrit (la valeur par défaut suffit en insertion, pas en mise à jour) : l'onglet Séances à venir affiche la plus récente, pour voir d'un coup d'œil si le DAG a tourné.
 - Écrire tous les motifs de l'organisation, même sans séance à venir : l'admin doit pouvoir les paramétrer à l'avance. Le motif de chaque séance écrite doit figurer dans le même chargement, motif supprimé compris, sinon la clé étrangère fait échouer toute la transaction (la date d'import cesse alors d'avancer dans l'onglet Séances à venir).
-- Renseigner `date_annulation` (le `cancelled_at` de RDV-SP) pour toute séance annulée : c'est la seule source de l'annulation pour PILOTE, qui ne lit pas `statut`.
+- Renseigner `date_annulation` (le `cancelled_at` de RDV-SP) pour toute séance annulée : c'est la seule source de l'annulation pour PILOTE. Le `status` de RDV-SP n'est pas stocké (décision du 2026-11-19) : `cancelled_at` est rempli quand il passe à un statut d'annulation, la colonne aurait fait doublon.
 - Si l'écriture passe par dlt, sa stratégie de remplacement ne doit ni vider les tables une à une, ni charger en jobs parallèles : c'est incompatible avec la transaction unique et la clé étrangère.
 - Les séances peuvent être limitées à celles à venir. PILOTE refiltre de toute façon à l'affichage (passées, annulées, complètes), puisque les données ne sont rafraîchies qu'une fois par jour.
 

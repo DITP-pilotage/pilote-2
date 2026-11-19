@@ -1,14 +1,15 @@
--- Motifs de formation RDV-SP. Remplie par copilot depuis RDV-SP (vidée puis rechargée à chaque import).
+-- Motifs de formation RDV-SP. Remplie par copilot depuis RDV-SP.
 CREATE TABLE "formation_motif" (
     "id" BIGINT NOT NULL,
     "nom" TEXT NOT NULL,
     "date_suppression" TIMESTAMPTZ,
-    "date_import" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "formation_motif_pkey" PRIMARY KEY ("id")
 );
 
--- Séances de formation RDV-SP. Remplie par copilot depuis RDV-SP (vidée puis rechargée à chaque import).
+-- Séances de formation RDV-SP. Remplie par copilot depuis RDV-SP.
 CREATE TABLE "formation_seance" (
     "id" BIGINT NOT NULL,
     "motif_id" BIGINT NOT NULL,
@@ -16,12 +17,12 @@ CREATE TABLE "formation_seance" (
     "duree_minutes" INTEGER NOT NULL,
     "lieu" TEXT,
     "animateurs" TEXT,
-    "statut" TEXT NOT NULL,
     "date_annulation" TIMESTAMPTZ,
     "nombre_places_max" INTEGER,
     "nombre_inscrits" INTEGER NOT NULL,
     "url_inscription" TEXT NOT NULL,
-    "date_import" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "formation_seance_pkey" PRIMARY KEY ("id")
 );
@@ -30,6 +31,8 @@ CREATE TABLE "formation_seance" (
 CREATE TABLE "formation_motif_profil" (
     "motif_id" BIGINT NOT NULL,
     "profil_code" TEXT NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "formation_motif_profil_pkey" PRIMARY KEY ("motif_id","profil_code")
 );
@@ -39,6 +42,8 @@ CREATE TABLE "formation_periode_information" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "date_debut" DATE NOT NULL,
     "date_fin" DATE NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "formation_periode_information_pkey" PRIMARY KEY ("id")
 );
@@ -47,6 +52,8 @@ CREATE TABLE "formation_periode_information" (
 CREATE TABLE "formation_periode_information_motif" (
     "periode_id" UUID NOT NULL,
     "motif_id" BIGINT NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "formation_periode_information_motif_pkey" PRIMARY KEY ("periode_id","motif_id")
 );
@@ -58,6 +65,8 @@ CREATE TABLE "formation_periode_information_utilisateur" (
     "date_presentation" TIMESTAMPTZ NOT NULL,
     "date_report" TIMESTAMPTZ,
     "date_fermeture" TIMESTAMPTZ,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "formation_periode_information_utilisateur_pkey" PRIMARY KEY ("utilisateur_id","periode_id")
 );

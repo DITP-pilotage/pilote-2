@@ -32,7 +32,7 @@ Débloque copilot : il peut écrire dans les tables dès que la migration est pa
 À cadrer :
 
 - [x] Plan détaillé : [2026-11-18-formations-rdv-sp-pr1.md](./2026-11-18-formations-rdv-sp-pr1.md)
-- [x] Colonnes affichées dans l'onglet Séances à venir : toutes les séances à venir avec un statut calculé (Ouverte, Complète, Annulée), dans un `TableauAdmin` avec recherche et filtres, et la date du dernier import (`date_import`, ajoutée au contrat copilot)
+- [x] Colonnes affichées dans l'onglet Séances à venir : toutes les séances à venir avec un statut calculé (Ouverte, Complète, Annulée), dans un `TableauAdmin` avec recherche et filtres, et la date du dernier import (plus récent `updated_at` des motifs, ajouté au contrat copilot)
 
 ## PR 2 : onglets Profils et Périodes d'information
 

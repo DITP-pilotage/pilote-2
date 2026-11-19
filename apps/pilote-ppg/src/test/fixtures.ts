@@ -823,7 +823,6 @@ export const fixtures = {
         motif_id: motifId,
         date_debut: dansSeptJours,
         duree_minutes: 45,
-        statut: "unknown",
         nombre_inscrits: 0,
         url_inscription:
           "https://rdv.anct.gouv.fr/prendre_rdv?public_link_organisation_id=1453",

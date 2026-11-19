@@ -56,19 +56,19 @@ export class ListSeancesAVenirQuery {
 
   async run({ maintenant }: { maintenant: Date }): Promise<SeancesAVenir> {
     const client = this.prisma.getInstance();
-    // Copilot réécrit tous les motifs à chaque import, même ceux sans séance à venir :
-    // leur date d'import la plus récente est celle du dernier passage.
+    // Copilot écrit tous les motifs à chaque import, même ceux sans séance à venir :
+    // leur dernière mise à jour donne la date du dernier passage.
     const [seances, dernierImport] = await Promise.all([
       client.formation_seance.findMany({
         where: { date_debut: { gt: maintenant } },
         include: { motif: true },
         orderBy: [{ date_debut: "asc" }, { id: "asc" }],
       }),
-      client.formation_motif.aggregate({ _max: { date_import: true } }),
+      client.formation_motif.aggregate({ _max: { updated_at: true } }),
     ]);
 
     return {
-      dateImport: dernierImport._max.date_import?.toISOString() ?? null,
+      dateImport: dernierImport._max.updated_at?.toISOString() ?? null,
       seances: seances.map(toApiModel),
     };
   }
