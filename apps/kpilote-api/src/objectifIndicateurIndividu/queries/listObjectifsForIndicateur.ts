@@ -19,18 +19,23 @@ import {
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'year'
 
+const performList = async (
+  indicateurPublicId: string,
+  params: ListObjectifsForIndicateurQuery,
+): Promise<ObjectifIndicateurIndividuListApiModel> => {
+  const principalId = requireCurrentPrincipalId()
+  const indicateur = await db().indicateur.findFirstOrThrow({
+    where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
+    select: { id: true, publicId: true },
+  })
+  return buildList({ indicateur, params })
+}
+
 export const listObjectifsForIndicateur = (
   indicateurPublicId: string,
   params: ListObjectifsForIndicateurQuery,
-): ResultAsync<ObjectifIndicateurIndividuListApiModel, never> => {
-  const principalId = requireCurrentPrincipalId()
-  return ResultAsync.fromSafePromise(
-    db().indicateur.findFirstOrThrow({
-      where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
-      select: { id: true, publicId: true },
-    }),
-  ).andThen((indicateur) => ResultAsync.fromSafePromise(buildList({ indicateur, params })))
-}
+): ResultAsync<ObjectifIndicateurIndividuListApiModel, never> =>
+  ResultAsync.fromSafePromise(performList(indicateurPublicId, params))
 
 const buildList = async ({
   indicateur,

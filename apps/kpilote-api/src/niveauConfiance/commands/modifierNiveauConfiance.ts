@@ -37,14 +37,18 @@ const updateIndice = ({
     include: niveauConfianceInclude,
   })
 
+const performModifier = async (
+  niveauConfianceId: string,
+  body: ModifierNiveauConfianceBody,
+): Promise<NiveauConfianceApiModel> => {
+  const principalId = requireCurrentPrincipalId()
+  await ensureAuteurDuNiveau(niveauConfianceId, principalId)
+  const niveau = await updateIndice({ niveauConfianceId, indice: body.indice, principalId })
+  return toNiveauConfianceApiModel(niveau)
+}
+
 export const modifierNiveauConfiance = (
   niveauConfianceId: string,
   body: ModifierNiveauConfianceBody,
-): ResultAsync<NiveauConfianceApiModel, never> => {
-  const principalId = requireCurrentPrincipalId()
-  return ResultAsync.fromSafePromise(
-    ensureAuteurDuNiveau(niveauConfianceId, principalId).then(() =>
-      updateIndice({ niveauConfianceId, indice: body.indice, principalId }),
-    ),
-  ).map(toNiveauConfianceApiModel)
-}
+): ResultAsync<NiveauConfianceApiModel, never> =>
+  ResultAsync.fromSafePromise(performModifier(niveauConfianceId, body))

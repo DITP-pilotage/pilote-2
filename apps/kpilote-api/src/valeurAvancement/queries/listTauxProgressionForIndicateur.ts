@@ -21,18 +21,23 @@ import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/compute
 const DEFAULT_DATE_TRUNC_VALEUR: DateTrunc = 'month'
 const DEFAULT_DATE_TRUNC_OBJECTIF: DateTrunc = 'month'
 
+const performList = async (
+  indicateurPublicId: string,
+  params: ListTauxProgressionQuery,
+): Promise<TauxProgressionListApiModel> => {
+  const principalId = requireCurrentPrincipalId()
+  const indicateur = await db().indicateur.findFirstOrThrow({
+    where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
+    select: { id: true, publicId: true },
+  })
+  return buildList({ indicateur, params })
+}
+
 export const listTauxProgressionForIndicateur = (
   indicateurPublicId: string,
   params: ListTauxProgressionQuery,
-): ResultAsync<TauxProgressionListApiModel, never> => {
-  const principalId = requireCurrentPrincipalId()
-  return ResultAsync.fromSafePromise(
-    db().indicateur.findFirstOrThrow({
-      where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
-      select: { id: true, publicId: true },
-    }),
-  ).andThen((indicateur) => ResultAsync.fromSafePromise(buildList({ indicateur, params })))
-}
+): ResultAsync<TauxProgressionListApiModel, never> =>
+  ResultAsync.fromSafePromise(performList(indicateurPublicId, params))
 
 const buildList = async ({
   indicateur,
