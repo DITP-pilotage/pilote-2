@@ -1,13 +1,9 @@
-import {
-  type CollectionApiModel,
-  type CreateCollectionBody,
-} from '@pilote/kpilote-shared/collection'
+import { type CreateCollectionBody } from '@pilote/kpilote-shared/collection'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
-import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { MESSAGE_ADMIN } from '@/collection/utils'
 
 // TODO PIL-1688 : remplacer ce calcul de MAX + verrou consultatif par une vraie
@@ -49,7 +45,5 @@ const performCreate = async (body: CreateCollectionBody): Promise<string> => {
   return publicId
 }
 
-export const createCollection = (
-  body: CreateCollectionBody,
-): ResultAsync<CollectionApiModel, never> =>
-  ResultAsync.fromSafePromise(performCreate(body)).andThen(getCollectionByPublicId)
+export const createCollection = (body: CreateCollectionBody): ResultAsync<string, never> =>
+  ResultAsync.fromSafePromise(performCreate(body))

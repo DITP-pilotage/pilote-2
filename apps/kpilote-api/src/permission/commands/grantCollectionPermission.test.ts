@@ -2,9 +2,13 @@ import { CollectionPermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { grantCollectionPermission } from '@/permission/commands/grantCollectionPermission'
+import { getPrincipalPermissions } from '@/permission/queries/getPrincipalPermissions'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { runAsAdmin } from '@/test/runAsPrincipal'
+
+const grantCollectionPermissionAndRead = (input: Parameters<typeof grantCollectionPermission>[0]) =>
+  grantCollectionPermission(input).andThen(() => getPrincipalPermissions(input.principalId))
 
 const CALLER_ID = '00000000-0000-0000-0000-0000000000a1'
 
@@ -20,7 +24,7 @@ describe.concurrent('grantCollectionPermission', () => {
       })
 
       const result = await runAsAdmin(CALLER_ID, () =>
-        grantCollectionPermission({
+        grantCollectionPermissionAndRead({
           principalId: target.id,
           collectionPublicId: dos.publicId,
           action: CollectionPermissionAction.READ,
@@ -52,7 +56,7 @@ describe.concurrent('grantCollectionPermission', () => {
       const target = await fixtures.utilisateur({})
       await expect(
         runAsAdmin(CALLER_ID, () =>
-          grantCollectionPermission({
+          grantCollectionPermissionAndRead({
             principalId: target.id,
             collectionPublicId: 'COL-INEXISTANT',
             action: CollectionPermissionAction.READ,

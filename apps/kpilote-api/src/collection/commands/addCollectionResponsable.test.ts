@@ -1,10 +1,16 @@
 import { describe, expect, it } from 'vitest'
 
 import { addCollectionResponsable } from '@/collection/commands/addCollectionResponsable'
+import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testCollectionNumericId, testEmail } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
+
+const addCollectionResponsableAndRead = (
+  publicId: string,
+  body: Parameters<typeof addCollectionResponsable>[1],
+) => addCollectionResponsable(publicId, body).andThen(() => getCollectionByPublicId(publicId))
 
 describe.concurrent('addCollectionResponsable', () => {
   it(
@@ -16,7 +22,7 @@ describe.concurrent('addCollectionResponsable', () => {
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
       const result = await runAsAdmin(apiKey.id, () =>
-        addCollectionResponsable(publicId, { utilisateurId: utilisateur.id }),
+        addCollectionResponsableAndRead(publicId, { utilisateurId: utilisateur.id }),
       )
 
       expect(result._unsafeUnwrap().responsables).toEqual([
@@ -37,7 +43,7 @@ describe.concurrent('addCollectionResponsable', () => {
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
       const result = await runAsAdmin(apiKey.id, () =>
-        addCollectionResponsable(publicId, { utilisateurId: utilisateur.id }),
+        addCollectionResponsableAndRead(publicId, { utilisateurId: utilisateur.id }),
       )
       expect(result._unsafeUnwrapErr()).toEqual({ type: 'RESPONSABLE_DEJA_AFFECTE' })
     }),
@@ -52,7 +58,7 @@ describe.concurrent('addCollectionResponsable', () => {
 
       await expect(
         runAsAdmin(apiKey.id, () =>
-          addCollectionResponsable(publicId, {
+          addCollectionResponsableAndRead(publicId, {
             utilisateurId: '00000000-0000-4000-8000-000000000000',
           }),
         ),
@@ -70,7 +76,7 @@ describe.concurrent('addCollectionResponsable', () => {
 
       await expect(
         runAsContributor(apiKey.id, () =>
-          addCollectionResponsable(publicId, { utilisateurId: utilisateur.id }),
+          addCollectionResponsableAndRead(publicId, { utilisateurId: utilisateur.id }),
         ),
       ).rejects.toThrow('Cette opération requiert une clé API de rôle ADMIN')
     }),

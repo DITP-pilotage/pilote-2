@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
 import { createCollection } from '@/collection/commands/createCollection'
+import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testCollectionNumericId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
+
+const createCollectionAndRead = (body: Parameters<typeof createCollection>[0]) =>
+  createCollection(body).andThen((publicId) => getCollectionByPublicId(publicId))
 
 const body = { nom: 'Santé de proximité', description: null, visibilite: 'PUBLIC' as const }
 
@@ -19,7 +23,7 @@ describe('createCollection', () => {
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
       const suivant = `COL-${Number(existant.slice(4)) + 1}`
 
-      const result = await runAsAdmin(apiKey.id, () => createCollection(body))
+      const result = await runAsAdmin(apiKey.id, () => createCollectionAndRead(body))
 
       expect(result._unsafeUnwrap()).toMatchObject({
         id: suivant,
@@ -39,7 +43,7 @@ describe('createCollection', () => {
       await fixtures.collection({ publicId: `COL-${base}` }, { publicId: `COL-${base + 5}` })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
-      const result = await runAsAdmin(apiKey.id, () => createCollection(body))
+      const result = await runAsAdmin(apiKey.id, () => createCollectionAndRead(body))
 
       expect(result._unsafeUnwrap().id).toBe(`COL-${base + 6}`)
     }),
@@ -52,7 +56,7 @@ describe('createCollection', () => {
       await fixtures.collection({ publicId: numerique }, { publicId: `COL-zzzz${Date.now()}` })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
-      const result = await runAsAdmin(apiKey.id, () => createCollection(body))
+      const result = await runAsAdmin(apiKey.id, () => createCollectionAndRead(body))
 
       expect(result._unsafeUnwrap().id).toBe(`COL-${Number(numerique.slice(4)) + 1}`)
     }),
@@ -63,9 +67,9 @@ describe('createCollection', () => {
     integrationTest(async () => {
       const apiKey = await fixtures.apiKey()
 
-      await expect(runAsContributor(apiKey.id, () => createCollection(body))).rejects.toThrow(
-        'Cette opération requiert une clé API de rôle ADMIN',
-      )
+      await expect(
+        runAsContributor(apiKey.id, () => createCollectionAndRead(body)),
+      ).rejects.toThrow('Cette opération requiert une clé API de rôle ADMIN')
     }),
   )
 })

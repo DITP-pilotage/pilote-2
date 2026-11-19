@@ -1,13 +1,9 @@
-import {
-  type PrincipalPermissionsApiModel,
-  type ReplacePrincipalPermissionsBody,
-} from '@pilote/kpilote-shared/permission'
+import { type ReplacePrincipalPermissionsBody } from '@pilote/kpilote-shared/permission'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
-import { loadPrincipalPermissions } from '@/permission/queries/loadPrincipalPermissions'
 
 export type ReplacePrincipalPermissionsError = {
   type: 'DOUBLONS'
@@ -37,7 +33,7 @@ const indexerParPublicId = (
 
 const performReplace = async (
   body: ReplacePrincipalPermissionsBody,
-): Promise<Result<PrincipalPermissionsApiModel, ReplacePrincipalPermissionsError>> => {
+): Promise<Result<void, ReplacePrincipalPermissionsError>> => {
   ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
   await db().principal.findUniqueOrThrow({ where: { id: body.principalId } })
 
@@ -84,10 +80,9 @@ const performReplace = async (
     skipDuplicates: true,
   })
 
-  return ok(await loadPrincipalPermissions(body.principalId))
+  return ok()
 }
 
 export const replacePrincipalPermissions = (
   body: ReplacePrincipalPermissionsBody,
-): ResultAsync<PrincipalPermissionsApiModel, ReplacePrincipalPermissionsError> =>
-  new ResultAsync(performReplace(body))
+): ResultAsync<void, ReplacePrincipalPermissionsError> => new ResultAsync(performReplace(body))

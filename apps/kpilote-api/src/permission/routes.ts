@@ -198,53 +198,63 @@ permissionRoutes.openapi(getPermissionsRoute, async (context) => {
 
 permissionRoutes.openapi(replacePermissionsRoute, async (context) => {
   const body = context.req.valid('json')
-  return withTransaction(() => replacePrincipalPermissions(body)).match(
-    (data) =>
-      jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
-    (error) => {
-      const { status, message, details } = describeReplacePrincipalPermissionsError(error)
-      return jsonResponseError({
-        context,
-        error: { code: error.type, message, details },
-        schema: ErrorApiModelSchema,
-        status,
-      })
-    },
-  )
+  return withTransaction(() => replacePrincipalPermissions(body))
+    .andThen(() => getPrincipalPermissions(body.principalId))
+    .match(
+      (data) =>
+        jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
+      (error) => {
+        const { status, message, details } = describeReplacePrincipalPermissionsError(error)
+        return jsonResponseError({
+          context,
+          error: { code: error.type, message, details },
+          schema: ErrorApiModelSchema,
+          status,
+        })
+      },
+    )
 })
 
 permissionRoutes.openapi(grantIndicateurPermissionRoute, async (context) => {
   const body = context.req.valid('json')
-  return withTransaction(() => grantIndicateurPermission(body)).match(
-    (data) =>
-      jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
-    never,
-  )
+  return withTransaction(() => grantIndicateurPermission(body))
+    .andThen(() => getPrincipalPermissions(body.principalId))
+    .match(
+      (data) =>
+        jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
+      never,
+    )
 })
 
 permissionRoutes.openapi(revokeIndicateurPermissionRoute, async (context) => {
   const query = context.req.valid('query')
-  return withTransaction(() => revokeIndicateurPermission(query)).match(
-    (data) =>
-      jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
-    never,
-  )
+  return withTransaction(() => revokeIndicateurPermission(query))
+    .andThen(() => getPrincipalPermissions(query.principalId))
+    .match(
+      (data) =>
+        jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
+      never,
+    )
 })
 
 permissionRoutes.openapi(grantCollectionPermissionRoute, async (context) => {
   const body = context.req.valid('json')
-  return withTransaction(() => grantCollectionPermission(body)).match(
-    (data) =>
-      jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
-    never,
-  )
+  return withTransaction(() => grantCollectionPermission(body))
+    .andThen(() => getPrincipalPermissions(body.principalId))
+    .match(
+      (data) =>
+        jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
+      never,
+    )
 })
 
 permissionRoutes.openapi(revokeCollectionPermissionRoute, async (context) => {
   const query = context.req.valid('query')
-  return withTransaction(() => revokeCollectionPermission(query)).match(
-    (data) =>
-      jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
-    never,
-  )
+  return withTransaction(() => revokeCollectionPermission(query))
+    .andThen(() => getPrincipalPermissions(query.principalId))
+    .match(
+      (data) =>
+        jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
+      never,
+    )
 })

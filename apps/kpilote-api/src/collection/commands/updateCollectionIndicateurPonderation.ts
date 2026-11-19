@@ -1,12 +1,8 @@
-import {
-  type CollectionApiModel,
-  type UpdateCollectionIndicateurPonderationBody,
-} from '@pilote/kpilote-shared/collection'
+import { type UpdateCollectionIndicateurPonderationBody } from '@pilote/kpilote-shared/collection'
 import { ResultAsync } from 'neverthrow'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
-import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { MESSAGE_ADMIN } from '@/collection/utils'
 
 const performUpdate = async (
@@ -39,7 +35,5 @@ export const updateCollectionIndicateurPonderation = (
   publicId: string,
   indicateurPublicId: string,
   body: UpdateCollectionIndicateurPonderationBody,
-): ResultAsync<CollectionApiModel, never> =>
-  ResultAsync.fromSafePromise(performUpdate(publicId, indicateurPublicId, body)).andThen(() =>
-    getCollectionByPublicId(publicId),
-  )
+): ResultAsync<void, never> =>
+  ResultAsync.fromSafePromise(performUpdate(publicId, indicateurPublicId, body))

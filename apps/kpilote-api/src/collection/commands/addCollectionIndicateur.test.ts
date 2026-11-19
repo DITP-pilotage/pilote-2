@@ -1,10 +1,16 @@
 import { describe, expect, it } from 'vitest'
 
 import { addCollectionIndicateur } from '@/collection/commands/addCollectionIndicateur'
+import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testCollectionNumericId, testIndicateurId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
+
+const addCollectionIndicateurAndRead = (
+  publicId: string,
+  body: Parameters<typeof addCollectionIndicateur>[1],
+) => addCollectionIndicateur(publicId, body).andThen(() => getCollectionByPublicId(publicId))
 
 describe.concurrent('addCollectionIndicateur', () => {
   it(
@@ -17,7 +23,7 @@ describe.concurrent('addCollectionIndicateur', () => {
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
       const result = await runAsAdmin(apiKey.id, () =>
-        addCollectionIndicateur(publicId, { indicateurId }),
+        addCollectionIndicateurAndRead(publicId, { indicateurId }),
       )
 
       expect(result._unsafeUnwrap().indicateurs).toEqual([{ id: indicateurId, ponderation: 1 }])
@@ -34,7 +40,7 @@ describe.concurrent('addCollectionIndicateur', () => {
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
       const result = await runAsAdmin(apiKey.id, () =>
-        addCollectionIndicateur(publicId, { indicateurId, ponderation: 2.5 }),
+        addCollectionIndicateurAndRead(publicId, { indicateurId, ponderation: 2.5 }),
       )
 
       expect(result._unsafeUnwrap().indicateurs).toEqual([{ id: indicateurId, ponderation: 2.5 }])
@@ -50,7 +56,7 @@ describe.concurrent('addCollectionIndicateur', () => {
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
       const result = await runAsAdmin(apiKey.id, () =>
-        addCollectionIndicateur(publicId, { indicateurId }),
+        addCollectionIndicateurAndRead(publicId, { indicateurId }),
       )
       expect(result._unsafeUnwrapErr()).toEqual({ type: 'INDICATEUR_DEJA_AFFECTE' })
     }),
@@ -65,7 +71,7 @@ describe.concurrent('addCollectionIndicateur', () => {
 
       await expect(
         runAsAdmin(apiKey.id, () =>
-          addCollectionIndicateur(publicId, { indicateurId: testIndicateurId() }),
+          addCollectionIndicateurAndRead(publicId, { indicateurId: testIndicateurId() }),
         ),
       ).rejects.toThrow()
     }),
@@ -81,7 +87,9 @@ describe.concurrent('addCollectionIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        runAsContributor(apiKey.id, () => addCollectionIndicateur(publicId, { indicateurId })),
+        runAsContributor(apiKey.id, () =>
+          addCollectionIndicateurAndRead(publicId, { indicateurId }),
+        ),
       ).rejects.toThrow('Cette opération requiert une clé API de rôle ADMIN')
     }),
   )

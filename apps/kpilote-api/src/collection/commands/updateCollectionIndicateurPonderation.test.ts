@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { updateCollectionIndicateurPonderation } from '@/collection/commands/updateCollectionIndicateurPonderation'
+import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { getCollectionTauxProgression } from '@/collection/queries/getCollectionTauxProgression'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -12,6 +13,15 @@ import {
 } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
+const updateCollectionIndicateurPonderationAndRead = (
+  publicId: string,
+  indicateurPublicId: string,
+  body: Parameters<typeof updateCollectionIndicateurPonderation>[2],
+) =>
+  updateCollectionIndicateurPonderation(publicId, indicateurPublicId, body).andThen(() =>
+    getCollectionByPublicId(publicId),
+  )
+
 describe.concurrent('updateCollectionIndicateurPonderation', () => {
   it(
     'remplace la pondération du lien',
@@ -22,7 +32,7 @@ describe.concurrent('updateCollectionIndicateurPonderation', () => {
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
       const result = await runAsAdmin(apiKey.id, () =>
-        updateCollectionIndicateurPonderation(publicId, indicateurId, { ponderation: 3 }),
+        updateCollectionIndicateurPonderationAndRead(publicId, indicateurId, { ponderation: 3 }),
       )
 
       expect(result._unsafeUnwrap().indicateurs).toEqual([{ id: indicateurId, ponderation: 3 }])
@@ -38,7 +48,7 @@ describe.concurrent('updateCollectionIndicateurPonderation', () => {
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
       const result = await runAsAdmin(apiKey.id, () =>
-        updateCollectionIndicateurPonderation(publicId, indicateurId, { ponderation: 0 }),
+        updateCollectionIndicateurPonderationAndRead(publicId, indicateurId, { ponderation: 0 }),
       )
 
       expect(result._unsafeUnwrap().indicateurs).toEqual([{ id: indicateurId, ponderation: 0 }])
@@ -56,7 +66,7 @@ describe.concurrent('updateCollectionIndicateurPonderation', () => {
 
       await expect(
         runAsAdmin(apiKey.id, () =>
-          updateCollectionIndicateurPonderation(publicId, indicateurId, { ponderation: 2 }),
+          updateCollectionIndicateurPonderationAndRead(publicId, indicateurId, { ponderation: 2 }),
         ),
       ).rejects.toThrow()
     }),
@@ -72,7 +82,7 @@ describe.concurrent('updateCollectionIndicateurPonderation', () => {
 
       await expect(
         runAsContributor(apiKey.id, () =>
-          updateCollectionIndicateurPonderation(publicId, indicateurId, { ponderation: 2 }),
+          updateCollectionIndicateurPonderationAndRead(publicId, indicateurId, { ponderation: 2 }),
         ),
       ).rejects.toThrow('Cette opération requiert une clé API de rôle ADMIN')
     }),
@@ -123,7 +133,7 @@ describe.concurrent('updateCollectionIndicateurPonderation', () => {
       )._unsafeUnwrap().tauxProgression
 
       await runAsAdmin(apiKey.id, () =>
-        updateCollectionIndicateurPonderation(publicId, indFort, { ponderation: 3 }),
+        updateCollectionIndicateurPonderationAndRead(publicId, indFort, { ponderation: 3 }),
       )
 
       const apres = (

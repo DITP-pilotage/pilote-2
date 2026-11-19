@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
 import { upsertCollection } from '@/collection/commands/upsertCollection'
+import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testCollectionNumericId, testIndicateurId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
+
+const upsertCollectionAndRead = (publicId: string, body: Parameters<typeof upsertCollection>[1]) =>
+  upsertCollection(publicId, body).andThen(() => getCollectionByPublicId(publicId))
 
 describe.concurrent('upsertCollection', () => {
   it(
@@ -14,7 +18,7 @@ describe.concurrent('upsertCollection', () => {
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
       const result = await runAsAdmin(apiKey.id, () =>
-        upsertCollection(publicId, {
+        upsertCollectionAndRead(publicId, {
           nom: 'Créée par PUT',
           description: 'Description',
           visibilite: 'PRIVE',
@@ -45,7 +49,7 @@ describe.concurrent('upsertCollection', () => {
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
       const result = await runAsAdmin(apiKey.id, () =>
-        upsertCollection(publicId, {
+        upsertCollectionAndRead(publicId, {
           nom: 'Nouveau nom',
           description: null,
           visibilite: 'PUBLIC',
@@ -68,7 +72,7 @@ describe.concurrent('upsertCollection', () => {
 
       await expect(
         runAsContributor(apiKey.id, () =>
-          upsertCollection(testCollectionNumericId(), {
+          upsertCollectionAndRead(testCollectionNumericId(), {
             nom: 'X',
             description: null,
             visibilite: 'PUBLIC',
