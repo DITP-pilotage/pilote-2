@@ -147,7 +147,7 @@ Direction d'administration centrale  [x]       [x]        [x]    [x]       [x]  
 
 ### Règles des périodes d'information (validées le 2026-11-19, remplacent celles du 2026-11-18)
 
-- Statut : Supprimée si `deleted_at` est renseignée ; sinon calculé sur la date du jour, heure de Paris : À venir, En cours (du premier au dernier jour inclus), Passée.
+- Statut : Supprimée si `deleted_at` est renseignée ; sinon calculé sur la date du jour UTC (décision du 2026-11-19 : entre minuit et 1 h ou 2 h à Paris, le statut a une heure ou deux de retard) : À venir, En cours (du premier au dernier jour inclus), Passée.
 - Passée ou Supprimée : lecture seule.
 - Début : pas dans le passé ; figé pour une période en cours.
 - Fin : égale ou postérieure au début, pas dans le passé.

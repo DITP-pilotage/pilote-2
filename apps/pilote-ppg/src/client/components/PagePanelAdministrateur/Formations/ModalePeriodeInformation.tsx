@@ -4,7 +4,6 @@ import { CheckboxField } from "@/components/shared/Checkbox";
 import { FormTextField } from "@/components/shared/FormTextField";
 import { Modale } from "@/components/shared/Modale";
 import { Notice } from "@/components/shared/Notice";
-import type { JourISO } from "@/server/formations/domain/periodeInformation";
 import type {
   PeriodeInformation,
   PeriodesInformation,
@@ -18,8 +17,8 @@ function avertissementRemplacement({
   aujourdhui,
 }: {
   periodesRemplacees: PeriodeInformation[];
-  dateDebut: JourISO;
-  aujourdhui: JourISO;
+  dateDebut: string;
+  aujourdhui: string;
 }): string {
   const periodes = listerPeriodes(
     periodesRemplacees.map((periode) => ({

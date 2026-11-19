@@ -1,27 +1,15 @@
-import { DateTime } from "luxon";
 import { z } from "zod";
-
-// Jour calendaire au format "AAAA-MM-JJ" : comparable comme une chaîne, sans fuseau.
-export type JourISO = string;
 
 export type StatutPeriode = "A_VENIR" | "EN_COURS" | "PASSEE" | "SUPPRIMEE";
 
-export type Bornes = { dateDebut: JourISO; dateFin: JourISO };
+// Jours au format "AAAA-MM-JJ" (`toISODate`), qui se comparent comme des chaînes.
+export type Bornes = { dateDebut: string; dateFin: string };
 
 export type SaisiePeriode = Bornes & { motifIds: number[] };
 
-export function aujourdhuiAParis(maintenant: Date): JourISO {
-  return DateTime.fromJSDate(maintenant).setZone("Europe/Paris").toISODate()!;
-}
-
-// Prisma lit une colonne `@db.Date` comme un `Date` à minuit UTC.
-export function jourISO(date: Date): JourISO {
-  return date.toISOString().slice(0, 10);
-}
-
 export function statutPeriode(
   periode: Bornes & { supprimee: boolean },
-  aujourdhui: JourISO,
+  aujourdhui: string,
 ): StatutPeriode {
   if (periode.supprimee) return "SUPPRIMEE";
   if (aujourdhui < periode.dateDebut) return "A_VENIR";
@@ -45,7 +33,7 @@ export function schemaPeriode({
   aujourdhui,
   periodeEnCours,
 }: {
-  aujourdhui: JourISO;
+  aujourdhui: string;
   periodeEnCours: Bornes | null;
 }) {
   const pasPassee = (message: string) =>

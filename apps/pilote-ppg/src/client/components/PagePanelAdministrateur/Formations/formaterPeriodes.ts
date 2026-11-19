@@ -1,9 +1,6 @@
-import type {
-  Bornes,
-  JourISO,
-} from "@/server/formations/domain/periodeInformation";
+import type { Bornes } from "@/server/formations/domain/periodeInformation";
 
-export function formaterJour(jour: JourISO): string {
+export function formaterJour(jour: string): string {
   const [annee, mois, quantieme] = jour.split("-");
   return `${quantieme}/${mois}/${annee}`;
 }

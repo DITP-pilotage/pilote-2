@@ -1,6 +1,4 @@
 import {
-  aujourdhuiAParis,
-  jourISO,
   periodesChevauchees,
   schemaPeriode,
   statutPeriode,
@@ -28,26 +26,6 @@ function erreurs(
     resultat.error.issues.map((issue) => [issue.path.join("."), issue.message]),
   );
 }
-
-describe("aujourdhuiAParis", () => {
-  it("donne le jour à Paris, pas le jour UTC", () => {
-    expect(aujourdhuiAParis(new Date("2026-11-18T23:30:00Z"))).toEqual(
-      "2026-11-19",
-    );
-    expect(aujourdhuiAParis(new Date("2026-07-01T21:59:00Z"))).toEqual(
-      "2026-07-01",
-    );
-    expect(aujourdhuiAParis(new Date("2026-07-01T22:00:00Z"))).toEqual(
-      "2026-07-02",
-    );
-  });
-});
-
-describe("jourISO", () => {
-  it("donne le jour d'une date lue dans une colonne date", () => {
-    expect(jourISO(new Date("2026-11-03T00:00:00Z"))).toEqual("2026-11-03");
-  });
-});
 
 describe("statutPeriode", () => {
   it("est à venir avant le premier jour, en cours du premier au dernier jour inclus, passée ensuite", () => {

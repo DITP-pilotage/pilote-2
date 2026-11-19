@@ -3,8 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { toISODate } from "@/server/app/domain/Dates";
 import {
-  aujourdhuiAParis,
   periodesChevauchees,
   schemaPeriode,
   type Bornes,
@@ -37,7 +37,7 @@ export const usePeriodeInformationForm = ({
   onClose: () => void;
 }) => {
   const utils = api.useUtils();
-  const aujourdhui = aujourdhuiAParis(new Date());
+  const aujourdhui = toISODate(new Date());
 
   const reactHookForm = useForm<SaisiePeriode>({
     resolver: zodResolver(

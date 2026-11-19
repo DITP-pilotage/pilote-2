@@ -1,10 +1,7 @@
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { BadRequestError } from "@/shared/errors/bad-request-error";
-import {
-  aujourdhuiAParis,
-  jourISO,
-  statutPeriode,
-} from "@/server/formations/domain/periodeInformation";
+import { toISODate } from "@/server/app/domain/Dates";
+import { statutPeriode } from "@/server/formations/domain/periodeInformation";
 import type { Inject } from "@/server/formations/module";
 
 export class DeletePeriodeInformationHandler {
@@ -34,11 +31,11 @@ export class DeletePeriodeInformationHandler {
       }
       const statut = statutPeriode(
         {
-          dateDebut: jourISO(periode.date_debut),
-          dateFin: jourISO(periode.date_fin),
+          dateDebut: toISODate(periode.date_debut),
+          dateFin: toISODate(periode.date_fin),
           supprimee: periode.deleted_at !== null,
         },
-        aujourdhuiAParis(maintenant),
+        toISODate(maintenant),
       );
       if (statut === "SUPPRIMEE") {
         throw new BadRequestError("Cette période est déjà supprimée.");

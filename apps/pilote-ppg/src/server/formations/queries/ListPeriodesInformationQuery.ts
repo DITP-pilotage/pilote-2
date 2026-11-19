@@ -1,18 +1,16 @@
 import type { Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
+import { toISODate } from "@/server/app/domain/Dates";
 import {
-  aujourdhuiAParis,
-  jourISO,
   statutPeriode,
-  type JourISO,
   type StatutPeriode,
 } from "@/server/formations/domain/periodeInformation";
 import type { Inject } from "@/server/formations/module";
 
 export interface PeriodeInformation {
   id: string;
-  dateDebut: JourISO;
-  dateFin: JourISO;
+  dateDebut: string;
+  dateFin: string;
   statut: StatutPeriode;
   motifs: { id: number; nom: string }[];
 }
@@ -34,10 +32,10 @@ type PeriodeAvecMotifs = Prisma.formation_periode_informationGetPayload<{
 
 function toApiModel(
   periode: PeriodeAvecMotifs,
-  aujourdhui: JourISO,
+  aujourdhui: string,
 ): PeriodeInformation {
-  const dateDebut = jourISO(periode.date_debut);
-  const dateFin = jourISO(periode.date_fin);
+  const dateDebut = toISODate(periode.date_debut);
+  const dateFin = toISODate(periode.date_fin);
   return {
     id: periode.id,
     dateDebut,
@@ -65,7 +63,7 @@ export class ListPeriodesInformationQuery {
     maintenant: Date;
   }): Promise<PeriodesInformation> {
     const client = this.prisma.getInstance();
-    const aujourdhui = aujourdhuiAParis(maintenant);
+    const aujourdhui = toISODate(maintenant);
 
     const [periodes, motifs, seancesAVenir] = await Promise.all([
       client.formation_periode_information.findMany({

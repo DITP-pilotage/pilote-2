@@ -4,13 +4,11 @@ import type { formation_periode_information } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { PilotePrismaClient } from "@/server/framework/persistence/PrismaTransaction";
 import { BadRequestError } from "@/shared/errors/bad-request-error";
+import { toISODate } from "@/server/app/domain/Dates";
 import {
-  aujourdhuiAParis,
-  jourISO,
   schemaPeriode,
   statutPeriode,
   type Bornes,
-  type JourISO,
 } from "@/server/formations/domain/periodeInformation";
 import type { Inject } from "@/server/formations/module";
 
@@ -44,7 +42,7 @@ export class SavePeriodeInformationHandler {
   }): Promise<{ id: string; periodesRemplacees: Bornes[] }> {
     return this.transaction.run(async () => {
       const client = this.prisma.getInstance();
-      const aujourdhui = aujourdhuiAParis(maintenant);
+      const aujourdhui = toISODate(maintenant);
       const motifIds = [...new Set(commande.motifIds)];
 
       const periodeEnCours = await this.periodeEnCoursAModifier(
@@ -74,7 +72,7 @@ export class SavePeriodeInformationHandler {
   private async periodeEnCoursAModifier(
     client: PilotePrismaClient,
     id: string | null,
-    aujourdhui: JourISO,
+    aujourdhui: string,
   ): Promise<Bornes | null> {
     if (!id) return null;
     const periode = await client.formation_periode_information.findUnique({
@@ -118,7 +116,7 @@ export class SavePeriodeInformationHandler {
 
   private validerSaisie(
     saisie: SavePeriodeInformationCommand,
-    contexte: { aujourdhui: JourISO; periodeEnCours: Bornes | null },
+    contexte: { aujourdhui: string; periodeEnCours: Bornes | null },
   ): void {
     const resultat = schemaPeriode(contexte).safeParse(saisie);
     if (!resultat.success) {
@@ -177,7 +175,7 @@ export class SavePeriodeInformationHandler {
 
 function bornesDe(periode: formation_periode_information): Bornes {
   return {
-    dateDebut: jourISO(periode.date_debut),
-    dateFin: jourISO(periode.date_fin),
+    dateDebut: toISODate(periode.date_debut),
+    dateFin: toISODate(periode.date_fin),
   };
 }
