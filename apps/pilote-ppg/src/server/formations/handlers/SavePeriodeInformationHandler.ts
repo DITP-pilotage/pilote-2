@@ -50,11 +50,11 @@ export class SavePeriodeInformationHandler {
         commande.id,
         aujourdhui,
       );
-      await this.verifierFormations(client, motifIds);
       this.validerSaisie(
         { ...commande, motifIds },
         { aujourdhui, periodeEnCours },
       );
+      await this.verifierFormations(client, motifIds);
 
       const periodesRemplacees = await this.supprimerPeriodesChevauchees(
         client,

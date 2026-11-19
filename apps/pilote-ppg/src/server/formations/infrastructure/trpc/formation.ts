@@ -63,7 +63,7 @@ export const formationRouter = createTRPCRouter({
     }),
 
   deletePeriodeInformation: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }).and(zodValidateurCSRF))
+    .input(z.object({ id: z.uuid() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);

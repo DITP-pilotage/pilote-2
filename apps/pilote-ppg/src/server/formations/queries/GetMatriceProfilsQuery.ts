@@ -23,22 +23,27 @@ export class GetMatriceProfilsQuery {
       }),
       client.formation_motif.findMany({
         where: { date_suppression: null },
-        select: { id: true, nom: true },
+        select: {
+          id: true,
+          nom: true,
+          profils: {
+            select: { profil_code: true },
+            orderBy: { profil_code: "asc" },
+          },
+        },
         orderBy: { nom: "asc" },
       }),
     ]);
-    const associations = await client.formation_motif_profil.findMany({
-      where: { motif_id: { in: motifs.map((motif) => motif.id) } },
-      orderBy: [{ motif_id: "asc" }, { profil_code: "asc" }],
-    });
 
     return {
       profils,
       motifs: motifs.map((motif) => ({ id: Number(motif.id), nom: motif.nom })),
-      associations: associations.map((association) => ({
-        motifId: Number(association.motif_id),
-        profilCode: association.profil_code,
-      })),
+      associations: motifs.flatMap((motif) =>
+        motif.profils.map((association) => ({
+          motifId: Number(motif.id),
+          profilCode: association.profil_code,
+        })),
+      ),
     };
   }
 }
