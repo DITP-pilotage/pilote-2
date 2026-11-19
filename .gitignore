@@ -44,6 +44,9 @@ qodana.yaml
 *.tsbuildinfo
 .devtools
 
+# rapports de tests vitest générés en local (reporter json)
+.vitest/
+
 # build artifacts
 .next
 /kpilote-api-deploy
