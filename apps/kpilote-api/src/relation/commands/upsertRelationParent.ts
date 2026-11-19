@@ -4,17 +4,22 @@ import { uuidv7 } from 'uuidv7'
 
 import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
+import {
+  type AutoParentError,
+  checkPasAutoParent,
+  checkSansCycle,
+  type CycleDetecteError,
+} from '@/relation/rules'
 
-export type UpsertRelationParentError = { type: 'AUTO_PARENT' } | { type: 'CYCLE_DETECTE' }
+export type UpsertRelationParentError = AutoParentError | CycleDetecteError
 
-// Remontée des ancêtres du candidat. Le Set de visités protège des cycles déjà
-// présents en base : les données historiques n'ont pas traversé cette garde.
-const estDescendant = async (candidatId: string, ancetreId: string): Promise<boolean> => {
-  const visites = new Set<string>([candidatId])
-  let courant = [candidatId]
+// L'individu puis tous ses ancêtres. Le Set de visités protège des cycles déjà
+// présents en base : les données historiques n'ont pas traversé cette règle.
+const loadCheminVersRacine = async ({ individuId }: { individuId: string }): Promise<string[]> => {
+  const visites = new Set<string>([individuId])
+  let courant = [individuId]
 
   while (courant.length > 0) {
-    if (courant.includes(ancetreId)) return true
     const relations = await db().relation.findMany({
       where: { childId: { in: courant } },
       select: { parentId: true },
@@ -23,7 +28,7 @@ const estDescendant = async (candidatId: string, ancetreId: string): Promise<boo
     for (const id of courant) visites.add(id)
   }
 
-  return false
+  return [...visites]
 }
 
 const performUpsert = async (
@@ -32,7 +37,8 @@ const performUpsert = async (
 ): Promise<Result<void, UpsertRelationParentError>> => {
   ensureAdmin()
 
-  if (enfantPublicId === body.parent) return err({ type: 'AUTO_PARENT' })
+  const autoParent = checkPasAutoParent({ enfantPublicId, parentPublicId: body.parent })
+  if (autoParent.isErr()) return err(autoParent.error)
 
   const enfant = await db().individu.findUniqueOrThrow({
     where: { publicId: enfantPublicId },
@@ -50,14 +56,18 @@ const performUpsert = async (
   // `deleteMany` ne verrouille alors aucune ligne.
   await db().$executeRaw`SELECT id FROM individu WHERE id = ${enfant.id}::uuid FOR UPDATE`
 
-  if (await estDescendant(parent.id, enfant.id)) return err({ type: 'CYCLE_DETECTE' })
+  const sansCycle = checkSansCycle({
+    enfantId: enfant.id,
+    cheminDuParent: await loadCheminVersRacine({ individuId: parent.id }),
+  })
+  if (sansCycle.isErr()) return err(sansCycle.error)
 
   await db().relation.deleteMany({ where: { childId: enfant.id } })
   await db().relation.create({
     data: { id: uuidv7(), parentId: parent.id, childId: enfant.id },
   })
 
-  return ok(undefined)
+  return ok()
 }
 
 export const upsertRelationParent = (
