@@ -10,12 +10,11 @@ import {
 } from '@pilote/kpilote-shared/valeursCombinaison'
 import { Temporal } from '@js-temporal/polyfill'
 import { useQueries, useQuery, type UseQueryResult } from '@tanstack/react-query'
-import { X } from 'lucide-react'
 import { useId, useMemo, useState } from 'react'
 
-import { Dialog } from '@pilote/kpilote-ui/Dialog'
 import { Field } from '@pilote/kpilote-ui/Field'
 import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
+import { SegmentedControl } from '@pilote/kpilote-ui/SegmentedControl'
 import { FormulaBar } from '@pilote/kpilote-ui/FormulaBar'
 import {
   type PivotCell,
@@ -32,6 +31,7 @@ import {
 } from '@pilote/kpilote-ui/Select'
 import { CelluleReference } from '@/components/indicateurs/tableau-valeurs/CelluleReference'
 import { ExplicationCellule } from '@/components/indicateurs/tableau-valeurs/ExplicationCellule'
+import { VueLignes } from '@/components/indicateurs/tableau-valeurs/VueLignes'
 import { buildNomOfIndividu, referenceLinesOf } from '@/lib/axes/explicationCellule'
 import { clsxm } from '@/lib/clsxm'
 import { formatMonthYearShortFr, formatNumberFr } from '@/lib/format'
@@ -55,64 +55,38 @@ import { referentielIndividusQueryOptions } from '@/queries/referentiels'
 const individusOf = (results: ReadonlyArray<UseQueryResult<ReadonlyArray<IndividuApiModel>>>) =>
   results.flatMap((result) => result.data ?? [])
 
-export function TableauValeursModal({
-  open,
-  onClose,
+// Le cube de l'individu affiché, en tableau croisé ou en lignes, en lecture seule. Les axes
+// choisis dans les sélecteurs de la page partent fixés sur leur modalité.
+export function TableauValeursTab({
   indicateurId,
   individuId,
   referentielIds,
   declarations,
+  modalitesFixees,
 }: {
-  open: boolean
-  onClose: () => void
   indicateurId: string
   individuId: string
   // Tous les référentiels de l'indicateur : les individus enfants peuvent être dans un autre.
   referentielIds: ReadonlyArray<string>
   declarations: ReadonlyArray<DeclarationAxeIndicateurApiModel>
+  // Une entrée par axe déclaré : la modalité choisie, ou `null` pour « Tous ».
+  modalitesFixees: ReadonlyArray<string | null>
 }) {
   const individus = useQueries({
-    queries: referentielIds.map((referentielId) => ({
-      ...referentielIndividusQueryOptions(referentielId),
-      enabled: open,
-    })),
+    queries: referentielIds.map(referentielIndividusQueryOptions),
     combine: individusOf,
   })
   const nomOfIndividu = useMemo(() => buildNomOfIndividu(individus), [individus])
   return (
-    <Dialog open={open} onOpenChange={(ouvert: boolean) => (ouvert ? undefined : onClose())}>
-      <Dialog.Portal>
-        <Dialog.Overlay />
-        <Dialog.Content className="top-4 h-[calc(100dvh-2rem)] max-h-none w-[calc(100vw-2rem)]">
-          <div className="flex h-full flex-col">
-            <header className="flex items-center gap-6 border-b border-border px-6 py-3">
-              <div className="mr-auto">
-                <Dialog.Title>Tableau des valeurs</Dialog.Title>
-                <Dialog.Description className="text-xs">
-                  Les valeurs de l’individu {nomOfIndividu(individuId)}, découpées par les axes de
-                  l’indicateur. Lecture seule : cliquez sur une cellule pour voir d’où vient sa
-                  valeur.
-                </Dialog.Description>
-              </div>
-              <button
-                type="button"
-                aria-label="Fermer"
-                onClick={onClose}
-                className="rounded-md p-1.5 text-text-subtle hover:bg-surface-muted hover:text-text"
-              >
-                <X className="size-[18px]" />
-              </button>
-            </header>
-            <TableauValeursContent
-              indicateurId={indicateurId}
-              individuId={individuId}
-              declarations={declarations}
-              nomOfIndividu={nomOfIndividu}
-            />
-          </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog>
+    <div className="flex h-[calc(100dvh-16rem)] min-h-[32rem] flex-col overflow-hidden rounded-lg border border-border bg-surface">
+      <TableauValeursContent
+        indicateurId={indicateurId}
+        individuId={individuId}
+        declarations={declarations}
+        nomOfIndividu={nomOfIndividu}
+        modalitesFixees={modalitesFixees}
+      />
+    </div>
   )
 }
 
@@ -121,15 +95,17 @@ function TableauValeursContent({
   individuId,
   declarations,
   nomOfIndividu,
+  modalitesFixees,
 }: {
   indicateurId: string
   individuId: string
   declarations: ReadonlyArray<DeclarationAxeIndicateurApiModel>
   nomOfIndividu: (individuId: string) => string
+  modalitesFixees: ReadonlyArray<string | null>
 }) {
   const axesWithModalites = useAxesWithModalites(declarations)
   // `useQuery` plutôt que la suspense : un refus de l'API (trop de combinaisons) s'affiche
-  // dans la modale au lieu de remonter jusqu'à l'erreur de la page.
+  // dans l’onglet au lieu de remonter jusqu'à l'erreur de la page.
   const { data, isPending, isError } = useQuery(
     indicateurValeursByCombinaisonQueryOptions({ indicateurId, individuId }),
   )
@@ -161,7 +137,16 @@ function TableauValeursContent({
   if (context.periodes.length === 0) {
     return <p className="p-6 text-sm text-text-muted">Aucune valeur pour cet individu.</p>
   }
-  return <TableauValeurs key={individuId} context={context} nomOfIndividu={nomOfIndividu} />
+  return (
+    <TableauValeurs
+      // Changer d'individu ou de modalité dans les sélecteurs repart d'un tableau neuf.
+      key={`${individuId}|${modalitesFixees.join(',')}`}
+      context={context}
+      individuId={individuId}
+      nomOfIndividu={nomOfIndividu}
+      modalitesFixees={modalitesFixees}
+    />
+  )
 }
 
 const KIND_DOT: Record<ModaliteKind, string> = {
@@ -190,21 +175,37 @@ type ActiveCellule = { ids: CombinaisonIds; periode: string }
 
 const formatPeriode = (periode: string) => formatMonthYearShortFr(Temporal.PlainDate.from(periode))
 
+type Vue = 'croise' | 'lignes'
+
+const VUE_OPTIONS = [
+  { value: 'croise', label: 'Tableau croisé' },
+  { value: 'lignes', label: 'Lignes' },
+] as const satisfies ReadonlyArray<{ value: Vue; label: string }>
+
 function TableauValeurs({
   context,
+  individuId,
   nomOfIndividu,
+  modalitesFixees,
 }: {
   context: TableauValeursContext
+  individuId: string
   nomOfIndividu: (individuId: string) => string
+  modalitesFixees: ReadonlyArray<string | null>
 }) {
   const { axes, series, periodes, axeIndexByModalite } = context
   const [disposition, setDisposition] = useState<Disposition>(INITIAL_DISPOSITION)
   const [periode, setPeriode] = useState(() => periodes.at(-1) ?? '')
-  const [fixees, setFixees] = useState<ReadonlyArray<string>>(() => axes.map(() => TOUS_ID))
+  const [fixees, setFixees] = useState<ReadonlyArray<string>>(() =>
+    axes.map((_, index) => modalitesFixees[index] ?? TOUS_ID),
+  )
   const [collapsedByAxe, setCollapsedByAxe] = useState<Record<string, ReadonlySet<string>>>(() =>
     Object.fromEntries(axes.map((axe) => [axe.id, initialCollapsed(axe.tree)])),
   )
   const [active, setActive] = useState<ActiveCellule | null>(null)
+  const [vue, setVue] = useState<Vue>('croise')
+  const individuNom = nomOfIndividu(individuId)
+  const individu = useMemo(() => ({ id: individuId, nom: individuNom }), [individuId, individuNom])
 
   const axeLignes = axes[disposition.lignes]
   const axeColonnes = disposition.colonnes === null ? undefined : axes[disposition.colonnes]
@@ -290,65 +291,80 @@ function TableauValeurs({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex flex-wrap items-start gap-x-6 gap-y-3 border-b border-border px-6 py-3">
-        <div className="w-56">
-          <FieldSelect
-            label="Lignes"
-            value={String(disposition.lignes)}
-            onValueChange={(value) =>
-              changeDisposition(withLignes({ disposition, index: Number(value) }))
-            }
-            options={axeOptions}
-          />
-        </div>
-        {axes.length > 1 ? (
-          <div className="w-56">
-            <FieldSelect
-              label="Colonnes"
-              value={disposition.colonnes === null ? PERIODES_VALUE : String(disposition.colonnes)}
-              onValueChange={(value) =>
-                changeDisposition(
-                  withColonnes({
-                    disposition,
-                    index: value === PERIODES_VALUE ? null : Number(value),
-                    axesCount: axes.length,
-                  }),
-                )
-              }
-              options={[{ value: PERIODES_VALUE, label: 'Périodes' }, ...axeOptions]}
-            />
-          </div>
+      <div className="flex flex-wrap items-end gap-x-6 gap-y-3 border-b border-border px-6 py-3">
+        <SegmentedControl
+          aria-label="Présentation des valeurs"
+          value={vue}
+          onValueChange={(next) => {
+            setVue(next)
+            setActive(null)
+          }}
+          options={VUE_OPTIONS}
+        />
+        {vue === 'croise' ? (
+          <>
+            <div className="w-56">
+              <FieldSelect
+                label="Lignes"
+                value={String(disposition.lignes)}
+                onValueChange={(value) =>
+                  changeDisposition(withLignes({ disposition, index: Number(value) }))
+                }
+                options={axeOptions}
+              />
+            </div>
+            {axes.length > 1 ? (
+              <div className="w-56">
+                <FieldSelect
+                  label="Colonnes"
+                  value={
+                    disposition.colonnes === null ? PERIODES_VALUE : String(disposition.colonnes)
+                  }
+                  onValueChange={(value) =>
+                    changeDisposition(
+                      withColonnes({
+                        disposition,
+                        index: value === PERIODES_VALUE ? null : Number(value),
+                        axesCount: axes.length,
+                      }),
+                    )
+                  }
+                  options={[{ value: PERIODES_VALUE, label: 'Périodes' }, ...axeOptions]}
+                />
+              </div>
+            ) : null}
+            {axeColonnes ? (
+              <div className="w-44">
+                <FieldSelect
+                  label="Période"
+                  value={periode}
+                  onValueChange={(value) => {
+                    setPeriode(value)
+                    setActive(null)
+                  }}
+                  options={periodes.toReversed().map((date) => ({
+                    value: date,
+                    label: formatPeriode(date),
+                  }))}
+                />
+              </div>
+            ) : null}
+            {autresAxes.map(({ axe, index }) => (
+              <FixeeSelect
+                key={axe.id}
+                axe={axe}
+                index={index}
+                value={fixees[index] ?? TOUS_ID}
+                onChange={(id) => {
+                  setActive(null)
+                  setFixees((current) =>
+                    current.map((fixee, position) => (position === index ? id : fixee)),
+                  )
+                }}
+              />
+            ))}
+          </>
         ) : null}
-        {axeColonnes ? (
-          <div className="w-44">
-            <FieldSelect
-              label="Période"
-              value={periode}
-              onValueChange={(value) => {
-                setPeriode(value)
-                setActive(null)
-              }}
-              options={periodes.toReversed().map((date) => ({
-                value: date,
-                label: formatPeriode(date),
-              }))}
-            />
-          </div>
-        ) : null}
-        {autresAxes.map(({ axe, index }) => (
-          <FixeeSelect
-            key={axe.id}
-            axe={axe}
-            index={index}
-            value={fixees[index] ?? TOUS_ID}
-            onChange={(id) => {
-              setActive(null)
-              setFixees((current) =>
-                current.map((fixee, position) => (position === index ? id : fixee)),
-              )
-            }}
-          />
-        ))}
       </div>
 
       <FormulaBar
@@ -372,16 +388,21 @@ function TableauValeurs({
         />
       </FormulaBar>
 
-      <div className="min-h-0 flex-1 overflow-auto">
-        <PivotTable
-          corner={`${axeLignes.nom} ↓ · ${axeColonnes ? axeColonnes.nom : 'Périodes'} →`}
-          rows={rows}
-          columns={columns}
-          cellOf={cellOf}
-        />
-      </div>
-
-      <Legende />
+      {vue === 'croise' ? (
+        <>
+          <div className="min-h-0 flex-1 overflow-auto">
+            <PivotTable
+              corner={`${axeLignes.nom} ↓ · ${axeColonnes ? axeColonnes.nom : 'Périodes'} →`}
+              rows={rows}
+              columns={columns}
+              cellOf={cellOf}
+            />
+          </div>
+          <Legende />
+        </>
+      ) : (
+        <VueLignes context={context} individu={individu} onActivate={setActive} />
+      )}
     </div>
   )
 }

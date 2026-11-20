@@ -10,18 +10,18 @@ import {
 import { type CibleRapprochement } from '@pilote/kpilote-shared/valeurImport/buildPlan'
 import { partition } from 'es-toolkit'
 
+import {
+  type ColonneGrille,
+  type CelluleGrille,
+  formatDate,
+  formatValeur,
+  type LigneGrille,
+} from '@/lib/grilleValeurs'
+
 // Dérivations pures de la grille d'import : colonnes, cellules affichées,
 // compteurs et texte de provenance. Les composants ne font qu'afficher.
 
-export type ColonneGrille =
-  | { type: 'INDIVIDU'; label: string }
-  | { type: 'AXE'; label: string; axe: string; rang: number }
-  | { type: 'DATE'; label: string }
-  | { type: 'VALEUR'; label: string }
-
 export type Candidat = { id: string; nom: string }
-
-export type PositionCellule = { ligne: number; colonne: number }
 
 // Une colonne par axe du plan, nommée par le nom de l'axe.
 export const listColonnesGrille = ({
@@ -49,24 +49,6 @@ export const buildNomById = (cibles: CiblesSaisieApiModel): Map<string, string> 
     ]),
   )
 
-export const formatDate = (iso: string): string => {
-  const [annee = '', mois = '', jour = ''] = iso.split('-')
-  return `${jour}/${mois}/${annee}`
-}
-
-const NOMBRE = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 6 })
-
-export const formatValeur = (valeur: number): string => NOMBRE.format(valeur)
-
-export type CelluleGrille = {
-  text: string
-  // Identifiant public d'un individu ou d'une modalité reconnus.
-  identifiant: string | null
-  isAlbert: boolean
-  isWarning: boolean
-  alignRight: boolean
-}
-
 const CELLULE_VIDE = '(vide)'
 
 const toCelluleEntite = ({
@@ -83,6 +65,7 @@ const toCelluleEntite = ({
       isAlbert: false,
       isWarning: true,
       alignRight: false,
+      isCalculee: false,
     }
   }
   return {
@@ -91,6 +74,7 @@ const toCelluleEntite = ({
     isAlbert: cellule.par === 'ALBERT',
     isWarning: false,
     alignRight: false,
+    isCalculee: false,
   }
 }
 
@@ -113,15 +97,8 @@ const toCelluleLue = <T>({
     isAlbert: false,
     isWarning: !isValide || isDoublon,
     alignRight,
+    isCalculee: false,
   }
-}
-
-export type LigneGrille = {
-  // Index de la ligne dans le résultat de `applyPlan`.
-  index: number
-  numero: number
-  cellules: CelluleGrille[]
-  isImportable: boolean
 }
 
 // Les cellules d'une ligne, dans l'ordre des colonnes de `listColonnesGrille`.
@@ -418,27 +395,5 @@ export const describeProvenance = ({
           describeValeur(ligne),
         ),
       }
-  }
-}
-
-// Déplacement de la sélection au clavier, borné aux lignes affichées.
-export const movePosition = ({
-  position,
-  delta,
-  lignes,
-  nombreColonnes,
-}: {
-  position: PositionCellule
-  delta: { ligne: number; colonne: number }
-  lignes: ReadonlyArray<LigneGrille>
-  nombreColonnes: number
-}): PositionCellule => {
-  if (lignes.length === 0) return position
-  const clamp = (value: number, max: number): number => Math.min(Math.max(value, 0), max)
-  const rang = lignes.findIndex((ligne) => ligne.index === position.ligne)
-  const nextRang = clamp(Math.max(rang, 0) + delta.ligne, lignes.length - 1)
-  return {
-    ligne: lignes[nextRang]?.index ?? position.ligne,
-    colonne: clamp(position.colonne + delta.colonne, nombreColonnes - 1),
   }
 }

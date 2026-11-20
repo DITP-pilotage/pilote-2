@@ -4,42 +4,25 @@ import {
 } from '@pilote/kpilote-shared/valeurImport'
 import { type LigneImport } from '@pilote/kpilote-shared/valeurImport/applyPlan'
 import { Check, TriangleAlert } from 'lucide-react'
-import { type KeyboardEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
+import { GrilleValeurs } from '@/components/grille-valeurs/GrilleValeurs'
 import { clsxm } from '@/lib/clsxm'
+import { type PositionCellule } from '@/lib/grilleValeurs'
 
 import { CelluleEditor, type CorrectionSaisie } from './CelluleEditor'
 import { ErreursServeurBloc } from './ErreursServeurBloc'
 import {
   buildLignesGrille,
   buildNomById,
-  type ColonneGrille,
   describeEdition,
   describeProvenance,
   filterLignes,
   type FiltreGrille,
   listColonnesGrille,
-  movePosition,
-  type PositionCellule,
   summarizeLignes,
 } from './grille'
-import { cellDomId, GrilleLigne } from './GrilleLigne'
 import { pluralize } from './pluralize'
-
-// Les colonnes d'axe se partagent la place laissée par les autres.
-const COLUMN_WIDTH: Record<ColonneGrille['type'], string | undefined> = {
-  INDIVIDU: 'w-[26%]',
-  AXE: undefined,
-  DATE: 'w-32',
-  VALEUR: 'w-32',
-}
-
-const DELTA_BY_KEY: Record<string, { ligne: number; colonne: number }> = {
-  ArrowUp: { ligne: -1, colonne: 0 },
-  ArrowDown: { ligne: 1, colonne: 0 },
-  ArrowLeft: { ligne: 0, colonne: -1 },
-  ArrowRight: { ligne: 0, colonne: 1 },
-}
 
 function Pastille({ tone, children }: { tone: 'success' | 'warning'; children: React.ReactNode }) {
   return (
@@ -75,25 +58,6 @@ function FiltreBouton({
     >
       {children}
     </button>
-  )
-}
-
-function ColonneEntete({ colonne }: { colonne: ColonneGrille }) {
-  return (
-    <th
-      scope="col"
-      className={clsxm(
-        'sticky top-0 z-[2] border-b border-r border-border-strong bg-surface-muted px-3 font-bold last:border-r-0',
-        colonne.type === 'VALEUR' ? 'text-right' : 'text-left',
-      )}
-    >
-      {colonne.label}
-      {colonne.type === 'AXE' ? (
-        <span className="ml-1.5 rounded bg-primary-tinted px-1.5 py-0.5 text-[11px] font-medium text-primary">
-          Axe
-        </span>
-      ) : null}
-    </th>
   )
 }
 
@@ -163,13 +127,6 @@ export function ImportGrille({
       })
     : null
 
-  // La cellule sélectionnée porte le focus : le clavier la suit dans la grille.
-  useEffect(() => {
-    if (isEditing) return
-    const cellule = document.getElementById(cellDomId(selection))
-    cellule?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-  }, [selection, isEditing])
-
   const onSelect = useCallback((position: PositionCellule) => {
     setSelection(position)
     setIsEditing(false)
@@ -179,28 +136,6 @@ export function ImportGrille({
     setIsEditing(true)
   }, [])
   const onCloseEditor = useCallback(() => setIsEditing(false), [])
-
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (isEditing) return
-    const delta = DELTA_BY_KEY[event.key]
-    if (delta) {
-      event.preventDefault()
-      const next = movePosition({
-        position: selection,
-        delta,
-        lignes: visibles,
-        nombreColonnes: colonnes.length,
-      })
-      setSelection(next)
-      document.getElementById(cellDomId(next))?.focus()
-      return
-    }
-    const opensEditor = event.key === 'Enter' || event.key === 'F2'
-    if (opensEditor && edition) {
-      event.preventDefault()
-      setIsEditing(true)
-    }
-  }
 
   const submitCorrection = (correction: CorrectionSaisie) => {
     if (!selectedLigne) return
@@ -263,55 +198,17 @@ export function ImportGrille({
         ) : null}
       </div>
 
-      <div
-        role="group"
-        aria-label="Valeurs à importer"
-        onKeyDown={onKeyDown}
-        className="min-h-0 flex-1 overflow-auto rounded-b-lg border border-border-strong bg-surface-muted"
-      >
-        <table className="w-full table-fixed border-separate border-spacing-0 text-[13px]">
-          <colgroup>
-            <col className="w-12" />
-            {colonnes.map((colonne, index) => (
-              <col key={index} className={COLUMN_WIDTH[colonne.type]} />
-            ))}
-          </colgroup>
-          <thead>
-            <tr className="h-10">
-              <th
-                scope="col"
-                className="sticky top-0 z-[2] border-b border-r border-border-strong bg-surface-muted"
-              >
-                <span className="sr-only">Ligne</span>
-              </th>
-              {colonnes.map((colonne, index) => (
-                <ColonneEntete key={index} colonne={colonne} />
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {visibles.map((ligne) => {
-              const isSelectedLigne = ligne.index === selection.ligne
-              return (
-                <GrilleLigne
-                  key={ligne.index}
-                  ligne={ligne}
-                  selectedColonne={isSelectedLigne ? selection.colonne : null}
-                  editor={isSelectedLigne ? editor : null}
-                  onSelect={onSelect}
-                  onEdit={onEdit}
-                  onCloseEditor={onCloseEditor}
-                />
-              )
-            })}
-          </tbody>
-        </table>
-        {visibles.length === 0 ? (
-          <p className="px-4 py-8 text-center text-sm text-text-muted">
-            Aucune ligne à corriger : toutes les valeurs sont prêtes.
-          </p>
-        ) : null}
-      </div>
+      <GrilleValeurs
+        label="Valeurs à importer"
+        colonnes={colonnes}
+        lignes={visibles}
+        selection={selection}
+        onSelect={onSelect}
+        editor={editor}
+        onEdit={onEdit}
+        onCloseEditor={onCloseEditor}
+        emptyMessage="Aucune ligne à corriger : toutes les valeurs sont prêtes."
+      />
     </div>
   )
 }

@@ -13,9 +13,9 @@ import {
   describeProvenance,
   filterLignes,
   listColonnesGrille,
-  movePosition,
   summarizeLignes,
 } from '@/components/import-valeurs/grille'
+import { movePosition } from '@/lib/grilleValeurs'
 
 const cibles: CiblesSaisieApiModel = {
   individus: [
@@ -92,13 +92,21 @@ describe('listColonnesGrille', () => {
 describe('buildLignesGrille', () => {
   it('affiche le nom et l’identifiant d’une entité reconnue, la date et la valeur formatées', () => {
     expect(grille[0]?.cellules).toEqual([
-      { text: 'Ain', identifiant: 'DEPT-01', isAlbert: false, isWarning: false, alignRight: false },
+      {
+        text: 'Ain',
+        identifiant: 'DEPT-01',
+        isAlbert: false,
+        isWarning: false,
+        alignRight: false,
+        isCalculee: false,
+      },
       {
         text: 'Orange',
         identifiant: 'OP-ORANGE',
         isAlbert: false,
         isWarning: false,
         alignRight: false,
+        isCalculee: false,
       },
       {
         text: '01/01/2022',
@@ -106,8 +114,16 @@ describe('buildLignesGrille', () => {
         isAlbert: false,
         isWarning: false,
         alignRight: false,
+        isCalculee: false,
       },
-      { text: '96,4', identifiant: null, isAlbert: false, isWarning: false, alignRight: true },
+      {
+        text: '96,4',
+        identifiant: null,
+        isAlbert: false,
+        isWarning: false,
+        alignRight: true,
+        isCalculee: false,
+      },
     ])
   })
 

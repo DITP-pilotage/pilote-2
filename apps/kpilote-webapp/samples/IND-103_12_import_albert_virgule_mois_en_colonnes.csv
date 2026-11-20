@@ -1,0 +1,9 @@
+Code département,Opérateur,Nature de la fraude,janv. 2027,févr. 2027,mars 2027
+01,OP-ORANGE,"Fraude à l'impôt sur le revenu, IR",0.985,1.005,1.025
+01,OP-ORANGE,TVA (fraude carrousel incluse),2.046,2.087,2.128
+01,OP-SFR,"Fraude à l'impôt sur le revenu, IR",0.543,0.554,0.565
+01,OP-SFR,TVA (fraude carrousel incluse),1.507,1.537,1.567
+38,OP-ORANGE,"Fraude à l'impôt sur le revenu, IR",1.846,1.883,1.920
+38,OP-ORANGE,TVA (fraude carrousel incluse),3.917,3.995,4.073
+38,OP-SFR,"Fraude à l'impôt sur le revenu, IR",1.109,1.131,1.153
+38,OP-SFR,TVA (fraude carrousel incluse),2.514,2.565,2.615

@@ -3,8 +3,8 @@ import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
 import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
-import { Table2, Upload } from 'lucide-react'
-import { startTransition, useCallback, useEffect, useState } from 'react'
+import { Upload } from 'lucide-react'
+import { startTransition, useCallback, useEffect } from 'react'
 import { z } from 'zod'
 
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
@@ -15,7 +15,7 @@ import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
 import { IndicateurResultatsTab } from '@/components/indicateurs/IndicateurResultatsTab'
 import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelect'
-import { TableauValeursModal } from '@/components/indicateurs/tableau-valeurs/TableauValeursModal'
+import { TableauValeursTab } from '@/components/indicateurs/tableau-valeurs/TableauValeursTab'
 import { useImportModal } from '@/components/import-valeurs/useImportModal'
 import { usePageFileDrop } from '@/components/import-valeurs/usePageFileDrop'
 import { BackLink } from '@pilote/kpilote-ui/BackLink'
@@ -52,7 +52,7 @@ const searchSchema = z.object({
   referentiel: referentielPublicIdSchema.optional(),
   // Modalités séparées par une virgule, au plus une par axe ; un axe absent vaut « Tous ».
   modalites: z.string().optional(),
-  onglet: z.enum(['resultats', 'metadonnees']).default('resultats'),
+  onglet: z.enum(['resultats', 'valeurs', 'metadonnees']).default('resultats'),
   sousOnglet: z.enum(['confiance', 'evolution', 'commentaire']).default('confiance'),
 })
 
@@ -161,7 +161,6 @@ function IndicateurDetailComponent() {
 
   const canWrite = useCanWriteDataIndicateur(id)
   const { open, target } = useImportModal()
-  const [isTableauOpen, setIsTableauOpen] = useState(false)
   const hasTableauValeurs = useFeature('TABLEAU_VALEURS')
 
   const onFile = useCallback(
@@ -215,11 +214,56 @@ function IndicateurDetailComponent() {
   const referentielId = search.referentiel
   const referentielIds = indicateur.referentiels.map((c) => c.id)
   const referentielNom = indicateur.referentiels.find((c) => c.id === referentielId)?.nom ?? null
+  const canShowValeurs = hasTableauValeurs && axes.length > 0
+  // Un lien vers l'onglet Tableau des valeurs, sans la feature, retombe sur Résultats.
+  const onglet = search.onglet === 'valeurs' && !canShowValeurs ? 'resultats' : search.onglet
+
+  // Sélecteurs communs aux onglets Résultats et Tableau des valeurs.
+  const selecteurs = (
+    <div className="flex flex-wrap items-end gap-4">
+      <div className="w-full max-w-md">
+        <FieldIndividuSelect
+          referentielIds={referentielIds}
+          value={individuId}
+          onChange={({ individu, referentiel }) => {
+            analytics.trackEvent(
+              analyticsEvents.indicateur.individuChange({ referentiel_id: referentiel }),
+            )
+            startTransition(() => {
+              void navigate({
+                search: (prev) => ({ ...prev, individu, referentiel }),
+              })
+            })
+          }}
+        />
+      </div>
+      {axes.map((axe) => (
+        <div key={axe.id} className="min-w-[14rem]">
+          <ModaliteSelect
+            axe={axe}
+            value={selection.get(axe.id) ?? null}
+            onChange={(modalite) => {
+              const next = setModalite({ selection, axeId: axe.id, modalite })
+              startTransition(() => {
+                void navigate({
+                  search: (prev) => ({
+                    ...prev,
+                    modalites: writeSelection({ axes, selection: next }),
+                  }),
+                  resetScroll: false,
+                })
+              })
+            }}
+          />
+        </div>
+      ))}
+    </div>
+  )
 
   return (
     <Page title={indicateur.nom} back={back} actions={actionsFiche}>
       <Tabs
-        value={search.onglet}
+        value={onglet}
         onValueChange={(onglet) => {
           analytics.trackEvent(analyticsEvents.indicateur.onglet({ entity_id: id, onglet }))
           void navigate({
@@ -230,64 +274,12 @@ function IndicateurDetailComponent() {
         <TabsList>
           <TabsTrigger value="resultats">Résultats</TabsTrigger>
           <TabsTrigger value="metadonnees">Informations sur l'indicateur</TabsTrigger>
+          {canShowValeurs ? <TabsTrigger value="valeurs">Tableau des valeurs</TabsTrigger> : null}
         </TabsList>
 
         <TabsContent value="resultats">
           <div className="flex flex-col gap-8">
-            {/* Sélecteurs propres à l'onglet Résultats : positionnés sous la
-                navigation primaire et masqués sur l'onglet Informations. */}
-            <div className="flex flex-wrap items-end gap-4">
-              <div className="w-full max-w-md">
-                <FieldIndividuSelect
-                  referentielIds={referentielIds}
-                  value={individuId}
-                  onChange={({ individu, referentiel }) => {
-                    analytics.trackEvent(
-                      analyticsEvents.indicateur.individuChange({ referentiel_id: referentiel }),
-                    )
-                    startTransition(() => {
-                      void navigate({
-                        search: (prev) => ({ ...prev, individu, referentiel }),
-                      })
-                    })
-                  }}
-                />
-              </div>
-              {axes.map((axe) => (
-                <div key={axe.id} className="min-w-[14rem]">
-                  <ModaliteSelect
-                    axe={axe}
-                    value={selection.get(axe.id) ?? null}
-                    onChange={(modalite) => {
-                      const next = setModalite({ selection, axeId: axe.id, modalite })
-                      startTransition(() => {
-                        void navigate({
-                          search: (prev) => ({
-                            ...prev,
-                            modalites: writeSelection({ axes, selection: next }),
-                          }),
-                          resetScroll: false,
-                        })
-                      })
-                    }}
-                  />
-                </div>
-              ))}
-              {hasTableauValeurs && axes.length > 0 ? (
-                <Button variant="secondary" size="md" onClick={() => setIsTableauOpen(true)}>
-                  <Table2 />
-                  Tableau des valeurs
-                </Button>
-              ) : null}
-            </div>
-            <TableauValeursModal
-              open={isTableauOpen}
-              onClose={() => setIsTableauOpen(false)}
-              indicateurId={id}
-              individuId={individuId}
-              referentielIds={referentielIds}
-              declarations={indicateur.axes}
-            />
+            {selecteurs}
             <IndicateurResultatsTab
               indicateurId={id}
               individuId={individuId}
@@ -303,6 +295,21 @@ function IndicateurDetailComponent() {
             />
           </div>
         </TabsContent>
+
+        {canShowValeurs ? (
+          <TabsContent value="valeurs">
+            <div className="flex flex-col gap-6">
+              {selecteurs}
+              <TableauValeursTab
+                indicateurId={id}
+                individuId={individuId}
+                referentielIds={referentielIds}
+                declarations={indicateur.axes}
+                modalitesFixees={indicateur.axes.map((axe) => selection.get(axe.id) ?? null)}
+              />
+            </div>
+          </TabsContent>
+        ) : null}
 
         <TabsContent value="metadonnees">
           <IndicateurMetadonnees indicateur={indicateur} />
