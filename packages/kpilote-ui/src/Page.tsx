@@ -27,13 +27,21 @@ export function Page({
     <div className="space-y-2 sm:space-y-4">
       {back && <div>{back}</div>}
       <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div className="max-w-3xl space-y-4">
+        <div className="min-w-0 max-w-3xl space-y-4">
           {kicker && (
             <Text as="span" variant="kicker">
               {kicker}
             </Text>
           )}
-          <Heading as="h1" size="display-lg" tone={titleTone} className="text-balance">
+          {/* Un titre long tient sur deux lignes, coupé par « … » ; le texte complet reste en
+              infobulle native. */}
+          <Heading
+            as="h1"
+            size="display-lg"
+            tone={titleTone}
+            className="line-clamp-2 text-balance break-words"
+            title={typeof title === 'string' ? title : undefined}
+          >
             {title}
           </Heading>
           {description && (

@@ -13,6 +13,8 @@ type HeadingProps = {
   tone?: HeadingTone
   children: ReactNode
   className?: string
+  // Infobulle native, par exemple le texte complet d'un titre tronqué.
+  title?: string | undefined
 }
 
 const headingSizeClasses: Record<HeadingSize, string> = {
@@ -38,11 +40,13 @@ export function Heading({
   tone = 'neutral',
   children,
   className,
+  title,
 }: HeadingProps) {
   return createElement(
     as,
     {
       className: clsxm(headingSizeClasses[size], headingToneClasses[tone], className),
+      title,
     },
     children,
   )

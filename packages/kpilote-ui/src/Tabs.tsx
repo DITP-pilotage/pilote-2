@@ -22,7 +22,9 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsP
         // bordure du panneau pour connecter l'onglet actif.
         '-mb-px inline-flex items-center gap-2 whitespace-nowrap px-4 py-2.5 text-base font-bold transition-colors',
         'border border-border border-t-2 border-t-transparent',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+        // Focus clavier : un anneau à l'intérieur de l'onglet, qui ne déborde pas sur ses voisins
+        // ni sur le panneau.
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/60',
         // Inactif : fond bleu clair (bleu France « low »), texte foncé.
         'bg-primary-tinted text-text hover:bg-primary/10',
         // Actif : fond de la surface, texte + trait haut bleu marianne, bordure
