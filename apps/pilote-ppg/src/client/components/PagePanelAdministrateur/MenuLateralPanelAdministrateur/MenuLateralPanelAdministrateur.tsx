@@ -119,6 +119,12 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
       },
       {
         type: "item",
+        label: "Formations",
+        href: "/panel-administrateur/formations",
+        pageKey: "formations",
+      },
+      {
+        type: "item",
         label: "Albert",
         href: "/panel-administrateur/albert",
         pageKey: "albert",

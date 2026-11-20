@@ -11,6 +11,12 @@ import { ContenuRapport } from "@/server/rapports-hebdomadaires/infrastructure/a
  *   const rattachement = await f.rattachement();
  *   const fiche = await f.fiche({ rattachement_code: rattachement.code });
  */
+
+// Identifiants RDV-SP (motifs, séances) : un compteur par processus de test, parti d'un
+// point tiré au hasard pour que deux fichiers lancés en parallèle n'insèrent pas les mêmes.
+let prochainIdRdvSp = BigInt(Math.floor(Math.random() * 1e12) + 1e9);
+const nouvelIdRdvSp = () => prochainIdRdvSp++;
+
 export const fixtures = {
   async utilisateur(
     overrides: Partial<Prisma.utilisateurUncheckedCreateInput> = {},
@@ -790,6 +796,41 @@ export const fixtures = {
         porteur_short: `PORT-${porteurId}`,
         porteur_name: `Porteur test ${porteurId}`,
         porteur_type: "MIN",
+        ...overrides,
+      },
+    });
+  },
+
+  async formationMotif(
+    overrides: Partial<Prisma.formation_motifUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const motifId = overrides.id ?? nouvelIdRdvSp();
+    return prisma.formation_motif.create({
+      data: {
+        id: motifId,
+        nom: `Motif test ${motifId}`,
+        ...overrides,
+      },
+    });
+  },
+
+  async formationSeance(
+    overrides: Partial<Prisma.formation_seanceUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const motifId = overrides.motif_id ?? (await fixtures.formationMotif()).id;
+    const dansSeptJours = new Date();
+    dansSeptJours.setDate(dansSeptJours.getDate() + 7);
+    return prisma.formation_seance.create({
+      data: {
+        id: nouvelIdRdvSp(),
+        motif_id: motifId,
+        date_debut: dansSeptJours,
+        duree_minutes: 45,
+        nombre_inscrits: 0,
+        url_inscription:
+          "https://rdv.anct.gouv.fr/prendre_rdv?public_link_organisation_id=1453",
         ...overrides,
       },
     });

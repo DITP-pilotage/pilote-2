@@ -834,6 +834,7 @@ model utilisateur {
   rapports_propositions_avancement       rapport_propositions_avancement[]
   llm_calls                              llm_calls[]
   albert_access_utilisateur              albert_access_utilisateur?
+  formation_periodes_information         formation_periode_information_utilisateur[]
 
   @@schema("public")
 }
@@ -854,6 +855,7 @@ model profil {
   a_access_aux_chantiers_brouillons               Boolean       @default(false)
   utilisateur                                     utilisateur[]
   albert_access_profil                            albert_access_profil?
+  formation_motifs_profils                        formation_motif_profil[]
 
   @@schema("public")
 }
@@ -1414,5 +1416,84 @@ model albert_access_utilisateur {
   utilisateur    utilisateur @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade)
   date_creation  DateTime    @default(now())
 
+  @@schema("public")
+}
+
+model formation_motif {
+  id               BigInt             @id
+  nom              String
+  date_suppression DateTime?          @db.Timestamptz
+  created_at       DateTime           @default(now()) @db.Timestamptz
+  updated_at       DateTime           @default(now()) @updatedAt @db.Timestamptz
+  seances          formation_seance[]
+
+  @@schema("public")
+}
+
+model formation_seance {
+  id                BigInt          @id
+  motif_id          BigInt
+  date_debut        DateTime        @db.Timestamptz
+  duree_minutes     Int
+  lieu              String?
+  animateurs        String?
+  date_annulation   DateTime?       @db.Timestamptz
+  nombre_places_max Int?
+  nombre_inscrits   Int
+  url_inscription   String
+  created_at        DateTime        @default(now()) @db.Timestamptz
+  updated_at        DateTime        @default(now()) @updatedAt @db.Timestamptz
+  motif             formation_motif @relation(fields: [motif_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([date_debut])
+  @@schema("public")
+}
+
+model formation_motif_profil {
+  motif_id    BigInt
+  profil_code String
+  created_at  DateTime @default(now()) @db.Timestamptz
+  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz
+  profil      profil   @relation(fields: [profil_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([motif_id, profil_code])
+  @@schema("public")
+}
+
+model formation_periode_information {
+  id           String                                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date_debut   DateTime                                    @db.Date
+  date_fin     DateTime                                    @db.Date
+  created_at   DateTime                                    @default(now()) @db.Timestamptz
+  updated_at   DateTime                                    @default(now()) @updatedAt @db.Timestamptz
+  motifs       formation_periode_information_motif[]
+  utilisateurs formation_periode_information_utilisateur[]
+
+  @@schema("public")
+}
+
+model formation_periode_information_motif {
+  periode_id String                        @db.Uuid
+  motif_id   BigInt
+  created_at DateTime                      @default(now()) @db.Timestamptz
+  updated_at DateTime                      @default(now()) @updatedAt @db.Timestamptz
+  periode    formation_periode_information @relation(fields: [periode_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([periode_id, motif_id])
+  @@schema("public")
+}
+
+model formation_periode_information_utilisateur {
+  utilisateur_id    String                        @db.Uuid
+  periode_id        String                        @db.Uuid
+  date_presentation DateTime                      @db.Timestamptz
+  date_report       DateTime?                     @db.Timestamptz
+  date_fermeture    DateTime?                     @db.Timestamptz
+  created_at        DateTime                      @default(now()) @db.Timestamptz
+  updated_at        DateTime                      @default(now()) @updatedAt @db.Timestamptz
+  utilisateur       utilisateur                   @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  periode           formation_periode_information @relation(fields: [periode_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([utilisateur_id, periode_id])
   @@schema("public")
 }

@@ -31,6 +31,7 @@ import { referentielAxeRouter } from "@/server/referentiels/axe/infrastructure/t
 import { referentielPpgRouter } from "@/server/referentiels/ppg/infrastructure/trpc/referentielPpg";
 import { referentielEngagementRouter } from "@/server/referentiels/engagement/infrastructure/trpc/referentielEngagement";
 import { annuaireRouter } from "@/server/annuaire/infrastructure/trpc/annuaire";
+import { formationRouter } from "@/server/formations/infrastructure/trpc/formation";
 
 export const appRouter = createTRPCRouter({
   chantier: chantierRouter,
@@ -65,4 +66,5 @@ export const appRouter = createTRPCRouter({
   referentielPpg: referentielPpgRouter,
   referentielEngagement: referentielEngagementRouter,
   annuaire: annuaireRouter,
+  formation: formationRouter,
 });
