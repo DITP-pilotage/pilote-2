@@ -11,7 +11,7 @@ Quatre PR empilées. Chacune est cadrée en détail au moment de la commencer.
 | # | PR | Ticket | Base | Branche | Lien | Statut |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Tables, données fictives, onglet Séances à venir | PIL-1883 | `dev` | `feat/PIL-1883-formations-tables-seances` | [#2707](https://github.com/DITP-pilotage/pilote-2/pull/2707) | En relecture : [plan](./2026-11-18-formations-rdv-sp-pr1.md) |
-| 2 | Onglets Profils et Périodes d'information | PIL-1883 | PR 1 | à créer | – | À faire |
+| 2 | Onglets Profils et Périodes d'information | PIL-1883 | PR 1 | `feat/PIL-1883-formations-profils-periodes` | [#2708](https://github.com/DITP-pilotage/pilote-2/pull/2708) | En relecture : [plan](./2026-11-18-formations-rdv-sp-pr2.md) |
 | 3 | Slide-in sur l'accueil | PIL-1923 | PR 2 | à créer | – | À faire |
 | 4 | Mesure d'usage dans Matomo | PIL-1923 | PR 3 | à créer | – | À faire |
 
@@ -25,7 +25,7 @@ Périmètre :
 - Script local `seed-formations.ts`, lancé à la main, refusé hors base locale.
 - Entrée « Formations » dans le menu du panel administrateur, page à onglets réservée à DITP Admin, sur le modèle de `AlbertPanel`.
 - Onglet « Séances à venir », en lecture seule.
-- Requête des séances ouvertes à l'inscription (pas passées, pas annulées, pas complètes), réutilisée ensuite par la slide-in.
+- Requête des séances à venir, avec leur statut (ouverte, complète, annulée) ; la slide-in ne gardera que les séances ouvertes.
 
 Débloque copilot : il peut écrire dans les tables dès que la migration est passée en recette.
 
@@ -40,17 +40,18 @@ Périmètre :
 
 - Onglet « Profils » : matrice profils en lignes, motifs en colonnes, une case par croisement, enregistrée au clic avec un toast.
 - Onglet « Périodes d'information » : liste (du, au, formations, statut calculé), ajout, modification, suppression. Une période passée reste visible mais ne se modifie plus.
-- Refus du chevauchement de deux périodes.
+- Une période enregistrée remplace celles qu'elle chevauche, qui sont supprimées (soft delete, colonne `deleted_at`), avec un avertissement dans le formulaire.
 
 À cadrer :
 
-- [ ] Plan détaillé
+- [x] Plan détaillé : [2026-11-18-formations-rdv-sp-pr2.md](./2026-11-18-formations-rdv-sp-pr2.md), avec les règles des périodes validées le 2026-11-18
+- [x] Mise à plat des règles des périodes et relecture (2026-11-19) : [2026-11-19-formations-rdv-sp-pr2-periodes.md](./2026-11-19-formations-rdv-sp-pr2-periodes.md)
 
 ## PR 3 : slide-in sur l'accueil
 
 Périmètre :
 
-- Formations à proposer : période active, motifs de la période associés au profil de l'utilisateur, séances ouvertes à l'inscription.
+- Formations à proposer : période active, motifs de la période associés au profil de l'utilisateur, séances ouvertes à l'inscription. Période active = non supprimée (`deleted_at IS NULL`) et en cours : réutiliser `statutPeriode`. Une période supprimée ne présente plus la slide-in. Sans verrou, deux périodes peuvent être en cours en même temps : prendre la plus récemment créée (`created_at`).
 - Slide-in sur l'accueil, d'après le prototype joint à PIL-1923.
 - « Plus tard », fermeture, lien d'inscription par séance.
 - Ligne d'état par utilisateur et par période (`formation_periode_information_utilisateur`).
@@ -82,3 +83,4 @@ Périmètre :
 | --- | --- | --- |
 | Écriture des motifs et séances par copilot, selon le contrat du design | à définir | À faire |
 | Mise à jour de PIL-1883 : l'arbitrage « pas de stockage des séances » ne tient plus | à définir | À faire |
+| Mise à plat des règles des périodes d'information (décidée le 2026-11-19, après la relecture de la PR 2) : une période en cours créée par erreur ne peut ni se supprimer ni se corriger ; une période en cours dont toutes les formations ont disparu de RDV-SP ne peut pas s'arrêter | Tristan | Faite dans la PR 2 (soft delete et remplacement) |

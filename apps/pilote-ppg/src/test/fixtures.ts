@@ -836,6 +836,29 @@ export const fixtures = {
     });
   },
 
+  async formationPeriodeInformation({
+    motifIds = [],
+    ...overrides
+  }: Partial<Prisma.formation_periode_informationUncheckedCreateInput> & {
+    motifIds?: bigint[];
+  } = {}) {
+    const prisma = getPrisma();
+    const periode = await prisma.formation_periode_information.create({
+      data: {
+        date_debut: new Date("2026-12-01T00:00:00Z"),
+        date_fin: new Date("2026-12-31T00:00:00Z"),
+        ...overrides,
+      },
+    });
+    await prisma.formation_periode_information_motif.createMany({
+      data: motifIds.map((motifId) => ({
+        periode_id: periode.id,
+        motif_id: motifId,
+      })),
+    });
+    return periode;
+  },
+
   async metadataZonegroup(
     overrides: Partial<Prisma.metadata_zonegroupUncheckedCreateInput> = {},
   ) {
