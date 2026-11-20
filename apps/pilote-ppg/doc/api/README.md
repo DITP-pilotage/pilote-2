@@ -16,11 +16,7 @@ Pour éditer simplement le fichier de spécifications OpenAPI, l'outil *Stopligh
 
 Pour exposer la documentation, on utilise [Swagger UI](https://swagger.io/tools/swagger-ui/) qui permet de visualiser et tester les différents endpoints de l'API.
 
-Pour lancer cette documentation interactive:
-
-- Copier `.env.example` vers `.env` (`cp .env.example .env`)
-- Lancer `docker-compose up`
-- Se rendre sur `localhost:<port>` (le port est spécifié dans le fichier `.env`)
+Elle est servie par l'application, sur la page `/swagger` (`src/pages/swagger.tsx`), à partir de `pilote-api.yml`.
 
 ## Testing
 
