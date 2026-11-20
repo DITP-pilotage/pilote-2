@@ -1,121 +1,18 @@
-import { z } from "zod";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import type { Inject } from "@/server/formations/module";
+import type { ImportFormationsInput } from "@/validation/import-formations";
 
-// Chaque contrôle porte son message : en production, la carte d'erreurs globale des
-// formulaires (src/validation/utilisateur.ts) rendrait sinon « Le champ est requis »
-// pour une durée nulle, ou laisserait les formats en anglais.
-const DATE_AVEC_FUSEAU = {
-  offset: true,
-  error:
-    "Date ISO 8601 avec fuseau attendue, par exemple 2026-12-03T09:30:00+01:00.",
-} as const;
+export type SyncFormationsCommand = ImportFormationsInput;
 
-const identifiantRdvSp = z
-  .int({ error: "Un identifiant RDV-SP entier est attendu." })
-  .positive("Un identifiant RDV-SP strictement positif est attendu.");
-
-const entierPositifOuNul = (nombreNegatif: string) =>
-  z.int({ error: "Un nombre entier est attendu." }).nonnegative(nombreNegatif);
-
-const motifSchema = z.object(
-  {
-    id: identifiantRdvSp,
-    nom: z
-      .string({ error: "Le nom du motif doit être un texte." })
-      .trim()
-      .min(1, "Le nom du motif est vide."),
-  },
-  { error: "Un motif doit être un objet { id, nom }." },
-);
-
-const seanceSchema = z.object(
-  {
-    id: identifiantRdvSp,
-    motif_id: identifiantRdvSp,
-    date_debut: z.iso.datetime(DATE_AVEC_FUSEAU),
-    duree_minutes: z
-      .int({ error: "Une durée entière en minutes est attendue." })
-      .positive("La durée doit être strictement positive."),
-    // Une séance sans agent, ou un agent sans prénom ni nom, ne doit pas bloquer
-    // tout l'import : les noms absents ou vides sont ignorés.
-    animateurs: z
-      .array(
-        z
-          .string({ error: "Un nom d'animateur doit être un texte." })
-          .nullable(),
-        { error: "Une liste de noms d'animateurs est attendue." },
-      )
-      .nullable()
-      .transform((noms) =>
-        (noms ?? [])
-          .map((nom) => nom?.trim() ?? "")
-          .filter((nom) => nom.length > 0),
-      ),
-    cancelled_at: z.iso.datetime(DATE_AVEC_FUSEAU).nullable(),
-    nombre_places_max: entierPositifOuNul(
-      "Le nombre de places ne peut pas être négatif.",
-    ).nullable(),
-    nombre_inscrits: entierPositifOuNul(
-      "Le nombre d'inscrits ne peut pas être négatif.",
-    ),
-    url_inscription: z.url({
-      protocol: /^https$/,
-      error: "Un lien d'inscription en https est attendu.",
-    }),
-  },
-  { error: "Une séance doit être un objet." },
-);
-
-export const syncFormationsCommandSchema = z
-  .object(
-    {
-      motifs: z
-        .array(motifSchema, { error: "Une liste de motifs est attendue." })
-        .min(1, "Au moins un motif est attendu."),
-      seances: z.array(seanceSchema, {
-        error: "Une liste de séances est attendue.",
-      }),
-    },
-    { error: "Un objet JSON { motifs, seances } est attendu." },
-  )
-  .superRefine(({ motifs, seances }, contexte) => {
-    const motifsVus = new Set<number>();
-    motifs.forEach((motif, index) => {
-      if (motifsVus.has(motif.id)) {
-        contexte.addIssue({
-          code: "custom",
-          path: ["motifs", index, "id"],
-          message: `Le motif ${motif.id} apparaît plusieurs fois.`,
-        });
-      }
-      motifsVus.add(motif.id);
-    });
-
-    const seancesVues = new Set<number>();
-    seances.forEach((seance, index) => {
-      if (seancesVues.has(seance.id)) {
-        contexte.addIssue({
-          code: "custom",
-          path: ["seances", index, "id"],
-          message: `La séance ${seance.id} apparaît plusieurs fois.`,
-        });
-      }
-      seancesVues.add(seance.id);
-    });
-
-    seances.forEach((seance, index) => {
-      if (!motifsVus.has(seance.motif_id)) {
-        contexte.addIssue({
-          code: "custom",
-          path: ["seances", index, "motif_id"],
-          message: `Le motif ${seance.motif_id} ne fait pas partie de l'envoi.`,
-        });
-      }
-    });
-  });
-
-export type SyncFormationsCommand = z.infer<typeof syncFormationsCommandSchema>;
+// Une séance sans agent, ou un agent sans prénom ni nom, ne doit pas bloquer tout
+// l'import : les noms absents ou vides sont ignorés.
+function nomsAnimateurs(
+  animateurs: SyncFormationsCommand["seances"][number]["animateurs"],
+): string[] {
+  return (animateurs ?? [])
+    .map((nom) => nom?.trim() ?? "")
+    .filter((nom) => nom.length > 0);
+}
 
 export interface ResultatSyncFormations {
   motifs: { ecrits: number; retires: number };
@@ -164,7 +61,7 @@ export class SyncFormationsHandler {
           motif_id: BigInt(seance.motif_id),
           date_debut: new Date(seance.date_debut),
           duree_minutes: seance.duree_minutes,
-          animateurs: seance.animateurs,
+          animateurs: nomsAnimateurs(seance.animateurs),
           cancelled_at: seance.cancelled_at
             ? new Date(seance.cancelled_at)
             : null,

@@ -92,6 +92,34 @@ describe("SyncFormationsHandler", () => {
   );
 
   it(
+    "ignore les noms d'animateurs absents ou vides",
+    createIntegrationTest(async (prisma) => {
+      // When
+      await handler.execute({
+        commande: {
+          motifs: [{ id: 1, nom: "Introduction" }],
+          seances: [
+            seance({ id: 11, animateurs: null }),
+            seance({ id: 12, animateurs: [null, " ", " Camille Martin "] }),
+          ],
+        },
+        maintenant,
+      });
+
+      // Then
+      expect(
+        await prisma.formation_seance.findMany({
+          select: { id: true, animateurs: true },
+          orderBy: { id: "asc" },
+        }),
+      ).toEqual([
+        { id: BigInt(11), animateurs: [] },
+        { id: BigInt(12), animateurs: ["Camille Martin"] },
+      ]);
+    }),
+  );
+
+  it(
     "met à jour un motif connu sans toucher à sa date de création, et le réactive s'il était retiré",
     createIntegrationTest(async (prisma) => {
       // Given

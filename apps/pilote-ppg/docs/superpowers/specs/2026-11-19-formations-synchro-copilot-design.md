@@ -73,7 +73,7 @@ PILOTE garde la main sur ses tables et ses règles, et copilot n'a plus besoin d
   - header absent ou mal formé : 401 ;
   - secret faux : 403 ;
   - variable non renseignée dans l'environnement : la route refuse tous les appels (503, comme le garde `onlyAcmeApiKey`), ce qui distingue une erreur de configuration de PILOTE d'un mauvais secret.
-- La route vit sous `/api/open-api`, déjà public dans `proxy.ts` (pas de session). Elle n'utilise pas `endpointProtege`, qui exige le token JWT d'un utilisateur, mais un garde dédié sur le modèle d'`onlyCron`, avec le même `errorHandler`.
+- La route vit sous `/api/open-api`, déjà public dans `proxy.ts` (pas de session). Elle n'utilise pas `endpointProtege`, qui exige le token JWT d'un utilisateur, mais un garde dédié sur le modèle d'`onlyCron`, avec le même `errorHandler`. Comme les routes d'export de l'open-api (`chantier/[chantierId]/donnees.ts`), la route porte elle-même sa fonction `handle` : validation, refus en 400, appel du handler d'écriture, journalisation (décision du 2026-11-20, relecture de la PR).
 - Corps en JSON, avec la limite de taille par défaut de Next (1 Mo), largement suffisante : quelques motifs et quelques dizaines de séances.
 
 ### Corps
@@ -99,7 +99,12 @@ PILOTE garde la main sur ses tables et ses règles, et copilot n'a plus besoin d
 
 ### Validation
 
-Toute erreur renvoie un 400 et rien n'est écrit.
+Toute erreur renvoie un 400 et rien n'est écrit. Deux étapes (décision du 2026-11-20, relecture de la PR) :
+
+1. le format, par un schéma zod (`src/validation/import-formations.ts`, comme les autres imports de l'open-api) : types, entiers, dates, lien ;
+2. les règles de l'envoi, par une fonction de domaine (`verifierEnvoi`, `src/server/formations/domain/envoiFormations.ts`) : au moins un motif, pas de doublon, motif de chaque séance présent dans l'envoi.
+
+Le détail des contrôles :
 
 - `motifs` : au moins un motif. Une liste vide viendrait d'une panne et retirerait toutes les formations.
   - `id` : entier positif, unique dans l'envoi ;
@@ -109,7 +114,7 @@ Toute erreur renvoie un 400 et rien n'est écrit.
   - `motif_id` : présent dans `motifs` du même envoi ;
   - `date_debut` : date ISO 8601 avec fuseau ;
   - `duree_minutes` : entier strictement positif ;
-  - `animateurs` : tableau de textes, éventuellement vide. Les noms vides ou faits d'espaces (agent sans prénom ni nom) sont ignorés plutôt que refusés : un nom manquant ne doit pas bloquer tout l'import ;
+  - `animateurs` : tableau de textes, éventuellement vide ou `null`, noms `null` acceptés. Le handler ignore à l'écriture les noms absents, vides ou faits d'espaces (agent sans prénom ni nom) : un nom manquant ne doit pas bloquer tout l'import ;
   - `cancelled_at` : date ISO 8601 avec fuseau, ou `null` ;
   - `nombre_places_max` : entier positif ou nul, ou `null` pour une séance sans limite de places ;
   - `nombre_inscrits` : entier positif ou nul ;
@@ -120,7 +125,7 @@ Toute erreur renvoie un 400 et rien n'est écrit.
 ### Réponses
 
 - 200 : `{ "motifs": { "ecrits": 6, "retires": 1 }, "seances": { "ecrites": 14 } }`. `retires` compte les motifs que cet appel a marqués supprimés.
-- 400 : `{ "message": "…", "erreurs": [{ "chemin": "seances[3].motif_id", "message": "Le motif 2107 ne fait pas partie de l'envoi." }] }`, sur le modèle de l'import des commentaires.
+- 400 : `{ "message": "…", "erreurs": [{ "chemin": "seances.3.motif_id", "message": "Le motif 2107 ne fait pas partie de l'envoi." }] }`, sur le modèle de l'import des commentaires.
 - 401, 403, 503 : authentification (voir plus haut).
 
 ## Écriture
@@ -135,7 +140,7 @@ Les lecteurs (admin, slide-in) voient l'état d'avant ou celui d'après, jamais 
 
 Deux appels simultanés : le second peut échouer (clé en double à l'insertion des séances), et copilot le rejoue. Pas de verrou, comme pour les périodes : copilot n'appelle qu'une fois par jour.
 
-Journalisation : `logger.info` en catégorie `import`, source `open-api/formations`, avec les compteurs ; `logger.warn` sur chaque refus (validation, secret).
+Journalisation : `logger.info` en catégorie `formation`, source `open-api/formations`, avec les compteurs ; `logger.warn` sur chaque refus (validation, secret).
 
 ## Tables après cette PR
 

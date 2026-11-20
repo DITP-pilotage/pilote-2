@@ -594,7 +594,7 @@ components:
               chemin:
                 type: string
                 description: Emplacement de l'erreur dans l'envoi.
-                example: 'seances[3].motif_id'
+                example: 'seances.3.motif_id'
               message:
                 type: string
                 example: Le motif 2107 ne fait pas partie de l'envoi.
