@@ -33,12 +33,12 @@ export function GrilleCellule({
       onClick={() => onSelect(position)}
       onDoubleClick={() => onEdit?.(position)}
       className={clsxm(
-        'flex h-[35px] w-full cursor-cell items-center gap-2 px-3 text-left text-[13px] focus:outline-none',
+        'flex h-8 w-full cursor-cell items-center gap-2 px-3 text-left text-sm focus:outline-none',
         cellule.alignRight && 'justify-end',
         cellule.isWarning && 'bg-warning-tinted',
-        // Un anneau intérieur plutôt qu'un outline : il reste dans la case, sans déborder sur
-        // les bordures des cellules voisines.
-        isSelected && 'bg-primary-tinted ring-2 ring-inset ring-primary',
+        // Comme la cellule active du tableau croisé : un anneau intérieur, qui ne déborde pas
+        // sur les bordures des cellules voisines.
+        isSelected && 'ring-2 ring-inset ring-primary',
       )}
     >
       <CelluleContenu cellule={cellule} />

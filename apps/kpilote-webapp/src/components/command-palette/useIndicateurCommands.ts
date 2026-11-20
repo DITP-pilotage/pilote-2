@@ -7,6 +7,7 @@ import { filterCommands, type Command } from '@/lib/commands/types'
 import { allIndicateursQueryOptions } from '@/queries/indicateurs'
 import { useImportModal } from '@/components/import-valeurs/useImportModal'
 
+import { useFeature } from '@/queries/meFeature'
 import { buildIndicateurActions } from './indicateurActions'
 import { useCanImport } from './useCanImport'
 
@@ -25,6 +26,7 @@ export function useIndicateurCommands(query: string, _open: boolean, close: () =
   const navigate = useNavigate()
   const { data } = useSuspenseQuery(allIndicateursQueryOptions())
   const canImport = useCanImport()
+  const hasTableauValeurs = useFeature('TABLEAU_VALEURS')
   const { open: openImport } = useImportModal()
 
   const allCommands = useMemo<Command[]>(
@@ -40,9 +42,15 @@ export function useIndicateurCommands(query: string, _open: boolean, close: () =
           void navigate({ to: '/indicateurs/$id', params: { id: indicateur.id } })
           close()
         },
-        actions: buildIndicateurActions(indicateur, { navigate, close, openImport, canImport }),
+        actions: buildIndicateurActions(indicateur, {
+          navigate,
+          close,
+          openImport,
+          canImport,
+          hasTableauValeurs,
+        }),
       })),
-    [data, navigate, close, openImport, canImport],
+    [data, navigate, close, openImport, canImport, hasTableauValeurs],
   )
 
   // On ne surface les résultats que lorsqu'une recherche est saisie : à vide, la

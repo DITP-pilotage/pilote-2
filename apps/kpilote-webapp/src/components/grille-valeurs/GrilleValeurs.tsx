@@ -1,5 +1,7 @@
 import { type KeyboardEvent, type ReactNode, useEffect } from 'react'
 
+import { clsxm } from '@/lib/clsxm'
+
 import { ColonneEntete } from '@/components/grille-valeurs/ColonneEntete'
 import { GrilleLigne } from '@/components/grille-valeurs/GrilleLigne'
 import {
@@ -39,6 +41,7 @@ export function GrilleValeurs({
   onEdit,
   onCloseEditor = noop,
   emptyMessage,
+  isFramed = true,
 }: {
   label: string
   colonnes: ReadonlyArray<ColonneGrille>
@@ -50,6 +53,8 @@ export function GrilleValeurs({
   onEdit?: (position: PositionCellule) => void
   onCloseEditor?: () => void
   emptyMessage: string
+  // Sans cadre : la grille occupe tout son conteneur, comme le tableau croisé.
+  isFramed?: boolean
 }) {
   const isEditing = editor !== null
 
@@ -87,9 +92,12 @@ export function GrilleValeurs({
       role="group"
       aria-label={label}
       onKeyDown={onKeyDown}
-      className="min-h-0 flex-1 overflow-auto rounded-b-lg border border-border-strong bg-surface-muted"
+      className={clsxm(
+        'min-h-0 flex-1 overflow-auto',
+        isFramed ? 'rounded-b-lg border border-border-strong bg-surface-muted' : 'bg-surface',
+      )}
     >
-      <table className="w-full table-fixed border-separate border-spacing-0 text-[13px]">
+      <table className="w-full table-fixed border-separate border-spacing-0 text-sm">
         <colgroup>
           <col className="w-12" />
           {colonnes.map((colonne, index) => (
@@ -97,7 +105,7 @@ export function GrilleValeurs({
           ))}
         </colgroup>
         <thead>
-          <tr className="h-10">
+          <tr>
             <th
               scope="col"
               className="sticky top-0 z-[2] border-b border-r border-border-strong bg-surface-muted"

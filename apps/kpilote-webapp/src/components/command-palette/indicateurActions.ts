@@ -1,5 +1,5 @@
 import type { useNavigate } from '@tanstack/react-router'
-import { BarChart2, FileText, Info, MessageSquare, ShieldCheck, Upload } from 'lucide-react'
+import { BarChart2, FileText, Info, MessageSquare, ShieldCheck, Table2, Upload } from 'lucide-react'
 
 import type { ImportTarget } from '@/components/import-valeurs/useImportModal'
 import type { CommandAction } from '@/lib/commands/types'
@@ -9,19 +9,24 @@ type BuildActionsContext = {
   close: () => void
   openImport?: (target: ImportTarget) => void
   canImport?: (indicateurId: string) => boolean
+  // Feature TABLEAU_VALEURS : l'onglet Tableau des valeurs de la fiche.
+  hasTableauValeurs?: boolean
 }
 
 /**
  * Actions de navigation proposées sur un indicateur dans la command palette.
- * Couvrent les deux onglets primaires (Résultats, Métadonnées) et les trois
+ * Couvrent les onglets primaires (Résultats, Métadonnées, Tableau des valeurs) et les trois
  * sous-onglets de Résultats (Niveau de confiance, Evolution et répartition, Commentaire).
  */
 export function buildIndicateurActions(
   indicateur: { id: string; nom: string },
-  { navigate, close, openImport, canImport }: BuildActionsContext,
+  { navigate, close, openImport, canImport, hasTableauValeurs = false }: BuildActionsContext,
 ): CommandAction[] {
   const goTo =
-    (onglet: 'resultats' | 'metadonnees', sousOnglet?: 'confiance' | 'evolution' | 'commentaire') =>
+    (
+      onglet: 'resultats' | 'valeurs' | 'metadonnees',
+      sousOnglet?: 'confiance' | 'evolution' | 'commentaire',
+    ) =>
     () => {
       void navigate({
         to: '/indicateurs/$id',
@@ -69,6 +74,16 @@ export function buildIndicateurActions(
       run: goTo('metadonnees'),
     },
   ]
+
+  if (hasTableauValeurs) {
+    actions.push({
+      id: `indicateur:${indicateur.id}:valeurs`,
+      label: 'Voir le tableau des valeurs',
+      icon: Table2,
+      keywords: ['répartition', 'axes', 'modalités', 'tableau croisé', 'lignes'],
+      run: goTo('valeurs'),
+    })
+  }
 
   if (openImport && canImport?.(indicateur.id)) {
     actions.push({

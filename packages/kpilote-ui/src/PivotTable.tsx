@@ -52,7 +52,8 @@ const EMPHASE_CELL: Record<PivotEmphase, string> = {
 }
 
 const TONE_CLASS: Record<PivotCellTone, string> = {
-  active: 'relative z-10 outline-2 -outline-offset-2 outline-primary',
+  // Un anneau intérieur : il reste dans la case, sans déborder sur les bordures voisines.
+  active: 'ring-2 ring-inset ring-primary',
   precedent: 'bg-primary-tinted',
 }
 

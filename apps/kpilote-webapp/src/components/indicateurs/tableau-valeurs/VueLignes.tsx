@@ -27,8 +27,9 @@ export function VueLignes({
     if (cible) onActivate(cible)
   }
   return (
-    <div className="flex min-h-0 flex-1 flex-col px-6 py-4">
+    <div className="flex min-h-0 flex-1 flex-col">
       <GrilleValeurs
+        isFramed={false}
         label={`Valeurs de ${individu.nom}`}
         colonnes={colonnes}
         lignes={lignes}

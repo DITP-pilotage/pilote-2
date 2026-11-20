@@ -6,6 +6,7 @@ import type { Command } from '@/lib/commands/types'
 import { getRecentlyVisited } from '@/lib/recentlyVisited'
 import { useImportModal } from '@/components/import-valeurs/useImportModal'
 
+import { useFeature } from '@/queries/meFeature'
 import { buildIndicateurActions } from './indicateurActions'
 import { buildCollectionActions } from './collectionActions'
 import { useCanImport } from './useCanImport'
@@ -27,6 +28,7 @@ const ICON_BY_TYPE = {
 export function useRecentlyVisitedCommands(open: boolean, close: () => void): Command[] {
   const navigate = useNavigate()
   const canImport = useCanImport()
+  const hasTableauValeurs = useFeature('TABLEAU_VALEURS')
   const { open: openImport } = useImportModal()
 
   // Relu à chaque (ré)ouverture de la palette : `open` en dépendance suffit à
@@ -53,7 +55,13 @@ export function useRecentlyVisitedCommands(open: boolean, close: () => void): Co
         }
         const actions =
           entry.type === 'indicateur'
-            ? buildIndicateurActions(cible, { navigate, close, openImport, canImport })
+            ? buildIndicateurActions(cible, {
+                navigate,
+                close,
+                openImport,
+                canImport,
+                hasTableauValeurs,
+              })
             : buildCollectionActions(cible, { navigate, close })
         return {
           id: `recent:${entry.type}:${entry.id}`,
@@ -73,6 +81,6 @@ export function useRecentlyVisitedCommands(open: boolean, close: () => void): Co
           actions,
         }
       }),
-    [entries, navigate, close, openImport, canImport],
+    [entries, navigate, close, openImport, canImport, hasTableauValeurs],
   )
 }
