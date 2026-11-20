@@ -37,6 +37,7 @@ apps/pilote-ppg/AGENTS.md
 !.claude/skills/
 .claude/skills/*
 !.claude/skills/deps-campagne/
+!.claude/skills/cve-exposition/
 
 # misc
 qodana.yaml
