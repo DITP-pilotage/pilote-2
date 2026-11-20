@@ -88,7 +88,7 @@ describe('traduireIssuesValidation', () => {
       },
     ]
     const messages = traduireIssuesValidation({ issues })
-    expect(messages).toEqual(['Ligne 4 : champ « date » invalide — Date calendaire invalide'])
+    expect(messages).toEqual(['Ligne 4 : champ « date » invalide : Date calendaire invalide'])
   })
 
   it('fallback "Ligne inconnue" si pas d\'index numérique dans le path', () => {
@@ -118,8 +118,8 @@ describe('traduireIssuesValidation', () => {
     ]
     const messages = traduireIssuesValidation({ issues })
     expect(messages).toEqual([
-      'Ligne 2 : champ « individu » invalide — Requis',
-      'Ligne 3 : champ « date » invalide — Format de date invalide',
+      'Ligne 2 : champ « individu » invalide : Requis',
+      'Ligne 3 : champ « date » invalide : Format de date invalide',
     ])
   })
 })
