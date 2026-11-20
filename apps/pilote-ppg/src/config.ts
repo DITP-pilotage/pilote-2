@@ -316,6 +316,14 @@ const config = convict({
       env: "ACME_UPLOAD_API_KEY",
     },
   },
+  formations: {
+    apiSecret: {
+      format: String,
+      default: "",
+      doc: "Secret de la synchronisation des formations par copilot (PUT /api/open-api/formations). Vide = route désactivée.",
+      env: "FORMATIONS_API_SECRET",
+    },
+  },
   tchap: {
     baseUrl: {
       format: String,

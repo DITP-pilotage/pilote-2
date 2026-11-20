@@ -49,7 +49,10 @@ export const usePeriodeInformationForm = ({
     defaultValues: {
       dateDebut: periode?.dateDebut ?? "",
       dateFin: periode?.dateFin ?? "",
-      motifIds: periode?.motifs.map((motif) => motif.id) ?? [],
+      motifIds:
+        periode?.motifs
+          .filter((motif) => !motif.retiree)
+          .map((motif) => motif.id) ?? [],
     },
   });
 

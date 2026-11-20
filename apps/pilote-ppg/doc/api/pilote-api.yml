@@ -392,8 +392,212 @@ paths:
                 $ref: '#/components/schemas/ImportSyntheseDesResultatsErrorResponse'
       security:
         - bearerAuth: []
+  /formations:
+    put:
+      summary: Synchronisation des formations Campus PILOTE
+      operationId: put-formations
+      tags:
+        - Formations
+      description: |-
+        Réservé à copilot (DITP). Copilot envoie chaque jour l'état complet des formations Campus PILOTE gérées dans Rendez-vous Service Public (RDV-SP) : les motifs actifs ouverts à l'inscription des usagers, et les séances collectives à venir de ces motifs, annulées comprises.
+
+        - L'envoi remplace l'état connu de PILOTE : un motif absent est retiré (jamais effacé, le paramétrage de la DITP le garde), les séances sont remplacées par celles de l'envoi.
+        - Tout ou rien : un envoi invalide est refusé en entier, sans rien écrire.
+        - Rejouable : renvoyer le même envoi ne change rien.
+        - Les champs inconnus sont ignorés. Ne jamais envoyer le lien de visioconférence (`visio_url`) : il permet d'entrer dans une séance sans s'inscrire.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncFormationsContrat'
+      responses:
+        '200':
+          description: L'envoi a été écrit. Les compteurs disent ce qui a changé.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncFormationsResultat'
+        '400':
+          description: L'envoi n'est pas valide. Rien n'a été écrit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncFormationsErreur'
+        '401':
+          description: Le header Authorization est absent ou ne commence pas par Bearer.
+        '403':
+          description: Le secret de synchronisation est faux.
+        '405':
+          description: Seule la méthode PUT est acceptée.
+        '503':
+          description: La synchronisation des formations n'est pas configurée sur cet environnement.
+      security:
+        - formationsApiSecret: []
 components:
   schemas:
+    SyncFormationsContrat:
+      title: SyncFormationsContrat
+      type: object
+      description: État complet des formations Campus PILOTE dans RDV-SP.
+      required:
+        - motifs
+        - seances
+      properties:
+        motifs:
+          type: array
+          minItems: 1
+          description: Motifs actifs de l'organisation Campus PILOTE ouverts à l'inscription des usagers, même sans séance à venir. Une liste vide est refusée.
+          items:
+            type: object
+            required:
+              - id
+              - nom
+            properties:
+              id:
+                type: integer
+                minimum: 1
+                description: Identifiant RDV-SP du motif (`motif.id`). Unique dans l'envoi.
+              nom:
+                type: string
+                minLength: 1
+                description: Nom du motif (`motif.name`).
+        seances:
+          type: array
+          description: Séances collectives à venir des motifs envoyés, annulées comprises. Peut être vide.
+          items:
+            type: object
+            required:
+              - id
+              - motif_id
+              - date_debut
+              - duree_minutes
+              - animateurs
+              - cancelled_at
+              - nombre_places_max
+              - nombre_inscrits
+              - url_inscription
+            properties:
+              id:
+                type: integer
+                minimum: 1
+                description: Identifiant RDV-SP du rendez-vous collectif (`rdv.id`). Unique dans l'envoi.
+              motif_id:
+                type: integer
+                minimum: 1
+                description: Motif de la séance (`rdv.motif.id`). Doit figurer dans `motifs`.
+              date_debut:
+                type: string
+                format: date-time
+                description: Début de la séance (`rdv.starts_at`), en ISO 8601 avec fuseau.
+              duree_minutes:
+                type: integer
+                minimum: 1
+                description: Durée de la séance (`rdv.duration_in_min`).
+              animateurs:
+                type:
+                  - array
+                  - 'null'
+                description: Prénom et nom des agents de la séance (`rdv.agents[]`). Une liste `null`, les noms `null` et les noms vides sont ignorés.
+                items:
+                  type:
+                    - string
+                    - 'null'
+              cancelled_at:
+                type:
+                  - string
+                  - 'null'
+                format: date-time
+                description: Date d'annulation (`rdv.cancelled_at`), en ISO 8601 avec fuseau. `null` si la séance est maintenue.
+              nombre_places_max:
+                type:
+                  - integer
+                  - 'null'
+                minimum: 0
+                description: Nombre de places (`rdv.max_participants_count`). `null` si illimité.
+              nombre_inscrits:
+                type: integer
+                minimum: 0
+                description: Nombre d'inscrits (`rdv.users_count`).
+              url_inscription:
+                type: string
+                format: uri
+                description: |-
+                  Lien d'inscription pour l'usager, en https. RDV-SP ne le fournit pas : il se construit comme le bouton « S'inscrire » de RDV-SP, `https://<domaine>/users/rdv_wizard_step/new?rdv_collectif_id=<id>`, avec le domaine de `rdv.url_for_agents`. `url_for_agents` est réservé aux agents : ce n'est pas un lien d'inscription.
+      examples:
+        - motifs:
+            - id: 2101
+              nom: "CAMPUS PILOTE : Introduction à l'outil"
+          seances:
+            - id: 884512
+              motif_id: 2101
+              date_debut: '2026-12-03T09:30:00+01:00'
+              duree_minutes: 90
+              animateurs:
+                - Camille Martin
+                - Alex Durand
+              cancelled_at: null
+              nombre_places_max: 20
+              nombre_inscrits: 12
+              url_inscription: 'https://rdv.anct.gouv.fr/users/rdv_wizard_step/new?rdv_collectif_id=884512'
+    SyncFormationsResultat:
+      title: SyncFormationsResultat
+      type: object
+      required:
+        - motifs
+        - seances
+      properties:
+        motifs:
+          type: object
+          required:
+            - ecrits
+            - retires
+          properties:
+            ecrits:
+              type: integer
+              description: Motifs reçus et écrits.
+            retires:
+              type: integer
+              description: Motifs que cet envoi a retirés, parce qu'ils n'y figuraient plus.
+        seances:
+          type: object
+          required:
+            - ecrites
+          properties:
+            ecrites:
+              type: integer
+              description: Séances écrites. Elles remplacent toutes les séances connues.
+      examples:
+        - motifs:
+            ecrits: 6
+            retires: 1
+          seances:
+            ecrites: 14
+    SyncFormationsErreur:
+      title: SyncFormationsErreur
+      type: object
+      required:
+        - message
+        - erreurs
+      properties:
+        message:
+          type: string
+          example: L'envoi des formations n'est pas valide.
+        erreurs:
+          type: array
+          items:
+            type: object
+            required:
+              - chemin
+              - message
+            properties:
+              chemin:
+                type: string
+                description: Emplacement de l'erreur dans l'envoi.
+                example: 'seances.3.motif_id'
+              message:
+                type: string
+                example: Le motif 2107 ne fait pas partie de l'envoi.
     DonneeIndicateurContrat:
       title: DonneeIndicateurContrat
       x-stoplight:
@@ -1320,6 +1524,10 @@ components:
       scheme: bearer
       description: Cette clé d'API vous permet de vous authentifier et d'accéder uniquement aux resources autorisées.
       bearerFormat: JWT
+    formationsApiSecret:
+      type: http
+      scheme: bearer
+      description: Secret de synchronisation des formations, transmis par la DITP à copilot. Distinct des tokens d'API des utilisateurs.
   parameters: {}
 tags:
   - name: Chantier
@@ -1334,6 +1542,8 @@ tags:
     description: Opérations sur les objectifs des chantiers prioritaires
   - name: Synthèse des résultats
     description: Opérations sur les synthèses des résultats des chantiers prioritaires
+  - name: Formations
+    description: Synchronisation des formations Campus PILOTE depuis Rendez-vous Service Public. Réservée à copilot (DITP), pas aux ministères.
   - name: PPG
     description: Opérations sur les PPG (Politiques Prioritaires du Gouvernement)
   - name: En test

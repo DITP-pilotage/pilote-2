@@ -25,6 +25,12 @@ const estModifiable = (periode: PeriodeInformation) =>
 const nomsFormations = (periode: PeriodeInformation) =>
   periode.motifs.map((motif) => motif.nom);
 
+const libelleFormation = ({
+  nom,
+  retiree,
+}: PeriodeInformation["motifs"][number]) =>
+  retiree ? `${nom} (retirée de RDV-SP)` : nom;
+
 const columnHelper = tableauAdmin.createColumnHelper<PeriodeInformation>();
 
 const useTableColumns = ({
@@ -55,7 +61,8 @@ const useTableColumns = ({
           id: "formations",
           header: "Formations",
           meta: { cellClassName: CLASSE_COLONNE_SECONDAIRE },
-          cell: ({ row }) => nomsFormations(row.original).join(", "),
+          cell: ({ row }) =>
+            row.original.motifs.map(libelleFormation).join(", "),
         }),
         columnHelper.accessor("statut", {
           id: "statut",

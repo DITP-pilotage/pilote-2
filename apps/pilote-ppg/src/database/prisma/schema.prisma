@@ -1422,7 +1422,7 @@ model albert_access_utilisateur {
 model formation_motif {
   id               BigInt             @id
   nom              String
-  date_suppression DateTime?                             @db.Timestamptz
+  deleted_at       DateTime?                             @db.Timestamptz
   created_at       DateTime                              @default(now()) @db.Timestamptz
   updated_at       DateTime                              @default(now()) @updatedAt @db.Timestamptz
   seances          formation_seance[]
@@ -1437,9 +1437,8 @@ model formation_seance {
   motif_id          BigInt
   date_debut        DateTime        @db.Timestamptz
   duree_minutes     Int
-  lieu              String?
-  animateurs        String?
-  date_annulation   DateTime?       @db.Timestamptz
+  animateurs        String[]        @default([])
+  cancelled_at      DateTime?       @db.Timestamptz
   nombre_places_max Int?
   nombre_inscrits   Int
   url_inscription   String

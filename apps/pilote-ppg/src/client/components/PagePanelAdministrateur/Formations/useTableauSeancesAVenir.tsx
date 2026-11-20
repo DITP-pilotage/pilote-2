@@ -23,8 +23,7 @@ const formaterDateSeance = (dateDebut: string) =>
 
 const champsRecherche = (seance: SeanceAVenir) => [
   seance.formation,
-  seance.lieu ?? "",
-  seance.animateurs ?? "",
+  ...seance.animateurs,
 ];
 
 const columnHelper = tableauAdmin.createColumnHelper<SeanceAVenir>();
@@ -63,15 +62,11 @@ const useTableColumns = (formations: string[]) =>
           meta: { cellClassName: CLASSE_COLONNE_SECONDAIRE },
           cell: (info) => `${info.getValue()} min`,
         }),
-        columnHelper.accessor("lieu", {
-          id: "lieu",
-          header: "Lieu",
-          meta: { cellClassName: CLASSE_COLONNE_SECONDAIRE },
-        }),
         columnHelper.accessor("animateurs", {
           id: "animateurs",
           header: "Animé par",
           meta: { cellClassName: CLASSE_COLONNE_SECONDAIRE },
+          cell: (info) => info.getValue().join(", "),
         }),
         columnHelper.accessor("nombreInscrits", {
           id: "nombreInscrits",

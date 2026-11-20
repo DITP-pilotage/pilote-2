@@ -49,44 +49,37 @@ Le ticket avait tranché « séances récupérées à la volée, pas de stockage
 
 Toutes dans `public`, avec `created_at` et `updated_at` (défaut `now()`). Les identifiants de motif et de séance sont ceux de RDV-SP (`bigint`).
 
-### Remplies par copilot
+### Écrites par PILOTE avec les données envoyées par copilot
 
 `formation_motif`
 
-| Colonne | Type | Note |
-| --- | --- | --- |
-| `id` | bigint, clé | identifiant RDV-SP du motif |
-| `nom` | text | ex. « CAMPUS PILOTE : Introduction à l'outil » |
-| `date_suppression` | timestamptz, nullable | motif supprimé dans RDV-SP |
-| `created_at` | timestamptz, défaut `now()` | |
-| `updated_at` | timestamptz, défaut `now()` | dernière écriture par copilot |
+| Colonne      | Type                        | Note                                                                                               |
+| ------------ | --------------------------- | -------------------------------------------------------------------------------------------------- |
+| `id`         | bigint, clé                 | identifiant RDV-SP du motif                                                                        |
+| `nom`        | text                        | ex. « CAMPUS PILOTE : Introduction à l'outil »                                                     |
+| `deleted_at` | timestamptz, nullable       | motif absent d'un envoi de copilot (retiré de RDV-SP) ; renommée depuis `date_suppression` en PR 3 |
+| `created_at` | timestamptz, défaut `now()` |                                                                                                    |
+| `updated_at` | timestamptz, défaut `now()` | dernier envoi qui contenait le motif                                                               |
 
 `formation_seance`
 
-| Colonne | Type | Note |
-| --- | --- | --- |
-| `id` | bigint, clé | identifiant RDV-SP du rendez-vous |
-| `motif_id` | bigint, FK `formation_motif` | |
-| `date_debut` | timestamptz | |
-| `duree_minutes` | integer | |
-| `lieu` | text, nullable | adresse ou visioconférence |
-| `animateurs` | text, nullable | noms des agents, pour « Animé par… » |
-| `date_annulation` | timestamptz, nullable | `cancelled_at`, seule source de l'annulation |
-| `nombre_places_max` | integer, nullable | `max_participants_count` |
-| `nombre_inscrits` | integer | `users_count` |
-| `url_inscription` | text | lien d'inscription pour l'utilisateur |
-| `created_at` | timestamptz, défaut `now()` | |
-| `updated_at` | timestamptz, défaut `now()` | dernière écriture par copilot |
+| Colonne             | Type                         | Note                                                                                               |
+| ------------------- | ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| `id`                | bigint, clé                  | identifiant RDV-SP du rendez-vous                                                                  |
+| `motif_id`          | bigint, FK `formation_motif` |                                                                                                    |
+| `date_debut`        | timestamptz                  |                                                                                                    |
+| `duree_minutes`     | integer                      |                                                                                                    |
+| `animateurs`        | text[], défaut vide          | noms des agents, pour « Animé par… » (tableau depuis la PR 3)                                      |
+| `cancelled_at`      | timestamptz, nullable        | `cancelled_at` de RDV-SP, seule source de l'annulation ; renommée depuis `date_annulation` en PR 3 |
+| `nombre_places_max` | integer, nullable            | `max_participants_count`                                                                           |
+| `nombre_inscrits`   | integer                      | `users_count`                                                                                      |
+| `url_inscription`   | text                         | lien d'inscription pour l'utilisateur                                                              |
+| `created_at`        | timestamptz, défaut `now()`  | date de l'import (les séances sont rechargées à chaque envoi)                                      |
+| `updated_at`        | timestamptz, défaut `now()`  | idem                                                                                               |
 
-Contrat avec copilot :
+La colonne `lieu` a été retirée en PR 3 (2026-11-19) : lieu et mode (visio, sur place) sont laissés de côté, à reprendre si le besoin apparaît.
 
-- Stratégie d'écriture pas encore tranchée (décision du 2026-11-19) : elle se décidera avec copilot, comme les éventuels ajustements de `created_at` et `updated_at`. Contrainte posée par la PR 2 : le paramétrage a une clé étrangère vers `formation_motif` (`ON DELETE RESTRICT`), donc les motifs ne peuvent plus être vidés ni effacés quand ils sont utilisés ; il faudra les écrire par upsert. Les séances peuvent toujours être vidées puis rechargées. Les motifs supprimés dans RDV-SP sont à traiter avec la passerelle copilot → PILOTE (décision du 2026-11-19 : aujourd'hui, aucun motif ne peut être supprimé).
-- Ne pas modifier la structure des tables (pas de colonnes `_dlt_*` ajoutées par dlt).
-- Renseigner `updated_at` à l'heure de l'import sur chaque motif écrit (la valeur par défaut suffit en insertion, pas en mise à jour) : l'onglet Séances à venir affiche la plus récente, pour voir d'un coup d'œil si le DAG a tourné.
-- Écrire tous les motifs de l'organisation, même sans séance à venir : l'admin doit pouvoir les paramétrer à l'avance. Le motif de chaque séance écrite doit figurer dans le même chargement, motif supprimé compris, sinon la clé étrangère fait échouer toute la transaction (la date d'import cesse alors d'avancer dans l'onglet Séances à venir).
-- Renseigner `date_annulation` (le `cancelled_at` de RDV-SP) pour toute séance annulée : c'est la seule source de l'annulation pour PILOTE. Le `status` de RDV-SP n'est pas stocké (décision du 2026-11-19) : `cancelled_at` est rempli quand il passe à un statut d'annulation, la colonne aurait fait doublon.
-- Si l'écriture passe par dlt, sa stratégie de remplacement ne doit ni vider les tables une à une, ni charger en jobs parallèles : c'est incompatible avec la transaction unique et la clé étrangère.
-- Les séances peuvent être limitées à celles à venir. PILOTE refiltre de toute façon à l'affichage (passées, annulées, complètes), puisque les données ne sont rafraîchies qu'une fois par jour.
+Contrat avec copilot : copilot n'écrit plus dans la base. Il appelle chaque jour `PUT /api/open-api/formations` avec l'état complet de RDV-SP, et PILOTE écrit lui-même ces tables (upsert des motifs, motifs absents retirés, séances rechargées, le tout dans une transaction). Contrat complet, colonnes et façon de les obtenir dans copilot : [design de la synchronisation](./2026-11-19-formations-synchro-copilot-design.md#contrat-avec-copilot) (décision du 2026-11-19, remplace l'écriture directe par dlt).
 
 ### Paramétrage DITP (PIL-1883)
 
@@ -104,13 +97,13 @@ Le paramétrage ne référence que des motifs existants (décision du 2026-11-19
 
 `formation_periode_information_utilisateur`
 
-| Colonne | Type | Note |
-| --- | --- | --- |
-| `utilisateur_id` | uuid, FK `utilisateur`, cascade | |
-| `periode_id` | uuid, FK `formation_periode_information`, cascade | |
-| `date_presentation` | timestamptz | première présentation |
-| `date_report` | timestamptz, nullable | dernier clic sur « Plus tard » |
-| `date_fermeture` | timestamptz, nullable | fermeture : plus de présentation sur la période |
+| Colonne             | Type                                              | Note                                            |
+| ------------------- | ------------------------------------------------- | ----------------------------------------------- |
+| `utilisateur_id`    | uuid, FK `utilisateur`, cascade                   |                                                 |
+| `periode_id`        | uuid, FK `formation_periode_information`, cascade |                                                 |
+| `date_presentation` | timestamptz                                       | première présentation                           |
+| `date_report`       | timestamptz, nullable                             | dernier clic sur « Plus tard »                  |
+| `date_fermeture`    | timestamptz, nullable                             | fermeture : plus de présentation sur la période |
 
 Clé (`utilisateur_id`, `periode_id`). Pas de ligne : jamais présentée. `date_report` garde de quoi appliquer la règle de nouvelle présentation, encore à arbitrer (prochaine connexion, prochaine visite ou délai).
 

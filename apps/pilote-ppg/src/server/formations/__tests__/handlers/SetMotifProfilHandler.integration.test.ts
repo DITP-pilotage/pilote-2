@@ -55,7 +55,7 @@ describe("SetMotifProfilHandler", () => {
       // Given
       await fixtures.formationMotif({
         id: BigInt(1),
-        date_suppression: new Date("2026-11-01T00:00:00Z"),
+        deleted_at: new Date("2026-11-01T00:00:00Z"),
       });
 
       // When

@@ -11,6 +11,7 @@ import { SetMotifProfilHandler } from "./handlers/SetMotifProfilHandler";
 import { ListPeriodesInformationQuery } from "./queries/ListPeriodesInformationQuery";
 import { SavePeriodeInformationHandler } from "./handlers/SavePeriodeInformationHandler";
 import { DeletePeriodeInformationHandler } from "./handlers/DeletePeriodeInformationHandler";
+import { SyncFormationsHandler } from "./handlers/SyncFormationsHandler";
 
 type FormationsOwnCradle = {
   listSeancesAVenirQuery: ListSeancesAVenirQuery;
@@ -19,6 +20,7 @@ type FormationsOwnCradle = {
   listPeriodesInformationQuery: ListPeriodesInformationQuery;
   savePeriodeInformationHandler: SavePeriodeInformationHandler;
   deletePeriodeInformationHandler: DeletePeriodeInformationHandler;
+  syncFormationsHandler: SyncFormationsHandler;
 };
 
 type FormationsCradle = FormationsOwnCradle & FrameworkDependencies;
@@ -39,6 +41,7 @@ export const formationsModule = defineModule<NoExports, FormationsCradle>()({
       deletePeriodeInformationHandler: asModuleClass(
         DeletePeriodeInformationHandler,
       ),
+      syncFormationsHandler: asModuleClass(SyncFormationsHandler),
     } satisfies VerifyCradle<FormationsOwnCradle>);
   },
 });

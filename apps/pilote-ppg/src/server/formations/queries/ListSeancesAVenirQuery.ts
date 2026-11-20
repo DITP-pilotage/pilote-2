@@ -11,8 +11,7 @@ export interface SeanceAVenir {
   formation: string;
   dateDebut: string;
   dureeMinutes: number;
-  lieu: string | null;
-  animateurs: string | null;
+  animateurs: string[];
   nombreInscrits: number;
   nombrePlacesMax: number | null;
   urlInscription: string;
@@ -34,13 +33,12 @@ function toApiModel(seance: SeanceAvecMotif): SeanceAVenir {
     formation: seance.motif.nom,
     dateDebut: seance.date_debut.toISOString(),
     dureeMinutes: seance.duree_minutes,
-    lieu: seance.lieu,
     animateurs: seance.animateurs,
     nombreInscrits: seance.nombre_inscrits,
     nombrePlacesMax: seance.nombre_places_max,
     urlInscription: seance.url_inscription,
     statut: statutSeance({
-      dateAnnulation: seance.date_annulation,
+      dateAnnulation: seance.cancelled_at,
       nombreInscrits: seance.nombre_inscrits,
       nombrePlacesMax: seance.nombre_places_max,
     }),
@@ -56,8 +54,8 @@ export class ListSeancesAVenirQuery {
 
   async run({ maintenant }: { maintenant: Date }): Promise<SeancesAVenir> {
     const client = this.prisma.getInstance();
-    // Copilot écrit tous les motifs à chaque import, même ceux sans séance à venir :
-    // leur dernière mise à jour donne la date du dernier passage.
+    // PILOTE écrit tous les motifs reçus à chaque synchronisation : le plus récent
+    // updated_at donne la date du dernier passage.
     const [seances, dernierImport] = await Promise.all([
       client.formation_seance.findMany({
         where: { date_debut: { gt: maintenant } },

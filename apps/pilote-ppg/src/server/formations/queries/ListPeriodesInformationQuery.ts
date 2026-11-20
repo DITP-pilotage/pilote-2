@@ -12,7 +12,7 @@ export interface PeriodeInformation {
   dateDebut: string;
   dateFin: string;
   statut: StatutPeriode;
-  motifs: { id: number; nom: string }[];
+  motifs: { id: number; nom: string; retiree: boolean }[];
 }
 
 export interface MotifDisponible {
@@ -45,7 +45,11 @@ function toApiModel(
       aujourdhui,
     ),
     motifs: periode.motifs
-      .map(({ motif }) => ({ id: Number(motif.id), nom: motif.nom }))
+      .map(({ motif }) => ({
+        id: Number(motif.id),
+        nom: motif.nom,
+        retiree: motif.deleted_at !== null,
+      }))
       .sort((premier, second) => premier.nom.localeCompare(second.nom, "fr")),
   };
 }
@@ -71,11 +75,11 @@ export class ListPeriodesInformationQuery {
         orderBy: { date_debut: "desc" },
       }),
       client.formation_motif.findMany({
-        where: { date_suppression: null },
+        where: { deleted_at: null },
         orderBy: { nom: "asc" },
       }),
       client.formation_seance.findMany({
-        where: { date_debut: { gt: maintenant }, date_annulation: null },
+        where: { date_debut: { gt: maintenant }, cancelled_at: null },
         select: { motif_id: true },
         distinct: ["motif_id"],
       }),
