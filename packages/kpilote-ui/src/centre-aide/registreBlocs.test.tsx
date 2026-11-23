@@ -40,7 +40,7 @@ it('rend une vidéo http/https mais rejette un schéma dangereux', () => {
   const { container: sain } = render(
     <>{registreBlocs['video']!.rendreDepuisElement(sure, () => null)}</>,
   )
-  expect(sain.querySelector('iframe')).toHaveAttribute('src', 'https://x/embed')
+  expect(sain.querySelector('button')).not.toBeNull()
 
   const dangereuse = elementDepuisHtml(
     '<div data-type="video" data-src="javascript:alert(1)"></div>',
@@ -48,5 +48,5 @@ it('rend une vidéo http/https mais rejette un schéma dangereux', () => {
   const { container: vide } = render(
     <>{registreBlocs['video']!.rendreDepuisElement(dangereuse, () => null)}</>,
   )
-  expect(vide.querySelector('iframe')).toBeNull()
+  expect(vide).toBeEmptyDOMElement()
 })

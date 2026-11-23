@@ -6,9 +6,10 @@ import { classesRenduBase } from '@pilote/kpilote-ui/centre-aide'
 import { Bold, Italic, Link2, Strikethrough, Underline as UnderlineIcon } from 'lucide-react'
 import { useState, type ComponentType } from 'react'
 
+import type { MediaKind } from '@pilote/kpilote-shared/mediaUrl'
 import { estUrlHttpSure } from '@pilote/kpilote-shared/url'
 import { extensionsCentreAide } from '@/components/centre-aide/extensions'
-import { ModaleVideoFinance } from '@/components/centre-aide/ModaleVideoFinance'
+import { MediaInsertModal } from '@/components/centre-aide/MediaInsertModal'
 import { clsxm } from '@/lib/clsxm'
 
 function BoutonBulle({
@@ -62,10 +63,10 @@ export function EditeurCentreAide({
   contenu: string
   onChange: (contenu: string) => void
 }) {
-  const [modaleVideoFinance, setModaleVideoFinance] = useState(false)
+  const [mediaModal, setMediaModal] = useState<MediaKind | null>(null)
 
   const editor = useEditor({
-    extensions: extensionsCentreAide({ ouvrirVideoFinance: () => setModaleVideoFinance(true) }),
+    extensions: extensionsCentreAide({ openMediaModal: setMediaModal }),
     content: contenu,
     onUpdate: ({ editor: instance }) => onChange(instance.isEmpty ? '' : instance.getHTML()),
   })
@@ -141,10 +142,17 @@ export function EditeurCentreAide({
 
       <EditorContent editor={editor} className={classesContenu} />
 
-      <ModaleVideoFinance
-        open={modaleVideoFinance}
-        onClose={() => setModaleVideoFinance(false)}
-        onValider={(url) => editor.chain().focus().insertVideo({ src: url }).run()}
+      <MediaInsertModal
+        kind="image"
+        open={mediaModal === 'image'}
+        onClose={() => setMediaModal(null)}
+        onInsert={(url) => editor.chain().focus().setImage({ src: url }).run()}
+      />
+      <MediaInsertModal
+        kind="video"
+        open={mediaModal === 'video'}
+        onClose={() => setMediaModal(null)}
+        onInsert={(url) => editor.chain().focus().insertVideo({ src: url }).run()}
       />
     </div>
   )

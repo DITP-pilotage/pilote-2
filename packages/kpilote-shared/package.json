@@ -36,6 +36,10 @@
       "types": "./src/mediaLayout.ts",
       "default": "./src/mediaLayout.ts"
     },
+    "./mediaUrl": {
+      "types": "./src/mediaUrl.ts",
+      "default": "./src/mediaUrl.ts"
+    },
     "./dates": {
       "types": "./src/dates.ts",
       "default": "./src/dates.ts"

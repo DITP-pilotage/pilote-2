@@ -37,3 +37,14 @@ describe('challenge ACME sur le serveur de la webapp', () => {
     expect(lectureApresSuppression.status).toBe(404)
   })
 })
+
+describe('CSP de la webapp', () => {
+  it('n’autorise que les hébergeurs de médias du centre d’aide', async () => {
+    const response = await app.request('/healthz')
+    const directives = response.headers.get('Content-Security-Policy')?.split('; ') ?? []
+
+    expect(directives).toContain("img-src 'self' data: https://fichiers.numerique.gouv.fr")
+    expect(directives).toContain("media-src 'self' https://fichiers.numerique.gouv.fr")
+    expect(directives).toContain("frame-src 'self' https://video.finances.gouv.fr")
+  })
+})
