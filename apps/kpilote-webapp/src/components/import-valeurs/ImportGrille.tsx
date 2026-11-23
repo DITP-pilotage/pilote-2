@@ -131,10 +131,20 @@ export function ImportGrille({
     setSelection(position)
     setIsEditing(false)
   }, [])
-  const onEdit = useCallback((position: PositionCellule) => {
-    setSelection(position)
-    setIsEditing(true)
-  }, [])
+  // Entrée, F2 ou double clic n'ouvrent l'éditeur que sur une cellule qu'on peut corriger.
+  const onEdit = useCallback(
+    (position: PositionCellule) => {
+      setSelection(position)
+      const ligne = lignes[position.ligne]
+      const colonne = colonnes[position.colonne]
+      const isEditable =
+        ligne !== undefined &&
+        colonne !== undefined &&
+        describeEdition({ ligne, colonne, cibles }) !== null
+      setIsEditing(isEditable)
+    },
+    [lignes, colonnes, cibles],
+  )
   const onCloseEditor = useCallback(() => setIsEditing(false), [])
 
   const submitCorrection = (correction: CorrectionSaisie) => {

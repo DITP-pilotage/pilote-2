@@ -478,6 +478,21 @@ export const valeurAvancementApiModelSchema = z.discriminatedUnion('type', [
 ])
 export type ValeurAvancementApiModel = z.infer<typeof valeurAvancementApiModelSchema>
 
+// Sans les contributions : une lecture de tout le cube les répéterait sur chaque point dérivé.
+export const valeurDeriveeResumeApiModelSchema = valeurDeriveeApiModelSchema
+  .omit({ contributions: true })
+  .describe(
+    'Point dérivé sans ses contributions. Pour les lire : `GET /indicateurs/{id}/valeurs` avec ' +
+      'les `modalites` de la combinaison.',
+  )
+export type ValeurDeriveeResumeApiModel = z.infer<typeof valeurDeriveeResumeApiModelSchema>
+
+export const valeurAvancementResumeApiModelSchema = z.discriminatedUnion('type', [
+  valeurSaisieApiModelSchema,
+  valeurDeriveeResumeApiModelSchema,
+])
+export type ValeurAvancementResumeApiModel = z.infer<typeof valeurAvancementResumeApiModelSchema>
+
 export const valeurAvancementListApiModelSchema = z.object({
   items: z
     .array(valeurAvancementApiModelSchema)
@@ -589,10 +604,10 @@ export const valeursCombinaisonApiModelSchema = z.object({
         'non cité vaut « Tous » ; vide : « Tous » sur chaque axe.',
     ),
   valeurs: z
-    .array(valeurAvancementApiModelSchema)
+    .array(valeurAvancementResumeApiModelSchema)
     .describe(
       'Série de la combinaison, triée par date : mêmes points que `GET /indicateurs/{id}/valeurs` ' +
-        'avec ces `modalites`.',
+        'avec ces `modalites`, sans les contributions des points dérivés.',
     ),
 })
 export type ValeursCombinaisonApiModel = z.infer<typeof valeursCombinaisonApiModelSchema>

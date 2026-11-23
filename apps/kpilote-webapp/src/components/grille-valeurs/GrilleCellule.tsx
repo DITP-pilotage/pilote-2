@@ -6,6 +6,7 @@ import { clsxm } from '@/lib/clsxm'
 import { type CelluleGrille, cellDomId, type PositionCellule } from '@/lib/grilleValeurs'
 
 export function GrilleCellule({
+  gridId,
   cellule,
   position,
   isSelected,
@@ -14,6 +15,7 @@ export function GrilleCellule({
   onEdit,
   onCloseEditor,
 }: {
+  gridId: string
   cellule: CelluleGrille
   position: PositionCellule
   isSelected: boolean
@@ -27,7 +29,7 @@ export function GrilleCellule({
   const button = (
     <button
       type="button"
-      id={cellDomId(position)}
+      id={cellDomId({ gridId, position })}
       tabIndex={isSelected ? 0 : -1}
       aria-pressed={isSelected}
       onClick={() => onSelect(position)}

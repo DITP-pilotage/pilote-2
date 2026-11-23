@@ -40,7 +40,7 @@ import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { ErrorApiModelSchema, erreur400, erreur403 } from '@/framework/openapi/responses'
+import { ErrorApiModelSchema, erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import {
   type DeleteValeurAvancementError,
@@ -174,7 +174,9 @@ const getValeursByCombinaisonRoute = createRoute({
     '`GET /indicateurs/{id}/valeurs` avec les mêmes `modalites`, calculée en une passe. Les ' +
     'combinaisons sans aucun point sont omises. Indicateur sans axe : une seule entrée, ' +
     `\`modalites\` vide. Erreur 400 \`TROP_DE_COMBINAISONS\` au-delà de ${MAX_COMBINAISONS_PAR_LECTURE} ` +
-    'combinaisons (produit, sur les axes, du nombre de modalités plus un).',
+    'combinaisons (produit, sur les axes, du nombre de modalités plus un). Les points dérivés ' +
+    'n’ont pas leurs `contributions` : les lire par `GET /indicateurs/{id}/valeurs`. Erreur 404 ' +
+    'tant que la feature `TABLEAU_VALEURS` est inactive pour l’appelant.',
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -186,6 +188,7 @@ const getValeursByCombinaisonRoute = createRoute({
       description: 'Séries par combinaison pour l’individu demandé',
     },
     400: erreur400,
+    404: erreur404,
   },
 })
 
@@ -547,17 +550,15 @@ valeurAvancementRoutes.openapi(getValeursByCombinaisonRoute, async (context) =>
         schema: ValeursByCombinaisonListApiModelSchema,
         status: 200,
       }),
-    (error) =>
-      jsonResponseError({
+    (error) => {
+      const { status, message, details } = describeListValeursByCombinaisonError(error)
+      return jsonResponseError({
         context,
-        error: {
-          code: error.type,
-          message: describeListValeursByCombinaisonError(error),
-          details: { combinaisons: error.combinaisons, max: error.max },
-        },
+        error: { code: error.type, message, details },
         schema: ErrorApiModelSchema,
-        status: 400,
-      }),
+        status,
+      })
+    },
   ),
 )
 

@@ -9,15 +9,21 @@ import { groupBy } from 'es-toolkit'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { type Selection } from '@/axe/modalites'
+import { isFeatureActive } from '@/feature/isFeatureActive'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { NotFoundError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
+import {
+  loadAxesIndicateur,
+  loadResolveSerieContext,
+} from '@/valeurAvancement/queries/loadResolveSerieContext'
 import { type PointInterne, resolveSerieNoeud } from '@/valeurAvancement/resolveSerieNoeud'
-import { toValeurAvancementApiModel } from '@/valeurAvancement/utils'
+import { toValeurAvancementResumeApiModel } from '@/valeurAvancement/utils'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
+const FEATURE_TABLEAU_VALEURS = 'TABLEAU_VALEURS'
 
 export type ListValeursByCombinaisonError = {
   type: 'TROP_DE_COMBINAISONS'
@@ -61,6 +67,10 @@ const performList = async ({
   indicateurPublicId: string
   params: ListValeursByCombinaisonQuery
 }): Promise<Result<ValeursByCombinaisonListApiModel, ListValeursByCombinaisonError>> => {
+  // Feature inactive : l'endpoint n'existe pas encore pour ce principal.
+  if (!(await isFeatureActive(FEATURE_TABLEAU_VALEURS))) {
+    throw new NotFoundError('La lecture des valeurs par combinaison n’est pas activée.')
+  }
   const principalId = requireCurrentPrincipalId()
   const indicateur = await db().indicateur.findFirstOrThrow({
     where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
@@ -69,14 +79,10 @@ const performList = async ({
   const [individu] = await loadIndividusParPublicId([params.individu])
   if (!individu) return ok({ items: [] })
 
-  const declarations = await db().indicateurAxe.findMany({
-    where: { indicateurId: indicateur.id },
-    orderBy: { ordre: 'asc' },
-  })
-  const axeIds = declarations.map((declaration) => declaration.axeId)
-  const modalites = await db().modalite.findMany({ where: { axeId: { in: axeIds } } })
+  const axes = await loadAxesIndicateur(indicateur.id)
+  const axeIds = axes.declarations.map((declaration) => declaration.axeId)
   const modaliteIdsByAxe = Object.fromEntries(
-    Object.entries(groupBy(modalites, (modalite) => modalite.axeId)).map(([axeId, liste]) => [
+    Object.entries(groupBy(axes.modalites, (modalite) => modalite.axeId)).map(([axeId, liste]) => [
       axeId,
       liste.map((modalite) => modalite.id),
     ]),
@@ -90,6 +96,7 @@ const performList = async ({
     indicateurId: indicateur.id,
     individusCibles: [individu],
     dateTrunc: params.dateTrunc ?? DEFAULT_DATE_TRUNC,
+    axes,
   })
   // Un seul cache : un nœud partagé par plusieurs combinaisons ne se calcule qu'une fois.
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
@@ -101,7 +108,7 @@ const performList = async ({
     items.push({
       modalites: [...cible.modalites],
       valeurs: serie.map((point) =>
-        toValeurAvancementApiModel({
+        toValeurAvancementResumeApiModel({
           indicateurPublicId,
           individuPublicId: individu.publicId,
           point,
@@ -121,15 +128,17 @@ export const listValeursByCombinaison = ({
   indicateurPublicId: string
   params: ListValeursByCombinaisonQuery
 }): ResultAsync<ValeursByCombinaisonListApiModel, ListValeursByCombinaisonError> =>
-  ResultAsync.fromSafePromise(performList({ indicateurPublicId, params })).andThen(
-    (result) => result,
-  )
+  new ResultAsync(performList({ indicateurPublicId, params }))
 
 export const describeListValeursByCombinaisonError = (
   error: ListValeursByCombinaisonError,
-): string => {
+): { status: 400; message: string; details: Record<string, unknown> } => {
   switch (error.type) {
     case 'TROP_DE_COMBINAISONS':
-      return `Les axes de l’indicateur donnent ${error.combinaisons} combinaisons, au-delà de la limite de ${error.max}.`
+      return {
+        status: 400,
+        message: `Les axes de l’indicateur donnent ${error.combinaisons} combinaisons, au-delà de la limite de ${error.max}.`,
+        details: { combinaisons: error.combinaisons, max: error.max },
+      }
   }
 }

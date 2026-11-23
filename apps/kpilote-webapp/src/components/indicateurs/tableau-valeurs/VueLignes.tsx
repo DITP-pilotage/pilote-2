@@ -1,9 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { GrilleValeurs } from '@/components/grille-valeurs/GrilleValeurs'
 import { buildLignesValeurs, type LigneCible } from '@/lib/axes/lignesValeurs'
 import { type TableauValeursContext } from '@/lib/axes/tableauValeurs'
 import { type PositionCellule } from '@/lib/grilleValeurs'
+
+const NO_SELECTION: PositionCellule = { ligne: -1, colonne: 0 }
 
 // Le cube de l'individu décomposé en lignes, comme dans la grille d'import. Une ligne
 // sélectionnée s'explique dans la barre de formule, comme une cellule du tableau croisé.
@@ -20,12 +22,17 @@ export function VueLignes({
     () => buildLignesValeurs({ context, individu }),
     [context, individu],
   )
-  const [selection, setSelection] = useState<PositionCellule>({ ligne: 0, colonne: 0 })
-  const select = (position: PositionCellule) => {
-    setSelection(position)
-    const cible = cibles[position.ligne]
-    if (cible) onActivate(cible)
-  }
+  // Aucune ligne sélectionnée au départ, comme la barre de formule (« Aucune cellule »).
+  const [selection, setSelection] = useState<PositionCellule>(NO_SELECTION)
+  // Stable : la grille ne redessine que la ligne quittée et la ligne atteinte.
+  const select = useCallback(
+    (position: PositionCellule) => {
+      setSelection(position)
+      const cible = cibles[position.ligne]
+      if (cible) onActivate(cible)
+    },
+    [cibles, onActivate],
+  )
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <GrilleValeurs

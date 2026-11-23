@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { NotFoundError } from '@/framework/errors/AppError'
 import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -76,6 +77,7 @@ describe.concurrent('listValeursByCombinaison', () => {
   it(
     'renvoie la série de chaque combinaison observée, « Tous » et parentes comprises',
     integrationTest(async () => {
+      await fixtures.feature({ key: 'TABLEAU_VALEURS', etat: 'ACTIVE' })
       const c = await deuxAxes()
 
       const result = await runAsPrincipal(c.apiKeyId, () =>
@@ -111,8 +113,35 @@ describe.concurrent('listValeursByCombinaison', () => {
   )
 
   it(
+    'renvoie les points dérivés sans leurs contributions',
+    integrationTest(async () => {
+      await fixtures.feature({ key: 'TABLEAU_VALEURS', etat: 'ACTIVE' })
+      const c = await deuxAxes()
+
+      const result = await runAsPrincipal(c.apiKeyId, () =>
+        listValeursByCombinaison({
+          indicateurPublicId: c.indicateurId,
+          params: { individu: c.individuId },
+        }),
+      )
+
+      const tous = result._unsafeUnwrap().items.find((item) => item.modalites.length === 0)
+      expect(tous?.valeurs[0]).toEqual({
+        indicateur: c.indicateurId,
+        individu: c.individuId,
+        date: '2025-01-01',
+        valeur: 5,
+        type: 'derivee',
+        fonctionAgregation: expect.any(String),
+        couverture: expect.anything(),
+      })
+    }),
+  )
+
+  it(
     'renvoie une liste vide pour un individu inconnu',
     integrationTest(async () => {
+      await fixtures.feature({ key: 'TABLEAU_VALEURS', etat: 'ACTIVE' })
       const c = await deuxAxes()
 
       const result = await runAsPrincipal(c.apiKeyId, () =>
@@ -123,6 +152,23 @@ describe.concurrent('listValeursByCombinaison', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({ items: [] })
+    }),
+  )
+
+  it(
+    'renvoie 404 quand la feature est désactivée',
+    integrationTest(async () => {
+      await fixtures.feature({ key: 'TABLEAU_VALEURS', etat: 'DESACTIVE' })
+      const c = await deuxAxes()
+
+      await expect(
+        runAsPrincipal(c.apiKeyId, () =>
+          listValeursByCombinaison({
+            indicateurPublicId: c.indicateurId,
+            params: { individu: c.individuId },
+          }),
+        ),
+      ).rejects.toBeInstanceOf(NotFoundError)
     }),
   )
 })

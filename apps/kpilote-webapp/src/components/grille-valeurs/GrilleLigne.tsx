@@ -6,6 +6,7 @@ import { type LigneGrille, type PositionCellule } from '@/lib/grilleValeurs'
 // Une ligne de la grille. Mémoïsée : une sélection ne redessine que la ligne
 // quittée et la ligne atteinte.
 export const GrilleLigne = memo(function GrilleLigne({
+  gridId,
   ligne,
   selectedColonne,
   editor,
@@ -13,6 +14,7 @@ export const GrilleLigne = memo(function GrilleLigne({
   onEdit,
   onCloseEditor,
 }: {
+  gridId: string
   ligne: LigneGrille
   // Colonne sélectionnée sur cette ligne, ou `null`.
   selectedColonne: number | null
@@ -35,6 +37,7 @@ export const GrilleLigne = memo(function GrilleLigne({
         return (
           <GrilleCellule
             key={colonne}
+            gridId={gridId}
             cellule={cellule}
             position={{ ligne: ligne.index, colonne }}
             isSelected={isSelected}

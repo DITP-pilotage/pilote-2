@@ -1,4 +1,11 @@
-import { type QueryClient, queryOptions, useSuspenseQueries } from '@tanstack/react-query'
+import { type ModaliteApiModel } from '@pilote/kpilote-shared/axe'
+import {
+  type QueryClient,
+  queryOptions,
+  useSuspenseQueries,
+  type UseSuspenseQueryResult,
+} from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 import { fetchModalitesForAxe } from '@/api/axes'
 import { type AxeWithModalites } from '@/lib/axes/selection'
@@ -29,15 +36,25 @@ export const loadAxesWithModalites = ({
     })),
   )
 
+// Hors du hook : un `combine` stable laisse useSuspenseQueries mémoriser son résultat, et les
+// dérivations des appelants (arbres, séries) ne se recalculent pas à chaque rendu.
+const dataOf = (results: ReadonlyArray<UseSuspenseQueryResult<ModaliteApiModel[]>>) =>
+  results.map((result) => result.data)
+
 export const useAxesWithModalites = (
   axes: ReadonlyArray<DeclaredAxe>,
-): ReadonlyArray<AxeWithModalites> =>
-  useSuspenseQueries({
+): ReadonlyArray<AxeWithModalites> => {
+  const modalitesByAxe = useSuspenseQueries({
     queries: axes.map((axe) => axeModalitesQueryOptions(axe.id)),
-    combine: (results) =>
+    combine: dataOf,
+  })
+  return useMemo(
+    () =>
       axes.map((axe, index) => ({
         id: axe.id,
         nom: axe.nom,
-        modalites: results[index]?.data ?? [],
+        modalites: modalitesByAxe[index] ?? [],
       })),
-  })
+    [axes, modalitesByAxe],
+  )
+}

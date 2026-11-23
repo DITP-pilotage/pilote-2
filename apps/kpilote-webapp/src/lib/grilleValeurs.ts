@@ -38,8 +38,14 @@ export type LigneGrille = {
   isImportable: boolean
 }
 
-export const cellDomId = (position: PositionCellule): string =>
-  `grille-cellule-${position.ligne}-${position.colonne}`
+// `gridId` distingue deux grilles d'une même page (la vue en lignes derrière la fenêtre d'import).
+export const cellDomId = ({
+  gridId,
+  position,
+}: {
+  gridId: string
+  position: PositionCellule
+}): string => `${gridId}-cellule-${position.ligne}-${position.colonne}`
 
 // Déplacement de la sélection au clavier, borné aux lignes affichées.
 export const movePosition = ({

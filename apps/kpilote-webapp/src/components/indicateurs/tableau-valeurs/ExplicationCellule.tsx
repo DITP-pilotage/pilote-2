@@ -52,6 +52,8 @@ export function ExplicationCellule({
           Pas encore de valeur en {mois} : cette combinaison n’en a qu’à des périodes suivantes.
         </span>
       )
+    case 'chargement':
+      return <span className="text-text-muted">Chargement des contributions…</span>
     case 'absente':
       return (
         <span className="text-text-muted">

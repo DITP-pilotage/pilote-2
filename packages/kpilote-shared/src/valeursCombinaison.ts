@@ -1,8 +1,10 @@
 import { type FonctionAgregation } from './indicateur'
 import { TOUS_ID } from './modaliteTree'
 import {
+  type ContributionApiModel,
   type ContributionSource,
   type ValeurAvancementApiModel,
+  type ValeurAvancementResumeApiModel,
   type ValeursCombinaisonApiModel,
 } from './valeurAvancement'
 
@@ -30,7 +32,7 @@ export type CelluleValeur = {
   present: number
   expected: number
   // Le point de l'API retenu à cette période (le dernier à cette date ou avant).
-  point: ValeurAvancementApiModel | null
+  point: ValeurAvancementResumeApiModel | null
 }
 
 const ABSENTE: CelluleValeur = {
@@ -66,7 +68,13 @@ export const toCombinaisonIds = ({
   return ids
 }
 
-export type SeriesByCombinaison = ReadonlyMap<string, ReadonlyArray<ValeurAvancementApiModel>>
+export type SerieCombinaison = {
+  ids: CombinaisonIds
+  valeurs: ReadonlyArray<ValeurAvancementResumeApiModel>
+}
+
+// Par `combinaisonKey` : la combinaison et sa série triée par date.
+export type SeriesByCombinaison = ReadonlyMap<string, SerieCombinaison>
 
 export const buildSeriesByCombinaison = ({
   items,
@@ -78,32 +86,33 @@ export const buildSeriesByCombinaison = ({
   axesCount: number
 }): SeriesByCombinaison =>
   new Map(
-    items.map((item) => [
-      combinaisonKey(
-        toCombinaisonIds({ modalites: item.modalites, axeIndexByModalite, axesCount }),
-      ),
-      item.valeurs.toSorted((left, right) => left.date.localeCompare(right.date)),
-    ]),
+    items.map((item) => {
+      const ids = toCombinaisonIds({ modalites: item.modalites, axeIndexByModalite, axesCount })
+      const valeurs = item.valeurs.toSorted((left, right) => left.date.localeCompare(right.date))
+      return [combinaisonKey(ids), { ids, valeurs }]
+    }),
   )
 
 // Les périodes du tableau : chaque date où au moins une combinaison a un point. Entre deux de
 // ces dates, aucune valeur ne change.
 export const listPeriodes = (series: SeriesByCombinaison): string[] =>
-  [...new Set([...series.values()].flatMap((valeurs) => valeurs.map((point) => point.date)))].sort()
+  [
+    ...new Set([...series.values()].flatMap(({ valeurs }) => valeurs.map((point) => point.date))),
+  ].sort()
 
-const findLastAtOrBefore = ({
+const findLastAtOrBefore = <T extends { date: string }>({
   valeurs,
   periode,
 }: {
-  valeurs: ReadonlyArray<ValeurAvancementApiModel>
+  valeurs: ReadonlyArray<T>
   periode: string
-}): ValeurAvancementApiModel | null => valeurs.findLast((point) => point.date <= periode) ?? null
+}): T | null => valeurs.findLast((point) => point.date <= periode) ?? null
 
 export const resolveCellule = ({
   valeurs,
   periode,
 }: {
-  valeurs: ReadonlyArray<ValeurAvancementApiModel> | undefined
+  valeurs: ReadonlyArray<ValeurAvancementResumeApiModel> | undefined
   periode: string
 }): CelluleValeur => {
   if (!valeurs || valeurs.length === 0) return ABSENTE
@@ -136,6 +145,8 @@ export type ExplicationCellule =
   | { kind: 'reportee'; date: string; valeur: number }
   | { kind: 'manquante' }
   | { kind: 'absente' }
+  // Calculée, mais ses contributions ne sont pas encore chargées.
+  | { kind: 'chargement' }
   | {
       // L'API descend un axe : les termes sont les modalités enfants de la cellule.
       kind: 'axe'
@@ -155,14 +166,30 @@ export type ExplicationCellule =
 const differingAxe = ({ ids, other }: { ids: CombinaisonIds; other: CombinaisonIds }): number =>
   ids.findIndex((id, index) => id !== other[index])
 
+// Les contributions du point dérivé à cette date, dans la série complète d'une combinaison
+// (`GET /indicateurs/{id}/valeurs`) ; la lecture du cube ne les porte pas.
+export const findContributions = ({
+  valeurs,
+  date,
+}: {
+  valeurs: ReadonlyArray<ValeurAvancementApiModel>
+  date: string
+}): ReadonlyArray<ContributionApiModel> | null => {
+  const point = valeurs.find((candidate) => candidate.date === date)
+  return point?.type === 'derivee' ? point.contributions : null
+}
+
 export const explainCellule = ({
   cellule,
   ids,
   axeIndexByModalite,
+  contributions,
 }: {
   cellule: CelluleValeur
   ids: CombinaisonIds
   axeIndexByModalite: ReadonlyMap<string, number>
+  // Celles du point retenu, quand il est dérivé ; `null` tant qu'elles ne sont pas chargées.
+  contributions: ReadonlyArray<ContributionApiModel> | null
 }): ExplicationCellule => {
   const { point } = cellule
   if (!point) return { kind: cellule.statut === 'manquante' ? 'manquante' : 'absente' }
@@ -170,7 +197,8 @@ export const explainCellule = ({
     const kind = cellule.statut === 'reportee' ? 'reportee' : 'saisie'
     return { kind, date: point.date, valeur: point.valeur }
   }
-  const termes = point.contributions.map((contribution): TermeExplication => ({
+  if (!contributions) return { kind: 'chargement' }
+  const termes = contributions.map((contribution): TermeExplication => ({
     ids: toCombinaisonIds({
       modalites: contribution.modalites ?? [],
       axeIndexByModalite,
@@ -181,7 +209,7 @@ export const explainCellule = ({
     source: contribution.source,
     date: contribution.date,
   }))
-  const isAgregationIndividus = point.contributions.some(
+  const isAgregationIndividus = contributions.some(
     (contribution) => contribution.individu !== point.individu,
   )
   if (isAgregationIndividus) {

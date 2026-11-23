@@ -1,4 +1,4 @@
-import { type KeyboardEvent, type ReactNode, useEffect } from 'react'
+import { type KeyboardEvent, type ReactNode, useEffect, useId } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
 
@@ -56,14 +56,15 @@ export function GrilleValeurs({
   // Sans cadre : la grille occupe tout son conteneur, comme le tableau croisé.
   isFramed?: boolean
 }) {
+  const gridId = useId()
   const isEditing = editor !== null
 
   // La cellule sélectionnée porte le focus : le clavier la suit dans la grille.
   useEffect(() => {
     if (isEditing) return
-    const cellule = document.getElementById(cellDomId(selection))
+    const cellule = document.getElementById(cellDomId({ gridId, position: selection }))
     cellule?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-  }, [selection, isEditing])
+  }, [gridId, selection, isEditing])
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (isEditing) return
@@ -77,7 +78,7 @@ export function GrilleValeurs({
         nombreColonnes: colonnes.length,
       })
       onSelect(next)
-      document.getElementById(cellDomId(next))?.focus()
+      document.getElementById(cellDomId({ gridId, position: next }))?.focus()
       return
     }
     const opensEditor = event.key === 'Enter' || event.key === 'F2'
@@ -123,6 +124,7 @@ export function GrilleValeurs({
             return (
               <GrilleLigne
                 key={ligne.index}
+                gridId={gridId}
                 ligne={ligne}
                 selectedColonne={isSelectedLigne ? selection.colonne : null}
                 editor={isSelectedLigne ? editor : null}

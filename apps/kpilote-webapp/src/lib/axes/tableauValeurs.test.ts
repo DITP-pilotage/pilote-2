@@ -4,40 +4,46 @@ import { describe, expect, it } from 'vitest'
 import {
   buildCelluleIds,
   buildTableauValeursContext,
+  describeChargementError,
   initialCollapsed,
+  modalitesOf,
+  syncFixedIds,
   toggleIn,
-  withColonnes,
-  withLignes,
+  withColumnsAxe,
+  withRowsAxe,
 } from '@/lib/axes/tableauValeurs'
 
-describe('disposition', () => {
+describe('layout', () => {
   it('échange lignes et colonnes quand on choisit en lignes l’axe en colonnes', () => {
-    expect(withLignes({ disposition: { lignes: 0, colonnes: 1 }, index: 1 })).toEqual({
-      lignes: 1,
-      colonnes: 0,
+    expect(withRowsAxe({ layout: { rows: 0, columns: 1 }, index: 1 })).toEqual({
+      rows: 1,
+      columns: 0,
     })
-    expect(withLignes({ disposition: { lignes: 0, colonnes: 1 }, index: 2 })).toEqual({
-      lignes: 2,
-      colonnes: 1,
+    expect(withRowsAxe({ layout: { rows: 0, columns: 1 }, index: 2 })).toEqual({
+      rows: 2,
+      columns: 1,
     })
   })
 
   it('échange aussi quand on choisit en colonnes l’axe en lignes', () => {
-    expect(
-      withColonnes({ disposition: { lignes: 0, colonnes: 1 }, index: 0, axesCount: 3 }),
-    ).toEqual({ lignes: 1, colonnes: 0 })
+    expect(withColumnsAxe({ layout: { rows: 0, columns: 1 }, index: 0, axesCount: 3 })).toEqual({
+      rows: 1,
+      columns: 0,
+    })
   })
 
   it('passe les lignes sur un autre axe quand les colonnes étaient les périodes', () => {
-    expect(
-      withColonnes({ disposition: { lignes: 0, colonnes: null }, index: 0, axesCount: 2 }),
-    ).toEqual({ lignes: 1, colonnes: 0 })
+    expect(withColumnsAxe({ layout: { rows: 0, columns: null }, index: 0, axesCount: 2 })).toEqual({
+      rows: 1,
+      columns: 0,
+    })
   })
 
   it('revient aux périodes en colonnes', () => {
-    expect(
-      withColonnes({ disposition: { lignes: 1, colonnes: 0 }, index: null, axesCount: 2 }),
-    ).toEqual({ lignes: 1, colonnes: null })
+    expect(withColumnsAxe({ layout: { rows: 1, columns: 0 }, index: null, axesCount: 2 })).toEqual({
+      rows: 1,
+      columns: null,
+    })
   })
 })
 
@@ -45,8 +51,8 @@ describe('buildCelluleIds', () => {
   it('croise la ligne, la colonne et les modalités fixées', () => {
     expect(
       buildCelluleIds({
-        disposition: { lignes: 2, colonnes: 0 },
-        fixees: [TOUS_ID, 'TVA', TOUS_ID],
+        layout: { rows: 2, columns: 0 },
+        fixedIds: [TOUS_ID, 'TVA', TOUS_ID],
         row: 'FT',
         column: 'FR',
       }),
@@ -56,8 +62,8 @@ describe('buildCelluleIds', () => {
   it('sans axe en colonnes, garde les modalités fixées ailleurs', () => {
     expect(
       buildCelluleIds({
-        disposition: { lignes: 0, colonnes: null },
-        fixees: [TOUS_ID, 'TVA'],
+        layout: { rows: 0, columns: null },
+        fixedIds: [TOUS_ID, 'TVA'],
         row: 'FT',
         column: null,
       }),
@@ -137,5 +143,37 @@ describe('buildTableauValeursContext', () => {
     ])
     expect([...context.series.keys()]).toEqual(['FT|TVA', `${TOUS_ID}|TVA`])
     expect(context.periodes).toEqual(['2025-01-01', '2025-02-01'])
+  })
+})
+
+describe('syncFixedIds', () => {
+  it('ne change que les axes dont le sélecteur de la page a bougé', () => {
+    expect(
+      syncFixedIds({
+        fixedIds: ['FT', 'TVA', 'X'],
+        previous: [null, null, 'X'],
+        next: ['CAF', null, null],
+      }),
+    ).toEqual(['CAF', 'TVA', TOUS_ID])
+  })
+})
+
+describe('modalitesOf', () => {
+  it('garde les modalités fixées d’une combinaison, sans « Tous »', () => {
+    expect(modalitesOf(['FT', TOUS_ID, 'TVA'])).toEqual(['FT', 'TVA'])
+  })
+})
+
+describe('describeChargementError', () => {
+  it('reprend le message de l’API quand elle refuse la lecture', () => {
+    const body = { code: 'TROP_DE_COMBINAISONS', message: '2 400 combinaisons, au-delà de 2 000.' }
+
+    expect(describeChargementError({ status: 400, body })).toBe(body.message)
+  })
+
+  it('ne présume pas de la cause d’une autre erreur', () => {
+    expect(describeChargementError({ status: 404, body: null })).toContain('pas disponible')
+    expect(describeChargementError({ status: 500, body: null })).toContain('pas pu être chargées')
+    expect(describeChargementError({ status: null, body: null })).toContain('pas pu être chargées')
   })
 })

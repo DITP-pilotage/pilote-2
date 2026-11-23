@@ -7,6 +7,7 @@ import {
   buildSeriesByCombinaison,
   combinaisonKey,
   explainCellule,
+  findContributions,
   listPeriodes,
   resolveCellule,
   toCombinaisonIds,
@@ -81,10 +82,9 @@ describe('buildSeriesByCombinaison et listPeriodes', () => {
       axesCount: 2,
     })
 
-    expect(series.get(combinaisonKey(['FT', 'TVA']))?.map((point) => point.date)).toEqual([
-      '2025-01-01',
-      '2025-03-01',
-    ])
+    const serie = series.get(combinaisonKey(['FT', 'TVA']))
+    expect(serie?.ids).toEqual(['FT', 'TVA'])
+    expect(serie?.valeurs.map((point) => point.date)).toEqual(['2025-01-01', '2025-03-01'])
     expect(listPeriodes(series)).toEqual(['2025-01-01', '2025-02-01', '2025-03-01'])
   })
 })
@@ -147,6 +147,7 @@ describe('explainCellule', () => {
       cellule,
       ids: [TOUS_ID, 'SOCIALE'],
       axeIndexByModalite,
+      contributions: findContributions({ valeurs: [point], date: '2025-01-01' }),
     })
 
     expect(explication).toMatchObject({
@@ -172,7 +173,11 @@ describe('explainCellule', () => {
     })
     const cellule = resolveCellule({ valeurs: [point], periode: '2025-01-01' })
 
-    expect(explainCellule({ cellule, ids: ['FT', TOUS_ID], axeIndexByModalite })).toMatchObject({
+    const contributions = findContributions({ valeurs: [point], date: '2025-01-01' })
+
+    expect(
+      explainCellule({ cellule, ids: ['FT', TOUS_ID], axeIndexByModalite, contributions }),
+    ).toMatchObject({
       kind: 'individus',
       termes: [
         { individu: 'D84', ids: ['FT', TOUS_ID] },
@@ -184,10 +189,21 @@ describe('explainCellule', () => {
   it('explique une saisie reportée par la date de sa source', () => {
     const cellule = resolveCellule({ valeurs: [saisie('2025-01-01', 7)], periode: '2025-03-01' })
 
-    expect(explainCellule({ cellule, ids: ['FT', 'TVA'], axeIndexByModalite })).toEqual({
+    expect(
+      explainCellule({ cellule, ids: ['FT', 'TVA'], axeIndexByModalite, contributions: null }),
+    ).toEqual({
       kind: 'reportee',
       date: '2025-01-01',
       valeur: 7,
     })
+  })
+
+  it('attend les contributions d’une valeur calculée avant de l’expliquer', () => {
+    const point = derivee({ date: '2025-01-01', valeur: 4, contributions: [{ valeur: 4 }] })
+    const cellule = resolveCellule({ valeurs: [point], periode: '2025-01-01' })
+
+    expect(
+      explainCellule({ cellule, ids: [TOUS_ID, TOUS_ID], axeIndexByModalite, contributions: null }),
+    ).toEqual({ kind: 'chargement' })
   })
 })

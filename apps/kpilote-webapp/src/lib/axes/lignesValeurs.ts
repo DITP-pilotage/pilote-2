@@ -42,8 +42,7 @@ export const buildLignesValeurs = ({
           .map((node, rank) => [node.id, rank] as const),
       ),
   )
-  const points = [...series.entries()].flatMap(([key, valeurs]) => {
-    const ids = key.split('|')
+  const points = [...series.values()].flatMap(({ ids, valeurs }) => {
     const ranks = ids.map((id, index) => rankByFeuilleByAxe[index]?.get(id))
     if (ranks.some((rank) => rank === undefined)) return []
     return valeurs.map((point) => ({ ids, ranks, point }))

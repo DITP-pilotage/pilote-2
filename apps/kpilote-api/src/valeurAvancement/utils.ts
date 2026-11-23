@@ -2,6 +2,7 @@ import {
   type ContributionApiModel,
   type IndividuAvecValeursApiModel,
   type ValeurAvancementApiModel,
+  type ValeurAvancementResumeApiModel,
   type ValeurSaisieApiModel,
 } from '@pilote/kpilote-shared/valeurAvancement'
 
@@ -44,6 +45,32 @@ export const toValeurAvancementApiModel = ({
     type: 'derivee',
     fonctionAgregation: point.fonctionAgregation,
     contributions,
+    couverture: point.couverture,
+  }
+}
+
+// Sans les contributions des points dérivés : `GET /indicateurs/{id}/valeurs-par-combinaison`
+// les répéterait sur chaque point du cube.
+export const toValeurAvancementResumeApiModel = ({
+  indicateurPublicId,
+  individuPublicId,
+  point,
+}: {
+  indicateurPublicId: string
+  individuPublicId: string
+  point: PointInterne
+}): ValeurAvancementResumeApiModel => {
+  const base = {
+    indicateur: indicateurPublicId,
+    individu: individuPublicId,
+    date: formatBucket(point.bucket),
+    valeur: point.valeur.toNumber(),
+  }
+  if (point.type === 'saisie') return { ...base, type: 'saisie' }
+  return {
+    ...base,
+    type: 'derivee',
+    fonctionAgregation: point.fonctionAgregation,
     couverture: point.couverture,
   }
 }
