@@ -1,4 +1,3 @@
-import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import Underline from '@tiptap/extension-underline'
@@ -10,6 +9,7 @@ import type { ActionsBlocs } from '@/components/centre-aide/blocs'
 import { AccordeonExtension } from './AccordeonExtension'
 import { CalloutExtension } from './CalloutExtension'
 import { IconeExtension } from './IconeExtension'
+import { ImageLayoutExtension } from './ImageLayoutExtension'
 import { SlashCommand } from './SlashCommand'
 import { VideoExtension } from './VideoExtension'
 
@@ -26,7 +26,10 @@ export const extensionsCentreAide = (
   }),
   Underline,
   Link.configure({ openOnClick: false }),
-  Image.configure({ allowBase64: false, HTMLAttributes: { class: 'max-w-full rounded-md' } }),
+  ImageLayoutExtension.configure({
+    allowBase64: false,
+    HTMLAttributes: { class: 'max-w-full rounded-md' },
+  }),
   Placeholder.configure({ placeholder }),
   CalloutExtension,
   AccordeonExtension,

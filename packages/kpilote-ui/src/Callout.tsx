@@ -7,40 +7,64 @@ export type CalloutColor = 'info' | 'success' | 'warning' | 'error'
 
 export const COULEURS_CALLOUT: readonly CalloutColor[] = ['info', 'success', 'warning', 'error']
 
-const variantes: Record<
+type CalloutIcon = ComponentType<{ className?: string }>
+
+// Source unique des variantes : rendu, menu « / » et barre des types de l'éditeur.
+export const CALLOUT_VARIANTES: Record<
   CalloutColor,
-  { conteneur: string; icone: string; Icone: ComponentType<{ className?: string }> }
+  { label: string; background: string; border: string; iconColor: string; Icon: CalloutIcon }
 > = {
-  info: { conteneur: 'bg-surface-tinted border-l-primary', icone: 'text-primary', Icone: Info },
+  info: {
+    label: 'Info',
+    background: 'bg-surface-tinted',
+    border: 'border-l-primary',
+    iconColor: 'text-primary',
+    Icon: Info,
+  },
   success: {
-    conteneur: 'bg-success-tinted border-l-success',
-    icone: 'text-success',
-    Icone: CircleCheck,
+    label: 'Succès',
+    background: 'bg-success-tinted',
+    border: 'border-l-success',
+    iconColor: 'text-success',
+    Icon: CircleCheck,
   },
   warning: {
-    conteneur: 'bg-warning-tinted border-l-warning',
-    icone: 'text-warning',
-    Icone: TriangleAlert,
+    label: 'Attention',
+    background: 'bg-warning-tinted',
+    border: 'border-l-warning',
+    iconColor: 'text-warning',
+    Icon: TriangleAlert,
   },
-  error: { conteneur: 'bg-error-tinted border-l-error', icone: 'text-error', Icone: CircleX },
+  error: {
+    label: 'Alerte',
+    background: 'bg-error-tinted',
+    border: 'border-l-error',
+    iconColor: 'text-error',
+    Icon: CircleX,
+  },
 }
 
 export function Callout({
   color = 'info',
+  icon,
   children,
   className,
 }: {
   color?: CalloutColor
+  /** Remplace l'icône de la variante, par exemple par une version cliquable. */
+  icon?: ReactNode
   children: ReactNode
   className?: string
 }) {
-  const variante = variantes[color]
+  const { background, border, iconColor, Icon } = CALLOUT_VARIANTES[color]
   return (
     <div
       data-color={color}
-      className={clsxm('flex items-start gap-3 border-l-4 p-4', variante.conteneur, className)}
+      className={clsxm('flex items-start gap-3 border-l-4 p-4', background, border, className)}
     >
-      <variante.Icone className={clsxm('mt-0.5 size-5 shrink-0', variante.icone)} />
+      <div className={clsxm('mt-0.5 shrink-0', iconColor)}>
+        {icon ?? <Icon className="size-5" />}
+      </div>
       <div className="flex-1 text-sm leading-relaxed [&_p]:mb-0">{children}</div>
     </div>
   )

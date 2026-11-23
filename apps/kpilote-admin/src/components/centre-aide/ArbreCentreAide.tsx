@@ -143,7 +143,7 @@ function LigneArbre({
         onClick={() => onSelect(noeud.id)}
         style={{ paddingLeft: depth * INDENTATION + 6 }}
         className={clsxm(
-          'group relative flex cursor-pointer items-center gap-1 py-1.5 pr-2 text-sm',
+          'group relative flex cursor-pointer items-start gap-1 py-1.5 pr-2 text-sm',
           selectionne
             ? 'rounded-md bg-primary-tinted font-medium text-primary'
             : 'rounded-md text-text hover:bg-surface-tinted',
@@ -164,7 +164,7 @@ function LigneArbre({
           {...attributes}
           {...listeners}
           onClick={(event) => event.stopPropagation()}
-          className="flex cursor-grab text-text-subtle opacity-0 transition-opacity group-hover:opacity-100"
+          className="flex h-5 shrink-0 cursor-grab items-center text-text-subtle opacity-0 transition-opacity group-hover:opacity-100"
         >
           <GripVertical className="size-3.5" />
         </button>
@@ -177,7 +177,7 @@ function LigneArbre({
               event.stopPropagation()
               onBasculerRepli(noeud.id)
             }}
-            className="flex text-text-subtle"
+            className="flex h-5 shrink-0 items-center text-text-subtle"
           >
             {replie ? <ChevronRight className="size-3.5" /> : <ChevronDown className="size-3.5" />}
           </button>
@@ -185,14 +185,16 @@ function LigneArbre({
           <span className="w-3.5 shrink-0" />
         )}
 
-        <span className={clsxm('flex-1 truncate', estGroupe && 'font-semibold text-text')}>
+        <span
+          className={clsxm('min-w-0 flex-1 break-words', estGroupe && 'font-semibold text-text')}
+        >
           {titre}
         </span>
 
         {estGroupe ? null : (
           <span
             className={clsxm(
-              'size-1.5 shrink-0 rounded-full',
+              'mt-[7px] size-1.5 shrink-0 rounded-full',
               noeud.article.estPublie ? 'bg-success' : 'bg-warning',
             )}
             title={noeud.article.estPublie ? 'Publié' : 'Brouillon'}

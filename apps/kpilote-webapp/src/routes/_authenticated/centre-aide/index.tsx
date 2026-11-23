@@ -146,7 +146,7 @@ function NavCentreAide({
               onClick={() => (estGroupe ? basculer(article.id) : onSelect(article.id))}
               style={{ paddingLeft: depth * INDENTATION_NAV + 6 }}
               className={clsxm(
-                'relative flex w-full cursor-pointer items-center gap-1 rounded-md py-1.5 pr-2 text-left',
+                'relative flex w-full cursor-pointer items-start gap-1 rounded-md py-1.5 pr-2 text-left',
                 navItemClassName({ isGroupe: estGroupe, isSelected: selectedId === article.id }),
               )}
             >
@@ -159,7 +159,7 @@ function NavCentreAide({
                 />
               ))}
               {estGroupe && aDesEnfants(article.id) ? (
-                <span className="flex text-text-subtle">
+                <span className="flex h-5 shrink-0 items-center text-text-subtle">
                   {replie ? (
                     <ChevronRight className="size-3.5" />
                   ) : (
@@ -169,7 +169,7 @@ function NavCentreAide({
               ) : (
                 <span className="w-3.5 shrink-0" />
               )}
-              <span className="flex-1 truncate">{titre}</span>
+              <span className="min-w-0 flex-1 break-words">{titre}</span>
             </button>
           </li>
         )

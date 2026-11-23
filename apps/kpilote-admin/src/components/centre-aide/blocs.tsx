@@ -1,9 +1,9 @@
+import { CALLOUT_VARIANTES, COULEURS_CALLOUT } from '@pilote/kpilote-ui/Callout'
 import { registreIcones, TYPES_ICONE } from '@pilote/kpilote-ui/centre-aide'
+import type { MediaKind } from '@pilote/kpilote-shared/mediaUrl'
 import { estUrlHttpSure } from '@pilote/kpilote-shared/url'
 import type { Editor } from '@tiptap/react'
 import {
-  CircleCheck,
-  CircleX,
   Heading,
   Heading1,
   Heading2,
@@ -18,7 +18,6 @@ import {
   ListOrdered,
   MessageSquareText,
   Minus,
-  TriangleAlert,
   Video as VideoIcon,
 } from 'lucide-react'
 import type { ComponentType } from 'react'
@@ -42,8 +41,7 @@ const LABELS_ICONE: Record<string, string> = {
 }
 
 export type ActionsBlocs = {
-  // Ouvre la modale d'insertion d'une vidéo video.finances.gouv.fr.
-  ouvrirVideoFinance?: () => void
+  openMediaModal?: (kind: MediaKind) => void
 }
 
 // Source unique des blocs insérables, consommée par la commande « / ». Un bloc
@@ -52,14 +50,6 @@ export const construireOptionsBlocs = (
   editor: Editor,
   actions: ActionsBlocs = {},
 ): OptionBloc[] => {
-  const insererImage = () => {
-    const url = window.prompt('URL de l’image')
-    if (url && estUrlHttpSure(url)) editor.chain().focus().setImage({ src: url }).run()
-  }
-  const insererVideoUrl = () => {
-    const url = window.prompt('URL d’intégration de la vidéo (iframe)')
-    if (url && estUrlHttpSure(url)) editor.chain().focus().insertVideo({ src: url }).run()
-  }
   const insererLien = () => {
     const url = window.prompt('URL du lien')
     if (!url || !estUrlHttpSure(url)) return
@@ -75,28 +65,20 @@ export const construireOptionsBlocs = (
     }
   }
 
-  const varianteCallout = (
-    color: 'info' | 'success' | 'warning' | 'error',
-    label: string,
-    Icon: ComponentType<{ className?: string }>,
-  ): OptionBloc => ({
-    label,
-    keywords: `callout ${label.toLowerCase()}`,
-    Icon,
-    run: () => editor.chain().focus().insertCallout({ color }).run(),
-  })
-
   return [
     {
       label: 'Encadré (callout)',
       keywords: 'callout encadre info alerte',
       Icon: MessageSquareText,
-      sousOptions: [
-        varianteCallout('info', 'Info', Info),
-        varianteCallout('success', 'Succès', CircleCheck),
-        varianteCallout('warning', 'Attention', TriangleAlert),
-        varianteCallout('error', 'Alerte', CircleX),
-      ],
+      sousOptions: COULEURS_CALLOUT.map((color) => {
+        const { label, Icon } = CALLOUT_VARIANTES[color]
+        return {
+          label,
+          keywords: `callout ${label.toLowerCase()}`,
+          Icon,
+          run: () => editor.chain().focus().insertCallout({ color }).run(),
+        }
+      }),
     },
     {
       label: 'Accordéon',
@@ -104,20 +86,17 @@ export const construireOptionsBlocs = (
       Icon: List,
       run: () => editor.chain().focus().insertAccordion().run(),
     },
-    { label: 'Image', keywords: 'image photo', Icon: ImageIcon, run: insererImage },
+    {
+      label: 'Image',
+      keywords: 'image photo',
+      Icon: ImageIcon,
+      run: () => actions.openMediaModal?.('image'),
+    },
     {
       label: 'Vidéo',
-      keywords: 'video iframe',
+      keywords: 'video film fichier iframe',
       Icon: VideoIcon,
-      sousOptions: [
-        { label: 'Par URL', keywords: 'video url', Icon: Link2, run: insererVideoUrl },
-        {
-          label: 'Par vidéo finance',
-          keywords: 'video finance video.finances.gouv.fr',
-          Icon: VideoIcon,
-          run: () => actions.ouvrirVideoFinance?.(),
-        },
-      ],
+      run: () => actions.openMediaModal?.('video'),
     },
     { label: 'Lien', keywords: 'lien url link', Icon: Link2, run: insererLien },
     {

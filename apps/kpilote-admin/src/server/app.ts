@@ -1,3 +1,8 @@
+import {
+  FICHIERS_ORIGIN,
+  MEDIA_ORIGINS,
+  VIDEO_FINANCES_ORIGIN,
+} from '@pilote/kpilote-shared/mediaUrl'
 import { Hono } from 'hono'
 import { secureHeaders } from 'hono/secure-headers'
 
@@ -15,7 +20,9 @@ app.use(
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-      imgSrc: ["'self'", 'data:'],
+      imgSrc: ["'self'", 'data:', ...MEDIA_ORIGINS.image],
+      mediaSrc: ["'self'", FICHIERS_ORIGIN],
+      frameSrc: ["'self'", VIDEO_FINANCES_ORIGIN],
       fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
       connectSrc: ["'self'"],
       frameAncestors: ["'none'"],
