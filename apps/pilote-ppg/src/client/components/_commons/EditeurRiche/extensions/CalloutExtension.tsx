@@ -5,21 +5,30 @@ import {
   NodeViewWrapper,
   ReactNodeViewRenderer,
 } from "@tiptap/react";
-import {
-  Callout,
-  CalloutColor,
-  iconeCallout,
-} from "@/client/components/shared/Callout";
+import { CalloutTypePicker } from "@/client/components/_commons/CentreAide/editeur/CalloutTypePicker";
+import { Callout, CalloutColor } from "@/client/components/shared/Callout";
 
-// La variante se choisit a l'insertion, dans le menu « / » : l'encadre affiche
-// donc en edition exactement ce qui sera publie.
-function CalloutNodeView({ node }: NodeViewProps) {
+function CalloutNodeView({
+  editor,
+  getPos,
+  node,
+  updateAttributes,
+}: NodeViewProps) {
   const color = (node.attrs.color as CalloutColor) || "info";
 
   return (
-    <NodeViewWrapper>
+    <NodeViewWrapper className="relative">
       <Callout.Root color={color}>
-        <Callout.Icon icone={iconeCallout(color)} />
+        <Callout.Icon
+          icone={
+            <CalloutTypePicker
+              color={color}
+              editor={editor}
+              getPos={getPos}
+              onChange={(newColor) => updateAttributes({ color: newColor })}
+            />
+          }
+        />
         <div className="flex-1 min-w-0">
           <NodeViewContent className="text-sm leading-relaxed" />
         </div>
