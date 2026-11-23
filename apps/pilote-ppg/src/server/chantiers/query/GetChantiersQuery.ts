@@ -110,8 +110,7 @@ export class GetChantiersQuery {
       const ecart = jalon?.ecart ?? null;
       const meteo = ct.meteo;
       const estEnRetard = ecart !== null && ecart <= -SEUIL_ECART_MEDIANE;
-      const estEnDifficulte =
-        !estEnRetard && (meteo === "ORAGE" || meteo === "NUAGE");
+      const estEnDifficulte = meteo === "ORAGE" || meteo === "NUAGE";
 
       const commentaireDonnees = ct.commentaires.find(
         (c) => c.type === "commentaires_sur_les_donnees",
@@ -214,12 +213,7 @@ export class GetChantiersQuery {
     }
 
     if (params.view === "en_difficulte") {
-      filters.push({
-        meteo: { in: ["ORAGE", "NUAGE"] },
-        chantier_territoire_jalon: {
-          none: { jalon: params.jalon, ecart: { lte: -10 } },
-        },
-      });
+      filters.push({ meteo: { in: ["ORAGE", "NUAGE"] } });
     }
 
     if (params.tendance) {

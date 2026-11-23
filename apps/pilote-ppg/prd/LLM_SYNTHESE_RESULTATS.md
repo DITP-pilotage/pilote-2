@@ -53,7 +53,7 @@ Deux outils de présentation :
 | `display_choices` | Affiche un panneau de boutons cliquables dans l'UI pour les cas d'ambiguïté ou de drill-down proposé. |
 | `export_rapport` | Double fonction : outil de données *et* déclencheur de composant UI (`ExportRapportDownload`). |
 
-**Corollaire clé** : `get_chantiers_en_retard` et `get_chantiers_en_difficulte` sont **mutuellement exclusifs par construction**. Un chantier déjà classé « en retard » (critère numérique) n'apparaîtra jamais dans « en difficulté », même si sa météo est ORAGE. Cette règle métier est à la fois **encodée dans les queries SQL** (`GetChantiersEnDifficulteQuery` exclut les chantiers déjà retournés par `GetChantiersEnRetardQuery`) **et rappelée dans le system prompt**, pour que l'agent n'« invente » pas de chevauchement.
+**Corollaire clé** : `get_chantiers_en_retard` et `get_chantiers_en_difficulte` **peuvent se recouper**. Un chantier en retard (critère numérique) dont la météo est ORAGE ou NUAGE est aussi « en difficulté » : l'exclure faisait disparaître des territoires d'une analyse des chantiers en difficulté (PIL-2028). La règle est **encodée dans la query** (`GetChantiersQuery`, vue `en_difficulte`) **et rappelée dans le system prompt**.
 
 ### 2.3. Combinaison d'outils dictée par le system prompt (pas par le code)
 

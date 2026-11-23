@@ -76,7 +76,7 @@ Un jalon est l'année de référence des cibles. Sans précision de l'utilisateu
 
 - L'écart à la médiane compare le taux d'avancement du chantier sur le territoire à la médiane des territoires de la même maille.
 - En retard : écart inférieur ou égal à −10 points. En avance : écart supérieur ou égal à +10 points. Entre les deux : dans la médiane.
-- En difficulté : niveau de confiance « Objectifs compromis » ou « Appuis nécessaires », pour un chantier qui n'est pas en retard. Un chantier est en retard ou en difficulté, jamais les deux.
+- En difficulté : niveau de confiance « Objectifs compromis » ou « Appuis nécessaires », que le chantier soit en retard ou non. Un chantier peut être à la fois en retard et en difficulté.
 - L'analyse « en retard » n'existe pas au niveau national.
 - Tendance : en hausse, en baisse ou stable.
 - Niveau de confiance, saisi par les équipes : Objectifs sécurisés, Objectifs atteignables, Appuis nécessaires, Objectifs compromis.
