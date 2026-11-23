@@ -3,6 +3,7 @@ import type { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 export const ANALYTICS_CATEGORIES = [
   "assistant_ia",
   "authentification",
+  "formations",
 ] as const;
 
 export type AnalyticsCategory = (typeof ANALYTICS_CATEGORIES)[number];
@@ -60,6 +61,10 @@ export const ANALYTICS_EVENT_NAMES = [
   "export.report_pdf",
   "login.proconnect",
   "login.keycloak",
+  "slide_in.view",
+  "slide_in.minimize",
+  "slide_in.close",
+  "inscription.click",
 ] as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENT_NAMES)[number];
@@ -77,6 +82,8 @@ export type AnalyticsDimensions = {
   type_question?: "premiere_libre" | "premiere_proposition" | "suivante";
   nombre_choix?: number;
   position_choix?: number;
+  periode_information?: string;
+  formation?: string;
   environnement?: AnalyticsEnvironnement;
 };
 
@@ -91,6 +98,8 @@ export const ANALYTICS_DIMENSIONS = [
   "type_question",
   "nombre_choix",
   "position_choix",
+  "periode_information",
+  "formation",
   "environnement",
 ] as const satisfies readonly AnalyticsDimension[];
 

@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "@/server/framework/trpc/api";
+import { useAnalytics } from "@/client/analytics/useAnalytics";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
-import type { PropositionFormations } from "@/server/formations/queries/GetFormationsAProposerQuery";
+import type {
+  FormationProposee,
+  PropositionFormations,
+} from "@/server/formations/queries/GetFormationsAProposerQuery";
 import type { RecordSlideInActionCommand } from "@/server/formations/handlers/RecordSlideInActionHandler";
+import { inscriptionEvent, slideInEvent } from "./slideInEvents";
 
 export function useSlideInFormations({
   peutAfficher,
@@ -14,8 +19,10 @@ export function useSlideInFormations({
   visible: boolean;
   masquer: () => void;
   fermer: () => void;
+  trackInscription: (formation: FormationProposee) => void;
 } {
   const utils = api.useUtils();
+  const { trackEvent } = useAnalytics();
   const { data } = api.formation.formationsAProposer.useQuery();
   const slideIn = data ?? null;
   // Pas de toast en cas d'échec : le routeur tRPC journalise l'erreur, et la
@@ -49,18 +56,31 @@ export function useSlideInFormations({
 
   const presentee = useRef(false);
   useEffect(() => {
-    if (!visible || presentee.current) return;
+    if (!visible || slideIn === null || presentee.current) return;
     presentee.current = true;
     enregistrer("PRESENTATION");
-  }, [visible, enregistrer]);
+    trackEvent(slideInEvent("view", slideIn.periode));
+  }, [visible, slideIn, enregistrer, trackEvent]);
 
-  // La croix et Échap masquent la slide-in jusqu'à la prochaine visite de l'accueil, sans rien enregistrer.
-  const masquer = useCallback(() => setMasquee(true), []);
+  // La croix et Échap masquent la slide-in jusqu'à la prochaine visite de l'accueil, sans rien écrire en base.
+  const masquer = useCallback(() => {
+    if (slideIn !== null) trackEvent(slideInEvent("minimize", slideIn.periode));
+    setMasquee(true);
+  }, [slideIn, trackEvent]);
 
   const fermer = useCallback(() => {
+    if (slideIn !== null) trackEvent(slideInEvent("close", slideIn.periode));
     setMasquee(true);
     enregistrer("FERMETURE");
-  }, [enregistrer]);
+  }, [slideIn, trackEvent, enregistrer]);
 
-  return { slideIn, visible, masquer, fermer };
+  const trackInscription = useCallback(
+    (formation: FormationProposee) => {
+      if (slideIn !== null)
+        trackEvent(inscriptionEvent(slideIn.periode, formation));
+    },
+    [slideIn, trackEvent],
+  );
+
+  return { slideIn, visible, masquer, fermer, trackInscription };
 }

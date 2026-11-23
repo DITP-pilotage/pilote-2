@@ -13,9 +13,10 @@ export const SlideInFormations = ({
   peutAfficher: boolean;
   pastilleAssistantVisible: boolean;
 }) => {
-  const { slideIn, visible, masquer, fermer } = useSlideInFormations({
-    peutAfficher,
-  });
+  const { slideIn, visible, masquer, fermer, trackInscription } =
+    useSlideInFormations({
+      peutAfficher,
+    });
   const idTitre = useId();
   const section = useRef<HTMLElement>(null);
 
@@ -81,7 +82,11 @@ export const SlideInFormations = ({
 
       <ul className="m-0 flex list-none flex-col overflow-y-auto p-0 px-5">
         {slideIn.formations.map((formation) => (
-          <LigneFormation formation={formation} key={formation.id} />
+          <LigneFormation
+            formation={formation}
+            key={formation.id}
+            onInscription={() => trackInscription(formation)}
+          />
         ))}
       </ul>
 
