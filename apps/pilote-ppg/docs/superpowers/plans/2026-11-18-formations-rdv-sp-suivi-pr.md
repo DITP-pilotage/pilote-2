@@ -4,7 +4,7 @@
 Tickets : [PIL-1883](https://data-ditp.atlassian.net/browse/PIL-1883) (paramétrage DITP), [PIL-1923](https://data-ditp.atlassian.net/browse/PIL-1923) (slide-in utilisateur)
 Design : [2026-11-18-formations-rdv-sp-tables-design.md](../specs/2026-11-18-formations-rdv-sp-tables-design.md)
 
-Cinq PR empilées (stack GitHub #2709). Chacune est cadrée en détail au moment de la commencer. La synchronisation copilot → PILOTE a été ajoutée en PR 3 le 2026-11-19. Les PR 1 à 3 sont mergées dans `dev` : la PR 4 part de `dev`.
+Cinq PR empilées (stack GitHub #2709). Chacune est cadrée en détail au moment de la commencer. La synchronisation copilot → PILOTE a été ajoutée en PR 3 le 2026-11-19. Les PR 1 à 4 sont mergées dans `dev` : la PR 5 part de `dev`.
 
 ## Avancement
 
@@ -13,8 +13,8 @@ Cinq PR empilées (stack GitHub #2709). Chacune est cadrée en détail au moment
 | 1   | Tables, données fictives, onglet Séances à venir | PIL-1883               | `dev` | `feat/PIL-1883-formations-tables-seances`   | [#2707](https://github.com/DITP-pilotage/pilote-2/pull/2707) | Mergée : [plan](./2026-11-18-formations-rdv-sp-pr1.md)                                                                                     |
 | 2   | Onglets Profils et Périodes d'information        | PIL-1883               | PR 1  | `feat/PIL-1883-formations-profils-periodes` | [#2708](https://github.com/DITP-pilotage/pilote-2/pull/2708) | Mergée : [plan](./2026-11-18-formations-rdv-sp-pr2.md)                                                                                     |
 | 3   | Synchronisation copilot → PILOTE par l'open-api  | PIL-1883 (à confirmer) | PR 2  | `feat/PIL-1883-formations-synchro-copilot`  | [#2728](https://github.com/DITP-pilotage/pilote-2/pull/2728) | Mergée : [design](../specs/2026-11-19-formations-synchro-copilot-design.md), [plan](./2026-11-19-formations-rdv-sp-pr3-synchro-copilot.md) |
-| 4   | Slide-in sur l'accueil                           | PIL-1923               | `dev` | `feat/PIL-1923-formations-slide-in`         | [#2733](https://github.com/DITP-pilotage/pilote-2/pull/2733) | En relecture : [design](../specs/2026-11-23-formations-slide-in-design.md), [plan](./2026-11-23-formations-rdv-sp-pr4-slide-in.md)         |
-| 5   | Mesure d'usage dans Matomo                       | PIL-1923               | PR 4  | à créer                                     | –                                                            | À faire                                                                                                                                    |
+| 4   | Slide-in sur l'accueil                           | PIL-1923               | `dev` | `feat/PIL-1923-formations-slide-in`         | [#2733](https://github.com/DITP-pilotage/pilote-2/pull/2733) | Mergée : [design](../specs/2026-11-23-formations-slide-in-design.md), [plan](./2026-11-23-formations-rdv-sp-pr4-slide-in.md)               |
+| 5   | Mesure d'usage dans Matomo                       | PIL-1923               | `dev` | `feat/PIL-1923-formations-matomo`           | –                                                            | En cours : [design](../specs/2026-11-23-formations-matomo-design.md), [plan](./2026-11-23-formations-rdv-sp-pr5-matomo.md)                 |
 
 Statuts : À faire, À cadrer, Cadrée, En cours, En relecture, Mergée.
 
@@ -91,12 +91,16 @@ Décidé le 2026-11-23, détaillé dans le [design](../specs/2026-11-23-formatio
 Périmètre :
 
 - Événements Matomo envoyés par la slide-in : affichage, clic par formation, masquage par la croix, fermeture, rattachés à la période d'information.
-- Sur le modèle du suivi de l'assistant IA (`useAssistantTracking`).
+- Événements construits dans la slide-in et envoyés par `useAnalytics`, comme ceux de l'assistant IA.
+- Deux nouvelles dimensions de portée Action, `periode_information` et `formation`, à créer dans Matomo.
 
-À cadrer :
+À cadrer (décidé le 2026-11-23, détaillé dans le [design](../specs/2026-11-23-formations-matomo-design.md)) :
 
-- [ ] Nommage des événements (catégorie, action, nom)
-- [ ] Plan détaillé
+- [x] Nommage des événements : catégorie `formations`, noms `slide_in.view`, `inscription.click`, `slide_in.minimize`, `slide_in.close`
+- [x] Vraies dimensions plutôt que le repli en suffixe du nom ; `nombre_choix` et `position_choix` écartées
+- [x] Part des exposés qui cliquent lue en visites, sans colonne en base
+- [x] Validation du design (2026-11-23)
+- [x] Plan détaillé : [2026-11-23-formations-rdv-sp-pr5-matomo.md](./2026-11-23-formations-rdv-sp-pr5-matomo.md)
 
 ## Hors pile
 
@@ -104,4 +108,5 @@ Périmètre :
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------ |
 | Envoi des motifs et séances par copilot, selon le [contrat de la synchronisation](../specs/2026-11-19-formations-synchro-copilot-design.md#contrat-avec-copilot)                                                                                                                      | à définir   | À faire                                          |
 | Mise à jour de PIL-1883 : l'arbitrage « pas de stockage des séances » ne tient plus                                                                                                                                                                                                   | à définir   | À faire                                          |
+| Création des dimensions Matomo `periode_information` et `formation` (portée Action) sur `stats.beta.gouv.fr`, emplacements à vérifier, puis numéros dans `NEXT_PUBLIC_MATOMO_DIMENSIONS` sur chaque environnement, avant la mise en production de la PR 5                             | à définir   | À faire                                          |
 | Mise à plat des règles des périodes d'information (décidée le 2026-11-19, après la relecture de la PR 2) : une période en cours créée par erreur ne peut ni se supprimer ni se corriger ; une période en cours dont toutes les formations ont disparu de RDV-SP ne peut pas s'arrêter | Tristan     | Faite dans la PR 2 (soft delete et remplacement) |
