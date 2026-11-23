@@ -4,17 +4,17 @@
 Tickets : [PIL-1883](https://data-ditp.atlassian.net/browse/PIL-1883) (paramétrage DITP), [PIL-1923](https://data-ditp.atlassian.net/browse/PIL-1923) (slide-in utilisateur)
 Design : [2026-11-18-formations-rdv-sp-tables-design.md](../specs/2026-11-18-formations-rdv-sp-tables-design.md)
 
-Cinq PR empilées (stack GitHub #2709). Chacune est cadrée en détail au moment de la commencer. La synchronisation copilot → PILOTE a été ajoutée en PR 3 le 2026-11-19.
+Cinq PR empilées (stack GitHub #2709). Chacune est cadrée en détail au moment de la commencer. La synchronisation copilot → PILOTE a été ajoutée en PR 3 le 2026-11-19. Les PR 1 à 3 sont mergées dans `dev` : la PR 4 part de `dev`.
 
 ## Avancement
 
-| #   | PR                                               | Ticket                 | Base  | Branche                                     | Lien                                                         | Statut                                                                                                                                           |
-| --- | ------------------------------------------------ | ---------------------- | ----- | ------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | Tables, données fictives, onglet Séances à venir | PIL-1883               | `dev` | `feat/PIL-1883-formations-tables-seances`   | [#2707](https://github.com/DITP-pilotage/pilote-2/pull/2707) | En relecture : [plan](./2026-11-18-formations-rdv-sp-pr1.md)                                                                                     |
-| 2   | Onglets Profils et Périodes d'information        | PIL-1883               | PR 1  | `feat/PIL-1883-formations-profils-periodes` | [#2708](https://github.com/DITP-pilotage/pilote-2/pull/2708) | En relecture : [plan](./2026-11-18-formations-rdv-sp-pr2.md)                                                                                     |
-| 3   | Synchronisation copilot → PILOTE par l'open-api  | PIL-1883 (à confirmer) | PR 2  | `feat/PIL-1883-formations-synchro-copilot`  | [#2728](https://github.com/DITP-pilotage/pilote-2/pull/2728) | En relecture : [design](../specs/2026-11-19-formations-synchro-copilot-design.md), [plan](./2026-11-19-formations-rdv-sp-pr3-synchro-copilot.md) |
-| 4   | Slide-in sur l'accueil                           | PIL-1923               | PR 3  | à créer                                     | –                                                            | À faire                                                                                                                                          |
-| 5   | Mesure d'usage dans Matomo                       | PIL-1923               | PR 4  | à créer                                     | –                                                            | À faire                                                                                                                                          |
+| #   | PR                                               | Ticket                 | Base  | Branche                                     | Lien                                                         | Statut                                                                                                                                     |
+| --- | ------------------------------------------------ | ---------------------- | ----- | ------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | Tables, données fictives, onglet Séances à venir | PIL-1883               | `dev` | `feat/PIL-1883-formations-tables-seances`   | [#2707](https://github.com/DITP-pilotage/pilote-2/pull/2707) | Mergée : [plan](./2026-11-18-formations-rdv-sp-pr1.md)                                                                                     |
+| 2   | Onglets Profils et Périodes d'information        | PIL-1883               | PR 1  | `feat/PIL-1883-formations-profils-periodes` | [#2708](https://github.com/DITP-pilotage/pilote-2/pull/2708) | Mergée : [plan](./2026-11-18-formations-rdv-sp-pr2.md)                                                                                     |
+| 3   | Synchronisation copilot → PILOTE par l'open-api  | PIL-1883 (à confirmer) | PR 2  | `feat/PIL-1883-formations-synchro-copilot`  | [#2728](https://github.com/DITP-pilotage/pilote-2/pull/2728) | Mergée : [design](../specs/2026-11-19-formations-synchro-copilot-design.md), [plan](./2026-11-19-formations-rdv-sp-pr3-synchro-copilot.md) |
+| 4   | Slide-in sur l'accueil                           | PIL-1923               | `dev` | `feat/PIL-1923-formations-slide-in`         | [#2733](https://github.com/DITP-pilotage/pilote-2/pull/2733) | En relecture : [design](../specs/2026-11-23-formations-slide-in-design.md), [plan](./2026-11-23-formations-rdv-sp-pr4-slide-in.md)         |
+| 5   | Mesure d'usage dans Matomo                       | PIL-1923               | PR 4  | à créer                                     | –                                                            | À faire                                                                                                                                    |
 
 Statuts : À faire, À cadrer, Cadrée, En cours, En relecture, Mergée.
 
@@ -69,23 +69,28 @@ Périmètre :
 
 - Formations à proposer : période active, motifs de la période non retirés de RDV-SP (`deleted_at IS NULL`) et associés au profil de l'utilisateur, séances ouvertes à l'inscription. Période active = non supprimée (`deleted_at IS NULL`) et en cours : réutiliser `statutPeriode`. Une période supprimée ne présente plus la slide-in. Sans verrou, deux périodes peuvent être en cours en même temps : prendre la plus récemment créée (`created_at`).
 - Slide-in sur l'accueil, d'après le prototype joint à PIL-1923.
-- « Plus tard », fermeture, lien d'inscription par séance.
+- Croix (masquage jusqu'à la prochaine visite), fermeture, lien d'inscription par séance.
 - Ligne d'état par utilisateur et par période (`formation_periode_information_utilisateur`).
 - Ajout des données au seed e2e pour les tests de la slide-in.
 
 À cadrer (points ouverts du ticket) :
 
-- [ ] Règle de nouvelle présentation après « Plus tard » : prochaine connexion, prochaine visite ou délai
-- [ ] Effet d'un clic vers l'inscription sur la slide-in
-- [ ] Nouvelle présentation lors d'une campagne suivante
-- [ ] Aucune formation disponible : ne pas afficher la slide-in (proposition du ticket)
-- [ ] Plan détaillé
+Décidé le 2026-11-23, détaillé dans le [design](../specs/2026-11-23-formations-slide-in-design.md) :
+
+- [x] Contenu : variante D du canevas (prochaine séance avec heure de début et durée, places restantes, autres dates dépliables, sans animateurs)
+- [x] Règle de nouvelle présentation : la croix (et Échap) masque la slide-in jusqu'à la prochaine visite de l'accueil, sans rien enregistrer ; « Plus tard », le report de 7 jours et la colonne `date_report` retirés le 2026-11-23, après une première version
+- [x] Effet d'un clic vers l'inscription : aucun, la slide-in reste ouverte et l'utilisateur la ferme ensuite avec la croix ou « Ne plus me les proposer »
+- [x] Nouvelle présentation lors d'une campagne suivante : une nouvelle période est une nouvelle campagne
+- [x] Aucune formation disponible : pas de slide-in et aucune ligne d'état
+- [x] Chargement : requête tRPC côté client, hors du `getServerSideProps` de l'accueil
+- [x] Validation du design (2026-11-23)
+- [x] Plan détaillé : [2026-11-23-formations-rdv-sp-pr4-slide-in.md](./2026-11-23-formations-rdv-sp-pr4-slide-in.md)
 
 ## PR 5 : mesure d'usage dans Matomo
 
 Périmètre :
 
-- Événements Matomo envoyés par la slide-in : affichage, clic par formation, report, fermeture, rattachés à la période d'information.
+- Événements Matomo envoyés par la slide-in : affichage, clic par formation, masquage par la croix, fermeture, rattachés à la période d'information.
 - Sur le modèle du suivi de l'assistant IA (`useAssistantTracking`).
 
 À cadrer :

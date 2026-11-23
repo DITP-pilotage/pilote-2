@@ -20,6 +20,7 @@ import {
 import { ModaleVideoAccueil } from "@/components/PageAccueil/PageChantiers/ModaleVideoAccueil/ModaleVideoAccueil";
 import { ModaleInscriptionInfolettre } from "@/components/PageAccueil/PageChantiers/ModaleInscriptionInfoLettre/ModaleInscriptionInfolettre";
 import { ModaleRenseignerService } from "@/components/PageAccueil/PageChantiers/ModaleRenseignerService/ModaleRenseignerService";
+import { SlideInFormations } from "@/components/PageAccueil/SlideInFormations/SlideInFormations";
 import { Axe } from "@/shared/axe/Axe.interface";
 import { Ministère } from "@/shared/ministere/Ministere.interface";
 import { MailleInterne } from "@/shared/maille/Maille.interface";
@@ -218,6 +219,14 @@ export const BasePageAccueilLayout: FunctionComponent<
               !isModaleVideoAccueilOpen &&
               !isModaleRenseignerServiceOpen &&
               isModaleInfolettreOpen
+            }
+          />
+          <SlideInFormations
+            pastilleAssistantVisible={accesAlbert.peutUtiliser}
+            peutAfficher={
+              !isModaleVideoAccueilOpen &&
+              !isModaleRenseignerServiceOpen &&
+              !isModaleInfolettreOpen
             }
           />
         </main>

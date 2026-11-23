@@ -129,9 +129,11 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
       </div>
       <Dialog.Root onOpenChange={setMenuOuvert} open={menuOuvert}>
         <Dialog.Portal>
+          {/* Au niveau des modales : au-dessus de l'assistant IA (z-[1750], plein écran z-[1760])
+              et de la slide-in des formations (z-[1755]), qui restaient sinon cliquables par-dessus le menu. */}
           <Dialog.Content
             aria-describedby={undefined}
-            className="fixed inset-0 z-[1000] overflow-y-auto bg-white px-4 pb-8 min-[62em]:hidden"
+            className="fixed inset-0 z-[1800] overflow-y-auto bg-white px-4 pb-8 min-[62em]:hidden"
           >
             <Dialog.Title className="sr-only">Menu principal</Dialog.Title>
             <div className="flex items-start justify-between gap-4 py-4">

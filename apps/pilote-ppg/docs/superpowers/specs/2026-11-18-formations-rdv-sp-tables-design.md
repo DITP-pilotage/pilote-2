@@ -102,10 +102,9 @@ Le paramétrage ne référence que des motifs existants (décision du 2026-11-19
 | `utilisateur_id`    | uuid, FK `utilisateur`, cascade                   |                                                 |
 | `periode_id`        | uuid, FK `formation_periode_information`, cascade |                                                 |
 | `date_presentation` | timestamptz                                       | première présentation                           |
-| `date_report`       | timestamptz, nullable                             | dernier clic sur « Plus tard »                  |
 | `date_fermeture`    | timestamptz, nullable                             | fermeture : plus de présentation sur la période |
 
-Clé (`utilisateur_id`, `periode_id`). Pas de ligne : jamais présentée. `date_report` garde de quoi appliquer la règle de nouvelle présentation, encore à arbitrer (prochaine connexion, prochaine visite ou délai).
+Clé (`utilisateur_id`, `periode_id`). Pas de ligne : jamais présentée. La colonne `date_report` a été supprimée le 2026-11-23 (PR 4) : la croix masque la slide-in sans rien enregistrer, et seule la fermeture l'écarte pour la période.
 
 ## Données fictives
 

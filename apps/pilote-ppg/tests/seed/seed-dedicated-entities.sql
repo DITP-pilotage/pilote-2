@@ -164,3 +164,28 @@ BEGIN
   INSERT INTO public.habilitation (utilisateur_id, scope_code, territoires, perimetres, chantiers) VALUES
     (v_user_id, 'lecture', ARRAY['DEPT-13'], ARRAY[]::text[], ARRAY[]::text[]);
 END $$;
+
+-- Slide-in des formations : une formation proposée au seul profil CABINET_MTFP, qu'aucun autre spec
+-- n'utilise, pendant une période en cours ; formations.slide.in est le compte du spec de la slide-in.
+DO $$
+DECLARE
+  v_user_id UUID;
+  v_periode_id UUID;
+BEGIN
+  INSERT INTO public.utilisateur (id, email, nom, prenom, profil_code, fonction, service, date_creation, date_modification, date_visualisation_video_accueil, date_inscription_infolettre)
+  VALUES (gen_random_uuid(), 'formations.slide.in@example.com', 'Formations', 'Slide-in', 'CABINET_MTFP', 'Conseiller', 'Cabinet MTFP', NOW(), NOW(), NOW(), NOW())
+  RETURNING id INTO v_user_id;
+
+  INSERT INTO public.habilitation (utilisateur_id, scope_code, territoires, perimetres, chantiers) VALUES
+    (v_user_id, 'lecture', ARRAY[]::text[], ARRAY[]::text[], ARRAY[]::text[]);
+
+  INSERT INTO public.formation_motif (id, nom) VALUES (900001, 'CAMPUS PILOTE : Formation e2e');
+  INSERT INTO public.formation_motif_profil (motif_id, profil_code) VALUES (900001, 'CABINET_MTFP');
+  INSERT INTO public.formation_seance (id, motif_id, date_debut, duree_minutes, nombre_places_max, nombre_inscrits, url_inscription)
+  VALUES (900001, 900001, NOW() + interval '7 days', 45, 20, 0, 'https://rdv.anct.gouv.fr/prendre_rdv?public_link_organisation_id=1453');
+
+  INSERT INTO public.formation_periode_information (date_debut, date_fin)
+  VALUES (CURRENT_DATE - 1, CURRENT_DATE + 30)
+  RETURNING id INTO v_periode_id;
+  INSERT INTO public.formation_periode_information_motif (periode_id, motif_id) VALUES (v_periode_id, 900001);
+END $$;

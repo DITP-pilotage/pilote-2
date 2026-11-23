@@ -9,6 +9,7 @@ import { zodValidateurCSRF } from "@/validation/publication";
 import { z } from "zod";
 import { setMotifProfilCommandSchema } from "@/server/formations/handlers/SetMotifProfilHandler";
 import { savePeriodeInformationCommandSchema } from "@/server/formations/handlers/SavePeriodeInformationHandler";
+import { recordSlideInActionCommandSchema } from "@/server/formations/handlers/RecordSlideInActionHandler";
 
 export const formationRouter = createTRPCRouter({
   listSeancesAVenir: protectedProcedure.query(async ({ ctx }) => {
@@ -70,5 +71,30 @@ export const formationRouter = createTRPCRouter({
       await getContainer("formations")
         .resolve("deletePeriodeInformationHandler")
         .execute({ id: input.id, maintenant: new Date() });
+    }),
+
+  // Ouvertes à tout utilisateur connecté : l'utilisateur et son profil viennent de la session.
+  formationsAProposer: protectedProcedure.query(async ({ ctx }) =>
+    getContainer("formations")
+      .resolve("getFormationsAProposerQuery")
+      .run({
+        utilisateurId: ctx.session.user.id,
+        profilCode: ctx.session.profil ?? null,
+        maintenant: new Date(),
+      }),
+  ),
+
+  recordSlideInAction: protectedProcedure
+    .input(recordSlideInActionCommandSchema.and(zodValidateurCSRF))
+    .mutation(async ({ input, ctx }) => {
+      checkCsrf(ctx.csrfDuCookie, input.csrf);
+      await getContainer("formations")
+        .resolve("recordSlideInActionHandler")
+        .execute({
+          utilisateurId: ctx.session.user.id,
+          periodeId: input.periodeId,
+          action: input.action,
+          maintenant: new Date(),
+        });
     }),
 });
