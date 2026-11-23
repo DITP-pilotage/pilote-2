@@ -61,6 +61,7 @@ type FiltersByAction = {
   ARTICLE_CENTRE_AIDE_CREATED: { id: string };
   ALBERT_ACCESS_PROFIL_ENABLED: { profilCode: string };
   ALBERT_ACCESS_UTILISATEUR_ADDED: { email: string };
+  FORMATION_SLIDE_IN_ETAT_CREATED: { email: string };
 };
 
 type ActionType = keyof FiltersByAction;
@@ -310,6 +311,11 @@ export class E2ETestContext {
           where: {
             utilisateur: { email: filters.email },
           },
+        });
+        break;
+      case "FORMATION_SLIDE_IN_ETAT_CREATED":
+        await prisma.formation_periode_information_utilisateur.deleteMany({
+          where: { utilisateur: { email: filters.email } },
         });
         break;
     }

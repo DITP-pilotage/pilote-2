@@ -7,3 +7,5 @@ export const INDICATEUR_FOR_FORM = "IND-902";
 export const INDICATEUR_FOR_OPEN_API = "IND-903";
 export const INDICATEUR_FOR_PONDERATIONS = "IND-904";
 export const CHANTIER_NOT_ASSIGNED_TO_EQUIPE_DIR_PROJET = "CH-070";
+export const UTILISATEUR_FOR_SLIDE_IN_FORMATIONS =
+  "formations.slide.in@example.com";
