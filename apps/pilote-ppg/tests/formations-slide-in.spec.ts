@@ -35,9 +35,12 @@ async function slideInApresRechargement(page: Page): Promise<unknown> {
   let resultat: unknown;
   await Promise.all([
     page.waitForResponse(async (response) => {
-      if (!estUnAppel(response, "formation.slideIn")) return false;
+      if (!estUnAppel(response, "formation.formationsAProposer")) return false;
       try {
-        resultat = await resultatDuLot(response, "formation.slideIn");
+        resultat = await resultatDuLot(
+          response,
+          "formation.formationsAProposer",
+        );
         return true;
       } catch {
         return false;
@@ -94,7 +97,10 @@ test.describe("Slide-in des formations", () => {
       date_fermeture: null,
     });
 
-    const premierRechargement = attendreAppel(page, "formation.slideIn");
+    const premierRechargement = attendreAppel(
+      page,
+      "formation.formationsAProposer",
+    );
     await page.reload();
     await premierRechargement;
     await expect(slideIn).toBeVisible({ timeout: 15_000 });
@@ -109,7 +115,7 @@ test.describe("Slide-in des formations", () => {
       .click();
     await expect(slideIn).toBeHidden();
     await fermeture;
-    // Fermeture écrite : toute réponse de formation.slideIn, d'avant ou d'après le rechargement, est vide.
+    // Fermeture écrite : toute réponse de formation.formationsAProposer, d'avant ou d'après le rechargement, est vide.
     await expect
       .poll(async () => (await ligneEtat())?.date_fermeture instanceof Date)
       .toBe(true);

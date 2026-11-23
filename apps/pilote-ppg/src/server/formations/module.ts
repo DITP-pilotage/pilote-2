@@ -12,7 +12,7 @@ import { ListPeriodesInformationQuery } from "./queries/ListPeriodesInformationQ
 import { SavePeriodeInformationHandler } from "./handlers/SavePeriodeInformationHandler";
 import { DeletePeriodeInformationHandler } from "./handlers/DeletePeriodeInformationHandler";
 import { SyncFormationsHandler } from "./handlers/SyncFormationsHandler";
-import { GetSlideInFormationsQuery } from "./queries/GetSlideInFormationsQuery";
+import { GetFormationsAProposerQuery } from "./queries/GetFormationsAProposerQuery";
 import { RecordSlideInActionHandler } from "./handlers/RecordSlideInActionHandler";
 
 type FormationsOwnCradle = {
@@ -23,7 +23,7 @@ type FormationsOwnCradle = {
   savePeriodeInformationHandler: SavePeriodeInformationHandler;
   deletePeriodeInformationHandler: DeletePeriodeInformationHandler;
   syncFormationsHandler: SyncFormationsHandler;
-  getSlideInFormationsQuery: GetSlideInFormationsQuery;
+  getFormationsAProposerQuery: GetFormationsAProposerQuery;
   recordSlideInActionHandler: RecordSlideInActionHandler;
 };
 
@@ -46,7 +46,7 @@ export const formationsModule = defineModule<NoExports, FormationsCradle>()({
         DeletePeriodeInformationHandler,
       ),
       syncFormationsHandler: asModuleClass(SyncFormationsHandler),
-      getSlideInFormationsQuery: asModuleClass(GetSlideInFormationsQuery),
+      getFormationsAProposerQuery: asModuleClass(GetFormationsAProposerQuery),
       recordSlideInActionHandler: asModuleClass(RecordSlideInActionHandler),
     } satisfies VerifyCradle<FormationsOwnCradle>);
   },

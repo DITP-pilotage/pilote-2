@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
-import { GetSlideInFormationsQuery } from "@/server/formations/queries/GetSlideInFormationsQuery";
+import { GetFormationsAProposerQuery } from "@/server/formations/queries/GetFormationsAProposerQuery";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
@@ -30,12 +30,12 @@ function periodeEnCours(
   });
 }
 
-describe("GetSlideInFormationsQuery", () => {
+describe("GetFormationsAProposerQuery", () => {
   const maintenant = new Date("2026-11-23T10:00:00Z");
-  let query: GetSlideInFormationsQuery;
+  let query: GetFormationsAProposerQuery;
 
   beforeEach(() => {
-    query = new GetSlideInFormationsQuery({ prisma: new PrismaPilote() });
+    query = new GetFormationsAProposerQuery({ prisma: new PrismaPilote() });
   });
 
   async function donneesDePresentation() {
@@ -99,7 +99,7 @@ describe("GetSlideInFormationsQuery", () => {
         formations: [
           {
             id: Number(motifB.id),
-            nom: "Maîtriser l'Assistant IA",
+            nom: "CAMPUS PILOTE : Maîtriser l'Assistant IA",
             seances: [
               {
                 id: Number(seanceB.id),
@@ -112,7 +112,7 @@ describe("GetSlideInFormationsQuery", () => {
           },
           {
             id: Number(motifA.id),
-            nom: "Introduction à l'outil",
+            nom: "CAMPUS PILOTE : Introduction à l'outil",
             seances: [
               {
                 id: Number(seanceA1.id),
@@ -182,7 +182,7 @@ describe("GetSlideInFormationsQuery", () => {
         formations: [
           {
             id: Number(motifA.id),
-            nom: "A",
+            nom: "CAMPUS PILOTE : A",
             seances: [
               {
                 id: Number(ouverte.id),
@@ -271,7 +271,7 @@ describe("GetSlideInFormationsQuery", () => {
         formations: [
           {
             id: Number(motif2.id),
-            nom: "M2",
+            nom: "CAMPUS PILOTE : M2",
             seances: [
               {
                 id: Number(seances[1].id),

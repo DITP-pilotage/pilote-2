@@ -1,8 +1,8 @@
+import type { Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { toISODate } from "@/server/app/domain/Dates";
 import { statutPeriode } from "@/server/formations/domain/periodeInformation";
 import { statutSeance } from "@/server/formations/domain/statutSeance";
-import { nomAffiche } from "@/server/formations/domain/presentationSlideIn";
 import type { Inject } from "@/server/formations/module";
 
 export interface SeanceProposee {
@@ -24,7 +24,35 @@ export interface PropositionFormations {
   formations: FormationProposee[];
 }
 
-export class GetSlideInFormationsQuery {
+type MotifAvecSeances = Prisma.formation_motifGetPayload<{
+  include: { seances: true };
+}>;
+
+const estOuverte = (seance: MotifAvecSeances["seances"][number]) =>
+  statutSeance({
+    dateAnnulation: seance.cancelled_at,
+    nombreInscrits: seance.nombre_inscrits,
+    nombrePlacesMax: seance.nombre_places_max,
+  }) === "OUVERTE";
+
+function toApiModel(motif: MotifAvecSeances): FormationProposee {
+  return {
+    id: Number(motif.id),
+    nom: motif.nom,
+    seances: motif.seances.map((seance) => ({
+      id: Number(seance.id),
+      dateDebut: seance.date_debut.toISOString(),
+      dureeMinutes: seance.duree_minutes,
+      placesRestantes:
+        seance.nombre_places_max === null
+          ? null
+          : seance.nombre_places_max - seance.nombre_inscrits,
+      urlInscription: seance.url_inscription,
+    })),
+  };
+}
+
+export class GetFormationsAProposerQuery {
   private readonly prisma: PrismaPilote;
 
   constructor({ prisma }: Inject<"prisma">) {
@@ -115,29 +143,9 @@ export class GetSlideInFormationsQuery {
     });
 
     return motifs
-      .map((motif) => ({
-        id: Number(motif.id),
-        nom: nomAffiche(motif.nom),
-        seances: motif.seances
-          .filter(
-            (seance) =>
-              statutSeance({
-                dateAnnulation: seance.cancelled_at,
-                nombreInscrits: seance.nombre_inscrits,
-                nombrePlacesMax: seance.nombre_places_max,
-              }) === "OUVERTE",
-          )
-          .map((seance) => ({
-            id: Number(seance.id),
-            dateDebut: seance.date_debut.toISOString(),
-            dureeMinutes: seance.duree_minutes,
-            placesRestantes:
-              seance.nombre_places_max === null
-                ? null
-                : seance.nombre_places_max - seance.nombre_inscrits,
-            urlInscription: seance.url_inscription,
-          })),
-      }))
+      .map((motif) =>
+        toApiModel({ ...motif, seances: motif.seances.filter(estOuverte) }),
+      )
       .filter((formation) => formation.seances.length > 0)
       .sort(
         (premiere, seconde) =>

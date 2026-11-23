@@ -74,9 +74,9 @@ export const formationRouter = createTRPCRouter({
     }),
 
   // Ouvertes à tout utilisateur connecté : l'utilisateur et son profil viennent de la session.
-  slideIn: protectedProcedure.query(async ({ ctx }) =>
+  formationsAProposer: protectedProcedure.query(async ({ ctx }) =>
     getContainer("formations")
-      .resolve("getSlideInFormationsQuery")
+      .resolve("getFormationsAProposerQuery")
       .run({
         utilisateurId: ctx.session.user.id,
         profilCode: ctx.session.profil ?? null,

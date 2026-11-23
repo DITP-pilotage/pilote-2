@@ -78,10 +78,9 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 
 ### Serveur (module `src/server/formations`)
 
-- **Domaine** : `nomAffiche`, le nom du motif sans son préfixe de campagne. Testée en unitaire.
 - **Requête** : à partir de l'utilisateur, de son profil et de `maintenant`, renvoie `null` (rien à présenter) ou la période et ses formations. Elle choisit la période, filtre motifs et séances selon les règles, lit la ligne d'état et ne propose rien si `date_fermeture` est renseignée. Formations triées par date de leur prochaine séance, séances par date. Chaque séance porte sa date de début, sa durée en minutes, son lien d'inscription et le nombre de places restantes (`nombre_places_max - nombre_inscrits`, `null` sans maximum). Testée en intégration.
 - **Commandes** : marquer la présentation, fermer. Chacune prend l'utilisateur de la session et l'identifiant de la période, et fait un upsert sur (`utilisateur_id`, `periode_id`). Testées en intégration.
-- **Routeur `formation`** : une requête (`slideIn`) et une mutation (`recordSlideInAction`, avec une action PRESENTATION ou FERMETURE) en `protectedProcedure`, sans `checkAdminPermission`, avec le contrôle CSRF des mutations existantes. L'utilisateur et le profil viennent de `ctx.session`, jamais de l'entrée.
+- **Routeur `formation`** : une requête (`formationsAProposer`, servie par `GetFormationsAProposerQuery`) et une mutation (`recordSlideInAction`, avec une action PRESENTATION ou FERMETURE) en `protectedProcedure`, sans `checkAdminPermission`, avec le contrôle CSRF des mutations existantes. L'utilisateur et le profil viennent de `ctx.session`, jamais de l'entrée.
 
 ### Client
 
@@ -93,7 +92,7 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
   - bouton « N autres dates » qui déplie les autres séances, chacune en lien avec sa propre mention de places ;
   - pied : lien-bouton « Ne plus me les proposer », aligné à droite ;
   - la croix porte le libellé « Fermer ».
-- Nom affiché : le nom du motif sans son préfixe de campagne, c'est-à-dire la partie après le premier « : » (« CAMPUS PILOTE : Introduction à l'outil » devient « Introduction à l'outil », « CAP sur PILOTE : Devenir un coordinateur efficace » devient « Devenir un coordinateur efficace ») ; le nom entier s'il n'y a pas de « : ».
+- Nom affiché : le nom complet du motif, tel que RDV-SP le donne (« CAMPUS PILOTE : Introduction à l'outil »), à la demande de Tristan en relecture.
 - Liens vers RDV-SP : `target="_blank"`, `rel="noopener"`, avec l'indication d'ouverture dans une nouvelle fenêtre prévue par le DSFR.
 - Position sur écran large : en bas à droite, au-dessus de la pastille de l'assistant (`fixed bottom-6 right-6`) quand elle est affichée, à sa place sinon. Hauteur limitée à la fenêtre, la liste défile si besoin.
 - Position sur mobile : feuille pleine largeur collée en bas d'écran, cibles de 44 px. Elle recouvre la pastille de l'assistant, qui redevient accessible dès que la feuille est fermée ; on ne touche pas au code de l'assistant. Pas de voile sur la page : l'artboard « Mobile » du canevas, antérieur à la variante D, en montrait un, ainsi qu'une ancienne mise en page ; seul le contenu de la variante D fait foi.
@@ -107,7 +106,7 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 
 ### Tests attendus
 
-- Unitaires : le nom affiché.
+- Unitaires : le formatage des séances (date, durée, places restantes).
 - Intégration : la requête (choix de la période, période supprimée ou à venir, profil, motif retiré, séances annulées, complètes ou passées, formation sans séance ouverte, état de la ligne) ; les deux commandes (création et mise à jour de la ligne).
 - E2E : un scénario sur l'accueil (affichage, croix sans écriture et retour au rechargement, « Ne plus me les proposer » et plus d'affichage au rechargement).
 
@@ -115,7 +114,6 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 
 - La slide-in attend que l'assistant soit fermé, comme elle attend les modales, et se masque s'il s'ouvre.
 - Sur mobile, la feuille recouvre la pastille de l'assistant, sans voile.
-- Nom affiché sans le préfixe de campagne (partie après le premier « : »).
 - Pas de prise de focus à l'apparition.
 - Échec d'une mutation : la slide-in se ferme quand même, erreur journalisée, pas de toast.
 
@@ -130,3 +128,5 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 ## Révision du 2026-11-23
 
 Après une première version avec « Plus tard » (report de 7 jours, colonne `date_report`), relue et ouverte en PR #2733, Tristan retire le bouton « Plus tard » : la croix masque seulement la slide-in, qui revient à la prochaine visite de l'accueil, et seul « Ne plus me les proposer » l'écarte pour la période. La règle des 7 jours, l'action REPORT et la colonne `date_report` disparaissent.
+
+Relecture de la PR #2733 (2026-11-23) : nom complet des formations (plus de suppression du préfixe), requête renommée `formationsAProposer`, composants partagés (`Button`, `TextLink`, `Collapsible`) au lieu d'éléments stylés à la main, slide-in en deux fichiers (`SlideInFormations`, `LigneFormation` avec `AutresSeances`). Le bouton des autres dates garde le libellé « N autres dates » ; la flèche indique l'ouverture.

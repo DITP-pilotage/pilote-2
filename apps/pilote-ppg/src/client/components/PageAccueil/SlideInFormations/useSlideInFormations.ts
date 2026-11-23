@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "@/server/framework/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
-import type { PropositionFormations } from "@/server/formations/queries/GetSlideInFormationsQuery";
+import type { PropositionFormations } from "@/server/formations/queries/GetFormationsAProposerQuery";
 import type { RecordSlideInActionCommand } from "@/server/formations/handlers/RecordSlideInActionHandler";
 
 export function useSlideInFormations({
@@ -16,14 +16,14 @@ export function useSlideInFormations({
   fermer: () => void;
 } {
   const utils = api.useUtils();
-  const { data } = api.formation.slideIn.useQuery();
+  const { data } = api.formation.formationsAProposer.useQuery();
   const slideIn = data ?? null;
   // Pas de toast en cas d'échec : le routeur tRPC journalise l'erreur, et la
   // slide-in reviendra simplement à la prochaine visite.
   const { mutate } = api.formation.recordSlideInAction.useMutation({
     onSuccess: async (_resultat, { action }) => {
       if (action === "FERMETURE") {
-        await utils.formation.slideIn.invalidate();
+        await utils.formation.formationsAProposer.invalidate();
       }
     },
   });
