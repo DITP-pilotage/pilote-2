@@ -166,7 +166,7 @@ BEGIN
 END $$;
 
 -- Slide-in des formations : une formation proposée au seul profil CABINET_MTFP, qu'aucun autre spec
--- n'utilise, pendant une période en cours ; formations.slide.in est le compte du spec qui la reporte.
+-- n'utilise, pendant une période en cours ; formations.slide.in est le compte du spec de la slide-in.
 DO $$
 DECLARE
   v_user_id UUID;
