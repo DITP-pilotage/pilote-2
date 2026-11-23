@@ -18,7 +18,7 @@ import {
   formatCitation,
   formatDate,
   formatEcart,
-  formatLecture,
+  formatLectureEcart,
   formatPonderation,
   formatSens,
   formatTauxCollection,
@@ -66,9 +66,9 @@ const individuRow = (
   objectif: dated(row.objectif, unite, 'non renseigné'),
   tauxProgression: formatTauxIndicateur(row.tauxProgression, sensSouhaite),
   variation: formatEcart(row.variation, unite),
-  lectureVariation: formatLecture(row.lectureVariation),
+  lectureVariation: formatLectureEcart({ ecart: row.variation, sensSouhaite }),
   ecartMediane: formatEcart(row.ecartMediane, unite),
-  lectureEcartMediane: formatLecture(row.lectureEcartMediane),
+  lectureEcartMediane: formatLectureEcart({ ecart: row.ecartMediane, sensSouhaite }),
 })
 
 const medianes = (synthese: SyntheseIndicateurOutput, unite: string | null) =>
@@ -173,7 +173,10 @@ const collectSyntheseCollection = async (
           derniereValeur: dated(row?.derniereValeur ?? null, unite, 'non renseignée'),
           objectif: dated(row?.objectif ?? null, unite, 'non renseigné'),
           ecartMediane: formatEcart(row?.ecartMediane ?? null, unite),
-          lectureEcartMediane: formatLecture(row?.lectureEcartMediane ?? null),
+          lectureEcartMediane: formatLectureEcart({
+            ecart: row?.ecartMediane ?? null,
+            sensSouhaite: contribution.sensSouhaite,
+          }),
         }
       }),
       ...indicateursTruncation(contributions.length, synthese.contributions.length),

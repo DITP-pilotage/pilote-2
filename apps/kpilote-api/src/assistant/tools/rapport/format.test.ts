@@ -4,7 +4,7 @@ import {
   formatCitation,
   formatDate,
   formatEcart,
-  formatLecture,
+  formatLectureEcart,
   formatPonderation,
   formatSens,
   formatTaux,
@@ -38,8 +38,16 @@ describe('formats recopiés par le sous-agent', () => {
 
   it('écrit le sens souhaité et la lecture d’un écart en mots', () => {
     expect(formatSens('BAISSE')).toBe('à la baisse : une valeur plus basse est meilleure')
-    expect(formatLecture('unfavorable')).toBe('défavorable')
-    expect(formatLecture(null)).toBe('non calculée')
+    expect(formatLectureEcart({ ecart: 1.5, sensSouhaite: 'BAISSE' })).toBe('défavorable')
+    expect(formatLectureEcart({ ecart: -1.5, sensSouhaite: 'BAISSE' })).toBe('favorable')
+    expect(formatLectureEcart({ ecart: null, sensSouhaite: 'BAISSE' })).toBe('non calculée')
+  })
+
+  it('lit un écart tel qu’il s’écrit : « 0 » est neutre, jamais « +0 (défavorable) »', () => {
+    expect(formatEcart(0.004, null)).toBe('0')
+    expect(formatEcart(-0.004, null)).toBe('0')
+    expect(formatLectureEcart({ ecart: 0.004, sensSouhaite: 'BAISSE' })).toBe('neutre')
+    expect(formatLectureEcart({ ecart: -0.004, sensSouhaite: 'HAUSSE' })).toBe('neutre')
   })
 
   it('signe un écart avec le signe moins typographique', () => {
