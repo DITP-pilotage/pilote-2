@@ -8,7 +8,12 @@ import {
 import { CalloutTypePicker } from "@/client/components/_commons/CentreAide/editeur/CalloutTypePicker";
 import { Callout, CalloutColor } from "@/client/components/shared/Callout";
 
-function CalloutNodeView({ node, updateAttributes }: NodeViewProps) {
+function CalloutNodeView({
+  editor,
+  getPos,
+  node,
+  updateAttributes,
+}: NodeViewProps) {
   const color = (node.attrs.color as CalloutColor) || "info";
 
   return (
@@ -18,6 +23,8 @@ function CalloutNodeView({ node, updateAttributes }: NodeViewProps) {
           icone={
             <CalloutTypePicker
               color={color}
+              editor={editor}
+              getPos={getPos}
               onChange={(newColor) => updateAttributes({ color: newColor })}
             />
           }

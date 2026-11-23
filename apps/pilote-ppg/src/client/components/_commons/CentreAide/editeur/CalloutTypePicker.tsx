@@ -1,7 +1,11 @@
+import { findParentNodeClosestToPos } from "@tiptap/core";
+import { Selection } from "@tiptap/pm/state";
+import type { ResolvedPos } from "@tiptap/pm/model";
+import { useEditorState, type NodeViewProps } from "@tiptap/react";
 import {
   createElement,
   FunctionComponent,
-  useEffect,
+  MouseEvent,
   useRef,
   useState,
 } from "react";
@@ -14,36 +18,65 @@ import {
 import { clsxm } from "@/utils/clsxm";
 import { FloatingToolbar, FloatingToolbarButton } from "./FloatingToolbar";
 
-export const CalloutTypePicker: FunctionComponent<{
-  color: CalloutColor;
-  onChange: (color: CalloutColor) => void;
-}> = ({ color, onChange }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const findClosestCalloutPos = ($pos: ResolvedPos) =>
+  findParentNodeClosestToPos($pos, (node) => node.type.name === "callout")?.pos;
+
+export const CalloutTypePicker: FunctionComponent<
+  Pick<NodeViewProps, "editor" | "getPos"> & {
+    color: CalloutColor;
+    onChange: (color: CalloutColor) => void;
+  }
+> = ({ color, editor, getPos, onChange }) => {
+  const [hasFocusWithin, setHasFocusWithin] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!isOpen) return;
+  // Une sélection de texte ouvre la bulle de mise en forme au même endroit.
+  const hasCaretInside = useEditorState({
+    editor,
+    selector: ({ editor: instance }) => {
+      const { selection } = instance.state;
+      return (
+        instance.isFocused &&
+        selection.empty &&
+        findClosestCalloutPos(selection.$from) === getPos()
+      );
+    },
+  });
+  const isOpen = hasCaretInside || hasFocusWithin;
 
-    const closeOnOutsideClick = (event: PointerEvent) => {
-      const isInside =
-        event.target instanceof Node &&
-        containerRef.current?.contains(event.target);
-      if (!isInside) setIsOpen(false);
-    };
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsOpen(false);
-    };
+  const openFromIcon = (event: MouseEvent<HTMLButtonElement>) => {
+    const pos = getPos();
+    if (hasCaretInside || pos === undefined) return;
 
-    document.addEventListener("pointerdown", closeOnOutsideClick);
-    document.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.removeEventListener("pointerdown", closeOnOutsideClick);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [isOpen]);
+    const { doc } = editor.state;
+    const calloutEnd = pos + (doc.nodeAt(pos)?.nodeSize ?? 0) - 1;
+    const caret = Selection.findFrom(doc.resolve(calloutEnd), -1, true);
+    if (!caret || findClosestCalloutPos(caret.$from) !== pos) {
+      event.currentTarget.focus();
+      return;
+    }
+
+    editor
+      .chain()
+      .command(({ tr }) => {
+        tr.setSelection(caret);
+        return true;
+      })
+      .focus()
+      .run();
+  };
 
   return (
-    <div contentEditable={false} ref={containerRef}>
+    <div
+      contentEditable={false}
+      onBlur={(event) =>
+        setHasFocusWithin(
+          containerRef.current?.contains(event.relatedTarget) ?? false,
+        )
+      }
+      onFocus={() => setHasFocusWithin(true)}
+      ref={containerRef}
+    >
       <button
         aria-expanded={isOpen}
         aria-label="Changer le type d'encadré"
@@ -52,7 +85,7 @@ export const CalloutTypePicker: FunctionComponent<{
           "-m-1 block rounded p-1 transition-colors hover:bg-black/10",
           isOpen && "bg-black/10",
         )}
-        onClick={() => setIsOpen((wasOpen) => !wasOpen)}
+        onClick={openFromIcon}
         onMouseDown={(event) => event.preventDefault()}
         title="Changer le type d'encadré"
         type="button"
