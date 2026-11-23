@@ -36,7 +36,7 @@
 
 **Files:**
 - Modify: `apps/kpilote-api/prisma/schema.prisma` (enum `SensSouhaite` après `UniteDuree` ; champ dans `model Indicateur`, juste après `unite`)
-- Create: `apps/kpilote-api/prisma/migrations/20261109120000_add_indicateur_sens_souhaite/migration.sql`
+- Create: `apps/kpilote-api/prisma/migrations/20261123120000_add_indicateur_sens_souhaite/migration.sql`
 - Modify: `packages/kpilote-shared/src/indicateur.ts`
 - Modify: `apps/kpilote-api/src/indicateur/utils.ts` (`toIndicateurApiModel`)
 - Modify: `apps/kpilote-api/src/indicateur/commands/upsertIndicateur.ts` (`updateIndicateurExistant`, `createIndicateurAvecGrants`)
@@ -119,7 +119,7 @@ ALTER TABLE "indicateur" ADD COLUMN "sens_souhaite" "sens_souhaite_enum" NOT NUL
 - [ ] **Step 5 : appliquer la migration en local et régénérer le client**
 
 Run (dans `apps/kpilote-api`) : `pnpm exec prisma migrate deploy && pnpm prisma:generate`
-Attendu : `20261109120000_add_indicateur_sens_souhaite` appliquée, puis client Prisma et TypedSQL générés sans erreur.
+Attendu : `20261123120000_add_indicateur_sens_souhaite` appliquée, puis client Prisma et TypedSQL générés sans erreur.
 
 Contrôle de cohérence entre le schéma et les migrations : `pnpm exec prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma`
 Attendu : aucune ligne qui mentionne `sens_souhaite`. Une dérive préexistante sans rapport se signale, sans la corriger.
