@@ -12,7 +12,7 @@ export function useSlideInFormations({
 }): {
   slideIn: PropositionFormations | null;
   visible: boolean;
-  reporter: () => void;
+  masquer: () => void;
   fermer: () => void;
 } {
   const utils = api.useUtils();
@@ -22,7 +22,7 @@ export function useSlideInFormations({
   // slide-in reviendra simplement à la prochaine visite.
   const { mutate } = api.formation.recordSlideInAction.useMutation({
     onSuccess: async (_resultat, { action }) => {
-      if (action !== "PRESENTATION") {
+      if (action === "FERMETURE") {
         await utils.formation.slideIn.invalidate();
       }
     },
@@ -54,15 +54,13 @@ export function useSlideInFormations({
     enregistrer("PRESENTATION");
   }, [visible, enregistrer]);
 
-  const reporter = useCallback(() => {
-    setMasquee(true);
-    enregistrer("REPORT");
-  }, [enregistrer]);
+  // La croix et Échap masquent la slide-in jusqu'à la prochaine visite de l'accueil, sans rien enregistrer.
+  const masquer = useCallback(() => setMasquee(true), []);
 
   const fermer = useCallback(() => {
     setMasquee(true);
     enregistrer("FERMETURE");
   }, [enregistrer]);
 
-  return { slideIn, visible, reporter, fermer };
+  return { slideIn, visible, masquer, fermer };
 }

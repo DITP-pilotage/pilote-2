@@ -15,13 +15,14 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 ## Objectifs
 
 - Présenter, sur l'accueil, les formations de la période en cours qui correspondent au profil de l'utilisateur et ont au moins une séance ouverte.
-- Laisser l'utilisateur reporter la proposition (« Plus tard ») ou la refuser pour la période (« Ne plus me les proposer »).
-- Garder l'état par utilisateur et par période dans `formation_periode_information_utilisateur`, sans nouvelle colonne.
+- Laisser l'utilisateur masquer la slide-in jusqu'à sa prochaine visite de l'accueil (croix) ou la refuser pour la période (« Ne plus me les proposer »).
+- Garder l'état par utilisateur et par période dans `formation_periode_information_utilisateur` : première présentation et fermeture. La colonne `date_report` est supprimée (migration `20261123120000_formations_supprime_date_report`).
 
 ## Non-objectifs
 
 - Mesure d'usage dans Matomo : PR 5.
-- Languette ou bouton pour rouvrir la slide-in après « Plus tard » : écartée par Tristan le 2026-11-23.
+- Languette ou bouton pour rouvrir la slide-in après la croix : écartée par Tristan le 2026-11-23.
+- Bouton « Plus tard » et report de 7 jours : retirés par Tristan le 2026-11-23, après une première version qui les avait (voir « Révision du 2026-11-23 »).
 - Message dans la slide-in après un clic sur « S'inscrire » : écarté le 2026-11-23.
 - Affichage des animateurs : retiré de la variante D à la demande de Tristan.
 - Toute modification de l'admin des formations ou de la synchronisation copilot.
@@ -45,29 +46,27 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 
 ### Présentation
 
-| État de la ligne (utilisateur, période)                   | Slide-in présentée ?              |
-| --------------------------------------------------------- | --------------------------------- |
-| Pas de ligne                                              | Oui                               |
-| `date_fermeture` renseignée                               | Non, pour toute la période        |
-| `date_report` renseignée, il y a moins de 7 jours         | Non                               |
-| `date_report` renseignée, il y a 7 jours ou plus          | Oui                               |
-| Ligne sans report ni fermeture (présentée, aucune action) | Oui, à chaque visite de l'accueil |
+| État de la ligne (utilisateur, période) | Slide-in présentée ?              |
+| --------------------------------------- | --------------------------------- |
+| Pas de ligne                            | Oui                               |
+| `date_fermeture` renseignée             | Non, pour toute la période        |
+| Ligne sans fermeture (déjà présentée)   | Oui, à chaque visite de l'accueil |
 
-- Le délai de 7 jours court depuis le dernier report (`date_report` est remplacée à chaque « Plus tard »). Choix de Tristan, contre « prochaine connexion » (sessions de 30 jours par défaut) et « prochaine visite » (report sans effet).
+- La croix ne laisse aucune trace : la slide-in reste masquée tant que la page d'accueil n'est pas rechargée (changer de filtre ou de territoire ne la fait pas revenir), puis revient à la prochaine visite de l'accueil.
 - Une nouvelle période est une nouvelle campagne : pas de ligne, donc la slide-in revient, même pour qui avait fermé la précédente. Modifier une période garde la même campagne (décidé en PR 2).
 
 ### Actions
 
-| Action                             | Effet sur la slide-in affichée                       | Effet en base                                                           |
-| ---------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------- |
-| Première apparition à l'écran      | –                                                    | Ligne créée avec `date_presentation` = maintenant, si elle n'existe pas |
-| « Plus tard », croix, touche Échap | Se ferme                                             | `date_report` = maintenant                                              |
-| « Ne plus me les proposer »        | Se ferme                                             | `date_fermeture` = maintenant                                           |
-| « S'inscrire » ou une autre date   | Reste ouverte ; RDV-SP s'ouvre dans un nouvel onglet | Aucun                                                                   |
+| Action                           | Effet sur la slide-in affichée                       | Effet en base                                                           |
+| -------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------- |
+| Première apparition à l'écran    | –                                                    | Ligne créée avec `date_presentation` = maintenant, si elle n'existe pas |
+| Croix, touche Échap              | Se masque jusqu'à la prochaine visite de l'accueil   | Aucun                                                                   |
+| « Ne plus me les proposer »      | Se ferme                                             | `date_fermeture` = maintenant                                           |
+| « S'inscrire » ou une autre date | Reste ouverte ; RDV-SP s'ouvre dans un nouvel onglet | Aucun                                                                   |
 
-- « S'inscrire » n'écrit rien (décision de Tristan) : l'utilisateur revient sur PILOTE, retrouve la slide-in et choisit alors « Plus tard » ou « Ne plus me les proposer ». S'il quitte la page sans choisir, la slide-in revient à sa prochaine visite de l'accueil.
-- La croix et Échap valent « Plus tard » (proposition retenue sur le canevas).
-- Un report ou une fermeture sans ligne existante (première présentation non enregistrée) crée la ligne avec `date_presentation` = maintenant.
+- « S'inscrire » n'écrit rien (décision de Tristan) : l'utilisateur revient sur PILOTE, retrouve la slide-in et la ferme avec la croix ou « Ne plus me les proposer ». S'il quitte la page sans choisir, la slide-in revient à sa prochaine visite de l'accueil.
+- La croix et Échap masquent seulement la slide-in (décision de Tristan, 2026-11-23).
+- Une fermeture sans ligne existante (première présentation non enregistrée) crée la ligne avec `date_presentation` = maintenant.
 
 ## Approches envisagées
 
@@ -79,10 +78,10 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 
 ### Serveur (module `src/server/formations`)
 
-- **Domaine** : une fonction pure qui, à partir de la ligne d'état (ou de son absence) et de `maintenant`, dit si la slide-in doit être présentée, avec le délai de 7 jours en constante. Testée en unitaire.
-- **Requête** : à partir de l'utilisateur, de son profil et de `maintenant`, renvoie `null` (rien à présenter) ou la période et ses formations. Elle choisit la période, filtre motifs et séances selon les règles, lit la ligne d'état et applique la fonction du domaine. Formations triées par date de leur prochaine séance, séances par date. Chaque séance porte sa date de début, sa durée en minutes, son lien d'inscription et le nombre de places restantes (`nombre_places_max - nombre_inscrits`, `null` sans maximum). Testée en intégration.
-- **Commandes** : marquer la présentation, reporter, fermer. Chacune prend l'utilisateur de la session et l'identifiant de la période, et fait un upsert sur (`utilisateur_id`, `periode_id`). Testées en intégration.
-- **Routeur `formation`** : une requête (`slideIn`) et une mutation (`recordSlideInAction`, avec une action PRESENTATION, REPORT ou FERMETURE) en `protectedProcedure`, sans `checkAdminPermission`, avec le contrôle CSRF des mutations existantes. L'utilisateur et le profil viennent de `ctx.session`, jamais de l'entrée.
+- **Domaine** : `nomAffiche`, le nom du motif sans son préfixe de campagne. Testée en unitaire.
+- **Requête** : à partir de l'utilisateur, de son profil et de `maintenant`, renvoie `null` (rien à présenter) ou la période et ses formations. Elle choisit la période, filtre motifs et séances selon les règles, lit la ligne d'état et ne propose rien si `date_fermeture` est renseignée. Formations triées par date de leur prochaine séance, séances par date. Chaque séance porte sa date de début, sa durée en minutes, son lien d'inscription et le nombre de places restantes (`nombre_places_max - nombre_inscrits`, `null` sans maximum). Testée en intégration.
+- **Commandes** : marquer la présentation, fermer. Chacune prend l'utilisateur de la session et l'identifiant de la période, et fait un upsert sur (`utilisateur_id`, `periode_id`). Testées en intégration.
+- **Routeur `formation`** : une requête (`slideIn`) et une mutation (`recordSlideInAction`, avec une action PRESENTATION ou FERMETURE) en `protectedProcedure`, sans `checkAdminPermission`, avec le contrôle CSRF des mutations existantes. L'utilisateur et le profil viennent de `ctx.session`, jamais de l'entrée.
 
 ### Client
 
@@ -92,13 +91,14 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
   - en-tête « CAMPUS PILOTE », titre « N formations pour votre profil » (« 1 formation pour votre profil » au singulier), ligne « Inscription sur Rendez-vous Service Public. », croix ;
   - une ligne par formation : nom, prochaine séance avec une icône d'horloge au format « Mar. 24 nov., 14 h · 45 min » (heure du fuseau du navigateur, comme le reste de l'application : un utilisateur des DROM voit son heure locale ; durée « 1 h 30 » au-delà d'une heure, pas d'heure de fin), mention « Plus que N places » quand il en reste 5 ou moins, bouton-lien « S'inscrire » vers la prochaine séance ;
   - bouton « N autres dates » qui déplie les autres séances, chacune en lien avec sa propre mention de places ;
-  - pied : bouton « Plus tard » et lien-bouton « Ne plus me les proposer ».
+  - pied : lien-bouton « Ne plus me les proposer », aligné à droite ;
+  - la croix porte le libellé « Fermer ».
 - Nom affiché : le nom du motif sans son préfixe de campagne, c'est-à-dire la partie après le premier « : » (« CAMPUS PILOTE : Introduction à l'outil » devient « Introduction à l'outil », « CAP sur PILOTE : Devenir un coordinateur efficace » devient « Devenir un coordinateur efficace ») ; le nom entier s'il n'y a pas de « : ».
 - Liens vers RDV-SP : `target="_blank"`, `rel="noopener"`, avec l'indication d'ouverture dans une nouvelle fenêtre prévue par le DSFR.
 - Position sur écran large : en bas à droite, au-dessus de la pastille de l'assistant (`fixed bottom-6 right-6`) quand elle est affichée, à sa place sinon. Hauteur limitée à la fenêtre, la liste défile si besoin.
 - Position sur mobile : feuille pleine largeur collée en bas d'écran, cibles de 44 px. Elle recouvre la pastille de l'assistant, qui redevient accessible dès que la feuille est fermée ; on ne touche pas au code de l'assistant. Pas de voile sur la page : l'artboard « Mobile » du canevas, antérieur à la variante D, en montrait un, ainsi qu'une ancienne mise en page ; seul le contenu de la variante D fait foi.
-- Accessibilité : panneau non modal, titré par son en-tête ; il ne prend pas le focus à l'apparition ; Échap le reporte quand le focus est dedans.
-- En cas d'échec d'une mutation, la slide-in se ferme quand même et l'erreur est journalisée (pas de toast) : l'utilisateur la reverra simplement à la prochaine visite.
+- Accessibilité : panneau non modal, titré par son en-tête ; il ne prend pas le focus à l'apparition ; Échap la masque quand le focus est dedans.
+- En cas d'échec de la fermeture, la slide-in disparaît quand même et l'erreur est journalisée (pas de toast) : l'utilisateur la reverra simplement à la prochaine visite.
 
 ### Données de test
 
@@ -107,9 +107,9 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 
 ### Tests attendus
 
-- Unitaires : la fonction de présentation (pas de ligne, fermeture, report de moins et de plus de 7 jours, ligne sans action).
-- Intégration : la requête (choix de la période, période supprimée ou à venir, profil, motif retiré, séances annulées, complètes ou passées, formation sans séance ouverte, état de la ligne) ; les trois commandes (création et mise à jour de la ligne).
-- E2E : un scénario sur l'accueil (affichage, « Plus tard », plus d'affichage à la visite suivante).
+- Unitaires : le nom affiché.
+- Intégration : la requête (choix de la période, période supprimée ou à venir, profil, motif retiré, séances annulées, complètes ou passées, formation sans séance ouverte, état de la ligne) ; les deux commandes (création et mise à jour de la ligne).
+- E2E : un scénario sur l'accueil (affichage, croix sans écriture et retour au rechargement, « Ne plus me les proposer » et plus d'affichage au rechargement).
 
 ## Choix faits pendant la rédaction, à confirmer par Tristan
 
@@ -126,3 +126,7 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 - Fonctions de formatage des dates et durées : réutiliser l'existant du client s'il convient.
 - Animation d'entrée et de sortie.
 - Façon d'isoler les données e2e (création dans le scénario ou utilisateur et profil dédiés).
+
+## Révision du 2026-11-23
+
+Après une première version avec « Plus tard » (report de 7 jours, colonne `date_report`), relue et ouverte en PR #2733, Tristan retire le bouton « Plus tard » : la croix masque seulement la slide-in, qui revient à la prochaine visite de l'accueil, et seul « Ne plus me les proposer » l'écarte pour la période. La règle des 7 jours, l'action REPORT et la colonne `date_report` disparaissent.

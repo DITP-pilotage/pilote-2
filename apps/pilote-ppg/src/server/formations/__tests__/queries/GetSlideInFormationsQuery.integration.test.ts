@@ -338,41 +338,57 @@ describe("GetSlideInFormationsQuery", () => {
     }),
   );
 
-  it.each([
-    ["fermée", { date_fermeture: new Date("2026-11-20T10:00:00Z") }],
-    [
-      "reportée il y a moins de 7 jours",
-      { date_report: new Date("2026-11-20T10:00:00Z") },
-    ],
-  ])(
-    "ne propose rien quand la slide-in est %s",
-    createIntegrationTest(
-      async (
-        prisma,
-        _cas: string,
-        etat: { date_fermeture?: Date; date_report?: Date },
-      ) => {
-        // Given
-        const { utilisateur, periode } = await donneesDePresentation();
-        await prisma.formation_periode_information_utilisateur.create({
-          data: {
-            utilisateur_id: utilisateur.id,
-            periode_id: periode.id,
-            date_presentation: new Date("2026-11-19T10:00:00Z"),
-            ...etat,
-          },
-        });
+  it(
+    "propose encore les formations déjà présentées, tant que la slide-in n'est pas fermée",
+    createIntegrationTest(async (prisma) => {
+      // Given
+      const { utilisateur, periode } = await donneesDePresentation();
+      await prisma.formation_periode_information_utilisateur.create({
+        data: {
+          utilisateur_id: utilisateur.id,
+          periode_id: periode.id,
+          date_presentation: new Date("2026-11-19T10:00:00Z"),
+        },
+      });
 
-        // When
-        const resultat = await query.run({
-          utilisateurId: utilisateur.id,
-          profilCode: PROFIL,
-          maintenant,
-        });
+      // When
+      const resultat = await query.run({
+        utilisateurId: utilisateur.id,
+        profilCode: PROFIL,
+        maintenant,
+      });
 
-        // Then
-        expect(resultat).toBeNull();
-      },
-    ),
+      // Then
+      expect(resultat).toEqual({
+        periodeId: periode.id,
+        formations: expect.any(Array),
+      });
+    }),
+  );
+
+  it(
+    "ne propose rien quand la slide-in est fermée",
+    createIntegrationTest(async (prisma) => {
+      // Given
+      const { utilisateur, periode } = await donneesDePresentation();
+      await prisma.formation_periode_information_utilisateur.create({
+        data: {
+          utilisateur_id: utilisateur.id,
+          periode_id: periode.id,
+          date_presentation: new Date("2026-11-19T10:00:00Z"),
+          date_fermeture: new Date("2026-11-20T10:00:00Z"),
+        },
+      });
+
+      // When
+      const resultat = await query.run({
+        utilisateurId: utilisateur.id,
+        profilCode: PROFIL,
+        maintenant,
+      });
+
+      // Then
+      expect(resultat).toBeNull();
+    }),
   );
 });

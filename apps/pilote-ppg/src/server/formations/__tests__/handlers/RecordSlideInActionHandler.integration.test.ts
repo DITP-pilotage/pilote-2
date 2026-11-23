@@ -8,7 +8,6 @@ import { fixtures } from "@/test/fixtures";
 describe("RecordSlideInActionHandler", () => {
   const premierInstant = new Date("2026-11-20T10:00:00Z");
   const deuxiemeInstant = new Date("2026-11-21T10:00:00Z");
-  const troisiemeInstant = new Date("2026-11-22T10:00:00Z");
   let handler: RecordSlideInActionHandler;
 
   beforeEach(() => {
@@ -21,7 +20,6 @@ describe("RecordSlideInActionHandler", () => {
         utilisateur_id: true,
         periode_id: true,
         date_presentation: true,
-        date_report: true,
         date_fermeture: true,
       },
     });
@@ -48,45 +46,6 @@ describe("RecordSlideInActionHandler", () => {
           utilisateur_id: utilisateur.id,
           periode_id: periode.id,
           date_presentation: premierInstant,
-          date_report: null,
-          date_fermeture: null,
-        },
-      ]);
-    }),
-  );
-
-  it(
-    "enregistre un report, puis le remplace au report suivant",
-    createIntegrationTest(async (prisma) => {
-      // Given
-      const utilisateur = await fixtures.utilisateur();
-      const periode = await fixtures.formationPeriodeInformation();
-      const commande = { utilisateurId: utilisateur.id, periodeId: periode.id };
-
-      // When
-      await handler.execute({
-        ...commande,
-        action: "PRESENTATION",
-        maintenant: premierInstant,
-      });
-      await handler.execute({
-        ...commande,
-        action: "REPORT",
-        maintenant: deuxiemeInstant,
-      });
-      await handler.execute({
-        ...commande,
-        action: "REPORT",
-        maintenant: troisiemeInstant,
-      });
-
-      // Then
-      expect(await lignesEtat(prisma)).toEqual([
-        {
-          utilisateur_id: utilisateur.id,
-          periode_id: periode.id,
-          date_presentation: premierInstant,
-          date_report: troisiemeInstant,
           date_fermeture: null,
         },
       ]);
@@ -119,7 +78,6 @@ describe("RecordSlideInActionHandler", () => {
           utilisateur_id: utilisateur.id,
           periode_id: periode.id,
           date_presentation: premierInstant,
-          date_report: null,
           date_fermeture: deuxiemeInstant,
         },
       ]);
@@ -127,7 +85,7 @@ describe("RecordSlideInActionHandler", () => {
   );
 
   it(
-    "crée la ligne au report quand la présentation n'a pas été enregistrée",
+    "crée la ligne à la fermeture quand la présentation n'a pas été enregistrée",
     createIntegrationTest(async (prisma) => {
       // Given
       const utilisateur = await fixtures.utilisateur();
@@ -137,7 +95,7 @@ describe("RecordSlideInActionHandler", () => {
       await handler.execute({
         utilisateurId: utilisateur.id,
         periodeId: periode.id,
-        action: "REPORT",
+        action: "FERMETURE",
         maintenant: premierInstant,
       });
 
@@ -147,8 +105,7 @@ describe("RecordSlideInActionHandler", () => {
           utilisateur_id: utilisateur.id,
           periode_id: periode.id,
           date_presentation: premierInstant,
-          date_report: premierInstant,
-          date_fermeture: null,
+          date_fermeture: premierInstant,
         },
       ]);
     }),
@@ -164,7 +121,7 @@ describe("RecordSlideInActionHandler", () => {
       const execution = handler.execute({
         utilisateurId: utilisateur.id,
         periodeId: randomUUID(),
-        action: "REPORT",
+        action: "FERMETURE",
         maintenant: premierInstant,
       });
 

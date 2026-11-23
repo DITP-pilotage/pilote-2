@@ -29,14 +29,33 @@ async function resultatDuLot(response: Response, procedure: string) {
   return corps[procedures.indexOf(procedure)].result.data.json;
 }
 
+// Une réponse de la page précédente peut arriver pendant le rechargement : son corps n'est
+// alors plus lisible, on l'ignore et on attend celle de la nouvelle page.
+async function slideInApresRechargement(page: Page): Promise<unknown> {
+  let resultat: unknown;
+  await Promise.all([
+    page.waitForResponse(async (response) => {
+      if (!estUnAppel(response, "formation.slideIn")) return false;
+      try {
+        resultat = await resultatDuLot(response, "formation.slideIn");
+        return true;
+      } catch {
+        return false;
+      }
+    }),
+    page.reload(),
+  ]);
+  return resultat;
+}
+
 const ligneEtat = () =>
   prisma.formation_periode_information_utilisateur.findFirst({
     where: { utilisateur: { email: UTILISATEUR_FOR_SLIDE_IN_FORMATIONS } },
-    select: { date_report: true, date_fermeture: true },
+    select: { date_presentation: true, date_fermeture: true },
   });
 
 test.describe("Slide-in des formations", () => {
-  test("propose la formation du profil, puis la reporte avec Plus tard", async ({
+  test("revient après la croix, puis ne revient plus après « Ne plus me les proposer »", async ({
     page,
     e2eContext,
   }) => {
@@ -63,27 +82,39 @@ test.describe("Slide-in des formations", () => {
       "href",
       "https://rdv.anct.gouv.fr/prendre_rdv?public_link_organisation_id=1453",
     );
+    await expect(
+      slideIn.getByRole("button", { name: "Plus tard" }),
+    ).toHaveCount(0);
     await presentation;
 
-    const report = attendreAppel(
+    await slideIn.getByRole("button", { name: "Fermer" }).click();
+    await expect(slideIn).toBeHidden();
+    expect(await ligneEtat()).toEqual({
+      date_presentation: expect.any(Date),
+      date_fermeture: null,
+    });
+
+    const premierRechargement = attendreAppel(page, "formation.slideIn");
+    await page.reload();
+    await premierRechargement;
+    await expect(slideIn).toBeVisible({ timeout: 15_000 });
+
+    const fermeture = attendreAppel(
       page,
       "formation.recordSlideInAction",
-      "REPORT",
+      "FERMETURE",
     );
-    const relanceApresReport = attendreAppel(page, "formation.slideIn");
-    await slideIn.getByRole("button", { name: "Plus tard" }).last().click();
+    await slideIn
+      .getByRole("button", { name: "Ne plus me les proposer" })
+      .click();
     await expect(slideIn).toBeHidden();
-    await report;
-    await relanceApresReport;
+    await fermeture;
+    // Fermeture écrite : toute réponse de formation.slideIn, d'avant ou d'après le rechargement, est vide.
     await expect
-      .poll(async () => (await ligneEtat())?.date_report instanceof Date)
+      .poll(async () => (await ligneEtat())?.date_fermeture instanceof Date)
       .toBe(true);
 
-    const rechargement = attendreAppel(page, "formation.slideIn");
-    await page.reload();
-    expect(
-      await resultatDuLot(await rechargement, "formation.slideIn"),
-    ).toBeNull();
+    expect(await slideInApresRechargement(page)).toBeNull();
     await expect(slideIn).toHaveCount(0);
   });
 });

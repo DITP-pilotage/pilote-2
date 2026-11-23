@@ -124,27 +124,27 @@ export const SlideInFormations: FunctionComponent<{
   peutAfficher: boolean;
   pastilleAssistantVisible: boolean;
 }> = ({ peutAfficher, pastilleAssistantVisible }) => {
-  const { slideIn, visible, reporter, fermer } = useSlideInFormations({
+  const { slideIn, visible, masquer, fermer } = useSlideInFormations({
     peutAfficher,
   });
   const idTitre = useId();
   const section = useRef<HTMLElement>(null);
 
-  // Échap ne reporte que si le focus est dans la slide-in, qui ne le prend pas d'elle-même.
+  // Échap ne masque que si le focus est dans la slide-in, qui ne le prend pas d'elle-même.
   useEffect(() => {
     if (!visible) return;
-    const reporterSurEchap = (event: KeyboardEvent) => {
+    const masquerSurEchap = (event: KeyboardEvent) => {
       if (
         event.key === "Escape" &&
         event.target instanceof Node &&
         section.current?.contains(event.target)
       ) {
-        reporter();
+        masquer();
       }
     };
-    window.addEventListener("keydown", reporterSurEchap);
-    return () => window.removeEventListener("keydown", reporterSurEchap);
-  }, [visible, reporter]);
+    window.addEventListener("keydown", masquerSurEchap);
+    return () => window.removeEventListener("keydown", masquerSurEchap);
+  }, [visible, masquer]);
 
   if (!visible || slideIn === null) return null;
 
@@ -173,10 +173,10 @@ export const SlideInFormations: FunctionComponent<{
           </p>
         </div>
         <button
-          aria-label="Plus tard"
+          aria-label="Fermer"
           className="flex h-11 w-11 shrink-0 items-center justify-center md:h-10 md:w-10"
-          onClick={reporter}
-          title="Plus tard"
+          onClick={masquer}
+          title="Fermer"
           type="button"
         >
           <span aria-hidden="true" className="flex">
@@ -191,14 +191,7 @@ export const SlideInFormations: FunctionComponent<{
         ))}
       </ul>
 
-      <div className="flex items-center justify-between gap-3 border-t border-dsfr-grey-925 px-5 pb-3.5 pt-2.5">
-        <button
-          className="min-h-11 border border-dsfr-grey-900 bg-white px-4 text-sm text-dsfr-blue-france-sun-113 hover:bg-dsfr-grey-975 md:min-h-0 md:py-1.5"
-          onClick={reporter}
-          type="button"
-        >
-          Plus tard
-        </button>
+      <div className="flex items-center justify-end border-t border-dsfr-grey-925 px-5 pb-3.5 pt-2.5">
         <button
           className="min-h-11 py-2 text-[13px] text-dsfr-grey-200 underline underline-offset-[3px] md:min-h-0"
           onClick={fermer}

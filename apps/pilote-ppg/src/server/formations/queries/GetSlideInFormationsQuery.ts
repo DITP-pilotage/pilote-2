@@ -2,10 +2,7 @@ import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { toISODate } from "@/server/app/domain/Dates";
 import { statutPeriode } from "@/server/formations/domain/periodeInformation";
 import { statutSeance } from "@/server/formations/domain/statutSeance";
-import {
-  doitPresenterSlideIn,
-  nomAffiche,
-} from "@/server/formations/domain/presentationSlideIn";
+import { nomAffiche } from "@/server/formations/domain/presentationSlideIn";
 import type { Inject } from "@/server/formations/module";
 
 export interface SeanceProposee {
@@ -55,6 +52,7 @@ export class GetSlideInFormationsQuery {
     });
     if (formations.length === 0) return null;
 
+    // Seul « Ne plus me les proposer » écarte la slide-in : la croix la masque sans rien enregistrer.
     const etat = await this.prisma
       .getInstance()
       .formation_periode_information_utilisateur.findUnique({
@@ -64,16 +62,10 @@ export class GetSlideInFormationsQuery {
             periode_id: periodeId,
           },
         },
+        select: { date_fermeture: true },
       });
-    const presenter = doitPresenterSlideIn(
-      etat && {
-        dateReport: etat.date_report,
-        dateFermeture: etat.date_fermeture,
-      },
-      maintenant,
-    );
 
-    return presenter ? { periodeId, formations } : null;
+    return etat?.date_fermeture ? null : { periodeId, formations };
   }
 
   // Sans verrou, deux périodes peuvent être en cours : la plus récemment créée l'emporte.

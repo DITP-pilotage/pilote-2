@@ -69,7 +69,7 @@ Périmètre :
 
 - Formations à proposer : période active, motifs de la période non retirés de RDV-SP (`deleted_at IS NULL`) et associés au profil de l'utilisateur, séances ouvertes à l'inscription. Période active = non supprimée (`deleted_at IS NULL`) et en cours : réutiliser `statutPeriode`. Une période supprimée ne présente plus la slide-in. Sans verrou, deux périodes peuvent être en cours en même temps : prendre la plus récemment créée (`created_at`).
 - Slide-in sur l'accueil, d'après le prototype joint à PIL-1923.
-- « Plus tard », fermeture, lien d'inscription par séance.
+- Croix (masquage jusqu'à la prochaine visite), fermeture, lien d'inscription par séance.
 - Ligne d'état par utilisateur et par période (`formation_periode_information_utilisateur`).
 - Ajout des données au seed e2e pour les tests de la slide-in.
 
@@ -78,8 +78,8 @@ Périmètre :
 Décidé le 2026-11-23, détaillé dans le [design](../specs/2026-11-23-formations-slide-in-design.md) :
 
 - [x] Contenu : variante D du canevas (prochaine séance avec heure de début et durée, places restantes, autres dates dépliables, sans animateurs)
-- [x] Règle de nouvelle présentation après « Plus tard » (croix et Échap compris) : 7 jours après le dernier report, sans languette pour rouvrir
-- [x] Effet d'un clic vers l'inscription : aucun, la slide-in reste ouverte et l'utilisateur choisit ensuite « Plus tard » ou « Ne plus me les proposer »
+- [x] Règle de nouvelle présentation : la croix (et Échap) masque la slide-in jusqu'à la prochaine visite de l'accueil, sans rien enregistrer ; « Plus tard », le report de 7 jours et la colonne `date_report` retirés le 2026-11-23, après une première version
+- [x] Effet d'un clic vers l'inscription : aucun, la slide-in reste ouverte et l'utilisateur la ferme ensuite avec la croix ou « Ne plus me les proposer »
 - [x] Nouvelle présentation lors d'une campagne suivante : une nouvelle période est une nouvelle campagne
 - [x] Aucune formation disponible : pas de slide-in et aucune ligne d'état
 - [x] Chargement : requête tRPC côté client, hors du `getServerSideProps` de l'accueil
@@ -90,7 +90,7 @@ Décidé le 2026-11-23, détaillé dans le [design](../specs/2026-11-23-formatio
 
 Périmètre :
 
-- Événements Matomo envoyés par la slide-in : affichage, clic par formation, report, fermeture, rattachés à la période d'information.
+- Événements Matomo envoyés par la slide-in : affichage, clic par formation, masquage par la croix, fermeture, rattachés à la période d'information.
 - Sur le modèle du suivi de l'assistant IA (`useAssistantTracking`).
 
 À cadrer :

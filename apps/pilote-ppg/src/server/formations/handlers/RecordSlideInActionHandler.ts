@@ -5,18 +5,12 @@ import type { Inject } from "@/server/formations/module";
 
 export const recordSlideInActionCommandSchema = z.object({
   periodeId: z.uuid(),
-  action: z.enum(["PRESENTATION", "REPORT", "FERMETURE"]),
+  action: z.enum(["PRESENTATION", "FERMETURE"]),
 });
 
 export type RecordSlideInActionCommand = z.infer<
   typeof recordSlideInActionCommandSchema
 >;
-
-const COLONNE_DE_L_ACTION = {
-  PRESENTATION: null,
-  REPORT: "date_report",
-  FERMETURE: "date_fermeture",
-} as const;
 
 export class RecordSlideInActionHandler {
   private readonly prisma: PrismaPilote;
@@ -36,7 +30,7 @@ export class RecordSlideInActionHandler {
   }): Promise<void> {
     const client = this.prisma.getInstance();
 
-    // Même supprimée, la période reste valable : un report sur une période qu'un
+    // Même supprimée, la période reste valable : une fermeture sur une période qu'un
     // admin vient de supprimer est sans effet sur l'affichage.
     const periode = await client.formation_periode_information.findUnique({
       where: { id: periodeId },
@@ -46,8 +40,8 @@ export class RecordSlideInActionHandler {
       throw new BadRequestError("Cette période d'information n'existe pas.");
     }
 
-    const colonne = COLONNE_DE_L_ACTION[action];
-    const dateDeLAction = colonne === null ? {} : { [colonne]: maintenant };
+    const fermeture =
+      action === "FERMETURE" ? { date_fermeture: maintenant } : {};
 
     await client.formation_periode_information_utilisateur.upsert({
       where: {
@@ -60,9 +54,9 @@ export class RecordSlideInActionHandler {
         utilisateur_id: utilisateurId,
         periode_id: periodeId,
         date_presentation: maintenant,
-        ...dateDeLAction,
+        ...fermeture,
       },
-      update: dateDeLAction,
+      update: fermeture,
     });
   }
 }
