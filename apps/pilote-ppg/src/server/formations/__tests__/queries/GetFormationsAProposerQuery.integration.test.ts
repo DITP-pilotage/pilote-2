@@ -95,7 +95,11 @@ describe("GetFormationsAProposerQuery", () => {
 
       // Then
       expect(resultat).toEqual({
-        periodeId: periode.id,
+        periode: {
+          id: periode.id,
+          dateDebut: "2026-11-01",
+          dateFin: "2026-11-30",
+        },
         formations: [
           {
             id: Number(motifB.id),
@@ -178,7 +182,11 @@ describe("GetFormationsAProposerQuery", () => {
 
       // Then
       expect(resultat).toEqual({
-        periodeId: periode.id,
+        periode: {
+          id: periode.id,
+          dateDebut: "2026-11-01",
+          dateFin: "2026-11-30",
+        },
         formations: [
           {
             id: Number(motifA.id),
@@ -252,6 +260,7 @@ describe("GetFormationsAProposerQuery", () => {
       });
       const plusRecente = await periodeEnCours([motif2.id], {
         created_at: new Date("2026-11-10T08:00:00Z"),
+        date_fin: new Date("2026-12-15T00:00:00Z"),
       });
       await periodeEnCours([motif3.id], {
         created_at: new Date("2026-11-20T08:00:00Z"),
@@ -267,7 +276,11 @@ describe("GetFormationsAProposerQuery", () => {
 
       // Then
       expect(resultat).toEqual({
-        periodeId: plusRecente.id,
+        periode: {
+          id: plusRecente.id,
+          dateDebut: "2026-11-01",
+          dateFin: "2026-12-15",
+        },
         formations: [
           {
             id: Number(motif2.id),
@@ -360,7 +373,11 @@ describe("GetFormationsAProposerQuery", () => {
 
       // Then
       expect(resultat).toEqual({
-        periodeId: periode.id,
+        periode: {
+          id: periode.id,
+          dateDebut: "2026-11-01",
+          dateFin: "2026-11-30",
+        },
         formations: expect.any(Array),
       });
     }),

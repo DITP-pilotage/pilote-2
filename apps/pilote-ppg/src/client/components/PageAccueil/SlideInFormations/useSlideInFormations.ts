@@ -39,7 +39,7 @@ export function useSlideInFormations({
     (action: RecordSlideInActionCommand["action"]) => {
       if (slideIn === null) return;
       mutate({
-        periodeId: slideIn.periodeId,
+        periodeId: slideIn.periode.id,
         action,
         csrf: récupérerUnCookie("csrf") ?? "",
       });
