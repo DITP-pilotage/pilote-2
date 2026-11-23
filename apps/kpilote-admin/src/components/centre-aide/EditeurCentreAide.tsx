@@ -1,3 +1,5 @@
+import { isTextSelection } from '@tiptap/core'
+import { NodeSelection } from '@tiptap/pm/state'
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react/menus'
 import { classesRenduBase } from '@pilote/kpilote-ui/centre-aide'
@@ -101,6 +103,13 @@ export function EditeurCentreAide({
       <BubbleMenu
         editor={editor}
         className="flex items-center gap-0.5 rounded-lg bg-surface-inverse p-1 shadow-raised"
+        shouldShow={({ view, state, from, to }) => {
+          // Un média sélectionné a sa propre barre, au même endroit.
+          if (state.selection instanceof NodeSelection || state.selection.empty) return false
+          const isEmptyTextBlock =
+            isTextSelection(state.selection) && state.doc.textBetween(from, to).length === 0
+          return !isEmptyTextBlock && view.hasFocus() && editor.isEditable
+        }}
       >
         <BoutonBulle
           label="Gras"

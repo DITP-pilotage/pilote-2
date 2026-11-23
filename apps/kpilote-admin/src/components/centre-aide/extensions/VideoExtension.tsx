@@ -1,13 +1,35 @@
+import { parseMediaAlignment, parseMediaSize } from '@pilote/kpilote-shared/mediaLayout'
+import { VideoCentreAide } from '@pilote/kpilote-ui/centre-aide'
 import { mergeAttributes, Node } from '@tiptap/core'
 import { NodeViewWrapper, ReactNodeViewRenderer, type NodeViewProps } from '@tiptap/react'
-import { VideoCentreAide } from '@pilote/kpilote-ui/centre-aide'
 
-function VideoNodeView({ node }: NodeViewProps) {
+import { MediaLayoutToolbar } from '@/components/centre-aide/MediaLayoutToolbar'
+
+import { mediaLayoutAttributes } from './mediaLayoutAttributes'
+
+function VideoNodeView({ node, selected, updateAttributes }: NodeViewProps) {
   const src = (node.attrs.src as string) ?? ''
+  const alignment = parseMediaAlignment(node.attrs.alignment)
+  const size = parseMediaSize(node.attrs.size)
   return (
-    <NodeViewWrapper className="my-2" contentEditable={false}>
+    <NodeViewWrapper className="relative my-2" contentEditable={false}>
+      {selected ? (
+        <MediaLayoutToolbar
+          alignment={alignment}
+          size={size}
+          onAlignmentChange={(value) => updateAttributes({ alignment: value })}
+          onSizeChange={(value) => updateAttributes({ size: value })}
+        />
+      ) : null}
       {src ? (
-        <VideoCentreAide src={src} />
+        <VideoCentreAide
+          src={src}
+          alignment={alignment}
+          size={size}
+          // Le lecteur capterait le clic : le premier sélectionne la vidéo, les suivants
+          // la pilotent.
+          {...(selected ? {} : { className: 'pointer-events-none' })}
+        />
       ) : (
         <div className="rounded-md border border-dashed border-border p-4 text-sm text-text-muted">
           Vidéo sans URL
@@ -37,6 +59,7 @@ export const VideoExtension = Node.create({
         parseHTML: (element) => element.getAttribute('data-src') ?? '',
         renderHTML: (attributes) => ({ 'data-src': attributes.src as string }),
       },
+      ...mediaLayoutAttributes,
     }
   },
 
