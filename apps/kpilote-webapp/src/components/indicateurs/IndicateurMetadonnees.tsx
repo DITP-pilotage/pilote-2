@@ -34,10 +34,10 @@ const formatReferentiels = (
 const formatDelai = (delai: DelaiMiseADisposition | null): string =>
   delai ? `${delai.nombre} ${UNITE_DUREE_LABELS[delai.unite]}` : VALEUR_VIDE
 
-// Ex. « À la baisse — une valeur plus faible est favorable ».
+// Ex. « À la baisse (une valeur plus faible est favorable) ».
 const formatSensSouhaite = (sens: SensSouhaite): string => {
   const hint = SENS_SOUHAITE_HINTS[sens]
-  return `${SENS_SOUHAITE_LABELS[sens]} — ${hint.charAt(0).toLowerCase()}${hint.slice(1)}`
+  return `${SENS_SOUHAITE_LABELS[sens]} (${hint.charAt(0).toLowerCase()}${hint.slice(1)})`
 }
 
 const formatDateMoisAnnee = (date: string | null): string =>
