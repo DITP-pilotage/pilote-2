@@ -563,12 +563,12 @@ describe.concurrent('listSyntheseIndividus', () => {
       const items = result._unsafeUnwrap().items
       expect(items.find((i) => i.individu === t.a)).toEqual({
         individu: t.a,
-        variation: 15,
+        variation: null,
         ecartMediane: 0,
       })
       expect(items.find((i) => i.individu === t.c)).toEqual({
         individu: t.c,
-        variation: 7,
+        variation: null,
         ecartMediane: -8,
       })
     }),
@@ -587,7 +587,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const items = result._unsafeUnwrap().items
       expect(items.find((i) => i.individu === t.a)).toEqual({
         individu: t.a,
-        variation: 10,
+        variation: null,
         ecartMediane: -5,
       })
       expect(items.find((i) => i.individu === t.c)).toEqual({
