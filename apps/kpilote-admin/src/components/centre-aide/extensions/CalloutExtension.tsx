@@ -7,11 +7,23 @@ import {
 } from '@tiptap/react'
 import { Callout, type CalloutColor } from '@pilote/kpilote-ui/Callout'
 
-function CalloutNodeView({ node }: NodeViewProps) {
+import { CalloutTypePicker } from '@/components/centre-aide/CalloutTypePicker'
+
+function CalloutNodeView({ editor, getPos, node, updateAttributes }: NodeViewProps) {
   const color = (node.attrs.color as CalloutColor) ?? 'info'
   return (
-    <NodeViewWrapper className="my-2">
-      <Callout color={color}>
+    <NodeViewWrapper className="relative my-2">
+      <Callout
+        color={color}
+        icon={
+          <CalloutTypePicker
+            color={color}
+            editor={editor}
+            getPos={getPos}
+            onChange={(newColor) => updateAttributes({ color: newColor })}
+          />
+        }
+      >
         <NodeViewContent />
       </Callout>
     </NodeViewWrapper>

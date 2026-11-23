@@ -1,9 +1,8 @@
+import { CALLOUT_VARIANTES, COULEURS_CALLOUT } from '@pilote/kpilote-ui/Callout'
 import { registreIcones, TYPES_ICONE } from '@pilote/kpilote-ui/centre-aide'
 import { estUrlHttpSure } from '@pilote/kpilote-shared/url'
 import type { Editor } from '@tiptap/react'
 import {
-  CircleCheck,
-  CircleX,
   Heading,
   Heading1,
   Heading2,
@@ -18,7 +17,6 @@ import {
   ListOrdered,
   MessageSquareText,
   Minus,
-  TriangleAlert,
   Video as VideoIcon,
 } from 'lucide-react'
 import type { ComponentType } from 'react'
@@ -75,28 +73,20 @@ export const construireOptionsBlocs = (
     }
   }
 
-  const varianteCallout = (
-    color: 'info' | 'success' | 'warning' | 'error',
-    label: string,
-    Icon: ComponentType<{ className?: string }>,
-  ): OptionBloc => ({
-    label,
-    keywords: `callout ${label.toLowerCase()}`,
-    Icon,
-    run: () => editor.chain().focus().insertCallout({ color }).run(),
-  })
-
   return [
     {
       label: 'Encadré (callout)',
       keywords: 'callout encadre info alerte',
       Icon: MessageSquareText,
-      sousOptions: [
-        varianteCallout('info', 'Info', Info),
-        varianteCallout('success', 'Succès', CircleCheck),
-        varianteCallout('warning', 'Attention', TriangleAlert),
-        varianteCallout('error', 'Alerte', CircleX),
-      ],
+      sousOptions: COULEURS_CALLOUT.map((color) => {
+        const { label, Icon } = CALLOUT_VARIANTES[color]
+        return {
+          label,
+          keywords: `callout ${label.toLowerCase()}`,
+          Icon,
+          run: () => editor.chain().focus().insertCallout({ color }).run(),
+        }
+      }),
     },
     {
       label: 'Accordéon',

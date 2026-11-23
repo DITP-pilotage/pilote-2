@@ -100,7 +100,7 @@ export function EditeurCentreAide({
     <div>
       <BubbleMenu
         editor={editor}
-        className="flex items-center gap-0.5 rounded-lg bg-[#1f2430] p-1 shadow-raised"
+        className="flex items-center gap-0.5 rounded-lg bg-surface-inverse p-1 shadow-raised"
       >
         <BoutonBulle
           label="Gras"

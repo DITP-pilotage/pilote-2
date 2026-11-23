@@ -17,6 +17,7 @@
   --color-surface-tinted: #f5f5fe;
   --color-surface-tinted-strong: #ececfe;
   --color-surface-muted: #f6f6f6;
+  --color-surface-inverse: #1f2430;
 
   /* Borders */
   --color-border: #e0e0e0;
