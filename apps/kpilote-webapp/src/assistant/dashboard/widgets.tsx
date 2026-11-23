@@ -48,19 +48,33 @@ const taux = (value: number | null | undefined): string =>
 const valeur = (value: number | null | undefined, unite: UniteIndicateurApiModel | null) =>
   value === null || value === undefined ? '—' : formatNumberFr(value, unite)
 
-// Un indicateur à la baisse n'a pas de taux par construction : on le dit plutôt qu'un « — » muet.
-const tauxSelonSens = (value: number | null | undefined, sensSouhaite: SensSouhaite): string =>
-  (value === null || value === undefined) && sensSouhaite === 'BAISSE'
-    ? '— (indicateur à la baisse)'
-    : taux(value)
+// Un indicateur à la baisse n'a pas de taux par construction : on le dit plutôt qu'un « - » muet.
+const formatTauxForSens = ({
+  value,
+  sensSouhaite,
+}: {
+  value: number | null | undefined
+  sensSouhaite: SensSouhaite
+}): string => {
+  const hasTaux = value !== null && value !== undefined
+  if (!hasTaux && sensSouhaite === 'BAISSE') return 'Sans objet (indicateur à la baisse)'
+  return taux(value)
+}
 
-const differenceSelonSens = (
-  value: number,
-  unite: UniteIndicateurApiModel | null,
-  sensSouhaite: SensSouhaite,
-): string => {
-  const label =
-    INTERPRETATION_LABEL_FR[interpretDifference(displayedDifferenceSign(value), sensSouhaite)]
+const formatDifferenceForSens = ({
+  value,
+  unite,
+  sensSouhaite,
+}: {
+  value: number
+  unite: UniteIndicateurApiModel | null
+  sensSouhaite: SensSouhaite
+}): string => {
+  const interpretation = interpretDifference({
+    difference: displayedDifferenceSign(value),
+    sensSouhaite,
+  })
+  const label = INTERPRETATION_LABEL_FR[interpretation]
   return label ? `${formatDifferenceFr(value, unite)} · ${label}` : formatDifferenceFr(value, unite)
 }
 
@@ -257,7 +271,7 @@ function TableauIndividus({
           {
             key: 'taux',
             header: 'Taux de progression',
-            cell: (row) => tauxSelonSens(row.point?.tauxProgression, sensSouhaite),
+            cell: (row) => formatTauxForSens({ value: row.point?.tauxProgression, sensSouhaite }),
           },
           {
             key: 'ecart',
@@ -265,7 +279,11 @@ function TableauIndividus({
             cell: (row) =>
               row.synthese?.ecartMediane === null || row.synthese?.ecartMediane === undefined
                 ? '—'
-                : differenceSelonSens(row.synthese.ecartMediane, unite, sensSouhaite),
+                : formatDifferenceForSens({
+                    value: row.synthese.ecartMediane,
+                    unite,
+                    sensSouhaite,
+                  }),
           },
         ]}
       />
@@ -309,7 +327,8 @@ function ContributionsCollection({
           {
             key: 'taux',
             header: 'Taux de progression',
-            cell: (row) => tauxSelonSens(row.tauxProgression, row.sensSouhaite),
+            cell: (row) =>
+              formatTauxForSens({ value: row.tauxProgression, sensSouhaite: row.sensSouhaite }),
           },
         ]}
       />

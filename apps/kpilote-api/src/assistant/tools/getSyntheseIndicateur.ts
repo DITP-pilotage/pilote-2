@@ -88,7 +88,7 @@ const readIndividus = async ({
   const dated = (valeur: number | undefined, date: string | undefined): DatedValue | null =>
     valeur === undefined || date === undefined ? null : { valeur, date }
   const lecture = (difference: number | null) =>
-    difference === null ? null : interpretDifference(difference, sensSouhaite)
+    difference === null ? null : interpretDifference({ difference, sensSouhaite })
 
   return individus.map((individu) => {
     const valeur = derniereValeur.get(individu.id)

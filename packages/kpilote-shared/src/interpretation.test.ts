@@ -11,7 +11,7 @@ describe('interpretDifference', () => {
     { difference: 8 - 10, sens: 'BAISSE', expected: 'favorable' }, // critère du ticket : 10 → 8
     { difference: 0, sens: 'BAISSE', expected: 'neutral' },
   ] as const)('$sens, différence $difference → $expected', ({ difference, sens, expected }) => {
-    expect(interpretDifference(difference, sens)).toBe(expected)
+    expect(interpretDifference({ difference, sensSouhaite: sens })).toBe(expected)
   })
 })
 

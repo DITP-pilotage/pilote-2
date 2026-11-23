@@ -212,7 +212,7 @@ function VariationPill({
   sensSouhaite: SensSouhaite
 }) {
   const sign = displayedDifferenceSign(variation)
-  const interpretation = interpretDifference(sign, sensSouhaite)
+  const interpretation = interpretDifference({ difference: sign, sensSouhaite })
   const label = INTERPRETATION_LABEL_FR[interpretation]
   return (
     <Pill tone={TONE_BY_INTERPRETATION[interpretation]} className="mt-3 w-fit text-sm">
@@ -231,6 +231,12 @@ function VariationPill({
   )
 }
 
+const describeMedianPosition = (sign: number): string => {
+  if (sign > 0) return 'au-dessus de la médiane'
+  if (sign < 0) return 'au-dessous de la médiane'
+  return 'à la médiane'
+}
+
 // Même libellé dans les deux sens ; le signe est conservé, la couleur suit le sens.
 function MedianGapPill({
   ecartMediane,
@@ -242,10 +248,9 @@ function MedianGapPill({
   sensSouhaite: SensSouhaite
 }) {
   const sign = displayedDifferenceSign(ecartMediane)
-  const interpretation = interpretDifference(sign, sensSouhaite)
+  const interpretation = interpretDifference({ difference: sign, sensSouhaite })
   const label = INTERPRETATION_LABEL_FR[interpretation]
-  const position =
-    sign > 0 ? 'au-dessus de la médiane' : sign < 0 ? 'au-dessous de la médiane' : 'à la médiane'
+  const position = describeMedianPosition(sign)
   return (
     <Pill tone={TONE_BY_INTERPRETATION[interpretation]}>
       <span>
