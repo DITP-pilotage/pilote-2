@@ -131,7 +131,7 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
         <Dialog.Portal>
           <Dialog.Content
             aria-describedby={undefined}
-            className="fixed inset-0 z-[1000] overflow-y-auto bg-white px-4 pb-8 min-[62em]:hidden"
+            className="fixed inset-0 z-[1800] overflow-y-auto bg-white px-4 pb-8 min-[62em]:hidden"
           >
             <Dialog.Title className="sr-only">Menu principal</Dialog.Title>
             <div className="flex items-start justify-between gap-4 py-4">
