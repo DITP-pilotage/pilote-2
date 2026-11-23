@@ -123,13 +123,13 @@ Clé (`utilisateur_id`, `periode_id`). Pas de ligne : jamais présentée. La col
 
 Une entrée « Formations » dans le menu latéral du panel administrateur, réservée à DITP Admin, avec des onglets sur le modèle de la page Albert (`AlbertPanel`, onglet dans l'URL via `?onglet=`) :
 
-1. **Profils** : la matrice du ticket, profils en lignes, motifs en colonnes, une case par croisement, enregistrée au clic avec un toast (comme « Permissions profils » d'Albert). Les motifs supprimés dans RDV-SP n'apparaissent pas.
-2. **Périodes d'information** : liste dans un `TableauAdmin` (du, au, formations, statut calculé : à venir, en cours, passée, supprimée ; recherche sur les formations, filtre par statut), ajout et modification par un formulaire (dates et une case par motif), suppression. Une période passée ou supprimée reste visible mais ne se modifie plus. Le formulaire prévient quand la période en remplace d'autres.
+1. **Accès motifs** (« Profils » jusqu'au 2026-11-23) : la matrice du ticket, profils en lignes, motifs en colonnes, une case par croisement, enregistrée au clic avec un toast (comme « Permissions profils » d'Albert). Les motifs supprimés dans RDV-SP n'apparaissent pas.
+2. **Périodes d'information** : les règles ci-dessous résumées en tête de l'onglet, puis une liste dans un `TableauAdmin` (du, au, formations, statut calculé : à venir, en cours, passée, supprimée ; recherche sur les formations, filtre par statut), ajout et modification par un formulaire (dates et une case par motif), suppression. Une période passée ou supprimée reste visible mais ne se modifie plus. Le formulaire prévient quand la période en remplace d'autres.
 3. **Séances à venir** : lecture seule, pour vérifier ce que copilot a ramené de RDV-SP. Toutes les séances qui n'ont pas commencé, avec un statut calculé (Ouverte, Complète, Annulée), dans un `TableauAdmin` (recherche, filtres, tri), et la date du dernier import en tête.
 
 ```
 Panel administrateur › Formations
-[ Profils ]  [ Périodes d'information ]  [ Séances à venir ]
+[ Accès motifs ]  [ Périodes d'information ]  [ Séances à venir ]
 
 Profil                              Intro  Commentaires  Rôles  Import  Assistant IA  Coordinateur
 Coordinateur PILOTE régional         [x]       [x]        [x]    [ ]       [x]           [x]

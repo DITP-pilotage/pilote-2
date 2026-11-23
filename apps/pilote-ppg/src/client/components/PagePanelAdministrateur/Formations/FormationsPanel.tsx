@@ -6,7 +6,11 @@ import { PeriodesInformation } from "@/components/PagePanelAdministrateur/Format
 export const FormationsPanel = () => (
   <PanelTabs
     tabs={[
-      { value: "profils", label: "Profils", content: ProfilsMatrice },
+      {
+        value: "acces-motifs",
+        label: "Accès motifs",
+        content: ProfilsMatrice,
+      },
       {
         value: "periodes-information",
         label: "Périodes d'information",
