@@ -5,8 +5,8 @@ import { Text } from '@pilote/kpilote-ui/Typography'
 import { formatMonthYearNumericFr, formatNumberAvecUniteFr, formatNumberFr } from '@/lib/format'
 
 // `taux` vaut null quand l'API ne calcule pas de taux alors qu'un objectif existe
-// (indicateur à la baisse, cible à 0) : on garde le bloc et l'objectif, avec « — »
-// et sans barre — une barre vide se lirait « 0 % ».
+// (indicateur à la baisse, cible à 0) : on garde le bloc et l'objectif, avec « - »
+// et sans barre, car une barre vide se lirait « 0 % ».
 export function IndicateurProgression({
   taux,
   valeurCible,
@@ -26,7 +26,7 @@ export function IndicateurProgression({
         </Text>
         {taux === null ? (
           <span className="text-sm font-bold tabular-nums text-text-muted">
-            <span aria-hidden="true">—</span>
+            <span aria-hidden="true">-</span>
             <span className="sr-only">Progression non disponible</span>
           </span>
         ) : (

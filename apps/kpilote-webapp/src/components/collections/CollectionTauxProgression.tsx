@@ -5,7 +5,7 @@ import { StatCard } from '@pilote/kpilote-ui/StatCard'
 import { collectionTauxProgressionQueryOptions } from '@/queries/collections'
 
 const formatTaux = (taux: number | null): string => {
-  if (taux === null) return '—'
+  if (taux === null) return '-'
   return `${taux} %`
 }
 
@@ -22,8 +22,10 @@ const buildCaption = ({
   if (raisonSansTaux === 'INDICATEUR_A_LA_BAISSE') {
     return 'Non calculable : la collection contient un indicateur à la baisse'
   }
-  const ponderees = contributions.filter((c) => c.ponderation > 0)
-  const nbBloquants = ponderees.filter((c) => c.tauxProgression === null).length
+  const ponderees = contributions.filter((contribution) => contribution.ponderation > 0)
+  const nbBloquants = ponderees.filter(
+    (contribution) => contribution.tauxProgression === null,
+  ).length
   return `${nbBloquants}/${ponderees.length} indicateur${nbBloquants > 1 ? 's' : ''} sans taux`
 }
 

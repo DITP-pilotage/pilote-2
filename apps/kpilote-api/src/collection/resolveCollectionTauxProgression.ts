@@ -36,11 +36,12 @@ export const resolveCollectionTauxProgression = (
 
   // Pondération 0 = indicateur volontairement exclu du calcul (cf. PIL-1578).
   // L'absence de taux ne bloque pas si l'utilisateur a déjà décidé de l'écarter.
-  const ponderees = contributions.filter((c) => !c.ponderation.isZero())
+  const ponderees = contributions.filter((contribution) => !contribution.ponderation.isZero())
   if (ponderees.length === 0) return sansTaux('AUCUN_INDICATEUR_PONDERE')
   // Règle tout-ou-rien : un indicateur pondéré non calculable invalide la moyenne.
   // Le sens à la baisse est la raison la plus actionnable, elle passe en premier.
-  if (ponderees.some((c) => c.sensSouhaite === 'BAISSE')) return sansTaux('INDICATEUR_A_LA_BAISSE')
+  if (ponderees.some((contribution) => contribution.sensSouhaite === 'BAISSE'))
+    return sansTaux('INDICATEUR_A_LA_BAISSE')
   const calculables = ponderees.flatMap(({ ponderation, tauxProgression }) =>
     tauxProgression === null ? [] : [{ ponderation, tauxProgression }],
   )

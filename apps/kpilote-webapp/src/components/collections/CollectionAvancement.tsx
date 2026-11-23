@@ -42,7 +42,7 @@ export function CollectionAvancement({
           Progression
         </Text>
         <span className="text-sm font-bold tabular-nums text-text-muted">
-          {taux == null ? '—' : `${formatNumberFr(taux)} %`}
+          {taux == null ? '-' : `${formatNumberFr(taux)} %`}
         </span>
       </div>
       {taux == null ? (
