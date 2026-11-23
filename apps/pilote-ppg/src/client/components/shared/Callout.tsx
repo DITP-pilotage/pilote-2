@@ -47,7 +47,7 @@ export const iconeCallout = (couleur: string): IconeCallout =>
   VARIANTES_CALLOUT.find((variante) => variante.couleur === couleur)?.Icone ??
   InformationPleineIcon;
 
-const colorVariants: Record<
+export const colorVariants: Record<
   CalloutColor,
   { bg: string; border: string; iconColor: string }
 > = {
