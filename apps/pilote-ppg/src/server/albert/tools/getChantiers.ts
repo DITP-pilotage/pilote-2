@@ -58,7 +58,7 @@ export const getChantiersInputSchema = z.object({
     .optional()
     .default("all")
     .describe(
-      "Vue : all (tous les chantiers), en_retard (écart ≤ -10 points à la médiane), en_difficulte (niveau de confiance « Objectifs compromis » ou « Appuis nécessaires », hors chantiers en retard)",
+      "Vue : all (tous les chantiers), en_retard (écart ≤ -10 points à la médiane), en_difficulte (niveau de confiance « Objectifs compromis » ou « Appuis nécessaires », chantiers en retard compris)",
     ),
   tendance: z
     .enum(["HAUSSE", "BAISSE", "STAGNATION"])

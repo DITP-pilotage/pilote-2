@@ -408,17 +408,23 @@ export async function collecterDonneesEncart({
   };
   if (!avecIndicateurs || !getChantierIndicateursQuery) return donnees;
 
-  const chantiersDesVues = [
-    ...donnees.chantiers_en_retard.resultats,
-    ...donnees.chantiers_en_difficulte.resultats,
-  ].flatMap((resultat) =>
-    resultat.chantiers.map((chantier) => ({
-      territoireCode: resultat.territoire_code,
-      chantierId: chantier.chantier.id,
-    })),
+  // Un chantier en retard et en difficulté figure dans les deux vues.
+  const chantiersDesVues = new Map(
+    [
+      ...donnees.chantiers_en_retard.resultats,
+      ...donnees.chantiers_en_difficulte.resultats,
+    ].flatMap((resultat) =>
+      resultat.chantiers.map((chantier) => [
+        `${resultat.territoire_code}|${chantier.chantier.id}`,
+        {
+          territoireCode: resultat.territoire_code,
+          chantierId: chantier.chantier.id,
+        },
+      ]),
+    ),
   );
   const indicateurs = await Promise.all(
-    chantiersDesVues.map(({ territoireCode, chantierId }) =>
+    [...chantiersDesVues.values()].map(({ territoireCode, chantierId }) =>
       getChantierIndicateursQuery.execute({
         territoireCode,
         chantierId,

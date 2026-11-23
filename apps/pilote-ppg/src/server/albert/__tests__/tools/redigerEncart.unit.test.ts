@@ -420,6 +420,50 @@ describe("outils de rédaction d'encart", () => {
     expect(sorties.at(-1)?.donnees?.indicateurs).toHaveLength(2);
   });
 
+  test("un chantier en retard et en difficulté figure dans les deux vues, ses indicateurs lus une fois", async () => {
+    // Given
+    subagentRedige(["# Synthèse"]);
+    const getChantierIndicateursQuery = indicateursQuery();
+    const enRetardEtEnDifficulte = mock<GetChantiersQuery>({
+      execute: vi.fn(async (params: GetChantiersParams) =>
+        params.territoireCodes.map((territoireCode) => ({
+          territoire_code: territoireCode,
+          territoire_nom: NOMS[territoireCode] ?? null,
+          jalon: params.jalon,
+          chantiers: [chantier("CH-071")],
+        })),
+      ),
+    });
+
+    // When
+    await collecter(
+      syntheseDuNord({
+        query: enRetardEtEnDifficulte,
+        getChantierIndicateursQuery,
+      }).execute!(
+        { territoire_code: "DEPT-59", jalon: 2025, avec_indicateurs: true },
+        OPTIONS,
+      ),
+    );
+
+    // Then
+    expect(vi.mocked(getChantierIndicateursQuery.execute).mock.calls).toEqual([
+      [{ territoireCode: "DEPT-59", chantierId: "CH-071", jalon: 2025 }],
+    ]);
+    const prompt = JSON.parse(
+      vi.mocked(Albert.streamSubagentText).mock.calls[0][0].prompt,
+    ) as Record<
+      "chantiers_en_retard" | "chantiers_en_difficulte",
+      { resultats: { chantiers: { id: string }[] }[] }
+    >;
+    expect(prompt.chantiers_en_retard.resultats[0].chantiers).toEqual([
+      expect.objectContaining({ id: "CH-071" }),
+    ]);
+    expect(prompt.chantiers_en_difficulte.resultats[0].chantiers).toEqual([
+      expect.objectContaining({ id: "CH-071" }),
+    ]);
+  });
+
   test("sans demande, ne lit pas les indicateurs", async () => {
     // Given
     subagentRedige(["# Synthèse"]);

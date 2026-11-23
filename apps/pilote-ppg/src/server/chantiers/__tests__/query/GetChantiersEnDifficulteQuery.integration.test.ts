@@ -96,10 +96,13 @@ describe("GetChantiersQuery — view en_difficulte", () => {
   );
 
   it(
-    "ne remonte pas un chantier en retard au jalon, même si l'écart mandat ne l'est pas",
+    "remonte un chantier en difficulté qui est aussi en retard au jalon",
     createIntegrationTest(async () => {
       // Given
-      await semerChantierOrageux({ ecartMandat: -5, ecartJalon: -15 });
+      const chantier = await semerChantierOrageux({
+        ecartMandat: -5,
+        ecartJalon: -15,
+      });
 
       // When
       const [resultat] = await query.execute({
@@ -109,7 +112,14 @@ describe("GetChantiersQuery — view en_difficulte", () => {
       });
 
       // Then
-      expect(resultat.chantiers).toEqual([]);
+      expect(resultat.chantiers).toEqual([
+        expect.objectContaining({
+          chantier: expect.objectContaining({ id: chantier.id }),
+          ecart: -15,
+          est_en_retard: true,
+          est_en_difficulte: true,
+        }),
+      ]);
     }),
   );
 });
