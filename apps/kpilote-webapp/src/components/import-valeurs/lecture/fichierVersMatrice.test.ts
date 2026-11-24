@@ -5,17 +5,23 @@ import { fichierVersMatrice } from '@/components/import-valeurs/lecture/fichierV
 const csvFile = (contenu: string) => new File([contenu], 'valeurs.csv', { type: 'text/csv' })
 
 describe('fichierVersMatrice', () => {
-  it('lit un CSV en matrice de cellules (dates typées, nombres bruts)', async () => {
+  it('lit un CSV en gardant ses cellules en texte, accents et virgule décimale compris', async () => {
     const lecture = await fichierVersMatrice({
-      file: csvFile('individu,date,valeur\nDEPT-84,2024-01-15,7.2\n'),
+      file: csvFile('Département;Période;Taux\nCôtes-d’Armor;03/04/2024;12,4\n'),
     })
     expect(lecture.ok).toBe(true)
     if (!lecture.ok) return
-    expect(lecture.matrice[0]).toEqual(['individu', 'date', 'valeur'])
-    expect(lecture.matrice[1]?.[0]).toBe('DEPT-84')
-    // cellDates: true → la date du CSV est remontée en objet Date (converti plus tard par formatDateCell)
-    expect(lecture.matrice[1]?.[1]).toBeInstanceOf(Date)
-    expect(lecture.matrice[1]?.[2]).toBe(7.2)
+    expect(lecture.matrice[0]).toEqual(['Département', 'Période', 'Taux'])
+    expect(lecture.matrice[1]).toEqual(['Côtes-d’Armor', '03/04/2024', '12,4'])
+  })
+
+  it('lit un CSV encodé en Windows-1252', async () => {
+    // « Département » : le é est l’octet 0xE9, invalide en UTF-8.
+    const bytes = new Uint8Array([0x44, 0xe9, 0x70, 0x74, 0x0a, 0x41, 0x69, 0x6e, 0x0a])
+    const lecture = await fichierVersMatrice({ file: new File([bytes], 'valeurs.csv') })
+    expect(lecture.ok).toBe(true)
+    if (!lecture.ok) return
+    expect(lecture.matrice[0]).toEqual(['Dépt'])
   })
 
   it('lit un XLSX en préservant les cellules Date', async () => {
