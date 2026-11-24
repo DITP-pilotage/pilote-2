@@ -100,8 +100,10 @@ export const planTransformationSchema = z.object({
 export type PlanTransformation = z.infer<typeof planTransformationSchema>
 
 // Ce sur quoi on peut saisir une valeur de l'indicateur : les individus de ses
-// référentiels, et les modalités feuilles de chacun de ses axes.
-export const ciblesSaisieApiModelSchema = z.object({
+// référentiels, et les modalités feuilles de chacun de ses axes. Aucune route ne
+// le renvoie tel quel : la webapp le recompose depuis les routes de l'indicateur,
+// des référentiels et des axes, l'API le charge pour Albert.
+export const ciblesSaisieSchema = z.object({
   individus: z.array(
     z.object({
       id: individuPublicIdSchema,
@@ -119,4 +121,4 @@ export const ciblesSaisieApiModelSchema = z.object({
     )
     .describe('Axes de l’indicateur, dans l’ordre de déclaration, avec leurs modalités feuilles.'),
 })
-export type CiblesSaisieApiModel = z.infer<typeof ciblesSaisieApiModelSchema>
+export type CiblesSaisie = z.infer<typeof ciblesSaisieSchema>

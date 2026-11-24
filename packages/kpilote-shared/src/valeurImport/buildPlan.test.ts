@@ -1,20 +1,16 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  type CiblesSaisieApiModel,
-  type PlanTransformation,
-  type TableauSource,
-} from '../valeurImport'
+import { type CiblesSaisie, type PlanTransformation, type TableauSource } from '../valeurImport'
 import { buildPlanStandard, listLibelles, setRapprochement } from './buildPlan'
 
-const individus: CiblesSaisieApiModel['individus'] = [
+const individus: CiblesSaisie['individus'] = [
   { id: 'DEPT-13', nom: 'Bouches-du-Rhône', referentiel: 'REF-DEPT' },
   { id: 'DEPT-84', nom: 'Vaucluse', referentiel: 'REF-DEPT' },
 ]
 
-const ciblesSansAxe: CiblesSaisieApiModel = { individus, axes: [] }
+const ciblesSansAxe: CiblesSaisie = { individus, axes: [] }
 
-const ciblesAvecAxe: CiblesSaisieApiModel = {
+const ciblesAvecAxe: CiblesSaisie = {
   individus,
   axes: [
     {

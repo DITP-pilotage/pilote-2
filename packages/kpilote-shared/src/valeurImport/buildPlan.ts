@@ -1,7 +1,7 @@
 import { uniq } from 'es-toolkit'
 
 import {
-  type CiblesSaisieApiModel,
+  type CiblesSaisie,
   type ColonneRapprochee,
   type PlanTransformation,
   type Rapprochement,
@@ -33,7 +33,7 @@ const COLONNES_STANDARD = { individu: 'individu', date: 'date', valeur: 'valeur'
 export const listColonnesStandard = ({
   cibles,
 }: {
-  cibles: Pick<CiblesSaisieApiModel, 'axes'>
+  cibles: Pick<CiblesSaisie, 'axes'>
 }): string[] => [
   COLONNES_STANDARD.individu,
   ...cibles.axes.map((axe) => axe.id),
@@ -69,7 +69,7 @@ export const buildPlanStandard = ({
   cibles,
 }: {
   tableau: TableauSource
-  cibles: CiblesSaisieApiModel
+  cibles: CiblesSaisie
 }): PlanStandard => {
   const enteteByKey = new Map(
     tableau.entetes.map((entete) => [entete.trim().toLowerCase(), entete]),

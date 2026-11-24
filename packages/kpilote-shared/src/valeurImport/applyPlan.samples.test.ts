@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
-  type CiblesSaisieApiModel,
+  type CiblesSaisie,
   type PlanTransformation,
   type Rapprochement,
   type TableauSource,
@@ -28,7 +28,7 @@ const buildPlan = ({
   cibles,
 }: {
   tableau: TableauSource
-  cibles: CiblesSaisieApiModel
+  cibles: CiblesSaisie
 }): PlanTransformation => {
   const resultat = buildPlanStandard({ tableau, cibles })
   if (!resultat.ok) {
@@ -37,7 +37,7 @@ const buildPlan = ({
   return resultat.plan
 }
 
-const ciblesInd019: CiblesSaisieApiModel = {
+const ciblesInd019: CiblesSaisie = {
   individus: [
     { id: 'DEPT-01', nom: 'Ain', referentiel: 'REF-DEPT' },
     { id: 'DEPT-06', nom: 'Alpes-Maritimes', referentiel: 'REF-DEPT' },
@@ -57,7 +57,7 @@ const ciblesInd019: CiblesSaisieApiModel = {
 
 // Les modalités feuilles de l'indicateur IND-103 : `FR-FISCALE` et
 // `FR-SOCIALE` regroupent des types de fraude, on ne saisit pas dessus.
-const ciblesInd103: CiblesSaisieApiModel = {
+const ciblesInd103: CiblesSaisie = {
   individus: [
     { id: 'DEPT-01', nom: 'Ain', referentiel: 'REF-DEPT' },
     { id: 'DEPT-13', nom: 'Bouches-du-Rhône', referentiel: 'REF-DEPT' },
