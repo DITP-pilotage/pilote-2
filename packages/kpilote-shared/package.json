@@ -156,10 +156,6 @@
       "types": "./src/valeurAvancement.ts",
       "default": "./src/valeurAvancement.ts"
     },
-    "./valeurNormalisation": {
-      "types": "./src/valeurNormalisation.ts",
-      "default": "./src/valeurNormalisation.ts"
-    },
     "./valeurImport": {
       "types": "./src/valeurImport.ts",
       "default": "./src/valeurImport.ts"

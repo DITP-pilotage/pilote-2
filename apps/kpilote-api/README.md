@@ -33,7 +33,7 @@ Le dev passe par [portless](https://www.npmjs.com/package/portless), qui sert l'
 | `OIDC_ISSUER_URL`, `OIDC_USERINFO_URL`, `OIDC_JWKS_URI`, `OIDC_AUDIENCE` | Validation des tokens ProConnect |
 | `KEYCLOAK_ISSUER_URL`, `KEYCLOAK_JWKS_URI`, `KEYCLOAK_AUDIENCE` | Validation des tokens Keycloak |
 | `API_KEY_HMAC_SECRET` | Secret HMAC (≥ 32 caractères) des clés API |
-| `ALBERT_API_KEY` | Optionnel — active la normalisation d'imports par le LLM Albert |
+| `ALBERT_API_KEY` | Optionnel — active le LLM Albert (assistant, plan d'import des fichiers au format libre) |
 | `LOG_LEVEL`, `LOG_TO_DATABASE` | Niveau de log, persistance des logs en base |
 | `MAX_ASYNC_CONCURRENCY` | Parallélisme des traitements asynchrones |
 | `ACME_UPLOAD_API_KEY` | Optionnel — clé Bearer du dépôt des challenges ACME ([renouvellement SSL](../../.github/workflows/README-renouvellement-ssl.md)) |
