@@ -25,9 +25,11 @@ const titreInscription = (
 const AutresSeances = ({
   formation,
   seances,
+  onInscription,
 }: {
   formation: FormationProposee;
   seances: SeanceProposee[];
+  onInscription: () => void;
 }) => (
   <Collapsible.Root>
     <Collapsible.Trigger asChild>
@@ -58,6 +60,7 @@ const AutresSeances = ({
               <TextLink
                 className="max-md:inline-flex max-md:min-h-11 max-md:items-center"
                 href={seance.urlInscription}
+                onClick={onInscription}
                 rel="noopener"
                 size="sm"
                 target="_blank"
@@ -78,8 +81,10 @@ const AutresSeances = ({
 
 export const LigneFormation = ({
   formation,
+  onInscription,
 }: {
   formation: FormationProposee;
+  onInscription: () => void;
 }) => {
   const [prochaine, ...autres] = formation.seances;
   const places = formaterPlacesRestantes(prochaine.placesRestantes);
@@ -114,6 +119,7 @@ export const LigneFormation = ({
         >
           <a
             href={prochaine.urlInscription}
+            onClick={onInscription}
             rel="noopener"
             target="_blank"
             title={titreInscription(formation, prochaine)}
@@ -123,7 +129,11 @@ export const LigneFormation = ({
         </Button>
       </div>
       {autres.length > 0 ? (
-        <AutresSeances formation={formation} seances={autres} />
+        <AutresSeances
+          formation={formation}
+          onInscription={onInscription}
+          seances={autres}
+        />
       ) : null}
     </li>
   );

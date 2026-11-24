@@ -19,8 +19,14 @@ export interface FormationProposee {
   seances: SeanceProposee[];
 }
 
+export interface PeriodeProposee {
+  id: string;
+  dateDebut: string;
+  dateFin: string;
+}
+
 export interface PropositionFormations {
-  periodeId: string;
+  periode: PeriodeProposee;
   formations: FormationProposee[];
 }
 
@@ -70,11 +76,11 @@ export class GetFormationsAProposerQuery {
   }): Promise<PropositionFormations | null> {
     if (profilCode === null) return null;
 
-    const periodeId = await this.periodeEnCours(maintenant);
-    if (periodeId === null) return null;
+    const periode = await this.periodeEnCours(maintenant);
+    if (periode === null) return null;
 
     const formations = await this.formationsProposees({
-      periodeId,
+      periodeId: periode.id,
       profilCode,
       maintenant,
     });
@@ -87,17 +93,19 @@ export class GetFormationsAProposerQuery {
         where: {
           utilisateur_id_periode_id: {
             utilisateur_id: utilisateurId,
-            periode_id: periodeId,
+            periode_id: periode.id,
           },
         },
         select: { date_fermeture: true },
       });
 
-    return etat?.date_fermeture ? null : { periodeId, formations };
+    return etat?.date_fermeture ? null : { periode, formations };
   }
 
   // Sans verrou, deux périodes peuvent être en cours : la plus récemment créée l'emporte.
-  private async periodeEnCours(maintenant: Date): Promise<string | null> {
+  private async periodeEnCours(
+    maintenant: Date,
+  ): Promise<PeriodeProposee | null> {
     const aujourdhui = toISODate(maintenant);
     const periodes = await this.prisma
       .getInstance()
@@ -105,18 +113,18 @@ export class GetFormationsAProposerQuery {
         where: { deleted_at: null },
         orderBy: { created_at: "desc" },
       });
-    const enCours = periodes.find(
-      (periode) =>
-        statutPeriode(
-          {
-            dateDebut: toISODate(periode.date_debut),
-            dateFin: toISODate(periode.date_fin),
-            supprimee: false,
-          },
-          aujourdhui,
-        ) === "EN_COURS",
-    );
-    return enCours?.id ?? null;
+    const enCours = periodes
+      .map((periode) => ({
+        id: periode.id,
+        dateDebut: toISODate(periode.date_debut),
+        dateFin: toISODate(periode.date_fin),
+      }))
+      .find(
+        (periode) =>
+          statutPeriode({ ...periode, supprimee: false }, aujourdhui) ===
+          "EN_COURS",
+      );
+    return enCours ?? null;
   }
 
   private async formationsProposees({
