@@ -1,11 +1,14 @@
 import type { ErrorComponentProps } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
 import { HTTPError } from 'ky'
+import { z } from 'zod'
 
 import { BackLink } from '@pilote/kpilote-ui/BackLink'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Section } from '@pilote/kpilote-ui/Section'
+
+const errorWithMessageSchema = z.object({ message: z.string() })
 
 const isNotFoundError = (error: unknown): boolean => {
   return error instanceof HTTPError && error.response.status === 404
@@ -35,7 +38,7 @@ export function RouteError({ error, reset }: ErrorComponentProps) {
       <div className="space-y-4">
         <EmptyState
           title="Erreur lors du chargement"
-          description={error instanceof Error ? error.message : String(error)}
+          description={errorWithMessageSchema.safeParse(error).data?.message ?? String(error)}
         />
         <div className="flex justify-center">
           <Button type="button" onClick={reset}>

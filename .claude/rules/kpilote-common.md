@@ -85,6 +85,19 @@ Pourquoi : le nom dit l'intention ; une boucle `get(k) ?? []` puis `push` se rel
   }
   ```
 
+### Lire une valeur inconnue avec zod, pas avec `instanceof`
+Pour lire un champ d'une valeur `unknown` (le `message` d'une erreur attrapée, typiquement), on décrit le champ attendu par un schéma zod et on le lit par `safeParse`, plutôt que par `instanceof Error`.
+Pourquoi : on teste ce qu'on lit vraiment (un `message` de type `string`) et non une classe ; une valeur rejetée qui n'hérite pas d'`Error` mais porte un message est lue aussi.
+- À faire :
+  ```ts
+  const errorWithMessageSchema = z.object({ message: z.string() })
+
+  const reasonOf = (error: unknown): string =>
+    errorWithMessageSchema.safeParse(error).data?.message ?? 'unknown'
+  ```
+- À éviter : `reason: error instanceof Error ? error.message : 'unknown'`
+- `instanceof` reste de mise pour discriminer une classe d'erreur (`AppError`, `HTTPError`, `Prisma.PrismaClientKnownRequestError`, `ZodError`) et pour les types DOM ou natifs (`HTMLElement`, `Date`, `Temporal.PlainDate`).
+
 ### Pas d'IIFE
 Pas de `(async () => { ... })()` ni de `(() => ...)()` en JSX : on extrait une fonction nommée.
 Pourquoi : une IIFE est une fonction anonyme déguisée en expression ; son nom manque à la lecture et au test.

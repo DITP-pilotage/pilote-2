@@ -1,5 +1,6 @@
 import { createMiddleware } from 'hono/factory'
 import { okAsync, ResultAsync } from 'neverthrow'
+import { z } from 'zod'
 
 import { type VerifiedTokenInfo, verifyAccessToken } from '@/authentication/jwks'
 import {
@@ -13,6 +14,8 @@ import { verifyApiKey } from '@/framework/auth/verifyApiKey'
 import { logger } from '@/framework/logger/logger'
 
 const BEARER_REGEX = /^Bearer\s+(.+)$/i
+
+const errorWithMessageSchema = z.object({ message: z.string() })
 
 const extractBearerToken = (header: string | undefined): string | null => {
   if (!header) return null
@@ -34,7 +37,10 @@ const resolveJwtPrincipal = (token: string): ResultAsync<Principal | null, unkno
   ResultAsync.fromPromise(verifyAccessToken(token), (error) => error)
     .orTee((error) =>
       logger.warn(
-        { event: 'auth.jwt.invalid', reason: error instanceof Error ? error.message : 'unknown' },
+        {
+          event: 'auth.jwt.invalid',
+          reason: errorWithMessageSchema.safeParse(error).data?.message ?? 'unknown',
+        },
         'JWT verification failed',
       ),
     )
