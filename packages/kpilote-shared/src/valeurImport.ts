@@ -8,8 +8,8 @@ import {
   referentielPublicIdSchema,
 } from './publicIds'
 
-// Import de valeurs : le fichier lu (tableau source) et le plan de
-// transformation produit par Albert.
+// Import de valeurs : le fichier lu (tableau source), le plan de transformation
+// produit par Albert, et le flux de la route qui construit ce plan.
 // Voir `valeurImport/applyPlan.ts` pour l'application du plan au tableau.
 
 export const MAX_LIGNES_TABLEAU = 1000
@@ -98,6 +98,62 @@ export const planTransformationSchema = z.object({
   filtre: filtreLignesSchema.optional(),
 })
 export type PlanTransformation = z.infer<typeof planTransformationSchema>
+
+export const motifPlanImpossibleSchema = z.enum([
+  'PAS_D_INDIVIDU',
+  'PAS_DE_DATE',
+  'PAS_DE_VALEUR',
+  'AXE_SANS_COLONNE',
+  'STRUCTURE_NON_RECONNUE',
+  'ASSISTANT_INDISPONIBLE',
+])
+export type MotifPlanImpossible = z.infer<typeof motifPlanImpossibleSchema>
+
+export const planImpossibleErrorSchema = z.object({
+  type: z.literal('FICHIER_INEXPLOITABLE'),
+  motif: motifPlanImpossibleSchema,
+  axes: z.array(axePublicIdSchema).optional().describe('Axes sans colonne (`AXE_SANS_COLONNE`).'),
+  explication: z.string().describe('Phrase destinée à l’utilisateur.'),
+})
+export type PlanImpossibleError = z.infer<typeof planImpossibleErrorSchema>
+
+const statutEtapeSchema = z.enum(['EN_COURS', 'TERMINEE'])
+
+export const etapePlanSchema = z.discriminatedUnion('etape', [
+  z.object({
+    etape: z.literal('STRUCTURE'),
+    statut: statutEtapeSchema,
+    valeurs: dispositionValeursSchema.optional(),
+  }),
+  z.object({
+    etape: z.literal('INDIVIDUS'),
+    statut: statutEtapeSchema,
+    resolus: z.number().int().nonnegative().optional(),
+    aVerifier: z.number().int().nonnegative().optional(),
+  }),
+  z.object({
+    etape: z.literal('AXE'),
+    axe: axePublicIdSchema,
+    statut: statutEtapeSchema,
+    resolus: z.number().int().nonnegative().optional(),
+    aVerifier: z.number().int().nonnegative().optional(),
+  }),
+])
+export type EtapePlan = z.infer<typeof etapePlanSchema>
+
+// Un message du flux SSE de `valeurs:plan-import`.
+export const planImportEventSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('ETAPE'), etape: etapePlanSchema }),
+  z.object({ type: z.literal('PLAN'), plan: planTransformationSchema }),
+  z.object({ type: z.literal('ECHEC'), erreur: planImpossibleErrorSchema }),
+])
+export type PlanImportEvent = z.infer<typeof planImportEventSchema>
+
+export const planImportBodySchema = z.object({
+  tableau: tableauSourceSchema,
+  nomFichier: z.string().max(255).describe('Nom du fichier, donné à Albert comme contexte.'),
+})
+export type PlanImportBody = z.infer<typeof planImportBodySchema>
 
 // Ce sur quoi on peut saisir une valeur de l'indicateur : les individus de ses
 // référentiels, et les modalités feuilles de chacun de ses axes. Aucune route ne
