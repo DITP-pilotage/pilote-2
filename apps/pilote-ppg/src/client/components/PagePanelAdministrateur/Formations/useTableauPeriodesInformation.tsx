@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { Badge, type BadgeVariant } from "@/components/shared/Badge";
 import { Button } from "@/components/shared/Button";
+import { Icone } from "@/components/_commons/Icone";
+import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 import {
   CLASSE_COLONNE_DATE,
   CLASSE_COLONNE_SECONDAIRE,
@@ -61,8 +63,19 @@ const useTableColumns = ({
           id: "formations",
           header: "Formations",
           meta: { cellClassName: CLASSE_COLONNE_SECONDAIRE },
-          cell: ({ row }) =>
-            row.original.motifs.map(libelleFormation).join(", "),
+          cell: ({ row }) => (
+            <ul className="m-0 flex list-none flex-col gap-0.5 p-0 leading-4">
+              {row.original.motifs.map((motif) => (
+                <li className="flex items-start gap-1.5 p-0" key={motif.id}>
+                  <Icone
+                    className="mt-px h-3.5 w-3.5 shrink-0"
+                    icone={CheckLineIcon}
+                  />
+                  {libelleFormation(motif)}
+                </li>
+              ))}
+            </ul>
+          ),
         }),
         columnHelper.accessor("statut", {
           id: "statut",
@@ -94,10 +107,18 @@ const useTableColumns = ({
           cell: ({ row }) =>
             estModifiable(row.original) ? (
               <div className="flex gap-4">
-                <Button onClick={() => modifier(row.original)} variant="link">
+                <Button
+                  className="text-sm"
+                  onClick={() => modifier(row.original)}
+                  variant="link"
+                >
                   Modifier
                 </Button>
-                <Button onClick={() => supprimer(row.original)} variant="link">
+                <Button
+                  className="text-sm"
+                  onClick={() => supprimer(row.original)}
+                  variant="link"
+                >
                   Supprimer
                 </Button>
               </div>

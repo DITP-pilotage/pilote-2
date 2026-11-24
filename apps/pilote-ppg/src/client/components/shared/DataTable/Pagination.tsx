@@ -185,7 +185,7 @@ export function PaginationView({
             valeur: String(option),
             libelle: String(option),
           }))}
-          triggerClassName="w-20 py-1"
+          triggerClassName="w-auto gap-2 px-3 py-1"
           value={String(pageSize)}
         />
       )}
