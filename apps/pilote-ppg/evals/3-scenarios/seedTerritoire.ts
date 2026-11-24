@@ -13,7 +13,7 @@ export type SeededChantier = {
   taux: number;
   /** Écart à la médiane, en points. En retard si <= -10. */
   ecart: number;
-  /** En difficulté si NUAGE ou ORAGE et pas en retard. */
+  /** En difficulté si NUAGE ou ORAGE, en retard ou non. */
   meteo: Meteo;
   /** `null` : la synthèse existe, sans commentaire. */
   commentaireSynthese: string | null;

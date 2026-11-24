@@ -42,7 +42,10 @@ describe("seedMondeTerritorial", () => {
 
       // Then
       expect(idsDesChantiers(enRetard)).toEqual(["CH-005"]);
-      expect(idsDesChantiers(enDifficulte)).toEqual(["CH-006"]);
+      expect(idsDesChantiers(enDifficulte)).toIncludeSameMembers([
+        "CH-005",
+        "CH-006",
+      ]);
     }),
   );
 
