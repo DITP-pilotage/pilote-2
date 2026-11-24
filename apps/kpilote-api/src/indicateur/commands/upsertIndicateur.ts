@@ -243,6 +243,7 @@ const performUpsert = async (
     nom: body.nom,
     visibilite: body.visibilite,
     unite: body.unite,
+    sensSouhaite: body.sensSouhaite,
     ...metadonneesData(body),
   }
   const indicateur = await db().indicateur.upsert({

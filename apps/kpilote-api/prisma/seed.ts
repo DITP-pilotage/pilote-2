@@ -3,6 +3,7 @@ import { uuidv7 } from 'uuidv7'
 
 import {
   type PeriodeMiseAJour,
+  type SensSouhaite,
   type UniteDuree,
   type UniteIndicateurCode,
 } from '@pilote/kpilote-shared/indicateur'
@@ -43,6 +44,7 @@ const indicateursSeed: ReadonlyArray<{
   nom: string
   visibilite?: 'PUBLIC' | 'PRIVE'
   unite?: UniteIndicateurCode
+  sensSouhaite?: SensSouhaite
   description?: string
   methodeCalcul?: string
   sourceDonnees?: string
@@ -56,6 +58,7 @@ const indicateursSeed: ReadonlyArray<{
     publicId: 'IND-001',
     nom: 'Taux de chômage',
     unite: 'POURCENTAGE',
+    sensSouhaite: 'BAISSE',
     description:
       'Part de la population active sans emploi cherchant activement un travail, au sens du Bureau international du travail.',
     methodeCalcul: 'Nombre de chômeurs BIT / population active × 100',
@@ -97,6 +100,7 @@ const indicateursSeed: ReadonlyArray<{
     publicId: 'IND-004',
     nom: 'Délai de traitement préfectures',
     unite: 'JOURS',
+    sensSouhaite: 'BAISSE',
     description:
       "Délai moyen d'instruction des collections déposés en préfecture, en jours ouvrés.",
     sourceDonnees: 'Ministère de l’Intérieur — DGCL',
@@ -142,7 +146,7 @@ const indicateursSeed: ReadonlyArray<{
   { publicId: 'IND-020', nom: "Qualité de l'air en zones urbaines" },
   { publicId: 'IND-021', nom: 'Aires protégées (terre et mer)', unite: 'HECTARES' },
   { publicId: 'IND-022', nom: 'Tri et valorisation des déchets', unite: 'POURCENTAGE' },
-  { publicId: 'IND-023', nom: 'Délai de traitement CAF', unite: 'JOURS' },
+  { publicId: 'IND-023', nom: 'Délai de traitement CAF', unite: 'JOURS', sensSouhaite: 'BAISSE' },
   { publicId: 'IND-024', nom: 'Délai de traitement Pôle emploi', unite: 'JOURS' },
   { publicId: 'IND-025', nom: "Délai de délivrance des titres d'identité", unite: 'JOURS' },
   { publicId: 'IND-026', nom: 'Présence postale en zone rurale' },
@@ -152,7 +156,7 @@ const indicateursSeed: ReadonlyArray<{
   { publicId: 'IND-030', nom: 'Élucidation des cambriolages', unite: 'POURCENTAGE' },
   { publicId: 'IND-031', nom: 'Sécurité routière — accidents mortels', unite: 'VALEUR_UNITAIRE' },
   { publicId: 'IND-032', nom: 'Délai de jugement civil', unite: 'MOIS' },
-  { publicId: 'IND-033', nom: 'Délai de jugement pénal', unite: 'MOIS' },
+  { publicId: 'IND-033', nom: 'Délai de jugement pénal', unite: 'MOIS', sensSouhaite: 'BAISSE' },
   { publicId: 'IND-034', nom: 'Recettes fiscales nettes', unite: 'MILLIARDS_EUROS' },
   { publicId: 'IND-035', nom: 'Dette publique / PIB', unite: 'POURCENTAGE' },
   { publicId: 'IND-036', nom: 'Croissance du PIB', unite: 'POURCENTAGE' },
@@ -468,6 +472,7 @@ const main = async () => {
     const { createdAt, updatedAt } = indicateurDates(index)
     const visibilite = item.visibilite ?? 'PRIVE'
     const unite = item.unite ?? null
+    const sensSouhaite = item.sensSouhaite ?? 'HAUSSE'
     const metadonnees = {
       description: item.description ?? null,
       methodeCalcul: item.methodeCalcul ?? null,
@@ -480,13 +485,14 @@ const main = async () => {
     }
     await prisma.indicateur.upsert({
       where: { publicId: item.publicId },
-      update: { nom: item.nom, visibilite, unite, ...metadonnees, updatedAt },
+      update: { nom: item.nom, visibilite, unite, sensSouhaite, ...metadonnees, updatedAt },
       create: {
         id: uuidv7(),
         publicId: item.publicId,
         nom: item.nom,
         visibilite,
         unite,
+        sensSouhaite,
         ...metadonnees,
         createdAt,
         updatedAt,

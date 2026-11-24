@@ -5,6 +5,9 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import {
   PERIODE_MISE_A_JOUR_LABELS,
   PERIODES_MISE_A_JOUR,
+  SENS_SOUHAITE_HINTS,
+  SENS_SOUHAITE_LABELS,
+  SENS_SOUHAITES,
   UNITE_DUREE_LABELS,
   UNITES_DUREE,
 } from '@pilote/kpilote-shared/indicateur'
@@ -29,6 +32,11 @@ const VISIBILITE_OPTIONS = [
   { value: 'PUBLIC', label: 'Public' },
   { value: 'PRIVE', label: 'Privé' },
 ] as const
+
+const SENS_SOUHAITE_OPTIONS = SENS_SOUHAITES.map((sens) => ({
+  value: sens,
+  label: SENS_SOUHAITE_LABELS[sens],
+}))
 
 const submitLabel = ({ pending, isProd }: { pending: boolean; isProd: boolean }): string => {
   if (pending) return 'Enregistrement…'
@@ -120,6 +128,23 @@ export function IndicateurForm({
                 )}
               />
             </div>
+          </div>
+
+          <div className="mb-6">
+            <Controller
+              control={form.control}
+              name="sensSouhaite"
+              render={({ field, fieldState }) => (
+                <SegmentedField
+                  label="Sens souhaité"
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  error={fieldState.error?.message}
+                  options={SENS_SOUHAITE_OPTIONS}
+                  description={`${SENS_SOUHAITE_HINTS[field.value]}. Changer le sens ne modifie ni les valeurs d'avancement ni les cibles.`}
+                />
+              )}
+            />
           </div>
 
           <div className="mb-6 border-t border-border pt-5">
