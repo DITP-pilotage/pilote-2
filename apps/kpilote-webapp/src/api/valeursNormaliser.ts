@@ -4,7 +4,7 @@ import {
   normaliserErrorApiModelSchema,
   normaliserValeursImportResponseApiModelSchema,
   type NormaliserValeursImportResponseApiModel,
-} from '@pilote/kpilote-shared/valeurImport'
+} from '@pilote/kpilote-shared/valeurNormalisation'
 
 import { apiClient } from '@/api/client'
 

@@ -4,7 +4,7 @@ import type {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import type { ValidationIssueApiModel } from '@pilote/kpilote-shared/error'
 import { keyBy } from 'es-toolkit'
-import type { AxeImport } from './lecture/matriceVersRows'
+import type { AxeImport } from './normalisation/lecture/matriceVersRows'
 
 const numeroLigne = (index: number): number => index + 2
 

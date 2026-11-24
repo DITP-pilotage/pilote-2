@@ -3,14 +3,14 @@ import { useQuery } from '@tanstack/react-query'
 import { indicateurQueryOptions } from '@/queries/indicateurs'
 import { normaliserValeursQueryOptions } from '@/queries/valeursNormaliser'
 import { fichierVersMatrice } from './lecture/fichierVersMatrice'
-import { type AxeImport, type ParsedRow } from './lecture/matriceVersRows'
-import { matriceVersRecords } from './lecture/matriceVersRecords'
+import { type AxeImport, type ParsedRow } from './normalisation/lecture/matriceVersRows'
+import { matriceVersRecords } from './normalisation/lecture/matriceVersRecords'
 import {
   deriverEtatImport,
   parseLecture,
   payloadDepuisEtat,
   type EtatImport,
-} from './deriverEtatImport'
+} from './normalisation/deriverEtatImport'
 
 const cleDeFichier = (file: File): string => `${file.name}:${file.size}:${file.lastModified}`
 
