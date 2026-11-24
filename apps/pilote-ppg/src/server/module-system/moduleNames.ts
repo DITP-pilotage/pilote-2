@@ -29,6 +29,7 @@ export const moduleNames = [
   "referentiels",
   "annuaire",
   "formations",
+  "analytics",
 ] as const;
 
 export type ModuleName = (typeof moduleNames)[number];

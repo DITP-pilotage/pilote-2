@@ -5,39 +5,14 @@ import {
   type Analytics,
   type InactiveAnalyticsReason,
 } from "@/client/analytics/browser";
+import { loadDimensionSlots } from "@/client/analytics/loadDimensionSlots";
 import {
-  ANALYTICS_DIMENSIONS,
   ANALYTICS_ENVIRONNEMENTS,
   type AnalyticsEnvironnement,
-  type DimensionSlots,
 } from "@/client/analytics/schema";
 
-const dimensionSlotsSchema = z.record(z.string(), z.unknown());
-
-const slotSchema = z.number().int().positive();
-
-const parseJson = (raw: string) => {
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return undefined;
-  }
-};
-
-export const parseDimensionSlots = (
-  raw: string | undefined,
-): DimensionSlots => {
-  if (!raw) return {};
-  const result = dimensionSlotsSchema.safeParse(parseJson(raw));
-  if (!result.success) return {};
-
-  const slots: DimensionSlots = {};
-  for (const dimension of ANALYTICS_DIMENSIONS) {
-    const slot = slotSchema.safeParse(result.data[dimension]);
-    if (slot.success) slots[dimension] = slot.data;
-  }
-  return slots;
-};
+// Au-delà, les envois retenus partent sans dimensions : l'analytics n'attend pas le serveur.
+const DIMENSIONS_TIMEOUT_MS = 3000;
 
 const environnementSchema = z.enum(ANALYTICS_ENVIRONNEMENTS);
 
@@ -72,9 +47,7 @@ const createAnalytics = (): Analytics => {
         ? {
             matomoUrl,
             siteId,
-            dimensionSlots: parseDimensionSlots(
-              process.env.NEXT_PUBLIC_MATOMO_DIMENSIONS,
-            ),
+            dimensionSlots: {},
             globalDimensions: {
               environnement: parseEnvironnement(
                 process.env.NEXT_PUBLIC_ANALYTICS_ENVIRONNEMENT,
@@ -84,7 +57,10 @@ const createAnalytics = (): Analytics => {
         : null,
     enabled: process.env.NEXT_PUBLIC_RECORD_ANALYTICS === "true",
     doNotTrack: respectDoNotTrack(),
+    waitForDimensions: { timeoutMs: DIMENSIONS_TIMEOUT_MS },
   });
+
+  void loadDimensionSlots(analytics);
 
   // eslint-disable-next-line no-console
   console.info(

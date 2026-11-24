@@ -1,3 +1,4 @@
+import type { DimensionSlots } from "@/shared/analytics/dimensions";
 import type { ProfilCode } from "@/shared/utilisateur/Utilisateur.interface";
 
 export const ANALYTICS_CATEGORIES = [
@@ -86,24 +87,6 @@ export type AnalyticsDimensions = {
   formation?: string;
   environnement?: AnalyticsEnvironnement;
 };
-
-export type AnalyticsDimension = keyof AnalyticsDimensions;
-
-export const ANALYTICS_DIMENSIONS = [
-  "profil_pilote",
-  "conversation_id",
-  "llm_call_id",
-  "proposition_id",
-  "proposition_mode",
-  "type_question",
-  "nombre_choix",
-  "position_choix",
-  "periode_information",
-  "formation",
-  "environnement",
-] as const satisfies readonly AnalyticsDimension[];
-
-export type DimensionSlots = Partial<Record<AnalyticsDimension, number>>;
 
 export type AnalyticsEvent = {
   category: AnalyticsCategory;

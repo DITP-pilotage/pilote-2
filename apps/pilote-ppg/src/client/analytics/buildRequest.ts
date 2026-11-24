@@ -1,10 +1,10 @@
-import {
-  ANALYTICS_DIMENSIONS,
-  type AnalyticsConfig,
-  type AnalyticsDimensions,
-  type AnalyticsEvent,
-  type AnalyticsPageView,
+import type {
+  AnalyticsConfig,
+  AnalyticsDimensions,
+  AnalyticsEvent,
+  AnalyticsPageView,
 } from "@/client/analytics/schema";
+import { ANALYTICS_DIMENSIONS } from "@/shared/analytics/dimensions";
 
 export type RequestContext = {
   pageUrl: string;
