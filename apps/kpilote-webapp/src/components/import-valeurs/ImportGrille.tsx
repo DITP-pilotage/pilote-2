@@ -1,16 +1,20 @@
 import { type CiblesSaisie, type PlanTransformation } from '@pilote/kpilote-shared/valeurImport'
 import { type LigneImport } from '@pilote/kpilote-shared/valeurImport/applyPlan'
+import { Button } from '@pilote/kpilote-ui/Button'
 import { Check, TriangleAlert } from 'lucide-react'
-import { type ReactNode, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 
 import { GrilleValeurs } from '@/components/grille-valeurs/GrilleValeurs'
 import { clsxm } from '@/lib/clsxm'
 import { type PositionCellule } from '@/lib/grilleValeurs'
 
+import { CelluleEditor } from './CelluleEditor'
+import { type CorrectionSaisie } from './edition'
 import { ErreursServeurBloc } from './ErreursServeurBloc'
 import {
   buildLignesGrille,
   buildNomById,
+  describeEdition,
   describeProvenance,
   filterLignes,
   type FiltreGrille,
@@ -74,8 +78,8 @@ const describeLecture = ({
   return `${lecture} · ${lignesEcartees} ${ecartees}`
 }
 
-// Grille au format cible de l'import : une ligne par valeur, et une cellule
-// sélectionnée dont la barre dit la provenance.
+// Grille au format cible de l'import : une ligne par valeur, une cellule
+// sélectionnée dont la barre dit la provenance, et la correction en place.
 export function ImportGrille({
   lignes,
   lignesEcartees,
@@ -83,6 +87,7 @@ export function ImportGrille({
   cibles,
   origine,
   erreursServeur,
+  onCorrection,
 }: {
   lignes: ReadonlyArray<LigneImport>
   lignesEcartees: number
@@ -90,9 +95,11 @@ export function ImportGrille({
   cibles: CiblesSaisie
   origine: 'STANDARD' | 'ALBERT'
   erreursServeur: string[]
+  onCorrection: (params: { ligne: LigneImport; correction: CorrectionSaisie }) => void
 }) {
   const [filtre, setFiltre] = useState<FiltreGrille>('TOUTES')
   const [selection, setSelection] = useState<PositionCellule>({ ligne: 0, colonne: 0 })
+  const [isEditing, setIsEditing] = useState(false)
 
   const colonnes = useMemo(() => listColonnesGrille({ plan, cibles }), [plan, cibles])
   const nomById = useMemo(() => buildNomById(cibles), [cibles])
@@ -109,6 +116,13 @@ export function ImportGrille({
   const selectedLigne = lignes[selection.ligne]
   const selectedColonne = colonnes[selection.colonne]
   const hasSelection = selectedLigne !== undefined && selectedColonne !== undefined
+  // Une ligne corrigée peut quitter le filtre « À corriger » : sa cellule n'est plus là pour
+  // porter l'éditeur.
+  const isSelectionVisible = visibles.some((ligne) => ligne.index === selection.ligne)
+  const edition =
+    hasSelection && isSelectionVisible
+      ? describeEdition({ ligne: selectedLigne, colonne: selectedColonne, cibles })
+      : null
   const provenance = hasSelection
     ? describeProvenance({
         ligne: selectedLigne,
@@ -118,6 +132,29 @@ export function ImportGrille({
         nomById,
       })
     : null
+
+  // Mémoïsés : la grille ne redessine que les lignes dont la sélection change.
+  const onSelect = useCallback((position: PositionCellule) => {
+    setSelection(position)
+    setIsEditing(false)
+  }, [])
+  // La grille ne demande l'édition que d'une cellule éditable.
+  const onEdit = useCallback((position: PositionCellule) => {
+    setSelection(position)
+    setIsEditing(true)
+  }, [])
+  const onCloseEditor = useCallback(() => setIsEditing(false), [])
+
+  const submitCorrection = (correction: CorrectionSaisie) => {
+    if (!selectedLigne) return
+    onCorrection({ ligne: selectedLigne, correction })
+    setIsEditing(false)
+  }
+
+  const editor =
+    isEditing && edition ? (
+      <CelluleEditor edition={edition} onCorrection={submitCorrection} />
+    ) : null
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -158,6 +195,17 @@ export function ImportGrille({
         >
           {provenance?.texte ?? ''}
         </div>
+        {edition ? (
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsEditing(true)}
+            className="mr-1.5 whitespace-nowrap"
+          >
+            {edition.action}
+          </Button>
+        ) : null}
       </div>
 
       <GrilleValeurs
@@ -165,7 +213,10 @@ export function ImportGrille({
         colonnes={colonnes}
         lignes={visibles}
         selection={selection}
-        onSelect={setSelection}
+        onSelect={onSelect}
+        editor={editor}
+        onEdit={onEdit}
+        onCloseEditor={onCloseEditor}
         emptyMessage="Aucune ligne à corriger : toutes les valeurs sont prêtes."
       />
     </div>

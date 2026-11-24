@@ -45,7 +45,10 @@ export function GrilleCellule({
   // flèches déplacent à nouveau la sélection. Un clic sur une autre cellule l'a déjà pris.
   const onCloseAutoFocus = (event: Event) => {
     event.preventDefault()
-    if (document.activeElement === document.body) document.getElementById(id)?.focus()
+    const celluleButton = document.getElementById(id)
+    const isFocusInGrille =
+      celluleButton?.closest('table')?.contains(document.activeElement) ?? false
+    if (!isFocusInGrille) celluleButton?.focus()
   }
 
   const button = (

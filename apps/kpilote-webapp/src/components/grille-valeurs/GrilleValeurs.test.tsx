@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { Sparkles } from 'lucide-react'
-import { type ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { GrilleValeurs } from '@/components/grille-valeurs/GrilleValeurs'
@@ -310,5 +310,78 @@ describe('GrilleValeurs, édition', () => {
     await userEvent.keyboard('{ArrowDown}')
 
     expect(onSelect).not.toHaveBeenCalled()
+  })
+
+  it('Échap rend le focus à la cellule, et les flèches déplacent à nouveau la sélection', async () => {
+    const onSelect = vi.fn<(position: PositionCellule) => void>()
+    function GrilleEnEdition() {
+      const [isEditing, setIsEditing] = useState(true)
+      return (
+        <GrilleValeurs
+          label="Valeurs"
+          colonnes={COLONNES}
+          lignes={LIGNES_EDITABLES}
+          selection={{ ligne: 0, colonne: 0 }}
+          onSelect={onSelect}
+          editor={isEditing ? <input aria-label="Champ de test" /> : null}
+          onEdit={() => setIsEditing(true)}
+          onCloseEditor={() => setIsEditing(false)}
+          emptyMessage="Aucune valeur."
+        />
+      )
+    }
+    render(<GrilleEnEdition />)
+
+    screen.getByRole('textbox', { name: 'Champ de test' }).focus()
+    await userEvent.keyboard('{Escape}')
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Vaucluse' })).toHaveFocus())
+    expect(screen.queryByRole('textbox', { name: 'Champ de test' })).not.toBeInTheDocument()
+    await userEvent.keyboard('{ArrowDown}')
+    expect(onSelect).toHaveBeenCalledWith({ ligne: 1, colonne: 0 })
+  })
+
+  it('un clic sur une autre cellule ferme l’éditeur', async () => {
+    const onCloseEditor = vi.fn<() => void>()
+    renderGrille({
+      lignes: LIGNES_EDITABLES,
+      selection: { ligne: 0, colonne: 0 },
+      editor: <p>Éditeur de test</p>,
+      onEdit: vi.fn(),
+      onCloseEditor,
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Gard' }))
+
+    expect(onCloseEditor).toHaveBeenCalled()
+  })
+
+  it('un clic hors de la grille rend aussi le focus à la cellule', async () => {
+    function GrilleDansUnConteneur() {
+      const [isEditing, setIsEditing] = useState(true)
+      // Comme le contenu d'une modale : focalisable, il prend le focus au clic.
+      return (
+        <div tabIndex={-1}>
+          <p>Hors de la grille</p>
+          <GrilleValeurs
+            label="Valeurs"
+            colonnes={COLONNES}
+            lignes={LIGNES_EDITABLES}
+            selection={{ ligne: 0, colonne: 0 }}
+            onSelect={vi.fn()}
+            editor={isEditing ? <input aria-label="Champ de test" /> : null}
+            onEdit={() => setIsEditing(true)}
+            onCloseEditor={() => setIsEditing(false)}
+            emptyMessage="Aucune valeur."
+          />
+        </div>
+      )
+    }
+    render(<GrilleDansUnConteneur />)
+
+    screen.getByRole('textbox', { name: 'Champ de test' }).focus()
+    await userEvent.click(screen.getByText('Hors de la grille'))
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Vaucluse' })).toHaveFocus())
   })
 })
