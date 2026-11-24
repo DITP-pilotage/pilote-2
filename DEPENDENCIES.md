@@ -89,7 +89,7 @@ Il permet aussi, comme le pin précédent, ESLint 10 (qui requiert Node ≥ 20.1
 | `@keycloak/keycloak-admin-client` | `26.5.6` | La 26.6.0 a un `prepare` script cassé qui appelle `pnpm wireit`. À re-tester maintenant qu'on est sur pnpm (le blocage d'origine venait de `npm install`). | Check `pnpm outdated` à chaque campagne |
 | `@tiptap/*` (core, extensions, react, pm, starter-kit, etc.) | `3.22.3` | Les packages `@tiptap/*` **doivent tous être à la même version** au runtime sinon l'éditeur plante (multiple `@tiptap/core` instances). On pin à l'exact pour éviter qu'un seul paquet dérive. | Bumper tout le bloc ensemble |
 | `evalite` (ppg, devDep) | `1.0.0-beta.16` | Outillage local des evals d'Albert. Seule version qui fournit `trialCount`, `evalite.each()` et les scorers : la `0.19.0` (`latest`) n'en a aucun. Les deux sont figées depuis le 2026-02-20. `better-sqlite3` est en `^13` alors que sa peer demande `^11` : la v11 n'a pas de binaire précompilé pour Node 24. | À chaque campagne : `npm view evalite dist-tags`. Passer en `^1` dès la 1.0 stable, et réaligner `better-sqlite3` sur sa peer. Le 2026-11-16, le moteur l'a « bumpé » en `0.19.0`, une rétrogradation classée major : il écarte désormais toute cible inférieure à la version courante (`retrogradationsEcartees`) |
-| `fast-xml-parser` | `5.7.3` | Bumpé en mai 2026 pour CVEs. Pinné car la 5.7.1 introduit `@nodable/entities` v2.1.0 avec breaking changes sur les entités — on fige tant qu'on n'a pas vérifié l'impact. | À évaluer pour passer en `^5.7.3` |
+| `fast-xml-parser` | `5.12.0` | Bumpé en mai 2026 pour CVEs. Pinné car la 5.7.1 introduit `@nodable/entities` v2.1.0 avec breaking changes sur les entités — on fige tant qu'on n'a pas vérifié l'impact. | À évaluer pour passer en `^5.7.3` |
 | `@next/env`, `next-auth`, `convict*`, `dotenv`, `dotenv-expand`, `next-router-mock`, `jest-extended`, `sanitize-html`, `sass`, `swagger-ui-react`, `ws`, `zustand`, etc. | divers | Pins historiques par prudence. Chaque ligne pourrait être remplacée par `^` lors d'une campagne si on valide que le bump mineur est safe. | À réévaluer ponctuellement |
 
 ## Dépendances hors registre
@@ -122,6 +122,8 @@ Définis dans `pnpm.overrides` du `package.json` racine. Tous ajoutés lors de l
 
 | Override | Verdict | Cible CVE | Condition de sortie (corrigée) | Action |
 |---|---|---|---|---|
+| `effect@>=3 <4: >=3.22.1 <4` (ajouté le 2026-11-24) | **PORTEUR** — 3.20.0 sans lui | GHSA-7589-6fvf-x4pw (**high**, ReDoS dans `Schema.TemplateLiteral`, `<=3.22.0`) | `@prisma/config` relève son pin exact `effect: 3.20.0` : `npm view @prisma/config dependencies.effect`. Fait dans la 7.11.0-dev.4, pas encore dans une stable (7.10.1 au 2026-11-24) | **GARDER** jusque-là |
+| `@hono/vite-dev-server>minimatch: >=11.0.1 <12` (ajouté le 2026-11-24) | **PORTEUR** — 9.0.9 sans lui | GHSA-g3hv-75wg-m249 (moderate, `<11.0.1`, aucun correctif en 9.x) | `@hono/vite-dev-server` (0.26.1, `minimatch ^9.0.3`) déclare une version `>=11.0.1` | **GARDER.** Deux majors forcés : `minimatch` n'est appelé que sur les motifs `exclude` de type chaîne, et ceux des trois apps (comme les défauts) sont tous des `RegExp`. **À revérifier si un motif chaîne est ajouté** |
 | `@hono/node-server@>=1.19.10 <2: >=2.1.3 <3` (ajouté le 2026-11-09) | **PORTEUR** — 1.19.17 sans lui | GHSA-rmxm-3fg6-px4f (`serveStatic` décode deux fois le chemin, bypass de middleware) : aucun correctif en 1.x, premier patch en 2.1.3 | `@hono/vite-dev-server` (devDep des 3 apps kpilote, `^1.19.11`) et `@ai-sdk/devtools` (ppg, `^1.13.7`) acceptent une 2.x, **ou** l'advisory reçoit un backport 1.x. **Non remplie au 2026-11-16** : `@hono/vite-dev-server` toujours en 0.26.1 (2026-07-11) ; la 1.19.18 backporte GHSA-jpvv-r467-5p4w mais **pas** GHSA-rmxm (range `>=1.19.10 <2.1.3`, aucun patch 1.x) | **GARDER.** Plafond de major forcé sur de l'outillage dev uniquement : `getRequestListener` et `getConnInfo`, seuls imports du plugin, existent en 2.x ; serveur de dev kpilote-api vérifié identique à `dev` |
 | `@hono/node-server: >=1.19.13` | **PORTEUR** — se résout en 1.19.11 sans lui | GHSA-92pp-h63x-v22m (bypass middleware, `<1.19.13`) — **réelle** | ~~« Quand `@prisma/dev` bumpera »~~ **visait le mauvais paquet.** `@prisma/dev@0.24.14` a *supprimé* la dep — mais `prisma@7.8.0` le pinne à `0.24.3` exact. Vraie condition : **quand `prisma` relèvera son pin `@prisma/dev`** (probablement 7.9.0). | **CIBLER** `"@prisma/dev>@hono/node-server": ">=1.19.13 <2"`. Ne **jamais** poser `<2` en global : les 3 apps kpilote sont en `^2.0.8` depuis `8c1d0b548`. |
 | `@xmldom/xmldom: >=0.9.10` | **PORTEUR** — 0.9.9 sans lui | 4× **HIGH** (GHSA-2v35-w6hq-6mfw, -f6ww-3ggp-fr8h, -x6wf-f3px-wcqx, -j759-j44w-7fr8) — **réelles** | ~~« stable 5.x de `speech-rule-engine` »~~ **incomplète.** `mathjax-full@3.2.2` déclare `^4.0.6` : même une 5.0.0 stable ne serait pas prise. Vraie condition : **stable 5.x de speech-rule-engine ET bump de `mathjax-full`.** (`latest` = `5.0.0-rc.4`) | **GARDER**, borner `">=0.9.10 <0.10"` |
@@ -831,7 +833,7 @@ tous les quinze jours.**
 
 | Override | Advisories fermées | Condition de sortie |
 |---|---|---|
-| `evalite>@fastify/static: >=10.1.2 <11` | GHSA-83w8-p2f5-377r (**high**, `<=10.1.0`), GHSA-8pvw-jcv7-9cmj (`<=10.1.1`), GHSA-pr96-94w5-mx2h et GHSA-x428-ghpx-8j92 (`>=8 <=9.1.0`) | `evalite` déclare `@fastify/static >=10.1.2` |
+| `evalite>@fastify/static: >=10.1.9 <11` (relevé de `>=10.1.2` le 2026-11-24 : première version sur `glob ^14`) | GHSA-3g3m-2fjr-6pw4 et GHSA-g3hv-75wg-m249 (via `glob`), GHSA-83w8-p2f5-377r (**high**, `<=10.1.0`), GHSA-8pvw-jcv7-9cmj (`<=10.1.1`), GHSA-pr96-94w5-mx2h et GHSA-x428-ghpx-8j92 (`>=8 <=9.1.0`) | `evalite` déclare `@fastify/static >=10.1.9` |
 | `evalite>file-type: >=21.3.1 <22` | GHSA-5v7r-6r5c-r473 (`>=13 <21.3.1`) | `evalite` déclare `file-type >=21.3.1` |
 
 - **Ciblés sur le parent**, pas globaux : rien d'autre dans l'arbre ne tire ces paquets, et un
@@ -1261,6 +1263,36 @@ sert une CSP permissive (`'unsafe-inline'`). Après tout bump de `next` ou `reac
 - **Attendre** : `@hono/node-server` v2 (retirer l'override d'abord, cf. « Overrides »)
 
 ## Historique des campagnes
+
+### Novembre 2026 (2026-11-24) — Campagne centrée sécu
+
+Livrée en trois PR empilées : vulnérabilités, puis in-range et pin-minors, puis majors. Départ : **63 deps
+périmées, 4 majors, 5 advisories** (1 high, 3 moderate, 1 low). La première PR suffit à arriver à **0**.
+
+| Advisory | Fermée par |
+|---|---|
+| `effect` 3.20.0 (high) | override → 3.22.4 |
+| `glob` 13.0.6, `minimatch` 10.2.6 (moderate, via `evalite>@fastify/static`) | plancher relevé à `>=10.1.9` → `@fastify/static` 10.1.10, `glob` 14.0.4 |
+| `minimatch` 9.0.9 (moderate, via `@hono/vite-dev-server`) | override → 11.0.5 |
+| `fast-xml-parser` 5.11.2 (low) | 5.12.0 |
+
+**`prisma` (CLI) 7.10.0 → 7.10.1.** Désalignée du client, déjà en 7.10.1 : la balise `latest` de `prisma`
+pointe sur une RC de la 8, que le moteur écarte **sans proposer la dernière stable de la ligne courante**.
+Angle mort à connaître : pour un paquet dont `latest` est une préversion, les patchs stables ne sont jamais
+proposés. La 7.10.1 épingle `mysql2` 3.24.4 et `deepmerge-ts` 8.0.2 : **les overrides `mysql2` et
+`deepmerge-ts` sont retirés**, résolution re-forcée et vérifiée sans eux. Leur banc d'essai du jour les disait
+porteurs parce qu'il a tourné avant l'alignement de la CLI.
+
+**Rouge ppg hérité de `dev`.** `evals/3-scenarios/mondeTerritorial.integration.test.ts` échouait sur tous les
+commits du moteur, sans aucun bump : il n'avait pas suivi #2734 (PIL-2028). Corrigé par #2740.
+
+**Base de test kpilote-api partagée.** Les bases locales portaient des migrations d'autres branches, et le
+`globalSetup` des tests joue `migrate deploy` : rejouer l'oracle sur une base dédiée (`DATABASE_URL`).
+
+**Moteur.** La sonde de la base de test ppg utilisait encore `dotenv -e`, syntaxe de `dotenv-cli` retirée par
+#2695 : corrigée en `dotenv run -f`.
+
+**`xlsx`** : 0.20.3 reste la dernière version servie par le CDN de SheetJS (0.20.4, 0.20.5 et 0.21.0 en 404).
 
 ### Novembre 2026 (2026-11-16) — Campagne centrée sécu
 

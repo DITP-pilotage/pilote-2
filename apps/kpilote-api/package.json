@@ -68,7 +68,7 @@
     "pino-pretty": "^13.2.0",
     "portless": "^0.15.13",
     "prettier": "^3.9.10",
-    "prisma": "7.10.0",
+    "prisma": "7.10.1",
     "tsx": "^4.23.15",
     "typescript": "7.0.2",
     "vite": "^8.3.5",
