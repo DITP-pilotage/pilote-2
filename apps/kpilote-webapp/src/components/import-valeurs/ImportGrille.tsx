@@ -96,7 +96,10 @@ export function ImportGrille({
 
   const colonnes = useMemo(() => listColonnesGrille({ plan, cibles }), [plan, cibles])
   const nomById = useMemo(() => buildNomById(cibles), [cibles])
-  const lignesGrille = useMemo(() => buildLignesGrille({ lignes, nomById }), [lignes, nomById])
+  const lignesGrille = useMemo(
+    () => buildLignesGrille({ lignes, colonnes, nomById }),
+    [lignes, colonnes, nomById],
+  )
   const visibles = useMemo(
     () => filterLignes({ lignesGrille, lignes, filtre }),
     [lignesGrille, lignes, filtre],

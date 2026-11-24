@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { Sparkles } from 'lucide-react'
+import { type ReactNode } from 'react'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { GrilleValeurs } from '@/components/grille-valeurs/GrilleValeurs'
@@ -22,6 +23,7 @@ const buildCellule = (overrides: Partial<CelluleGrille> = {}): CelluleGrille => 
   tone: 'DEFAULT',
   marker: null,
   alignRight: false,
+  isEditable: true,
   ...overrides,
 })
 
@@ -42,10 +44,16 @@ const renderGrille = ({
   lignes = LIGNES,
   selection = { ligne: 0, colonne: 0 },
   onSelect = vi.fn<(position: PositionCellule) => void>(),
+  editor = null,
+  onEdit,
+  onCloseEditor = vi.fn<() => void>(),
 }: {
   lignes?: LigneGrille[]
   selection?: PositionCellule
   onSelect?: (position: PositionCellule) => void
+  editor?: ReactNode
+  onEdit?: (position: PositionCellule) => void
+  onCloseEditor?: () => void
 } = {}) =>
   render(
     <GrilleValeurs
@@ -54,6 +62,10 @@ const renderGrille = ({
       lignes={lignes}
       selection={selection}
       onSelect={onSelect}
+      editor={editor}
+      // Sans `onEdit`, la grille est en lecture seule.
+      {...(onEdit ? { onEdit } : {})}
+      onCloseEditor={onCloseEditor}
       emptyMessage="Aucune valeur."
     />,
   )
@@ -177,5 +189,126 @@ describe('GrilleValeurs', () => {
     renderGrille({ selection: { ligne: -1, colonne: 0 } })
 
     expect(pressedCellules()).toEqual([])
+  })
+})
+
+describe('GrilleValeurs, édition', () => {
+  const LIGNES_EDITABLES: LigneGrille[] = [
+    {
+      index: 0,
+      numero: 1,
+      cellules: [
+        buildCellule({ text: 'Vaucluse' }),
+        buildCellule({ text: 'Orange', isEditable: false }),
+      ],
+    },
+    {
+      index: 1,
+      numero: 2,
+      cellules: [buildCellule({ text: 'Gard' }), buildCellule({ text: 'Free' })],
+    },
+  ]
+
+  it('double-cliquer une cellule éditable demande son édition', async () => {
+    const onEdit = vi.fn<(position: PositionCellule) => void>()
+    renderGrille({ lignes: LIGNES_EDITABLES, onEdit })
+
+    await userEvent.dblClick(screen.getByRole('button', { name: 'Free' }))
+
+    expect(onEdit).toHaveBeenCalledWith({ ligne: 1, colonne: 1 })
+  })
+
+  it('double-cliquer une cellule non éditable ne demande rien', async () => {
+    const onEdit = vi.fn<(position: PositionCellule) => void>()
+    renderGrille({ lignes: LIGNES_EDITABLES, onEdit })
+
+    await userEvent.dblClick(screen.getByRole('button', { name: 'Orange' }))
+
+    expect(onEdit).not.toHaveBeenCalled()
+  })
+
+  it('Entrée et F2 demandent l’édition de la cellule sélectionnée', async () => {
+    const onEdit = vi.fn<(position: PositionCellule) => void>()
+    renderGrille({ lignes: LIGNES_EDITABLES, selection: { ligne: 1, colonne: 0 }, onEdit })
+
+    screen.getByRole('button', { name: 'Gard' }).focus()
+    await userEvent.keyboard('{Enter}')
+    await userEvent.keyboard('{F2}')
+
+    expect(onEdit).toHaveBeenCalledTimes(2)
+    expect(onEdit).toHaveBeenNthCalledWith(1, { ligne: 1, colonne: 0 })
+    expect(onEdit).toHaveBeenNthCalledWith(2, { ligne: 1, colonne: 0 })
+  })
+
+  it('Entrée et F2 ne demandent rien sur une cellule non éditable', async () => {
+    const onEdit = vi.fn<(position: PositionCellule) => void>()
+    renderGrille({ lignes: LIGNES_EDITABLES, selection: { ligne: 0, colonne: 1 }, onEdit })
+
+    screen.getByRole('button', { name: 'Orange' }).focus()
+    await userEvent.keyboard('{Enter}')
+    await userEvent.keyboard('{F2}')
+
+    expect(onEdit).not.toHaveBeenCalled()
+  })
+
+  it('sans onEdit, la grille reste en lecture seule', async () => {
+    const onSelect = vi.fn<(position: PositionCellule) => void>()
+    renderGrille({ lignes: LIGNES_EDITABLES, selection: { ligne: 1, colonne: 0 }, onSelect })
+
+    await userEvent.dblClick(screen.getByRole('button', { name: 'Gard' }))
+    await userEvent.keyboard('{Enter}')
+    await userEvent.keyboard('{F2}')
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(onSelect).toHaveBeenCalledWith({ ligne: 1, colonne: 0 })
+  })
+
+  it('distingue au curseur une cellule éditable d’une cellule non éditable', () => {
+    renderGrille({ lignes: LIGNES_EDITABLES, onEdit: vi.fn() })
+
+    expect(screen.getByRole('button', { name: 'Vaucluse' })).toHaveClass('cursor-cell')
+    expect(screen.getByRole('button', { name: 'Orange' })).toHaveClass('cursor-default')
+  })
+
+  it('affiche l’éditeur fourni, ancré à la cellule sélectionnée', () => {
+    renderGrille({
+      lignes: LIGNES_EDITABLES,
+      selection: { ligne: 1, colonne: 1 },
+      editor: <p>Éditeur de test</p>,
+      onEdit: vi.fn(),
+    })
+
+    expect(screen.getByText('Éditeur de test')).toBeInTheDocument()
+  })
+
+  it('Échap ferme l’éditeur', async () => {
+    const onCloseEditor = vi.fn<() => void>()
+    renderGrille({
+      lignes: LIGNES_EDITABLES,
+      selection: { ligne: 1, colonne: 1 },
+      editor: <p>Éditeur de test</p>,
+      onEdit: vi.fn(),
+      onCloseEditor,
+    })
+
+    await userEvent.keyboard('{Escape}')
+
+    expect(onCloseEditor).toHaveBeenCalled()
+  })
+
+  it('les flèches ne bougent pas la sélection pendant l’édition', async () => {
+    const onSelect = vi.fn<(position: PositionCellule) => void>()
+    renderGrille({
+      lignes: LIGNES_EDITABLES,
+      selection: { ligne: 0, colonne: 0 },
+      onSelect,
+      editor: <input aria-label="Champ de test" />,
+      onEdit: vi.fn(),
+    })
+
+    screen.getByRole('textbox', { name: 'Champ de test' }).focus()
+    await userEvent.keyboard('{ArrowDown}')
+
+    expect(onSelect).not.toHaveBeenCalled()
   })
 })

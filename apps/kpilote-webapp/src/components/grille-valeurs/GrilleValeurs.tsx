@@ -1,10 +1,11 @@
-import { type KeyboardEvent, useEffect, useId } from 'react'
+import { type KeyboardEvent, type ReactNode, useEffect, useId } from 'react'
 
 import { ColonneEntete } from '@/components/grille-valeurs/ColonneEntete'
 import { GrilleLigne } from '@/components/grille-valeurs/GrilleLigne'
 import { clsxm } from '@/lib/clsxm'
 import {
   cellDomId,
+  type CelluleGrille,
   type ColonneGrille,
   type LigneGrille,
   movePosition,
@@ -26,6 +27,19 @@ const DELTA_BY_KEY: Record<string, { ligne: number; colonne: number }> = {
   ArrowRight: { ligne: 0, colonne: 1 },
 }
 
+const EDIT_KEYS: ReadonlyArray<string> = ['Enter', 'F2']
+
+const noop = () => undefined
+
+const findCellule = ({
+  lignes,
+  position,
+}: {
+  lignes: ReadonlyArray<LigneGrille>
+  position: PositionCellule
+}): CelluleGrille | undefined =>
+  lignes.find((ligne) => ligne.index === position.ligne)?.cellules[position.colonne]
+
 // La seule cellule atteignable par Tab : la cellule sélectionnée si sa ligne est affichée,
 // sinon la première cellule de la première ligne affichée.
 const findTabStop = ({
@@ -42,13 +56,18 @@ const findTabStop = ({
   return { ligne: premiereLigne.index, colonne: 0 }
 }
 
-// Une ligne par valeur, en lecture seule, avec une cellule sélectionnée que le clavier déplace.
+// Une ligne par valeur, avec une cellule sélectionnée que le clavier déplace. La grille demande
+// l'édition d'une cellule éditable et affiche l'éditeur qu'on lui donne : ce que veut dire
+// corriger appartient à l'écran. Sans `onEdit`, elle est en lecture seule.
 export function GrilleValeurs({
   label,
   colonnes,
   lignes,
   selection,
   onSelect,
+  editor = null,
+  onEdit,
+  onCloseEditor = noop,
   emptyMessage,
   isFramed = true,
 }: {
@@ -57,6 +76,11 @@ export function GrilleValeurs({
   lignes: ReadonlyArray<LigneGrille>
   selection: PositionCellule
   onSelect: (position: PositionCellule) => void
+  // Éditeur ouvert sur la cellule sélectionnée, ou `null`.
+  editor?: ReactNode
+  // Absent : la grille est en lecture seule.
+  onEdit?: (position: PositionCellule) => void
+  onCloseEditor?: () => void
   emptyMessage: string
   // Sans cadre : la grille occupe tout son conteneur.
   isFramed?: boolean
@@ -67,6 +91,7 @@ export function GrilleValeurs({
   // l'arrêt de tabulation quand elle reçoit le focus, donc son `onFocus` ne sélectionne pas
   // une seconde fois.
   const tabStop = findTabStop({ selection, lignes })
+  const isEditing = editor !== null
 
   // La cellule sélectionnée reste visible quand la sélection change.
   useEffect(() => {
@@ -74,7 +99,18 @@ export function GrilleValeurs({
     cellule?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
   }, [gridId, selection])
 
+  const editSelection = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!onEdit) return
+    if (!findCellule({ lignes, position: selection })?.isEditable) return
+    event.preventDefault()
+    onEdit(selection)
+  }
+
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    // Le clavier appartient à l'éditeur (liste de candidats, champ texte) : ses événements
+    // remontent jusqu'ici à travers le portail du popover.
+    if (isEditing) return
+    if (EDIT_KEYS.includes(event.key)) return editSelection(event)
     const delta = DELTA_BY_KEY[event.key]
     if (!delta) return
     event.preventDefault()
@@ -120,16 +156,22 @@ export function GrilleValeurs({
           </tr>
         </thead>
         <tbody>
-          {lignes.map((ligne) => (
-            <GrilleLigne
-              key={ligne.index}
-              gridId={gridId}
-              ligne={ligne}
-              selectedColonne={ligne.index === selection.ligne ? selection.colonne : null}
-              tabStopColonne={ligne.index === tabStop?.ligne ? tabStop.colonne : null}
-              onSelect={onSelect}
-            />
-          ))}
+          {lignes.map((ligne) => {
+            const isSelectedLigne = ligne.index === selection.ligne
+            return (
+              <GrilleLigne
+                key={ligne.index}
+                gridId={gridId}
+                ligne={ligne}
+                selectedColonne={isSelectedLigne ? selection.colonne : null}
+                tabStopColonne={ligne.index === tabStop?.ligne ? tabStop.colonne : null}
+                editor={isSelectedLigne ? editor : null}
+                onSelect={onSelect}
+                onEdit={onEdit}
+                onCloseEditor={onCloseEditor}
+              />
+            )
+          })}
         </tbody>
       </table>
       {lignes.length === 0 ? (

@@ -25,6 +25,8 @@ export type CelluleGrille = {
   tone: CelluleTone
   marker: CelluleMarker | null
   alignRight: boolean
+  // L'écran sait la corriger : la grille demande son édition au double-clic, à Entrée ou à F2.
+  isEditable: boolean
 }
 
 export type LigneGrille = {

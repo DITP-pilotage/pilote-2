@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, type ReactNode } from 'react'
 
 import { GrilleCellule } from '@/components/grille-valeurs/GrilleCellule'
 import { type LigneGrille, type PositionCellule } from '@/lib/grilleValeurs'
@@ -10,7 +10,10 @@ export const GrilleLigne = memo(function GrilleLigne({
   ligne,
   selectedColonne,
   tabStopColonne,
+  editor,
   onSelect,
+  onEdit,
+  onCloseEditor,
 }: {
   gridId: string
   ligne: LigneGrille
@@ -18,7 +21,11 @@ export const GrilleLigne = memo(function GrilleLigne({
   selectedColonne: number | null
   // Colonne de l'arrêt de tabulation de la grille sur cette ligne, ou `null`.
   tabStopColonne: number | null
+  // Éditeur ouvert sur la cellule sélectionnée de cette ligne, ou `null`.
+  editor: ReactNode
   onSelect: (position: PositionCellule) => void
+  onEdit: ((position: PositionCellule) => void) | undefined
+  onCloseEditor: () => void
 }) {
   return (
     <tr className="bg-surface">
@@ -28,17 +35,23 @@ export const GrilleLigne = memo(function GrilleLigne({
       >
         {ligne.numero}
       </th>
-      {ligne.cellules.map((cellule, colonne) => (
-        <GrilleCellule
-          key={colonne}
-          gridId={gridId}
-          cellule={cellule}
-          position={{ ligne: ligne.index, colonne }}
-          isSelected={selectedColonne === colonne}
-          isTabStop={tabStopColonne === colonne}
-          onSelect={onSelect}
-        />
-      ))}
+      {ligne.cellules.map((cellule, colonne) => {
+        const isSelected = selectedColonne === colonne
+        return (
+          <GrilleCellule
+            key={colonne}
+            gridId={gridId}
+            cellule={cellule}
+            position={{ ligne: ligne.index, colonne }}
+            isSelected={isSelected}
+            isTabStop={tabStopColonne === colonne}
+            editor={isSelected ? editor : null}
+            onSelect={onSelect}
+            onEdit={onEdit}
+            onCloseEditor={onCloseEditor}
+          />
+        )
+      })}
     </tr>
   )
 })
