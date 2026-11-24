@@ -19,10 +19,11 @@ import { err, ok, type Result } from 'neverthrow'
 export type StructureProposee = {
   colonneIndividu: string
   colonnesAxes: Array<{ axe: string; colonne: string }>
-  disposition: 'LIGNES' | 'COLONNES'
+  disposition: 'LIGNES' | 'COLONNES' | 'COLONNES_MODALITES'
   colonneDate?: string | null | undefined
   colonneValeur?: string | null | undefined
   colonnesDates?: Array<{ colonne: string; date?: string | null | undefined }> | null | undefined
+  axeEnColonnes?: { axe: string; colonnes: string[] } | null | undefined
   colonneFiltre?: string | null | undefined
   valeursFiltre?: string[] | null | undefined
 }
@@ -30,6 +31,9 @@ export type StructureProposee = {
 export type StructureValidee = {
   colonneIndividu: string
   colonnesAxes: Array<{ axe: string; colonne: string }>
+  // L'axe dont les modalités sont les en-têtes des colonnes de valeurs
+  // (`COLONNES_MODALITES`), nul sinon.
+  axeEnEntete: string | null
   valeurs: DispositionValeurs
   filtre?: FiltreLignes
 }
@@ -39,7 +43,10 @@ export type ErreurStructure =
   | { type: 'COLONNE_A_DEUX_ROLES'; colonne: string }
   | { type: 'AXE_INCONNU'; axe: string }
   | { type: 'AXE_EN_DOUBLE'; axe: string }
-  | { type: 'CHAMP_MANQUANT'; champ: 'colonneDate' | 'colonneValeur' | 'colonnesDates' }
+  | {
+      type: 'CHAMP_MANQUANT'
+      champ: 'colonneDate' | 'colonneValeur' | 'colonnesDates' | 'axeEnColonnes'
+    }
   | { type: 'DATE_INVALIDE'; colonne: string }
   | { type: 'FILTRE_SANS_VALEUR'; colonne: string }
   | { type: 'VALEUR_DE_FILTRE_INCONNUE'; valeur: string }
@@ -56,21 +63,34 @@ const duplicatesOf = (values: ReadonlyArray<string>): string[] =>
     .filter(([, count]) => count > 1)
     .map(([value]) => value)
 
-type Disposition = { valeurs: DispositionValeurs | null; erreurs: ErreurStructure[] }
+type Disposition = {
+  valeurs: DispositionValeurs | null
+  axeEnEntete: string | null
+  erreurs: ErreurStructure[]
+}
 
-const readDisposition = (proposition: StructureProposee): Disposition => {
-  if (proposition.disposition === 'LIGNES') {
-    const colonneDate = clean(proposition.colonneDate)
-    const colonneValeur = clean(proposition.colonneValeur)
-    const erreurs: ErreurStructure[] = []
-    if (!colonneDate) erreurs.push({ type: 'CHAMP_MANQUANT', champ: 'colonneDate' })
-    if (!colonneValeur) erreurs.push({ type: 'CHAMP_MANQUANT', champ: 'colonneValeur' })
-    if (!colonneDate || !colonneValeur) return { valeurs: null, erreurs }
-    return { valeurs: { disposition: 'LIGNES', colonneDate, colonneValeur }, erreurs }
+const readLignes = (proposition: StructureProposee): Disposition => {
+  const colonneDate = clean(proposition.colonneDate)
+  const colonneValeur = clean(proposition.colonneValeur)
+  const erreurs: ErreurStructure[] = []
+  if (!colonneDate) erreurs.push({ type: 'CHAMP_MANQUANT', champ: 'colonneDate' })
+  if (!colonneValeur) erreurs.push({ type: 'CHAMP_MANQUANT', champ: 'colonneValeur' })
+  if (!colonneDate || !colonneValeur) return { valeurs: null, axeEnEntete: null, erreurs }
+  return {
+    valeurs: { disposition: 'LIGNES', colonneDate, colonneValeur },
+    axeEnEntete: null,
+    erreurs,
   }
+}
+
+const readColonnesDates = (proposition: StructureProposee): Disposition => {
   const proposees = proposition.colonnesDates ?? []
   if (proposees.length === 0) {
-    return { valeurs: null, erreurs: [{ type: 'CHAMP_MANQUANT', champ: 'colonnesDates' }] }
+    return {
+      valeurs: null,
+      axeEnEntete: null,
+      erreurs: [{ type: 'CHAMP_MANQUANT', champ: 'colonnesDates' }],
+    }
   }
   // Le parseur du code fait autorité sur un en-tête qu'il sait lire ; la date
   // donnée par Albert ne sert que pour les en-têtes qu'il ne tranche pas.
@@ -81,13 +101,46 @@ const readDisposition = (proposition: StructureProposee): Disposition => {
   const erreurs = colonnes
     .filter(({ date }) => !isValidCalendarDate(date))
     .map(({ colonne }): ErreurStructure => ({ type: 'DATE_INVALIDE', colonne }))
-  return { valeurs: { disposition: 'COLONNES', colonnes }, erreurs }
+  return { valeurs: { disposition: 'COLONNES', colonnes }, axeEnEntete: null, erreurs }
 }
 
-const columnsOf = (valeurs: DispositionValeurs): string[] =>
-  valeurs.disposition === 'LIGNES'
-    ? [valeurs.colonneDate, valeurs.colonneValeur]
-    : valeurs.colonnes.map(({ colonne }) => colonne)
+const readColonnesModalites = (proposition: StructureProposee): Disposition => {
+  const colonneDate = clean(proposition.colonneDate)
+  const axe = clean(proposition.axeEnColonnes?.axe)
+  const colonnes = (proposition.axeEnColonnes?.colonnes ?? []).map((colonne) => colonne.trim())
+  const hasAxeEnColonnes = axe !== null && colonnes.length > 0
+  const erreurs: ErreurStructure[] = []
+  if (!colonneDate) erreurs.push({ type: 'CHAMP_MANQUANT', champ: 'colonneDate' })
+  if (!hasAxeEnColonnes) erreurs.push({ type: 'CHAMP_MANQUANT', champ: 'axeEnColonnes' })
+  if (!colonneDate || !hasAxeEnColonnes) return { valeurs: null, axeEnEntete: null, erreurs }
+  return {
+    valeurs: { disposition: 'COLONNES_MODALITES', colonneDate, colonnes },
+    axeEnEntete: axe,
+    erreurs,
+  }
+}
+
+const readDisposition = (proposition: StructureProposee): Disposition => {
+  switch (proposition.disposition) {
+    case 'LIGNES':
+      return readLignes(proposition)
+    case 'COLONNES':
+      return readColonnesDates(proposition)
+    case 'COLONNES_MODALITES':
+      return readColonnesModalites(proposition)
+  }
+}
+
+const columnsOf = (valeurs: DispositionValeurs): string[] => {
+  switch (valeurs.disposition) {
+    case 'LIGNES':
+      return [valeurs.colonneDate, valeurs.colonneValeur]
+    case 'COLONNES':
+      return valeurs.colonnes.map(({ colonne }) => colonne)
+    case 'COLONNES_MODALITES':
+      return [valeurs.colonneDate, ...valeurs.colonnes]
+  }
+}
 
 type Filtre = { filtre: FiltreLignes | null; erreurs: ErreurStructure[] }
 
@@ -114,7 +167,7 @@ const readFiltre = ({
 
 // Une structure n'est acceptée que si chaque colonne citée existe dans le
 // fichier et n'a qu'un rôle, et si chaque axe cité est un axe de l'indicateur,
-// cité une seule fois.
+// cité une seule fois, en colonne ou en en-tête.
 export const checkStructure = ({
   proposition,
   tableau,
@@ -140,7 +193,10 @@ export const checkStructure = ({
   ]
   const entetes = new Set(tableau.entetes)
   const axesConnus = new Set(axes)
-  const axesCites = colonnesAxes.map(({ axe }) => axe)
+  const axesCites = [
+    ...colonnesAxes.map(({ axe }) => axe),
+    ...(disposition.axeEnEntete ? [disposition.axeEnEntete] : []),
+  ]
 
   const erreurs: ErreurStructure[] = [
     ...[...new Set(roles)]
@@ -163,6 +219,7 @@ export const checkStructure = ({
   return ok({
     colonneIndividu,
     colonnesAxes,
+    axeEnEntete: disposition.axeEnEntete,
     valeurs: disposition.valeurs,
     ...(filtre.filtre ? { filtre: filtre.filtre } : {}),
   })
@@ -171,15 +228,20 @@ export const checkStructure = ({
 export type AxeSansColonneError = { type: 'AXE_SANS_COLONNE'; axes: string[] }
 
 // Une valeur se saisit avec une modalité pour chaque axe de l'indicateur : sans
-// colonne pour l'un d'eux, aucune ligne du fichier ne serait importable.
+// colonne ni en-têtes pour l'un d'eux, aucune ligne du fichier ne serait importable.
 export const checkAxesCouverts = ({
   colonnesAxes,
+  axeEnEntete,
   axes,
 }: {
   colonnesAxes: ReadonlyArray<{ axe: string }>
+  axeEnEntete: string | null
   axes: ReadonlyArray<string>
 }): Result<void, AxeSansColonneError> => {
-  const couverts = new Set(colonnesAxes.map(({ axe }) => axe))
+  const couverts = new Set([
+    ...colonnesAxes.map(({ axe }) => axe),
+    ...(axeEnEntete ? [axeEnEntete] : []),
+  ])
   const manquants = axes.filter((axe) => !couverts.has(axe))
   if (manquants.length > 0) return err({ type: 'AXE_SANS_COLONNE', axes: manquants })
   return ok()

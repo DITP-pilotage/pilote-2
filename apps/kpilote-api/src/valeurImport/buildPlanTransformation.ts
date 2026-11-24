@@ -1,7 +1,10 @@
 import {
+  type AxePlan,
   type ColonneRapprochee,
+  type DispositionValeurs,
   type PlanImportEvent,
   type PlanTransformation,
+  type Rapprochement,
   type TableauSource,
 } from '@pilote/kpilote-shared/valeurImport'
 import { listLibelles } from '@pilote/kpilote-shared/valeurImport/buildPlan'
@@ -15,25 +18,48 @@ import { checkAxesCouverts } from '@/valeurImport/rules'
 
 // Construit le plan de transformation d'un fichier hors format standard, en deux
 // étapes fixes : la structure du fichier, puis le rapprochement des libellés de
-// chaque colonne. Générateur asynchrone : il produit chaque étape au fil de
-// l'eau, puis le plan ou l'échec. Il ne touche pas la base : son contexte est
-// chargé par l'appelant.
+// chaque colonne, ou des en-têtes de l'axe lu en en-tête. Générateur
+// asynchrone : il produit chaque étape au fil de l'eau, puis le plan ou
+// l'échec. Il ne touche pas la base : son contexte est chargé par l'appelant.
 
 type Counts = { resolus: number; aVerifier: number }
 
-const countRapprochements = (colonne: ColonneRapprochee): Counts => {
-  const statuts = Object.values(colonne.rapprochements).map((rapprochement) => rapprochement.statut)
+const countRapprochements = ({
+  rapprochements,
+}: {
+  rapprochements: Record<string, Rapprochement>
+}): Counts => {
+  const statuts = Object.values(rapprochements).map((rapprochement) => rapprochement.statut)
   const resolus = statuts.filter((statut) => statut === 'RESOLU').length
   return { resolus, aVerifier: statuts.length - resolus }
 }
 
 // Le code rapproche seul ce qui correspond exactement ; Albert ne voit que le reste.
-const matchColonne = async ({
-  tableau,
-  colonne,
+const matchLibellesFor = async ({
+  libelles,
   cible,
   indicateurNom,
   abortSignal,
+}: {
+  libelles: ReadonlyArray<string>
+  cible: CibleLibelles
+  indicateurNom: string
+  abortSignal?: AbortSignal | undefined
+}): Promise<Record<string, Rapprochement>> => {
+  const exact = matchLibellesExact({ libelles, candidats: cible.candidats })
+  const parAlbert = await matchLibelles({
+    cible,
+    libelles: exact.restants,
+    indicateurNom,
+    abortSignal,
+  })
+  return { ...exact.rapprochements, ...parAlbert }
+}
+
+const matchColonne = async ({
+  tableau,
+  colonne,
+  ...params
 }: {
   tableau: TableauSource
   colonne: string
@@ -42,22 +68,19 @@ const matchColonne = async ({
   abortSignal?: AbortSignal | undefined
 }): Promise<ColonneRapprochee> => {
   const libelles = listLibelles({ tableau, colonne })
-  const exact = matchLibellesExact({ libelles, candidats: cible.candidats })
-  const parAlbert = await matchLibelles({
-    cible,
-    libelles: exact.restants,
-    indicateurNom,
-    abortSignal,
-  })
-  return { colonne, rapprochements: { ...exact.rapprochements, ...parAlbert } }
+  return { colonne, rapprochements: await matchLibellesFor({ libelles, ...params }) }
 }
 
 // Un rapprochement lancé en avance peut échouer avant d'être attendu : sans ce
 // gestionnaire, son rejet ferait tomber le processus. L'erreur reste levée à l'`await`.
-const startMatch = (pending: Promise<ColonneRapprochee>): Promise<ColonneRapprochee> => {
+const startMatch = <T>(pending: Promise<T>): Promise<T> => {
   pending.catch(() => undefined)
   return pending
 }
+
+// Les en-têtes des colonnes de valeurs, quand ils sont les libellés d'un axe.
+const listEntetesModalites = (valeurs: DispositionValeurs): string[] =>
+  valeurs.disposition === 'COLONNES_MODALITES' ? valeurs.colonnes : []
 
 const describeAxesSansColonne = (noms: ReadonlyArray<string>): string =>
   noms.length > 1
@@ -91,6 +114,7 @@ async function* buildPlan({
   }
   const couverts = checkAxesCouverts({
     colonnesAxes: structure.value.colonnesAxes,
+    axeEnEntete: structure.value.axeEnEntete,
     axes: cibles.axes.map((axe) => axe.id),
   })
   if (couverts.isErr()) {
@@ -107,7 +131,7 @@ async function* buildPlan({
     }
     return
   }
-  const { colonneIndividu, colonnesAxes, valeurs, filtre } = structure.value
+  const { colonneIndividu, colonnesAxes, axeEnEntete, valeurs, filtre } = structure.value
   yield { type: 'ETAPE', etape: { etape: 'STRUCTURE', statut: 'TERMINEE', valeurs } }
 
   // Les colonnes se rapprochent en parallèle : l'attente est celle de la plus
@@ -123,19 +147,33 @@ async function* buildPlan({
   )
   // Dans l'ordre des axes de l'indicateur, quel que soit l'ordre donné par Albert.
   const axesPending = cibles.axes.flatMap((axe) => {
+    const params = {
+      cible: {
+        description: `des modalités de l'axe « ${axe.nom} », et uniquement de cet axe`,
+        candidats: axe.modalites,
+      },
+      indicateurNom: indicateur.nom,
+      abortSignal,
+    }
+    if (axe.id === axeEnEntete) {
+      const libelles = listEntetesModalites(valeurs)
+      const pending = startMatch(
+        matchLibellesFor({ libelles, ...params }).then((rapprochements): AxePlan => ({
+          lecture: 'ENTETE',
+          axe: axe.id,
+          rapprochements,
+        })),
+      )
+      return [{ axe: axe.id, pending }]
+    }
     const colonne = colonnesAxes.find((colonneAxe) => colonneAxe.axe === axe.id)?.colonne
     if (colonne === undefined) return []
     const pending = startMatch(
-      matchColonne({
-        tableau,
-        colonne,
-        cible: {
-          description: `des modalités de l'axe « ${axe.nom} », et uniquement de cet axe`,
-          candidats: axe.modalites,
-        },
-        indicateurNom: indicateur.nom,
-        abortSignal,
-      }),
+      matchColonne({ tableau, colonne, ...params }).then((rapprochee): AxePlan => ({
+        lecture: 'CELLULE',
+        axe: axe.id,
+        ...rapprochee,
+      })),
     )
     return [{ axe: axe.id, pending }]
   })
@@ -150,11 +188,11 @@ async function* buildPlan({
   const axes: PlanTransformation['axes'] = []
   for (const { axe, pending } of axesPending) {
     yield { type: 'ETAPE', etape: { etape: 'AXE', axe, statut: 'EN_COURS' } }
-    const rapprochee = await pending
-    axes.push({ axe, ...rapprochee })
+    const axePlan = await pending
+    axes.push(axePlan)
     yield {
       type: 'ETAPE',
-      etape: { etape: 'AXE', axe, statut: 'TERMINEE', ...countRapprochements(rapprochee) },
+      etape: { etape: 'AXE', axe, statut: 'TERMINEE', ...countRapprochements(axePlan) },
     }
   }
 

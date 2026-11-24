@@ -54,6 +54,27 @@ describe('buildEtapesAttente', () => {
     expect(etapes[2]?.statut).toBe('EN_COURS')
   })
 
+  it('décrit une modalité par colonne de valeurs, et la colonne de date', () => {
+    const etapes = buildEtapesAttente({
+      tableau,
+      cibles,
+      etapes: [
+        {
+          etape: 'STRUCTURE',
+          statut: 'TERMINEE',
+          valeurs: {
+            disposition: 'COLONNES_MODALITES',
+            colonneDate: 'Trimestre',
+            colonnes: ['TVA', 'IR', 'IS', 'Cotisations', 'Prestations'],
+          },
+        },
+      ],
+    })
+    expect(etapes[1]?.detail).toBe(
+      'Une colonne par modalité (TVA, IR, IS, Cotisations…), date dans « Trimestre »',
+    )
+  })
+
   it('nomme l’étape d’un axe par son nom et compte ses libellés', () => {
     const etapes = buildEtapesAttente({
       tableau,

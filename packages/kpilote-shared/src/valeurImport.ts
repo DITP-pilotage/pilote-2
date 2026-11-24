@@ -75,6 +75,18 @@ export const dispositionValeursSchema = z.discriminatedUnion('disposition', [
       .describe('Une ligne du fichier porte une valeur par colonne de date.'),
     colonnes: z.array(z.object({ colonne: z.string(), date: dateSchema })).min(1),
   }),
+  z.object({
+    disposition: z
+      .literal('COLONNES_MODALITES')
+      .describe(
+        'Une ligne du fichier porte une valeur par modalité de l’axe lu en en-tête ; la date est en ligne.',
+      ),
+    colonneDate: z.string(),
+    colonnes: z
+      .array(z.string())
+      .min(1)
+      .describe('En-têtes des colonnes de valeurs, un par modalité.'),
+  }),
 ])
 export type DispositionValeurs = z.infer<typeof dispositionValeursSchema>
 
@@ -89,10 +101,31 @@ export const filtreLignesSchema = z
   )
 export type FiltreLignes = z.infer<typeof filtreLignesSchema>
 
+const axeLuEnCelluleSchema = colonneRapprocheeSchema.extend({
+  lecture: z.literal('CELLULE').describe('La modalité se lit dans la cellule de `colonne`.'),
+  axe: axePublicIdSchema,
+})
+
+const axeLuEnEnteteSchema = z.object({
+  lecture: z
+    .literal('ENTETE')
+    .describe('La modalité se lit dans l’en-tête de la colonne de valeurs.'),
+  axe: axePublicIdSchema,
+  rapprochements: z
+    .record(z.string(), rapprochementSchema)
+    .describe('Un rapprochement par en-tête de colonne de valeurs.'),
+})
+
+export const axePlanSchema = z.discriminatedUnion('lecture', [
+  axeLuEnCelluleSchema,
+  axeLuEnEnteteSchema,
+])
+export type AxePlan = z.infer<typeof axePlanSchema>
+
 export const planTransformationSchema = z.object({
   individu: colonneRapprocheeSchema,
   axes: z
-    .array(colonneRapprocheeSchema.extend({ axe: axePublicIdSchema }))
+    .array(axePlanSchema)
     .describe('Une colonne par axe de l’indicateur, dans l’ordre des axes.'),
   valeurs: dispositionValeursSchema,
   filtre: filtreLignesSchema.optional(),

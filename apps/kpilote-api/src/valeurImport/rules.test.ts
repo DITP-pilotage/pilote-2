@@ -40,6 +40,7 @@ describe.concurrent('checkStructure', () => {
     expect(result._unsafeUnwrap()).toEqual({
       colonneIndividu: 'Dpt',
       colonnesAxes: [{ axe: 'AXE-OPERATEUR', colonne: 'Opérateur' }],
+      axeEnEntete: null,
       valeurs: { disposition: 'LIGNES', colonneDate: 'Période', colonneValeur: 'Taux' },
     })
   })
@@ -137,15 +138,119 @@ describe.concurrent('checkStructure', () => {
   })
 })
 
+describe.concurrent('checkStructure, un axe dans les en-têtes des colonnes de valeurs', () => {
+  const tableauFraudes: TableauSource = {
+    entetes: ['Dpt', 'Opérateur', 'Trimestre', 'TVA', 'IR', 'Commentaire'],
+    lignes: [['Ain', 'Orange', 'T2 2026', '2,25', '1,00', '']],
+  }
+  const axesFraudes = ['AXE-OPERATEUR', 'AXE-FRAUDE']
+
+  const modalitesEnColonnes = (override: Partial<StructureProposee> = {}): StructureProposee => ({
+    colonneIndividu: 'Dpt',
+    colonnesAxes: [{ axe: 'AXE-OPERATEUR', colonne: 'Opérateur' }],
+    disposition: 'COLONNES_MODALITES',
+    colonneDate: 'Trimestre',
+    axeEnColonnes: { axe: 'AXE-FRAUDE', colonnes: ['TVA', 'IR'] },
+    ...override,
+  })
+
+  const erreursFraudesOf = (proposition: StructureProposee) =>
+    checkStructure({ proposition, tableau: tableauFraudes, axes: axesFraudes })._unsafeUnwrapErr()
+      .erreurs
+
+  it('accepte une disposition COLONNES_MODALITES et renvoie l’axe lu en en-tête', () => {
+    const result = checkStructure({
+      proposition: modalitesEnColonnes({ colonneValeur: null, colonnesDates: null }),
+      tableau: tableauFraudes,
+      axes: axesFraudes,
+    })
+    expect(result._unsafeUnwrap()).toEqual({
+      colonneIndividu: 'Dpt',
+      colonnesAxes: [{ axe: 'AXE-OPERATEUR', colonne: 'Opérateur' }],
+      axeEnEntete: 'AXE-FRAUDE',
+      valeurs: {
+        disposition: 'COLONNES_MODALITES',
+        colonneDate: 'Trimestre',
+        colonnes: ['TVA', 'IR'],
+      },
+    })
+  })
+
+  it('refuse COLONNES_MODALITES sans colonneDate ou sans axeEnColonnes', () => {
+    expect(
+      erreursFraudesOf(modalitesEnColonnes({ colonneDate: null, axeEnColonnes: null })),
+    ).toEqual([
+      { type: 'CHAMP_MANQUANT', champ: 'colonneDate' },
+      { type: 'CHAMP_MANQUANT', champ: 'axeEnColonnes' },
+    ])
+    expect(
+      erreursFraudesOf(modalitesEnColonnes({ axeEnColonnes: { axe: 'AXE-FRAUDE', colonnes: [] } })),
+    ).toEqual([{ type: 'CHAMP_MANQUANT', champ: 'axeEnColonnes' }])
+  })
+
+  it('refuse un axe cité à la fois en colonne et en en-tête', () => {
+    const proposition = modalitesEnColonnes({
+      colonnesAxes: [
+        { axe: 'AXE-OPERATEUR', colonne: 'Opérateur' },
+        { axe: 'AXE-FRAUDE', colonne: 'Commentaire' },
+      ],
+    })
+    expect(erreursFraudesOf(proposition)).toEqual([{ type: 'AXE_EN_DOUBLE', axe: 'AXE-FRAUDE' }])
+  })
+
+  it('refuse un axe inconnu lu en en-tête', () => {
+    const proposition = modalitesEnColonnes({
+      axeEnColonnes: { axe: 'AXE-INVENTE', colonnes: ['TVA', 'IR'] },
+    })
+    expect(erreursFraudesOf(proposition)).toEqual([{ type: 'AXE_INCONNU', axe: 'AXE-INVENTE' }])
+  })
+
+  it('refuse une colonne de valeurs qui sert aussi de colonne d’axe', () => {
+    const proposition = modalitesEnColonnes({
+      colonnesAxes: [{ axe: 'AXE-OPERATEUR', colonne: 'TVA' }],
+    })
+    expect(erreursFraudesOf(proposition)).toEqual([
+      { type: 'COLONNE_A_DEUX_ROLES', colonne: 'TVA' },
+    ])
+  })
+
+  it('refuse une colonne de valeurs absente du fichier', () => {
+    const proposition = modalitesEnColonnes({
+      axeEnColonnes: { axe: 'AXE-FRAUDE', colonnes: ['TVA', 'Fraude IS'] },
+    })
+    expect(erreursFraudesOf(proposition)).toEqual([
+      { type: 'COLONNE_INCONNUE', colonne: 'Fraude IS' },
+    ])
+  })
+})
+
 describe.concurrent('checkAxesCouverts', () => {
   it('accepte quand chaque axe de l’indicateur a une colonne', () => {
-    expect(checkAxesCouverts({ colonnesAxes: [{ axe: 'AXE-A' }], axes: ['AXE-A'] }).isOk()).toBe(
-      true,
-    )
+    expect(
+      checkAxesCouverts({
+        colonnesAxes: [{ axe: 'AXE-A' }],
+        axeEnEntete: null,
+        axes: ['AXE-A'],
+      }).isOk(),
+    ).toBe(true)
+  })
+
+  it('checkAxesCouverts compte l’axe lu en en-tête', () => {
+    expect(
+      checkAxesCouverts({
+        colonnesAxes: [{ axe: 'AXE-A' }],
+        axeEnEntete: 'AXE-B',
+        axes: ['AXE-A', 'AXE-B'],
+      }).isOk(),
+    ).toBe(true)
   })
 
   it('liste tous les axes sans colonne', () => {
-    const result = checkAxesCouverts({ colonnesAxes: [], axes: ['AXE-A', 'AXE-B'] })
+    const result = checkAxesCouverts({
+      colonnesAxes: [],
+      axeEnEntete: null,
+      axes: ['AXE-A', 'AXE-B'],
+    })
     expect(result._unsafeUnwrapErr()).toEqual({
       type: 'AXE_SANS_COLONNE',
       axes: ['AXE-A', 'AXE-B'],

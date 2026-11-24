@@ -96,6 +96,7 @@ describe('applyPlan, dates en colonnes', () => {
     individu: { colonne: 'Dept', rapprochements: { Ain: resolu('DEPT-01') } },
     axes: [
       {
+        lecture: 'CELLULE',
         axe: 'AXE-OPERATEUR',
         colonne: 'Opérateur',
         rapprochements: { Orange: resolu('OP-ORANGE'), MVNO: { statut: 'INCONNU' } },
@@ -138,6 +139,120 @@ describe('applyPlan, dates en colonnes', () => {
     expect(toItemsImport(lignes)).toEqual([
       { individu: 'DEPT-01', modalites: ['OP-ORANGE'], date: '2022-01-01', valeur: 96.4 },
     ])
+  })
+})
+
+describe('applyPlan, une modalité par colonne de valeurs', () => {
+  const plan: PlanTransformation = {
+    individu: { colonne: 'Dept', rapprochements: { Ain: resolu('DEPT-01') } },
+    axes: [
+      {
+        lecture: 'CELLULE',
+        axe: 'AXE-OPERATEUR',
+        colonne: 'Opérateur',
+        rapprochements: { Orange: resolu('OP-ORANGE'), SFR: resolu('OP-SFR') },
+      },
+      {
+        lecture: 'ENTETE',
+        axe: 'AXE-FRAUDE',
+        rapprochements: {
+          TVA: resolu('FR-TVA'),
+          IR: { statut: 'RESOLU', publicId: 'FR-IR', par: 'ALBERT' },
+          Autre: { statut: 'INCONNU' },
+        },
+      },
+    ],
+    valeurs: {
+      disposition: 'COLONNES_MODALITES',
+      colonneDate: 'Trimestre',
+      colonnes: ['TVA', 'IR', 'Autre'],
+    },
+  }
+  const tableau: TableauSource = {
+    entetes: ['Dept', 'Opérateur', 'Trimestre', 'TVA', 'IR', 'Autre', 'Type'],
+    lignes: [
+      ['Ain', 'Orange', 'T2 2026', '2,25', '1,00', '0,5', 'VA'],
+      ['Ain', 'SFR', 'T2 2026', '1,38', '0,57', '0,4', 'VA'],
+    ],
+  }
+
+  it('produit une ligne par cellule de valeur, modalité lue dans l’en-tête, date en ligne', () => {
+    const { lignes } = applyPlan({ plan, tableau })
+    expect(lignes.map((ligne) => ligne.source)).toEqual([
+      { ligne: 0, colonneValeur: 'TVA' },
+      { ligne: 0, colonneValeur: 'IR' },
+      { ligne: 0, colonneValeur: 'Autre' },
+      { ligne: 1, colonneValeur: 'TVA' },
+      { ligne: 1, colonneValeur: 'IR' },
+      { ligne: 1, colonneValeur: 'Autre' },
+    ])
+    expect(lignes[1]).toEqual({
+      source: { ligne: 0, colonneValeur: 'IR' },
+      individu: { statut: 'VALIDE', brut: 'Ain', valeur: 'DEPT-01', par: 'EXACT' },
+      modalites: [
+        { statut: 'VALIDE', brut: 'Orange', valeur: 'OP-ORANGE', par: 'EXACT' },
+        { statut: 'VALIDE', brut: 'IR', valeur: 'FR-IR', par: 'ALBERT' },
+      ],
+      date: { statut: 'VALIDE', brut: 'T2 2026', valeur: '2026-04-01', par: 'LECTURE' },
+      valeur: { statut: 'VALIDE', brut: '1,00', valeur: 1, par: 'LECTURE' },
+    })
+  })
+
+  it('ne produit pas de ligne pour une cellule de valeur vide', () => {
+    const avecTrou: TableauSource = {
+      ...tableau,
+      lignes: [['Ain', 'Orange', 'T2 2026', '2,25', '', null, 'VA']],
+    }
+    const { lignes } = applyPlan({ plan, tableau: avecTrou })
+    expect(lignes.map((ligne) => ligne.source.colonneValeur)).toEqual(['TVA'])
+  })
+
+  it('signale un en-tête sans modalité sur toutes les lignes de sa colonne', () => {
+    const { lignes } = applyPlan({ plan, tableau })
+    const colonneAutre = lignes.filter((ligne) => ligne.source.colonneValeur === 'Autre')
+    expect(colonneAutre.map((ligne) => ligne.modalites[1])).toEqual([
+      { statut: 'A_CORRIGER', brut: 'Autre', motif: { type: 'LIBELLE_INCONNU' } },
+      { statut: 'A_CORRIGER', brut: 'Autre', motif: { type: 'LIBELLE_INCONNU' } },
+    ])
+    expect(lignes.filter(isImportable)).toHaveLength(4)
+  })
+
+  it('corrige toute la colonne quand le rapprochement de son en-tête change', () => {
+    const corrige = setRapprochement({
+      plan,
+      cible: { type: 'AXE', axe: 'AXE-FRAUDE' },
+      libelle: 'Autre',
+      publicId: 'FR-IS',
+    })
+    const { lignes } = applyPlan({ plan: corrige, tableau })
+    expect(lignes.filter(isImportable)).toHaveLength(6)
+  })
+
+  it('applique le filtre de lignes', () => {
+    const filtre = { colonne: 'Type', valeursRetenues: ['VA'] }
+    const tableauFiltre: TableauSource = {
+      ...tableau,
+      lignes: [...tableau.lignes, ['Ain', 'Orange', 'T3 2026', '1', '2', '3', 'VC']],
+    }
+    const { lignes, lignesEcartees } = applyPlan({
+      plan: { ...plan, filtre },
+      tableau: tableauFiltre,
+    })
+    expect(lignes).toHaveLength(6)
+    expect(lignesEcartees).toBe(1)
+  })
+
+  it('laisse à corriger une modalité lue en en-tête quand les valeurs sont en lignes', () => {
+    const planLignesEntete: PlanTransformation = {
+      ...plan,
+      valeurs: { disposition: 'LIGNES', colonneDate: 'Trimestre', colonneValeur: 'TVA' },
+    }
+    const { lignes } = applyPlan({ plan: planLignesEntete, tableau })
+    expect(lignes[0]?.modalites[1]).toEqual({
+      statut: 'A_CORRIGER',
+      brut: '',
+      motif: { type: 'CELLULE_VIDE' },
+    })
   })
 })
 
@@ -203,6 +318,7 @@ describe('buildPlanStandard', () => {
         },
         axes: [
           {
+            lecture: 'CELLULE',
             axe: 'AXE-OPERATEUR',
             colonne: 'axe-operateur',
             rapprochements: { 'OP-ORANGE': resolu('OP-ORANGE'), Inconnu: { statut: 'INCONNU' } },

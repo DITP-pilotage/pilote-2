@@ -13,9 +13,7 @@ import { buildPlanStandard } from './buildPlan'
 // plan de transformation, sans Albert : le plan de `buildPlanStandard` pour un
 // fichier au format standard, un plan écrit à la main pour les autres. Les
 // cellules sont des chaînes, comme la webapp lit un CSV.
-// Deux fichiers n'ont pas de plan : le 04, inexploitable, et le IND-103_10, dont
-// les types de fraude sont en colonnes. Le plan ne lit une modalité que dans une
-// cellule, pas dans un en-tête.
+// Le 04, inexploitable, n'a pas de plan.
 
 const resolu = (publicId: string): Rapprochement => ({ statut: 'RESOLU', publicId, par: 'EXACT' })
 const inconnu: Rapprochement = { statut: 'INCONNU' }
@@ -306,6 +304,7 @@ describe('applyPlan sur les fichiers d’exemple', () => {
       },
       axes: [
         {
+          lecture: 'CELLULE',
           axe: 'AXE-OPERATEUR',
           colonne: 'Opérateur',
           rapprochements: {
@@ -317,6 +316,7 @@ describe('applyPlan sur les fichiers d’exemple', () => {
           },
         },
         {
+          lecture: 'CELLULE',
           axe: 'AXE-FRAUDE',
           colonne: 'Type de fraude',
           rapprochements: {
@@ -413,6 +413,7 @@ describe('applyPlan sur les fichiers d’exemple', () => {
       },
       axes: [
         {
+          lecture: 'CELLULE',
           axe: 'AXE-OPERATEUR',
           colonne: 'Opérateur télécom',
           rapprochements: {
@@ -423,6 +424,7 @@ describe('applyPlan sur les fichiers d’exemple', () => {
           },
         },
         {
+          lecture: 'CELLULE',
           axe: 'AXE-FRAUDE',
           colonne: 'Nature de la fraude',
           rapprochements: {
@@ -485,11 +487,13 @@ describe('applyPlan sur les fichiers d’exemple', () => {
       },
       axes: [
         {
+          lecture: 'CELLULE',
           axe: 'AXE-OPERATEUR',
           colonne: 'operateur',
           rapprochements: { 'OP-ORANGE': resolu('OP-ORANGE'), 'OP-SFR': resolu('OP-SFR') },
         },
         {
+          lecture: 'CELLULE',
           axe: 'AXE-FRAUDE',
           colonne: 'type_fraude',
           rapprochements: { 'FR-TVA': resolu('FR-TVA'), 'FR-IR': resolu('FR-IR') },
@@ -577,6 +581,90 @@ describe('applyPlan sur les fichiers d’exemple', () => {
     ])
   })
 
+  it('IND-103_10_import_albert_fraudes_en_colonnes : types de fraude en en-têtes, trimestre en ligne', () => {
+    const tableau: TableauSource = {
+      entetes: [
+        'Département',
+        'Opérateur',
+        'Trimestre',
+        'TVA',
+        'IR',
+        'IS',
+        'Cotisations',
+        'Prestations',
+      ],
+      lignes: [
+        ['Ain', 'Orange', 'T2 2026', '2,25', '1,00', '1,23', '1,28', '0,59'],
+        ['Ain', 'SFR', 'T2 2026', '1,38', '0,57', '0,74', '0,87', '0,37'],
+        ['Ain', 'Free', 'T2 2026', '1,19', '0,50', '0,59', '0,64', '0,35'],
+        ['Ain', 'Bouygues', 'T2 2026', '0,92', '0,36', '0,51', '0,50', '0,23'],
+        ['Isère', 'Orange', 'T2 2026', '4,24', '1,83', '2,35', '2,55', '1,19'],
+        ['Isère', 'SFR', 'T2 2026', '2,76', '1,03', '1,48', '1,36', '0,77'],
+        ['Isère', 'Free', 'T2 2026', '2,26', '0,91', '1,22', '1,23', '0,57'],
+        ['Isère', 'Bouygues', 'T2 2026', '1,54', '0,69', '0,93', '0,88', '0,45'],
+        ['Rhône', 'Orange', 'T2 2026', '4,87', '2,18', '2,98', '2,78', '1,49'],
+        ['Rhône', 'SFR', 'T2 2026', '3,37', '1,36', '1,97', '1,73', '0,98'],
+        ['Rhône', 'Free', 'T2 2026', '2,36', '1,05', '1,53', '1,31', '0,74'],
+        ['Rhône', 'Bouygues', 'T2 2026', '2,03', '0,88', '1,12', '1,05', '0,52'],
+      ],
+    }
+    const plan: PlanTransformation = {
+      individu: {
+        colonne: 'Département',
+        rapprochements: {
+          Ain: resolu('DEPT-01'),
+          Isère: resolu('DEPT-38'),
+          Rhône: resolu('DEPT-69'),
+        },
+      },
+      axes: [
+        {
+          lecture: 'CELLULE',
+          axe: 'AXE-OPERATEUR',
+          colonne: 'Opérateur',
+          rapprochements: {
+            Orange: resolu('OP-ORANGE'),
+            SFR: resolu('OP-SFR'),
+            Free: resolu('OP-FREE'),
+            Bouygues: resolu('OP-BOUYGUES'),
+          },
+        },
+        {
+          lecture: 'ENTETE',
+          axe: 'AXE-FRAUDE',
+          rapprochements: {
+            TVA: resolu('FR-TVA'),
+            IR: resolu('FR-IR'),
+            IS: resolu('FR-IS'),
+            Cotisations: resolu('FR-COTISATIONS'),
+            Prestations: resolu('FR-PRESTATIONS'),
+          },
+        },
+      ],
+      valeurs: {
+        disposition: 'COLONNES_MODALITES',
+        colonneDate: 'Trimestre',
+        colonnes: ['TVA', 'IR', 'IS', 'Cotisations', 'Prestations'],
+      },
+    }
+
+    const { lignes } = applyPlan({ plan, tableau })
+
+    // Douze lignes, cinq types de fraude.
+    expect(lignes).toHaveLength(60)
+    expect(countImportables(lignes)).toBe(60)
+    expect(lignes[0]).toEqual({
+      source: { ligne: 0, colonneValeur: 'TVA' },
+      individu: { statut: 'VALIDE', brut: 'Ain', valeur: 'DEPT-01', par: 'EXACT' },
+      modalites: [
+        { statut: 'VALIDE', brut: 'Orange', valeur: 'OP-ORANGE', par: 'EXACT' },
+        { statut: 'VALIDE', brut: 'TVA', valeur: 'FR-TVA', par: 'EXACT' },
+      ],
+      date: { statut: 'VALIDE', brut: 'T2 2026', valeur: '2026-04-01', par: 'LECTURE' },
+      valeur: { statut: 'VALIDE', brut: '2,25', valeur: 2.25, par: 'LECTURE' },
+    })
+  })
+
   it('IND-103_11_import_albert_pieges : doublon, modalités non feuilles, région, date impossible', () => {
     const tableau: TableauSource = {
       entetes: ['Territoire', 'Opérateur', 'Type de fraude', 'Date', 'Montant (M€)'],
@@ -606,6 +694,7 @@ describe('applyPlan sur les fichiers d’exemple', () => {
       },
       axes: [
         {
+          lecture: 'CELLULE',
           axe: 'AXE-OPERATEUR',
           colonne: 'Opérateur',
           rapprochements: {
@@ -617,6 +706,7 @@ describe('applyPlan sur les fichiers d’exemple', () => {
           },
         },
         {
+          lecture: 'CELLULE',
           axe: 'AXE-FRAUDE',
           colonne: 'Type de fraude',
           rapprochements: {
@@ -682,11 +772,13 @@ describe('applyPlan sur les fichiers d’exemple', () => {
       },
       axes: [
         {
+          lecture: 'CELLULE',
           axe: 'AXE-OPERATEUR',
           colonne: 'Opérateur',
           rapprochements: { 'OP-ORANGE': resolu('OP-ORANGE'), 'OP-SFR': resolu('OP-SFR') },
         },
         {
+          lecture: 'CELLULE',
           axe: 'AXE-FRAUDE',
           colonne: 'Nature de la fraude',
           rapprochements: {

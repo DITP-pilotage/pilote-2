@@ -50,6 +50,20 @@ const axeOperateur = {
   ],
 }
 
+// Les modalités feuilles de l'axe : `FR-FISCALE` et `FR-SOCIALE` regroupent
+// des types de fraude, on ne saisit pas dessus.
+const axeFraude = {
+  id: 'AXE-FRAUDE',
+  nom: 'Type de fraude',
+  modalites: [
+    { id: 'FR-TVA', nom: 'Fraude à la TVA' },
+    { id: 'FR-IR', nom: "Fraude à l'impôt sur le revenu" },
+    { id: 'FR-IS', nom: "Fraude à l'impôt sur les sociétés" },
+    { id: 'FR-COTISATIONS', nom: 'Fraude aux cotisations' },
+    { id: 'FR-PRESTATIONS', nom: 'Fraude aux prestations' },
+  ],
+}
+
 const axeTechnologie = {
   id: 'AXE-TECHNO',
   nom: 'Technologie',
@@ -61,6 +75,10 @@ const axeTechnologie = {
 
 const emissions = { nom: 'Émissions de gaz à effet de serre', unite: null }
 const couverture = { nom: 'Couverture mobile du territoire', unite: 'POURCENTAGE' }
+const fraudes = {
+  nom: 'Montant des fraudes détectées chez les opérateurs télécom, par opérateur et par type',
+  unite: 'MILLIONS_EUROS',
+}
 
 export const corpus: CasCorpus[] = [
   {
@@ -188,6 +206,7 @@ export const corpus: CasCorpus[] = [
         },
         axes: [
           {
+            lecture: 'CELLULE',
             axe: 'AXE-OPERATEUR',
             colonne: 'Opérateur',
             rapprochements: {
@@ -199,6 +218,7 @@ export const corpus: CasCorpus[] = [
             },
           },
           {
+            lecture: 'CELLULE',
             axe: 'AXE-TECHNO',
             colonne: 'Techno',
             rapprochements: { '4G': exact('TECH-4G'), '5G': exact('TECH-5G') },
@@ -211,6 +231,89 @@ export const corpus: CasCorpus[] = [
             { colonne: '2023', date: '2023-01-01' },
             { colonne: '2024', date: '2024-01-01' },
           ],
+        },
+      },
+    },
+  },
+  {
+    nom: 'types de fraude en en-têtes de colonnes, trimestre en ligne',
+    nomFichier: '10_import_albert_fraudes_en_colonnes.csv',
+    context: {
+      indicateur: fraudes,
+      cibles: {
+        individus: [
+          ...departements,
+          { id: 'DEPT-38', nom: 'Isère', referentiel: 'REF-DEPT' },
+          { id: 'DEPT-69', nom: 'Rhône', referentiel: 'REF-DEPT' },
+        ],
+        axes: [axeOperateur, axeFraude],
+      },
+    },
+    tableau: {
+      entetes: [
+        'Département',
+        'Opérateur',
+        'Trimestre',
+        'TVA',
+        'IR',
+        'IS',
+        'Cotisations',
+        'Prestations',
+      ],
+      lignes: [
+        ['Ain', 'Orange', 'T2 2026', '2,25', '1,00', '1,23', '1,28', '0,59'],
+        ['Ain', 'SFR', 'T2 2026', '1,38', '0,57', '0,74', '0,87', '0,37'],
+        ['Ain', 'Free', 'T2 2026', '1,19', '0,50', '0,59', '0,64', '0,35'],
+        ['Ain', 'Bouygues', 'T2 2026', '0,92', '0,36', '0,51', '0,50', '0,23'],
+        ['Isère', 'Orange', 'T2 2026', '4,24', '1,83', '2,35', '2,55', '1,19'],
+        ['Isère', 'SFR', 'T2 2026', '2,76', '1,03', '1,48', '1,36', '0,77'],
+        ['Isère', 'Free', 'T2 2026', '2,26', '0,91', '1,22', '1,23', '0,57'],
+        ['Isère', 'Bouygues', 'T2 2026', '1,54', '0,69', '0,93', '0,88', '0,45'],
+        ['Rhône', 'Orange', 'T2 2026', '4,87', '2,18', '2,98', '2,78', '1,49'],
+        ['Rhône', 'SFR', 'T2 2026', '3,37', '1,36', '1,97', '1,73', '0,98'],
+        ['Rhône', 'Free', 'T2 2026', '2,36', '1,05', '1,53', '1,31', '0,74'],
+        ['Rhône', 'Bouygues', 'T2 2026', '2,03', '0,88', '1,12', '1,05', '0,52'],
+      ],
+    },
+    attendu: {
+      plan: {
+        individu: {
+          colonne: 'Département',
+          rapprochements: {
+            Ain: exact('DEPT-01'),
+            Isère: exact('DEPT-38'),
+            Rhône: exact('DEPT-69'),
+          },
+        },
+        axes: [
+          {
+            lecture: 'CELLULE',
+            axe: 'AXE-OPERATEUR',
+            colonne: 'Opérateur',
+            rapprochements: {
+              Orange: exact('OP-ORANGE'),
+              SFR: exact('OP-SFR'),
+              Free: exact('OP-FREE'),
+              Bouygues: albert('OP-BOUYGUES'),
+            },
+          },
+          {
+            lecture: 'ENTETE',
+            axe: 'AXE-FRAUDE',
+            // Aucun en-tête n'est le nom exact d'une modalité : Albert les rapproche tous.
+            rapprochements: {
+              TVA: albert('FR-TVA'),
+              IR: albert('FR-IR'),
+              IS: albert('FR-IS'),
+              Cotisations: albert('FR-COTISATIONS'),
+              Prestations: albert('FR-PRESTATIONS'),
+            },
+          },
+        ],
+        valeurs: {
+          disposition: 'COLONNES_MODALITES',
+          colonneDate: 'Trimestre',
+          colonnes: ['TVA', 'IR', 'IS', 'Cotisations', 'Prestations'],
         },
       },
     },
