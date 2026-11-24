@@ -12,6 +12,7 @@ import { logger } from '@/framework/logger/logger'
 import { startTimer } from '@/framework/timer'
 import { buildProfilColonnes } from '@/valeurImport/profilColonnes'
 import { ALBERT_IMPORT_OPTIONS } from '@/valeurImport/albert/providerOptions'
+import { describeFichierInexploitable } from '@/valeurImport/fichierInexploitable'
 import { checkStructure, type StructureValidee } from '@/valeurImport/rules'
 
 // Étape 1 du plan : Albert dit le rôle de chaque colonne du fichier. Il remet sa
@@ -86,17 +87,13 @@ const fichierInexploitableSchema = z.object({
   motif: z
     .enum(['PAS_D_INDIVIDU', 'PAS_DE_DATE', 'PAS_DE_VALEUR', 'STRUCTURE_NON_RECONNUE'])
     .describe('Ce qui manque au fichier.'),
-  explication: z
-    .string()
-    .describe(
-      "Une phrase en français pour l'utilisateur : ce qui manque et comment corriger le fichier.",
-    ),
 })
 
 const SYSTEM_PROMPT = [
   "Tu lis un fichier de données tabulaires déposé par un agent public. Ta seule tâche : dire le rôle de chaque colonne, pour en extraire des valeurs d'un indicateur.",
   '',
   'Une valeur se définit par : un individu, une date, un nombre, et une modalité pour chaque axe de l’indicateur.',
+  'L’individu est l’entité mesurée : un territoire (département, région, commune) ou une structure (établissement, service). Les modalités d’un axe (opérateur, type de fraude…) ne sont jamais des individus.',
   '',
   'Deux dispositions existent.',
   '- LIGNES : une ligne porte une valeur. Exemple d’en-têtes : `Département, Période, Taux`. Tu donnes `colonneDate` et `colonneValeur`.',
@@ -152,8 +149,7 @@ const buildPrompt = ({
 const STRUCTURE_NON_RECONNUE: PlanImpossibleError = {
   type: 'FICHIER_INEXPLOITABLE',
   motif: 'STRUCTURE_NON_RECONNUE',
-  explication:
-    "L'assistant IA n'a pas su lire la structure de ce fichier. Utilisez le format standard, ou simplifiez le fichier : une ligne d'en-têtes, puis les données.",
+  explication: describeFichierInexploitable('STRUCTURE_NON_RECONNUE'),
 }
 
 export const describeStructure = async ({
@@ -208,8 +204,12 @@ export const describeStructure = async ({
         description: "Déclare que le fichier ne permet pas d'extraire des valeurs.",
         inputSchema: fichierInexploitableSchema,
         // oxlint-disable-next-line typescript/require-await -- le SDK attend une fonction asynchrone
-        execute: async ({ motif, explication }) => {
-          echec = { type: 'FICHIER_INEXPLOITABLE', motif, explication }
+        execute: async ({ motif }) => {
+          echec = {
+            type: 'FICHIER_INEXPLOITABLE',
+            motif,
+            explication: describeFichierInexploitable(motif),
+          }
           return { ok: true as const }
         },
       }),
