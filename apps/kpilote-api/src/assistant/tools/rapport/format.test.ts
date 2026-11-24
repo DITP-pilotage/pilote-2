@@ -4,8 +4,12 @@ import {
   formatCitation,
   formatDate,
   formatEcart,
+  formatLectureEcart,
   formatPonderation,
+  formatSens,
   formatTaux,
+  formatTauxCollection,
+  formatTauxIndicateur,
   formatValeur,
 } from '@/assistant/tools/rapport/format'
 
@@ -20,6 +24,30 @@ describe('formats recopiés par le sous-agent', () => {
   it('arrondit le taux de progression', () => {
     expect(formatTaux(66.6)).toBe('67 %')
     expect(formatTaux(null)).toBe('non calculé')
+  })
+
+  it('ne présente pas l’absence de taux à la baisse comme une donnée manquante', () => {
+    expect(formatTauxIndicateur(null, 'BAISSE')).toBe('sans objet (indicateur à la baisse)')
+    expect(formatTauxIndicateur(null, 'HAUSSE')).toBe('non calculé')
+    expect(formatTauxCollection(null, 'INDICATEUR_A_LA_BAISSE')).toBe(
+      'non calculable (la collection contient un indicateur à la baisse)',
+    )
+    expect(formatTauxCollection(null, 'INDICATEUR_NON_CALCULABLE')).toBe('non calculé')
+    expect(formatTauxCollection(42.4, null)).toBe('42 %')
+  })
+
+  it('écrit le sens souhaité et la lecture d’un écart en mots', () => {
+    expect(formatSens('BAISSE')).toBe('à la baisse : une valeur plus basse est meilleure')
+    expect(formatLectureEcart({ ecart: 1.5, sensSouhaite: 'BAISSE' })).toBe('défavorable')
+    expect(formatLectureEcart({ ecart: -1.5, sensSouhaite: 'BAISSE' })).toBe('favorable')
+    expect(formatLectureEcart({ ecart: null, sensSouhaite: 'BAISSE' })).toBe('non calculée')
+  })
+
+  it('lit un écart tel qu’il s’écrit : « 0 » est neutre, jamais « +0 (défavorable) »', () => {
+    expect(formatEcart(0.004, null)).toBe('0')
+    expect(formatEcart(-0.004, null)).toBe('0')
+    expect(formatLectureEcart({ ecart: 0.004, sensSouhaite: 'BAISSE' })).toBe('neutre')
+    expect(formatLectureEcart({ ecart: -0.004, sensSouhaite: 'HAUSSE' })).toBe('neutre')
   })
 
   it('signe un écart avec le signe moins typographique', () => {

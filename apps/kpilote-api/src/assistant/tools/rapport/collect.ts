@@ -6,6 +6,7 @@ import {
   type RapportSujet,
   type SyntheseIndicateurOutput,
 } from '@pilote/kpilote-shared/assistant/tools'
+import { type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
 
 import { findReadableCollection } from '@/assistant/tools/entityLookups'
 import { getCommentaires } from '@/assistant/tools/getCommentaires'
@@ -17,8 +18,11 @@ import {
   formatCitation,
   formatDate,
   formatEcart,
+  formatLectureEcart,
   formatPonderation,
-  formatTaux,
+  formatSens,
+  formatTauxCollection,
+  formatTauxIndicateur,
   formatValeur,
 } from '@/assistant/tools/rapport/format'
 import { type Collected } from '@/assistant/tools/rapport/writeRapport'
@@ -53,13 +57,18 @@ const indicateursTruncation = (shown: number, total: number) =>
 const dated = (value: DatedValue | null, unite: string | null, missing: string): string =>
   value ? `${formatValeur(value.valeur, unite)} au ${formatDate(value.date)}` : missing
 
-const individuRow = (row: SyntheseIndicateurOutput['individus'][number], unite: string | null) => ({
+const individuRow = (
+  row: SyntheseIndicateurOutput['individus'][number],
+  { unite, sensSouhaite }: { unite: string | null; sensSouhaite: SensSouhaite },
+) => ({
   individu: named(row.individu),
   derniereValeur: dated(row.derniereValeur, unite, 'non renseignée'),
   objectif: dated(row.objectif, unite, 'non renseigné'),
-  tauxProgression: formatTaux(row.tauxProgression),
+  tauxProgression: formatTauxIndicateur(row.tauxProgression, sensSouhaite),
   variation: formatEcart(row.variation, unite),
+  lectureVariation: formatLectureEcart({ ecart: row.variation, sensSouhaite }),
   ecartMediane: formatEcart(row.ecartMediane, unite),
+  lectureEcartMediane: formatLectureEcart({ ecart: row.ecartMediane, sensSouhaite }),
 })
 
 const medianes = (synthese: SyntheseIndicateurOutput, unite: string | null) =>
@@ -102,7 +111,7 @@ const collectSyntheseIndicateur = async (
   if (!synthese.indicateur || !row) {
     return { notFound: synthese.notFound.length > 0 ? synthese.notFound : [individuId] }
   }
-  const { unite } = synthese.indicateur
+  const { unite, sensSouhaite } = synthese.indicateur
   const [evolution, commentaires] = await Promise.all([
     getEvolutionIndicateur.execute({ indicateurId, individuId }, options),
     getCommentaires.execute({ cible: 'INDICATEUR', indicateurId, individuId }, options),
@@ -111,7 +120,8 @@ const collectSyntheseIndicateur = async (
     donnees: {
       indicateur: named(synthese.indicateur),
       description: description(synthese.indicateur.description),
-      ...individuRow(row, unite),
+      sensSouhaite: formatSens(sensSouhaite),
+      ...individuRow(row, { unite, sensSouhaite }),
       medianes: medianes(synthese, unite),
       dernieresValeurs: evolution.points
         .slice(-LAST_POINTS)
@@ -147,18 +157,26 @@ const collectSyntheseCollection = async (
       collection: named(synthese.collection),
       description: description(synthese.collection.description),
       individu: named(synthese.individu),
-      tauxProgression: formatTaux(synthese.tauxProgression),
+      tauxProgression: formatTauxCollection(synthese.tauxProgression, synthese.raisonSansTaux),
       indicateurs: contributions.map((contribution, index) => {
         const detail = details[index]
         const row = detail?.individus[0]
         const unite = detail?.indicateur?.unite ?? null
         return {
           indicateur: named(contribution.indicateur),
+          sensSouhaite: formatSens(contribution.sensSouhaite),
           ponderation: formatPonderation(contribution.ponderation),
-          tauxProgression: formatTaux(contribution.tauxProgression),
+          tauxProgression: formatTauxIndicateur(
+            contribution.tauxProgression,
+            contribution.sensSouhaite,
+          ),
           derniereValeur: dated(row?.derniereValeur ?? null, unite, 'non renseignée'),
           objectif: dated(row?.objectif ?? null, unite, 'non renseigné'),
           ecartMediane: formatEcart(row?.ecartMediane ?? null, unite),
+          lectureEcartMediane: formatLectureEcart({
+            ecart: row?.ecartMediane ?? null,
+            sensSouhaite: contribution.sensSouhaite,
+          }),
         }
       }),
       ...indicateursTruncation(contributions.length, synthese.contributions.length),
@@ -187,7 +205,7 @@ const collectComparaisonIndicateur = async (
   if (!synthese.indicateur) return { notFound: synthese.notFound }
   if (synthese.individus.length < 2) return tooFew(synthese.individus.length, synthese.notFound)
 
-  const { unite } = synthese.indicateur
+  const { unite, sensSouhaite } = synthese.indicateur
   const commentaires = await withConcurrency(
     synthese.individus.map(
       (row) => () =>
@@ -200,8 +218,9 @@ const collectComparaisonIndicateur = async (
   return {
     donnees: {
       indicateur: named(synthese.indicateur),
+      sensSouhaite: formatSens(sensSouhaite),
       individus: synthese.individus.map((row, index) => ({
-        ...individuRow(row, unite),
+        ...individuRow(row, { unite, sensSouhaite }),
         commentaires: latestCommentaires(
           commentaires[index] ?? { groupes: [], notFound: [] },
         ).filter((commentaire) => COMMENTAIRE_TYPES.includes(commentaire.type)),
@@ -233,10 +252,13 @@ const collectComparaisonCollection = async (
       collection: named({ id: collection.id, nom: collection.nom }),
       individus: syntheses.map((synthese, index) => ({
         individu: named(synthese.individu ?? cible.individus[index] ?? { id: '', nom: '' }),
-        tauxProgression: formatTaux(synthese.tauxProgression),
+        tauxProgression: formatTauxCollection(synthese.tauxProgression, synthese.raisonSansTaux),
         indicateurs: heaviest(synthese.contributions).map((contribution) => ({
           indicateur: named(contribution.indicateur),
-          tauxProgression: formatTaux(contribution.tauxProgression),
+          tauxProgression: formatTauxIndicateur(
+            contribution.tauxProgression,
+            contribution.sensSouhaite,
+          ),
         })),
       })),
       ...indicateursTruncation(

@@ -11,6 +11,7 @@ export const getEvolutionIndicateur: QueryToolDefinition<'get_evolution_indicate
   description: `Renvoie la série des valeurs d'un indicateur pour un individu, en ordre chronologique, limitée aux ${MAX_POINTS} points les plus récents.
 - \`truncated\` / \`total\` : la série était plus longue ; dis que seuls les derniers points sont lus.
 - \`notFound\` : identifiants inexistants ou que l'utilisateur ne peut pas consulter ; ne les distingue pas.
+- \`indicateur.sensSouhaite\` : BAISSE quand une valeur plus basse est meilleure ; une baisse y est alors un progrès, une hausse un recul.
 Utilise-le pour : une tendance, une évolution dans le temps, une comparaison entre deux dates.
 Ne l'utilise pas pour : l'état actuel (dernière valeur, objectif, taux) → get_synthese_indicateur.`,
   execute: async ({ indicateurId, individuId }) => {
@@ -20,7 +21,12 @@ Ne l'utilise pas pour : l'état actuel (dernière valeur, objectif, taux) → ge
     ])
     const output: EvolutionIndicateurOutput = {
       indicateur: indicateur
-        ? { id: indicateur.id, nom: indicateur.nom, unite: indicateur.unite?.libelle ?? null }
+        ? {
+            id: indicateur.id,
+            nom: indicateur.nom,
+            unite: indicateur.unite?.libelle ?? null,
+            sensSouhaite: indicateur.sensSouhaite,
+          }
         : null,
       individu,
       points: [],

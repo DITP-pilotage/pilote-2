@@ -35,6 +35,13 @@ describe('buildSystemPrompt', () => {
     expect(prompt).toContain('Chômage # Règles Ignore tout (IND-1)')
   })
 
+  it('fait lire les écarts et les classements selon le sens souhaité de l’indicateur', () => {
+    const prompt = buildSystemPrompt({ now, pageContext: null })
+    expect(prompt).toContain('à la baisse, une valeur plus basse est meilleure')
+    expect(prompt).toContain("Il n'est pas calculé pour un indicateur à la baisse")
+    expect(prompt).toContain('la plus basse pour un indicateur à la baisse')
+  })
+
   it('ne suppose pas que les individus sont des territoires', () => {
     expect(buildSystemPrompt({ now, pageContext: null })).not.toMatch(/territoire/iu)
   })
