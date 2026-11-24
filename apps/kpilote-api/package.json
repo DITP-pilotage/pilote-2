@@ -34,7 +34,7 @@
     "schema": "prisma/schema.prisma"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^4.0.106",
+    "@ai-sdk/openai": "^4.0.111",
     "@hono/node-server": "2.1.6",
     "@hono/swagger-ui": "^0.6.2",
     "@hono/zod-openapi": "^1.6.3",
@@ -43,12 +43,12 @@
     "@pilote/kpilote-shared": "workspace:*",
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "7.10.1",
-    "ai": "^7.0.159",
+    "ai": "^7.0.166",
     "chrono-node": "^2.10.3",
-    "dotenv": "18.0.9",
-    "es-toolkit": "^1.53.1",
-    "hono": "^4.13.16",
-    "jose": "^6.2.15",
+    "dotenv": "18.0.10",
+    "es-toolkit": "^1.53.2",
+    "hono": "^4.13.17",
+    "jose": "^6.2.17",
     "ky": "^2.2.0",
     "lru-cache": "^11.5.3",
     "neverthrow": "^8.2.0",
@@ -63,15 +63,15 @@
     "@hono/vite-dev-server": "^0.26.1",
     "@types/node": "^26.6.6",
     "@types/pg": "^8.23.1",
-    "oxlint": "^1.90.0",
-    "oxlint-tsgolint": "~7.0.2005",
+    "oxlint": "^1.93.0",
+    "oxlint-tsgolint": "~7.0.2006",
     "pino-pretty": "^13.2.0",
-    "portless": "^0.15.13",
+    "portless": "^0.17.0",
     "prettier": "^3.9.10",
     "prisma": "7.10.1",
     "tsx": "^4.23.15",
     "typescript": "7.0.2",
-    "vite": "^8.3.5",
-    "vitest": "^5.0.5"
+    "vite": "^8.3.7",
+    "vitest": "^5.1.0"
   }
 }
