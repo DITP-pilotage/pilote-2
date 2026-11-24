@@ -4,16 +4,19 @@ import { RenduContenuCentreAide } from '@pilote/kpilote-ui/centre-aide'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
+import { z } from 'zod'
 
 import { clsxm } from '@/lib/clsxm'
 import { useRecordVisit } from '@/lib/recentlyVisited'
 import { articlesCentreAidePubliesQueryOptions } from '@/queries/centreAide'
 
+const searchSchema = z.object({
+  article: z.string().optional().catch(undefined),
+})
+
 export const Route = createFileRoute('/_authenticated/centre-aide/')({
   staticData: { title: 'Centre d’aide' },
-  validateSearch: (search: Record<string, unknown>): { article: string | undefined } => ({
-    article: typeof search.article === 'string' ? search.article : undefined,
-  }),
+  validateSearch: searchSchema,
   component: CentreAidePage,
 })
 

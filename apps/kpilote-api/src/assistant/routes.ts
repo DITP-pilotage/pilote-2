@@ -38,18 +38,16 @@ const MAX_RATE_BODY_BYTES = 8 * 1024
 
 const STREAM_ERROR_MESSAGE = "L'assistant a rencontré une erreur. Réessayez dans un instant."
 
-const hasId = (message: unknown): message is { id: string } =>
-  typeof message === 'object' &&
-  message !== null &&
-  'id' in message &&
-  typeof message.id === 'string'
+const messageWithIdSchema = z.object({ id: z.string() })
 
 /**
  * Un message déjà présent est une relance (« Réessayer ») : le tour repart de ce message,
  * sans le dupliquer ni garder la réponse qu'il avait reçue.
  */
 const historyBefore = (history: unknown[], messageId: string): unknown[] => {
-  const index = history.findIndex((message) => hasId(message) && message.id === messageId)
+  const index = history.findIndex(
+    (message) => messageWithIdSchema.safeParse(message).data?.id === messageId,
+  )
   return index === -1 ? history : history.slice(0, index)
 }
 
