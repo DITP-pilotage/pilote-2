@@ -478,6 +478,21 @@ export const valeurAvancementApiModelSchema = z.discriminatedUnion('type', [
 ])
 export type ValeurAvancementApiModel = z.infer<typeof valeurAvancementApiModelSchema>
 
+// Sans les contributions : une lecture de tout le cube les répéterait sur chaque point dérivé.
+export const valeurDeriveeResumeApiModelSchema = valeurDeriveeApiModelSchema
+  .omit({ contributions: true })
+  .describe(
+    'Point dérivé sans ses contributions. Pour les lire : `GET /indicateurs/{id}/valeurs` avec ' +
+      'les `modalites` de la combinaison.',
+  )
+export type ValeurDeriveeResumeApiModel = z.infer<typeof valeurDeriveeResumeApiModelSchema>
+
+export const valeurAvancementResumeApiModelSchema = z.discriminatedUnion('type', [
+  valeurSaisieApiModelSchema,
+  valeurDeriveeResumeApiModelSchema,
+])
+export type ValeurAvancementResumeApiModel = z.infer<typeof valeurAvancementResumeApiModelSchema>
+
 export const valeurAvancementListApiModelSchema = z.object({
   items: z
     .array(valeurAvancementApiModelSchema)
@@ -568,4 +583,44 @@ export const tauxProgressionIndividuListApiModelSchema = z.object({
 })
 export type TauxProgressionIndividuListApiModel = z.infer<
   typeof tauxProgressionIndividuListApiModelSchema
+>
+
+// Plafond des combinaisons lues en une fois : au-delà, le produit des modalités des axes
+// devient coûteux à calculer et illisible à afficher.
+export const MAX_COMBINAISONS_PAR_LECTURE = 2000
+
+export const listValeursByCombinaisonQuerySchema = z.object({
+  individu: individuPublicIdSchema.describe('Individu dont on lit les combinaisons.'),
+  dateTrunc: dateTruncSchema
+    .optional()
+    .describe('Granularité de troncature des dates des points. Par défaut `month`.'),
+})
+export type ListValeursByCombinaisonQuery = z.infer<typeof listValeursByCombinaisonQuerySchema>
+
+export const valeursCombinaisonApiModelSchema = z.object({
+  modalites: z
+    .array(modalitePublicIdSchema)
+    .describe(
+      'Modalités fixées de la combinaison (feuilles ou parentes), dans l’ordre des axes. Un axe ' +
+        'non cité vaut « Tous » ; vide : « Tous » sur chaque axe.',
+    ),
+  valeurs: z
+    .array(valeurAvancementResumeApiModelSchema)
+    .describe(
+      'Série de la combinaison, triée par date : mêmes points que `GET /indicateurs/{id}/valeurs` ' +
+        'avec ces `modalites`, sans les contributions des points dérivés.',
+    ),
+})
+export type ValeursCombinaisonApiModel = z.infer<typeof valeursCombinaisonApiModelSchema>
+
+export const valeursByCombinaisonListApiModelSchema = z.object({
+  items: z
+    .array(valeursCombinaisonApiModelSchema)
+    .describe(
+      'Une entrée par combinaison qui a au moins un point. Une combinaison absente n’a aucune ' +
+        'valeur pour l’individu (jamais saisie, ni calculable).',
+    ),
+})
+export type ValeursByCombinaisonListApiModel = z.infer<
+  typeof valeursByCombinaisonListApiModelSchema
 >

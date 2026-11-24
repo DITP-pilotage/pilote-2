@@ -11,7 +11,9 @@ import {
   listIndividusWithValeursQuerySchema,
   listSyntheseIndividusQuerySchema,
   listTauxProgressionIndividuQuerySchema,
+  listValeursByCombinaisonQuerySchema,
   listValeursForIndicateurQuerySchema,
+  MAX_COMBINAISONS_PAR_LECTURE,
   listValeursRemarquablesForIndicateurQuerySchema,
   syntheseIndividusListApiModelSchema,
   tauxProgressionIndividuListApiModelSchema,
@@ -20,6 +22,7 @@ import {
   upsertValeursAvancementBatchResultApiModelSchema,
   valeurAvancementListApiModelSchema,
   valeurSaisieApiModelSchema,
+  valeursByCombinaisonListApiModelSchema,
   valeursRemarquablesListApiModelSchema,
 } from '@pilote/kpilote-shared/valeurAvancement'
 import {
@@ -37,7 +40,7 @@ import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { ErrorApiModelSchema, erreur400, erreur403 } from '@/framework/openapi/responses'
+import { ErrorApiModelSchema, erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import {
   type DeleteValeurAvancementError,
@@ -57,12 +60,19 @@ import { listCollectionTauxProgressionForIndividu } from '@/collection/queries/l
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 import { listTauxProgressionForIndicateur } from '@/valeurAvancement/queries/listTauxProgressionForIndicateur'
+import {
+  describeListValeursByCombinaisonError,
+  listValeursByCombinaison,
+} from '@/valeurAvancement/queries/listValeursByCombinaison'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
 import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries/listValeursRemarquablesForIndicateur'
 
 const ValeurSaisieApiModelSchema = valeurSaisieApiModelSchema.openapi('ValeurSaisieApiModel')
 const ValeurAvancementListApiModelSchema = valeurAvancementListApiModelSchema.openapi(
   'ValeurAvancementListApiModel',
+)
+const ValeursByCombinaisonListApiModelSchema = valeursByCombinaisonListApiModelSchema.openapi(
+  'ValeursByCombinaisonListApiModel',
 )
 const UpsertValeurAvancementBodySchema = upsertValeurAvancementBodySchema.openapi(
   'UpsertValeurAvancementBody',
@@ -148,6 +158,37 @@ const getValeursForIndicateurRoute = createRoute({
       description: 'Points (saisies et dérivés) pour les individus demandés',
     },
     400: erreur400,
+  },
+})
+
+// --- GET /indicateurs/:id/valeurs-par-combinaison -----------------------------
+
+const getValeursByCombinaisonRoute = createRoute({
+  method: 'get',
+  path: '/indicateurs/{id}/valeurs-par-combinaison',
+  tags: ['Indicateur'],
+  summary: 'Lister les séries de toutes les combinaisons de modalités pour un individu',
+  description:
+    'Pour un individu, la série de chaque combinaison de l’indicateur : sur chaque axe, « Tous », ' +
+    'une modalité parente ou une modalité feuille. Chaque série est celle que renvoie ' +
+    '`GET /indicateurs/{id}/valeurs` avec les mêmes `modalites`, calculée en une passe. Les ' +
+    'combinaisons sans aucun point sont omises. Indicateur sans axe : une seule entrée, ' +
+    `\`modalites\` vide. Erreur 400 \`TROP_DE_COMBINAISONS\` au-delà de ${MAX_COMBINAISONS_PAR_LECTURE} ` +
+    'combinaisons (produit, sur les axes, du nombre de modalités plus un). Les points dérivés ' +
+    'n’ont pas leurs `contributions` : les lire par `GET /indicateurs/{id}/valeurs`. Erreur 404 ' +
+    'tant que la feature `TABLEAU_VALEURS` est inactive pour l’appelant.',
+  middleware: [requireAuthentication],
+  request: {
+    params: indicateurParamsSchema,
+    query: listValeursByCombinaisonQuerySchema,
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: ValeursByCombinaisonListApiModelSchema } },
+      description: 'Séries par combinaison pour l’individu demandé',
+    },
+    400: erreur400,
+    404: erreur404,
   },
 })
 
@@ -498,6 +539,30 @@ valeurAvancementRoutes.openapi(getValeursForIndicateurRoute, async (context) => 
     },
   )
 })
+
+valeurAvancementRoutes.openapi(getValeursByCombinaisonRoute, async (context) =>
+  listValeursByCombinaison({
+    indicateurPublicId: context.req.valid('param').id,
+    params: context.req.valid('query'),
+  }).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: ValeursByCombinaisonListApiModelSchema,
+        status: 200,
+      }),
+    (error) => {
+      const { status, message, details } = describeListValeursByCombinaisonError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
+  ),
+)
 
 valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
   const { id } = context.req.valid('param')

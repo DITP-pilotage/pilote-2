@@ -1,10 +1,79 @@
 import {
+  type ContributionApiModel,
   type IndividuAvecValeursApiModel,
+  type ValeurAvancementApiModel,
+  type ValeurAvancementResumeApiModel,
   type ValeurSaisieApiModel,
 } from '@pilote/kpilote-shared/valeurAvancement'
 
+import { formatBucket } from '@/framework/bucket'
 import { type ValeurAvancementModel } from '@/generated/prisma/models'
 import { type IndividuWithReferentiel, toIndividuApiModel } from '@/individu/utils'
+import { type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
+
+export const toValeurAvancementApiModel = ({
+  indicateurPublicId,
+  individuPublicId,
+  point,
+}: {
+  indicateurPublicId: string
+  individuPublicId: string
+  point: PointInterne
+}): ValeurAvancementApiModel => {
+  if (point.type === 'saisie') {
+    return {
+      indicateur: indicateurPublicId,
+      individu: individuPublicId,
+      date: formatBucket(point.bucket),
+      valeur: point.valeur.toNumber(),
+      type: 'saisie',
+    }
+  }
+  const contributions: ContributionApiModel[] = point.contributions.map((contribution) => ({
+    individu: contribution.individuPublicId,
+    valeur: contribution.valeur === null ? null : contribution.valeur.toNumber(),
+    date: contribution.dateOrigine === null ? null : formatBucket(contribution.dateOrigine),
+    source: contribution.source,
+    // Champ absent sans axe : la réponse des indicateurs sans axe ne change pas.
+    ...(contribution.modalites.length > 0 ? { modalites: [...contribution.modalites] } : {}),
+  }))
+  return {
+    indicateur: indicateurPublicId,
+    individu: individuPublicId,
+    date: formatBucket(point.bucket),
+    valeur: point.valeur.toNumber(),
+    type: 'derivee',
+    fonctionAgregation: point.fonctionAgregation,
+    contributions,
+    couverture: point.couverture,
+  }
+}
+
+// Sans les contributions des points dérivés : `GET /indicateurs/{id}/valeurs-par-combinaison`
+// les répéterait sur chaque point du cube.
+export const toValeurAvancementResumeApiModel = ({
+  indicateurPublicId,
+  individuPublicId,
+  point,
+}: {
+  indicateurPublicId: string
+  individuPublicId: string
+  point: PointInterne
+}): ValeurAvancementResumeApiModel => {
+  const base = {
+    indicateur: indicateurPublicId,
+    individu: individuPublicId,
+    date: formatBucket(point.bucket),
+    valeur: point.valeur.toNumber(),
+  }
+  if (point.type === 'saisie') return { ...base, type: 'saisie' }
+  return {
+    ...base,
+    type: 'derivee',
+    fonctionAgregation: point.fonctionAgregation,
+    couverture: point.couverture,
+  }
+}
 
 export type ValeurAvancementWithRelations = ValeurAvancementModel & {
   indicateur: { publicId: string }

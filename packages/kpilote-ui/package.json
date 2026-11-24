@@ -109,6 +109,14 @@
       "types": "./src/Pagination.tsx",
       "default": "./src/Pagination.tsx"
     },
+    "./FormulaBar": {
+      "types": "./src/FormulaBar.tsx",
+      "default": "./src/FormulaBar.tsx"
+    },
+    "./PivotTable": {
+      "types": "./src/PivotTable.tsx",
+      "default": "./src/PivotTable.tsx"
+    },
     "./Picker": {
       "types": "./src/Picker.tsx",
       "default": "./src/Picker.tsx"

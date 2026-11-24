@@ -9,6 +9,7 @@ import {
   loadSousArbre,
 } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { type ModaliteCalcul, type Selection } from '@/axe/modalites'
+import { type IndicateurAxeModel, type ModaliteModel } from '@/generated/prisma/models'
 import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
 import { cleCellule, type SaisiesCellule } from '@/valeurAvancement/cellule'
 import {
@@ -26,6 +27,24 @@ export type ContexteSerie = {
   allNodes: Map<string, IndividuRef>
 }
 
+export type AxesIndicateur = {
+  declarations: ReadonlyArray<IndicateurAxeModel>
+  modalites: ReadonlyArray<ModaliteModel>
+}
+
+// Les axes déclarés par l'indicateur, dans leur ordre, et toutes leurs modalités.
+export const loadAxesIndicateur = async (indicateurId: string): Promise<AxesIndicateur> => {
+  const declarations = await db().indicateurAxe.findMany({
+    where: { indicateurId },
+    orderBy: { ordre: 'asc' },
+  })
+  if (declarations.length === 0) return { declarations, modalites: [] }
+  const modalites = await db().modalite.findMany({
+    where: { axeId: { in: declarations.map((declaration) => declaration.axeId) } },
+  })
+  return { declarations, modalites }
+}
+
 // Charge en bulk tout ce dont le moteur (`resolveSerieNoeud`) a besoin pour
 // calculer une série (dérivée ou feuille) à partir d'un ensemble d'individus
 // cibles : le sous-arbre des descendants, les liens indicateur↔référentiel, et
@@ -38,21 +57,26 @@ export type ContexteSerie = {
 // combinaison vide, et le graphe reprend le calcul historique ; un indicateur à
 // axes calcule « Tous » et les modalités parentes à partir des combinaisons
 // observées (chemin 1).
+//
+// `axes` : déjà chargés par l'appelant qui en avait besoin avant le calcul, pour ne pas les relire.
 export const loadResolveSerieContext = async ({
   indicateurId,
   individusCibles,
   dateTrunc,
+  axes,
 }: {
   indicateurId: string
   individusCibles: ReadonlyArray<IndividuRef>
   dateTrunc: DateTrunc
+  axes?: AxesIndicateur
 }): Promise<ContexteSerie> => {
-  const [{ allNodes, enfantsParParent }, fonctionAgregationParReferentiel, declarations] =
+  const [{ allNodes, enfantsParParent }, fonctionAgregationParReferentiel, axesIndicateur] =
     await Promise.all([
       loadSousArbre(individusCibles),
       loadFonctionsAgregation(indicateurId),
-      db().indicateurAxe.findMany({ where: { indicateurId }, orderBy: { ordre: 'asc' } }),
+      axes ?? loadAxesIndicateur(indicateurId),
     ])
+  const { declarations } = axesIndicateur
   const individuIds = [...allNodes.keys()]
 
   const { modalites, cellules, modalitesParCombinaison } =
@@ -62,7 +86,7 @@ export const loadResolveSerieContext = async ({
           indicateurId,
           individuIds,
           dateTrunc,
-          axeIds: declarations.map((declaration) => declaration.axeId),
+          modalites: axesIndicateur.modalites,
         })
 
   const { graphe, noeud } = buildGrapheSerie({
@@ -106,23 +130,25 @@ const loadCombinaisonVide = async ({
   return { modalites: [], cellules, modalitesParCombinaison: new Map() }
 }
 
-// Indicateur à axes : ses modalités, les saisies de toutes ses combinaisons,
-// puis les modalités des combinaisons trouvées.
+// Indicateur à axes : les saisies de toutes ses combinaisons, puis les
+// modalités des combinaisons trouvées.
 const loadCombinaisonsAxes = async ({
   indicateurId,
   individuIds,
   dateTrunc,
-  axeIds,
+  modalites,
 }: {
   indicateurId: string
   individuIds: ReadonlyArray<string>
   dateTrunc: DateTrunc
-  axeIds: ReadonlyArray<string>
+  modalites: ReadonlyArray<ModaliteModel>
 }): Promise<DonneesCombinaisons> => {
-  const [modalites, cellules] = await Promise.all([
-    db().modalite.findMany({ where: { axeId: { in: [...axeIds] } } }),
-    loadSaisiesTronquees({ indicateurId, individuIds, dateTrunc, combinaisonIds: null }),
-  ])
+  const cellules = await loadSaisiesTronquees({
+    indicateurId,
+    individuIds,
+    dateTrunc,
+    combinaisonIds: null,
+  })
   const lignes = await db().combinaisonModalite.findMany({
     where: { combinaisonId: { in: [...new Set(cellules.map((c) => c.combinaisonId))] } },
   })

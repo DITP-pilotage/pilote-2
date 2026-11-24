@@ -1,103 +1,100 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { indicateurPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import {
-  normaliserErrorApiModelSchema,
-  normaliserValeursImportResponseApiModelSchema,
+  ciblesSaisieApiModelSchema,
+  planImportBodySchema,
 } from '@pilote/kpilote-shared/valeurImport'
+import { streamSSE } from 'hono/streaming'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
+import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
-import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { normaliserValeursImport } from '@/valeurImport/commands/normaliserValeursImport'
+import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
+import { buildPlanTransformation } from '@/valeurImport/buildPlanTransformation'
+import { getImportContext } from '@/valeurImport/queries/getImportContext'
 
-const MAX_ROWS = 1000
+const params = z.object({ id: indicateurPublicIdSchema })
 
-const normaliserBodySchema = z.object({
-  rows: z
-    .array(z.record(z.string(), z.unknown()))
-    .min(1)
-    .max(MAX_ROWS)
-    .describe('Lignes brutes parsées côté client (clé = en-tête, valeur = cellule).'),
-  nomFichier: z.string().max(255).describe('Nom du fichier source — contexte pour Albert.'),
+const CiblesSaisieApiModelSchema = ciblesSaisieApiModelSchema.openapi('CiblesSaisieApiModel')
+
+const ciblesSaisieRoute = createRoute({
+  method: 'get',
+  path: '/indicateurs/{id}/cibles-saisie',
+  tags: ['Indicateur'],
+  summary: 'Lister les cibles de saisie d’un indicateur',
+  description:
+    'Ce sur quoi une valeur de l’indicateur peut être saisie : les individus de ses référentiels, ' +
+    'et pour chacun de ses axes ses modalités feuilles. Réservé à qui peut écrire les valeurs de l’indicateur.',
+  middleware: [requireAuthentication],
+  request: { params },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: CiblesSaisieApiModelSchema } },
+      description: 'Individus et modalités sur lesquels saisir.',
+    },
+    403: erreur403,
+    404: erreur404,
+  },
 })
 
-const NormaliserBodySchema = normaliserBodySchema.openapi('NormaliserValeursImportBody')
-const NormaliserResponseSchema = normaliserValeursImportResponseApiModelSchema.openapi(
-  'NormaliserValeursImportResponse',
-)
-const NormaliserErrorSchema = normaliserErrorApiModelSchema.openapi('NormaliserValeursImportError')
-
-const normaliserRoute = createRoute({
+const planImportRoute = createRoute({
   method: 'post',
-  path: '/indicateurs/{id}/valeurs:normaliser',
+  path: '/indicateurs/{id}/valeurs:plan-import',
   tags: ['Indicateur'],
-  summary: 'Normaliser un fichier hétérogène vers le format batch (extraction assistée Albert)',
+  summary: 'Construire le plan de transformation d’un fichier de valeurs',
   description:
-    "Reçoit les lignes brutes (CSV/Excel parsé côté client) d'un fichier qui ne respecte pas le " +
-    'format standard `individu/date/valeur`, et utilise Albert en 2 passes (découverte de structure ' +
-    "puis résolution des individus) pour produire des triplets normalisés. N'écrit rien en base : " +
-    "l'écriture reste via `PUT /indicateurs/{id}/valeurs:batch`. Indicateur à axes : Albert rattache " +
-    'une colonne du fichier à chaque axe, dont les libellés sont résolus contre les modalités feuilles ' +
-    'de cet axe ; les items portent alors `modalites` (une par axe), et les lignes incomplètes sont ' +
-    'écartées avec un avertissement.',
+    'Reçoit un fichier lu en tableau (en-têtes et lignes) qui ne suit pas le format standard, et ' +
+    'construit avec l’assistant IA le plan qui dit comment le lire : rôle de chaque colonne, puis ' +
+    'rapprochement de chaque libellé avec un individu ou une modalité. N’écrit rien en base : ' +
+    'l’écriture reste `PUT /indicateurs/{id}/valeurs:batch`. La réponse est un flux SSE : chaque ' +
+    'message porte un événement JSON (`PlanImportEvent`), les étapes au fil de l’eau puis un ' +
+    'dernier événement `PLAN` ou `ECHEC`.',
   middleware: [requireAuthentication],
   request: {
-    params: z.object({ id: indicateurPublicIdSchema }),
+    params,
     body: {
-      content: { 'application/json': { schema: NormaliserBodySchema } },
+      content: { 'application/json': { schema: planImportBodySchema.openapi('PlanImportBody') } },
       required: true,
     },
   },
   responses: {
     200: {
-      content: { 'application/json': { schema: NormaliserResponseSchema } },
-      description: 'Triplets normalisés + résolution + warnings + rapport.',
+      content: { 'text/event-stream': { schema: z.string() } },
+      description: 'Flux des étapes, terminé par le plan ou par l’échec.',
     },
-    422: {
-      content: { 'application/json': { schema: NormaliserErrorSchema } },
-      description:
-        "Albert n'a pas su structurer le fichier (`PLAN_ECHEC`) ou résoudre les individus " +
-        '(`RESOLUTION_ECHEC`).',
-    },
+    400: erreur400,
+    403: erreur403,
+    404: erreur404,
   },
 })
 
 export const valeurImportRoutes = createOpenApiHono()
 
-valeurImportRoutes.openapi(normaliserRoute, async (context) => {
-  const { id } = context.req.valid('param')
-  const body = context.req.valid('json')
+valeurImportRoutes.openapi(ciblesSaisieRoute, async (context) =>
+  getImportContext({ indicateurPublicId: context.req.valid('param').id }).match(
+    ({ cibles }) =>
+      jsonResponseOk({ context, data: cibles, schema: CiblesSaisieApiModelSchema, status: 200 }),
+    never,
+  ),
+)
 
-  const result = await normaliserValeursImport(id, {
-    rows: body.rows,
-    nomFichier: body.nomFichier,
+valeurImportRoutes.openapi(planImportRoute, async (context) => {
+  const { tableau, nomFichier } = context.req.valid('json')
+  // Chargé avant d'ouvrir le flux : un 403 ou un 404 part avec son vrai statut.
+  const importContext = await getImportContext({
+    indicateurPublicId: context.req.valid('param').id,
+  }).match((value) => value, never)
+
+  return streamSSE(context, async (output) => {
+    const events = buildPlanTransformation({
+      context: importContext,
+      tableau,
+      nomFichier,
+      abortSignal: context.req.raw.signal,
+    })
+    for await (const event of events) {
+      await output.writeSSE({ data: JSON.stringify(event) })
+    }
   })
-
-  return result.match(
-    (data) => jsonResponseOk({ context, data, schema: NormaliserResponseSchema, status: 200 }),
-    (error) => {
-      if (error.type === 'PLAN_ECHEC') {
-        return jsonResponseError({
-          context,
-          error: {
-            code: 'PLAN_ECHEC',
-            message: error.explication,
-            details: { raison: error.raison, explication: error.explication },
-          },
-          schema: NormaliserErrorSchema,
-          status: 422,
-        })
-      }
-      // RESOLUTION_ECHEC
-      return jsonResponseError({
-        context,
-        error: {
-          code: 'RESOLUTION_ECHEC',
-          message: "Albert n'a pas fourni de mapping valide après plusieurs tentatives.",
-        },
-        schema: NormaliserErrorSchema,
-        status: 422,
-      })
-    },
-  )
 })

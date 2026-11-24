@@ -55,6 +55,14 @@ export const testDeptId = (): string => `DEPT-${randomToken(12).toUpperCase()}`
 
 export const testRegId = (): string => `REG-${randomToken(12).toUpperCase()}`
 
+// Lettres seules : une clé de feature n'admet que A-Z et `_`.
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+export const testFeatureKey = (): string => {
+  let out = 'FEATURE_TEST_'
+  for (let i = 0; i < 12; i++) out += LETTERS[Math.floor(Math.random() * LETTERS.length)]
+  return out
+}
+
 export const testEmail = (): string => `utilisateur-${randomToken(12)}@example.com`
 
 // `pilote_live_<token>` — préfixe imposé par looksLikeApiKey, longueur ≥ 20 pour

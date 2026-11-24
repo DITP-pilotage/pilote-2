@@ -15,6 +15,7 @@ import {
   testWidgetId,
   testAxeId,
   testModaliteId,
+  testFeatureKey,
 } from '@/test/randomIds'
 import {
   type ApiKeyModel,
@@ -1260,25 +1261,28 @@ type FeatureOverrides = Partial<{
   utilisateurs: { id: string }[]
 }>
 
-let featureSeq = 0
-
-const upsertFeature = async (o: FeatureOverrides = {}) => {
-  const id = o.id ?? uuidv7()
-  featureSeq += 1
-  const created = await db().feature.create({
-    data: {
-      id,
-      key: o.key ?? `FEATURE_TEST_${featureSeq}`,
-      nom: o.nom ?? 'Feature de test',
-      etat: o.etat ?? 'DESACTIVE',
-    },
+// Upsert sur `key` : une feature référencée par le code (TABLEAU_VALEURS) existe déjà, insérée
+// par sa migration.
+const upsertFeature = async ({ utilisateurs, ...o }: FeatureOverrides = {}) => {
+  const create = {
+    id: uuidv7(),
+    key: testFeatureKey(),
+    nom: 'Feature de test',
+    etat: 'DESACTIVE' as const,
+    ...o,
+  }
+  const { id: _id, key: _key, ...update } = o
+  const upserted = await db().feature.upsert({
+    where: { key: create.key },
+    update,
+    create,
   })
-  for (const utilisateur of o.utilisateurs ?? []) {
+  for (const utilisateur of utilisateurs ?? []) {
     await db().featureUtilisateur.create({
-      data: { featureId: id, utilisateurId: utilisateur.id },
+      data: { featureId: upserted.id, utilisateurId: utilisateur.id },
     })
   }
-  return created
+  return upserted
 }
 
 function feature(): Promise<FeatureModel>
