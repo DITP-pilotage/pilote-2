@@ -35,17 +35,24 @@ const structureProposeeSchema = z.object({
           .describe("En-tête exact de la colonne qui porte les modalités de l'axe."),
       }),
     )
-    .describe("Une entrée par axe de l'indicateur présent dans le fichier. Vide sans axe."),
+    .describe(
+      "Une entrée par axe de l'indicateur dont les modalités sont dans les cellules d'une colonne. " +
+        'Sans l’axe lu dans les en-têtes (`axeEnColonnes`). Vide sans axe.',
+    ),
   disposition: z
-    .enum(['LIGNES', 'COLONNES'])
+    .enum(['LIGNES', 'COLONNES', 'COLONNES_MODALITES'])
     .describe(
       'LIGNES : une ligne du fichier porte une seule valeur, avec une colonne de date. ' +
-        'COLONNES : les en-têtes de plusieurs colonnes sont des dates, chaque ligne porte une valeur par date.',
+        'COLONNES : les en-têtes de plusieurs colonnes sont des dates, chaque ligne porte une valeur par date. ' +
+        "COLONNES_MODALITES : les en-têtes de plusieurs colonnes sont des modalités d'un axe, " +
+        'chaque ligne porte une valeur par modalité, avec une colonne de date.',
     ),
   colonneDate: z
     .string()
     .nullish()
-    .describe('Disposition LIGNES seulement : en-tête exact de la colonne de date.'),
+    .describe(
+      'Dispositions LIGNES et COLONNES_MODALITES seulement : en-tête exact de la colonne de date.',
+    ),
   colonneValeur: z
     .string()
     .nullish()
@@ -66,6 +73,22 @@ const structureProposeeSchema = z.object({
     .nullish()
     .describe(
       'Disposition COLONNES seulement : une entrée par colonne dont l’en-tête est une date.',
+    ),
+  axeEnColonnes: z
+    .object({
+      axe: z
+        .string()
+        .describe(
+          "Identifiant de l'axe dont les modalités sont les en-têtes, recopié de la liste des axes.",
+        ),
+      colonnes: z
+        .array(z.string())
+        .describe('En-têtes exacts des colonnes de valeurs, un par modalité de l’axe.'),
+    })
+    .nullish()
+    .describe(
+      'Disposition COLONNES_MODALITES seulement : l’axe lu dans les en-têtes des colonnes de ' +
+        'valeurs. Cet axe ne figure pas dans `colonnesAxes`.',
     ),
   colonneFiltre: z
     .string()
@@ -95,14 +118,15 @@ const SYSTEM_PROMPT = [
   'Une valeur se définit par : un individu, une date, un nombre, et une modalité pour chaque axe de l’indicateur.',
   'L’individu est l’entité mesurée : un territoire (département, région, commune) ou une structure (établissement, service). Les modalités d’un axe (opérateur, type de fraude…) ne sont jamais des individus.',
   '',
-  'Deux dispositions existent.',
+  'Trois dispositions existent.',
   '- LIGNES : une ligne porte une valeur. Exemple d’en-têtes : `Département, Période, Taux`. Tu donnes `colonneDate` et `colonneValeur`.',
   '- COLONNES : les en-têtes sont des dates. Exemple : `Département, 2021, 2022, 2023`. Tu donnes `colonnesDates`, une entrée par colonne de date.',
+  '- COLONNES_MODALITES : les en-têtes de plusieurs colonnes sont des modalités d’un axe, et la date est dans une colonne. Exemple : `Département, Opérateur, Trimestre, TVA, IR, IS`, où `TVA`, `IR` et `IS` sont des types de fraude. Tu donnes `colonneDate` et `axeEnColonnes` : l’axe et les en-têtes de ses colonnes de valeurs. Cet axe ne figure pas dans `colonnesAxes`.',
   '',
   'Règles.',
   '- Recopie les en-têtes exactement, caractère pour caractère. N’invente aucune colonne.',
   '- Une colonne n’a qu’un seul rôle.',
-  '- Pour chaque axe de l’indicateur, cherche la colonne dont les cellules ressemblent à ses modalités. Si aucune colonne ne convient, ne cite pas cet axe.',
+  '- Pour chaque axe de l’indicateur, cherche la colonne dont les cellules ressemblent à ses modalités, ou des en-têtes de colonnes qui ressemblent à ses modalités (abréviations comprises). Si rien ne convient, ne cite pas cet axe.',
   '- `colonneFiltre` ne sert que si une colonne distingue valeur initiale, valeur cible et valeur d’avancement (par exemple `VI`, `VC`, `VA`). Dans ce cas `valeursFiltre` ne contient que les valeurs d’avancement.',
   '',
   'Quand tu as fini, appelle le tool `decrire_structure`. S’il te renvoie des erreurs, corrige-les et rappelle-le.',
