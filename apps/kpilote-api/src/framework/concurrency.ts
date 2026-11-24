@@ -43,3 +43,29 @@ export const withConcurrency = <R>(
   const limit = pLimit(concurrency)
   return Promise.all(fns.map((fn) => limit(fn)))
 }
+
+// Pour lancer un travail tout de suite et ne l'attendre que plus tard, par
+// exemple plusieurs appels en parallèle dont on veut les résultats dans l'ordre :
+//
+//   const premier = awaitLater(fetchA())
+//   const second = awaitLater(fetchB())
+//   yield await premier // `fetchB` tourne pendant ce temps
+//   yield await second
+//
+// Sans `awaitLater`, si `fetchB` échoue pendant qu'on attend encore `premier`,
+// sa promesse est rejetée alors que personne n'a encore écrit `await` dessus.
+// Node signale alors un rejet non géré (`unhandledRejection`) et, par défaut
+// depuis Node 15, arrête le process : l'API tombe pour une erreur qu'on allait
+// traiter quelques instants plus tard.
+//
+// `awaitLater` branche tout de suite un gestionnaire vide sur la promesse, ce
+// qui la marque comme gérée, puis renvoie la promesse d'origine (pas celle de
+// `.catch`) : le `await` qui vient plus tard lève toujours l'erreur, et le code
+// appelant la traite comme d'habitude. Le gestionnaire vide n'avale donc rien.
+//
+// Inutile quand on attend la promesse aussitôt, ou quand on passe par
+// `Promise.all` / `Promise.allSettled`, qui branchent leurs gestionnaires d'emblée.
+export const awaitLater = <T>(promise: Promise<T>): Promise<T> => {
+  promise.catch(() => undefined)
+  return promise
+}

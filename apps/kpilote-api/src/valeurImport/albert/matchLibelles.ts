@@ -3,10 +3,13 @@ import { generateText, stepCountIs, tool } from 'ai'
 import { chunk } from 'es-toolkit'
 import { z } from 'zod'
 
-import { createAlbertModel, STRUCTURED_TEMPERATURE } from '@/framework/llm/albert'
+import {
+  createAlbertModel,
+  LOW_REASONING_OPTIONS,
+  STRUCTURED_TEMPERATURE,
+} from '@/framework/llm/albert'
 import { logger } from '@/framework/logger/logger'
 import { startTimer } from '@/framework/timer'
-import { ALBERT_IMPORT_OPTIONS } from '@/valeurImport/albert/providerOptions'
 import { checkRapprochements } from '@/valeurImport/rules'
 
 // Étape 2 du plan : Albert rapproche les libellés d'une colonne des individus ou
@@ -101,7 +104,7 @@ const matchLot = async ({
       `Libellés à rapprocher (${libelles.length}) :\n${JSON.stringify(libelles, null, 2)}`,
     ].join('\n'),
     temperature: STRUCTURED_TEMPERATURE,
-    providerOptions: ALBERT_IMPORT_OPTIONS,
+    providerOptions: LOW_REASONING_OPTIONS,
     tools: {
       rapprocher_libelles: tool({
         description:

@@ -7,6 +7,7 @@ import {
 import { listLibelles } from '@pilote/kpilote-shared/valeurImport/buildPlan'
 import { matchLibellesExact } from '@pilote/kpilote-shared/valeurImport/matchLibellesExact'
 
+import { awaitLater } from '@/framework/concurrency'
 import { logger } from '@/framework/logger/logger'
 import { describeStructure } from '@/valeurImport/albert/describeStructure'
 import { type CibleLibelles, matchLibelles } from '@/valeurImport/albert/matchLibelles'
@@ -50,13 +51,6 @@ const matchColonne = async ({
     abortSignal,
   })
   return { colonne, rapprochements: { ...exact.rapprochements, ...parLlm } }
-}
-
-// Un rapprochement lancé en avance peut échouer avant d'être attendu : sans ce
-// gestionnaire, son rejet ferait tomber le processus. L'erreur reste levée à l'`await`.
-const startMatch = (pending: Promise<ColonneRapprochee>): Promise<ColonneRapprochee> => {
-  pending.catch(() => undefined)
-  return pending
 }
 
 const describeAxesSansColonne = (noms: ReadonlyArray<string>): string =>
@@ -111,8 +105,9 @@ async function* buildPlan({
   yield { type: 'ETAPE', etape: { etape: 'STRUCTURE', statut: 'TERMINEE', valeurs } }
 
   // Les colonnes se rapprochent en parallèle : l'attente est celle de la plus
-  // longue. Les étapes sont produites dans l'ordre, individus puis axes.
-  const individuPending = startMatch(
+  // longue. Les étapes sont produites dans l'ordre, individus puis axes ; un
+  // rapprochement qui échoue avant son tour lève son erreur à son `await`.
+  const individuPending = awaitLater(
     matchColonne({
       tableau,
       colonne: colonneIndividu,
@@ -125,7 +120,7 @@ async function* buildPlan({
   const axesPending = cibles.axes.flatMap((axe) => {
     const colonne = colonnesAxes.find((colonneAxe) => colonneAxe.axe === axe.id)?.colonne
     if (colonne === undefined) return []
-    const pending = startMatch(
+    const pending = awaitLater(
       matchColonne({
         tableau,
         colonne,

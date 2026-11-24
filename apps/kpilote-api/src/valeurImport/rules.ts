@@ -7,8 +7,9 @@ import {
   type TableauSource,
 } from '@pilote/kpilote-shared/valeurImport'
 import { listLibelles } from '@pilote/kpilote-shared/valeurImport/buildPlan'
-import { countBy } from 'es-toolkit'
 import { err, ok, type Result } from 'neverthrow'
+
+import { findDuplicates } from '@/framework/collections/findDuplicates'
 
 // Règles de validation des propositions d'Albert. Chaque règle renvoie toutes
 // les erreurs trouvées : elles repartent telles quelles vers Albert, qui corrige
@@ -45,11 +46,6 @@ export type ErreurStructure =
   | { type: 'VALEUR_DE_FILTRE_INCONNUE'; valeur: string }
 
 export type StructureInvalideError = { type: 'STRUCTURE_INVALIDE'; erreurs: ErreurStructure[] }
-
-const duplicatesOf = (values: ReadonlyArray<string>): string[] =>
-  Object.entries(countBy(values, (value) => value))
-    .filter(([, count]) => count > 1)
-    .map(([value]) => value)
 
 type Disposition = { valeurs: DispositionValeurs | null; erreurs: ErreurStructure[] }
 
@@ -141,14 +137,14 @@ export const checkStructure = ({
     ...[...new Set(roles)]
       .filter((colonne) => !entetes.has(colonne))
       .map((colonne): ErreurStructure => ({ type: 'COLONNE_INCONNUE', colonne })),
-    ...duplicatesOf(roles).map((colonne): ErreurStructure => ({
+    ...findDuplicates(roles).map((colonne): ErreurStructure => ({
       type: 'COLONNE_A_DEUX_ROLES',
       colonne,
     })),
     ...[...new Set(axesCites)]
       .filter((axe) => !axesConnus.has(axe))
       .map((axe): ErreurStructure => ({ type: 'AXE_INCONNU', axe })),
-    ...duplicatesOf(axesCites).map((axe): ErreurStructure => ({ type: 'AXE_EN_DOUBLE', axe })),
+    ...findDuplicates(axesCites).map((axe): ErreurStructure => ({ type: 'AXE_EN_DOUBLE', axe })),
     ...disposition.erreurs,
     ...filtre.erreurs,
   ]
@@ -251,7 +247,7 @@ export const checkRapprochements = ({
     ...libelles
       .filter((libelle) => !citesSet.has(libelle))
       .map((libelle): ErreurRapprochement => ({ type: 'LIBELLE_MANQUANT', libelle })),
-    ...duplicatesOf(cites).map((libelle): ErreurRapprochement => ({
+    ...findDuplicates(cites).map((libelle): ErreurRapprochement => ({
       type: 'LIBELLE_EN_DOUBLE',
       libelle,
     })),

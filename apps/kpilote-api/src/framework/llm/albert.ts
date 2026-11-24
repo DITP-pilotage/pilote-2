@@ -13,6 +13,11 @@ export const DEFAULT_MODEL: Model = 'openweight-large'
 export const CONVERSATION_TEMPERATURE = 0.2
 export const STRUCTURED_TEMPERATURE = 0
 
+// Les modèles d'Albert raisonnent avant de répondre. Pour une décision simple,
+// validée ensuite par le code, un raisonnement court suffit et divise par deux
+// la durée d'un appel (17 s contre 34 s mesurées sur un appel type de l'import).
+export const LOW_REASONING_OPTIONS = { openai: { reasoningEffort: 'low' } }
+
 type ModelWrapper = (model: LanguageModel) => LanguageModel
 
 let modelWrapper: ModelWrapper | null = null
