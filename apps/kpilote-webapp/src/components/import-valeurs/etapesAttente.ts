@@ -19,17 +19,24 @@ export type EtapeAttente = {
 
 const MAX_DATES_CITEES = 4
 
-const describeStructure = (valeurs: DispositionValeurs | undefined): string => {
-  if (!valeurs || valeurs.disposition === 'COLONNES_MODALITES') {
-    return 'Colonnes de l’individu, de la date et de la valeur repérées'
-  }
-  if (valeurs.disposition === 'LIGNES') {
-    return `Une ligne par valeur : date dans « ${valeurs.colonneDate} », valeur dans « ${valeurs.colonneValeur} »`
-  }
-  const colonnes = valeurs.colonnes.map((colonne) => colonne.colonne)
+const listColonnesCitees = (colonnes: ReadonlyArray<string>): string => {
   const citees = colonnes.slice(0, MAX_DATES_CITEES).join(', ')
   const suite = colonnes.length > MAX_DATES_CITEES ? '…' : ''
-  return `Les dates en colonnes (${citees}${suite})`
+  return `${citees}${suite}`
+}
+
+const describeStructure = (valeurs: DispositionValeurs | undefined): string => {
+  if (!valeurs) return 'Colonnes de l’individu, de la date et de la valeur repérées'
+  switch (valeurs.disposition) {
+    case 'LIGNES':
+      return `Une ligne par valeur : date dans « ${valeurs.colonneDate} », valeur dans « ${valeurs.colonneValeur} »`
+    case 'COLONNES': {
+      const colonnes = valeurs.colonnes.map((colonne) => colonne.colonne)
+      return `Les dates en colonnes (${listColonnesCitees(colonnes)})`
+    }
+    case 'COLONNES_MODALITES':
+      return `Une colonne par modalité (${listColonnesCitees(valeurs.colonnes)}), date dans « ${valeurs.colonneDate} »`
+  }
 }
 
 const describeRapprochements = ({

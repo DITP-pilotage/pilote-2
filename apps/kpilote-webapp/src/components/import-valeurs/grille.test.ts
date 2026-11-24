@@ -226,6 +226,85 @@ describe('describeProvenance', () => {
   })
 })
 
+describe('une modalité lue dans l’en-tête des colonnes de valeurs', () => {
+  const ciblesFraude: CiblesSaisie = {
+    ...cibles,
+    axes: [
+      {
+        id: 'AXE-FRAUDE',
+        nom: 'Type de fraude',
+        modalites: [
+          { id: 'FR-TVA', nom: 'Fraude à la TVA' },
+          { id: 'FR-IR', nom: "Fraude à l'impôt sur le revenu" },
+        ],
+      },
+    ],
+  }
+  const planFraude: PlanTransformation = {
+    individu: plan.individu,
+    axes: [
+      {
+        lecture: 'ENTETE',
+        axe: 'AXE-FRAUDE',
+        rapprochements: {
+          TVA: { statut: 'RESOLU', publicId: 'FR-TVA', par: 'ALBERT' },
+          IR: { statut: 'INCONNU' },
+        },
+      },
+    ],
+    valeurs: {
+      disposition: 'COLONNES_MODALITES',
+      colonneDate: 'Trimestre',
+      colonnes: ['TVA', 'IR'],
+    },
+  }
+  const tableauFraude: TableauSource = {
+    entetes: ['Département', 'Trimestre', 'TVA', 'IR'],
+    lignes: [['Ain', 'T2 2026', '2,25', '1,00']],
+  }
+  const lignesFraude = applyPlan({ plan: planFraude, tableau: tableauFraude }).lignes
+  const colonnesFraude = listColonnesGrille({ plan: planFraude, cibles: ciblesFraude })
+  const provenanceFraude = (ligne: number, colonne: number) =>
+    describeProvenance({
+      ligne: lignesFraude[ligne]!,
+      numero: ligne + 1,
+      colonne: colonnesFraude[colonne]!,
+      plan: planFraude,
+      nomById: buildNomById(ciblesFraude),
+    })
+
+  it('dit que la modalité vient de l’en-tête de la colonne de valeurs', () => {
+    expect(provenanceFraude(0, 1).texte).toBe(
+      'Fichier, ligne 2, en-tête de colonne « TVA ». Rapproché par l’assistant IA de Fraude à la TVA (FR-TVA).',
+    )
+    expect(provenanceFraude(1, 1).texte).toBe(
+      'Fichier, ligne 2, en-tête de colonne « IR ». Aucune modalité de l’axe « Type de fraude » ne correspond.',
+    )
+  })
+
+  it('dit que la date vient de la cellule de la colonne de date', () => {
+    expect(provenanceFraude(0, 2).texte).toBe(
+      'Fichier, ligne 2, colonne « Trimestre » : « T2 2026 ». Lu comme le 01/04/2026.',
+    )
+  })
+
+  it('propose les modalités de l’axe pour corriger l’en-tête', () => {
+    expect(
+      describeEdition({
+        ligne: lignesFraude[1]!,
+        colonne: colonnesFraude[1]!,
+        cibles: ciblesFraude,
+      }),
+    ).toMatchObject({
+      type: 'RAPPROCHEMENT',
+      cible: { type: 'AXE', axe: 'AXE-FRAUDE' },
+      libelle: 'IR',
+      candidats: ciblesFraude.axes[0]?.modalites,
+      action: 'Choisir une modalité',
+    })
+  })
+})
+
 describe('describeEdition', () => {
   const edition = (ligne: number, colonne: number) =>
     describeEdition({ ligne: lignes[ligne]!, colonne: colonnes[colonne]!, cibles })

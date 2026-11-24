@@ -382,6 +382,28 @@ const describeValeur = (ligne: LigneImport): string => {
   return valeur.motif.type === 'CELLULE_VIDE' ? 'Saisissez la valeur.' : 'Ce n’est pas un nombre.'
 }
 
+// Avec des dates en colonnes, la date est l'en-tête de la colonne de valeurs ;
+// sinon, elle se lit dans la cellule de la colonne de date.
+const describeOrigineDate = ({
+  ligne,
+  plan,
+}: {
+  ligne: LigneImport
+  plan: PlanTransformation
+}): string => {
+  switch (plan.valeurs.disposition) {
+    case 'LIGNES':
+    case 'COLONNES_MODALITES':
+      return describeOrigine({
+        ligne,
+        colonneFichier: plan.valeurs.colonneDate,
+        brut: ligne.date.brut,
+      })
+    case 'COLONNES':
+      return `Fichier, en-tête de colonne « ${ligne.source.colonneValeur} ».`
+  }
+}
+
 // D'où vient la cellule sélectionnée, et comment elle a été lue ou rapprochée.
 export const describeProvenance = ({
   ligne,
@@ -419,12 +441,15 @@ export const describeProvenance = ({
     case 'AXE': {
       const cellule = ligne.modalites[colonne.rang]
       const axePlan = plan.axes[colonne.rang]
-      const colonneFichier = axePlan?.lecture === 'CELLULE' ? axePlan.colonne : colonne.label
-      if (!cellule) return { reference, texte: '' }
+      if (!cellule || !axePlan) return { reference, texte: '' }
+      const origine =
+        axePlan.lecture === 'CELLULE'
+          ? describeOrigine({ ligne, colonneFichier: axePlan.colonne, brut: cellule.brut })
+          : `Fichier, ligne ${fileLineOf(ligne)}, en-tête de colonne « ${ligne.source.colonneValeur} ».`
       return {
         reference,
         texte: join(
-          describeOrigine({ ligne, colonneFichier, brut: cellule.brut }),
+          origine,
           describeEntite({
             cellule,
             nomById,
@@ -433,17 +458,8 @@ export const describeProvenance = ({
         ),
       }
     }
-    case 'DATE': {
-      const origine =
-        plan.valeurs.disposition === 'LIGNES'
-          ? describeOrigine({
-              ligne,
-              colonneFichier: plan.valeurs.colonneDate,
-              brut: ligne.date.brut,
-            })
-          : `Fichier, en-tête de colonne « ${ligne.source.colonneValeur} ».`
-      return { reference, texte: join(origine, describeDate(ligne)) }
-    }
+    case 'DATE':
+      return { reference, texte: join(describeOrigineDate({ ligne, plan }), describeDate(ligne)) }
     case 'VALEUR':
       return {
         reference,
