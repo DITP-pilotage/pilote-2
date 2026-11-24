@@ -5,9 +5,9 @@ import { indicateurDuChantier } from "./world";
  * Briques de données réutilisables, appelées au seed du monde d'un fichier.
  *
  * Les seuils viennent de `GetChantiersQuery` : en retard si l'écart à la
- * médiane est <= -10 ; en difficulté si le chantier n'est pas en retard et que
- * sa météo est ORAGE ou NUAGE. Les valeurs sont franchement de part et d'autre
- * du seuil — un cas d'eval ne doit pas basculer sur un arrondi.
+ * médiane est <= -10 ; en difficulté si sa météo est ORAGE ou NUAGE, en retard
+ * ou non. Les valeurs sont franchement de part et d'autre du seuil — un cas
+ * d'eval ne doit pas basculer sur un arrondi.
  */
 
 export type TerritoireRef = {
