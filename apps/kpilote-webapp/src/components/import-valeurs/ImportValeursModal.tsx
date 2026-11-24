@@ -2,6 +2,7 @@ import { MAX_VALEURS_PAR_BATCH } from '@pilote/kpilote-shared/valeurAvancement'
 import {
   applyPlan,
   isImportable,
+  type LigneImport,
   toItemsImport,
 } from '@pilote/kpilote-shared/valeurImport/applyPlan'
 import { listColonnesStandard } from '@pilote/kpilote-shared/valeurImport/buildPlan'
@@ -14,6 +15,7 @@ import { useMemo, useState } from 'react'
 import { ImportError } from '@/api/valeursImport'
 import { useImportValeursBatch } from '@/mutations/valeursImport'
 
+import { applyCorrection, type CorrectionSaisie, type Edition, selectEdition } from './edition'
 import { ImportAttente } from './ImportAttente'
 import { ImportDropZone } from './ImportDropZone'
 import { ImportGrille } from './ImportGrille'
@@ -48,19 +50,49 @@ export function ImportValeursModal({
   const indicateurId = target.indicateur.id
   const mutation = useImportValeursBatch({ indicateurId })
   const [file, setFile] = useState<File | null>(target.initialFile ?? null)
+  const [savedEdition, setSavedEdition] = useState<Edition | null>(null)
   const [erreursServeur, setErreursServeur] = useState<string[]>([])
 
-  const { etat, cibles } = useImportValeurs({ file, indicateurId })
+  const { etat, cibles, fileKey } = useImportValeurs({ file, indicateurId })
 
   const grille = etat.kind === 'grille' ? etat : null
-  const resultat = useMemo(
-    () => (grille ? applyPlan({ plan: grille.plan, tableau: grille.tableau }) : null),
-    [grille],
+  // Mémoïsée : sans correction, `selectEdition` crée une nouvelle édition, et `applyPlan` se
+  // rejouerait à chaque rendu.
+  const edition = useMemo(
+    () =>
+      grille
+        ? selectEdition({
+            edition: savedEdition,
+            key: `${fileKey}:${grille.origine}`,
+            plan: grille.plan,
+          })
+        : null,
+    [grille, savedEdition, fileKey],
   )
+  const resultat = useMemo(() => {
+    if (!grille || !edition) return null
+    return applyPlan({
+      plan: edition.plan,
+      tableau: grille.tableau,
+      corrections: edition.corrections,
+    })
+  }, [grille, edition])
   const items = useMemo(() => (resultat ? toItemsImport(resultat.lignes) : []), [resultat])
 
   const onFile = (newFile: File) => {
     setFile(newFile)
+    setErreursServeur([])
+  }
+
+  const onCorrection = ({
+    ligne,
+    correction,
+  }: {
+    ligne: LigneImport
+    correction: CorrectionSaisie
+  }) => {
+    if (!edition) return
+    setSavedEdition(applyCorrection({ edition, ligne, correction }))
     setErreursServeur([])
   }
 
@@ -153,6 +185,7 @@ export function ImportValeursModal({
             cibles={cibles}
             origine={etat.origine}
             erreursServeur={erreursServeur}
+            onCorrection={onCorrection}
           />
         )
     }

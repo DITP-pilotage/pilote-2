@@ -4,6 +4,7 @@ import {
   isImportable,
   type LigneImport,
 } from '@pilote/kpilote-shared/valeurImport/applyPlan'
+import { type CibleRapprochement } from '@pilote/kpilote-shared/valeurImport/buildPlan'
 import { partition } from 'es-toolkit'
 import { Sparkles, TriangleAlert } from 'lucide-react'
 
@@ -17,7 +18,9 @@ import {
 } from '@/lib/grilleValeurs'
 
 // Dérivations pures de la grille d'import : colonnes, cellules affichées,
-// compteurs et texte de provenance. Les composants ne font qu'afficher.
+// compteurs, texte de provenance et ce qui se corrige. Les composants ne font qu'afficher.
+
+export type Candidat = { id: string; nom: string }
 
 const MARKER_A_CORRIGER: CelluleMarker = { icon: TriangleAlert, label: 'À corriger' }
 const MARKER_ALBERT: CelluleMarker = { icon: Sparkles, label: 'Rapproché par l’assistant IA' }
@@ -52,13 +55,24 @@ const CELLULE_VIDE = '(vide)'
 
 const CELLULE_A_CORRIGER = { tone: 'WARNING', marker: MARKER_A_CORRIGER } as const
 
+// Ce que montre une cellule. Qu'elle soit éditable se décide à part, par `isEditableCellule`.
+type CelluleAffichee = Omit<CelluleGrille, 'isEditable'>
+
+const CELLULE_ABSENTE: CelluleAffichee = {
+  text: '',
+  identifiant: null,
+  tone: 'DEFAULT',
+  marker: null,
+  alignRight: false,
+}
+
 const toCelluleEntite = ({
   cellule,
   nomById,
 }: {
   cellule: Cellule<string>
   nomById: ReadonlyMap<string, string>
-}): CelluleGrille => {
+}): CelluleAffichee => {
   if (cellule.statut === 'A_CORRIGER') {
     return {
       text: cellule.brut === '' ? CELLULE_VIDE : cellule.brut,
@@ -86,7 +100,7 @@ const toCelluleLue = <T>({
   format: (valeur: T) => string
   isDoublon?: boolean
   alignRight: boolean
-}): CelluleGrille => {
+}): CelluleAffichee => {
   if (cellule.statut === 'A_CORRIGER') {
     return {
       text: cellule.brut === '' ? CELLULE_VIDE : cellule.brut,
@@ -103,29 +117,74 @@ const toCelluleLue = <T>({
   }
 }
 
-// Les cellules d'une ligne, dans l'ordre des colonnes de `listColonnesGrille`.
 // Un doublon se signale sur sa date : c'est elle qu'on corrige pour le lever.
+const toCelluleAffichee = ({
+  ligne,
+  colonne,
+  nomById,
+}: {
+  ligne: LigneImport
+  colonne: ColonneGrille
+  nomById: ReadonlyMap<string, string>
+}): CelluleAffichee => {
+  switch (colonne.type) {
+    case 'INDIVIDU':
+      return toCelluleEntite({ cellule: ligne.individu, nomById })
+    case 'AXE': {
+      const cellule = ligne.modalites[colonne.rang]
+      return cellule ? toCelluleEntite({ cellule, nomById }) : CELLULE_ABSENTE
+    }
+    case 'DATE':
+      return toCelluleLue({
+        cellule: ligne.date,
+        format: formatDate,
+        isDoublon: ligne.doublonDe !== undefined,
+        alignRight: false,
+      })
+    case 'VALEUR':
+      return toCelluleLue({ cellule: ligne.valeur, format: formatValeur, alignRight: true })
+  }
+}
+
+// Ce qui se corrige dans la grille : un libellé à rapprocher, une date, une valeur. Un libellé
+// vide n'a rien à rapprocher : il se complète dans le fichier.
+export const isEditableCellule = ({
+  ligne,
+  colonne,
+}: {
+  ligne: LigneImport
+  colonne: ColonneGrille
+}): boolean => {
+  switch (colonne.type) {
+    case 'INDIVIDU':
+      return ligne.individu.brut !== ''
+    case 'AXE': {
+      const brut = ligne.modalites[colonne.rang]?.brut ?? ''
+      return brut !== ''
+    }
+    case 'DATE':
+    case 'VALEUR':
+      return true
+  }
+}
+
+// Une cellule par colonne de `listColonnesGrille`.
 export const buildLignesGrille = ({
   lignes,
+  colonnes,
   nomById,
 }: {
   lignes: ReadonlyArray<LigneImport>
+  colonnes: ReadonlyArray<ColonneGrille>
   nomById: ReadonlyMap<string, string>
 }): LigneGrille[] =>
   lignes.map((ligne, index) => ({
     index,
     numero: index + 1,
-    cellules: [
-      toCelluleEntite({ cellule: ligne.individu, nomById }),
-      ...ligne.modalites.map((modalite) => toCelluleEntite({ cellule: modalite, nomById })),
-      toCelluleLue({
-        cellule: ligne.date,
-        format: formatDate,
-        isDoublon: ligne.doublonDe !== undefined,
-        alignRight: false,
-      }),
-      toCelluleLue({ cellule: ligne.valeur, format: formatValeur, alignRight: true }),
-    ],
+    cellules: colonnes.map((colonne) => ({
+      ...toCelluleAffichee({ ligne, colonne, nomById }),
+      isEditable: isEditableCellule({ ligne, colonne }),
+    })),
   }))
 
 export const summarizeLignes = (
@@ -152,6 +211,103 @@ export const filterLignes = ({
     const ligne = lignes[ligneGrille.index]
     return ligne !== undefined && !isImportable(ligne)
   })
+}
+
+// Ce que l'utilisateur peut corriger dans une cellule, ou `null` si la
+// correction passe par le fichier (libellé vide : rien à rapprocher).
+export type EditionCellule =
+  | {
+      type: 'RAPPROCHEMENT'
+      cible: CibleRapprochement
+      libelle: string
+      selected: string | null
+      candidats: Candidat[]
+      action: string
+    }
+  | { type: 'DATE'; value: string; action: string }
+  | { type: 'VALEUR'; value: number | null; action: string }
+
+// Les candidats d'un libellé ambigu d'abord, puis les autres dans leur ordre.
+const sortCandidats = ({
+  candidats,
+  preferes,
+}: {
+  candidats: ReadonlyArray<Candidat>
+  preferes: ReadonlyArray<string>
+}): Candidat[] => {
+  const [first, rest] = partition([...candidats], (candidat) => preferes.includes(candidat.id))
+  return [...first, ...rest]
+}
+
+const describeRapprochementEdition = ({
+  cellule,
+  cible,
+  candidats,
+  action,
+}: {
+  cellule: Cellule<string>
+  cible: CibleRapprochement
+  candidats: ReadonlyArray<Candidat>
+  action: string
+}): EditionCellule => {
+  if (cellule.statut === 'VALIDE') {
+    return {
+      type: 'RAPPROCHEMENT',
+      cible,
+      libelle: cellule.brut,
+      selected: cellule.valeur,
+      candidats: [...candidats],
+      action: 'Changer',
+    }
+  }
+  const preferes = cellule.motif.type === 'LIBELLE_AMBIGU' ? cellule.motif.candidats : []
+  return {
+    type: 'RAPPROCHEMENT',
+    cible,
+    libelle: cellule.brut,
+    selected: null,
+    candidats: sortCandidats({ candidats, preferes }),
+    action,
+  }
+}
+
+export const describeEdition = ({
+  ligne,
+  colonne,
+  cibles,
+}: {
+  ligne: LigneImport
+  colonne: ColonneGrille
+  cibles: CiblesSaisie
+}): EditionCellule | null => {
+  if (!isEditableCellule({ ligne, colonne })) return null
+  switch (colonne.type) {
+    case 'INDIVIDU':
+      return describeRapprochementEdition({
+        cellule: ligne.individu,
+        cible: { type: 'INDIVIDU' },
+        candidats: cibles.individus,
+        action: 'Choisir un individu',
+      })
+    case 'AXE': {
+      const cellule = ligne.modalites[colonne.rang]
+      if (!cellule) return null
+      return describeRapprochementEdition({
+        cellule,
+        cible: { type: 'AXE', axe: colonne.axe },
+        candidats: cibles.axes.find((axe) => axe.id === colonne.axe)?.modalites ?? [],
+        action: 'Choisir une modalité',
+      })
+    }
+    case 'DATE':
+      return ligne.date.statut === 'VALIDE'
+        ? { type: 'DATE', value: ligne.date.valeur, action: 'Modifier' }
+        : { type: 'DATE', value: '', action: 'Saisir une date' }
+    case 'VALEUR':
+      return ligne.valeur.statut === 'VALIDE'
+        ? { type: 'VALEUR', value: ligne.valeur.valeur, action: 'Modifier' }
+        : { type: 'VALEUR', value: null, action: 'Saisir une valeur' }
+  }
 }
 
 // Numéro de la ligne dans le fichier : la première ligne porte les en-têtes.

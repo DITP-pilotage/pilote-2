@@ -9,6 +9,7 @@ import { describe, expect, it } from 'vitest'
 import {
   buildLignesGrille,
   buildNomById,
+  describeEdition,
   describeProvenance,
   filterLignes,
   listColonnesGrille,
@@ -74,7 +75,7 @@ const tableau: TableauSource = {
 const { lignes } = applyPlan({ plan, tableau })
 const nomById = buildNomById(cibles)
 const colonnes = listColonnesGrille({ plan, cibles })
-const grille = buildLignesGrille({ lignes, nomById })
+const grille = buildLignesGrille({ lignes, colonnes, nomById })
 
 describe('listColonnesGrille', () => {
   it('place une colonne par axe, nommée par son nom, entre l’individu et la date', () => {
@@ -90,16 +91,38 @@ describe('listColonnesGrille', () => {
 describe('buildLignesGrille', () => {
   it('affiche le nom et l’identifiant d’une entité reconnue, la date et la valeur formatées', () => {
     expect(grille[0]?.cellules).toEqual([
-      { text: 'Ain', identifiant: 'DEPT-01', tone: 'DEFAULT', marker: null, alignRight: false },
+      {
+        text: 'Ain',
+        identifiant: 'DEPT-01',
+        tone: 'DEFAULT',
+        marker: null,
+        alignRight: false,
+        isEditable: true,
+      },
       {
         text: 'Orange',
         identifiant: 'OP-ORANGE',
         tone: 'DEFAULT',
         marker: null,
         alignRight: false,
+        isEditable: true,
       },
-      { text: '01/01/2022', identifiant: null, tone: 'DEFAULT', marker: null, alignRight: false },
-      { text: '96,4', identifiant: null, tone: 'DEFAULT', marker: null, alignRight: true },
+      {
+        text: '01/01/2022',
+        identifiant: null,
+        tone: 'DEFAULT',
+        marker: null,
+        alignRight: false,
+        isEditable: true,
+      },
+      {
+        text: '96,4',
+        identifiant: null,
+        tone: 'DEFAULT',
+        marker: null,
+        alignRight: true,
+        isEditable: true,
+      },
     ])
   })
 
@@ -135,7 +158,7 @@ describe('buildLignesGrille', () => {
         ],
       },
     }).lignes
-    const [premiere, seconde] = buildLignesGrille({ lignes: doublons, nomById })
+    const [premiere, seconde] = buildLignesGrille({ lignes: doublons, colonnes, nomById })
     expect(premiere?.cellules[2]).toMatchObject({ tone: 'DEFAULT', marker: null })
     expect(seconde?.cellules[2]?.tone).toBe('WARNING')
     expect(seconde?.cellules[2]?.marker?.label).toBe('À corriger')
@@ -152,7 +175,7 @@ describe('buildLignesGrille', () => {
         ],
       },
     }).lignes
-    const lignesGrille = buildLignesGrille({ lignes: doublons, nomById })
+    const lignesGrille = buildLignesGrille({ lignes: doublons, colonnes, nomById })
     expect(summarizeLignes(doublons)).toEqual({ pretes: 2, aCorriger: 1 })
     expect(
       filterLignes({ lignesGrille, lignes: doublons, filtre: 'A_CORRIGER' }).map(
@@ -199,5 +222,78 @@ describe('describeProvenance', () => {
     expect(provenance(1, 3).texte).toBe(
       'Fichier, ligne 2, colonne « 2023 » : « n.d. ». Ce n’est pas un nombre.',
     )
+  })
+})
+
+describe('describeEdition', () => {
+  const edition = (ligne: number, colonne: number) =>
+    describeEdition({ ligne: lignes[ligne]!, colonne: colonnes[colonne]!, cibles })
+
+  it('propose les candidats d’un libellé ambigu en tête', () => {
+    const corse = edition(3, 0)
+    expect(corse).toMatchObject({
+      type: 'RAPPROCHEMENT',
+      cible: { type: 'INDIVIDU' },
+      libelle: 'Corse',
+      selected: null,
+      action: 'Choisir un individu',
+    })
+    expect(
+      corse?.type === 'RAPPROCHEMENT' ? corse.candidats.map((candidat) => candidat.id) : [],
+    ).toEqual(['DEPT-2A', 'DEPT-2B', 'DEPT-01', 'DEPT-13'])
+  })
+
+  it('propose les modalités de l’axe de la colonne, et de changer un choix valide', () => {
+    expect(edition(2, 1)).toMatchObject({
+      cible: { type: 'AXE', axe: 'AXE-OPERATEUR' },
+      action: 'Choisir une modalité',
+      candidats: cibles.axes[0]?.modalites,
+    })
+    expect(edition(0, 0)).toMatchObject({ selected: 'DEPT-01', action: 'Changer' })
+  })
+
+  it('propose de saisir une valeur ou de modifier une date', () => {
+    expect(edition(1, 3)).toEqual({ type: 'VALEUR', value: null, action: 'Saisir une valeur' })
+    expect(edition(0, 2)).toEqual({ type: 'DATE', value: '2022-01-01', action: 'Modifier' })
+  })
+
+  it('isEditable vaut describeEdition(...) !== null pour chaque cellule', () => {
+    const planEnLignes: PlanTransformation = {
+      ...plan,
+      valeurs: { disposition: 'LIGNES', colonneDate: 'Date', colonneValeur: 'Taux' },
+    }
+    const colonnesEnLignes = listColonnesGrille({ plan: planEnLignes, cibles })
+    const { lignes: lignesEnLignes } = applyPlan({
+      plan: planEnLignes,
+      tableau: {
+        entetes: ['Département', 'Opérateur', 'Date', 'Taux'],
+        lignes: [
+          // Libellé vide, libellé valide, date et valeur lues.
+          ['', 'Orange', '2024-01-01', 3],
+          // Libellé ambigu, modalité vide, date illisible, valeur vide.
+          ['Corse', '', 'pas une date', null],
+          // Libellé rapproché par Albert, modalité inconnue, valeur non numérique.
+          ['Bdr', 'MVNO', '2024-02-01', 'n.d.'],
+        ],
+      },
+    })
+    const lignesGrille = buildLignesGrille({
+      lignes: lignesEnLignes,
+      colonnes: colonnesEnLignes,
+      nomById,
+    })
+
+    const editables = lignesGrille.map((ligneGrille) =>
+      ligneGrille.cellules.map((cellule) => cellule.isEditable),
+    )
+    const editions = lignesEnLignes.map((ligne) =>
+      colonnesEnLignes.map((colonne) => describeEdition({ ligne, colonne, cibles }) !== null),
+    )
+    expect(editables).toEqual(editions)
+    expect(editables).toEqual([
+      [false, true, true, true],
+      [true, false, true, true],
+      [true, true, true, true],
+    ])
   })
 })
