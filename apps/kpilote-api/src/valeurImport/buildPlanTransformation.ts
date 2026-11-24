@@ -43,13 +43,13 @@ const matchColonne = async ({
 }): Promise<ColonneRapprochee> => {
   const libelles = listLibelles({ tableau, colonne })
   const exact = matchLibellesExact({ libelles, candidats: cible.candidats })
-  const parAlbert = await matchLibelles({
+  const parLlm = await matchLibelles({
     cible,
     libelles: exact.restants,
     indicateurNom,
     abortSignal,
   })
-  return { colonne, rapprochements: { ...exact.rapprochements, ...parAlbert } }
+  return { colonne, rapprochements: { ...exact.rapprochements, ...parLlm } }
 }
 
 // Un rapprochement lancé en avance peut échouer avant d'être attendu : sans ce

@@ -157,7 +157,7 @@ describe.concurrent('checkRapprochements', () => {
   const libelles = ['Bdr', 'Corse', 'Total']
   const publicIdsConnus = new Set(['DEPT-13', 'DEPT-2A', 'DEPT-2B'])
 
-  it('accepte un rapprochement par libellé et marque les résolus comme venant d’Albert', () => {
+  it('accepte un rapprochement par libellé et marque les résolus comme venant du LLM', () => {
     const result = checkRapprochements({
       proposition: [
         { libelle: 'Bdr', statut: 'RESOLU', publicId: 'DEPT-13', candidats: null },
@@ -168,7 +168,7 @@ describe.concurrent('checkRapprochements', () => {
       publicIdsConnus,
     })
     expect(result._unsafeUnwrap()).toEqual({
-      Bdr: { statut: 'RESOLU', publicId: 'DEPT-13', par: 'ALBERT' },
+      Bdr: { statut: 'RESOLU', publicId: 'DEPT-13', par: 'LLM' },
       Corse: { statut: 'AMBIGU', candidats: ['DEPT-2A', 'DEPT-2B'] },
       Total: { statut: 'INCONNU' },
     })

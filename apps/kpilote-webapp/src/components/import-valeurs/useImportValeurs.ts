@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import { ciblesSaisieQueryOptions } from '@/queries/ciblesSaisie'
 import { planImportEtapesQueryOptions, planImportQueryOptions } from '@/queries/planImport'
 
-import { deriveEtatImport, type EtatImport, selectTableauForAlbert } from './deriveEtatImport'
+import { deriveEtatImport, type EtatImport, selectTableauForLlm } from './deriveEtatImport'
 import { readTableau } from './lecture/readTableau'
 
 const fileKeyOf = (file: File): string => `${file.name}:${file.size}:${file.lastModified}`
@@ -35,7 +35,7 @@ export function useImportValeurs({
     staleTime: Infinity,
   })
 
-  const tableauForAlbert = selectTableauForAlbert({
+  const tableauForLlm = selectTableauForLlm({
     lecture: lectureQuery.data,
     cibles: ciblesQuery.data,
   })
@@ -44,7 +44,7 @@ export function useImportValeurs({
       queryClient,
       indicateurId,
       fileKey,
-      tableau: tableauForAlbert,
+      tableau: tableauForLlm,
       nomFichier: file?.name ?? null,
     }),
   )

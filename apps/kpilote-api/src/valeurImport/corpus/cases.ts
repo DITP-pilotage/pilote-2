@@ -19,7 +19,7 @@ export type CasCorpus = {
 }
 
 const exact = (publicId: string): Rapprochement => ({ statut: 'RESOLU', publicId, par: 'EXACT' })
-const albert = (publicId: string): Rapprochement => ({ statut: 'RESOLU', publicId, par: 'ALBERT' })
+const llm = (publicId: string): Rapprochement => ({ statut: 'RESOLU', publicId, par: 'LLM' })
 const INCONNU: Rapprochement = { statut: 'INCONNU' }
 
 const departements = [
@@ -85,7 +85,7 @@ export const corpus: CasCorpus[] = [
           colonne: 'Département',
           rapprochements: {
             Ain: exact('DEPT-01'),
-            Bdr: albert('DEPT-13'),
+            Bdr: llm('DEPT-13'),
             'Cotes d Armor': exact('DEPT-22'),
             Corse: { statut: 'AMBIGU', candidats: ['DEPT-2A', 'DEPT-2B'] },
             'Total France': INCONNU,
@@ -193,8 +193,8 @@ export const corpus: CasCorpus[] = [
             rapprochements: {
               Orange: exact('OP-ORANGE'),
               SFR: exact('OP-SFR'),
-              Bouygues: albert('OP-BOUYGUES'),
-              'Free Mobile': albert('OP-FREE'),
+              Bouygues: llm('OP-BOUYGUES'),
+              'Free Mobile': llm('OP-FREE'),
               MVNO: INCONNU,
             },
           },

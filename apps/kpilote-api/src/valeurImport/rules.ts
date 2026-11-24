@@ -229,7 +229,7 @@ const readRapprochement = ({
 
   if (propose.statut === 'RESOLU') {
     return {
-      rapprochement: { statut: 'RESOLU', publicId: publicIds[0]!, par: 'ALBERT' },
+      rapprochement: { statut: 'RESOLU', publicId: publicIds[0]!, par: 'LLM' },
       erreurs: [],
     }
   }
