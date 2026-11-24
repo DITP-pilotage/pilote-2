@@ -109,9 +109,17 @@
       "types": "./src/Pagination.tsx",
       "default": "./src/Pagination.tsx"
     },
+    "./commandFilter": {
+      "types": "./src/commandFilter.ts",
+      "default": "./src/commandFilter.ts"
+    },
     "./Picker": {
       "types": "./src/Picker.tsx",
       "default": "./src/Picker.tsx"
+    },
+    "./PickerList": {
+      "types": "./src/PickerList.tsx",
+      "default": "./src/PickerList.tsx"
     },
     "./PickerOptionNomId": {
       "types": "./src/PickerOptionNomId.tsx",
