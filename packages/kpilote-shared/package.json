@@ -156,9 +156,9 @@
       "types": "./src/valeurAvancement.ts",
       "default": "./src/valeurAvancement.ts"
     },
-    "./valeurImport": {
-      "types": "./src/valeurImport.ts",
-      "default": "./src/valeurImport.ts"
+    "./valeurNormalisation": {
+      "types": "./src/valeurNormalisation.ts",
+      "default": "./src/valeurNormalisation.ts"
     },
     "./objectifIndicateurIndividu": {
       "types": "./src/objectifIndicateurIndividu.ts",

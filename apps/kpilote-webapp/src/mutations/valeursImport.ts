@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { analytics } from '@/analytics/tracker'
 import { importValeursBatch, ImportError } from '@/api/valeursImport'
-import type { ParsedRow } from '@/components/import-valeurs/lecture/matriceVersRows'
+import type { ParsedRow } from '@/components/import-valeurs/normalisation/lecture/matriceVersRows'
 
 export function useImportValeursBatch({ indicateurId }: { indicateurId: string }) {
   const queryClient = useQueryClient()

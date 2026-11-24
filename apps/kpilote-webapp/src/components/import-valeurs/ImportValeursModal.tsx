@@ -7,13 +7,17 @@ import { ModaleForm } from '@pilote/kpilote-ui/ModaleForm'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { ImportError } from '@/api/valeursImport'
 import { useImportValeursBatch } from '@/mutations/valeursImport'
-import { type AxeImport, expectedColumns, type ParseError } from './lecture/matriceVersRows'
+import {
+  type AxeImport,
+  expectedColumns,
+  type ParseError,
+} from './normalisation/lecture/matriceVersRows'
 import { useImportValeurs } from './useImportValeurs'
 import { traduireErreursBatch, traduireIssuesValidation } from './traduireErreursBatch'
-import { EncadreMessage } from './EncadreMessage'
+import { EncadreMessage } from './normalisation/EncadreMessage'
 import { ImportDropZone } from './ImportDropZone'
-import { ImportFormatValide } from './ImportFormatValide'
-import { NormalisationRevue } from './NormalisationRevue'
+import { ImportFormatValide } from './normalisation/ImportFormatValide'
+import { NormalisationRevue } from './normalisation/NormalisationRevue'
 import type { ImportTarget } from './useImportModal'
 
 const schema = z.object({
