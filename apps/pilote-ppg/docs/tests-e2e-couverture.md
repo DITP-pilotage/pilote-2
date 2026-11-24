@@ -106,6 +106,7 @@ Tous les tests sont sans session.
 
 - `ditp.admin` désactive `premiere.ministre` avec l'en-tête `Sec-Fetch-Site: cross-site` puis `same-site` : 403 ; `date_desactivation` reste nulle (un test par valeur).
 - `ditp.admin` envoie un fichier à `POST /api/import/metadata-indicateurs` avec `Sec-Fetch-Site: cross-site` : 403.
+- `ditp.admin` appelle en `GET` la publication d'un import (`/api/chantier/…/indicateur/…?rapportId=…`) : 405.
 
 **Gestion des comptes :**
 

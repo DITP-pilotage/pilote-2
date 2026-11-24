@@ -158,6 +158,20 @@ test.describe("Écritures venues d'une autre origine", () => {
 
     expect(response.status()).toBe(403);
   });
+
+  test("la publication d'un import par une requête GET est refusée", async ({
+    page,
+    e2eContext,
+  }) => {
+    await new AppActions(page, e2eContext).loginAs("ditp.admin@example.com");
+
+    const response = await page.request.get(
+      "/api/chantier/CH-001/indicateur/IND-001?rapportId=00000000-0000-4000-8000-000000000000",
+      { maxRedirects: 0 },
+    );
+
+    expect(response.status()).toBe(405);
+  });
 });
 
 test.describe("Gestion des comptes utilisateurs", () => {
