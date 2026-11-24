@@ -91,7 +91,7 @@ PILOTE garde la main sur ses tables et ses règles, et copilot n'a plus besoin d
       "cancelled_at": null,
       "nombre_places_max": 20,
       "nombre_inscrits": 12,
-      "url_inscription": "https://rdv.anct.gouv.fr/users/rdv_wizard_step/new?rdv_collectif_id=884512"
+      "url_inscription": "https://rdv.anct.gouv.fr/users/rdv_wizard_step/new?rdv_collectif_id=884512&departement="
     }
   ]
 }
@@ -195,19 +195,19 @@ Copilot appelle la route une fois par jour, après son chargement RDV-SP, avec l
 
 Copilot ne récupère aujourd'hui que `GET /api/v1/rdvs`, rechargé en entier chaque jour par dlt dans le schéma `rdv_sp`.
 
-| Champ               | Source RDV-SP                 | Comment l'obtenir dans copilot                                                                                                                           |
-| ------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `motifs[].id`       | `motif.id`                    | nouvel appel `GET /api/v1/organisations/{organisation_id}/motifs?active=true` (nouvelle ressource dans `sources/rdv_sp/store.py`, même authentification) |
-| `motifs[].nom`      | `motif.name`                  | même appel                                                                                                                                               |
-| `seances[].id`      | `rdv.id`                      | `stg__rdv_sp_rdvs.id`                                                                                                                                    |
-| `motif_id`          | `rdv.motif.id`                | `stg__rdv_sp_rdvs.motif_id`                                                                                                                              |
-| `date_debut`        | `rdv.starts_at`               | `stg__rdv_sp_rdvs.starts_at`, déjà en `timestamptz`, à envoyer en ISO 8601                                                                               |
-| `duree_minutes`     | `rdv.duration_in_min`         | `stg__rdv_sp_rdvs.duration_in_min`                                                                                                                       |
-| `animateurs`        | `rdv.agents[]`, prénom et nom | `int__rdv_sp_organisateurs.organisateurs_nom`, déjà un tableau                                                                                           |
-| `cancelled_at`      | `rdv.cancelled_at`            | `stg__rdv_sp_rdvs.cancelled_at`                                                                                                                          |
-| `nombre_places_max` | `rdv.max_participants_count`  | colonne brute de `rdv_sp.rdvs`, à extraire dans `stg__rdv_sp_rdvs`                                                                                       |
-| `nombre_inscrits`   | `rdv.users_count`             | `stg__rdv_sp_rdvs.users_count`                                                                                                                           |
-| `url_inscription`   | aucun                         | à construire : `https://<domaine de url_for_agents>/users/rdv_wizard_step/new?rdv_collectif_id=<id>`                                                     |
+| Champ               | Source RDV-SP                 | Comment l'obtenir dans copilot                                                                                                                                                   |
+| ------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `motifs[].id`       | `motif.id`                    | nouvel appel `GET /api/v1/organisations/{organisation_id}/motifs?active=true` (nouvelle ressource dans `sources/rdv_sp/store.py`, même authentification)                         |
+| `motifs[].nom`      | `motif.name`                  | même appel                                                                                                                                                                       |
+| `seances[].id`      | `rdv.id`                      | `stg__rdv_sp_rdvs.id`                                                                                                                                                            |
+| `motif_id`          | `rdv.motif.id`                | `stg__rdv_sp_rdvs.motif_id`                                                                                                                                                      |
+| `date_debut`        | `rdv.starts_at`               | `stg__rdv_sp_rdvs.starts_at`, déjà en `timestamptz`, à envoyer en ISO 8601                                                                                                       |
+| `duree_minutes`     | `rdv.duration_in_min`         | `stg__rdv_sp_rdvs.duration_in_min`                                                                                                                                               |
+| `animateurs`        | `rdv.agents[]`, prénom et nom | `int__rdv_sp_organisateurs.organisateurs_nom`, déjà un tableau                                                                                                                   |
+| `cancelled_at`      | `rdv.cancelled_at`            | `stg__rdv_sp_rdvs.cancelled_at`                                                                                                                                                  |
+| `nombre_places_max` | `rdv.max_participants_count`  | colonne brute de `rdv_sp.rdvs`, à extraire dans `stg__rdv_sp_rdvs`                                                                                                               |
+| `nombre_inscrits`   | `rdv.users_count`             | `stg__rdv_sp_rdvs.users_count`                                                                                                                                                   |
+| `url_inscription`   | aucun                         | à construire : `https://<domaine de url_for_agents>/users/rdv_wizard_step/new?rdv_collectif_id=<id>&departement=` (`departement` obligatoire même vide, sinon RDV-SP répond 500) |
 
 Filtres sur les séances envoyées :
 

@@ -523,7 +523,7 @@ components:
                 type: string
                 format: uri
                 description: |-
-                  Lien d'inscription pour l'usager, en https. RDV-SP ne le fournit pas : il se construit comme le bouton « S'inscrire » de RDV-SP, `https://<domaine>/users/rdv_wizard_step/new?rdv_collectif_id=<id>`, avec le domaine de `rdv.url_for_agents`. `url_for_agents` est réservé aux agents : ce n'est pas un lien d'inscription.
+                  Lien d'inscription pour l'usager, en https. RDV-SP ne le fournit pas : il se construit comme le bouton « S'inscrire » de RDV-SP, `https://<domaine>/users/rdv_wizard_step/new?rdv_collectif_id=<id>&departement=`, avec le domaine de `rdv.url_for_agents`. Le paramètre `departement` est obligatoire, même vide : sans lui, RDV-SP répond une erreur 500. `url_for_agents` est réservé aux agents : ce n'est pas un lien d'inscription.
       examples:
         - motifs:
             - id: 2101
@@ -539,7 +539,7 @@ components:
               cancelled_at: null
               nombre_places_max: 20
               nombre_inscrits: 12
-              url_inscription: 'https://rdv.anct.gouv.fr/users/rdv_wizard_step/new?rdv_collectif_id=884512'
+              url_inscription: 'https://rdv.anct.gouv.fr/users/rdv_wizard_step/new?rdv_collectif_id=884512&departement='
     SyncFormationsResultat:
       title: SyncFormationsResultat
       type: object
