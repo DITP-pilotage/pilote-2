@@ -104,34 +104,36 @@ export function ImportValeursModal({
     })
   }
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     if (!resultat || items.length === 0) return
     setErreursServeur([])
-    try {
-      const result = await mutation.mutateAsync(items)
-      toast({
-        title: 'Import réussi.',
-        description: `${result.created} créée(s) · ${result.updated} mise(s) à jour`,
-      })
-      target.onSuccess?.()
-      onClose()
-    } catch (error) {
-      if (!(error instanceof ImportError)) return showGenericError()
-      const { detail } = error
-      if (detail.type === 'BATCH_INVALID') {
-        // Les items envoyés sont les lignes importables, dans l'ordre de la grille.
-        const rowNumbers = resultat.lignes.flatMap((ligne, index) =>
-          isImportable(ligne) ? [index + 1] : [],
-        )
-        return setErreursServeur(
-          traduireErreursBatch({ details: detail.details, axes: cibles?.axes ?? [], rowNumbers }),
-        )
-      }
-      if (detail.type === 'VALIDATION_ERROR') {
-        return setErreursServeur(traduireIssuesValidation({ issues: detail.issues }))
-      }
-      return showGenericError()
-    }
+    mutation.mutate(items, {
+      onSuccess: (result) => {
+        toast({
+          title: 'Import réussi.',
+          description: `${result.created} créée(s) · ${result.updated} mise(s) à jour`,
+        })
+        target.onSuccess?.()
+        onClose()
+      },
+      onError: (error) => {
+        if (!(error instanceof ImportError)) return showGenericError()
+        const { detail } = error
+        if (detail.type === 'BATCH_INVALID') {
+          // Les items envoyés sont les lignes importables, dans l'ordre de la grille.
+          const rowNumbers = resultat.lignes.flatMap((ligne, index) =>
+            isImportable(ligne) ? [index + 1] : [],
+          )
+          return setErreursServeur(
+            traduireErreursBatch({ details: detail.details, axes: cibles?.axes ?? [], rowNumbers }),
+          )
+        }
+        if (detail.type === 'VALIDATION_ERROR') {
+          return setErreursServeur(traduireIssuesValidation({ issues: detail.issues }))
+        }
+        return showGenericError()
+      },
+    })
   }
 
   const colonnes = cibles ? listColonnesStandard({ cibles }) : ['individu', 'date', 'valeur']
@@ -220,7 +222,7 @@ export function ImportValeursModal({
       <Button
         variant="primary"
         type="button"
-        onClick={() => void onSubmit()}
+        onClick={onSubmit}
         disabled={items.length === 0 || isTooLarge || mutation.isPending}
       >
         {mutation.isPending ? 'Import en cours…' : submitLabel}

@@ -50,6 +50,12 @@ Pourquoi : une seule définition de clé et de fetch par lecture, réutilisée p
 ### `useSuspenseQuery` par défaut
 `useQuery` seulement quand la requête est conditionnelle (`enabled:`).
 
+### Une mutation se déclenche par `mutate`, ses suites passent par `onSuccess` et `onError`
+Le composant appelle `mutation.mutate(variables, { onSuccess, onError })` : le toast de succès, la fermeture de la modale et la traduction des erreurs vivent dans ces callbacks. Pas de `try { await mutation.mutateAsync(...) } catch`.
+Pourquoi : le flux d'erreur de TanStack Query reste le seul ; un `catch` vide avale l'erreur sans le dire, et un `catch` qui traite l'erreur double celui du hook.
+- À faire : `onSubmit` de `components/import-valeurs/ImportValeursModal.tsx`
+- Exception : plusieurs écritures qui doivent s'enchaîner dans un même handler, la seconde n'ayant de sens que si la première a réussi. `mutateAsync` en séquence reste alors plus lisible que des `mutate` imbriqués dans des `onSuccess` ; les erreurs sont signalées par les `onError` des hooks, et le `catch` ne sert qu'à arrêter l'enchaînement (`soumettre` de `components/commentaires/EditeurCommentaire.tsx`, niveau de confiance puis commentaire).
+
 ### Formulaires avec react-hook-form et zod
 `useForm({ resolver: zodResolver(schema) })` ; un champ contrôlé se branche par `Controller`, jamais par un `input` caché. Les champs viennent de `@pilote/kpilote-ui/Field*`.
 
