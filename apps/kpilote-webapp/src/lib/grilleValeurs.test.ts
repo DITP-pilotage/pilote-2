@@ -1,24 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatDate, formatValeur, type LigneGrille, movePosition } from '@/lib/grilleValeurs'
+import { type LigneGrille, movePosition } from '@/lib/grilleValeurs'
 
 const buildLignes = (indexes: number[]): LigneGrille[] =>
   indexes.map((index, rang) => ({ index, numero: rang + 1, cellules: [] }))
 
 const BAS = { ligne: 1, colonne: 0 }
 const DROITE = { ligne: 0, colonne: 1 }
-
-describe('formatDate', () => {
-  it('affiche une date ISO au format jour/mois/année', () => {
-    expect(formatDate('2024-03-15')).toBe('15/03/2024')
-  })
-})
-
-describe('formatValeur', () => {
-  it('formate un nombre en fr-FR', () => {
-    expect(formatValeur(1234.5)).toBe(new Intl.NumberFormat('fr-FR').format(1234.5))
-  })
-})
 
 describe('movePosition', () => {
   it('reste sur la dernière ligne quand on descend depuis la dernière ligne', () => {

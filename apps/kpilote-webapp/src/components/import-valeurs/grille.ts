@@ -1,3 +1,4 @@
+import { formatIsoDateFr, formatNumberFrFull } from '@/lib/format'
 import { type CiblesSaisie, type PlanTransformation } from '@pilote/kpilote-shared/valeurImport'
 import {
   type Cellule,
@@ -12,8 +13,6 @@ import {
   type CelluleGrille,
   type CelluleMarker,
   type ColonneGrille,
-  formatDate,
-  formatValeur,
   type LigneGrille,
 } from '@/lib/grilleValeurs'
 
@@ -137,12 +136,12 @@ const toCelluleAffichee = ({
     case 'DATE':
       return toCelluleLue({
         cellule: ligne.date,
-        format: formatDate,
+        format: formatIsoDateFr,
         isDoublon: ligne.doublonDe !== undefined,
         alignRight: false,
       })
     case 'VALEUR':
-      return toCelluleLue({ cellule: ligne.valeur, format: formatValeur, alignRight: true })
+      return toCelluleLue({ cellule: ligne.valeur, format: formatNumberFrFull, alignRight: true })
   }
 }
 
@@ -368,8 +367,8 @@ const describeDate = (ligne: LigneImport): string => {
   }
   const lecture =
     date.par === 'UTILISATEUR'
-      ? `Vous avez saisi le ${formatDate(date.valeur)}.`
-      : `Lu comme le ${formatDate(date.valeur)}.`
+      ? `Vous avez saisi le ${formatIsoDateFr(date.valeur)}.`
+      : `Lu comme le ${formatIsoDateFr(date.valeur)}.`
   if (ligne.doublonDe === undefined) return lecture
   return `${lecture} Doublon de la ligne ${ligne.doublonDe + 1} : même individu et même date.`
 }
@@ -377,7 +376,9 @@ const describeDate = (ligne: LigneImport): string => {
 const describeValeur = (ligne: LigneImport): string => {
   const { valeur } = ligne
   if (valeur.statut === 'VALIDE') {
-    return valeur.par === 'UTILISATEUR' ? `Vous avez saisi ${formatValeur(valeur.valeur)}.` : ''
+    return valeur.par === 'UTILISATEUR'
+      ? `Vous avez saisi ${formatNumberFrFull(valeur.valeur)}.`
+      : ''
   }
   return valeur.motif.type === 'CELLULE_VIDE' ? 'Saisissez la valeur.' : 'Ce n’est pas un nombre.'
 }

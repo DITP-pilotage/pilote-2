@@ -16,7 +16,7 @@ import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetado
 import { IndicateurResultatsTab } from '@/components/indicateurs/IndicateurResultatsTab'
 import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelect'
 import { useImportModal } from '@/components/import-valeurs/useImportModal'
-import { usePageFileDrop } from '@/components/import-valeurs/usePageFileDrop'
+import { usePageFileDrop } from '@/lib/usePageFileDrop'
 import { BackLink } from '@pilote/kpilote-ui/BackLink'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
