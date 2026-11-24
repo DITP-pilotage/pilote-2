@@ -1,79 +1,76 @@
-import { useQuery } from '@tanstack/react-query'
+import { type CiblesSaisie } from '@pilote/kpilote-shared/valeurImport'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
-import { indicateurQueryOptions } from '@/queries/indicateurs'
-import { normaliserValeursQueryOptions } from '@/queries/valeursNormaliser'
-import { fichierVersMatrice } from './lecture/fichierVersMatrice'
-import { type AxeImport, type ParsedRow } from './normalisation/lecture/matriceVersRows'
-import { matriceVersRecords } from './normalisation/lecture/matriceVersRecords'
-import {
-  deriverEtatImport,
-  parseLecture,
-  payloadDepuisEtat,
-  type EtatImport,
-} from './normalisation/deriverEtatImport'
+import { ciblesSaisieQueryOptions } from '@/queries/ciblesSaisie'
+import { planImportEtapesQueryOptions, planImportQueryOptions } from '@/queries/planImport'
 
-const cleDeFichier = (file: File): string => `${file.name}:${file.size}:${file.lastModified}`
+import { deriveEtatImport, type EtatImport, selectTableauForAlbert } from './deriveEtatImport'
+import { readTableau } from './lecture/readTableau'
 
-// Orchestration de l'import : lit le fichier une seule fois en matrice, en dérive
-// les deux projections (rows strictes / records bruts pour Albert), et expose un
-// état discriminé + le payload prêt à envoyer. Toute la logique de transition vit
-// dans `deriverEtatImport` (pur, testé) ; ce hook n'est que le câblage des queries.
-// Les axes de l'indicateur fixent les colonnes attendues : la lecture attend
-// l'indicateur. S'il ne se charge pas, l'import se fait sans axe et l'API
-// signale les modalités manquantes.
-const NO_AXES: AxeImport[] = []
+const fileKeyOf = (file: File): string => `${file.name}:${file.size}:${file.lastModified}`
 
+// Câblage des requêtes de l'import : lecture du fichier, cibles de saisie de
+// l'indicateur et, pour un fichier hors format standard, plan construit par
+// Albert. Toute la dérivation vit dans `deriveEtatImport` (pur, testé).
 export function useImportValeurs({
   file,
   indicateurId,
 }: {
   file: File | null
   indicateurId: string
-}): { etat: EtatImport; payload: ParsedRow[] | null; axes: AxeImport[] } {
-  const indicateurQuery = useQuery(indicateurQueryOptions(indicateurId))
-  const indicateurAxes = indicateurQuery.isError ? NO_AXES : indicateurQuery.data?.axes
-  const axes = indicateurAxes ?? NO_AXES
+}): { etat: EtatImport; cibles: CiblesSaisie | undefined; fileKey: string | null } {
+  const queryClient = useQueryClient()
+  const fileKey = file ? fileKeyOf(file) : null
 
-  const matriceQuery = useQuery({
-    queryKey: ['import-matrice', file?.name, file?.size, file?.lastModified],
+  const ciblesQuery = useQuery(ciblesSaisieQueryOptions(indicateurId))
+  const lectureQuery = useQuery({
+    queryKey: ['import-tableau', fileKey],
     queryFn: () => {
-      // `enabled: file != null` garantit file défini quand queryFn s'exécute.
+      // `enabled` garantit un fichier quand la queryFn s'exécute.
       if (!file) throw new Error('file attendu')
-      return fichierVersMatrice({ file })
+      return readTableau({ file })
     },
-    enabled: file != null,
+    enabled: file !== null,
+    staleTime: Infinity,
   })
 
-  const lecture = matriceQuery.data
-  const parseResult = parseLecture({ lecture, axes: indicateurAxes })
-
-  // Records dérivés seulement pour un fichier hors format standard (colonnes
-  // manquantes) → c'est le seul cas qui déclenche Albert.
-  const horsFormat =
-    parseResult !== undefined && !parseResult.ok && parseResult.error.code === 'MISSING_COLUMNS'
-  const records =
-    horsFormat && lecture?.ok ? matriceVersRecords({ matrice: lecture.matrice }) : null
-
-  const albertQuery = useQuery(
-    normaliserValeursQueryOptions({
+  const tableauForAlbert = selectTableauForAlbert({
+    lecture: lectureQuery.data,
+    cibles: ciblesQuery.data,
+  })
+  const planImportQuery = useQuery(
+    planImportQueryOptions({
+      queryClient,
       indicateurId,
-      records,
-      nomFichier: records ? (file?.name ?? null) : null,
-      cleFichier: records && file ? cleDeFichier(file) : null,
+      fileKey,
+      tableau: tableauForAlbert,
+      nomFichier: file?.name ?? null,
     }),
   )
+  const etapesQuery = useQuery(planImportEtapesQueryOptions({ indicateurId, fileKey }))
 
-  const albert = {
-    revue: albertQuery.data?.isOk() ? albertQuery.data.value : null,
-    echec: albertQuery.data?.isErr() === true || albertQuery.isError,
-  }
+  // Mémoïsé : la grille rejoue le plan sur le tableau à chaque nouvel état, pas à chaque rendu.
+  const hasFile = file !== null
+  const etat = useMemo(
+    () =>
+      deriveEtatImport({
+        hasFile,
+        lecture: lectureQuery.data,
+        cibles: ciblesQuery.data,
+        isCiblesError: ciblesQuery.isError,
+        planImport: planImportQuery.data,
+        etapes: etapesQuery.data,
+      }),
+    [
+      hasFile,
+      lectureQuery.data,
+      ciblesQuery.data,
+      ciblesQuery.isError,
+      planImportQuery.data,
+      etapesQuery.data,
+    ],
+  )
 
-  const etat = deriverEtatImport({
-    file,
-    lectureEnCours: file != null && matriceQuery.isPending,
-    parseResult,
-    albert,
-  })
-
-  return { etat, payload: payloadDepuisEtat(etat), axes }
+  return { etat, cibles: ciblesQuery.data, fileKey }
 }

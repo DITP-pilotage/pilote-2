@@ -1,0 +1,7 @@
+territoire;operateur;type_fraude;date_valeur;type_valeur;valeur
+DEPT-01;OP-ORANGE;FR-TVA;2017-12-31;vi;8
+DEPT-01;OP-ORANGE;FR-TVA;2018-06-30;va;9,5
+DEPT-01;OP-ORANGE;FR-TVA;2020-12-31;vc;15
+DEPT-75;OP-SFR;FR-IR;2017-12-31;vi;4
+DEPT-75;OP-SFR;FR-IR;2018-06-30;va;4,8
+DEPT-75;OP-SFR;FR-IR;2020-12-31;vc;9

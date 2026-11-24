@@ -1,14 +1,14 @@
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
+import { type ItemImport } from '@pilote/kpilote-shared/valeurImport/applyPlan'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { analytics } from '@/analytics/tracker'
 import { importValeursBatch, ImportError } from '@/api/valeursImport'
-import type { ParsedRow } from '@/components/import-valeurs/normalisation/lecture/matriceVersRows'
 
 export function useImportValeursBatch({ indicateurId }: { indicateurId: string }) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (rows: ParsedRow[]) => {
+    mutationFn: async (rows: ItemImport[]) => {
       const res = await importValeursBatch({ indicateurId, rows })
       if (res.isErr()) throw new ImportError(res.error)
       return res.value
