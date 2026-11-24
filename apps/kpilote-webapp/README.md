@@ -89,7 +89,7 @@ pnpm maps:generate        # Régénère le GeoJSON de la carte de France
 
 ## Fichiers d'exemple
 
-[`samples/`](samples) contient des CSV pour tester l'import de valeurs, dont le fallback de normalisation par Albert (qui nécessite `ALBERT_API_KEY` côté kpilote-api).
+[`samples/`](samples) contient des CSV pour tester l'import de valeurs, dont l'import assisté par Albert des fichiers au format libre (qui nécessite `ALBERT_API_KEY` côté kpilote-api).
 
 ## Déploiement
 
