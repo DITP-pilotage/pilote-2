@@ -5,27 +5,15 @@ import {
 } from '@pilote/kpilote-shared/collectionTauxProgression'
 import { ResultAsync } from 'neverthrow'
 
-import { type DateTrunc } from '@pilote/kpilote-shared/dates'
-
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { type Bucket, compareBuckets, formatBucket } from '@/framework/bucket'
+import { formatBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
 import { withCollectionReadPermission } from '@/collection/permissions'
-import {
-  type IndicateurContribution,
-  resolveCollectionTauxProgression,
-} from '@/collection/resolveCollectionTauxProgression'
-import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
+import { computeContributions } from '@/collection/queries/computeCollectionContributions'
+import { resolveCollectionTauxProgression } from '@/collection/resolveCollectionTauxProgression'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
-import { type TauxProgressionPoint } from '@/valeurAvancement/resolveTauxProgression'
-
-// Aligné sur la route /indicateurs/:id/taux-progression : `month/month` est
-// le défaut documenté (cf. docs/architecture/taux-progression.md). Pas exposé
-// en query côté collection en v0.
-const DATE_TRUNC_VALEUR: DateTrunc = 'month'
-const DATE_TRUNC_OBJECTIF: DateTrunc = 'month'
 
 const collectionTauxProgressionArgs = {
   select: {
@@ -35,7 +23,7 @@ const collectionTauxProgressionArgs = {
       orderBy: { createdAt: 'asc' },
       select: {
         ponderation: true,
-        indicateur: { select: { id: true, publicId: true } },
+        indicateur: { select: { id: true, publicId: true, sensSouhaite: true } },
       },
     },
   },
@@ -76,6 +64,7 @@ const buildResult = async ({
       collection: collection.publicId,
       individu: params.individu,
       tauxProgression: null,
+      raisonSansTaux: 'COLLECTION_VIDE',
       contributions: [],
     }
   }
@@ -86,18 +75,9 @@ const buildResult = async ({
     select: { id: true, publicId: true, referentielId: true },
   })
 
-  const contributions: IndicateurContribution[] = []
-  for (const { indicateur: ind, ponderation } of collection.indicateurs) {
-    const dernier = await computeDernierTaux({ indicateurId: ind.id, cible })
-    contributions.push({
-      indicateurPublicId: ind.publicId,
-      tauxProgression: dernier?.tauxProgression ?? null,
-      date: dernier?.date ?? null,
-      ponderation,
-    })
-  }
+  const contributions = await computeContributions(collection.indicateurs, cible)
 
-  const { tauxProgression } = resolveCollectionTauxProgression(contributions)
+  const { tauxProgression, raisonSansTaux } = resolveCollectionTauxProgression(contributions)
 
   const apiContributions: CollectionTauxProgressionContributionApiModel[] = contributions.map(
     (c) => ({
@@ -105,6 +85,7 @@ const buildResult = async ({
       tauxProgression: c.tauxProgression,
       date: c.date ? formatBucket(c.date) : null,
       ponderation: c.ponderation.toNumber(),
+      sensSouhaite: c.sensSouhaite,
     }),
   )
 
@@ -124,33 +105,7 @@ const buildResult = async ({
     collection: collection.publicId,
     individu: params.individu,
     tauxProgression,
+    raisonSansTaux,
     contributions: apiContributions,
   }
-}
-
-// Sélectionne le dernier bucket parmi les points calculés par le pipeline
-// taux-progression. La règle « tout-ou-rien » côté collection veut que tout
-// indicateur dont l'un des prérequis manque (pas de série, pas d'objectif,
-// dernier objectif à 0) produise `null` — ce qui correspond ici à l'absence
-// de point ou à un dernier point sans taux.
-const computeDernierTaux = async ({
-  indicateurId,
-  cible,
-}: {
-  indicateurId: string
-  cible: IndividuRef
-}): Promise<{ tauxProgression: number | null; date: Bucket } | null> => {
-  const points = await computeTauxProgressionPoints({
-    indicateurId,
-    individusCibles: [cible],
-    dateTruncValeur: DATE_TRUNC_VALEUR,
-    dateTruncObjectif: DATE_TRUNC_OBJECTIF,
-  })
-  if (points.length === 0) return null
-
-  const dernier = points.reduce<TauxProgressionPoint>(
-    (acc, p) => (compareBuckets(p.date, acc.date) > 0 ? p : acc),
-    points[0]!,
-  )
-  return { tauxProgression: dernier.tauxProgression, date: dernier.date }
 }

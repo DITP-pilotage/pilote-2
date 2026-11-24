@@ -11,6 +11,7 @@ const c = (overrides: Partial<IndicateurContribution> = {}): IndicateurContribut
   tauxProgression: 50,
   date: null,
   ponderation: new Decimal(1),
+  sensSouhaite: 'HAUSSE',
   ...overrides,
 })
 
@@ -18,6 +19,7 @@ describe('resolveCollectionTauxProgression', () => {
   it('retourne null pour une collection vide', () => {
     const result = resolveCollectionTauxProgression([])
     expect(result.tauxProgression).toBeNull()
+    expect(result.raisonSansTaux).toBe('COLLECTION_VIDE')
     expect(result.contributions).toEqual([])
   })
 
@@ -27,6 +29,7 @@ describe('resolveCollectionTauxProgression', () => {
       c({ indicateurPublicId: 'IND-B', tauxProgression: 100 }),
     ])
     expect(result.tauxProgression).toBe(75)
+    expect(result.raisonSansTaux).toBeNull()
   })
 
   it("retourne null dès qu'une contribution est null (tout-ou-rien)", () => {
@@ -36,7 +39,31 @@ describe('resolveCollectionTauxProgression', () => {
       c({ indicateurPublicId: 'IND-C', tauxProgression: 90 }),
     ])
     expect(result.tauxProgression).toBeNull()
+    expect(result.raisonSansTaux).toBe('INDICATEUR_NON_CALCULABLE')
     expect(result.contributions).toHaveLength(3)
+  })
+
+  it('dit quand un indicateur pondéré à la baisse bloque le calcul, même à côté d’un indicateur non calculable', () => {
+    const result = resolveCollectionTauxProgression([
+      c({ indicateurPublicId: 'IND-A', tauxProgression: null }),
+      c({ indicateurPublicId: 'IND-B', tauxProgression: null, sensSouhaite: 'BAISSE' }),
+    ])
+    expect(result.tauxProgression).toBeNull()
+    expect(result.raisonSansTaux).toBe('INDICATEUR_A_LA_BAISSE')
+  })
+
+  it('ignore un indicateur à la baisse de pondération 0', () => {
+    const result = resolveCollectionTauxProgression([
+      c({ indicateurPublicId: 'IND-A', tauxProgression: 50 }),
+      c({
+        indicateurPublicId: 'IND-B',
+        tauxProgression: null,
+        sensSouhaite: 'BAISSE',
+        ponderation: new Decimal(0),
+      }),
+    ])
+    expect(result.tauxProgression).toBe(50)
+    expect(result.raisonSansTaux).toBeNull()
   })
 
   it('applique des pondérations hétérogènes (moyenne pondérée)', () => {
@@ -83,5 +110,6 @@ describe('resolveCollectionTauxProgression', () => {
       c({ tauxProgression: 80, ponderation: new Decimal(0) }),
     ])
     expect(result.tauxProgression).toBeNull()
+    expect(result.raisonSansTaux).toBe('AUCUN_INDICATEUR_PONDERE')
   })
 })

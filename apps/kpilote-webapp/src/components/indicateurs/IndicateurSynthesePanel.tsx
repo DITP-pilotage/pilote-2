@@ -72,9 +72,10 @@ export function IndicateurSynthesePanel({
   const ecartMediane = synthese.items[0]?.ecartMediane ?? null
   const stats = remarquables.items[0] ?? { min: null, max: null, mediane: null }
 
-  const dernierPoint = tauxProgression.items[tauxProgression.items.length - 1]
-  // Le taux se calcule sur « Tous » (objectif de l'individu) : pas de taux pour une modalité.
-  const taux = modalites.length > 0 ? null : (dernierPoint?.tauxProgression ?? null)
+  // Le taux et l'objectif portent sur « Tous » (objectif de l'individu) : pour une
+  // modalité, ni taux ni bloc « Progression », qui montrerait l'objectif de « Tous ».
+  const dernierPoint = modalites.length > 0 ? undefined : tauxProgression.items.at(-1)
+  const taux = dernierPoint?.tauxProgression ?? null
 
   return (
     <section className="rounded-xl border border-border bg-surface p-6 sm:p-8">
@@ -119,7 +120,7 @@ export function IndicateurSynthesePanel({
             )}
           </div>
 
-          {taux !== null && dernierPoint && (
+          {dernierPoint && (
             <IndicateurProgression
               taux={taux}
               valeurCible={dernierPoint.valeurCible}

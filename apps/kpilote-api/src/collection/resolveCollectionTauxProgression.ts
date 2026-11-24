@@ -1,3 +1,6 @@
+import { type RaisonSansTaux } from '@pilote/kpilote-shared/collectionTauxProgression'
+import { type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
+
 import { type Bucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 
@@ -7,10 +10,12 @@ export type IndicateurContribution = {
   tauxProgression: number | null
   date: Bucket | null
   ponderation: Decimal
+  sensSouhaite: SensSouhaite
 }
 
 export type CollectionTauxProgressionResult = {
   tauxProgression: number | null
+  raisonSansTaux: RaisonSansTaux
   contributions: ReadonlyArray<IndicateurContribution>
 }
 
@@ -22,29 +27,34 @@ const CENT = new Decimal(100)
 export const resolveCollectionTauxProgression = (
   contributions: ReadonlyArray<IndicateurContribution>,
 ): CollectionTauxProgressionResult => {
-  if (contributions.length === 0) {
-    return { tauxProgression: null, contributions }
-  }
+  const sansTaux = (raisonSansTaux: RaisonSansTaux) => ({
+    tauxProgression: null,
+    raisonSansTaux,
+    contributions,
+  })
+  if (contributions.length === 0) return sansTaux('COLLECTION_VIDE')
+
+  // Pondération 0 = indicateur volontairement exclu du calcul (cf. PIL-1578).
+  // L'absence de taux ne bloque pas si l'utilisateur a déjà décidé de l'écarter.
+  const ponderees = contributions.filter((contribution) => !contribution.ponderation.isZero())
+  if (ponderees.length === 0) return sansTaux('AUCUN_INDICATEUR_PONDERE')
+  // Règle tout-ou-rien : un indicateur pondéré non calculable invalide la moyenne.
+  // Le sens à la baisse est la raison la plus actionnable, elle passe en premier.
+  if (ponderees.some((contribution) => contribution.sensSouhaite === 'BAISSE'))
+    return sansTaux('INDICATEUR_A_LA_BAISSE')
+  const calculables = ponderees.flatMap(({ ponderation, tauxProgression }) =>
+    tauxProgression === null ? [] : [{ ponderation, tauxProgression }],
+  )
+  if (calculables.length < ponderees.length) return sansTaux('INDICATEUR_NON_CALCULABLE')
 
   let sommePondTaux = new Decimal(0)
   let sommePond = new Decimal(0)
-  for (const c of contributions) {
-    // Pondération 0 = indicateur volontairement exclu du calcul (cf. PIL-1578).
-    // L'absence de taux ne bloque pas si l'utilisateur a déjà décidé de l'écarter.
-    if (c.ponderation.isZero()) continue
-    if (c.tauxProgression === null) {
-      // Règle tout-ou-rien : un indicateur pondéré non calculable invalide la moyenne.
-      return { tauxProgression: null, contributions }
-    }
+  for (const c of calculables) {
     sommePondTaux = sommePondTaux.plus(c.ponderation.mul(c.tauxProgression))
     sommePond = sommePond.plus(c.ponderation)
   }
 
-  if (sommePond.isZero()) {
-    return { tauxProgression: null, contributions }
-  }
-
   const moyenne = sommePondTaux.div(sommePond)
   const taux = Decimal.min(CENT, moyenne).toDecimalPlaces(2, Decimal.ROUND_DOWN).toNumber()
-  return { tauxProgression: taux, contributions }
+  return { tauxProgression: taux, raisonSansTaux: null, contributions }
 }

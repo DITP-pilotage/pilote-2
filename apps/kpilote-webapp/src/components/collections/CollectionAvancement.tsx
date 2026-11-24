@@ -29,7 +29,11 @@ export function CollectionAvancement({
     collectionTauxProgressionIndividuQueryOptions(individuId, collectionId),
   )
 
-  if (data == null || data.tauxProgression == null) return null
+  if (data == null) return null
+  const taux = data.tauxProgression
+  // Un manque de données masque le bloc ; un indicateur à la baisse n'est pas un
+  // manque : on garde le bloc et on dit pourquoi il n'y a pas de taux.
+  if (taux == null && data.raisonSansTaux !== 'INDICATEUR_A_LA_BAISSE') return null
 
   return (
     <div>
@@ -38,15 +42,21 @@ export function CollectionAvancement({
           Progression
         </Text>
         <span className="text-sm font-bold tabular-nums text-text-muted">
-          {formatNumberFr(data.tauxProgression)} %
+          {taux == null ? '-' : `${formatNumberFr(taux)} %`}
         </span>
       </div>
-      <ProgressBar
-        value={data.tauxProgression}
-        tone="neutral"
-        label={`Progression de la collection : ${formatNumberFr(data.tauxProgression)} %`}
-        className="mt-2"
-      />
+      {taux == null ? (
+        <Text variant="body" tone="muted" className="mt-1 text-sm">
+          Non calculable : la collection contient un indicateur à la baisse
+        </Text>
+      ) : (
+        <ProgressBar
+          value={taux}
+          tone="neutral"
+          label={`Progression de la collection : ${formatNumberFr(taux)} %`}
+          className="mt-2"
+        />
+      )}
     </div>
   )
 }
