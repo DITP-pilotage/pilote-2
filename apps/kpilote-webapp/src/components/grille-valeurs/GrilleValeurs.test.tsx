@@ -126,6 +126,34 @@ describe('GrilleValeurs', () => {
     expect(onSelect).toHaveBeenCalledWith({ ligne: 1, colonne: 0 })
   })
 
+  it('une flèche ne sélectionne qu’une fois', async () => {
+    const onSelect = vi.fn<(position: PositionCellule) => void>()
+    renderGrille({ selection: { ligne: 0, colonne: 0 }, onSelect })
+
+    screen.getByRole('button', { name: 'Vaucluse' }).focus()
+    await userEvent.keyboard('{ArrowDown}')
+
+    expect(onSelect).toHaveBeenCalledTimes(1)
+    expect(onSelect).toHaveBeenCalledWith({ ligne: 1, colonne: 0 })
+  })
+
+  it('fait de la cellule sélectionnée le seul arrêt de tabulation', () => {
+    renderGrille({ selection: { ligne: 1, colonne: 0 } })
+
+    const tabStops = screen.getAllByRole('button').filter((button) => button.tabIndex === 0)
+    expect(tabStops).toEqual([screen.getByRole('button', { name: 'Gard' })])
+  })
+
+  it('sans sélection, la tabulation entre dans la grille par la première cellule et la sélectionne', async () => {
+    const onSelect = vi.fn<(position: PositionCellule) => void>()
+    renderGrille({ selection: { ligne: -1, colonne: 0 }, onSelect })
+
+    await userEvent.tab()
+
+    expect(screen.getByRole('button', { name: 'Vaucluse' })).toHaveFocus()
+    expect(onSelect).toHaveBeenCalledWith({ ligne: 0, colonne: 0 })
+  })
+
   it('utilise l’index de la ligne, pas son rang', async () => {
     const onSelect = vi.fn<(position: PositionCellule) => void>()
     renderGrille({

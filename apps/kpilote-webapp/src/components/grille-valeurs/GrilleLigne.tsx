@@ -9,12 +9,15 @@ export const GrilleLigne = memo(function GrilleLigne({
   gridId,
   ligne,
   selectedColonne,
+  tabStopColonne,
   onSelect,
 }: {
   gridId: string
   ligne: LigneGrille
   // Colonne sélectionnée sur cette ligne, ou `null`.
   selectedColonne: number | null
+  // Colonne de l'arrêt de tabulation de la grille sur cette ligne, ou `null`.
+  tabStopColonne: number | null
   onSelect: (position: PositionCellule) => void
 }) {
   return (
@@ -32,6 +35,7 @@ export const GrilleLigne = memo(function GrilleLigne({
           cellule={cellule}
           position={{ ligne: ligne.index, colonne }}
           isSelected={selectedColonne === colonne}
+          isTabStop={tabStopColonne === colonne}
           onSelect={onSelect}
         />
       ))}

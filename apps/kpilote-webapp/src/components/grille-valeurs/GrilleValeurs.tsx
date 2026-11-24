@@ -26,6 +26,22 @@ const DELTA_BY_KEY: Record<string, { ligne: number; colonne: number }> = {
   ArrowRight: { ligne: 0, colonne: 1 },
 }
 
+// La seule cellule atteignable par Tab : la cellule sélectionnée si sa ligne est affichée,
+// sinon la première cellule de la première ligne affichée.
+const findTabStop = ({
+  selection,
+  lignes,
+}: {
+  selection: PositionCellule
+  lignes: ReadonlyArray<LigneGrille>
+}): PositionCellule | null => {
+  const isSelectionAffichee = lignes.some((ligne) => ligne.index === selection.ligne)
+  if (isSelectionAffichee) return selection
+  const premiereLigne = lignes[0]
+  if (premiereLigne === undefined) return null
+  return { ligne: premiereLigne.index, colonne: 0 }
+}
+
 // Une ligne par valeur, en lecture seule, avec une cellule sélectionnée que le clavier déplace.
 export function GrilleValeurs({
   label,
@@ -47,6 +63,10 @@ export function GrilleValeurs({
 }) {
   // Deux grilles d'une même page n'ont pas d'`id` de cellule en commun.
   const gridId = useId()
+  // Calculé depuis la sélection courante : la cellule qu'une flèche atteint n'est pas encore
+  // l'arrêt de tabulation quand elle reçoit le focus, donc son `onFocus` ne sélectionne pas
+  // une seconde fois.
+  const tabStop = findTabStop({ selection, lignes })
 
   // La cellule sélectionnée reste visible quand la sélection change.
   useEffect(() => {
@@ -106,6 +126,7 @@ export function GrilleValeurs({
               gridId={gridId}
               ligne={ligne}
               selectedColonne={ligne.index === selection.ligne ? selection.colonne : null}
+              tabStopColonne={ligne.index === tabStop?.ligne ? tabStop.colonne : null}
               onSelect={onSelect}
             />
           ))}
