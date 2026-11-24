@@ -1,5 +1,5 @@
 import {
-  type CiblesSaisieApiModel,
+  type CiblesSaisie,
   type PlanImpossibleError,
   type TableauSource,
 } from '@pilote/kpilote-shared/valeurImport'
@@ -121,7 +121,7 @@ const buildPrompt = ({
   indicateur: { nom: string; unite: string | null }
   nomFichier: string
   tableau: TableauSource
-  axes: CiblesSaisieApiModel['axes']
+  axes: CiblesSaisie['axes']
 }): string => {
   const exemples = tableau.lignes
     .slice(0, MAX_LIGNES_EXEMPLE)
@@ -166,7 +166,7 @@ export const describeStructure = async ({
   indicateur: { nom: string; unite: string | null }
   nomFichier: string
   tableau: TableauSource
-  axes: CiblesSaisieApiModel['axes']
+  axes: CiblesSaisie['axes']
   abortSignal?: AbortSignal | undefined
 }): Promise<Result<StructureValidee, PlanImpossibleError>> => {
   let acceptee: StructureValidee | null = null

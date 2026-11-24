@@ -27,6 +27,7 @@ import { relationRoutes } from '@/relation/routes'
 import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
 import { utilisateurRoutes } from '@/utilisateur/routes'
 import { valeurAvancementRoutes } from '@/valeurAvancement/routes'
+import { valeurImportRoutes } from '@/valeurImport/routes'
 import { valeurNormalisationRoutes } from '@/valeurNormalisation/routes'
 import { whoamiRoutes } from '@/whoami/routes'
 
@@ -55,6 +56,7 @@ app.route('/', analyticsRoutes)
 app.route('/', axeRoutes)
 app.route('/', indicateurRoutes)
 app.route('/', valeurAvancementRoutes)
+app.route('/', valeurImportRoutes)
 app.route('/', valeurNormalisationRoutes)
 app.route('/', objectifIndicateurIndividuRoutes)
 app.route('/', referentielRoutes)

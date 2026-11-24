@@ -1,4 +1,4 @@
-import { type CiblesSaisieApiModel } from '@pilote/kpilote-shared/valeurImport'
+import { type CiblesSaisie } from '@pilote/kpilote-shared/valeurImport'
 import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
@@ -9,7 +9,7 @@ import { resolveIndicateurForWriteData } from '@/indicateur/resolveIndicateurFor
 // modalités feuilles de ses axes).
 export type ImportContext = {
   indicateur: { nom: string; unite: string | null }
-  cibles: CiblesSaisieApiModel
+  cibles: CiblesSaisie
 }
 
 const loadImportContext = async ({
