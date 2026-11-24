@@ -11,7 +11,7 @@ import {
   type ValidationIssueApiModel,
 } from '@pilote/kpilote-shared/error'
 import { apiClient } from '@/api/client'
-import type { ParsedRow } from '@/components/import-valeurs/normalisation/lecture/matriceVersRows'
+import { type ItemImport } from '@pilote/kpilote-shared/valeurImport/applyPlan'
 
 export type ImportBatchError =
   | { type: 'BATCH_INVALID'; details: BatchInvalidErrorDetailsApiModel }
@@ -30,7 +30,7 @@ export async function importValeursBatch({
   rows,
 }: {
   indicateurId: string
-  rows: ParsedRow[]
+  rows: ItemImport[]
 }): Promise<Result<UpsertValeursAvancementBatchResultApiModel, ImportBatchError>> {
   try {
     const json = await apiClient

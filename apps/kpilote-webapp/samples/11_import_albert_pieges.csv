@@ -1,0 +1,10 @@
+Territoire;Opérateur;Type de fraude;Date;Montant (M€)
+Ain;Orange;Fraude à la TVA;01/07/2026;0,58
+Ain;Orange;Fraude à la TVA;juillet 2026;0,61
+Ain;SFR;Fraude fiscale;01/07/2026;0,72
+Isère;Tous opérateurs;Fraude à la TVA;01/07/2026;2,95
+Isère;Free;Toutes fraudes;01/07/2026;1,48
+Auvergne-Rhône-Alpes;Orange;Fraude aux cotisations;01/07/2026;3,10
+Rhône;Bouygues Telecom;Fraude aux prestations;01/07/2026;0,14
+Rhône;Bouygues Telecom;Fraude aux cotisations;01/07/2026;-0,20
+Savoie;SFR;Fraude à l'impôt sur les sociétés;31/06/2026;0,33

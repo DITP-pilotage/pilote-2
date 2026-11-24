@@ -1,47 +1,39 @@
-import { useState } from 'react'
-import { Loader2 } from 'lucide-react'
-import { useForm, useWatch } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { ModaleForm } from '@pilote/kpilote-ui/ModaleForm'
+import { MAX_VALEURS_PAR_BATCH } from '@pilote/kpilote-shared/valeurAvancement'
+import {
+  applyPlan,
+  isImportable,
+  toItemsImport,
+} from '@pilote/kpilote-shared/valeurImport/applyPlan'
+import { listColonnesStandard } from '@pilote/kpilote-shared/valeurImport/buildPlan'
+import { Button } from '@pilote/kpilote-ui/Button'
+import { Modale } from '@pilote/kpilote-ui/Modale'
 import { useToast } from '@pilote/kpilote-ui/Toast'
+import { Loader2, Sparkles } from 'lucide-react'
+import { useMemo, useState } from 'react'
+
 import { ImportError } from '@/api/valeursImport'
 import { useImportValeursBatch } from '@/mutations/valeursImport'
-import {
-  type AxeImport,
-  expectedColumns,
-  type ParseError,
-} from './normalisation/lecture/matriceVersRows'
-import { useImportValeurs } from './useImportValeurs'
-import { traduireErreursBatch, traduireIssuesValidation } from './traduireErreursBatch'
-import { EncadreMessage } from './normalisation/EncadreMessage'
+
+import { ImportAttente } from './ImportAttente'
 import { ImportDropZone } from './ImportDropZone'
-import { ImportFormatValide } from './normalisation/ImportFormatValide'
-import { NormalisationRevue } from './normalisation/NormalisationRevue'
+import { ImportGrille } from './ImportGrille'
+import { ImportMessage } from './ImportMessage'
+import { type LectureError } from './lecture/matriceVersTableau'
+import { pluralize } from './pluralize'
+import { traduireErreursBatch, traduireIssuesValidation } from './traduireErreursBatch'
 import type { ImportTarget } from './useImportModal'
+import { useImportValeurs } from './useImportValeurs'
 
-const schema = z.object({
-  file: z.instanceof(File, { message: 'Sélectionnez un fichier.' }),
-})
-
-type FormValues = z.infer<typeof schema>
-
-const messageParseError = ({
-  error,
-  axes,
-}: {
-  error: ParseError
-  axes: ReadonlyArray<AxeImport>
-}): string => {
+const describeLectureError = (error: LectureError): string => {
   switch (error.code) {
     case 'EMPTY':
       return 'Le fichier ne contient aucune ligne de données.'
     case 'TOO_MANY_ROWS':
-      return `${error.count} lignes — la limite est de ${error.max} lignes par import. Scindez le fichier.`
-    case 'MISSING_COLUMNS':
-      return `Colonne(s) manquante(s) : ${error.missing.join(', ')}. Attendu : ${expectedColumns({ axes }).join(', ')}.`
+      return `Le fichier compte ${error.count} lignes. La limite est de ${error.max} lignes par import : scindez le fichier.`
+    case 'TOO_MANY_COLUMNS':
+      return `Le fichier compte ${error.count} colonnes. La limite est de ${error.max} colonnes.`
     case 'UNREADABLE':
-      return "Fichier illisible. Vérifiez qu'il s'agit d'un CSV ou d'un Excel valide."
+      return 'Le fichier est illisible. Vérifiez qu’il s’agit d’un CSV ou d’un Excel valide.'
   }
 }
 
@@ -53,24 +45,26 @@ export function ImportValeursModal({
   onClose: () => void
 }) {
   const toast = useToast()
-  const mutation = useImportValeursBatch({ indicateurId: target.indicateur.id })
+  const indicateurId = target.indicateur.id
+  const mutation = useImportValeursBatch({ indicateurId })
+  const [file, setFile] = useState<File | null>(target.initialFile ?? null)
   const [erreursServeur, setErreursServeur] = useState<string[]>([])
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
-    defaultValues: { file: target.initialFile ?? null } as unknown as FormValues,
-  })
+  const { etat, cibles } = useImportValeurs({ file, indicateurId })
 
-  const file = useWatch({ control: form.control, name: 'file' }) ?? null
+  const grille = etat.kind === 'grille' ? etat : null
+  const resultat = useMemo(
+    () => (grille ? applyPlan({ plan: grille.plan, tableau: grille.tableau }) : null),
+    [grille],
+  )
+  const items = useMemo(() => (resultat ? toItemsImport(resultat.lignes) : []), [resultat])
 
-  const { etat, payload, axes } = useImportValeurs({ file, indicateurId: target.indicateur.id })
-
-  const onFileChange = (newFile: File) => {
-    form.setValue('file', newFile, { shouldValidate: true })
+  const onFile = (newFile: File) => {
+    setFile(newFile)
     setErreursServeur([])
   }
 
-  const genericToast = () => {
+  const showGenericError = () => {
     toast({
       title: 'Import impossible.',
       description: 'Une erreur est survenue.',
@@ -79,10 +73,10 @@ export function ImportValeursModal({
   }
 
   const onSubmit = async () => {
-    if (!payload || payload.length === 0) return
+    if (!resultat || items.length === 0) return
     setErreursServeur([])
     try {
-      const result = await mutation.mutateAsync(payload)
+      const result = await mutation.mutateAsync(items)
       toast({
         title: 'Import réussi.',
         description: `${result.created} créée(s) · ${result.updated} mise(s) à jour`,
@@ -90,86 +84,131 @@ export function ImportValeursModal({
       target.onSuccess?.()
       onClose()
     } catch (error) {
-      if (error instanceof ImportError) {
-        const d = error.detail
-        if (d.type === 'BATCH_INVALID') {
-          setErreursServeur(traduireErreursBatch({ details: d.details, axes }))
-        } else if (d.type === 'VALIDATION_ERROR') {
-          setErreursServeur(traduireIssuesValidation({ issues: d.issues }))
-        } else {
-          genericToast()
-        }
-      } else {
-        genericToast()
+      if (!(error instanceof ImportError)) return showGenericError()
+      const { detail } = error
+      if (detail.type === 'BATCH_INVALID') {
+        // Les items envoyés sont les lignes importables, dans l'ordre de la grille.
+        const rowNumbers = resultat.lignes.flatMap((ligne, index) =>
+          isImportable(ligne) ? [index + 1] : [],
+        )
+        return setErreursServeur(
+          traduireErreursBatch({ details: detail.details, axes: cibles?.axes ?? [], rowNumbers }),
+        )
       }
+      if (detail.type === 'VALIDATION_ERROR') {
+        return setErreursServeur(traduireIssuesValidation({ issues: detail.issues }))
+      }
+      return showGenericError()
     }
   }
 
-  const submitLabel =
-    payload && payload.length > 0
-      ? `Importer ${payload.length} valeur${payload.length > 1 ? 's' : ''}`
-      : 'Importer'
-
-  const encadreChargement = (texte: string) => (
-    <EncadreMessage>
-      <span className="flex items-center gap-2">
-        <Loader2 className="size-4 animate-spin" />
-        {texte}
-      </span>
-    </EncadreMessage>
-  )
-
-  // Zone de dépôt + message d'erreur éventuel (format non parsable ou échec Albert)
-  // invitant à re-déposer un fichier.
-  const zoneDepot = (error?: ParseError) => (
-    <>
-      <ImportDropZone onFile={onFileChange} colonnes={expectedColumns({ axes })} />
-      {error ? (
-        <EncadreMessage variant="erreur">{messageParseError({ error, axes })}</EncadreMessage>
-      ) : null}
-    </>
-  )
+  const colonnes = cibles ? listColonnesStandard({ cibles }) : ['individu', 'date', 'valeur']
+  const isTooLarge = items.length > MAX_VALEURS_PAR_BATCH
+  const aCorriger = resultat ? resultat.lignes.length - items.length : 0
+  const showAlbertLegend = grille?.origine === 'ALBERT'
 
   const body = () => {
     switch (etat.kind) {
       case 'vide':
-        return zoneDepot()
+        return <ImportDropZone onFile={onFile} colonnes={colonnes} />
       case 'lecture':
-        return encadreChargement('Analyse du fichier en cours…')
-      case 'albertEnCours':
-        return encadreChargement(
-          'Format non standard détecté — extraction assistée par IA en cours…',
-        )
-      case 'standard':
         return (
-          <ImportFormatValide
-            nomFichier={etat.nomFichier}
-            rows={etat.rows}
-            axes={axes}
+          <ImportMessage>
+            <span className="flex items-center gap-2">
+              <Loader2 aria-hidden className="size-4 animate-spin" />
+              Lecture du fichier en cours…
+            </span>
+          </ImportMessage>
+        )
+      case 'illisible':
+        return (
+          <>
+            <ImportDropZone onFile={onFile} colonnes={colonnes} />
+            <ImportMessage variant="erreur">{describeLectureError(etat.error)}</ImportMessage>
+          </>
+        )
+      case 'echec':
+        return (
+          <>
+            <ImportDropZone onFile={onFile} colonnes={colonnes} />
+            <ImportMessage variant="erreur">{etat.explication}</ImportMessage>
+          </>
+        )
+      case 'attente':
+        return (
+          <ImportAttente
+            nomFichier={file?.name ?? ''}
+            nombreLignes={etat.tableau.lignes.length}
+            nombreColonnes={etat.tableau.entetes.length}
+            etapes={etat.etapes}
+          />
+        )
+      case 'grille':
+        if (!resultat || !cibles) return null
+        return (
+          <ImportGrille
+            lignes={resultat.lignes}
+            lignesEcartees={resultat.lignesEcartees}
+            plan={etat.plan}
+            cibles={cibles}
+            origine={etat.origine}
             erreursServeur={erreursServeur}
           />
         )
-      case 'albertRevue':
-        return <NormalisationRevue revue={etat.revue} axes={axes} erreursServeur={erreursServeur} />
-      case 'illisible':
-      case 'albertEchec':
-        return zoneDepot(etat.error)
     }
   }
 
+  const submitLabel =
+    items.length > 0
+      ? `Importer ${items.length} ${pluralize({ count: items.length, singular: 'valeur', plural: 'valeurs' })}`
+      : 'Importer'
+
+  const footer = (
+    <>
+      {grille ? (
+        <div className="mr-auto flex flex-wrap items-center gap-x-5 gap-y-1 text-[13px] text-text">
+          {showAlbertLegend ? (
+            <span className="inline-flex items-center gap-1.5">
+              <Sparkles aria-hidden className="size-3.5 text-blue-cumulus" />
+              Rapproché par l’assistant IA
+            </span>
+          ) : null}
+          {aCorriger > 0 ? <span>Les lignes à corriger ne seront pas importées.</span> : null}
+          {isTooLarge ? (
+            <span className="text-red-marianne">
+              Un import est limité à {MAX_VALEURS_PAR_BATCH} valeurs : scindez le fichier.
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+      <Button variant="secondary" type="button" onClick={onClose} disabled={mutation.isPending}>
+        Annuler
+      </Button>
+      <Button
+        variant="primary"
+        type="button"
+        onClick={() => void onSubmit()}
+        disabled={items.length === 0 || isTooLarge || mutation.isPending}
+      >
+        {mutation.isPending ? 'Import en cours…' : submitLabel}
+      </Button>
+    </>
+  )
+
+  const description = grille
+    ? `${target.indicateur.nom} · ${file?.name ?? ''}`
+    : `${target.indicateur.nom} · CSV ou Excel`
+
   return (
-    <ModaleForm
+    <Modale
       open
       onClose={onClose}
       titre="Importer des valeurs"
-      description={`${target.indicateur.nom} · CSV ou Excel`}
-      form={form}
-      onSubmit={onSubmit}
-      submitLabel={submitLabel}
-      submitPendingLabel="Import en cours…"
-      submitDisabled={!payload || payload.length === 0}
+      description={description}
+      size={grille ? 'xl' : 'md'}
+      footer={footer}
     >
       {body()}
-    </ModaleForm>
+    </Modale>
   )
 }
