@@ -418,7 +418,8 @@ export const describeProvenance = ({
       }
     case 'AXE': {
       const cellule = ligne.modalites[colonne.rang]
-      const colonneFichier = plan.axes[colonne.rang]?.colonne ?? colonne.label
+      const axePlan = plan.axes[colonne.rang]
+      const colonneFichier = axePlan?.lecture === 'CELLULE' ? axePlan.colonne : colonne.label
       if (!cellule) return { reference, texte: '' }
       return {
         reference,

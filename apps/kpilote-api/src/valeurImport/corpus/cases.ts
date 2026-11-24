@@ -188,6 +188,7 @@ export const corpus: CasCorpus[] = [
         },
         axes: [
           {
+            lecture: 'CELLULE',
             axe: 'AXE-OPERATEUR',
             colonne: 'Opérateur',
             rapprochements: {
@@ -199,6 +200,7 @@ export const corpus: CasCorpus[] = [
             },
           },
           {
+            lecture: 'CELLULE',
             axe: 'AXE-TECHNO',
             colonne: 'Techno',
             rapprochements: { '4G': exact('TECH-4G'), '5G': exact('TECH-5G') },

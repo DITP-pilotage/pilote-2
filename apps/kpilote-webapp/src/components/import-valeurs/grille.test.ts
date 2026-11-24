@@ -46,6 +46,7 @@ const plan: PlanTransformation = {
   },
   axes: [
     {
+      lecture: 'CELLULE',
       axe: 'AXE-OPERATEUR',
       colonne: 'Opérateur',
       rapprochements: {

@@ -1,8 +1,9 @@
 import {
+  type AxePlan,
   type CelluleSource,
-  type ColonneRapprochee,
   type OrigineRapprochement,
   type PlanTransformation,
+  type Rapprochement,
   type TableauSource,
 } from '../valeurImport'
 import { parseDate } from './parseDate'
@@ -72,6 +73,24 @@ const buildColumnReader = (tableau: TableauSource) => {
 const isEmptyRow = (cellules: ReadonlyArray<CelluleSource>): boolean =>
   cellules.every((cellule) => toTexte(cellule) === '')
 
+// Le libellé de la modalité d'un axe pour une cellule de valeur. Un axe lu en
+// en-tête n'a de sens qu'avec `COLONNES_MODALITES` : ailleurs, son libellé est
+// vide et la cellule est à corriger.
+const readModalite = ({
+  axe,
+  read,
+  ligne,
+  enteteValeur,
+}: {
+  axe: AxePlan
+  read: ReturnType<typeof buildColumnReader>
+  ligne: number
+  enteteValeur: string | null
+}): string => {
+  if (axe.lecture === 'CELLULE') return toTexte(read({ ligne, colonne: axe.colonne }))
+  return enteteValeur ?? ''
+}
+
 const toObservations = ({
   plan,
   tableau,
@@ -94,32 +113,57 @@ const toObservations = ({
       }
     }
     const individu = toTexte(read({ ligne, colonne: plan.individu.colonne }))
-    const modalites = plan.axes.map((axe) => toTexte(read({ ligne, colonne: axe.colonne })))
+    const readModalites = (enteteValeur: string | null): string[] =>
+      plan.axes.map((axe) => readModalite({ axe, read, ligne, enteteValeur }))
 
-    if (plan.valeurs.disposition === 'LIGNES') {
-      const dateBrute = read({ ligne, colonne: plan.valeurs.colonneDate })
-      observations.push({
-        ligne,
-        colonneValeur: plan.valeurs.colonneValeur,
-        individu,
-        modalites,
-        date: { brut: toTexte(dateBrute), lue: parseDate(dateBrute) },
-        valeur: read({ ligne, colonne: plan.valeurs.colonneValeur }),
-      })
-      continue
-    }
-    for (const { colonne, date } of plan.valeurs.colonnes) {
-      const valeur = read({ ligne, colonne })
-      // Un tableau à dates en colonnes a souvent des trous : pas de valeur, pas de ligne.
-      if (toTexte(valeur) === '') continue
-      observations.push({
-        ligne,
-        colonneValeur: colonne,
-        individu,
-        modalites,
-        date: { brut: colonne, lue: date },
-        valeur,
-      })
+    switch (plan.valeurs.disposition) {
+      case 'LIGNES': {
+        const dateBrute = read({ ligne, colonne: plan.valeurs.colonneDate })
+        observations.push({
+          ligne,
+          colonneValeur: plan.valeurs.colonneValeur,
+          individu,
+          modalites: readModalites(null),
+          date: { brut: toTexte(dateBrute), lue: parseDate(dateBrute) },
+          valeur: read({ ligne, colonne: plan.valeurs.colonneValeur }),
+        })
+        break
+      }
+      case 'COLONNES': {
+        const modalites = readModalites(null)
+        for (const { colonne, date } of plan.valeurs.colonnes) {
+          const valeur = read({ ligne, colonne })
+          // Un tableau à dates en colonnes a souvent des trous : pas de valeur, pas de ligne.
+          if (toTexte(valeur) === '') continue
+          observations.push({
+            ligne,
+            colonneValeur: colonne,
+            individu,
+            modalites,
+            date: { brut: colonne, lue: date },
+            valeur,
+          })
+        }
+        break
+      }
+      case 'COLONNES_MODALITES': {
+        const dateBrute = read({ ligne, colonne: plan.valeurs.colonneDate })
+        const date = { brut: toTexte(dateBrute), lue: parseDate(dateBrute) }
+        for (const colonne of plan.valeurs.colonnes) {
+          const valeur = read({ ligne, colonne })
+          // Comme pour les dates en colonnes : pas de valeur, pas de ligne.
+          if (toTexte(valeur) === '') continue
+          observations.push({
+            ligne,
+            colonneValeur: colonne,
+            individu,
+            modalites: readModalites(colonne),
+            date,
+            valeur,
+          })
+        }
+        break
+      }
     }
   }
   return { observations, lignesEcartees }
@@ -127,13 +171,13 @@ const toObservations = ({
 
 const toCelluleRapprochee = ({
   libelle,
-  colonne,
+  rapprochements,
 }: {
   libelle: string
-  colonne: ColonneRapprochee
+  rapprochements: Record<string, Rapprochement>
 }): Cellule<string> => {
   if (libelle === '') return { statut: 'A_CORRIGER', brut: '', motif: { type: 'CELLULE_VIDE' } }
-  const rapprochement = colonne.rapprochements[libelle]
+  const rapprochement = rapprochements[libelle]
   if (!rapprochement || rapprochement.statut === 'INCONNU') {
     return { statut: 'A_CORRIGER', brut: libelle, motif: { type: 'LIBELLE_INCONNU' } }
   }
@@ -199,9 +243,15 @@ const toLigneImport = ({
   const correction = corrections[correctionKey(source)]
   return {
     source,
-    individu: toCelluleRapprochee({ libelle: observation.individu, colonne: plan.individu }),
+    individu: toCelluleRapprochee({
+      libelle: observation.individu,
+      rapprochements: plan.individu.rapprochements,
+    }),
     modalites: plan.axes.map((axe, index) =>
-      toCelluleRapprochee({ libelle: observation.modalites[index] ?? '', colonne: axe }),
+      toCelluleRapprochee({
+        libelle: observation.modalites[index] ?? '',
+        rapprochements: axe.rapprochements,
+      }),
     ),
     date: toCelluleDate({ date: observation.date, correction: correction?.date }),
     valeur: toCelluleValeur({ valeur: observation.valeur, correction: correction?.valeur }),

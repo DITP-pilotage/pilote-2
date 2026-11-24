@@ -84,10 +84,16 @@ const readDisposition = (proposition: StructureProposee): Disposition => {
   return { valeurs: { disposition: 'COLONNES', colonnes }, erreurs }
 }
 
-const columnsOf = (valeurs: DispositionValeurs): string[] =>
-  valeurs.disposition === 'LIGNES'
-    ? [valeurs.colonneDate, valeurs.colonneValeur]
-    : valeurs.colonnes.map(({ colonne }) => colonne)
+const columnsOf = (valeurs: DispositionValeurs): string[] => {
+  switch (valeurs.disposition) {
+    case 'LIGNES':
+      return [valeurs.colonneDate, valeurs.colonneValeur]
+    case 'COLONNES':
+      return valeurs.colonnes.map(({ colonne }) => colonne)
+    case 'COLONNES_MODALITES':
+      return [valeurs.colonneDate, ...valeurs.colonnes]
+  }
+}
 
 type Filtre = { filtre: FiltreLignes | null; erreurs: ErreurStructure[] }
 

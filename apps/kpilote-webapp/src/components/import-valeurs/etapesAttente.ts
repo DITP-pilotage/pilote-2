@@ -20,7 +20,9 @@ export type EtapeAttente = {
 const MAX_DATES_CITEES = 4
 
 const describeStructure = (valeurs: DispositionValeurs | undefined): string => {
-  if (!valeurs) return 'Colonnes de l’individu, de la date et de la valeur repérées'
+  if (!valeurs || valeurs.disposition === 'COLONNES_MODALITES') {
+    return 'Colonnes de l’individu, de la date et de la valeur repérées'
+  }
   if (valeurs.disposition === 'LIGNES') {
     return `Une ligne par valeur : date dans « ${valeurs.colonneDate} », valeur dans « ${valeurs.colonneValeur} »`
   }

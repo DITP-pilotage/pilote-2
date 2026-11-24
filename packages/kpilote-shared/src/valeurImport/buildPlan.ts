@@ -90,6 +90,7 @@ export const buildPlanStandard = ({
         candidats: cibles.individus,
       }),
       axes: cibles.axes.map((axe) => ({
+        lecture: 'CELLULE',
         axe: axe.id,
         ...matchColonne({ tableau, colonne: findEntete(axe.id)!, candidats: axe.modalites }),
       })),

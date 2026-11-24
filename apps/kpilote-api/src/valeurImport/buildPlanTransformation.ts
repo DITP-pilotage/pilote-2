@@ -151,7 +151,7 @@ async function* buildPlan({
   for (const { axe, pending } of axesPending) {
     yield { type: 'ETAPE', etape: { etape: 'AXE', axe, statut: 'EN_COURS' } }
     const rapprochee = await pending
-    axes.push({ axe, ...rapprochee })
+    axes.push({ lecture: 'CELLULE', axe, ...rapprochee })
     yield {
       type: 'ETAPE',
       etape: { etape: 'AXE', axe, statut: 'TERMINEE', ...countRapprochements(rapprochee) },

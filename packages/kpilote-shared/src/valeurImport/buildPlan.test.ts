@@ -124,8 +124,18 @@ describe('setRapprochement', () => {
       rapprochements: { Bdr: { statut: 'INCONNU' }, Vaucluse: { statut: 'INCONNU' } },
     },
     axes: [
-      { axe: 'AXE-SEXE', colonne: 'Sexe', rapprochements: { F: { statut: 'INCONNU' } } },
-      { axe: 'AXE-AGE', colonne: 'Âge', rapprochements: { F: { statut: 'INCONNU' } } },
+      {
+        lecture: 'CELLULE',
+        axe: 'AXE-SEXE',
+        colonne: 'Sexe',
+        rapprochements: { F: { statut: 'INCONNU' } },
+      },
+      {
+        lecture: 'CELLULE',
+        axe: 'AXE-AGE',
+        colonne: 'Âge',
+        rapprochements: { F: { statut: 'INCONNU' } },
+      },
     ],
     valeurs: { disposition: 'LIGNES', colonneDate: 'Date', colonneValeur: 'Valeur' },
   }
@@ -153,12 +163,41 @@ describe('setRapprochement', () => {
     })
     expect(corrige.axes).toEqual([
       {
+        lecture: 'CELLULE',
         axe: 'AXE-SEXE',
         colonne: 'Sexe',
         rapprochements: { F: { statut: 'RESOLU', publicId: 'MOD-FEMME', par: 'UTILISATEUR' } },
       },
-      { axe: 'AXE-AGE', colonne: 'Âge', rapprochements: { F: { statut: 'INCONNU' } } },
+      {
+        lecture: 'CELLULE',
+        axe: 'AXE-AGE',
+        colonne: 'Âge',
+        rapprochements: { F: { statut: 'INCONNU' } },
+      },
     ])
     expect(corrige.individu).toEqual(plan.individu)
+  })
+
+  it('corrige le rapprochement d’un en-tête pour un axe lu en en-tête', () => {
+    const planEntete: PlanTransformation = {
+      ...plan,
+      axes: [
+        { lecture: 'ENTETE', axe: 'AXE-FRAUDE', rapprochements: { IR: { statut: 'INCONNU' } } },
+      ],
+      valeurs: { disposition: 'COLONNES_MODALITES', colonneDate: 'Date', colonnes: ['IR'] },
+    }
+    const corrige = setRapprochement({
+      plan: planEntete,
+      cible: { type: 'AXE', axe: 'AXE-FRAUDE' },
+      libelle: 'IR',
+      publicId: 'FR-IR',
+    })
+    expect(corrige.axes).toEqual([
+      {
+        lecture: 'ENTETE',
+        axe: 'AXE-FRAUDE',
+        rapprochements: { IR: { statut: 'RESOLU', publicId: 'FR-IR', par: 'UTILISATEUR' } },
+      },
+    ])
   })
 })
