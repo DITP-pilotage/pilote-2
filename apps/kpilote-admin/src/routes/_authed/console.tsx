@@ -3,6 +3,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useCallback, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 import { sendConsoleRequest, type ConsoleResponse } from '@/api/console'
 import { CurlPreview } from '@/components/console/CurlPreview'
@@ -23,8 +24,10 @@ import { consoleMetaQueryOptions } from '@/queries/console'
 
 export const Route = createFileRoute('/_authed/console')({ component: ConsoleComponent })
 
+const errorWithMessageSchema = z.object({ message: z.string() })
+
 const toErrorMessage = (error: unknown): string =>
-  error instanceof Error ? error.message : 'Échec de l’appel'
+  errorWithMessageSchema.safeParse(error).data?.message ?? 'Échec de l’appel'
 
 // Section réponse isolée : sa `key` (submittedAt) change à chaque envoi, ce qui
 // la remonte et redéclenche la callback ref → scroll vers le résultat.

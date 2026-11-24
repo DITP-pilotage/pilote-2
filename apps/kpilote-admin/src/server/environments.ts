@@ -1,10 +1,14 @@
+import { z } from 'zod'
+
 import { serverEnv } from '@/server/env'
 
 export const ENVIRONMENTS = ['local', 'dev', 'prod'] as const
 export type Environment = (typeof ENVIRONMENTS)[number]
 
+const environmentSchema = z.enum(ENVIRONMENTS)
+
 export const isEnvironment = (value: unknown): value is Environment =>
-  typeof value === 'string' && (ENVIRONMENTS as readonly string[]).includes(value)
+  environmentSchema.safeParse(value).success
 
 const URL_BY_ENVIRONMENT: Record<Environment, string> = {
   local: serverEnv.API_BASE_URL_LOCAL,

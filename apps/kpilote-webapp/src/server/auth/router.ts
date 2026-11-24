@@ -5,6 +5,7 @@ import * as client from 'openid-client'
 
 import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import ky, { HTTPError } from 'ky'
+import { z } from 'zod'
 
 import { type Provider, getOidcConfig, providerSchema } from '@/server/auth/oidc'
 import {
@@ -46,6 +47,11 @@ const sessionTtlSeconds = (provider: Provider, refreshExpiresIn: unknown): numbe
   const idpValue = Number.isFinite(value) && value > 0 ? value : default_
   return Math.min(idpValue, default_)
 }
+
+const errorWithMessageSchema = z.object({ message: z.string() })
+
+const reasonOf = (error: unknown): string =>
+  errorWithMessageSchema.safeParse(error).data?.message ?? 'unknown'
 
 const SAFE_INTERNAL_PATH = /^\/(?:[^/\\].*)?$/
 
@@ -181,7 +187,7 @@ authRouter.get('/callback', async (context) => {
     })
   } catch (error) {
     logger.warn(
-      { event: 'auth.callback.failed', reason: error instanceof Error ? error.message : 'unknown' },
+      { event: 'auth.callback.failed', reason: reasonOf(error) },
       'OIDC code exchange failed',
     )
     return context.redirect('/login-error?reason=callback_failed')
@@ -256,7 +262,7 @@ authRouter.post('/refresh', refreshLimiter, async (context) => {
     tokens = await client.refreshTokenGrant(config, session.refreshToken)
   } catch (error) {
     logger.warn(
-      { event: 'auth.refresh.failed', reason: error instanceof Error ? error.message : 'unknown' },
+      { event: 'auth.refresh.failed', reason: reasonOf(error) },
       'Refresh token grant failed',
     )
     clearSession(context)
@@ -307,7 +313,7 @@ authRouter.post('/logout', logoutLimiter, async (context) => {
     logger.warn(
       {
         event: 'auth.logout.revocation_failed',
-        reason: error instanceof Error ? error.message : 'unknown',
+        reason: reasonOf(error),
       },
       'IdP token revocation failed (best effort)',
     )

@@ -85,6 +85,20 @@ Pourquoi : le nom dit l'intention ; une boucle `get(k) ?? []` puis `push` se rel
   }
   ```
 
+### Lire une valeur inconnue avec zod, pas avec `instanceof` ni `typeof`
+Pour vérifier la forme d'une valeur `unknown` (une erreur attrapée, un message de conversation, une entrée de `localStorage`, un paramètre d'URL), on décrit ce qu'on attend par un schéma zod et on le lit par `safeParse`, plutôt que par `instanceof Error` ou une garde écrite à la main (`typeof x === 'object' && x !== null && 'id' in x && typeof x.id === 'string'`).
+Pourquoi : le schéma dit d'un bloc la forme attendue et donne le type ; on teste ce qu'on lit vraiment (un `message` de type `string`) et non une classe, et une garde à la main grossit vite en chaîne de `&&`.
+- À faire :
+  ```ts
+  const errorWithMessageSchema = z.object({ message: z.string() })
+
+  const reasonOf = (error: unknown): string =>
+    errorWithMessageSchema.safeParse(error).data?.message ?? 'unknown'
+  ```
+- À éviter : `reason: error instanceof Error ? error.message : 'unknown'`, `typeof search.article === 'string' ? search.article : undefined` dans un `validateSearch` (on passe un schéma zod à `validateSearch`)
+- `instanceof` reste de mise pour discriminer une classe d'erreur (`AppError`, `HTTPError`, `Prisma.PrismaClientKnownRequestError`, `ZodError`) et pour les types DOM ou natifs (`HTMLElement`, `Date`, `Temporal.PlainDate`).
+- `typeof` reste de mise pour restreindre une union déjà typée (`Date | string`, `string | number | null`, `ReactNode`) et pour aiguiller une conversion selon le type d'une cellule (`toCelluleSource`).
+
 ### Pas d'IIFE
 Pas de `(async () => { ... })()` ni de `(() => ...)()` en JSX : on extrait une fonction nommée.
 Pourquoi : une IIFE est une fonction anonyme déguisée en expression ; son nom manque à la lecture et au test.

@@ -1,5 +1,6 @@
 import { type Model, type PageContext } from '@pilote/kpilote-shared/assistant/chat'
 import { deriveTitle } from '@pilote/kpilote-shared/assistant/conversation'
+import { z } from 'zod'
 
 import { NotFoundError } from '@/framework/errors/AppError'
 import { type SubCallTrace } from '@/framework/llm/turnTrace'
@@ -13,11 +14,9 @@ const toPlainJson = (value: unknown): object => JSON.parse(JSON.stringify(value)
 const toPlainJsonArray = (values: ReadonlyArray<unknown>): Prisma.JsonArray =>
   JSON.parse(JSON.stringify(values)) as Prisma.JsonArray
 
-const hasId = (message: unknown): message is { id: string; role?: unknown } =>
-  typeof message === 'object' &&
-  message !== null &&
-  'id' in message &&
-  typeof message.id === 'string'
+const messageRefSchema = z.object({ id: z.string(), role: z.unknown() })
+
+const messageRefOf = (message: unknown) => messageRefSchema.safeParse(message).data
 
 /**
  * L'apport du tour (sa question et ce qui suit) reporté sur l'historique enregistré, qui a pu
@@ -25,12 +24,13 @@ const hasId = (message: unknown): message is { id: string; role?: unknown } =>
  * nouvelle question s'ajoute à la fin.
  */
 const mergeTurn = (stored: Prisma.JsonArray, messages: Prisma.JsonArray): Prisma.JsonArray => {
-  const start = messages.findLastIndex((message) => hasId(message) && message.role === 'user')
+  const start = messages.findLastIndex((message) => messageRefOf(message)?.role === 'user')
   const turn = messages.slice(Math.max(start, 0))
-  const question = turn[0]
-  const replaced = hasId(question)
-    ? stored.findIndex((message) => hasId(message) && message.id === question.id)
-    : -1
+  const questionId = messageRefOf(turn[0])?.id
+  const replaced =
+    questionId === undefined
+      ? -1
+      : stored.findIndex((message) => messageRefOf(message)?.id === questionId)
   return [...(replaced === -1 ? stored : stored.slice(0, replaced)), ...turn]
 }
 

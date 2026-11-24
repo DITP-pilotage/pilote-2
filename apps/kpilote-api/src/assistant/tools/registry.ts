@@ -5,6 +5,7 @@ import {
   type ToolName,
 } from '@pilote/kpilote-shared/assistant/tools'
 import { tool, type Tool, type ToolSet } from 'ai'
+import { z } from 'zod'
 
 import { createDashboard } from '@/assistant/tools/dashboard/createDashboard'
 import { consultCentreAide } from '@/assistant/tools/centreAide/consultCentreAide'
@@ -56,18 +57,28 @@ const isToolError = (output: unknown): output is ToolError =>
 // recopier une partie : on ne journalise que leur nom, un message tronqué et leur pile.
 const MAX_LOGGED_MESSAGE = 300
 
-export const toLoggableError = (error: unknown) =>
-  error instanceof Error
-    ? {
-        name: error.name,
-        message: error.message.slice(0, MAX_LOGGED_MESSAGE),
-        // La pile commence par le message entier : seules ses lignes d'appel sont gardées.
-        stack: error.stack
-          ?.split('\n')
-          .filter((line) => line.trimStart().startsWith('at '))
-          .join('\n'),
-      }
-    : { name: 'UnknownError', message: String(error).slice(0, MAX_LOGGED_MESSAGE) }
+const loggableErrorSchema = z.object({
+  name: z.string(),
+  message: z.string(),
+  stack: z.string().optional(),
+})
+
+export const toLoggableError = (error: unknown) => {
+  const parsed = loggableErrorSchema.safeParse(error)
+  if (!parsed.success) {
+    return { name: 'UnknownError', message: String(error).slice(0, MAX_LOGGED_MESSAGE) }
+  }
+  const { name, message, stack } = parsed.data
+  return {
+    name,
+    message: message.slice(0, MAX_LOGGED_MESSAGE),
+    // La pile commence par le message entier : seules ses lignes d'appel sont gardées.
+    stack: stack
+      ?.split('\n')
+      .filter((line) => line.trimStart().startsWith('at '))
+      .join('\n'),
+  }
+}
 
 // Seules les erreurs métier disent au modèle quoi corriger. Une erreur interne (base,
 // réseau) reste dans les journaux : sa sortie atteint aussi l'interface.

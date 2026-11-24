@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { z } from 'zod'
 
 /** Type de ressource dont on mémorise la visite (fiche de détail). */
 export type RecentType = 'indicateur' | 'collection' | 'article'
@@ -17,15 +18,15 @@ const MAX_ENTRIES = 5
 
 const entryKey = (entry: RecentEntry): string => `${entry.type}:${entry.id}`
 
-/** Valide qu'une valeur inconnue a bien la forme d'une `RecentEntry`. */
-function isRecentEntry(value: unknown): value is RecentEntry {
-  if (typeof value !== 'object' || value === null) return false
-  const entry = value as Record<string, unknown>
-  return (
-    (entry.type === 'indicateur' || entry.type === 'collection' || entry.type === 'article') &&
-    typeof entry.id === 'string' &&
-    typeof entry.label === 'string'
-  )
+const recentEntrySchema: z.ZodType<RecentEntry> = z.object({
+  type: z.enum(['indicateur', 'collection', 'article']),
+  id: z.string(),
+  label: z.string(),
+})
+
+const toRecentEntries = (value: unknown): RecentEntry[] => {
+  const parsed = recentEntrySchema.safeParse(value)
+  return parsed.success ? [parsed.data] : []
 }
 
 /** Lit la liste depuis localStorage, tolérante aux données corrompues / stockage indisponible. */
@@ -36,7 +37,7 @@ function read(): RecentEntry[] {
     if (!Array.isArray(parsed)) return []
     // On filtre les entrées malformées pour tenir la promesse d'une lecture
     // tolérante : une entrée corrompue ne doit pas faire échouer `recordVisit()`.
-    return parsed.filter(isRecentEntry).slice(0, MAX_ENTRIES)
+    return parsed.flatMap(toRecentEntries).slice(0, MAX_ENTRIES)
   } catch {
     return []
   }
