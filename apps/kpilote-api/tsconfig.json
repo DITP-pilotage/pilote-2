@@ -31,6 +31,7 @@
       "@/relation/*": ["./src/relation/*"],
       "@/niveauConfiance/*": ["./src/niveauConfiance/*"],
       "@/valeurAvancement/*": ["./src/valeurAvancement/*"],
+      "@/valeurImport/*": ["./src/valeurImport/*"],
       "@/valeurNormalisation/*": ["./src/valeurNormalisation/*"],
       "@/objectifIndicateurIndividu/*": ["./src/objectifIndicateurIndividu/*"],
       "@/widget/*": ["./src/widget/*"],
