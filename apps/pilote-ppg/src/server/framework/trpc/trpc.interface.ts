@@ -7,5 +7,4 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 export type CreateContextOptions = {
   session: Session | null;
-  csrfDuCookie: string | null;
 };

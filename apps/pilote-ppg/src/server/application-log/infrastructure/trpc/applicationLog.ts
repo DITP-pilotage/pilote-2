@@ -3,7 +3,6 @@ import { $Enums } from "@prisma/client";
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { ProfilEnum } from "@/shared/profil/ProfilEnum";
@@ -68,13 +67,10 @@ export const applicationLogRouter = createTRPCRouter({
   purger: protectedProcedure
     .input(
       z.object({
-        csrf: z.string(),
         anterieurA: z.string().datetime(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       if (ctx.session.profil !== ProfilEnum.DITP_ADMIN) {
         throw new UnauthorizedError("Accès réservé aux administrateurs");
       }

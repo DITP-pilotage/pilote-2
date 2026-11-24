@@ -2,7 +2,6 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import {
   createValidationMetadataIndicateurFormulaire,
@@ -16,7 +15,6 @@ import {
   presenterEnMetadataParametrageIndicateurInformationContrat,
 } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { presenterEnMapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { zodValidateurCSRF } from "@/validation/publication";
 import { MetadataParametrageIndicateurForm } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm";
 import { getContainer } from "@/server/dependances";
 import { defaultHistoriqueInformation } from "@/server/parametrage-indicateur/domain/DefaultHistoriqueInformation";
@@ -272,10 +270,8 @@ export const parametrageIndicateurRouter = createTRPCRouter({
     },
   ),
   modifier: protectedProcedure
-    .input(validationMetadataIndicateurInput.and(zodValidateurCSRF))
+    .input(validationMetadataIndicateurInput)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       const habilitations = await getContainer("gestionUtilisateur")
         .resolve("habilitationService")
         .recupererHabilitations(ctx.session);
@@ -298,10 +294,8 @@ export const parametrageIndicateurRouter = createTRPCRouter({
         );
     }),
   creer: protectedProcedure
-    .input(validationMetadataIndicateurInput.and(zodValidateurCSRF))
+    .input(validationMetadataIndicateurInput)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       const habilitations = await getContainer("gestionUtilisateur")
         .resolve("habilitationService")
         .recupererHabilitations(ctx.session);

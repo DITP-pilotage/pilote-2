@@ -65,7 +65,7 @@ test.describe("Pages du panel gardées par la seule session", () => {
     await new AppActions(page, e2eContext).loginAs(
       "coordinateur.region@example.com",
     );
-    const trpc = await TrpcClient.outsideApp(page);
+    const trpc = new TrpcClient(page);
 
     const logs = await trpc.query("applicationLog.lister", {});
     const featureFlips = await trpc.query(
@@ -85,7 +85,7 @@ test.describe("Pages du panel gardées par la seule session", () => {
     await new AppActions(page, e2eContext).loginAs(
       "coordinateur.region@example.com",
     );
-    const trpc = await TrpcClient.outsideApp(page);
+    const trpc = new TrpcClient(page);
     const nouveauteId = randomUUID();
     const articleId = randomUUID();
     e2eContext.track("NOUVEAUTE_CREATED", { id: nouveauteId });

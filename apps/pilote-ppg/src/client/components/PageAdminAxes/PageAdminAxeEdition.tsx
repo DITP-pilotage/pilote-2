@@ -7,7 +7,6 @@ import { Button } from "@/components/shared/Button";
 import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { MetadataAxe } from "@/server/referentiels/axe/queries/GetAxeQuery";
 import {
@@ -119,11 +118,9 @@ const PageAdminAxeEdition = ({ axeId, isCreation, axeData }: Props) => {
                       onClick={() =>
                         estSupprime
                           ? restaurerMutation.mutate({
-                              csrf: récupérerUnCookie("csrf") ?? "",
                               axeId,
                             })
                           : archiverMutation.mutate({
-                              csrf: récupérerUnCookie("csrf") ?? "",
                               axeId,
                             })
                       }

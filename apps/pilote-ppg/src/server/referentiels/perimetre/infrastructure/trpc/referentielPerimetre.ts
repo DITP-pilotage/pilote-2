@@ -2,9 +2,7 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
-import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { perimetreCommandSchema } from "@/server/referentiels/perimetre/handlers/SavePerimetreHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
@@ -43,9 +41,8 @@ export const referentielPerimetreRouter = createTRPCRouter({
     }),
 
   save: protectedProcedure
-    .input(perimetreCommandSchema.and(zodValidateurCSRF))
+    .input(perimetreCommandSchema)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("savePerimetreHandler")
@@ -53,9 +50,8 @@ export const referentielPerimetreRouter = createTRPCRouter({
     }),
 
   archive: protectedProcedure
-    .input(z.object({ perimetreId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ perimetreId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("archivePerimetreHandler")
@@ -63,9 +59,8 @@ export const referentielPerimetreRouter = createTRPCRouter({
     }),
 
   restore: protectedProcedure
-    .input(z.object({ perimetreId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ perimetreId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("restorePerimetreHandler")

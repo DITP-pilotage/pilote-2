@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { api } from "@/server/framework/trpc/api";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { validationCreationTokenAPI } from "@/validation/gestion-token-api";
 
 export type TokenAPIForm = {
@@ -61,7 +60,6 @@ export const useGestionTokenAPI = () => {
 
   const creerTokenAPI: SubmitHandler<TokenAPIForm> = async (data) => {
     const inputs = {
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
     };
 
@@ -70,7 +68,6 @@ export const useGestionTokenAPI = () => {
 
   const supprimerTokenAPI: SubmitHandler<TokenAPIForm> = async (data) => {
     const inputs = {
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
     };
 

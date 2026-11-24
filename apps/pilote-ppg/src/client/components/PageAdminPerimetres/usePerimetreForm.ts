@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { perimetreCommandSchema } from "@/server/referentiels/perimetre/handlers/SavePerimetreHandler";
 
 export type PerimetreForm = z.infer<typeof perimetreCommandSchema>;
@@ -50,7 +49,6 @@ export const usePerimetreForm = ({
 
   const enregistrer: SubmitHandler<PerimetreForm> = (data) => {
     mutation.mutate({
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
     });
   };

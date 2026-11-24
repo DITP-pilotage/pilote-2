@@ -5,7 +5,6 @@ import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MAILLES } from "@/server/parametrage-chantier/domain/maille";
 
 export const validationChantierSchema = z.object({
@@ -93,7 +92,6 @@ export const useChantierForm = ({
 
   const modifierChantier: SubmitHandler<ChantierForm> = (data) => {
     mutationModifier.mutate({
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       conseillerMail: data.conseillerMail || null,
     });
@@ -101,7 +99,6 @@ export const useChantierForm = ({
 
   const creerChantier: SubmitHandler<ChantierForm> = (data) => {
     mutationCreer.mutate({
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       conseillerMail: data.conseillerMail || null,
     });

@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { porteurCommandSchema } from "@/server/referentiels/porteur/handlers/SavePorteurHandler";
 
 export type PorteurForm = z.infer<typeof porteurCommandSchema>;
@@ -54,7 +53,6 @@ export const usePorteurForm = ({
 
   const enregistrer: SubmitHandler<PorteurForm> = (data) => {
     mutation.mutate({
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       porteurDesc: data.porteurDesc || null,
       porteurDirecteur: data.porteurDirecteur || null,

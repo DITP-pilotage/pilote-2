@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { axeCommandSchema } from "@/server/referentiels/axe/handlers/SaveAxeHandler";
 
 export type AxeForm = z.infer<typeof axeCommandSchema>;
@@ -49,7 +48,6 @@ export const useAxeForm = ({
 
   const enregistrer: SubmitHandler<AxeForm> = (data) => {
     mutation.mutate({
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       axeDesc: data.axeDesc || null,
     });

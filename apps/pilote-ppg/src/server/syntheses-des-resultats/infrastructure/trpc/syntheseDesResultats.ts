@@ -1,8 +1,6 @@
-import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import {
   validationBrouillonAPublier,
@@ -15,20 +13,14 @@ import {
 import { getContainer } from "@/server/dependances";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 
-const zodValidateurCSRF = z.object({
-  csrf: z.string(),
-});
-
 export const syntheseDesResultatsRouter = createTRPCRouter({
   modifier: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationSynthèseDesRésultatsFormulaire)
-        .merge(validationSyntheseAModifier),
+      validationSynthèseDesRésultatsFormulaire.merge(
+        validationSyntheseAModifier,
+      ),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("importSyntheseDesResultats")
         .resolve("modifierSyntheseDesResultatsPublieeUseCase")
         .execute({
@@ -43,13 +35,11 @@ export const syntheseDesResultatsRouter = createTRPCRouter({
 
   publier: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationSynthèseDesRésultatsFormulaire)
-        .merge(validationSynthèseDesRésultatsContexte),
+      validationSynthèseDesRésultatsFormulaire.merge(
+        validationSynthèseDesRésultatsContexte,
+      ),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("importSyntheseDesResultats")
         .resolve("publierSyntheseDesResultatsUseCase")
         .execute({
@@ -65,13 +55,11 @@ export const syntheseDesResultatsRouter = createTRPCRouter({
 
   enregistrerEnBrouillon: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationSynthèseDesRésultatsBrouillon)
-        .merge(validationSynthèseDesRésultatsContexte),
+      validationSynthèseDesRésultatsBrouillon.merge(
+        validationSynthèseDesRésultatsContexte,
+      ),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("importSyntheseDesResultats")
         .resolve("enregistrerBrouillonSyntheseDesResultatsUseCase")
         .execute({
@@ -87,13 +75,11 @@ export const syntheseDesResultatsRouter = createTRPCRouter({
 
   publierUnBrouillon: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationSynthèseDesRésultatsFormulaire)
-        .merge(validationBrouillonAPublier),
+      validationSynthèseDesRésultatsFormulaire.merge(
+        validationBrouillonAPublier,
+      ),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("importSyntheseDesResultats")
         .resolve("publierBrouillonSyntheseDesResultatsUseCase")
         .execute({
@@ -108,13 +94,11 @@ export const syntheseDesResultatsRouter = createTRPCRouter({
 
   modifierLeBrouillon: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationSynthèseDesRésultatsBrouillon)
-        .merge(validationBrouillonAPublier),
+      validationSynthèseDesRésultatsBrouillon.merge(
+        validationBrouillonAPublier,
+      ),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("importSyntheseDesResultats")
         .resolve("modifierBrouillonSyntheseDesResultatsUseCase")
         .execute({

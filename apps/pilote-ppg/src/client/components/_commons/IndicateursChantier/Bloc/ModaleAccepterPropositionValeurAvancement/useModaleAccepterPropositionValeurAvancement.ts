@@ -5,7 +5,6 @@ import { z } from "zod";
 import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 
 const formSchema = z
@@ -134,7 +133,6 @@ export const useModaleAccepterPropositionValeurAvancement = ({
 
   const traiterDecision: SubmitHandler<FormData> = async (data) => {
     const inputs = {
-      csrf: récupérerUnCookie("csrf") ?? "",
       motif: data.motif,
       dateValeurAvancement: data.dateValeurAvancement,
       indicId: indicateur.id,

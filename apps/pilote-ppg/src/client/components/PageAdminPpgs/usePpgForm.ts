@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { ppgCommandSchema } from "@/server/referentiels/ppg/handlers/SavePpgHandler";
 
 export type PpgForm = z.infer<typeof ppgCommandSchema>;
@@ -50,7 +49,6 @@ export const usePpgForm = ({
 
   const enregistrer: SubmitHandler<PpgForm> = (data) => {
     mutation.mutate({
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       ppgDesc: data.ppgDesc || null,
       ppgAxe: data.ppgAxe || null,

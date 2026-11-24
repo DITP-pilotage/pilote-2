@@ -3,7 +3,6 @@ import { Button } from "@/components/shared/Button";
 import { useSession } from "next-auth/react";
 import { Modale } from "@/components/shared/Modale";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 
 export const ModaleVideoAccueil: FunctionComponent<{
   open: boolean;
@@ -23,7 +22,6 @@ export const ModaleVideoAccueil: FunctionComponent<{
             iframeRef.current.src = "";
           }
           desactiverVideoAccueil.mutate({
-            csrf: récupérerUnCookie("csrf") ?? "",
             utilisateurId: session.user.id,
           });
         }

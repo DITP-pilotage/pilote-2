@@ -2,9 +2,7 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
-import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { chantierCommandSchema } from "@/server/parametrage-chantier/handlers/SaveChantierHandler";
 import { enregistrerPonderationsIndicateursCommandSchema } from "@/server/parametrage-chantier/handlers/SavePonderationsIndicateursHandler";
@@ -68,9 +66,8 @@ export const parametrageChantierRouter = createTRPCRouter({
   }),
 
   save: protectedProcedure
-    .input(chantierCommandSchema.and(zodValidateurCSRF))
+    .input(chantierCommandSchema)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("parametrageChantier")
         .resolve("saveChantierHandler")
@@ -87,11 +84,8 @@ export const parametrageChantierRouter = createTRPCRouter({
     }),
 
   savePonderationsIndicateurs: protectedProcedure
-    .input(
-      enregistrerPonderationsIndicateursCommandSchema.and(zodValidateurCSRF),
-    )
+    .input(enregistrerPonderationsIndicateursCommandSchema)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("parametrageChantier")
         .resolve("savePonderationsIndicateursHandler")

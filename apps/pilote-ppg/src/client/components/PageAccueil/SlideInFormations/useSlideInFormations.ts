@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "@/server/framework/trpc/api";
 import { useAnalytics } from "@/client/analytics/useAnalytics";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
 import type {
   FormationProposee,
@@ -48,7 +47,6 @@ export function useSlideInFormations({
       mutate({
         periodeId: slideIn.periode.id,
         action,
-        csrf: récupérerUnCookie("csrf") ?? "",
       });
     },
     [mutate, slideIn],

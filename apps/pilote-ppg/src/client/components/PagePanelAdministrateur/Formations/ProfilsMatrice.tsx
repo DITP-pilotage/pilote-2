@@ -1,6 +1,5 @@
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Checkbox } from "@/components/shared/Checkbox";
 import { Notice } from "@/components/shared/Notice";
 import { Table } from "@/components/shared/Table";
@@ -73,7 +72,6 @@ export const ProfilsMatrice = () => {
                         motifId: motif.id,
                         profilCode: profil.code,
                         propose: etat === true,
-                        csrf: récupérerUnCookie("csrf") ?? "",
                       })
                     }
                   />

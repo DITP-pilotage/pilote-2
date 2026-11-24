@@ -2,9 +2,7 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
-import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { engagementCommandSchema } from "@/server/referentiels/engagement/handlers/SaveEngagementHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
@@ -43,9 +41,8 @@ export const referentielEngagementRouter = createTRPCRouter({
     }),
 
   save: protectedProcedure
-    .input(engagementCommandSchema.and(zodValidateurCSRF))
+    .input(engagementCommandSchema)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("saveEngagementHandler")
@@ -53,9 +50,8 @@ export const referentielEngagementRouter = createTRPCRouter({
     }),
 
   archive: protectedProcedure
-    .input(z.object({ engagementId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ engagementId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("archiveEngagementHandler")
@@ -63,9 +59,8 @@ export const referentielEngagementRouter = createTRPCRouter({
     }),
 
   restore: protectedProcedure
-    .input(z.object({ engagementId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ engagementId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("restoreEngagementHandler")

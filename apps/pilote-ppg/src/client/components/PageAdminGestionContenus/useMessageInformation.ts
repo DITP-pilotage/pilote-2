@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { validationContenu } from "@/validation/gestion-contenu";
 import { api } from "@/server/framework/trpc/api";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MessageInformationContrat } from "@/server/app/contrats/MessageInformationContrat";
 
 export type ContenuForm = {
@@ -63,7 +62,6 @@ export const useMessageInformation = ({
 
   const modifierIndicateur: SubmitHandler<ContenuForm> = async (data) => {
     const inputs = {
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
     };
 

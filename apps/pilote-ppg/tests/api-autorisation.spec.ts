@@ -13,7 +13,7 @@ async function trpcAs(
   email: string,
 ): Promise<TrpcClient> {
   await new AppActions(page, e2eContext).loginAs(email);
-  return TrpcClient.outsideApp(page);
+  return new TrpcClient(page);
 }
 
 function buildUtilisateurInput(email: string, territoire: string) {
@@ -59,11 +59,9 @@ test.describe("Appels directs sans session", () => {
   }) => {
     const trpc = new TrpcClient(page);
 
-    const result = await trpc.mutation(
-      "utilisateur.desactiver",
-      { email: "prefet.region@example.com" },
-      { csrf: null },
-    );
+    const result = await trpc.mutation("utilisateur.desactiver", {
+      email: "prefet.region@example.com",
+    });
 
     expect(result.status).toBe(303);
     expect(result.location).toContain("/connexion?callbackUrl=");
@@ -109,6 +107,56 @@ test.describe("Appels directs avec session", () => {
     expect(result.status).toBe(200);
     expect(result.errorCode).toBeNull();
     expect(result.data?.length).toBeGreaterThan(0);
+  });
+});
+
+test.describe("Écritures venues d'une autre origine", () => {
+  for (const secFetchSite of ["cross-site", "same-site"]) {
+    test(`une mutation tRPC marquée ${secFetchSite} par le navigateur est refusée`, async ({
+      page,
+      e2eContext,
+    }) => {
+      // Si la garde régresse, le compte serait désactivé : on prévoit sa réactivation.
+      e2eContext.track("UTILISATEUR_DEACTIVATED", {
+        email: "premiere.ministre@example.com",
+      });
+      const trpc = await trpcAs(page, e2eContext, "ditp.admin@example.com");
+
+      const result = await trpc.mutation(
+        "utilisateur.desactiver",
+        { email: "premiere.ministre@example.com" },
+        { headers: { "sec-fetch-site": secFetchSite } },
+      );
+
+      expect(result.status).toBe(403);
+      expect(
+        await getDateDesactivation("premiere.ministre@example.com"),
+      ).toBeNull();
+    });
+  }
+
+  test("un import de fichier venu d'un autre site est refusé", async ({
+    page,
+    e2eContext,
+  }) => {
+    await new AppActions(page, e2eContext).loginAs("ditp.admin@example.com");
+
+    const response = await page.request.post(
+      "/api/import/metadata-indicateurs",
+      {
+        headers: { "sec-fetch-site": "cross-site" },
+        multipart: {
+          file: {
+            name: "metadata-indicateurs.csv",
+            mimeType: "text/csv",
+            buffer: Buffer.from(""),
+          },
+        },
+        maxRedirects: 0,
+      },
+    );
+
+    expect(response.status()).toBe(403);
   });
 });
 
@@ -248,51 +296,6 @@ test.describe("Gestion des comptes utilisateurs", () => {
     expect(
       await getDateDesactivation("compte.desactive@example.com"),
     ).not.toBeNull();
-  });
-
-  test("une mutation sans jeton CSRF est refusée", async ({
-    page,
-    e2eContext,
-  }) => {
-    // Si la garde régresse, le compte serait désactivé : on prévoit sa réactivation.
-    e2eContext.track("UTILISATEUR_DEACTIVATED", {
-      email: "premiere.ministre@example.com",
-    });
-    const trpc = await trpcAs(page, e2eContext, "ditp.admin@example.com");
-
-    const result = await trpc.mutation(
-      "utilisateur.desactiver",
-      { email: "premiere.ministre@example.com" },
-      { csrf: null },
-    );
-
-    expect(result.status).toBe(400);
-    expect(
-      await getDateDesactivation("premiere.ministre@example.com"),
-    ).toBeNull();
-  });
-
-  test("une mutation avec un jeton CSRF invalide est refusée", async ({
-    page,
-    e2eContext,
-  }) => {
-    // Si la garde régresse, le compte serait désactivé : on prévoit sa réactivation.
-    e2eContext.track("UTILISATEUR_DEACTIVATED", {
-      email: "premiere.ministre@example.com",
-    });
-    const trpc = await trpcAs(page, e2eContext, "ditp.admin@example.com");
-
-    const result = await trpc.mutation(
-      "utilisateur.desactiver",
-      { email: "premiere.ministre@example.com" },
-      { csrf: "jeton-invalide" },
-    );
-
-    expect(result.status).toBe(403);
-    expect(result.errorCode).toBe("FORBIDDEN");
-    expect(
-      await getDateDesactivation("premiere.ministre@example.com"),
-    ).toBeNull();
   });
 });
 

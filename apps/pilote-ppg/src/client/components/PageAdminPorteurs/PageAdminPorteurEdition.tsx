@@ -13,7 +13,6 @@ import { Controller, FormProvider } from "react-hook-form";
 import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { MetadataPorteur } from "@/server/referentiels/porteur/queries/GetPorteurQuery";
 import {
@@ -144,11 +143,9 @@ const PageAdminPorteurEdition = ({
                       onClick={() =>
                         estSupprime
                           ? restaurerMutation.mutate({
-                              csrf: récupérerUnCookie("csrf") ?? "",
                               porteurId: porteurIdEffectif,
                             })
                           : archiverMutation.mutate({
-                              csrf: récupérerUnCookie("csrf") ?? "",
                               porteurId: porteurIdEffectif,
                             })
                       }

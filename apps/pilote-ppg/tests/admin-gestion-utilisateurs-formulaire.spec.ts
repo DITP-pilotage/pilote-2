@@ -85,7 +85,7 @@ test("doit créer un compte puis refuser dès l'identification un second compte 
 
   await step("Création du compte", async () => {
     await fillIdentificationStep(email, "E2E");
-    await pageFormulaire.clickNextToReview();
+    await pageFormulaire.clickNext();
     await pageFormulaire.confirm();
     await pageFormulaire.expectUpdateSuccess();
     const utilisateur = await prisma.utilisateur.findUniqueOrThrow({

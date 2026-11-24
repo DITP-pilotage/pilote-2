@@ -9,7 +9,6 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import { validationModifierMonProfil } from "@/validation/mon-profil";
 import type AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
@@ -120,7 +119,6 @@ export const PageMonProfilUtilisateur = () => {
   const soumettreFormulaire = (data: MonProfilUtilisateurFormInputs) => {
     mutationModifierMonProfil.mutate({
       ...data,
-      csrf: récupérerUnCookie("csrf") ?? "",
     });
   };
 

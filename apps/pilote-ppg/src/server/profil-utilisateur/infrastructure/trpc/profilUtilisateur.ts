@@ -1,12 +1,10 @@
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { UnauthorizedError } from "@/shared/errors/unauthorized-error";
 import { getContainer } from "@/server/dependances";
 import { validationModifierMonProfil } from "@/validation/mon-profil";
-import { zodValidateurCSRF } from "@/validation/publication";
 
 export const profilUtilisateurRouter = createTRPCRouter({
   getUtilisateurConnecte: protectedProcedure.query(async ({ ctx }) => {
@@ -21,9 +19,8 @@ export const profilUtilisateurRouter = createTRPCRouter({
     return query.run(session.user.id);
   }),
   modifierMonProfil: protectedProcedure
-    .input(validationModifierMonProfil.and(zodValidateurCSRF))
+    .input(validationModifierMonProfil)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       await getContainer("profilUtilisateur")
         .resolve("modifierMonProfilUseCase")
         .run(ctx.session.user.id, input);

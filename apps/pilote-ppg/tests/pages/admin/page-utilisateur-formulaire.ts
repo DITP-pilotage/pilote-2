@@ -79,16 +79,6 @@ export class PageUtilisateurFormulaire extends BasePage {
     await option.click();
   }
 
-  async clickNextToReview(): Promise<void> {
-    // Chaque réponse renouvelle le cookie csrf : confirmer avant la fin du chargement
-    // de l'étape 2 enverrait un jeton périmé.
-    const reviewStepLoaded = this.page.waitForResponse(
-      /chantier\.recupererTousLesInformationsChantiers/,
-    );
-    await this.clickNext();
-    await reviewStepLoaded;
-  }
-
   async clickNext(): Promise<void> {
     await this.nextButton.click();
   }

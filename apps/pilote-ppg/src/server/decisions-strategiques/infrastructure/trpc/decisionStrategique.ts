@@ -1,8 +1,6 @@
-import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
@@ -13,20 +11,14 @@ import {
   validationDecisionStrategiqueAModifier,
 } from "@/validation/decisionStrategique";
 
-const zodValidateurCSRF = z.object({
-  csrf: z.string(),
-});
-
 export const decisionStrategiqueRouter = createTRPCRouter({
   publier: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationDecisionStrategiqueFormulaire)
-        .merge(validationDecisionStrategiqueContexte),
+      validationDecisionStrategiqueFormulaire.merge(
+        validationDecisionStrategiqueContexte,
+      ),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("decisionStrategique")
         .resolve("publierDecisionStrategiqueUseCase")
         .execute({
@@ -41,13 +33,11 @@ export const decisionStrategiqueRouter = createTRPCRouter({
 
   enregistrerEnBrouillon: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationDecisionStrategiqueFormulaire)
-        .merge(validationDecisionStrategiqueContexte),
+      validationDecisionStrategiqueFormulaire.merge(
+        validationDecisionStrategiqueContexte,
+      ),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("decisionStrategique")
         .resolve("enregistrerBrouillonDecisionStrategiqueUseCase")
         .execute({
@@ -62,13 +52,11 @@ export const decisionStrategiqueRouter = createTRPCRouter({
 
   publierUnBrouillon: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationDecisionStrategiqueFormulaire)
-        .merge(validationBrouillonDecisionStrategiqueAPublier),
+      validationDecisionStrategiqueFormulaire.merge(
+        validationBrouillonDecisionStrategiqueAPublier,
+      ),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("decisionStrategique")
         .resolve("publierBrouillonDecisionStrategiqueUseCase")
         .execute({
@@ -82,13 +70,11 @@ export const decisionStrategiqueRouter = createTRPCRouter({
 
   modifierLeBrouillon: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationDecisionStrategiqueFormulaire)
-        .merge(validationBrouillonDecisionStrategiqueAPublier),
+      validationDecisionStrategiqueFormulaire.merge(
+        validationBrouillonDecisionStrategiqueAPublier,
+      ),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("decisionStrategique")
         .resolve("modifierBrouillonDecisionStrategiqueUseCase")
         .execute({
@@ -102,13 +88,11 @@ export const decisionStrategiqueRouter = createTRPCRouter({
 
   modifier: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationDecisionStrategiqueFormulaire)
-        .merge(validationDecisionStrategiqueAModifier),
+      validationDecisionStrategiqueFormulaire.merge(
+        validationDecisionStrategiqueAModifier,
+      ),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("decisionStrategique")
         .resolve("modifierDecisionStrategiquePublieeUseCase")
         .execute({

@@ -2,9 +2,7 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
-import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { zonegroupCommandSchema } from "@/server/referentiels/zonegroup/handlers/SaveZonegroupHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
@@ -52,9 +50,8 @@ export const referentielZonegroupRouter = createTRPCRouter({
     }),
 
   save: protectedProcedure
-    .input(zonegroupCommandSchema.and(zodValidateurCSRF))
+    .input(zonegroupCommandSchema)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("saveZonegroupHandler")
@@ -62,9 +59,8 @@ export const referentielZonegroupRouter = createTRPCRouter({
     }),
 
   archive: protectedProcedure
-    .input(z.object({ zoneGroupId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ zoneGroupId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("archiveZonegroupHandler")
@@ -72,9 +68,8 @@ export const referentielZonegroupRouter = createTRPCRouter({
     }),
 
   restore: protectedProcedure
-    .input(z.object({ zoneGroupId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ zoneGroupId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("restoreZonegroupHandler")
