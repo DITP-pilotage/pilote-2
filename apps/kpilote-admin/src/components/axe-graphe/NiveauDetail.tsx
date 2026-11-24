@@ -5,7 +5,7 @@ import { ConfirmDeleteButton } from '@/components/axe-graphe/ConfirmDeleteButton
 import { ModaliteChip } from '@/components/axe-graphe/ModaliteChip'
 import { PanelSection } from '@/components/axe-graphe/PanelSection'
 import { RenameForm } from '@/components/axe-graphe/RenameForm'
-import { type Arbre, pluralize } from '@/lib/axeArbre'
+import { type Arbre, pluralizeCount } from '@/lib/axeArbre'
 import { type AxeEdition } from '@/mutations/axes'
 
 export function NiveauDetail({
@@ -59,7 +59,7 @@ export function NiveauDetail({
             : `Ses modalités se découpent au niveau « ${niveauNomOf(ordre + 1)} » ; celles qui ne se découpent pas restent des feuilles.`}
         </p>
       </PanelSection>
-      <PanelSection title={pluralize({ count: members.length, word: 'modalité' })}>
+      <PanelSection title={pluralizeCount({ count: members.length, word: 'modalité' })}>
         {members.length === 0 ? (
           <p className="text-text-muted">Aucune modalité.</p>
         ) : (

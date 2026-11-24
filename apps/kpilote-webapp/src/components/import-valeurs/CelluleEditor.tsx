@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { searchUnaccent } from '@pilote/kpilote-shared/texte'
-import { parseNombre } from '@pilote/kpilote-shared/valeurImport/parseNombre'
+import { parseNombre } from '@pilote/kpilote-shared/nombre'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
 import { Command } from 'cmdk'

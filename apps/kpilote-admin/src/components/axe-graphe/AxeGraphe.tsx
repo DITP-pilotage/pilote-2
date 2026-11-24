@@ -24,7 +24,7 @@ import {
   buildArbre,
   initialCollapsed,
   nodesOfKind,
-  pluralize,
+  pluralizeCount,
   toggleInSet,
   withTousNamed,
 } from '@/lib/axeArbre'
@@ -171,7 +171,7 @@ export function AxeGraphe({
         <div className="mr-auto">
           <Dialog.Title>Axe {axe.nom}</Dialog.Title>
           <Dialog.Description className="text-xs">
-            {pluralize({ count: arbre.size - 1, word: 'modalité' })} ·{' '}
+            {pluralizeCount({ count: arbre.size - 1, word: 'modalité' })} ·{' '}
             {isTableView
               ? 'un exemple de valeurs mois par mois : on saisit sur les feuilles, le reste se calcule.'
               : 'les valeurs se saisissent sur les feuilles, à gauche, et remontent vers la droite jusqu’à « Tous ».'}

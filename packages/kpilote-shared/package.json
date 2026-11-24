@@ -40,6 +40,10 @@
       "types": "./src/mediaUrl.ts",
       "default": "./src/mediaUrl.ts"
     },
+    "./nombre": {
+      "types": "./src/nombre.ts",
+      "default": "./src/nombre.ts"
+    },
     "./dates": {
       "types": "./src/dates.ts",
       "default": "./src/dates.ts"
@@ -171,14 +175,6 @@
     "./valeurImport/matchLibellesExact": {
       "types": "./src/valeurImport/matchLibellesExact.ts",
       "default": "./src/valeurImport/matchLibellesExact.ts"
-    },
-    "./valeurImport/parseDate": {
-      "types": "./src/valeurImport/parseDate.ts",
-      "default": "./src/valeurImport/parseDate.ts"
-    },
-    "./valeurImport/parseNombre": {
-      "types": "./src/valeurImport/parseNombre.ts",
-      "default": "./src/valeurImport/parseNombre.ts"
     },
     "./objectifIndicateurIndividu": {
       "types": "./src/objectifIndicateurIndividu.ts",

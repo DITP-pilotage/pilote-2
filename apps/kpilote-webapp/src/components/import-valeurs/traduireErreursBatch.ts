@@ -1,3 +1,4 @@
+import { pluralize } from '@pilote/kpilote-shared/texte'
 import type {
   BatchInvalidErrorDetailsApiModel,
   BatchInvalidErrorEntryApiModel,
@@ -19,7 +20,7 @@ const libelleLignes = ({
   rowNumberOf: RowNumberOf
 }): string => {
   const numeros = indices.map(rowNumberOf)
-  const mot = numeros.length > 1 ? 'lignes' : 'ligne'
+  const mot = pluralize({ count: numeros.length, singular: 'ligne', plural: 'lignes' })
   return `${mot} ${numeros.join(', ')}`
 }
 

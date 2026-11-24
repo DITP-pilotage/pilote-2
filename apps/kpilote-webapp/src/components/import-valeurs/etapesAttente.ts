@@ -1,11 +1,10 @@
+import { pluralize } from '@pilote/kpilote-shared/texte'
 import {
   type CiblesSaisie,
   type DispositionValeurs,
   type EtapePlan,
   type TableauSource,
 } from '@pilote/kpilote-shared/valeurImport'
-
-import { pluralize } from './pluralize'
 
 export type StatutEtapeAttente = 'TERMINEE' | 'EN_COURS' | 'A_VENIR'
 

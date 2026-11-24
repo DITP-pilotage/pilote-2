@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { parseNombre } from './parseNombre'
+import { parseNombre } from './nombre'
 
 describe('parseNombre', () => {
   it('garde un nombre natif', () => {

@@ -1,7 +1,13 @@
 import { type FonctionAgregationAxe } from '@pilote/kpilote-shared/axe'
 
 import { ModaliteChip } from '@/components/axe-graphe/ModaliteChip'
-import { type ArbreNode, fonctionLabel, formatValue, formulaOf, pluralize } from '@/lib/axeArbre'
+import {
+  type ArbreNode,
+  fonctionLabel,
+  formatValue,
+  formulaOf,
+  pluralizeCount,
+} from '@/lib/axeArbre'
 import { type Cellule } from '@/lib/axeSerie'
 
 export function ValueOrigin({
@@ -42,7 +48,7 @@ export function ValueOrigin({
         <strong className="text-text">
           {isSimulating ? fonctionLabel(fonction) : 'somme ou la moyenne'}
         </strong>{' '}
-        de ses {pluralize({ count: childNodes.length, word: 'enfant' })}
+        de ses {pluralizeCount({ count: childNodes.length, word: 'enfant' })}
         {isSimulating ? '' : ', selon l’indicateur'}.
       </p>
       <div className="rounded-md bg-surface-muted px-3 py-2 font-mono text-xs leading-relaxed text-text">

@@ -1,3 +1,4 @@
+import { pluralize } from '@pilote/kpilote-shared/texte'
 import { type CiblesSaisie, type PlanTransformation } from '@pilote/kpilote-shared/valeurImport'
 import { type LigneImport } from '@pilote/kpilote-shared/valeurImport/applyPlan'
 import { Button } from '@pilote/kpilote-ui/Button'
@@ -21,7 +22,6 @@ import {
   listColonnesGrille,
   summarizeLignes,
 } from './grille'
-import { pluralize } from './pluralize'
 
 function Pastille({ tone, children }: { tone: 'success' | 'warning'; children: ReactNode }) {
   return (

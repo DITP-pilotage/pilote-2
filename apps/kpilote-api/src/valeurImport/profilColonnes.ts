@@ -1,6 +1,6 @@
 import { type CelluleSource, type TableauSource } from '@pilote/kpilote-shared/valeurImport'
-import { parseDate } from '@pilote/kpilote-shared/valeurImport/parseDate'
-import { parseNombre } from '@pilote/kpilote-shared/valeurImport/parseNombre'
+import { parseDateFr } from '@pilote/kpilote-shared/dates'
+import { parseNombre } from '@pilote/kpilote-shared/nombre'
 import { countBy, uniq } from 'es-toolkit'
 
 // Profil d'une colonne du fichier, calculé sans IA et donné à Albert : il voit
@@ -22,7 +22,7 @@ const MAX_VALEURS_COMPLETES = 20
 const natureOf = (cellule: CelluleSource): Exclude<NatureColonne, 'VIDE'> => {
   if (typeof cellule === 'number') return 'NOMBRE'
   if (parseNombre(cellule) !== null) return 'NOMBRE'
-  if (parseDate(cellule) !== null) return 'DATE'
+  if (parseDateFr(cellule) !== null) return 'DATE'
   return 'TEXTE'
 }
 

@@ -10,7 +10,7 @@ import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
 import { useAppConfig } from '@/context/AppConfigContext'
 import { clsxm } from '@/lib/clsxm'
-import { emptyToNull } from '@/lib/emptyToNull'
+import { emptyToNull } from '@pilote/kpilote-shared/texte'
 
 const collectionFormSchema = z.object({
   nom: z.string().trim().min(1, 'Le nom est requis'),

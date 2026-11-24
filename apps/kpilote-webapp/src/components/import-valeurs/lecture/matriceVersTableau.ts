@@ -1,3 +1,5 @@
+import { formatIsoDate } from '@pilote/kpilote-shared/dates'
+import { emptyToNull } from '@pilote/kpilote-shared/texte'
 import {
   type CelluleSource,
   MAX_COLONNES_TABLEAU,
@@ -14,16 +16,18 @@ export type LectureError =
 export type LectureTableau =
   { ok: true; tableau: TableauSource } | { ok: false; error: LectureError }
 
-const pad = (value: number): string => String(value).padStart(2, '0')
-
 // Une date de tableur est lue à minuit UTC : ses composantes UTC sont la date écrite.
 const toIsoDate = (date: Date): string =>
-  `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`
+  formatIsoDate({
+    year: date.getUTCFullYear(),
+    month: date.getUTCMonth() + 1,
+    day: date.getUTCDate(),
+  })
 
 const toCelluleSource = (cellule: unknown): CelluleSource => {
   if (cellule instanceof Date) return toIsoDate(cellule)
   if (typeof cellule === 'number') return Number.isFinite(cellule) ? cellule : null
-  if (typeof cellule === 'string') return cellule.trim() === '' ? null : cellule.trim()
+  if (typeof cellule === 'string') return emptyToNull(cellule)
   if (typeof cellule === 'boolean') return String(cellule)
   return null
 }

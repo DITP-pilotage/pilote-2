@@ -8,14 +8,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@pilote/kpilote-ui/Select'
-import { depthFirst, fonctionLabel, pluralize, TOUS_ID } from '@/lib/axeArbre'
+import { depthFirst, fonctionLabel, pluralizeCount, TOUS_ID } from '@/lib/axeArbre'
 import { type AxeCroise } from '@/lib/axesCroises'
 import { clsxm } from '@/lib/clsxm'
 
 const effectOf = ({ axe, id }: { axe: AxeCroise; id: string }): string => {
   const childCount = axe.arbre.get(id)?.children.length ?? 0
   if (childCount === 0) return 'Une feuille : les cases du tableau deviennent saisissables.'
-  const modalites = pluralize({ count: childCount, word: 'modalité' })
+  const modalites = pluralizeCount({ count: childCount, word: 'modalité' })
   return `Chaque case fait la ${fonctionLabel(axe.fonction)} de ses ${modalites}.`
 }
 

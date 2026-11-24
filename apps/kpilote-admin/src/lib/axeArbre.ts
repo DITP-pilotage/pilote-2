@@ -1,4 +1,5 @@
 import { type FonctionAgregationAxe, type ModaliteApiModel } from '@pilote/kpilote-shared/axe'
+import { pluralize } from '@pilote/kpilote-shared/texte'
 import { groupBy } from 'es-toolkit'
 
 export const TOUS_ID = '__TOUS__'
@@ -120,8 +121,8 @@ export const normalize = (value: string): string =>
 export const formatValue = (value: number): string =>
   value.toLocaleString('fr-FR', { maximumFractionDigits: 2 })
 
-export const pluralize = ({ count, word }: { count: number; word: string }): string =>
-  `${count} ${word}${count > 1 ? 's' : ''}`
+export const pluralizeCount = ({ count, word }: { count: number; word: string }): string =>
+  `${count} ${pluralize({ count, singular: word, plural: `${word}s` })}`
 
 export const pluralSuffix = (count: number): string => (count > 1 ? 's' : '')
 
