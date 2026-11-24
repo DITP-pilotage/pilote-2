@@ -1283,6 +1283,23 @@ proposés. La 7.10.1 épingle `mysql2` 3.24.4 et `deepmerge-ts` 8.0.2 : **les ov
 `deepmerge-ts` sont retirés**, résolution re-forcée et vérifiée sans eux. Leur banc d'essai du jour les disait
 porteurs parce qu'il a tourné avant l'alignement de la CLI.
 
+**Majors.** `jsdom` 30.1.3 → 31.0.0 et `vitest-mock-extended` 5.1.1 → 6.0.0 (code publié identique à la 5.1.1
+hors commentaires ; captors contrôlés par mutation). `prisma` 8 (RC) et `evalite` 0.19.0 (rétrogradation)
+écartés par le moteur.
+
+**🔴 `jsdom` n'est pas qu'une dépendance de test.** ppg l'embarque en production par `isomorphic-dompurify`
+(`dependencies`, importé par `src/client/utils/strings.ts`), et un simple
+bump **in-range** (4.6.0 → 4.7.0) y fait entrer jsdom 31 : les deux montent ensemble, dans la PR des majors. `jsdom`
+est externalisé par Next, donc exposé au traçage standalone, que rien ne teste en CI. Vérifié sur un
+`next build` copié **hors du dépôt** (dans le dépôt, la résolution remonte au `node_modules` racine et rend un
+vert faux) : jsdom 31.0.0 se charge avec ses 862 modules, aucun pris hors du bundle.
+
+- Assertions d'absence par rôle : mêmes verts avec `defaultHidden: true` (ppg client 405, webapp 240, admin 93),
+  donc de vraies absences du DOM, pas un effet du nouveau moteur CSS.
+- `server.deps.inline` du projet Vitest client de ppg vise cinq paquets (`@asamuzakjp/*`, `@csstools/*`) sortis
+  de l'arbre avec jsdom 31 : configuration morte, 405 tests verts sans elle. À supprimer.
+- 31.0.1 (perf des styles calculés) mûre le 2026-11-27 ; `isomorphic-dompurify` 4.8.0 l'exige, mûre le 2026-12-02.
+
 **Rouge ppg hérité de `dev`.** `evals/3-scenarios/mondeTerritorial.integration.test.ts` échouait sur tous les
 commits du moteur, sans aucun bump : il n'avait pas suivi #2734 (PIL-2028). Corrigé par #2740.
 
