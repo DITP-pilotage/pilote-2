@@ -40,7 +40,8 @@ Transport :
 - **Table `analytics_dimension`** : `cle` (clé primaire), `slot` (entier, unique), `created_at`,
   `updated_at`. Une ligne = une dimension configurée. La migration insère les 9 valeurs actuelles :
   `profil_pilote` 1, `conversation_id` 2, `llm_call_id` 3, `proposition_id` 4, `proposition_mode` 5,
-  `type_question` 6, `nombre_choix` 7, `position_choix` 8, `environnement` 9.
+  `type_question` 6, `nombre_choix` 7, `position_choix` 8, `environnement` 9. `periode_information` et `formation`, arrivées
+  avec PIL-1923, restent sans numéro tant qu'elles ne sont pas créées dans Matomo.
 - **Module serveur `analytics`** et routeur tRPC :
   - lecture **publique** de la correspondance (rien de sensible, lue avant la connexion) ;
   - enregistrement d'un numéro ou retrait (numéro vide), réservé à DITP_ADMIN, avec CSRF. Clé hors
@@ -53,7 +54,7 @@ Transport :
   dimensions, comme aujourd'hui. L'URL de la page est capturée à l'appel, pas à l'envoi : une
   navigation pendant l'attente ne doit pas fausser l'événement.
 - **Panel** : page `/panel-administrateur/dimensions-matomo`, entrée « Dimensions Matomo » du menu.
-  Tableau des 9 dimensions (clé, n° ou « Non configurée », Modifier) ; modale avec le numéro, vide pour
+  Tableau des dimensions du code (clé, n° ou « Non configurée », Modifier) ; modale avec le numéro, vide pour
   retirer. Rappel : créer d'abord la dimension dans Matomo, en portée « Action » si le contexte change
   d'une page à l'autre ; pour échanger deux numéros, vider l'un d'abord. Garde DITP_ADMIN en
   `getServerSideProps`. Un changement s'applique au prochain chargement complet de page.
