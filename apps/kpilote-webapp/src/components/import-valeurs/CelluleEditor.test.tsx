@@ -85,4 +85,14 @@ describe('CelluleEditor', () => {
     expect(screen.getByText('Ce n’est pas un nombre.')).toBeInTheDocument()
     expect(onCorrection).not.toHaveBeenCalled()
   })
+
+  it('une valeur effacée demande une saisie, sans rien envoyer', async () => {
+    const { onCorrection } = renderEditor({ type: 'VALEUR', value: 3.5, action: 'Corriger' })
+
+    await userEvent.clear(screen.getByLabelText('Valeur'))
+    await userEvent.type(screen.getByLabelText('Valeur'), '{Enter}')
+
+    expect(screen.getByText('Saisissez une valeur.')).toBeInTheDocument()
+    expect(onCorrection).not.toHaveBeenCalled()
+  })
 })

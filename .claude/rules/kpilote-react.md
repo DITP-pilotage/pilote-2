@@ -57,7 +57,10 @@ Pourquoi : le flux d'erreur de TanStack Query reste le seul ; un `catch` vide av
 - Exception : plusieurs écritures qui doivent s'enchaîner dans un même handler, la seconde n'ayant de sens que si la première a réussi. `mutateAsync` en séquence reste alors plus lisible que des `mutate` imbriqués dans des `onSuccess` ; les erreurs sont signalées par les `onError` des hooks, et le `catch` ne sert qu'à arrêter l'enchaînement (`soumettre` de `components/commentaires/EditeurCommentaire.tsx`, niveau de confiance puis commentaire).
 
 ### Formulaires avec react-hook-form et zod
-`useForm({ resolver: zodResolver(schema) })` ; un champ contrôlé se branche par `Controller`, jamais par un `input` caché. Les champs viennent de `@pilote/kpilote-ui/Field*`.
+Tout formulaire passe par `useForm({ resolver: zodResolver(schema) })`, y compris un mini-formulaire d'un seul champ dans un popover : jamais de `useState` pour la valeur d'un champ, jamais de validation recalculée à la main dans le rendu. La conversion et les messages d'erreur vivent dans le schéma (`transform` + `addIssue`), `formState.errors` les affiche ; `mode: 'onChange'` quand l'erreur doit apparaître pendant la saisie. Un champ contrôlé se branche par `Controller`, jamais par un `input` caché. Les champs viennent de `@pilote/kpilote-ui/Field*`, pas d'`<input>` stylé à la main.
+Pourquoi : un `useState` par champ refait à la main la validation, l'état d'erreur et la soumission, chaque fois un peu différemment.
+- À faire : `ValeurEditor` de `components/import-valeurs/CelluleEditor.tsx` (texte saisi converti en nombre par le schéma, `FieldInput` avec `error`)
+- À éviter : `const [texte, setTexte] = useState(...)` puis `const showError = texte.trim() !== '' && parseNombre(texte) === null` dans le rendu
 
 ## Tests
 

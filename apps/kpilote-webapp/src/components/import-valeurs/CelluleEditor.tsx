@@ -1,9 +1,12 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { searchUnaccent } from '@pilote/kpilote-shared/texte'
 import { parseNombre } from '@pilote/kpilote-shared/valeurImport/parseNombre'
 import { Button } from '@pilote/kpilote-ui/Button'
+import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
 import { Command } from 'cmdk'
 import { Check, Search } from 'lucide-react'
-import { type FormEvent, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 import { type CorrectionSaisie } from './edition'
 import { type Candidat, type EditionCellule } from './grille'
@@ -61,33 +64,46 @@ function RapprochementEditor({
   )
 }
 
-const INPUT_CLASS =
-  'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text focus-visible:border-primary focus-visible:outline-none'
+const dateFormSchema = z.object({
+  date: z.string().min(1, 'Choisissez une date.'),
+})
 
 function DateEditor({ value, onSubmit }: { value: string; onSubmit: (date: string) => void }) {
-  const [date, setDate] = useState(value)
-  const submit = (event: FormEvent) => {
-    event.preventDefault()
-    if (date !== '') onSubmit(date)
-  }
+  const { register, handleSubmit, formState } = useForm({
+    resolver: zodResolver(dateFormSchema),
+    mode: 'onChange',
+    defaultValues: { date: value },
+  })
   return (
-    <form onSubmit={submit} className="flex w-64 flex-col gap-2 p-3">
-      <label className="flex flex-col gap-1 text-xs font-medium text-text-muted">
-        Date de la valeur
-        <input
-          autoFocus
-          type="date"
-          value={date}
-          onChange={(event) => setDate(event.target.value)}
-          className={INPUT_CLASS}
-        />
-      </label>
-      <Button type="submit" size="sm" disabled={date === ''}>
+    <form
+      onSubmit={(event) => void handleSubmit(({ date }) => onSubmit(date))(event)}
+      className="flex w-64 flex-col gap-2 p-3"
+    >
+      <FieldInput
+        label="Date de la valeur"
+        type="date"
+        autoFocus
+        error={formState.errors.date?.message}
+        {...register('date')}
+      />
+      <Button type="submit" size="sm" disabled={!formState.isValid}>
         Valider
       </Button>
     </form>
   )
 }
+
+// Le champ reste du texte : on y tape « 12,4 » comme dans un tableur, et
+// `parseNombre` lit les deux séparateurs décimaux.
+const valeurFormSchema = z.object({
+  valeur: z.string().transform((texte, context) => {
+    const nombre = parseNombre(texte)
+    if (nombre !== null) return nombre
+    const message = texte.trim() === '' ? 'Saisissez une valeur.' : 'Ce n’est pas un nombre.'
+    context.addIssue({ code: 'custom', message })
+    return z.NEVER
+  }),
+})
 
 function ValeurEditor({
   value,
@@ -96,29 +112,26 @@ function ValeurEditor({
   value: number | null
   onSubmit: (valeur: number) => void
 }) {
-  const [texte, setTexte] = useState(value === null ? '' : String(value).replace('.', ','))
-  const nombre = parseNombre(texte)
-  const showError = texte.trim() !== '' && nombre === null
-  const submit = (event: FormEvent) => {
-    event.preventDefault()
-    if (nombre !== null) onSubmit(nombre)
-  }
+  const { register, handleSubmit, formState } = useForm({
+    resolver: zodResolver(valeurFormSchema),
+    mode: 'onChange',
+    defaultValues: { valeur: value === null ? '' : String(value).replace('.', ',') },
+  })
   return (
-    <form onSubmit={submit} className="flex w-64 flex-col gap-2 p-3">
-      <label className="flex flex-col gap-1 text-xs font-medium text-text-muted">
-        Valeur
-        <input
-          autoFocus
-          type="text"
-          inputMode="decimal"
-          value={texte}
-          onChange={(event) => setTexte(event.target.value)}
-          aria-invalid={showError}
-          className={INPUT_CLASS}
-        />
-      </label>
-      {showError ? <p className="text-xs text-red-marianne">Ce n’est pas un nombre.</p> : null}
-      <Button type="submit" size="sm" disabled={nombre === null}>
+    <form
+      onSubmit={(event) => void handleSubmit(({ valeur }) => onSubmit(valeur))(event)}
+      className="flex w-64 flex-col gap-2 p-3"
+    >
+      <FieldInput
+        label="Valeur"
+        type="text"
+        inputMode="decimal"
+        autoFocus
+        error={formState.errors.valeur?.message}
+        aria-invalid={formState.errors.valeur !== undefined}
+        {...register('valeur')}
+      />
+      <Button type="submit" size="sm" disabled={!formState.isValid}>
         Valider
       </Button>
     </form>
