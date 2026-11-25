@@ -11,7 +11,7 @@ const planLignes: PlanTransformation = {
     colonne: 'Département',
     rapprochements: {
       Ain: resolu('DEPT-01'),
-      Bdr: { statut: 'RESOLU', publicId: 'DEPT-13', par: 'ALBERT' },
+      Bdr: { statut: 'RESOLU', publicId: 'DEPT-13', par: 'LLM' },
       Corse: { statut: 'AMBIGU', candidats: ['DEPT-2A', 'DEPT-2B'] },
     },
   },
@@ -40,7 +40,7 @@ describe('applyPlan, valeurs en lignes', () => {
     const { lignes } = applyPlan({ plan: planLignes, tableau: tableauLignes })
     expect(lignes[1]).toEqual({
       source: { ligne: 1, colonneValeur: 'Taux' },
-      individu: { statut: 'VALIDE', brut: 'Bdr', valeur: 'DEPT-13', par: 'ALBERT' },
+      individu: { statut: 'VALIDE', brut: 'Bdr', valeur: 'DEPT-13', par: 'LLM' },
       modalites: [],
       date: { statut: 'VALIDE', brut: 'T2 2024', valeur: '2024-04-01', par: 'LECTURE' },
       valeur: { statut: 'VALIDE', brut: '41', valeur: 41, par: 'LECTURE' },

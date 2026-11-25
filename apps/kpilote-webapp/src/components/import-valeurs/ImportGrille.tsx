@@ -64,11 +64,10 @@ const describeLecture = ({
   origine,
   lignesEcartees,
 }: {
-  origine: 'STANDARD' | 'ALBERT'
+  origine: 'STANDARD' | 'LLM'
   lignesEcartees: number
 }): string => {
-  const lecture =
-    origine === 'ALBERT' ? 'Fichier lu par l’assistant IA' : 'Fichier au format standard'
+  const lecture = origine === 'LLM' ? 'Fichier lu par l’assistant IA' : 'Fichier au format standard'
   if (lignesEcartees === 0) return lecture
   const ecartees = pluralize({
     count: lignesEcartees,
@@ -93,7 +92,7 @@ export function ImportGrille({
   lignesEcartees: number
   plan: PlanTransformation
   cibles: CiblesSaisie
-  origine: 'STANDARD' | 'ALBERT'
+  origine: 'STANDARD' | 'LLM'
   erreursServeur: string[]
   onCorrection: (params: { ligne: LigneImport; correction: CorrectionSaisie }) => void
 }) {

@@ -22,7 +22,7 @@ export type EtatImport =
       tableau: TableauSource
       // Plan de départ, avant toute correction de l'utilisateur.
       plan: PlanTransformation
-      origine: 'STANDARD' | 'ALBERT'
+      origine: 'STANDARD' | 'LLM'
     }
 
 const CIBLES_INDISPONIBLES =
@@ -30,7 +30,7 @@ const CIBLES_INDISPONIBLES =
 
 // Le tableau à confier à Albert : celui d'un fichier lisible qui n'est pas au
 // format standard. `null` tant qu'on ne sait pas, ou quand Albert est inutile.
-export const selectTableauForAlbert = ({
+export const selectTableauForLlm = ({
   lecture,
   cibles,
 }: {
@@ -73,5 +73,5 @@ export const deriveEtatImport = ({
     return { kind: 'attente', tableau, etapes: buildEtapesAttente({ tableau, cibles, etapes }) }
   }
   if (!planImport.ok) return { kind: 'echec', explication: planImport.erreur.explication }
-  return { kind: 'grille', tableau, plan: planImport.plan, origine: 'ALBERT' }
+  return { kind: 'grille', tableau, plan: planImport.plan, origine: 'LLM' }
 }

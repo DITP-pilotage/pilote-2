@@ -23,7 +23,7 @@ import {
 export type Candidat = { id: string; nom: string }
 
 const MARKER_A_CORRIGER: CelluleMarker = { icon: TriangleAlert, label: 'À corriger' }
-const MARKER_ALBERT: CelluleMarker = { icon: Sparkles, label: 'Rapproché par l’assistant IA' }
+const MARKER_LLM: CelluleMarker = { icon: Sparkles, label: 'Rapproché par l’assistant IA' }
 
 // Une colonne par axe du plan, nommée par le nom de l'axe.
 export const listColonnesGrille = ({
@@ -85,7 +85,7 @@ const toCelluleEntite = ({
     text: nomById.get(cellule.valeur) ?? cellule.valeur,
     identifiant: cellule.valeur,
     tone: 'DEFAULT',
-    marker: cellule.par === 'ALBERT' ? MARKER_ALBERT : null,
+    marker: cellule.par === 'LLM' ? MARKER_LLM : null,
     alignRight: false,
   }
 }
@@ -341,7 +341,7 @@ const describeEntite = ({
   }
   if (cellule.statut === 'VALIDE') {
     switch (cellule.par) {
-      case 'ALBERT':
+      case 'LLM':
         return `Rapproché par l’assistant IA de ${nommer(cellule.valeur)}.`
       case 'UTILISATEUR':
         return `Vous avez choisi ${nommer(cellule.valeur)}.`

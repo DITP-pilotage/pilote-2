@@ -137,7 +137,7 @@ export function ImportValeursModal({
   const colonnes = cibles ? listColonnesStandard({ cibles }) : ['individu', 'date', 'valeur']
   const isTooLarge = items.length > MAX_VALEURS_PAR_BATCH
   const aCorriger = resultat ? resultat.lignes.length - items.length : 0
-  const showAlbertLegend = grille?.origine === 'ALBERT'
+  const showLlmLegend = grille?.origine === 'LLM'
 
   const body = () => {
     switch (etat.kind) {
@@ -200,7 +200,7 @@ export function ImportValeursModal({
     <>
       {grille ? (
         <div className="mr-auto flex flex-wrap items-center gap-x-5 gap-y-1 text-[13px] text-text">
-          {showAlbertLegend ? (
+          {showLlmLegend ? (
             <span className="inline-flex items-center gap-1.5">
               <Sparkles aria-hidden className="size-3.5 text-blue-cumulus" />
               Rapproché par l’assistant IA

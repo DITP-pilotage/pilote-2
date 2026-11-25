@@ -35,7 +35,7 @@ export const tableauSourceSchema = z.object({
 export type TableauSource = z.infer<typeof tableauSourceSchema>
 
 export const origineRapprochementSchema = z
-  .enum(['EXACT', 'ALBERT', 'UTILISATEUR'])
+  .enum(['EXACT', 'LLM', 'UTILISATEUR'])
   .describe(
     'Qui a rapproché le libellé : une correspondance exacte, l’assistant IA, ou l’utilisateur.',
   )

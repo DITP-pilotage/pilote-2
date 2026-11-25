@@ -40,7 +40,7 @@ const plan: PlanTransformation = {
     colonne: 'Département',
     rapprochements: {
       Ain: { statut: 'RESOLU', publicId: 'DEPT-01', par: 'EXACT' },
-      Bdr: { statut: 'RESOLU', publicId: 'DEPT-13', par: 'ALBERT' },
+      Bdr: { statut: 'RESOLU', publicId: 'DEPT-13', par: 'LLM' },
       Corse: { statut: 'AMBIGU', candidats: ['DEPT-2B', 'DEPT-2A'] },
     },
   },
@@ -126,7 +126,7 @@ describe('buildLignesGrille', () => {
     ])
   })
 
-  it('marque ce qu’Albert a rapproché et ce qui reste à corriger', () => {
+  it('marque ce que le LLM a rapproché et ce qui reste à corriger', () => {
     expect(grille[2]?.cellules[0]).toMatchObject({ text: 'Bouches-du-Rhône', tone: 'DEFAULT' })
     expect(grille[2]?.cellules[0]?.marker?.label).toBe('Rapproché par l’assistant IA')
     expect(grille[2]?.cellules[1]).toMatchObject({ text: 'MVNO', tone: 'WARNING' })

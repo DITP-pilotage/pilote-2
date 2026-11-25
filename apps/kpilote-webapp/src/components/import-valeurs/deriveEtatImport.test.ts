@@ -5,10 +5,7 @@ import {
 } from '@pilote/kpilote-shared/valeurImport'
 import { describe, expect, it } from 'vitest'
 
-import {
-  deriveEtatImport,
-  selectTableauForAlbert,
-} from '@/components/import-valeurs/deriveEtatImport'
+import { deriveEtatImport, selectTableauForLlm } from '@/components/import-valeurs/deriveEtatImport'
 import { type LectureTableau } from '@/components/import-valeurs/lecture/matriceVersTableau'
 
 const cibles: CiblesSaisie = {
@@ -24,7 +21,7 @@ const lectureOf = (tableau: TableauSource): LectureTableau => ({ ok: true, table
 const plan: PlanTransformation = {
   individu: {
     colonne: 'Département',
-    rapprochements: { Ain: { statut: 'RESOLU', publicId: 'DEPT-01', par: 'ALBERT' } },
+    rapprochements: { Ain: { statut: 'RESOLU', publicId: 'DEPT-01', par: 'LLM' } },
   },
   axes: [],
   valeurs: { disposition: 'COLONNES', colonnes: [{ colonne: '2023', date: '2023-01-01' }] },
@@ -81,7 +78,7 @@ describe('deriveEtatImport', () => {
 
   it('affiche la grille du plan d’Albert', () => {
     const etat = deriveEtatImport({ ...base, planImport: { ok: true, plan } })
-    expect(etat).toEqual({ kind: 'grille', tableau: libre, plan, origine: 'ALBERT' })
+    expect(etat).toEqual({ kind: 'grille', tableau: libre, plan, origine: 'LLM' })
   })
 
   it('reprend l’explication quand le fichier est inexploitable', () => {
@@ -100,11 +97,11 @@ describe('deriveEtatImport', () => {
   })
 })
 
-describe('selectTableauForAlbert', () => {
+describe('selectTableauForLlm', () => {
   it('ne confie à Albert qu’un fichier lisible hors format standard', () => {
-    expect(selectTableauForAlbert({ lecture: lectureOf(libre), cibles })).toBe(libre)
-    expect(selectTableauForAlbert({ lecture: lectureOf(standard), cibles })).toBeNull()
-    expect(selectTableauForAlbert({ lecture: undefined, cibles })).toBeNull()
-    expect(selectTableauForAlbert({ lecture: lectureOf(libre), cibles: undefined })).toBeNull()
+    expect(selectTableauForLlm({ lecture: lectureOf(libre), cibles })).toBe(libre)
+    expect(selectTableauForLlm({ lecture: lectureOf(standard), cibles })).toBeNull()
+    expect(selectTableauForLlm({ lecture: undefined, cibles })).toBeNull()
+    expect(selectTableauForLlm({ lecture: lectureOf(libre), cibles: undefined })).toBeNull()
   })
 })
