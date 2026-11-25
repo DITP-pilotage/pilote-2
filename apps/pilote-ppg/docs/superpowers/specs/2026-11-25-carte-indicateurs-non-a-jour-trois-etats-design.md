@@ -20,10 +20,10 @@ La carte « indicateurs non à jour » (onglet de la comparaison territoriale, p
 - **Couleurs** : `#B34000` pour non à jour (l'« orange » du ticket et le « rouge » de Triko sont cette teinte, déjà celle du non à jour et de l'orage en météo), `#27A658` pour à jour (soleil en météo), `#bababa` pour donnée absente (« non renseignée » en météo), hachures inchangées.
 - **Tableau chantier** : deux colonnes « Non à jour » et « Sans donnée » au lieu d'une ; « À jour » ou « Non applicable » sur les deux colonnes quand c'est le cas. Tri : rouge, gris, vert, non applicable, puis nombre de non à jour décroissant, puis nombre sans donnée décroissant.
 - **Infobulle chantier** : « 2 indicateurs non à jour · 1 sans donnée » (une partie à zéro est omise), « À jour », « Non applicable ».
-- **Tableau et infobulle indicateur** : « Aucune valeur » déjà affiché ; pour une donnée absente, la colonne « Mise à jour attendue depuis » n'est plus en orange gras, et l'infobulle dit « Donnée absente ».
+- **Tableau et infobulle indicateur** : « Aucune valeur » déjà affiché ; pour une donnée absente, la colonne « Mise à jour attendue depuis » n'est plus en orange gras, et l'infobulle dit « Données requises mais non renseignées ».
 - **Légendes** :
   - chantier : « Tous les indicateurs sont à jour », « Un ou plusieurs indicateurs ne sont pas à jour », « Un ou plusieurs indicateurs sans donnée », non applicable inchangé ;
-  - indicateur : « L'indicateur est à jour », « Donnée existante, mais non à jour », « Donnée absente », non applicable inchangé.
+  - indicateur : « L'indicateur est à jour », « Donnée existante, mais non à jour », « Données requises mais non renseignées », non applicable inchangé.
   - L'entrée non applicable reste masquée quand tous les territoires sont applicables (comportement actuel).
 
 ## Non-objectifs

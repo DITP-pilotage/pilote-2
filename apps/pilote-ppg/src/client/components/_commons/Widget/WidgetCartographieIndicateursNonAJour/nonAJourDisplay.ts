@@ -82,7 +82,7 @@ export const formatEtatChantier = (
 const LIBELLES_ETAT_INDICATEUR: Record<EtatMiseAJour, string> = {
   A_JOUR: "À jour",
   NON_A_JOUR: "Non à jour",
-  SANS_DONNEE: "Donnée absente",
+  SANS_DONNEE: "Données requises mais non renseignées",
   NON_APPLICABLE: "Non applicable",
 };
 

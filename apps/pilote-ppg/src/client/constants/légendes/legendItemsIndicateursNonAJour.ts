@@ -37,7 +37,7 @@ export const LEGEND_ITEMS_NON_A_JOUR_INDICATEUR: Record<
     remplissage: "#B34000",
   },
   SANS_DONNEE: {
-    libellé: "Donnée absente",
+    libellé: "Données requises mais non renseignées",
     remplissage: "#bababa",
   },
   NON_APPLICABLE: {
