@@ -288,6 +288,28 @@ describe.concurrent('upsertModalite', () => {
   )
 
   it(
+    'accepte un enfant de plus sous une modalité déjà parente qui porte des valeurs',
+    integrationTest(async () => {
+      // Valeurs saisies sur la famille avant que la règle n'existe : elles ne
+      // sont déjà plus lues, un enfant de plus ne change aucun total.
+      const { axePublicId, famille } = await axeImbrique()
+      await valeurSur(famille)
+      const publicId = testModaliteId()
+
+      const result = await runAsAdmin('principal-upsert-modalite-deja-parente', () =>
+        upsertModalite({
+          axePublicId,
+          publicId,
+          body: { nom: 'Fraude à l’IR', parent: famille.publicId },
+        }),
+      )
+
+      expect(result.isOk()).toBe(true)
+      expect(await modaliteEnBase(publicId)).toMatchObject({ parent: famille.publicId })
+    }),
+  )
+
+  it(
     'refuse un parent au dernier niveau avant de regarder ses valeurs',
     integrationTest(async () => {
       const { axePublicId, type } = await axeImbrique()

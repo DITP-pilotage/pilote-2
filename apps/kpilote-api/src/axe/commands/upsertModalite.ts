@@ -31,7 +31,7 @@ const loadParent = async ({ publicId }: { publicId: string | null }) => {
   if (publicId === null) return null
   const parent = await db().modalite.findUnique({
     where: { publicId },
-    include: { axe: true, niveauAxe: true },
+    include: { axe: true, niveauAxe: true, _count: { select: { enfants: true } } },
   })
   if (!parent) return null
   return {
@@ -41,6 +41,7 @@ const loadParent = async ({ publicId }: { publicId: string | null }) => {
     axePublicId: parent.axe.publicId,
     ordre: parent.niveauAxe.ordre,
     nombreValeurs: await countValeursForModalite({ modaliteId: parent.id }),
+    nombreEnfants: parent._count.enfants,
   }
 }
 

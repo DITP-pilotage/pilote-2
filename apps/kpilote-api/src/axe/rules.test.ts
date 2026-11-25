@@ -237,13 +237,25 @@ describe.concurrent('checkParentSansValeur', () => {
   })
 
   it('accepte un parent qui ne porte aucune valeur', () => {
-    expect(checkParentSansValeur({ parent: { publicId: 'P1', nombreValeurs: 0 } }).isOk()).toBe(
-      true,
-    )
+    expect(
+      checkParentSansValeur({
+        parent: { publicId: 'P1', nombreValeurs: 0, nombreEnfants: 0 },
+      }).isOk(),
+    ).toBe(true)
+  })
+
+  it('accepte un parent qui a déjà des enfants, même s’il porte des valeurs', () => {
+    expect(
+      checkParentSansValeur({
+        parent: { publicId: 'P1', nombreValeurs: 3, nombreEnfants: 1 },
+      }).isOk(),
+    ).toBe(true)
   })
 
   it('rejette un parent qui porte des valeurs, en donnant leur nombre', () => {
-    const result = checkParentSansValeur({ parent: { publicId: 'P1', nombreValeurs: 3 } })
+    const result = checkParentSansValeur({
+      parent: { publicId: 'P1', nombreValeurs: 3, nombreEnfants: 0 },
+    })
     expect(result._unsafeUnwrapErr()).toEqual({
       type: 'PARENT_PORTE_VALEURS',
       parent: 'P1',

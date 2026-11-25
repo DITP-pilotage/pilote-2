@@ -190,14 +190,16 @@ export type ParentPorteValeursError = {
 
 // Une modalité qui a des enfants se calcule à partir d'eux : ses propres
 // saisies ne sont plus lues (`buildGrapheSerie`). Lui ajouter un premier enfant
-// ferait baisser les totaux sans prévenir.
+// ferait baisser les totaux sans prévenir. Une modalité déjà parente ne lit
+// déjà plus ses saisies : un enfant de plus ne change rien.
 export const checkParentSansValeur = ({
   parent,
 }: {
   // null : la modalité est créée au premier niveau.
-  parent: { publicId: string; nombreValeurs: number } | null
+  parent: { publicId: string; nombreValeurs: number; nombreEnfants: number } | null
 }): Result<void, ParentPorteValeursError> => {
   if (parent === null) return ok()
+  if (parent.nombreEnfants > 0) return ok()
   if (parent.nombreValeurs === 0) return ok()
   return err({
     type: 'PARENT_PORTE_VALEURS',
