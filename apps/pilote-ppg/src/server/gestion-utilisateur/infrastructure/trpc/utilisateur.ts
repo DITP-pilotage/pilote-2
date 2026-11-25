@@ -3,7 +3,6 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import {
   validationDesactiverVideoAccueil,
@@ -13,7 +12,6 @@ import {
   validationReactiverUtilisateur,
   validationSupprimerUtilisateur,
 } from "@/validation/utilisateur";
-import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
 import { profilsCodes } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
@@ -54,9 +52,8 @@ export const utilisateurRouter = createTRPCRouter({
       });
   }),
   creer: protectedProcedure
-    .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
+    .input(creerUtilisateurSchemaBase)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
@@ -82,9 +79,8 @@ export const utilisateurRouter = createTRPCRouter({
         .getAccountStatus(input.email);
     }),
   modifier: protectedProcedure
-    .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
+    .input(creerUtilisateurSchemaBase)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
@@ -99,9 +95,8 @@ export const utilisateurRouter = createTRPCRouter({
         );
     }),
   desactiver: protectedProcedure
-    .input(validationSupprimerUtilisateur.merge(zodValidateurCSRF))
+    .input(validationSupprimerUtilisateur)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
@@ -115,9 +110,8 @@ export const utilisateurRouter = createTRPCRouter({
         );
     }),
   reactiver: protectedProcedure
-    .input(validationReactiverUtilisateur.merge(zodValidateurCSRF))
+    .input(validationReactiverUtilisateur)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await getContainer("gestionUtilisateur")
         .resolve("récupérerUnProfilUseCase")
         .run(ctx.session.profil);
@@ -131,25 +125,22 @@ export const utilisateurRouter = createTRPCRouter({
         );
     }),
   desactiverVideoAccueil: protectedProcedure
-    .input(validationDesactiverVideoAccueil.merge(zodValidateurCSRF))
-    .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
+    .input(validationDesactiverVideoAccueil)
+    .mutation(async ({ input }) => {
       await getContainer("gestionUtilisateur")
         .resolve("desactiverVideoAccueilUseCase")
         .execute(input.utilisateurId);
     }),
   envoyerMailInscriptionInfolettre: protectedProcedure
-    .input(validationEnvoyerMailInscriptionInfolettre.merge(zodValidateurCSRF))
-    .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
+    .input(validationEnvoyerMailInscriptionInfolettre)
+    .mutation(async ({ input }) => {
       await getContainer("gestionUtilisateur")
         .resolve("envoyerMailInscriptionInfolettreUseCase")
         .execute(input.utilisateurEmail, input.lienConfirmationInscription);
     }),
   desactiverPopupInfolettre: protectedProcedure
-    .input(validationDesactiverVideoAccueil.merge(zodValidateurCSRF))
-    .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
+    .input(validationDesactiverVideoAccueil)
+    .mutation(async ({ input }) => {
       await getContainer("gestionUtilisateur")
         .resolve("desactiverPopupInfolettreUseCase")
         .execute(input.utilisateurId);

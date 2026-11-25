@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { createValidationMetadataIndicateurFormulaire } from "@/validation/metadata-indicateur";
@@ -94,7 +93,6 @@ export const usePageIndicateur = (
     MetadataIndicateurForm & { indicId: string }
   > = async (data) => {
     const inputs = {
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       indicParentIndic:
         data.indicParentIndic === "Aucun indicateur sélectionné"
@@ -109,7 +107,6 @@ export const usePageIndicateur = (
     MetadataIndicateurForm & { indicId: string }
   > = async (data) => {
     const inputs = {
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       indicParentIndic:
         data.indicParentIndic === "Aucun indicateur sélectionné"

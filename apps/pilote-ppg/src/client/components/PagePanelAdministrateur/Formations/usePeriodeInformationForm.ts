@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { toISODate } from "@/server/app/domain/Dates";
 import {
   periodesChevauchees,
@@ -85,7 +84,6 @@ export const usePeriodeInformationForm = ({
     savePeriode.mutate({
       id: periode?.id ?? null,
       ...saisie,
-      csrf: récupérerUnCookie("csrf") ?? "",
     });
   });
 

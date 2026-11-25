@@ -11,10 +11,6 @@ export const LIMITE_CARACTÈRES_PUBLICATION = Number.parseInt(
   process.env.NEXT_PUBLIC_LIMITE_CARACTERES_PUBLICATION || "5000",
 );
 
-export const zodValidateurCSRF = z.object({
-  csrf: z.string(),
-});
-
 export const validationPublicationContexte = z.object({
   typeDeRéforme: z.string(),
   réformeId: z.string(),

@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { zonegroupCommandSchema } from "@/server/referentiels/zonegroup/handlers/SaveZonegroupHandler";
 
 export type ZonegroupForm = z.infer<typeof zonegroupCommandSchema>;
@@ -51,7 +50,6 @@ export const useZonegroupForm = ({
 
   const enregistrer: SubmitHandler<ZonegroupForm> = (data) => {
     mutation.mutate({
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       zoneGroupDesc: data.zoneGroupDesc || null,
     });

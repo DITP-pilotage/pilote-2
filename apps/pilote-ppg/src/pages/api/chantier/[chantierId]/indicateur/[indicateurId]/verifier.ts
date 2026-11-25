@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getContainer } from "@/server/dependances";
+import { onlyPost } from "@/server/framework/guards/onlyPost";
 
 export const config = {
   api: {
@@ -7,8 +8,10 @@ export const config = {
   },
 };
 
-export default function handle(req: NextApiRequest, res: NextApiResponse) {
+function handle(req: NextApiRequest, res: NextApiResponse) {
   return getContainer("importIndicateur")
     .resolve("verifierFichierImportIndicateurHandler")
     .handle(req, res);
 }
+
+export default onlyPost(handle);

@@ -1,11 +1,9 @@
 import {
-  checkCsrf,
   createTRPCRouter,
   protectedProcedure,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
-import { zodValidateurCSRF } from "@/validation/publication";
 import { z } from "zod";
 import { setMotifProfilCommandSchema } from "@/server/formations/handlers/SetMotifProfilHandler";
 import { savePeriodeInformationCommandSchema } from "@/server/formations/handlers/SavePeriodeInformationHandler";
@@ -25,9 +23,8 @@ export const formationRouter = createTRPCRouter({
   }),
 
   setMotifProfil: protectedProcedure
-    .input(setMotifProfilCommandSchema.and(zodValidateurCSRF))
+    .input(setMotifProfilCommandSchema)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("formations")
         .resolve("setMotifProfilHandler")
@@ -46,9 +43,8 @@ export const formationRouter = createTRPCRouter({
   }),
 
   savePeriodeInformation: protectedProcedure
-    .input(savePeriodeInformationCommandSchema.and(zodValidateurCSRF))
+    .input(savePeriodeInformationCommandSchema)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       return getContainer("formations")
         .resolve("savePeriodeInformationHandler")
@@ -64,9 +60,8 @@ export const formationRouter = createTRPCRouter({
     }),
 
   deletePeriodeInformation: protectedProcedure
-    .input(z.object({ id: z.uuid() }).and(zodValidateurCSRF))
+    .input(z.object({ id: z.uuid() }))
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("formations")
         .resolve("deletePeriodeInformationHandler")
@@ -85,9 +80,8 @@ export const formationRouter = createTRPCRouter({
   ),
 
   recordSlideInAction: protectedProcedure
-    .input(recordSlideInActionCommandSchema.and(zodValidateurCSRF))
+    .input(recordSlideInActionCommandSchema)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       await getContainer("formations")
         .resolve("recordSlideInActionHandler")
         .execute({

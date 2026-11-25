@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { MAILLES, Maille } from "@/server/parametrage-chantier/domain/maille";
 import { IndicateurPonderation } from "@/server/parametrage-chantier/queries/GetIndicateursPonderationsChantierQuery";
@@ -133,7 +132,6 @@ export const usePonderationsIndicateursForm = ({
 
   const enregistrer = reactHookForm.handleSubmit((data) => {
     mutation.mutate({
-      csrf: récupérerUnCookie("csrf") ?? "",
       lignes: data.lignes.map((ligne, index) => ({
         indicId: ponderations[index].indicId,
         estActif: ligne.estActif,

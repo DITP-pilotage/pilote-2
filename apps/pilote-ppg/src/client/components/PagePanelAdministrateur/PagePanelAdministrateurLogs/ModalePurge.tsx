@@ -1,6 +1,5 @@
 import { FunctionComponent, useState } from "react";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Modale } from "@/components/shared/Modale";
 
 type ModalePurgeProps = {
@@ -25,7 +24,6 @@ export const ModalePurge: FunctionComponent<ModalePurgeProps> = ({
   const handlePurger = () => {
     if (!dateStr) return;
     mutation.mutate({
-      csrf: récupérerUnCookie("csrf") ?? "",
       anterieurA: new Date(dateStr).toISOString(),
     });
   };

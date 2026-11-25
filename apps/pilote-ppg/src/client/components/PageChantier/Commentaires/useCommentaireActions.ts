@@ -1,5 +1,4 @@
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import {
   CommentaireV2,
   TypeCommentaireChantier,
@@ -20,7 +19,6 @@ export const useCommentaireActions = ({
   commentaire: CommentaireV2 | null;
   brouillon: CommentaireV2 | null;
 }): PublicationActions => {
-  const csrf = () => récupérerUnCookie("csrf") ?? "";
   const refreshRouter = useRefreshRouter();
 
   const publierMutation = api.commentaire.publier.useMutation();
@@ -34,31 +32,31 @@ export const useCommentaireActions = ({
 
   const publier = (data: { contenu: string }) =>
     publierMutation.mutateAsync(
-      { chantierId, territoireCode, type, contenu: data.contenu, csrf: csrf() },
+      { chantierId, territoireCode, type, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
   const enregistrerEnBrouillon = (data: { contenu: string }) =>
     enregistrerEnBrouillonMutation.mutateAsync(
-      { chantierId, territoireCode, type, contenu: data.contenu, csrf: csrf() },
+      { chantierId, territoireCode, type, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
   const publierBrouillon = (data: { contenu: string }) =>
     publierUnBrouillonMutation.mutateAsync(
-      { brouillonId: brouillon!.id, contenu: data.contenu, csrf: csrf() },
+      { brouillonId: brouillon!.id, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
   const modifierBrouillon = (data: { contenu: string }) =>
     modifierLeBrouillonMutation.mutateAsync(
-      { brouillonId: brouillon!.id, contenu: data.contenu, csrf: csrf() },
+      { brouillonId: brouillon!.id, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
   const modifier = (data: { contenu: string }) =>
     modifierMutation.mutateAsync(
-      { commentaireId: commentaire!.id, contenu: data.contenu, csrf: csrf() },
+      { commentaireId: commentaire!.id, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 

@@ -10,7 +10,6 @@ import { httpStatusFromTrpcError } from "./trpcErrorStatus";
 const createInternalTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
-    csrfDuCookie: opts.csrfDuCookie,
   };
 };
 
@@ -18,11 +17,9 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
   const session = await auth(req, res);
-  const csrfDuCookie = req.cookies.csrf ?? null;
 
   return createInternalTRPCContext({
     session,
-    csrfDuCookie,
   });
 };
 
@@ -59,20 +56,6 @@ const isAuthenticatedMiddleware = trpc.middleware(({ ctx, next }) => {
     },
   });
 });
-
-export const checkCsrf = (csrfDuCookie: string | null, csrfDuBody: string) => {
-  if (!csrfDuCookie || !csrfDuBody) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message:
-        "Le cookie CSRF n'existe pas ou il n'est pas correctement soumis",
-    });
-  }
-
-  if (csrfDuCookie !== csrfDuBody) {
-    throw new TRPCError({ code: "FORBIDDEN", message: "Le CSRF est invalide" });
-  }
-};
 
 export const createTRPCRouter = trpc.router;
 export const protectedProcedure = trpc.procedure.use(isAuthenticatedMiddleware);

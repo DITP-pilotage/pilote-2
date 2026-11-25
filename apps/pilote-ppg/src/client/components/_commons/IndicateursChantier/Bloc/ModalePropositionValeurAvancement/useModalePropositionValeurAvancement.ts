@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import { z } from "zod";
 import { champsPropositionValeurAvancement } from "@/validation/proposition-valeur-avancement";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import {
   estPropositionCreee,
@@ -142,7 +141,6 @@ const useModalePropositionValeurAvancement = () => {
   ) => {
     const [mois, annee] = data.moisValeurAvancement.split("/");
     const inputs = {
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       valeurAvancement: data.valeurAvancement,
       dateValeurAvancement: `${annee}-${mois}-01T00:00:00.000Z`,

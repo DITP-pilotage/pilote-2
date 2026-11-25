@@ -1,4 +1,4 @@
-import { expect, Page } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { prisma } from "@/server/framework/persistence/prisma";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
@@ -8,19 +8,6 @@ import {
   CHANTIER_FOR_WRITES,
   INDICATEUR_FOR_PONDERATIONS,
 } from "./seed/dedicated-entities";
-
-// Chaque réponse renouvelle le cookie csrf que le formulaire lit au rendu :
-// on attend la fin du chargement de la page avant d'enregistrer.
-async function openChantierSettings(
-  page: Page,
-  chantierId: string,
-): Promise<void> {
-  const listsLoaded = page.waitForResponse(
-    /parametrageChantier\.listZonegroups/,
-  );
-  await page.goto(`/panel-administrateur/chantiers/${chantierId}`);
-  await listsLoaded;
-}
 
 async function saveAndExpectPersisted(
   save: () => Promise<void>,
@@ -43,7 +30,7 @@ test.describe("Paramétrage d'un chantier par l'administrateur DITP", () => {
       }),
     );
     await new AppActions(page, e2eContext).loginAs("ditp.admin@example.com");
-    await openChantierSettings(page, CHANTIER_FOR_WRITES);
+    await page.goto(`/panel-administrateur/chantiers/${CHANTIER_FOR_WRITES}`);
 
     await saveAndExpectPersisted(
       async () => {
@@ -74,7 +61,9 @@ test.describe("Paramétrage d'un chantier par l'administrateur DITP", () => {
       await readMetadataIndicateur(INDICATEUR_FOR_PONDERATIONS),
     );
     await new AppActions(page, e2eContext).loginAs("ditp.admin@example.com");
-    await openChantierSettings(page, CHANTIER_FOR_PONDERATIONS);
+    await page.goto(
+      `/panel-administrateur/chantiers/${CHANTIER_FOR_PONDERATIONS}`,
+    );
     await page.getByRole("tab", { name: "Pondérations" }).click();
 
     const nationalPonderationInput = page

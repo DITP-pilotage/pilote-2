@@ -9,7 +9,6 @@ import { Button } from "@/components/shared/Button";
 import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { MetadataPerimetre } from "@/server/referentiels/perimetre/queries/GetPerimetreQuery";
 import {
@@ -141,11 +140,9 @@ const PageAdminPerimetreEdition = ({
                       onClick={() =>
                         estSupprimé
                           ? restaurerMutation.mutate({
-                              csrf: récupérerUnCookie("csrf") ?? "",
                               perimetreId: perimetreIdEffectif,
                             })
                           : archiverMutation.mutate({
-                              csrf: récupérerUnCookie("csrf") ?? "",
                               perimetreId: perimetreIdEffectif,
                             })
                       }

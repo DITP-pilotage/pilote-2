@@ -2,7 +2,6 @@ import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 
 interface InscriptionInfoLettreForm {
   consentement: boolean;
@@ -34,7 +33,6 @@ export const useModaleInscriptionInfolettre = () => {
   const handleFermetureModale = () => {
     if (session?.user.id) {
       desactiverPopupInfolettre.mutate({
-        csrf: récupérerUnCookie("csrf") ?? "",
         utilisateurId: session.user.id,
       });
     }
@@ -42,7 +40,6 @@ export const useModaleInscriptionInfolettre = () => {
 
   const handleSubmitForm = handleSubmit((data: InscriptionInfoLettreForm) => {
     envoyerMailInscriptionInfolettre.mutate({
-      csrf: récupérerUnCookie("csrf") ?? "",
       utilisateurEmail: data.emailUtilisateur,
       lienConfirmationInscription: `${process.env.NEXT_PUBLIC_BASE_URL}/inscription`,
     });

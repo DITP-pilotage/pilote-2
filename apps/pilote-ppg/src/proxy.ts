@@ -5,6 +5,7 @@ import { z } from "zod";
 import { cheminDeRetourSur } from "@/server/authentification/domain/cheminDeRetour";
 import { CHEMIN_CONNEXION } from "@/server/authentification/domain/cheminsAuthentification";
 import { getContainer } from "@/server/dependances";
+import { isCrossOriginUnsafeRequest } from "@/server/framework/guards/crossOriginRequest";
 import { logger } from "./server/framework/logger";
 
 /**
@@ -113,6 +114,23 @@ export async function proxy(request: NextRequest) {
     routesTrpcPubliques.some((route) => pathname.startsWith(route));
 
   if (!estRoutePublique) {
+    if (isCrossOriginUnsafeRequest(request)) {
+      logger.warn(
+        {
+          categorie: "auth",
+          source: "proxy",
+          chemin: pathname,
+          secFetchSite: request.headers.get("sec-fetch-site"),
+          origine: request.headers.get("origin"),
+        },
+        "Requête inter-origine refusée",
+      );
+      return NextResponse.json(
+        { message: "Requête inter-origine refusée" },
+        { status: 403 },
+      );
+    }
+
     const useSecureCookies =
       process.env.NEXTAUTH_URL?.startsWith("https://") ?? false;
 
@@ -177,27 +195,8 @@ export async function proxy(request: NextRequest) {
           }
         }
 
-        // Supprimer également le cookie csrf personnalisé si utilisé
-        redirectResponse.cookies.set("csrf", "", {
-          expires: new Date(0),
-          path: "/",
-          sameSite: "lax",
-        });
-
         return redirectResponse;
       }
-    }
-
-    const cookie = request.cookies.get("csrf")?.value;
-
-    // CSRF handling
-    if (token.jti && (cookie === undefined || cookie !== token.jti)) {
-      const jti = String(token.jti);
-      response.cookies.set("csrf", jti, {
-        sameSite: "lax",
-        httpOnly: false,
-        path: "/",
-      });
     }
   }
 

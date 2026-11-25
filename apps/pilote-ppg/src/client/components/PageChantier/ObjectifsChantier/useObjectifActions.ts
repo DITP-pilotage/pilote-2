@@ -1,5 +1,4 @@
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import {
   ObjectifV2,
@@ -19,7 +18,6 @@ export const useObjectifActions = ({
   objectif: ObjectifV2AvecNomAuteur | null;
   brouillon: ObjectifV2 | null;
 }): PublicationActions => {
-  const csrf = () => récupérerUnCookie("csrf") ?? "";
   const refreshRouter = useRefreshRouter();
 
   const publierMutation = api.objectif.publier.useMutation();
@@ -33,31 +31,31 @@ export const useObjectifActions = ({
 
   const publier = (data: { contenu: string }) =>
     publierMutation.mutateAsync(
-      { chantierId, type, contenu: data.contenu, csrf: csrf() },
+      { chantierId, type, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
   const enregistrerEnBrouillon = (data: { contenu: string }) =>
     enregistrerEnBrouillonMutation.mutateAsync(
-      { chantierId, type, contenu: data.contenu, csrf: csrf() },
+      { chantierId, type, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
   const publierBrouillon = (data: { contenu: string }) =>
     publierUnBrouillonMutation.mutateAsync(
-      { brouillonId: brouillon!.id, contenu: data.contenu, csrf: csrf() },
+      { brouillonId: brouillon!.id, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
   const modifierBrouillon = (data: { contenu: string }) =>
     modifierLeBrouillonMutation.mutateAsync(
-      { brouillonId: brouillon!.id, contenu: data.contenu, csrf: csrf() },
+      { brouillonId: brouillon!.id, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
   const modifier = (data: { contenu: string }) =>
     modifierMutation.mutateAsync(
-      { objectifId: objectif!.id, contenu: data.contenu, csrf: csrf() },
+      { objectifId: objectif!.id, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 

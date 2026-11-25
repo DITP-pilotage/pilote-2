@@ -122,7 +122,7 @@ Route `applicationLog` avec 3 procédures, toutes réservées DITP_ADMIN :
 - Données agrégées pour les graphes
 
 ### `applicationLog.purger`
-- **Input** : `{ csrf, anterieurA: Date }`
+- **Input** : `{ anterieurA: Date }`
 - Supprime les logs plus anciens qu'une date donnée
 - Garde-fou : minimum 7 jours de rétention
 

@@ -1,5 +1,4 @@
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import {
   DecisionStrategiqueV2,
@@ -18,7 +17,6 @@ export const useDecisionStrategiqueActions = ({
   decisionStrategique: DecisionStrategiqueV2 | null;
   brouillon: DecisionStrategiqueV2 | null;
 }): PublicationActions => {
-  const csrf = () => récupérerUnCookie("csrf") ?? "";
   const refreshRouter = useRefreshRouter();
 
   const publierMutation = api.decisionStrategique.publier.useMutation();
@@ -32,25 +30,25 @@ export const useDecisionStrategiqueActions = ({
 
   const publier = (data: { contenu: string }) =>
     publierMutation.mutateAsync(
-      { chantierId, type, contenu: data.contenu, csrf: csrf() },
+      { chantierId, type, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
   const enregistrerEnBrouillon = (data: { contenu: string }) =>
     enregistrerEnBrouillonMutation.mutateAsync(
-      { chantierId, type, contenu: data.contenu, csrf: csrf() },
+      { chantierId, type, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
   const publierBrouillon = (data: { contenu: string }) =>
     publierUnBrouillonMutation.mutateAsync(
-      { brouillonId: brouillon!.id, contenu: data.contenu, csrf: csrf() },
+      { brouillonId: brouillon!.id, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
   const modifierBrouillon = (data: { contenu: string }) =>
     modifierLeBrouillonMutation.mutateAsync(
-      { brouillonId: brouillon!.id, contenu: data.contenu, csrf: csrf() },
+      { brouillonId: brouillon!.id, contenu: data.contenu },
       { onSuccess: () => refreshRouter() },
     );
 
@@ -59,7 +57,6 @@ export const useDecisionStrategiqueActions = ({
       {
         decisionStrategiqueId: decisionStrategique!.id,
         contenu: data.contenu,
-        csrf: csrf(),
       },
       { onSuccess: () => refreshRouter() },
     );

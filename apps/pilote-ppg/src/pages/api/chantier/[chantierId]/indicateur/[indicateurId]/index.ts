@@ -2,12 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
+import { onlyPost } from "@/server/framework/guards/onlyPost";
 import { auth } from "@/server/authentification/infrastructure/nextauth/[...nextauth]";
 
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handle(req: NextApiRequest, res: NextApiResponse) {
   const session = await auth(req, res);
   const userId = session?.user.id;
   assert(userId);
@@ -15,3 +13,5 @@ export default async function handle(
     .resolve("publierFichierImportIndicateurHandler")
     .handle(req, res, userId);
 }
+
+export default onlyPost(handle);

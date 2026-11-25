@@ -5,7 +5,6 @@ import { z } from "zod";
 import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { validationAccuserReceptionPropostionValeurAvancement } from "@/validation/proposition-valeur-avancement";
 
 type FormData = z.infer<
@@ -60,7 +59,6 @@ export const useModaleAccuserReceptionPropositionValeurAvancement = ({
 
   const traiterAccuseReception: SubmitHandler<FormData> = async (data) => {
     const inputs = {
-      csrf: récupérerUnCookie("csrf") ?? "",
       motif: data.motif,
       dateValeurAvancement: data.dateValeurAvancement,
       indicId: indicateur.id,

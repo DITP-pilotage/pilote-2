@@ -12,7 +12,4 @@ export type UtilisateurFormulaireContainerProps = Pick<
   "utilisateur"
 >;
 
-export type UtilisateurFormInputs = Omit<
-  RouterInputs["utilisateur"]["creer"],
-  "csrf"
->;
+export type UtilisateurFormInputs = RouterInputs["utilisateur"]["creer"];

@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getContainer } from "@/server/dependances";
+import { onlyPost } from "@/server/framework/guards/onlyPost";
 
 export const config = {
   api: {
@@ -7,10 +8,7 @@ export const config = {
   },
 };
 
-export default async function handle(
-  request: NextApiRequest,
-  response: NextApiResponse,
-) {
+async function handle(request: NextApiRequest, response: NextApiResponse) {
   await getContainer("parametrageIndicateur")
     .resolve("importMasseMetadataIndicateurHandler")
     .handle(request)
@@ -23,3 +21,5 @@ export default async function handle(
       });
     });
 }
+
+export default onlyPost(handle);

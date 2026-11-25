@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { Session } from "next-auth";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import {
   Utilisateur,
   ProfilCode,
@@ -37,14 +36,12 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
   const desactiverUtilisateur = () => {
     mutationDesactiverUtilisateur.mutate({
       email: utilisateur.email,
-      csrf: récupérerUnCookie("csrf") ?? "",
     });
   };
 
   const reactiverUtilisateur = () => {
     mutationReactiverUtilisateur.mutate({
       email: utilisateur.email,
-      csrf: récupérerUnCookie("csrf") ?? "",
     });
   };
 

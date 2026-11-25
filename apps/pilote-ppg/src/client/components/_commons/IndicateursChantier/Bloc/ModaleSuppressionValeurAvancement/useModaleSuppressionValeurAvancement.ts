@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Indicateur } from "@/shared/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/shared/indicateur/DetailsIndicateur.interface";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { validationSuppressionPropositionValeurAvancement } from "@/validation/proposition-valeur-avancement";
 
 type SuppressionPropositionValeurAvancementForm = z.infer<
@@ -67,7 +66,6 @@ const useModaleSuppressionValeurAvancement = ({
     data: SuppressionPropositionValeurAvancementForm,
   ) => {
     const inputs = {
-      csrf: récupérerUnCookie("csrf") ?? "",
       indicId: indicateur.id,
       territoireCode,
       dateValeurAvancement: detailIndicateur.proposition!.dateValeurAvancement,

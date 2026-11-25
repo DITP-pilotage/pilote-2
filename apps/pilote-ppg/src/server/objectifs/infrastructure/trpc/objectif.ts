@@ -1,8 +1,6 @@
-import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { Habilitation } from "@/shared/utilisateur/habilitation/Habilitation";
@@ -13,20 +11,10 @@ import {
   validationObjectifAModifier,
 } from "@/validation/objectif";
 
-const zodValidateurCSRF = z.object({
-  csrf: z.string(),
-});
-
 export const objectifRouter = createTRPCRouter({
   publier: protectedProcedure
-    .input(
-      zodValidateurCSRF
-        .merge(validationObjectifFormulaire)
-        .merge(validationObjectifContexte),
-    )
+    .input(validationObjectifFormulaire.merge(validationObjectifContexte))
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("objectif")
         .resolve("publierObjectifUseCase")
         .execute({
@@ -40,14 +28,8 @@ export const objectifRouter = createTRPCRouter({
     }),
 
   enregistrerEnBrouillon: protectedProcedure
-    .input(
-      zodValidateurCSRF
-        .merge(validationObjectifFormulaire)
-        .merge(validationObjectifContexte),
-    )
+    .input(validationObjectifFormulaire.merge(validationObjectifContexte))
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("objectif")
         .resolve("enregistrerBrouillonObjectifUseCase")
         .execute({
@@ -62,13 +44,9 @@ export const objectifRouter = createTRPCRouter({
 
   publierUnBrouillon: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationObjectifFormulaire)
-        .merge(validationBrouillonObjectifAPublier),
+      validationObjectifFormulaire.merge(validationBrouillonObjectifAPublier),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("objectif")
         .resolve("publierBrouillonObjectifUseCase")
         .execute({
@@ -82,13 +60,9 @@ export const objectifRouter = createTRPCRouter({
 
   modifierLeBrouillon: protectedProcedure
     .input(
-      zodValidateurCSRF
-        .merge(validationObjectifFormulaire)
-        .merge(validationBrouillonObjectifAPublier),
+      validationObjectifFormulaire.merge(validationBrouillonObjectifAPublier),
     )
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("objectif")
         .resolve("modifierBrouillonObjectifUseCase")
         .execute({
@@ -101,14 +75,8 @@ export const objectifRouter = createTRPCRouter({
     }),
 
   modifier: protectedProcedure
-    .input(
-      zodValidateurCSRF
-        .merge(validationObjectifFormulaire)
-        .merge(validationObjectifAModifier),
-    )
+    .input(validationObjectifFormulaire.merge(validationObjectifAModifier))
     .mutation(({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
-
       return getContainer("objectif")
         .resolve("modifierObjectifPublieUseCase")
         .execute({

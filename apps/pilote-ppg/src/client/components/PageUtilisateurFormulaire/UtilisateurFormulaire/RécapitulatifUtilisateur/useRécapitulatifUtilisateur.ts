@@ -1,7 +1,6 @@
 import { useFormContext } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { api } from "@/server/framework/trpc/api";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { UtilisateurFormInputs } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
@@ -41,12 +40,10 @@ export default function useRécapitulatifUtilisateur() {
     if (utilisateurExistant)
       mutationModifierUtilisateur.mutate({
         ...utilisateur,
-        csrf: récupérerUnCookie("csrf") ?? "",
       });
     else
       mutationCréerUtilisateur.mutate({
         ...utilisateur,
-        csrf: récupérerUnCookie("csrf") ?? "",
       });
   };
 

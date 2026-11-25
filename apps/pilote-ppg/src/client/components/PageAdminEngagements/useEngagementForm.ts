@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { engagementCommandSchema } from "@/server/referentiels/engagement/handlers/SaveEngagementHandler";
 
 export type EngagementForm = z.infer<typeof engagementCommandSchema>;
@@ -55,7 +54,6 @@ export const useEngagementForm = ({
 
   const enregistrer: SubmitHandler<EngagementForm> = (data) => {
     mutation.mutate({
-      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
     });
   };

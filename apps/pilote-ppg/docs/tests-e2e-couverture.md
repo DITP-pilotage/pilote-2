@@ -25,7 +25,7 @@ Habilitations ajoutées : `equipe.dir.projet@example.com` reçoit CH-901, CH-902
 
 **Connexion :** `AppActions.loginAs` (`tests/actions/app.actions.ts`) se connecte par l'API NextAuth (provider credentials), sans passer par les écrans ; le parcours complet par formulaire est couvert par `loginViaFormulaire`. Sans email, le compte utilisé est `E2E_USERNAME` (`ditp.admin@example.com`).
 
-**Client tRPC direct :** `tests/api-client/trpc.client.ts` appelle `/api/trpc/*` sans passer par l'IHM, avec la session du navigateur. Les mutations envoient le jeton CSRF lu dans le cookie `csrf` (ou aucun / un jeton forcé). Le résultat expose le statut HTTP, le code d'erreur tRPC et l'en-tête `location`.
+**Client tRPC direct :** `tests/api-client/trpc.client.ts` appelle `/api/trpc/*` sans passer par l'IHM, avec la session du navigateur. Les mutations acceptent des en-têtes supplémentaires. Le résultat expose le statut HTTP, le code d'erreur tRPC et l'en-tête `location`.
 
 **Fixtures open-api** (`tests/fixtures.ts`) :
 
@@ -94,13 +94,19 @@ Tous les tests sont sans session.
 
 **Sans session :**
 
-- Mutation `utilisateur.desactiver` sans jeton CSRF : 303 vers `/connexion?callbackUrl=…`.
+- Mutation `utilisateur.desactiver` : 303 vers `/connexion?callbackUrl=…`.
 - `GET /api/trpc/chantier.recupererTousSynthetisesAccessiblesEnLecture`, `/api/export/chantiers-v2`, `/api/export/utilisateurs` : 303 vers `/connexion?callbackUrl=…` (un test par route).
 - `POST /api/albert/chat` : 303 vers `/connexion?callbackUrl=…`.
 
 **Avec session :**
 
 - `ditp.pilotage` lit `chantier.recupererTousSynthetisesAccessiblesEnLecture` : 200, pas d'erreur, liste non vide.
+
+**Écritures venues d'une autre origine :**
+
+- `ditp.admin` désactive `premiere.ministre` avec l'en-tête `Sec-Fetch-Site: cross-site` puis `same-site` : 403 ; `date_desactivation` reste nulle (un test par valeur).
+- `ditp.admin` envoie un fichier à `POST /api/import/metadata-indicateurs` avec `Sec-Fetch-Site: cross-site` : 403.
+- `ditp.admin` appelle en `GET` la publication d'un import (`/api/chantier/…/indicateur/…?rapportId=…`) : 405.
 
 **Gestion des comptes :**
 
@@ -109,8 +115,6 @@ Tous les tests sont sans session.
 - `prefet.departement` (sans gestion des comptes) crée un compte : 403 `ForbiddenError` ; le compte n'existe pas en base.
 - `coordinateur.departement` désactive `premiere.ministre` : 403 `ForbiddenError` ; `date_desactivation` reste nulle.
 - `coordinateur.departement` réactive `premiere.ministre` : 403 `ForbiddenError`.
-- `ditp.admin` désactive `premiere.ministre` sans jeton CSRF : 400 ; `date_desactivation` reste nulle.
-- `ditp.admin` désactive `premiere.ministre` avec un jeton CSRF invalide : 403 `FORBIDDEN` ; `date_desactivation` reste nulle.
 
 **Tokens API :**
 
@@ -820,8 +824,6 @@ Les failles d'autorisation connues ne sont pas encore testées : leurs tests ser
 - N1 : modification d'un compte hors périmètre
 - N2 : vidéo d'accueil et popup infolettre désactivées pour un autre compte (`utilisateur.desactiverVideoAccueil`, `desactiverPopupInfolettre`)
 - N3 : mail d'inscription à l'infolettre (`envoyerMailInscriptionInfolettre`)
-- N4 : CSRF des tokens API (`gestionTokenAPI.creerTokenAPI` / `supprimerTokenAPI`)
-- N5 : mutations admin sans CSRF
 - N6 : export des utilisateurs refusé en 500
 
 **PIL-1922 — habilitations de l'assistant IA :**

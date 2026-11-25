@@ -1,6 +1,5 @@
 import { toast } from "sonner";
 import { api } from "@/server/framework/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Button } from "@/components/shared/Button";
 import { Modale } from "@/components/shared/Modale";
 import type { PeriodeInformation } from "@/server/formations/queries/ListPeriodesInformationQuery";
@@ -52,7 +51,6 @@ export const ModaleSuppressionPeriode = ({
             if (deletePeriode.isPending) return;
             deletePeriode.mutate({
               id: periode.id,
-              csrf: récupérerUnCookie("csrf") ?? "",
             });
           }}
           variant="primary"

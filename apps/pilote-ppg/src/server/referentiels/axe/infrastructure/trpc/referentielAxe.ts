@@ -2,9 +2,7 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  checkCsrf,
 } from "@/server/framework/trpc/trpc";
-import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { axeCommandSchema } from "@/server/referentiels/axe/handlers/SaveAxeHandler";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
@@ -34,9 +32,8 @@ export const referentielAxeRouter = createTRPCRouter({
     }),
 
   save: protectedProcedure
-    .input(axeCommandSchema.and(zodValidateurCSRF))
+    .input(axeCommandSchema)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("saveAxeHandler")
@@ -44,9 +41,8 @@ export const referentielAxeRouter = createTRPCRouter({
     }),
 
   archive: protectedProcedure
-    .input(z.object({ axeId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ axeId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("archiveAxeHandler")
@@ -54,9 +50,8 @@ export const referentielAxeRouter = createTRPCRouter({
     }),
 
   restore: protectedProcedure
-    .input(z.object({ axeId: z.string() }).and(zodValidateurCSRF))
+    .input(z.object({ axeId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("referentiels")
         .resolve("restoreAxeHandler")
