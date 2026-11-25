@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { seDeconnecter } from "@/client/utils/seDeconnecter";
 import { Icone } from "@/components/_commons/Icone";
 import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
@@ -137,7 +138,7 @@ export const MonEspaceMenuMobile = ({
                 <li>
                   <button
                     className={clsxm(NAV_LINK_CLASSES, "w-full text-left")}
-                    onClick={() => signOut()}
+                    onClick={() => seDeconnecter()}
                     type="button"
                   >
                     Se déconnecter
