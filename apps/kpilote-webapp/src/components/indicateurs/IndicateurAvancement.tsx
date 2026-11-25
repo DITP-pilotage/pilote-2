@@ -21,17 +21,17 @@ export function IndicateurAvancementSkeleton() {
 
 export function IndicateurAvancement({
   indicateurId,
-  individuId,
+  individus,
   unite,
 }: {
   indicateurId: string
-  individuId: string
+  individus: ReadonlyArray<string> | undefined
   unite: UniteIndicateurApiModel | null
 }) {
   const [{ data }, { data: tauxData }] = useSuspenseQueries({
     queries: [
-      derniereValeurQueryOptions({ individus: [individuId], indicateurId }),
-      dernierTauxProgressionQueryOptions({ individus: [individuId], indicateurId }),
+      derniereValeurQueryOptions({ individus, indicateurId }),
+      dernierTauxProgressionQueryOptions({ individus, indicateurId }),
     ],
   })
   if (!data) {
