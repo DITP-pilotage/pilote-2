@@ -29,6 +29,10 @@
       "types": "./src/CardGrid.tsx",
       "default": "./src/CardGrid.tsx"
     },
+    "./Checkbox": {
+      "types": "./src/Checkbox.tsx",
+      "default": "./src/Checkbox.tsx"
+    },
     "./Collapsible": {
       "types": "./src/Collapsible.tsx",
       "default": "./src/Collapsible.tsx"

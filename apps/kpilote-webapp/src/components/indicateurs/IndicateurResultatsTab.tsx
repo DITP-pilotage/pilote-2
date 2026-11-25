@@ -1,5 +1,5 @@
 import { type SensSouhaite, type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
-import { Suspense, useId, useState } from 'react'
+import { Suspense, useState } from 'react'
 
 import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
 import { RouteLoading } from '@/components/RouteLoading'
@@ -10,6 +10,7 @@ import { IndicateurValeursDecomposeesChart } from '@/components/indicateurs/Indi
 import { IndicateurWidgets } from '@/components/indicateurs/IndicateurWidgets'
 import { buildDecomposition } from '@/lib/axes/decomposition'
 import { type AxeWithModalites, type SelectionModalites } from '@/lib/axes/selection'
+import { Checkbox } from '@pilote/kpilote-ui/Checkbox'
 import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 
@@ -38,7 +39,6 @@ function EvolutionChart({
   decomposer: string | undefined
   onDecomposerChange: (axeId: string | undefined) => void
 }) {
-  const ensembleCheckboxId = useId()
   const [showEnsemble, setShowEnsemble] = useState(true)
   const chart = (
     <IndicateurValeursChart
@@ -69,16 +69,12 @@ function EvolutionChart({
           />
         </div>
         {axe ? (
-          <label htmlFor={ensembleCheckboxId} className="flex items-center gap-2 pb-2.5 text-sm">
-            <input
-              id={ensembleCheckboxId}
-              type="checkbox"
-              className="size-4 accent-primary"
-              checked={showEnsemble}
-              onChange={(event) => setShowEnsemble(event.target.checked)}
-            />
-            Afficher l'ensemble
-          </label>
+          <Checkbox
+            className="pb-2.5"
+            checked={showEnsemble}
+            onCheckedChange={setShowEnsemble}
+            label="Afficher l'ensemble"
+          />
         ) : null}
       </div>
       <Suspense fallback={<RouteLoading message="Chargement du graphique…" />}>
