@@ -379,6 +379,60 @@ describe.concurrent('PUT /axes/{id}/modalites/{modaliteId}', () => {
   )
 
   it(
+    'refuse (409) d’ajouter un enfant à une modalité qui porte des valeurs',
+    integrationTest(async () => {
+      const { axeId } = await axeImbrique()
+      const sociale = await fixtures.modalite({
+        publicId: testModaliteId(),
+        nom: 'Fraude sociale',
+        niveau: { axe: { publicId: axeId }, ordre: 1 },
+      })
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: testIndicateurId() },
+        individu: { publicId: testIndividuId() },
+        combinaison: { modalites: [{ publicId: sociale.publicId }] },
+      })
+      const cle = await cleApi(ApiKeyRole.ADMIN)
+
+      const response = await requete({
+        cle,
+        method: 'PUT',
+        path: `/axes/${axeId}/modalites/${testModaliteId()}`,
+        body: { nom: 'Cotisations', parent: sociale.publicId },
+      })
+
+      expect(response.status).toBe(409)
+      expect(await response.json()).toMatchObject({
+        code: 'PARENT_PORTE_VALEURS',
+        details: { parent: sociale.publicId, valeurs: 1 },
+      })
+    }),
+  )
+
+  it(
+    'accepte (200) un enfant sous une modalité sans valeur',
+    integrationTest(async () => {
+      const { axeId, famille } = await axeImbrique()
+      const modaliteId = testModaliteId()
+      const cle = await cleApi(ApiKeyRole.ADMIN)
+
+      const response = await requete({
+        cle,
+        method: 'PUT',
+        path: `/axes/${axeId}/modalites/${modaliteId}`,
+        body: { nom: 'Fraude à l’IR', parent: famille.publicId },
+      })
+
+      expect(response.status).toBe(200)
+      expect(await response.json()).toMatchObject({
+        id: modaliteId,
+        niveau: 2,
+        parent: famille.publicId,
+      })
+    }),
+  )
+
+  it(
     'refuse (409) un identifiant déjà pris dans un autre axe',
     integrationTest(async () => {
       const { axeId } = await axeImbrique()
