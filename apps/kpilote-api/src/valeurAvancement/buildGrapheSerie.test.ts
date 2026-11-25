@@ -82,11 +82,11 @@ const dernierPoint = async (
   selection: Record<string, string> = {},
 ): Promise<PointInterne | undefined> =>
   (
-    await resolveSerieNoeud(
-      noeud({ individu, selection: new Map(Object.entries(selection)) }),
+    await resolveSerieNoeud({
+      noeud: noeud({ individu, selection: new Map(Object.entries(selection)) }),
       graphe,
-      new Map(),
-    )
+      cache: new Map(),
+    })
   ).at(-1)
 
 const valeurDe = async (...args: Parameters<typeof dernierPoint>) =>
@@ -228,11 +228,11 @@ describe('buildGrapheSerie — axe imbriqué', () => {
       ],
     })
     const serieDe = async (selection: Record<string, string>) =>
-      resolveSerieNoeud(
-        avecDates.noeud({ individu: D84, selection: new Map(Object.entries(selection)) }),
-        avecDates.graphe,
-        new Map(),
-      )
+      resolveSerieNoeud({
+        noeud: avecDates.noeud({ individu: D84, selection: new Map(Object.entries(selection)) }),
+        graphe: avecDates.graphe,
+        cache: new Map(),
+      })
 
     const [janvier, mars] = await serieDe({ [FRAUDE]: 'a1' })
     expect(janvier).toMatchObject({

@@ -68,11 +68,22 @@ const buildContext = (input: {
   })
 }
 
+// Série d'un individu avec un cache neuf : rien n'est partagé entre deux appels.
+const resolveWithFreshCache = ({
+  graphe,
+  noeud,
+  individu,
+}: ReturnType<typeof buildContext> & { individu: IndividuRef }): Promise<
+  ReadonlyArray<PointInterne>
+> => resolveSerieNoeud({ noeud: noeud({ individu }), graphe, cache: new Map() })
+
 describe('resolveSerieNoeud — feuille', () => {
   it('retourne une série vide pour une feuille sans saisies', async () => {
     const { graphe, noeud } = buildContext({ individusReferentiel: { [DEPT_A.id]: REF_DEPT } })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    expect(await resolveSerieNoeud(noeud({ individu: DEPT_A }), graphe, cache)).toEqual([])
+    expect(await resolveSerieNoeud({ noeud: noeud({ individu: DEPT_A }), graphe, cache })).toEqual(
+      [],
+    )
   })
 
   it('retourne la série de saisies tronquée pour une feuille', async () => {
@@ -86,7 +97,7 @@ describe('resolveSerieNoeud — feuille', () => {
       },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    const serie = await resolveSerieNoeud(noeud({ individu: DEPT_A }), graphe, cache)
+    const serie = await resolveSerieNoeud({ noeud: noeud({ individu: DEPT_A }), graphe, cache })
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toEqual({
@@ -113,7 +124,7 @@ describe('resolveSerieNoeud — feuille', () => {
       },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    const serie = await resolveSerieNoeud(noeud({ individu: FRANCE }), graphe, cache)
+    const serie = await resolveSerieNoeud({ noeud: noeud({ individu: FRANCE }), graphe, cache })
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({ type: 'saisie', valeur: d(99) })
@@ -136,7 +147,7 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
+    const serie = await resolveWithFreshCache({ graphe, noeud, individu: REG_S })
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
@@ -169,7 +180,7 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
+    const serie = await resolveWithFreshCache({ graphe, noeud, individu: REG_S })
 
     expect(serie).toHaveLength(3)
     // 2025-01 : seul DEPT-A connu → valeur=10, couverture 1/2
@@ -220,7 +231,7 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
+    const serie = await resolveWithFreshCache({ graphe, noeud, individu: REG_S })
     const contributions = (serie[0] as { contributions: { individuPublicId: string }[] })
       .contributions
 
@@ -238,7 +249,7 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
       fonctionAgregationParReferentiel: { [REF_REG]: 'SUM' },
     })
 
-    expect(await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())).toEqual([])
+    expect(await resolveWithFreshCache({ graphe, noeud, individu: REG_S })).toEqual([])
   })
 
   it('ignore les saisies sur un nœud agrégé (D6 : saisie ignorée si fonctionAgregation)', async () => {
@@ -255,7 +266,7 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
+    const serie = await resolveWithFreshCache({ graphe, noeud, individu: REG_S })
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({ type: 'derivee', valeur: d(42) })
@@ -278,7 +289,7 @@ describe('resolveSerieNoeud — agrégation AVG', () => {
       },
     })
 
-    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
+    const serie = await resolveWithFreshCache({ graphe, noeud, individu: REG_S })
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
@@ -306,7 +317,7 @@ describe('resolveSerieNoeud — agrégation AVG', () => {
       },
     })
 
-    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
+    const serie = await resolveWithFreshCache({ graphe, noeud, individu: REG_S })
 
     expect(serie).toHaveLength(2)
     // 2025-01 : seul DEPT-A → moyenne sur 1 = 10, couverture 1/2
@@ -330,7 +341,7 @@ describe('resolveSerieNoeud — agrégation AVG', () => {
       fonctionAgregationParReferentiel: { [REF_REG]: 'AVG' },
     })
 
-    expect(await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())).toEqual([])
+    expect(await resolveWithFreshCache({ graphe, noeud, individu: REG_S })).toEqual([])
   })
 
   it('produit une moyenne décimale exacte sur des entiers non divisibles', async () => {
@@ -350,7 +361,7 @@ describe('resolveSerieNoeud — agrégation AVG', () => {
       },
     })
 
-    const serie = await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, new Map())
+    const serie = await resolveWithFreshCache({ graphe, noeud, individu: REG_S })
 
     // (1 + 2 + 2) / 3 = 1.6666...
     const valeur = (serie[0] as { valeur: Decimal }).valeur
@@ -384,7 +395,7 @@ describe('resolveSerieNoeud — agrégation multi-niveaux', () => {
       },
     })
 
-    const serie = await resolveSerieNoeud(noeud({ individu: FRANCE }), graphe, new Map())
+    const serie = await resolveWithFreshCache({ graphe, noeud, individu: FRANCE })
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({
@@ -435,7 +446,7 @@ describe('resolveSerieNoeud — agrégation multi-niveaux', () => {
       },
     })
 
-    const serie = await resolveSerieNoeud(noeud({ individu: FRANCE }), graphe, new Map())
+    const serie = await resolveWithFreshCache({ graphe, noeud, individu: FRANCE })
 
     expect(serie).toHaveLength(2)
     // 2025-01 : REG-N = 5, REG-S inconnu → 5
@@ -467,7 +478,7 @@ describe('resolveSerieNoeud — nœuds avec modalités', () => {
       ]),
     }
 
-    const serie = await resolveSerieNoeud(tous, graphe, new Map())
+    const serie = await resolveSerieNoeud({ noeud: tous, graphe, cache: new Map() })
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
@@ -501,8 +512,8 @@ describe('resolveSerieNoeud — mémoïsation', () => {
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-    const a = await resolveSerieNoeud(noeud({ individu: DEPT_A }), graphe, cache)
-    const b = await resolveSerieNoeud(noeud({ individu: DEPT_A }), graphe, cache)
+    const a = await resolveSerieNoeud({ noeud: noeud({ individu: DEPT_A }), graphe, cache })
+    const b = await resolveSerieNoeud({ noeud: noeud({ individu: DEPT_A }), graphe, cache })
     expect(b).toBe(a)
   })
 
@@ -522,10 +533,10 @@ describe('resolveSerieNoeud — mémoïsation', () => {
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-    await resolveSerieNoeud(noeud({ individu: REG_S }), graphe, cache)
+    await resolveSerieNoeud({ noeud: noeud({ individu: REG_S }), graphe, cache })
     const tailleAvant = cache.size
 
-    await resolveSerieNoeud(noeud({ individu: FRANCE }), graphe, cache)
+    await resolveSerieNoeud({ noeud: noeud({ individu: FRANCE }), graphe, cache })
     // Cache : REG_S et DEPT_A déjà présents avant l'appel FRANCE, qui n'ajoute que France.
     expect(cache.has(noeud({ individu: DEPT_A }).cle)).toBe(true)
     expect(cache.has(noeud({ individu: REG_S }).cle)).toBe(true)

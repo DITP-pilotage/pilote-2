@@ -1,10 +1,11 @@
 import { groupBy, mapValues } from 'es-toolkit'
 import { describe, expect, it } from 'vitest'
 
-import { formatBucket } from '@/framework/bucket'
+import { formatBucket, parseBucket } from '@/framework/bucket'
+import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { getValeursTronqueesPourIndividus } from '@/generated/prisma/sql'
-import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
+import { loadIndividusParPublicId } from '@/indicateur/loadIndicateurIndividuContext'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import {
@@ -17,7 +18,10 @@ import {
   testReferentielIds,
   testRegId,
 } from '@/test/randomIds'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
+import {
+  keepDerniersPoints,
+  loadResolveSerieContext,
+} from '@/valeurAvancement/loadResolveSerieContext'
 import { type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
 
 // Résout les séries des cibles et rend un accès par publicId.
@@ -262,4 +266,26 @@ describe.concurrent('loadResolveSerieContext', () => {
       })
     }),
   )
+})
+
+describe.concurrent('keepDerniersPoints', () => {
+  const serie = ['2026-01-01', '2026-02-01', '2026-03-01'].map((date): PointInterne => ({
+    type: 'saisie',
+    bucket: parseBucket(date),
+    dateOrigine: parseBucket(date),
+    valeur: new Decimal(1),
+  }))
+
+  it('rend les N derniers points', () => {
+    expect(keepDerniersPoints({ serie, derniersPoints: 2 })).toEqual(serie.slice(1))
+  })
+
+  it('rend la série entière sans limite, ou quand on demande plus de points qu’elle n’en a', () => {
+    expect(keepDerniersPoints({ serie, derniersPoints: null })).toEqual(serie)
+    expect(keepDerniersPoints({ serie, derniersPoints: 5 })).toEqual(serie)
+  })
+
+  it('rend une série vide pour 0 point', () => {
+    expect(keepDerniersPoints({ serie, derniersPoints: 0 })).toEqual([])
+  })
 })

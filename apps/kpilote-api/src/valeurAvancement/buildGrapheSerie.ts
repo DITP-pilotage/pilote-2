@@ -188,7 +188,10 @@ const deciderRegle = ({
   individu: IndividuRef
   selection: Selection
 }): Regle => {
-  const fonction = getFonctionAgregationActive(individu.id, contexte.hierarchie)
+  const fonction = getFonctionAgregationActive({
+    individuId: individu.id,
+    hierarchy: contexte.hierarchie,
+  })
   if (fonction) {
     return {
       type: 'agregationIndividus',

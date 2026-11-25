@@ -12,8 +12,8 @@ import { compareBuckets, formatBucket, parseBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
-import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
+import { loadIndividusParPublicId } from '@/indicateur/loadIndicateurIndividuContext'
+import { computeTauxProgressionPoints } from '@/valeurAvancement/computeTauxProgressionPoints'
 
 // Défauts compromis lisibilité × coût : mensuel des deux côtés (cf. doc archi
 // `taux-progression.md`). Surchargeable par requête, avec la contrainte

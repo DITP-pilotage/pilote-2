@@ -16,7 +16,7 @@ import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { computeEcartMediane } from '@/valeurAvancement/computeEcartMediane'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeVariation } from '@/valeurAvancement/computeVariation'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
+import { loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
 import { type IndividuRef, type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
 
 // Aligné sur listValeursForIndicateur : on raisonne sur les buckets mensuels

@@ -4,7 +4,7 @@ import { type Bucket, compareBuckets } from '@/framework/bucket'
 import { withConcurrency } from '@/framework/concurrency'
 import { type Decimal } from '@/framework/decimal'
 import { type IndicateurContribution } from '@/collection/resolveCollectionTauxProgression'
-import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
+import { computeTauxProgressionPoints } from '@/valeurAvancement/computeTauxProgressionPoints'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 import { type TauxProgressionPoint } from '@/valeurAvancement/resolveTauxProgression'
 

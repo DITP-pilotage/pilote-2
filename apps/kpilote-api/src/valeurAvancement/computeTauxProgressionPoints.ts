@@ -2,12 +2,12 @@ import { type DateTrunc } from '@pilote/kpilote-shared/dates'
 import { type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
 
 import { type BucketKey, compareBuckets } from '@/framework/bucket'
-import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/queries/loadResolveObjectifContext'
+import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/loadResolveObjectifContext'
 import {
   type PointObjectifInterne,
   resolveObjectifIndividu,
 } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
+import { loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 import {
   type ObjectifBrut,
@@ -71,7 +71,11 @@ export const computeTauxProgressionPoints = async ({
       })
     }
 
-    const objectifsMap = resolveObjectifIndividu(cible.id, objectifCtx, objectifCache)
+    const objectifsMap = resolveObjectifIndividu({
+      individuId: cible.id,
+      ctx: objectifCtx,
+      cache: objectifCache,
+    })
     if (objectifsMap.size === 0) continue
     const objectifsList: ObjectifBrut[] = [...objectifsMap.values()]
       .map((point) => ({ dateCible: point.bucket, valeurCible: point.valeur }))
