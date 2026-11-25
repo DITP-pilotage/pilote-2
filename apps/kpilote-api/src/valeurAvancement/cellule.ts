@@ -11,7 +11,7 @@ export type Cellule = {
 // Clé d'une cellule pour les caches et les index en mémoire. L'individu seul ne
 // suffit pas : un même individu peut être calculé pour plusieurs combinaisons
 // dans une même lecture (ex. Orange, SFR et « Tous »).
-export const cleCellule = ({ individuId, combinaisonId }: Cellule): string =>
+export const celluleKey = ({ individuId, combinaisonId }: Cellule): string =>
   `${individuId}~${combinaisonId}`
 
 // Les saisies d'une cellule, telles que chargées (tronquées par bucket).

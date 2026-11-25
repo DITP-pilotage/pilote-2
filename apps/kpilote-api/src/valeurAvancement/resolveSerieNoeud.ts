@@ -3,7 +3,7 @@ import { type FonctionAgregation } from '@pilote/kpilote-shared/indicateur'
 import { type Bucket, type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
 import { yieldToEventLoop } from '@/framework/concurrency'
 import { Decimal } from '@/framework/decimal'
-import { agreger } from '@/indicateur/resolveAgregation'
+import { aggregate } from '@/indicateur/resolveAgregation'
 
 export type IndividuRef = {
   id: string
@@ -38,10 +38,10 @@ export type PointInterne =
     }
 
 // Un nœud du graphe de résolution : un individu et, pour un indicateur à axes,
-// les modalités fixées (« Tous » sur les autres axes). `cle` l'identifie dans
+// les modalités fixées (« Tous » sur les autres axes). `key` l'identifie dans
 // le graphe et dans le cache.
 export type Noeud = {
-  cle: string
+  key: string
   individuPublicId: string
   // publicIds des modalités fixées, dans l'ordre de déclaration des axes.
   modalites: ReadonlyArray<string>
@@ -53,11 +53,11 @@ export type AgregationNoeud = {
 }
 
 // Graphe consommé par le moteur : un nœud agrégé a ses enfants et la fonction
-// qui les combine ; un nœud absent de `agregationParNoeud` est saisi. Construit
+// qui les combine ; un nœud absent de `agregationByNoeud` est saisi. Construit
 // par `buildGrapheSerie`, avec ou sans axe.
 export type GrapheSerie = {
-  agregationParNoeud: ReadonlyMap<string, AgregationNoeud>
-  saisiesParNoeud: ReadonlyMap<string, ReadonlyArray<SaisieTronquee>>
+  agregationByNoeud: ReadonlyMap<string, AgregationNoeud>
+  saisiesByNoeud: ReadonlyMap<string, ReadonlyArray<SaisieTronquee>>
 }
 
 // Calcule la série d'un nœud du graphe.
@@ -71,7 +71,7 @@ export type GrapheSerie = {
 // requêtes concurrentes. Le coût micro-task ajouté reste négligeable face
 // au temps de calcul lui-même.
 //
-// Le cache est indexé par `noeud.cle`.
+// Le cache est indexé par `noeud.key`.
 export const resolveSerieNoeud = async ({
   noeud,
   graphe,
@@ -81,15 +81,15 @@ export const resolveSerieNoeud = async ({
   graphe: GrapheSerie
   cache: Map<string, ReadonlyArray<PointInterne>>
 }): Promise<ReadonlyArray<PointInterne>> => {
-  const cached = cache.get(noeud.cle)
+  const cached = cache.get(noeud.key)
   if (cached) return cached
 
-  const agregation = graphe.agregationParNoeud.get(noeud.cle)
+  const agregation = graphe.agregationByNoeud.get(noeud.key)
   const serie = agregation
     ? await computeSerieDerivee({ agregation, graphe, cache })
     : computeSerieSaisie({ noeud, graphe })
 
-  cache.set(noeud.cle, serie)
+  cache.set(noeud.key, serie)
   return serie
 }
 
@@ -100,7 +100,7 @@ const computeSerieSaisie = ({
   noeud: Noeud
   graphe: GrapheSerie
 }): ReadonlyArray<PointInterne> => {
-  const saisies = graphe.saisiesParNoeud.get(noeud.cle) ?? []
+  const saisies = graphe.saisiesByNoeud.get(noeud.key) ?? []
   return saisies.map(({ bucket, dateOrigine, valeur }) => ({
     type: 'saisie',
     bucket,
@@ -109,7 +109,7 @@ const computeSerieSaisie = ({
   }))
 }
 
-const cleDeTri = (noeud: Noeud): string => [noeud.individuPublicId, ...noeud.modalites].join('|')
+const sortKeyOf = (noeud: Noeud): string => [noeud.individuPublicId, ...noeud.modalites].join('|')
 
 // Même ordre que `localeCompare`, sans recréer le collator à chaque comparaison.
 const collator = new Intl.Collator()
@@ -137,26 +137,26 @@ const computeSerieDerivee = async ({
 }): Promise<ReadonlyArray<PointInterne>> => {
   // Tri stable par publicId (puis modalités) pour des contributions déterministes,
   // avec la clé de chaque enfant calculée une seule fois.
-  const enfantsTries = enfants
-    .map((enfant) => ({ enfant, sortKey: cleDeTri(enfant) }))
+  const sortedEnfants = enfants
+    .map((enfant) => ({ enfant, sortKey: sortKeyOf(enfant) }))
     .sort((a, b) => collator.compare(a.sortKey, b.sortKey))
     .map(({ enfant }) => enfant)
 
   type EnfantState = {
     enfant: Noeud
     points: ReadonlyArray<PointInterne>
-    estAgrege: boolean
+    isAgrege: boolean
     pointer: number // index de la dernière valeur ≤ bucket courant (-1 = aucune)
   }
   // Résolution séquentielle des enfants : la mémoïsation garantit que chaque
   // sous-arbre n'est calculé qu'une fois, donc le parallélisme n'apporterait
   // rien et empêcherait le yield bucket-par-bucket d'avoir l'effet voulu.
   const states: EnfantState[] = []
-  for (const enfant of enfantsTries) {
+  for (const enfant of sortedEnfants) {
     states.push({
       enfant,
       points: await resolveSerieNoeud({ noeud: enfant, graphe, cache }),
-      estAgrege: graphe.agregationParNoeud.has(enfant.cle),
+      isAgrege: graphe.agregationByNoeud.has(enfant.key),
       pointer: -1,
     })
   }
@@ -204,11 +204,11 @@ const computeSerieDerivee = async ({
     }
 
     const contributions: ContributionInterne[] = []
-    const valeursAAgreger: Decimal[] = []
+    const valeursToAggregate: Decimal[] = []
 
     for (const state of states) {
-      const courant = state.pointer >= 0 ? state.points[state.pointer] : undefined
-      if (!courant) {
+      const current = state.pointer >= 0 ? state.points[state.pointer] : undefined
+      if (!current) {
         contributions.push({
           individuPublicId: state.enfant.individuPublicId,
           modalites: state.enfant.modalites,
@@ -220,22 +220,22 @@ const computeSerieDerivee = async ({
       }
       // Pour un enfant feuille (saisie) on expose la date d'origine pré-troncature ;
       // pour un enfant déjà dérivé, on n'a que la date de son bucket le plus récent.
-      const dateOrigine = courant.type === 'saisie' ? courant.dateOrigine : courant.bucket
+      const dateOrigine = current.type === 'saisie' ? current.dateOrigine : current.bucket
       contributions.push({
         individuPublicId: state.enfant.individuPublicId,
         modalites: state.enfant.modalites,
-        valeur: courant.valeur,
+        valeur: current.valeur,
         dateOrigine,
-        source: state.estAgrege ? 'derivee' : 'saisie',
+        source: state.isAgrege ? 'derivee' : 'saisie',
       })
-      valeursAAgreger.push(courant.valeur)
+      valeursToAggregate.push(current.valeur)
     }
 
     // Permissif : on n'émet pas tant qu'aucun enfant n'a saisi ; dès la première
     // valeur connue d'un enfant, le point sort avec une couverture < total.
-    if (valeursAAgreger.length === 0) continue
+    if (valeursToAggregate.length === 0) continue
 
-    const valeur = agreger({ valeurs: valeursAAgreger, fonction: fonctionAgregation })
+    const valeur = aggregate({ valeurs: valeursToAggregate, fonction: fonctionAgregation })
     result.push({
       type: 'derivee',
       bucket,
@@ -243,7 +243,7 @@ const computeSerieDerivee = async ({
       fonctionAgregation,
       contributions,
       couverture: {
-        nbEnfantsAvecValeur: valeursAAgreger.length,
+        nbEnfantsAvecValeur: valeursToAggregate.length,
         nbEnfantsTotal: states.length,
       },
     })

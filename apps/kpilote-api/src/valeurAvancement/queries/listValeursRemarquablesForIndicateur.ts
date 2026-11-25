@@ -73,18 +73,18 @@ const buildStats = async ({
   query: ListValeursRemarquablesForIndicateurQuery
   selection: Selection
 }): Promise<ValeursRemarquablesListApiModel> => {
-  const referentiels = await loadReferentielsAvecIndividus(query.referentiels)
+  const referentiels = await loadReferentielsWithIndividus(query.referentiels)
   if (referentiels.length === 0) return { items: [] }
 
   const cibles: IndividuRef[] = referentiels.flatMap((referentiel) => referentiel.individus)
   const dateTrunc: DateTrunc = query.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  const { serieDe, allNodes } = await loadResolveSerieContext({
+  const { serieOf, allNodes } = await loadResolveSerieContext({
     indicateurId,
     individusCibles: cibles,
     dateTrunc,
     selection,
-    derniersPoints: 1,
+    lastPointCount: 1,
   })
 
   const items: ValeursRemarquablesListApiModel['items'] = []
@@ -92,14 +92,14 @@ const buildStats = async ({
     const contributions: ValeursRemarquablesContributionApiModel[] = []
     const valeurs: Decimal[] = []
     for (const individu of referentiel.individus) {
-      const dernierPoint = serieDe(individu).at(-1)
-      if (!dernierPoint) continue
-      valeurs.push(dernierPoint.valeur)
+      const lastPoint = serieOf(individu).at(-1)
+      if (!lastPoint) continue
+      valeurs.push(lastPoint.valeur)
       contributions.push({
         individu: individu.publicId,
-        valeur: dernierPoint.valeur.toNumber(),
-        date: formatBucket(dernierPoint.bucket),
-        source: dernierPoint.type === 'saisie' ? 'saisie' : 'derivee',
+        valeur: lastPoint.valeur.toNumber(),
+        date: formatBucket(lastPoint.bucket),
+        source: lastPoint.type === 'saisie' ? 'saisie' : 'derivee',
       })
     }
     items.push({
@@ -126,7 +126,7 @@ const buildStats = async ({
   return { items }
 }
 
-const loadReferentielsAvecIndividus = async (
+const loadReferentielsWithIndividus = async (
   referentielPublicIds: ReadonlyArray<string>,
 ): Promise<ReadonlyArray<{ publicId: string; individus: IndividuRef[] }>> => {
   const rows = await db().referentiel.findMany({

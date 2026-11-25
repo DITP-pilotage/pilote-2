@@ -63,10 +63,10 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         where: { indicateur: { publicId: indId } },
         include: { individu: { select: { publicId: true } } },
       })
-      const valeurParPublicId = new Map(
+      const valeurByPublicId = new Map(
         rows.map((row) => [row.individu.publicId, row.valeur.toNumber()]),
       )
-      expect(valeurParPublicId).toEqual(
+      expect(valeurByPublicId).toEqual(
         new Map([
           [deptA, 10],
           [deptB, 20],

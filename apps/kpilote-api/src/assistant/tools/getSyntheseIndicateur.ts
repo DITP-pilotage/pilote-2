@@ -93,13 +93,16 @@ const readIndividus = async ({
       query: { individus: ids },
     }).unwrapOr({ items: [] }),
   ])
-  const derniereValeur = latestByIndividu({ items: valeurs.items, dateOf: (item) => item.date })
-  const objectif = latestByIndividu({
+  const lastValeurByIndividu = latestByIndividu({
+    items: valeurs.items,
+    dateOf: (item) => item.date,
+  })
+  const objectifByIndividu = latestByIndividu({
     items: objectifs.items,
     dateOf: (item) => item.dateCible,
   })
-  const dernierTaux = latestByIndividu({ items: taux.items, dateOf: (item) => item.date })
-  const syntheseParIndividu = new Map(synthese.items.map((item) => [item.individu, item]))
+  const lastTauxByIndividu = latestByIndividu({ items: taux.items, dateOf: (item) => item.date })
+  const syntheseByIndividu = new Map(synthese.items.map((item) => [item.individu, item]))
 
   const dated = ({
     valeur,
@@ -108,23 +111,23 @@ const readIndividus = async ({
     valeur: number | undefined
     date: string | undefined
   }): DatedValue | null => (valeur === undefined || date === undefined ? null : { valeur, date })
-  const lecture = (difference: number | null) =>
+  const interpret = (difference: number | null) =>
     difference === null ? null : interpretDifference({ difference, sensSouhaite })
 
   return individus.map((individu) => {
-    const valeur = derniereValeur.get(individu.id)
-    const cible = objectif.get(individu.id)
-    const variation = syntheseParIndividu.get(individu.id)?.variation ?? null
-    const ecartMediane = syntheseParIndividu.get(individu.id)?.ecartMediane ?? null
+    const valeur = lastValeurByIndividu.get(individu.id)
+    const cible = objectifByIndividu.get(individu.id)
+    const variation = syntheseByIndividu.get(individu.id)?.variation ?? null
+    const ecartMediane = syntheseByIndividu.get(individu.id)?.ecartMediane ?? null
     return {
       individu,
       derniereValeur: dated({ valeur: valeur?.valeur, date: valeur?.date }),
       objectif: dated({ valeur: cible?.valeurCible, date: cible?.dateCible }),
-      tauxProgression: dernierTaux.get(individu.id)?.tauxProgression ?? null,
+      tauxProgression: lastTauxByIndividu.get(individu.id)?.tauxProgression ?? null,
       variation,
-      lectureVariation: lecture(variation),
+      lectureVariation: interpret(variation),
       ecartMediane,
-      lectureEcartMediane: lecture(ecartMediane),
+      lectureEcartMediane: interpret(ecartMediane),
     }
   })
 }

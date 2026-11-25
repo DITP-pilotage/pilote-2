@@ -9,7 +9,7 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Bucket, type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
-import { loadIndividusParPublicId } from '@/indicateur/loadIndicateurIndividuContext'
+import { loadIndividusByPublicId } from '@/indicateur/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/loadResolveObjectifContext'
 import {
@@ -48,7 +48,7 @@ const buildList = async ({
   indicateur: { id: string; publicId: string }
   query: ListObjectifsForIndicateurQuery
 }): Promise<ObjectifIndicateurIndividuListApiModel> => {
-  const individusCibles = await loadIndividusParPublicId(query.individus)
+  const individusCibles = await loadIndividusByPublicId(query.individus)
   if (individusCibles.length === 0) return { items: [] }
 
   const dateTrunc: DateTrunc = query.dateTrunc ?? DEFAULT_DATE_TRUNC
@@ -108,11 +108,11 @@ const toApiModel = ({
     valeurCible: point.valeur.toNumber(),
     type: 'derivee',
     fonctionAgregation: point.fonctionAgregation,
-    contributions: point.contributions.map((c) => ({
-      individu: c.individuPublicId,
-      valeurCible: c.valeur.toNumber(),
-      dateCible: formatBucket(c.bucketCible),
-      source: c.estAgregee ? ('derivee' as const) : ('saisie' as const),
+    contributions: point.contributions.map((contribution) => ({
+      individu: contribution.individuPublicId,
+      valeurCible: contribution.valeur.toNumber(),
+      dateCible: formatBucket(contribution.bucketCible),
+      source: contribution.isAgregee ? ('derivee' as const) : ('saisie' as const),
     })),
   }
 }

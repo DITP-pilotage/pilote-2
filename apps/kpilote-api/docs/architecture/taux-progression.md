@@ -119,10 +119,10 @@ L'implémentation sépare chargement et calcul : les séries se chargent fratrie
 ```
 computeTauxProgressionPoints, appelé par la query :
 1. En parallèle (Promise.all) :
-   - résoudre les séries des cibles avec loadResolveSerieContext (chargement fratrie par fratrie, rend serieDe)
+   - résoudre les séries des cibles avec loadResolveSerieContext (chargement fratrie par fratrie, rend serieOf)
    - charger en bulk le ResolveObjectifContext (sous-arbre + objectifs bucketisés)
 3. Pour chaque individu cible :
-   a. serie    = serieDe(individu)                                    → Array<PointInterne>
+   a. serie    = serieOf(individu)                                    → Array<PointInterne>
    b. objectifsMap = resolveObjectifIndividu({ individuId, ctx, cache }) → Map<bucketDateCible, PointObjectifInterne>
 4. Convertir objectifsMap → ObjectifBrut[] triés par dateCible ASC
 5. Pour chaque (individu, point de série) — `date = point.bucket` :
@@ -136,7 +136,7 @@ computeTauxProgressionPoints, appelé par la query :
 7. Trier par individu publicId asc, puis date asc
 ```
 
-`resolveTauxProgression({ valeurs, objectifsParIndividu, sensSouhaite })` reste pur et n'est jamais conscient
+`resolveTauxProgression({ valeurs, objectifsByIndividu, sensSouhaite })` reste pur et n'est jamais conscient
 du fait que les valeurs ou les objectifs proviennent d'une saisie directe ou d'une agrégation.
 Les deux contextes partagent `dateTrunc='month'` pour aligner les buckets de valeurs et
 d'objectifs sur une grille mensuelle commune.
@@ -152,7 +152,7 @@ d'objectifs sur une grille mensuelle commune.
    │                              │                                   │                              │
    │ GET /indicateurs/:id/taux-progression                            │                              │
    ├─────────────────────────────▶│                                   │                              │
-   │                              │ loadIndividusParPublicId          │                              │
+   │                              │ loadIndividusByPublicId           │                              │
    │                              ├──────────────────────────────────▶│                              │
    │                              │                                   │                              │
    │                              │ computeTauxProgressionPoints : Promise.all([                     │
@@ -162,11 +162,11 @@ d'objectifs sur une grille mensuelle commune.
    │                              ├──────────────────────────────────▶│                              │
    │                              │                                   │                              │
    │                              │ pour chaque individu cible :      │                              │
-   │                              │   serieDe(individu)       → ValeurBrute[]                        │
+   │                              │   serieOf(individu)       → ValeurBrute[]                        │
    │                              │   resolveObjectifIndividu → ObjectifBrut[] (triés dateCible asc) │
    │                              ├──────────────────────────────────▶│                              │
    │                              │                                                                  │
-   │                              │ resolveTauxProgression({ valeurs, objectifsParIndividu,          │
+   │                              │ resolveTauxProgression({ valeurs, objectifsByIndividu,           │
    │                              │   sensSouhaite })                                                │
    │                              ├─────────────────────────────────────────────────────────────────▶│
    │                              │                                                                  │ pour chaque valeur :
@@ -211,13 +211,13 @@ sequenceDiagram
     participant C as Client
     participant R as Route GET /indicateurs/:id/taux-progression
     participant Q as listTauxProgressionForIndicateur (via computeTauxProgressionPoints)
-    participant S as loadResolveSerieContext (serieDe)
+    participant S as loadResolveSerieContext (serieOf)
     participant O as resolveObjectifIndividu
     participant T as resolveTauxProgression (pur)
 
     C->>R: requête HTTP
     R->>Q: indicateurPublicId, params
-    Q->>Q: loadIndividusParPublicId(params.individus)
+    Q->>Q: loadIndividusByPublicId(params.individus)
 
     par chargement parallèle (dateTrunc = month)
         Q->>Q: loadResolveSerieContext
@@ -226,13 +226,13 @@ sequenceDiagram
     end
 
     loop chaque individu cible
-        Q->>S: serieDe(individu)
+        Q->>S: serieOf(individu)
         S-->>Q: ValeurBrute[]
         Q->>O: resolveObjectifIndividu({ individuId, ctx, cache })
         O-->>Q: ObjectifBrut[] (triés dateCible asc)
     end
 
-    Q->>T: { valeurs, objectifsParIndividu }
+    Q->>T: { valeurs, objectifsByIndividu }
     loop chaque valeur
         T->>T: obj = 1er objectif tel que dateCible ≥ date
         Note over T: sinon dernier objectif (carry-forward)
@@ -249,10 +249,10 @@ sequenceDiagram
 ### `resolveSerieNoeud` — récursion + carry-forward **permissif**
 
 Calcule la série d'un nœud du graphe (un individu et, pour un indicateur à axes, ses modalités fixées) :
-- si le nœud est **saisi** (absent de `graphe.agregationParNoeud`) → ses saisies bucketisées telles quelles
-- sinon → série dérivée par `combineLatest` permissif sur ses enfants directs (récursion + mémoïsation via `cache`, indexé par `noeud.cle`)
+- si le nœud est **saisi** (absent de `graphe.agregationByNoeud`) → ses saisies bucketisées telles quelles
+- sinon → série dérivée par `combineLatest` permissif sur ses enfants directs (récursion + mémoïsation via `cache`, indexé par `noeud.key`)
 
-Le graphe est construit par `buildGrapheSerie`, appelé lot par lot par `loadResolveSerieContext` : `deciderRegle` y décide quels nœuds sont agrégés, par leurs individus enfants si le référentiel agrège, sinon par l'axe qui reste à détailler (fonction de l'axe).
+Le graphe est construit par `buildGrapheSerie`, appelé lot par lot par `loadResolveSerieContext` : `decideRule` y décide quels nœuds sont agrégés, par leurs individus enfants si le référentiel agrège, sinon par l'axe qui reste à détailler (fonction de l'axe).
 
 > **Permissif** : un bucket sort dès qu'**au moins un enfant** a une valeur portée. Les autres figurent en `manquante` dans `contributions`, avec une `couverture { nbEnfantsAvecValeur, nbEnfantsTotal }`.
 
@@ -261,14 +261,14 @@ Le graphe est construit par `buildGrapheSerie`, appelé lot par lot par `loadRes
 ```
 resolveSerieNoeud({ noeud, graphe, cache })          [async — yield event loop par bucket]
    │
-   ├── cache.get(noeud.cle) → hit ? oui → retour
+   ├── cache.get(noeud.key) → hit ? oui → retour
    │
-   ├── agregation = graphe.agregationParNoeud.get(noeud.cle)
+   ├── agregation = graphe.agregationByNoeud.get(noeud.key)
    │
    ├── saisi (agregation absente) ?
    │     │
    │     ├─ OUI → computeSerieSaisie({ noeud, graphe })
-   │     │         graphe.saisiesParNoeud.get(noeud.cle)
+   │     │         graphe.saisiesByNoeud.get(noeud.key)
    │     │           → PointInterne[] type='saisie' (bucket, dateOrigine, valeur)
    │     │
    │     └─ NON → computeSerieDerivee({ agregation, graphe, cache })
@@ -286,15 +286,15 @@ resolveSerieNoeud({ noeud, graphe, cache })          [async — yield event loop
    │                      ├── carry-forward : pour chaque enfant, avancer pointer tant que
    │                      │     state.points[pointer + 1].bucket ≤ B
    │                      ├── construire contributions :
-   │                      │     - pointer ≥ 0 → 'saisie' ou 'derivee' (selon estAgrege)
+   │                      │     - pointer ≥ 0 → 'saisie' ou 'derivee' (selon isAgrege)
    │                      │     - pointer = -1 → 'manquante' (valeur=null)
    │                      └── si AU MOINS UN enfant a une valeur :
-   │                            valeur = agreger({ valeurs, fonction: fonctionAgregation })
+   │                            valeur = aggregate({ valeurs, fonction: fonctionAgregation })
    │                            émettre PointInterne type='derivee'
    │                              avec couverture { avec, total }
    │                          sinon → skip ce bucket
    │
-   └── cache.set(noeud.cle, serie) ; retour
+   └── cache.set(noeud.key, serie) ; retour
 ```
 
 #### Mini exemple (somme, 2 enfants feuilles)
@@ -329,14 +329,14 @@ sequenceDiagram
     participant CSD as computeSerieDerivee
 
     Caller->>R: { noeud, graphe, cache }
-    R->>Cache: get(N.cle)
+    R->>Cache: get(N.key)
     alt cache hit
         Cache-->>R: PointInterne[]
         R-->>Caller: PointInterne[]
     else cache miss
-        R->>G: agregationParNoeud.get(N.cle)
+        R->>G: agregationByNoeud.get(N.key)
         alt saisi (pas d'agrégation)
-            R->>G: saisiesParNoeud.get(N.cle)
+            R->>G: saisiesByNoeud.get(N.key)
             G-->>R: SaisieTronquee[]
             Note over R: map → PointInterne type='saisie'
         else dérivée
@@ -356,18 +356,18 @@ sequenceDiagram
                     alt state.pointer = -1 (aucune valeur ≤ B)
                         Note over CSD: contribution { source: 'manquante',<br/>valeur: null, dateOrigine: null }
                     else state.pointer ≥ 0
-                        Note over CSD: courant = state.points[state.pointer]<br/>dateOrigine = courant.type === 'saisie'<br/>  ? courant.dateOrigine (pré-troncature)<br/>  : courant.bucket<br/>source = state.estAgrege ? 'derivee' : 'saisie'<br/>push courant.valeur → valeursAAgreger
+                        Note over CSD: current = state.points[state.pointer]<br/>dateOrigine = current.type === 'saisie'<br/>  ? current.dateOrigine (pré-troncature)<br/>  : current.bucket<br/>source = state.isAgrege ? 'derivee' : 'saisie'<br/>push current.valeur → valeursToAggregate
                     end
                 end
-                alt valeursAAgreger.length === 0
+                alt valeursToAggregate.length === 0
                     Note over CSD: skip bucket (aucun enfant n'a encore de valeur)
                 else
-                    Note over CSD: valeur = agreger({ valeurs: valeursAAgreger, fonction: fonctionAgregation })<br/>émettre PointInterne type='derivee'<br/>couverture { nbEnfantsAvecValeur, nbEnfantsTotal }
+                    Note over CSD: valeur = aggregate({ valeurs: valeursToAggregate, fonction: fonctionAgregation })<br/>émettre PointInterne type='derivee'<br/>couverture { nbEnfantsAvecValeur, nbEnfantsTotal }
                 end
             end
             CSD-->>R: PointInterne[] type='derivee'
         end
-        R->>Cache: set(N.cle, serie)
+        R->>Cache: set(N.key, serie)
         R-->>Caller: PointInterne[]
     end
 ```
@@ -392,12 +392,12 @@ resolveObjectifIndividu({ individuId, ctx, cache })       [synchrone]
    ├── feuille (fonctionAgregation === null) ?
    │     │
    │     ├─ OUI → buildSaisieMap({ individuId, ctx })
-   │     │         ctx.objectifBucketParIndividu.get(individuId)
+   │     │         ctx.objectifBucketByIndividu.get(individuId)
    │     │           → Map<BucketKey, PointObjectifInterne type='saisie' (bucket, valeur)>
    │     │
    │     └─ NON → computeObjectifDerive({ parentId, ctx, cache, fonctionAgregation })
    │                │
-   │                ├── enfants = ctx.enfantsParParent.get(parent), triés par publicId asc
+   │                ├── enfants = ctx.enfantsByParent.get(parent), triés par publicId asc
    │                │
    │                ├── pour chaque enfant (récursion synchrone, mémoïsée) :
    │                │     state.values  = resolveObjectifIndividu({ individuId: enfant.id, ctx, cache })
@@ -414,7 +414,7 @@ resolveObjectifIndividu({ individuId, ctx, cache })       [synchrone]
    │                      │     si pointer < 0 → allHaveValue = false ; BREAK
    │                      │     sinon → push contribution + valeur
    │                      └── si allHaveValue && valeurs.length > 0 :
-   │                            result.set(B, type='derivee', agreger({ valeurs, fonction: fonctionAgregation }))
+   │                            result.set(B, type='derivee', aggregate({ valeurs, fonction: fonctionAgregation }))
    │                          sinon → skip ce bucket
    │
    └── cache.set(individuId, result) ; retour Map<BucketKey, PointObjectifInterne>
@@ -461,12 +461,12 @@ sequenceDiagram
     else cache miss
         R->>Ctx: getFonctionAgregationActive({ individuId, hierarchy: ctx })
         alt feuille (pas de fonction d'agrégation)
-            R->>Ctx: objectifBucketParIndividu.get(I)
+            R->>Ctx: objectifBucketByIndividu.get(I)
             Ctx-->>R: Map<BucketKey, ObjectifSaisieBucketise>
             Note over R: map → Map<BucketKey, PointObjectifInterne type='saisie'>
         else dérivée
             R->>COD: { parentId, ctx, cache, fonctionAgregation }
-            COD->>Ctx: enfantsParParent.get(parent)<br/>tri par publicId asc
+            COD->>Ctx: enfantsByParent.get(parent)<br/>tri par publicId asc
             loop chaque enfant (récursion synchrone)
                 COD->>R: resolveObjectifIndividu({ individuId: enfant.id, ctx, cache }) — mémo
                 R-->>COD: enfant.values (Map) + buckets triés asc
@@ -481,13 +481,13 @@ sequenceDiagram
                     alt state.pointer = -1
                         Note over COD: allHaveValue = false<br/>BREAK la boucle (inutile de continuer)
                     else state.pointer ≥ 0
-                        Note over COD: dateCible = state.buckets[state.pointer]<br/>point = state.values.get(formatBucket(dateCible))<br/>contribution { valeur, dateCible,<br/>  estAgregee: point.type === 'derivee' }<br/>push point.valeur → valeurs
+                        Note over COD: dateCible = state.buckets[state.pointer]<br/>point = state.values.get(formatBucket(dateCible))<br/>contribution { valeur, dateCible,<br/>  isAgregee: point.type === 'derivee' }<br/>push point.valeur → valeurs
                     end
                 end
                 alt !allHaveValue OR valeurs.length === 0
                     Note over COD: SKIP bucket<br/>(au moins un enfant n'a aucun objectif ≤ B)
                 else
-                    Note over COD: valeur = agreger({ valeurs, fonction: fonctionAgregation })<br/>result.set(formatBucket(B),<br/>  { type: 'derivee', bucket: B, valeur,<br/>    fonctionAgregation, contributions })
+                    Note over COD: valeur = aggregate({ valeurs, fonction: fonctionAgregation })<br/>result.set(formatBucket(B),<br/>  { type: 'derivee', bucket: B, valeur,<br/>    fonctionAgregation, contributions })
                 end
             end
             COD-->>R: Map<BucketKey, PointObjectifInterne>
@@ -521,7 +521,7 @@ sequenceDiagram
 
 **Fichier** : `apps/mb-api/src/tauxProgression/resolveTauxProgression.ts` (nouveau)
 
-- Fonction pure `resolveTauxProgression({ valeurs, objectifsParIndividu, sensSouhaite })` → `TauxProgressionPoint[]`
+- Fonction pure `resolveTauxProgression({ valeurs, objectifsByIndividu, sensSouhaite })` → `TauxProgressionPoint[]`
 - Implémenter la recherche d'objectif applicable (`findObjectifApplicable`)
 - Implémenter le calcul du taux avec cap à 100 et gestion de la division par zéro
 - Couvrir par des tests unitaires

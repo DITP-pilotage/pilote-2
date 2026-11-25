@@ -4,7 +4,7 @@ import { type AxeCalcul, type ModaliteCalcul } from '@/axe/modalites'
 import { compareBuckets, parseBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
-import { cleCellule, type SaisiesCellule } from '@/valeurAvancement/cellule'
+import { celluleKey, type SaisiesCellule } from '@/valeurAvancement/cellule'
 import {
   type IndividuRef,
   type PointInterne,
@@ -50,33 +50,33 @@ const cube = ({
   modalites: ReadonlyArray<ModaliteCalcul>
   valeurs: ReadonlyArray<Valeur>
 }) => {
-  const modalitesParCombinaison = new Map<string, ReadonlyMap<string, string>>()
+  const modalitesByCombinaison = new Map<string, ReadonlyMap<string, string>>()
   const cellules = new Map<string, SaisiesCellule & { saisies: SaisieTronquee[] }>()
-  for (const { individu, modalites: parAxe, valeur, date = DATE } of valeurs) {
-    const combinaisonId = Object.values(parAxe).sort().join(',')
-    modalitesParCombinaison.set(combinaisonId, new Map(Object.entries(parAxe)))
-    const cle = cleCellule({ individuId: individu.id, combinaisonId })
-    const cellule = cellules.get(cle) ?? { individuId: individu.id, combinaisonId, saisies: [] }
+  for (const { individu, modalites: modaliteByAxe, valeur, date = DATE } of valeurs) {
+    const combinaisonId = Object.values(modaliteByAxe).sort().join(',')
+    modalitesByCombinaison.set(combinaisonId, new Map(Object.entries(modaliteByAxe)))
+    const key = celluleKey({ individuId: individu.id, combinaisonId })
+    const cellule = cellules.get(key) ?? { individuId: individu.id, combinaisonId, saisies: [] }
     cellule.saisies.push({
       bucket: parseBucket(date),
       dateOrigine: parseBucket(date),
       valeur: new Decimal(valeur),
     })
     cellule.saisies.sort((a, b) => compareBuckets(a.bucket, b.bucket))
-    cellules.set(cle, cellule)
+    cellules.set(key, cellule)
   }
   return buildGrapheSerie({
     individus: [PACA, D84, D13],
-    enfantsParParent: new Map([[PACA.id, [D84, D13]]]),
-    fonctionAgregationParReferentiel: new Map([[REF_REG, fonctionReg]]),
+    enfantsByParent: new Map([[PACA.id, [D84, D13]]]),
+    fonctionAgregationByReferentiel: new Map([[REF_REG, fonctionReg]]),
     axes,
     modalites,
     cellules: [...cellules.values()],
-    modalitesParCombinaison,
+    modalitesByCombinaison,
   })
 }
 
-const dernierPoint = async (
+const lastPointOf = async (
   { graphe, noeud }: ReturnType<typeof cube>,
   individu: IndividuRef,
   selection: Record<string, string> = {},
@@ -89,8 +89,8 @@ const dernierPoint = async (
     })
   ).at(-1)
 
-const valeurDe = async (...args: Parameters<typeof dernierPoint>) =>
-  (await dernierPoint(...args))?.valeur.toNumber()
+const valeurOf = async (...args: Parameters<typeof lastPointOf>) =>
+  (await lastPointOf(...args))?.valeur.toNumber()
 
 // --- Points d'accueil pour 10 000 habitants (point n°1 de PIL-1963) ---------
 
@@ -114,24 +114,24 @@ describe('buildGrapheSerie — un axe', () => {
   it('combine les axes avant la hiérarchie des individus : PACA = (1 + 2 + 3) / 2 = 3', async () => {
     const graphe = paca('AVG', 'SUM')
 
-    expect(await valeurDe(graphe, D84)).toBe(3)
-    expect(await valeurDe(graphe, D13)).toBe(3)
-    expect(await valeurDe(graphe, PACA)).toBe(3)
+    expect(await valeurOf(graphe, D84)).toBe(3)
+    expect(await valeurOf(graphe, D13)).toBe(3)
+    expect(await valeurOf(graphe, PACA)).toBe(3)
   })
 
   it('moyenne sur les deux : 84 = 1,5, PACA = 2,25', async () => {
     const graphe = paca('AVG', 'AVG')
 
-    expect(await valeurDe(graphe, D84)).toBe(1.5)
-    expect(await valeurDe(graphe, PACA)).toBe(2.25)
+    expect(await valeurOf(graphe, D84)).toBe(1.5)
+    expect(await valeurOf(graphe, PACA)).toBe(2.25)
   })
 
   it('PACA · France Travail = (1 + 3) / 2 = 2', async () => {
-    expect(await valeurDe(paca('AVG', 'SUM'), PACA, { [OPERATEUR]: 'ft' })).toBe(2)
+    expect(await valeurOf(paca('AVG', 'SUM'), PACA, { [OPERATEUR]: 'ft' })).toBe(2)
   })
 
   it('n’attend pas une modalité jamais observée : la CAF ne compte pas dans le 13', async () => {
-    const point = await dernierPoint(paca('AVG', 'SUM'), D13)
+    const point = await lastPointOf(paca('AVG', 'SUM'), D13)
 
     expect(point).toMatchObject({
       type: 'derivee',
@@ -140,7 +140,7 @@ describe('buildGrapheSerie — un axe', () => {
   })
 
   it('expose les modalités dans les contributions', async () => {
-    const point = await dernierPoint(paca('AVG', 'SUM'), D84)
+    const point = await lastPointOf(paca('AVG', 'SUM'), D84)
 
     expect(point?.type === 'derivee' && point.contributions).toMatchObject([
       { individuPublicId: 'DEPT-84', modalites: ['CAF'], source: 'saisie' },
@@ -149,7 +149,7 @@ describe('buildGrapheSerie — un axe', () => {
   })
 
   it('renvoie une série vide pour une modalité jamais observée de l’individu', async () => {
-    expect(await dernierPoint(paca('AVG', 'SUM'), D13, { [OPERATEUR]: 'caf' })).toBeUndefined()
+    expect(await lastPointOf(paca('AVG', 'SUM'), D13, { [OPERATEUR]: 'caf' })).toBeUndefined()
   })
 
   it('individu saisi (NONE) : « Tous » se calcule à son niveau', async () => {
@@ -164,7 +164,7 @@ describe('buildGrapheSerie — un axe', () => {
       ],
     })
 
-    expect(await valeurDe(graphe, PACA)).toBe(11)
+    expect(await valeurOf(graphe, PACA)).toBe(11)
   })
 })
 
@@ -196,14 +196,14 @@ describe('buildGrapheSerie — axe imbriqué', () => {
   })
 
   it('remonte les niveaux : feuille, parent, grand-parent, « Tous »', async () => {
-    expect(await valeurDe(graphe, D84, { [FRAUDE]: 'a1x' })).toBe(1)
-    expect(await valeurDe(graphe, D84, { [FRAUDE]: 'a1' })).toBe(3)
-    expect(await valeurDe(graphe, D84, { [FRAUDE]: 'a' })).toBe(7)
-    expect(await valeurDe(graphe, D84)).toBe(15)
+    expect(await valeurOf(graphe, D84, { [FRAUDE]: 'a1x' })).toBe(1)
+    expect(await valeurOf(graphe, D84, { [FRAUDE]: 'a1' })).toBe(3)
+    expect(await valeurOf(graphe, D84, { [FRAUDE]: 'a' })).toBe(7)
+    expect(await valeurOf(graphe, D84)).toBe(15)
   })
 
   it('ne détaille une modalité parente qu’en ses enfants observés', async () => {
-    const point = await dernierPoint(graphe, D84, { [FRAUDE]: 'b1' })
+    const point = await lastPointOf(graphe, D84, { [FRAUDE]: 'b1' })
 
     expect(point).toMatchObject({
       valeur: new Decimal(8),
@@ -213,7 +213,7 @@ describe('buildGrapheSerie — axe imbriqué', () => {
 
   it('niveau intermédiaire dont une feuille est vide à une date : manquante, puis report', async () => {
     // a1x saisie en janvier seulement, a1y à partir de mars : les deux sont attendues.
-    const avecDates = cube({
+    const withDates = cube({
       fonctionReg: 'SUM',
       axes: [{ id: FRAUDE, fonction: 'SUM' }],
       modalites: [
@@ -227,14 +227,14 @@ describe('buildGrapheSerie — axe imbriqué', () => {
         { individu: D84, modalites: { [FRAUDE]: 'a1y' }, valeur: 2, date: '2025-03-01' },
       ],
     })
-    const serieDe = async (selection: Record<string, string>) =>
+    const serieOf = async (selection: Record<string, string>) =>
       resolveSerieNoeud({
-        noeud: avecDates.noeud({ individu: D84, selection: new Map(Object.entries(selection)) }),
-        graphe: avecDates.graphe,
+        noeud: withDates.noeud({ individu: D84, selection: new Map(Object.entries(selection)) }),
+        graphe: withDates.graphe,
         cache: new Map(),
       })
 
-    const [janvier, mars] = await serieDe({ [FRAUDE]: 'a1' })
+    const [janvier, mars] = await serieOf({ [FRAUDE]: 'a1' })
     expect(janvier).toMatchObject({
       valeur: new Decimal(1),
       couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
@@ -251,7 +251,7 @@ describe('buildGrapheSerie — axe imbriqué', () => {
         { modalites: ['A1Y'], valeur: new Decimal(2) },
       ],
     })
-    expect((await serieDe({})).map((point) => point.valeur.toNumber())).toEqual([1, 3])
+    expect((await serieOf({})).map((point) => point.valeur.toNumber())).toEqual([1, 3])
   })
 })
 
@@ -272,7 +272,7 @@ describe('buildGrapheSerie — deux axes', () => {
     { individu: D84, modalites: { [OP]: 'sfr', [FR]: 'tva' }, valeur: 30 },
     { individu: D84, modalites: { [OP]: 'orange', [FR]: 'ir' }, valeur: 20 },
   ]
-  const operateurEnPremier = cube({
+  const operateurFirst = cube({
     fonctionReg: 'SUM',
     axes: [
       { id: OP, fonction: 'AVG' },
@@ -283,11 +283,11 @@ describe('buildGrapheSerie — deux axes', () => {
   })
 
   it('combine le premier axe déclaré en premier : opérateurs puis fraude = 40', async () => {
-    expect(await valeurDe(operateurEnPremier, D84)).toBe(40)
+    expect(await valeurOf(operateurFirst, D84)).toBe(40)
   })
 
   it('dans l’ordre inverse, fraude puis opérateurs = 30', async () => {
-    const fraudeEnPremier = cube({
+    const fraudeFirst = cube({
       fonctionReg: 'SUM',
       axes: [
         { id: FR, fonction: 'SUM' },
@@ -297,15 +297,15 @@ describe('buildGrapheSerie — deux axes', () => {
       valeurs,
     })
 
-    expect(await valeurDe(fraudeEnPremier, D84)).toBe(30)
+    expect(await valeurOf(fraudeFirst, D84)).toBe(30)
   })
 
   it('sélection partielle : une modalité sur un axe, « Tous » sur l’autre', async () => {
-    expect(await valeurDe(operateurEnPremier, D84, { [FR]: 'tva' })).toBe(20)
-    expect(await valeurDe(operateurEnPremier, D84, { [OP]: 'orange' })).toBe(30)
+    expect(await valeurOf(operateurFirst, D84, { [FR]: 'tva' })).toBe(20)
+    expect(await valeurOf(operateurFirst, D84, { [OP]: 'orange' })).toBe(30)
   })
 
   it('sélection complète : la saisie', async () => {
-    expect(await valeurDe(operateurEnPremier, D84, { [OP]: 'sfr', [FR]: 'tva' })).toBe(30)
+    expect(await valeurOf(operateurFirst, D84, { [OP]: 'sfr', [FR]: 'tva' })).toBe(30)
   })
 })

@@ -11,23 +11,23 @@ export const getFonctionAgregationActive = ({
 }: {
   individuId: string
   hierarchy: {
-    enfantsParParent: ReadonlyMap<string, ReadonlyArray<{ id: string }>>
-    fonctionAgregationParReferentiel: ReadonlyMap<string, FonctionAgregation>
-    referentielParIndividu: ReadonlyMap<string, string>
+    enfantsByParent: ReadonlyMap<string, ReadonlyArray<{ id: string }>>
+    fonctionAgregationByReferentiel: ReadonlyMap<string, FonctionAgregation>
+    referentielByIndividu: ReadonlyMap<string, string>
   }
 }): FonctionAgregation | null => {
-  const enfants = hierarchy.enfantsParParent.get(individuId)
+  const enfants = hierarchy.enfantsByParent.get(individuId)
   if (!enfants || enfants.length === 0) return null
-  const referentielId = hierarchy.referentielParIndividu.get(individuId)
+  const referentielId = hierarchy.referentielByIndividu.get(individuId)
   if (!referentielId) return null
-  const fonction = hierarchy.fonctionAgregationParReferentiel.get(referentielId)
+  const fonction = hierarchy.fonctionAgregationByReferentiel.get(referentielId)
   if (!fonction || fonction === 'NONE') return null
   return fonction
 }
 
 // Précondition : `valeurs` est non vide et `fonction` est active (≠ 'NONE').
 // `AVG` est une moyenne arithmétique simple non pondérée.
-export const agreger = ({
+export const aggregate = ({
   valeurs,
   fonction,
 }: {
@@ -42,7 +42,7 @@ export const agreger = ({
       return somme.dividedBy(valeurs.length)
     case 'NONE':
       throw new Error(
-        "agreger appelé avec fonction 'NONE' : une dérivation ne devrait pas être déclenchée " +
+        "aggregate appelé avec fonction 'NONE' : une dérivation ne devrait pas être déclenchée " +
           "lorsque l'agrégation est désactivée.",
       )
   }

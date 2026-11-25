@@ -29,7 +29,7 @@ export const computeTauxProgressionPoints = async ({
   individusCibles,
   dateTruncValeur,
   dateTruncObjectif,
-  derniersPoints = null,
+  lastPointCount = null,
 }: {
   indicateurId: string
   sensSouhaite: SensSouhaite
@@ -37,18 +37,18 @@ export const computeTauxProgressionPoints = async ({
   dateTruncValeur: DateTrunc
   dateTruncObjectif: DateTrunc
   // Nombre de derniers points de valeur à rendre par cible ; null pour toute la série.
-  derniersPoints?: number | null
+  lastPointCount?: number | null
 }): Promise<TauxProgressionPoint[]> => {
   if (individusCibles.length === 0) return []
 
   // Indicateur à axes : la série d'un individu est « Tous » (la marginale), le
   // taux est donc marginale / objectif de l'individu (D6).
-  const [{ serieDe }, { ctx: objectifCtx }] = await Promise.all([
+  const [{ serieOf }, { ctx: objectifCtx }] = await Promise.all([
     loadResolveSerieContext({
       indicateurId,
       individusCibles,
       dateTrunc: dateTruncValeur,
-      derniersPoints,
+      lastPointCount,
     }),
     loadResolveObjectifContext({
       indicateurId,
@@ -59,10 +59,10 @@ export const computeTauxProgressionPoints = async ({
   const objectifCache = new Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>()
 
   const valeurs: ValeurBrute[] = []
-  const objectifsParIndividu = new Map<string, ObjectifBrut[]>()
+  const objectifsByIndividu = new Map<string, ObjectifBrut[]>()
 
   for (const cible of individusCibles) {
-    for (const point of serieDe(cible)) {
+    for (const point of serieOf(cible)) {
       valeurs.push({
         individuId: cible.id,
         individuPublicId: cible.publicId,
@@ -80,8 +80,8 @@ export const computeTauxProgressionPoints = async ({
     const objectifsList: ObjectifBrut[] = [...objectifsMap.values()]
       .map((point) => ({ dateCible: point.bucket, valeurCible: point.valeur }))
       .sort((a, b) => compareBuckets(a.dateCible, b.dateCible))
-    objectifsParIndividu.set(cible.id, objectifsList)
+    objectifsByIndividu.set(cible.id, objectifsList)
   }
 
-  return resolveTauxProgression({ valeurs, objectifsParIndividu, sensSouhaite })
+  return resolveTauxProgression({ valeurs, objectifsByIndividu, sensSouhaite })
 }

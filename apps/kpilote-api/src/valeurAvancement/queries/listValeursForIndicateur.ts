@@ -13,7 +13,7 @@ import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { compareBuckets, formatBucket, parseBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
-import { loadIndividusParPublicId } from '@/indicateur/loadIndicateurIndividuContext'
+import { loadIndividusByPublicId } from '@/indicateur/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
 import { type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
@@ -73,12 +73,12 @@ const buildSeries = async ({
   query: ListValeursForIndicateurQuery
   selection: Selection
 }): Promise<ValeurAvancementListApiModel> => {
-  const individusCibles = await loadIndividusParPublicId(query.individus)
+  const individusCibles = await loadIndividusByPublicId(query.individus)
   if (individusCibles.length === 0) return { items: [] }
 
   const dateTrunc: DateTrunc = query.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  const { serieDe, allNodes } = await loadResolveSerieContext({
+  const { serieOf, allNodes } = await loadResolveSerieContext({
     indicateurId,
     individusCibles,
     dateTrunc,
@@ -89,7 +89,7 @@ const buildSeries = async ({
   const dateFin = query.dateFin ? parseBucket(query.dateFin) : null
   const items: ValeurAvancementApiModel[] = []
   for (const individuCible of individusCibles) {
-    for (const point of serieDe(individuCible)) {
+    for (const point of serieOf(individuCible)) {
       if (dateDebut && compareBuckets(point.bucket, dateDebut) < 0) continue
       if (dateFin && compareBuckets(point.bucket, dateFin) > 0) continue
       items.push(
@@ -130,13 +130,13 @@ const toApiModel = ({
       type: 'saisie',
     }
   }
-  const contributions: ContributionApiModel[] = point.contributions.map((c) => ({
-    individu: c.individuPublicId,
-    valeur: c.valeur === null ? null : c.valeur.toNumber(),
-    date: c.dateOrigine === null ? null : formatBucket(c.dateOrigine),
-    source: c.source,
+  const contributions: ContributionApiModel[] = point.contributions.map((contribution) => ({
+    individu: contribution.individuPublicId,
+    valeur: contribution.valeur === null ? null : contribution.valeur.toNumber(),
+    date: contribution.dateOrigine === null ? null : formatBucket(contribution.dateOrigine),
+    source: contribution.source,
     // Champ absent sans axe : la réponse des indicateurs sans axe ne change pas.
-    ...(c.modalites.length > 0 ? { modalites: [...c.modalites] } : {}),
+    ...(contribution.modalites.length > 0 ? { modalites: [...contribution.modalites] } : {}),
   }))
   return {
     indicateur: indicateurPublicId,
