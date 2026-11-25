@@ -12,7 +12,7 @@ import {
 } from '@/queries/indicateurs'
 
 // 13 (et non 12) pour faire apparaître deux occurrences du même mois sur les indicateurs saisis une fois par an.
-const DEFAULT_WINDOW = 13
+export const DEFAULT_WINDOW = 13
 
 const SERIES_VALEUR = 'Valeur'
 const SERIES_OBJECTIF = 'Objectif'
@@ -26,7 +26,7 @@ type IndicateurValeursChartProps = {
   legend?: string | null
 }
 
-type AxisTooltipParam = {
+export type AxisTooltipParam = {
   seriesName?: string
   value?: unknown
   dataIndex?: number

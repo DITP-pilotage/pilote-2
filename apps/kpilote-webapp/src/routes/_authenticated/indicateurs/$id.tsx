@@ -50,6 +50,8 @@ const searchSchema = z.object({
   referentiel: referentielPublicIdSchema.optional(),
   // Modalités séparées par une virgule, au plus une par axe ; un axe absent vaut « Tous ».
   modalites: z.string().optional(),
+  // Axe du graphique « Décomposer par » ; un axe non déclaré est ignoré.
+  decomposer: z.string().optional(),
   onglet: z.enum(['resultats', 'metadonnees']).default('resultats'),
   sousOnglet: z.enum(['confiance', 'evolution', 'commentaire']).default('confiance'),
 })
@@ -279,6 +281,14 @@ function IndicateurDetailComponent() {
               referentielNom={referentielNom}
               modalites={modalites}
               legend={selectionLabel({ axes, selection })}
+              axes={axes}
+              selection={selection}
+              decomposer={search.decomposer}
+              onDecomposerChange={(decomposer) => {
+                startTransition(() => {
+                  void navigate({ search: (prev) => ({ ...prev, decomposer }), resetScroll: false })
+                })
+              }}
               sousOnglet={search.sousOnglet}
               onSousOngletChange={(sousOnglet) => {
                 void navigate({ search: (prev) => ({ ...prev, sousOnglet }), resetScroll: false })

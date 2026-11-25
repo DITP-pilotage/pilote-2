@@ -96,12 +96,45 @@ const enumerateMonths = ({
 
 const currentMonth = (): Temporal.PlainDate => Temporal.Now.plainDateISO('UTC').with({ day: 1 })
 
-// Construit la série mensuelle consommée par le chart :
+// Axe des mois consommé par le chart :
 // - ancre = mois de la dernière valeur, ou mois courant à défaut ;
 // - série = du plus ancien mois disponible (ou ancre−(windowSize−1) si pas
 //   d'historique antérieur) jusqu'à l'ancre, sans trou ;
 // - defaultWindow = derniers `windowSize` mois pour cadrer l'affichage initial,
 //   le reste reste accessible via le slider ECharts.
+const buildMonthAxis = ({
+  valeurs,
+  windowSize,
+}: {
+  valeurs: ReadonlyArray<ValeurDateApiModel>
+  windowSize: number
+}): Pick<MonthlySeries, 'months' | 'defaultWindow'> => {
+  const { earliest, latest } = monthBounds(valeurs)
+  const anchor = latest ?? currentMonth()
+  const minStart = anchor.subtract({ months: windowSize - 1 })
+  const start = earliest ? earlier(earliest, minStart) : minStart
+  const months = enumerateMonths({ start, end: anchor })
+  const lastIndex = months.length - 1
+  return {
+    months,
+    defaultWindow: {
+      startIndex: Math.max(0, lastIndex - (windowSize - 1)),
+      endIndex: lastIndex,
+    },
+  }
+}
+
+const valuesOnMonths = ({
+  months,
+  valeurs,
+}: {
+  months: ReadonlyArray<Month>
+  valeurs: ReadonlyArray<ValeurDateApiModel>
+}): Array<number | null> => {
+  const valueByKey = latestValueByMonthKey(valeurs)
+  return months.map((month): number | null => valueByKey.get(month.key) ?? null)
+}
+
 // `valeursCible` et `tauxProgression` sont alignés sur le même axe X via le
 // bucket mensuel, et restent `null` pour les mois sans objectif applicable.
 export const buildMonthlySeries = ({
@@ -113,29 +146,53 @@ export const buildMonthlySeries = ({
   tauxProgression: ReadonlyArray<TauxProgressionPointApiModel>
   windowSize: number
 }): MonthlySeries => {
-  const valueByKey = latestValueByMonthKey(valeurs)
   const tauxByKey = tauxByMonthKey(tauxProgression)
-  const { earliest, latest } = monthBounds(valeurs)
-  const anchor = latest ?? currentMonth()
-  const minStart = anchor.subtract({ months: windowSize - 1 })
-  const start = earliest ? earlier(earliest, minStart) : minStart
-  const months = enumerateMonths({ start, end: anchor })
-  const values = months.map((month): number | null => valueByKey.get(month.key) ?? null)
+  const { months, defaultWindow } = buildMonthAxis({ valeurs, windowSize })
   const valeursCible = months.map(
     (month): number | null => tauxByKey.get(month.key)?.valeurCible ?? null,
   )
   const taux = months.map(
     (month): number | null => tauxByKey.get(month.key)?.tauxProgression ?? null,
   )
-  const lastIndex = months.length - 1
   return {
     months,
-    values,
+    values: valuesOnMonths({ months, valeurs }),
     valeursCible,
     tauxProgression: taux,
-    defaultWindow: {
-      startIndex: Math.max(0, lastIndex - (windowSize - 1)),
-      endIndex: lastIndex,
-    },
+    defaultWindow,
+  }
+}
+
+export type MonthlyMultiSeries = Pick<MonthlySeries, 'months' | 'defaultWindow'> & {
+  series: ReadonlyArray<{ key: string; name: string; values: ReadonlyArray<number | null> }>
+}
+
+// Plusieurs séries sur un même axe des mois, borné par l'ensemble de leurs valeurs.
+// Une série sans valeur est écartée : elle n'apporterait qu'une entrée de légende vide.
+export const buildMonthlyMultiSeries = ({
+  series,
+  windowSize,
+}: {
+  series: ReadonlyArray<{
+    key: string
+    name: string
+    valeurs: ReadonlyArray<ValeurDateApiModel>
+  }>
+  windowSize: number
+}): MonthlyMultiSeries => {
+  const { months, defaultWindow } = buildMonthAxis({
+    valeurs: series.flatMap((serie) => serie.valeurs),
+    windowSize,
+  })
+  return {
+    months,
+    defaultWindow,
+    series: series
+      .filter((serie) => serie.valeurs.length > 0)
+      .map((serie) => ({
+        key: serie.key,
+        name: serie.name,
+        values: valuesOnMonths({ months, valeurs: serie.valeurs }),
+      })),
   }
 }

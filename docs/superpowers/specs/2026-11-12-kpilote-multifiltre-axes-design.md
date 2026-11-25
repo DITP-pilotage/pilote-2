@@ -280,8 +280,9 @@ Pour lire un fichier du POC : `git show origin/claude/individu-dimension-poc-f01
 
 1. ~~**Rejeu pilote-ppg (PIL-1979).**~~ Tranché (#2674) : les tests sont des tests de non-régression des
    écritures (`valeurs:batch`, `PUT /indicateurs`), sans référence à pilote-ppg.
-2. **Format de la décomposition dans l'API** : à figer dans PIL-1998. Le format de `modalites=` pour les lectures
-   est figé par PIL-1991 (§6).
+2. ~~**Format de la décomposition dans l'API.**~~ Tranché (PIL-1998) : pas de format dédié. La webapp lit chaque
+   série du graphique « Décomposer par » par `GET /indicateurs/{id}/valeurs?modalites=` (format figé par PIL-1991,
+   §6), une lecture par modalité, la même que celle du sélecteur.
 3. **Ticket PIL-1980** (feature flag) : abandonné (D12), à supprimer dans Jira.
 4. ~~**Total connu, ventilation partielle.**~~ Tranché (2026-11-17, PIL-1994) : pas de cas particulier. Sur un
    indicateur à axes, on ne saisit que sur une combinaison complète de modalités feuilles (D9) : un total
