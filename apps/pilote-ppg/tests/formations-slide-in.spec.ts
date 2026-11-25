@@ -58,7 +58,7 @@ const ligneEtat = () =>
   });
 
 test.describe("Slide-in des formations", () => {
-  test("revient après la croix, puis ne revient plus après « Ne plus me les proposer »", async ({
+  test("revient après la croix, puis ne revient plus après « Ne plus afficher ces suggestions »", async ({
     page,
     e2eContext,
   }) => {
@@ -75,7 +75,7 @@ test.describe("Slide-in des formations", () => {
     );
 
     const slideIn = page.getByRole("region", {
-      name: "1 formation pour votre profil",
+      name: "1 formation adaptée à votre profil",
     });
     await expect(slideIn).toBeVisible({ timeout: 15_000 });
     await expect(slideIn.getByText("Formation e2e")).toBeVisible();
@@ -111,7 +111,7 @@ test.describe("Slide-in des formations", () => {
       "FERMETURE",
     );
     await slideIn
-      .getByRole("button", { name: "Ne plus me les proposer" })
+      .getByRole("button", { name: "Ne plus afficher ces suggestions" })
       .click();
     await expect(slideIn).toBeHidden();
     await fermeture;

@@ -86,7 +86,7 @@ export class GetFormationsAProposerQuery {
     });
     if (formations.length === 0) return null;
 
-    // Seul « Ne plus me les proposer » écarte la slide-in : la croix la masque sans rien enregistrer.
+    // Seul « Ne plus afficher ces suggestions » écarte la slide-in : la croix la masque sans rien enregistrer.
     const etat = await this.prisma
       .getInstance()
       .formation_periode_information_utilisateur.findUnique({
