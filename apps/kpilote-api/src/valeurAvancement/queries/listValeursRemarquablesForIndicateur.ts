@@ -24,10 +24,17 @@ import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 // pour les agrégés (cf. doc d'archi `indicateur-derives.md`).
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
-const performList = async (
-  indicateurPublicId: string,
-  params: ListValeursRemarquablesForIndicateurQuery,
-): Promise<Result<ValeursRemarquablesListApiModel, ResolveSelectionError>> => {
+type ListValeursRemarquablesForIndicateurParams = {
+  indicateurPublicId: string
+  query: ListValeursRemarquablesForIndicateurQuery
+}
+
+const performList = async ({
+  indicateurPublicId,
+  query,
+}: ListValeursRemarquablesForIndicateurParams): Promise<
+  Result<ValeursRemarquablesListApiModel, ResolveSelectionError>
+> => {
   const principalId = requireCurrentPrincipalId()
   const indicateur = await db().indicateur.findFirstOrThrow({
     where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
@@ -35,17 +42,16 @@ const performList = async (
   })
   const selection = await resolveSelection({
     indicateurId: indicateur.id,
-    modalitePublicIds: params.modalites ?? [],
+    modalitePublicIds: query.modalites ?? [],
   })
   if (selection.isErr()) return err(selection.error)
-  return ok(await buildStats({ indicateurId: indicateur.id, params, selection: selection.value }))
+  return ok(await buildStats({ indicateurId: indicateur.id, query, selection: selection.value }))
 }
 
 export const listValeursRemarquablesForIndicateur = (
-  indicateurPublicId: string,
-  params: ListValeursRemarquablesForIndicateurQuery,
+  params: ListValeursRemarquablesForIndicateurParams,
 ): ResultAsync<ValeursRemarquablesListApiModel, ResolveSelectionError> =>
-  new ResultAsync(performList(indicateurPublicId, params))
+  new ResultAsync(performList(params))
 
 // Pour chaque référentiel demandé, on calcule min/max/médiane sur la dernière
 // valeur connue de chaque individu — saisie pour les feuilles, dérivée pour les
@@ -60,18 +66,18 @@ export const listValeursRemarquablesForIndicateur = (
 // observée n'a pas de valeur et sort des statistiques.
 const buildStats = async ({
   indicateurId,
-  params,
+  query,
   selection,
 }: {
   indicateurId: string
-  params: ListValeursRemarquablesForIndicateurQuery
+  query: ListValeursRemarquablesForIndicateurQuery
   selection: Selection
 }): Promise<ValeursRemarquablesListApiModel> => {
-  const referentiels = await loadReferentielsAvecIndividus(params.referentiels)
+  const referentiels = await loadReferentielsAvecIndividus(query.referentiels)
   if (referentiels.length === 0) return { items: [] }
 
-  const cibles: IndividuRef[] = referentiels.flatMap((r) => r.individus)
-  const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
+  const cibles: IndividuRef[] = referentiels.flatMap((referentiel) => referentiel.individus)
+  const dateTrunc: DateTrunc = query.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
   const { serieDe, allNodes } = await loadResolveSerieContext({
     indicateurId,
@@ -128,9 +134,9 @@ const loadReferentielsAvecIndividus = async (
     orderBy: { publicId: 'asc' },
     include: { individus: { orderBy: { publicId: 'asc' } } },
   })
-  return rows.map((r) => ({
-    publicId: r.publicId,
-    individus: r.individus.map(({ id, publicId, referentielId }) => ({
+  return rows.map((row) => ({
+    publicId: row.publicId,
+    individus: row.individus.map(({ id, publicId, referentielId }) => ({
       id,
       publicId,
       referentielId,

@@ -22,10 +22,17 @@ import { type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
 // avec saisies quotidiennes par département explose (cf. design doc D11).
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
-const performList = async (
-  indicateurPublicId: string,
-  params: ListValeursForIndicateurQuery,
-): Promise<Result<ValeurAvancementListApiModel, ResolveSelectionError>> => {
+type ListValeursForIndicateurParams = {
+  indicateurPublicId: string
+  query: ListValeursForIndicateurQuery
+}
+
+const performList = async ({
+  indicateurPublicId,
+  query,
+}: ListValeursForIndicateurParams): Promise<
+  Result<ValeurAvancementListApiModel, ResolveSelectionError>
+> => {
   const principalId = requireCurrentPrincipalId()
   const indicateur = await db().indicateur.findFirstOrThrow({
     where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
@@ -33,24 +40,23 @@ const performList = async (
   })
   const selection = await resolveSelection({
     indicateurId: indicateur.id,
-    modalitePublicIds: params.modalites ?? [],
+    modalitePublicIds: query.modalites ?? [],
   })
   if (selection.isErr()) return err(selection.error)
   return ok(
     await buildSeries({
       indicateurId: indicateur.id,
       indicateurPublicId,
-      params,
+      query,
       selection: selection.value,
     }),
   )
 }
 
 export const listValeursForIndicateur = (
-  indicateurPublicId: string,
-  params: ListValeursForIndicateurQuery,
+  params: ListValeursForIndicateurParams,
 ): ResultAsync<ValeurAvancementListApiModel, ResolveSelectionError> =>
-  new ResultAsync(performList(indicateurPublicId, params))
+  new ResultAsync(performList(params))
 
 // Orchestration en 3 phases : (1) résoudre les cibles publicId→id, (2) résoudre
 // leurs séries (`loadResolveSerieContext` charge et calcule fratrie par
@@ -59,18 +65,18 @@ export const listValeursForIndicateur = (
 const buildSeries = async ({
   indicateurId,
   indicateurPublicId,
-  params,
+  query,
   selection,
 }: {
   indicateurId: string
   indicateurPublicId: string
-  params: ListValeursForIndicateurQuery
+  query: ListValeursForIndicateurQuery
   selection: Selection
 }): Promise<ValeurAvancementListApiModel> => {
-  const individusCibles = await loadIndividusParPublicId(params.individus)
+  const individusCibles = await loadIndividusParPublicId(query.individus)
   if (individusCibles.length === 0) return { items: [] }
 
-  const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
+  const dateTrunc: DateTrunc = query.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
   const { serieDe, allNodes } = await loadResolveSerieContext({
     indicateurId,
@@ -79,8 +85,8 @@ const buildSeries = async ({
     selection,
   })
 
-  const dateDebut = params.dateDebut ? parseBucket(params.dateDebut) : null
-  const dateFin = params.dateFin ? parseBucket(params.dateFin) : null
+  const dateDebut = query.dateDebut ? parseBucket(query.dateDebut) : null
+  const dateFin = query.dateFin ? parseBucket(query.dateFin) : null
   const items: ValeurAvancementApiModel[] = []
   for (const individuCible of individusCibles) {
     for (const point of serieDe(individuCible)) {

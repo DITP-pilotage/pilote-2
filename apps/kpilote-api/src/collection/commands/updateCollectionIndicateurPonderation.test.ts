@@ -128,7 +128,10 @@ describe.concurrent('updateCollectionIndicateurPonderation', () => {
 
       const avant = (
         await runAsAdmin(apiKey.id, () =>
-          getCollectionTauxProgression(publicId, { individu: deptId }),
+          getCollectionTauxProgression({
+            collectionPublicId: publicId,
+            query: { individu: deptId },
+          }),
         )
       )._unsafeUnwrap().tauxProgression
 
@@ -138,7 +141,10 @@ describe.concurrent('updateCollectionIndicateurPonderation', () => {
 
       const apres = (
         await runAsAdmin(apiKey.id, () =>
-          getCollectionTauxProgression(publicId, { individu: deptId }),
+          getCollectionTauxProgression({
+            collectionPublicId: publicId,
+            query: { individu: deptId },
+          }),
         )
       )._unsafeUnwrap().tauxProgression
 

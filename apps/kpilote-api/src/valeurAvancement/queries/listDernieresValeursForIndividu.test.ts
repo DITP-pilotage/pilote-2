@@ -43,7 +43,10 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listDernieresValeursForIndividu(deptId, { indicateurs: [indId] }),
+        listDernieresValeursForIndividu({
+          individuPublicId: deptId,
+          query: { indicateurs: [indId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -70,7 +73,10 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listDernieresValeursForIndividu(deptId, { indicateurs: [indId] }),
+        listDernieresValeursForIndividu({
+          individuPublicId: deptId,
+          query: { indicateurs: [indId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({ items: [] })
@@ -85,7 +91,10 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listDernieresValeursForIndividu('DEPT-99', { indicateurs: [indId] }),
+        listDernieresValeursForIndividu({
+          individuPublicId: 'DEPT-99',
+          query: { indicateurs: [indId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({ items: [] })
@@ -111,8 +120,11 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listDernieresValeursForIndividu(deptId, {
-          indicateurs: [indAvecValeur, indSansValeur],
+        listDernieresValeursForIndividu({
+          individuPublicId: deptId,
+          query: {
+            indicateurs: [indAvecValeur, indSansValeur],
+          },
         }),
       )
 
@@ -156,7 +168,10 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listDernieresValeursForIndividu(deptId, { indicateurs: [indPublic, indPrive] }),
+        listDernieresValeursForIndividu({
+          individuPublicId: deptId,
+          query: { indicateurs: [indPublic, indPrive] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -203,7 +218,10 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listDernieresValeursForIndividu(regId, { indicateurs: [indId] }),
+        listDernieresValeursForIndividu({
+          individuPublicId: regId,
+          query: { indicateurs: [indId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({

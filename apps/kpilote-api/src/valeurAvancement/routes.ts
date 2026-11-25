@@ -471,14 +471,9 @@ export const valeurAvancementRoutes = createOpenApiHono()
 
 valeurAvancementRoutes.openapi(getValeursForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { individus, dateDebut, dateFin, dateTrunc, modalites } = context.req.valid('query')
-
-  return listValeursForIndicateur(id, {
-    individus,
-    dateDebut,
-    dateFin,
-    dateTrunc,
-    modalites,
+  return listValeursForIndicateur({
+    indicateurPublicId: id,
+    query: context.req.valid('query'),
   }).match(
     (data) =>
       jsonResponseOk({
@@ -587,7 +582,9 @@ valeurAvancementRoutes.openapi(upsertValeursAvancementBatchRoute, async (context
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  return withTransaction(() => upsertValeursAvancementBatch(id, { items: body.items })).match(
+  return withTransaction(() =>
+    upsertValeursAvancementBatch({ indicateurPublicId: id, body }),
+  ).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -609,9 +606,10 @@ valeurAvancementRoutes.openapi(upsertValeursAvancementBatchRoute, async (context
 
 valeurAvancementRoutes.openapi(getIndividusWithValeursRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { referentiel, cursor, pageSize } = context.req.valid('query')
-
-  return listIndividusWithValeurs(id, { referentiel, cursor, pageSize }).match(
+  return listIndividusWithValeurs({
+    indicateurPublicId: id,
+    query: context.req.valid('query'),
+  }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -625,9 +623,10 @@ valeurAvancementRoutes.openapi(getIndividusWithValeursRoute, async (context) => 
 
 valeurAvancementRoutes.openapi(getValeursRemarquablesForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { referentiels, dateTrunc, modalites } = context.req.valid('query')
-
-  return listValeursRemarquablesForIndicateur(id, { referentiels, dateTrunc, modalites }).match(
+  return listValeursRemarquablesForIndicateur({
+    indicateurPublicId: id,
+    query: context.req.valid('query'),
+  }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -649,9 +648,10 @@ valeurAvancementRoutes.openapi(getValeursRemarquablesForIndicateurRoute, async (
 
 valeurAvancementRoutes.openapi(getSyntheseIndividusRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { individus, dateTrunc, modalites } = context.req.valid('query')
-
-  return listSyntheseIndividus(id, { individus, dateTrunc, modalites }).match(
+  return listSyntheseIndividus({
+    indicateurPublicId: id,
+    query: context.req.valid('query'),
+  }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -673,9 +673,10 @@ valeurAvancementRoutes.openapi(getSyntheseIndividusRoute, async (context) => {
 
 valeurAvancementRoutes.openapi(getDernieresValeursForIndividuRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { indicateurs } = context.req.valid('query')
-
-  return listDernieresValeursForIndividu(id, { indicateurs }).match(
+  return listDernieresValeursForIndividu({
+    individuPublicId: id,
+    query: context.req.valid('query'),
+  }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -689,9 +690,10 @@ valeurAvancementRoutes.openapi(getDernieresValeursForIndividuRoute, async (conte
 
 valeurAvancementRoutes.openapi(getTauxProgressionForIndividuRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { indicateurs } = context.req.valid('query')
-
-  return listTauxProgressionForIndividu(id, { indicateurs }).match(
+  return listTauxProgressionForIndividu({
+    individuPublicId: id,
+    query: context.req.valid('query'),
+  }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -705,9 +707,10 @@ valeurAvancementRoutes.openapi(getTauxProgressionForIndividuRoute, async (contex
 
 valeurAvancementRoutes.openapi(getCollectionTauxProgressionForIndividuRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { collections } = context.req.valid('query')
-
-  return listCollectionTauxProgressionForIndividu(id, { collections }).match(
+  return listCollectionTauxProgressionForIndividu({
+    individuPublicId: id,
+    query: context.req.valid('query'),
+  }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -721,9 +724,10 @@ valeurAvancementRoutes.openapi(getCollectionTauxProgressionForIndividuRoute, asy
 
 valeurAvancementRoutes.openapi(getTauxProgressionRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const query = context.req.valid('query')
-
-  return listTauxProgressionForIndicateur(id, query).match(
+  return listTauxProgressionForIndicateur({
+    indicateurPublicId: id,
+    query: context.req.valid('query'),
+  }).match(
     (data) =>
       jsonResponseOk({
         context,

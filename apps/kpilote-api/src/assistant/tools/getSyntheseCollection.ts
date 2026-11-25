@@ -33,8 +33,9 @@ Ne l'utilise pas pour : le détail d'un indicateur de la collection → get_synt
     }
     if (!collection || !individu) return empty
 
-    const taux = await getCollectionTauxProgression(collectionId, {
-      individu: individuId,
+    const taux = await getCollectionTauxProgression({
+      collectionPublicId: collectionId,
+      query: { individu: individuId },
     }).unwrapOr(null)
     if (!taux) return empty
 

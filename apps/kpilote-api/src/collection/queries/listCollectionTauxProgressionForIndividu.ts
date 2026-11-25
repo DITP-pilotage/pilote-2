@@ -30,16 +30,20 @@ const collectionListArgs = {
 
 type CollectionRow = Prisma.CollectionGetPayload<typeof collectionListArgs>
 
-export const listCollectionTauxProgressionForIndividu = (
-  individuPublicId: string,
-  params: ListCollectionTauxProgressionForIndividuQuery,
-): ResultAsync<CollectionTauxProgressionSummaryListApiModel, never> =>
-  ResultAsync.fromSafePromise(build(individuPublicId, params))
+type ListCollectionTauxProgressionForIndividuParams = {
+  individuPublicId: string
+  query: ListCollectionTauxProgressionForIndividuQuery
+}
 
-const build = async (
-  individuPublicId: string,
-  params: ListCollectionTauxProgressionForIndividuQuery,
-): Promise<CollectionTauxProgressionSummaryListApiModel> => {
+export const listCollectionTauxProgressionForIndividu = (
+  params: ListCollectionTauxProgressionForIndividuParams,
+): ResultAsync<CollectionTauxProgressionSummaryListApiModel, never> =>
+  ResultAsync.fromSafePromise(build(params))
+
+const build = async ({
+  individuPublicId,
+  query,
+}: ListCollectionTauxProgressionForIndividuParams): Promise<CollectionTauxProgressionSummaryListApiModel> => {
   const principalId = requireCurrentPrincipalId()
 
   const individuCible = await db().individu.findFirstOrThrow({
@@ -50,19 +54,19 @@ const build = async (
   const startedAt = performance.now()
 
   const collections = await db().collection.findMany({
-    where: withCollectionReadPermission({ publicId: { in: params.collections } }, principalId),
+    where: withCollectionReadPermission({ publicId: { in: query.collections } }, principalId),
     ...collectionListArgs,
   })
 
   const items = await withConcurrency(
-    collections.map((collection) => () => computeCollectionTaux(collection, individuCible)),
+    collections.map((collection) => () => computeCollectionTaux({ collection, individuCible })),
   )
 
   logger.info(
     {
       event: 'collection.listCollectionTauxProgressionForIndividu.timing',
       individuId: individuCible.id,
-      nbCollectionsDemandes: params.collections.length,
+      nbCollectionsDemandes: query.collections.length,
       nbCollectionsAccessibles: collections.length,
       nbItems: items.length,
       durationMs: Math.round(performance.now() - startedAt),
@@ -73,11 +77,17 @@ const build = async (
   return { items }
 }
 
-const computeCollectionTaux = async (
-  collection: CollectionRow,
-  individuCible: IndividuRef,
-): Promise<CollectionTauxProgressionSummaryApiModel> => {
-  const contributions = await computeContributions(collection.indicateurs, individuCible)
+const computeCollectionTaux = async ({
+  collection,
+  individuCible,
+}: {
+  collection: CollectionRow
+  individuCible: IndividuRef
+}): Promise<CollectionTauxProgressionSummaryApiModel> => {
+  const contributions = await computeContributions({
+    indicateurs: collection.indicateurs,
+    individuCible,
+  })
   const { tauxProgression, raisonSansTaux } = resolveCollectionTauxProgression(contributions)
   return { collection: collection.publicId, tauxProgression, raisonSansTaux }
 }

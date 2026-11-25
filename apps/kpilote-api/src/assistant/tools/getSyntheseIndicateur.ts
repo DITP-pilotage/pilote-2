@@ -28,10 +28,13 @@ export const findReadableIndicateur = async (id: string): Promise<IndicateurApiM
 }
 
 /** Le point le plus récent de chaque individu. */
-const latestByIndividu = <T extends { individu: string }>(
-  items: ReadonlyArray<T>,
-  dateOf: (item: T) => string,
-) => {
+const latestByIndividu = <T extends { individu: string }>({
+  items,
+  dateOf,
+}: {
+  items: ReadonlyArray<T>
+  dateOf: (item: T) => string
+}) => {
   const latest = new Map<string, T>()
   for (const item of items) {
     const current = latest.get(item.individu)
@@ -41,14 +44,12 @@ const latestByIndividu = <T extends { individu: string }>(
 }
 
 const withoutIndividus = (
-  indicateur: SyntheseIndicateurOutput['indicateur'],
-  rest: Partial<SyntheseIndicateurOutput>,
+  output: Pick<SyntheseIndicateurOutput, 'indicateur'> & Partial<SyntheseIndicateurOutput>,
 ): SyntheseIndicateurOutput => ({
-  indicateur,
   individus: [],
   valeursRemarquables: [],
   notFound: [],
-  ...rest,
+  ...output,
 })
 
 // Un périmètre explicite l'emporte ; à défaut, l'individu seul forme une sélection.
@@ -75,18 +76,38 @@ const readIndividus = async ({
 }): Promise<SyntheseIndicateurOutput['individus']> => {
   const ids = individus.map((individu) => individu.id)
   const [valeurs, objectifs, taux, synthese] = await Promise.all([
-    listValeursForIndicateur(indicateurId, { individus: ids }).unwrapOr({ items: [] }),
-    listObjectifsForIndicateur(indicateurId, { individus: ids }).unwrapOr({ items: [] }),
-    listTauxProgressionForIndicateur(indicateurId, { individus: ids }).unwrapOr({ items: [] }),
-    listSyntheseIndividus(indicateurId, { individus: ids }).unwrapOr({ items: [] }),
+    listValeursForIndicateur({
+      indicateurPublicId: indicateurId,
+      query: { individus: ids },
+    }).unwrapOr({ items: [] }),
+    listObjectifsForIndicateur({
+      indicateurPublicId: indicateurId,
+      query: { individus: ids },
+    }).unwrapOr({ items: [] }),
+    listTauxProgressionForIndicateur({
+      indicateurPublicId: indicateurId,
+      query: { individus: ids },
+    }).unwrapOr({ items: [] }),
+    listSyntheseIndividus({
+      indicateurPublicId: indicateurId,
+      query: { individus: ids },
+    }).unwrapOr({ items: [] }),
   ])
-  const derniereValeur = latestByIndividu(valeurs.items, (item) => item.date)
-  const objectif = latestByIndividu(objectifs.items, (item) => item.dateCible)
-  const dernierTaux = latestByIndividu(taux.items, (item) => item.date)
+  const derniereValeur = latestByIndividu({ items: valeurs.items, dateOf: (item) => item.date })
+  const objectif = latestByIndividu({
+    items: objectifs.items,
+    dateOf: (item) => item.dateCible,
+  })
+  const dernierTaux = latestByIndividu({ items: taux.items, dateOf: (item) => item.date })
   const syntheseParIndividu = new Map(synthese.items.map((item) => [item.individu, item]))
 
-  const dated = (valeur: number | undefined, date: string | undefined): DatedValue | null =>
-    valeur === undefined || date === undefined ? null : { valeur, date }
+  const dated = ({
+    valeur,
+    date,
+  }: {
+    valeur: number | undefined
+    date: string | undefined
+  }): DatedValue | null => (valeur === undefined || date === undefined ? null : { valeur, date })
   const lecture = (difference: number | null) =>
     difference === null ? null : interpretDifference({ difference, sensSouhaite })
 
@@ -97,8 +118,8 @@ const readIndividus = async ({
     const ecartMediane = syntheseParIndividu.get(individu.id)?.ecartMediane ?? null
     return {
       individu,
-      derniereValeur: dated(valeur?.valeur, valeur?.date),
-      objectif: dated(cible?.valeurCible, cible?.dateCible),
+      derniereValeur: dated({ valeur: valeur?.valeur, date: valeur?.date }),
+      objectif: dated({ valeur: cible?.valeurCible, date: cible?.dateCible }),
       tauxProgression: dernierTaux.get(individu.id)?.tauxProgression ?? null,
       variation,
       lectureVariation: lecture(variation),
@@ -121,7 +142,7 @@ Ne l'utilise pas pour : la série complète dans le temps → get_evolution_indi
 ${PERIMETRE_DESCRIPTION}`,
   execute: async ({ indicateurId, individuId, perimetre }) => {
     const indicateur = await findReadableIndicateur(indicateurId)
-    if (!indicateur) return withoutIndividus(null, { notFound: [indicateurId] })
+    if (!indicateur) return withoutIndividus({ indicateur: null, notFound: [indicateurId] })
 
     const identite = {
       id: indicateur.id,
@@ -140,8 +161,11 @@ ${PERIMETRE_DESCRIPTION}`,
       referentielIds.length === 0
         ? []
         : (
-            await listValeursRemarquablesForIndicateur(indicateurId, {
-              referentiels: referentielIds,
+            await listValeursRemarquablesForIndicateur({
+              indicateurPublicId: indicateurId,
+              query: {
+                referentiels: referentielIds,
+              },
             }).unwrapOr({ items: [] })
           ).items.map((item) => ({
             referentiel: identite.referentiels.find(
@@ -157,7 +181,8 @@ ${PERIMETRE_DESCRIPTION}`,
 
     const cible = await resolveCible({ perimetre, individuId })
     if (!cible) {
-      return withoutIndividus(identite, {
+      return withoutIndividus({
+        indicateur: identite,
         valeursRemarquables,
         needsClarification:
           'Les valeurs, objectifs et taux de progression se lisent pour un individu précis, et aucun n’a été désigné.',

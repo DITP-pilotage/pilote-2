@@ -11,17 +11,22 @@ import { individuInclude } from '@/individu/utils'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { toIndividuAvecValeursApiModel } from '@/valeurAvancement/utils'
 
-export const listIndividusWithValeurs = (
-  indicateurPublicId: string,
-  params: ListIndividusWithValeursQuery,
-): ResultAsync<IndividusWithValeursListApiModel, never> => {
+type ListIndividusWithValeursParams = {
+  indicateurPublicId: string
+  query: ListIndividusWithValeursQuery
+}
+
+export const listIndividusWithValeurs = ({
+  indicateurPublicId,
+  query,
+}: ListIndividusWithValeursParams): ResultAsync<IndividusWithValeursListApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
   const indicateurFilter = {
     indicateur: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
   }
   const where = {
     valeurs: { some: indicateurFilter },
-    ...(params.referentiel ? { referentiel: { publicId: params.referentiel } } : {}),
+    ...(query.referentiel ? { referentiel: { publicId: query.referentiel } } : {}),
   }
 
   const fetchPage = db().individu.findMany({
@@ -36,11 +41,11 @@ export const listIndividusWithValeurs = (
       },
       _count: { select: { valeurs: { where: indicateurFilter } } },
     },
-    ...buildPaginationArgs(params.cursor, params.pageSize),
+    ...buildPaginationArgs(query.cursor, query.pageSize),
   })
   const fetchTotal = db().individu.count({ where })
 
   return ResultAsync.fromSafePromise(Promise.all([fetchPage, fetchTotal])).map(([rows, total]) =>
-    toPaginatedResponse(rows, total, toIndividuAvecValeursApiModel, params.pageSize),
+    toPaginatedResponse(rows, total, toIndividuAvecValeursApiModel, query.pageSize),
   )
 }

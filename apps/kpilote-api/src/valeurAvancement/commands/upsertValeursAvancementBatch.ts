@@ -38,13 +38,15 @@ type BatchItems = UpsertValeursAvancementBatchBody['items']
 // déclaré, dans l'ordre des axes ; aucune pour un indicateur sans axe).
 type ResolvedCellule = { individuId: string; modalites: RequestedModalite[] }
 
+type UpsertValeursAvancementBatchParams = {
+  indicateurPublicId: string
+  body: UpsertValeursAvancementBatchBody
+}
+
 const performBatch = async ({
   indicateurPublicId,
-  items,
-}: {
-  indicateurPublicId: string
-  items: BatchItems
-}): Promise<
+  body: { items },
+}: UpsertValeursAvancementBatchParams): Promise<
   Result<UpsertValeursAvancementBatchResultApiModel, UpsertValeursAvancementBatchError>
 > => {
   const { indicateur } = await resolveIndicateurForWriteData({ indicateurPublicId })
@@ -57,10 +59,9 @@ const performBatch = async ({
 }
 
 export const upsertValeursAvancementBatch = (
-  indicateurPublicId: string,
-  { items }: UpsertValeursAvancementBatchBody,
+  params: UpsertValeursAvancementBatchParams,
 ): ResultAsync<UpsertValeursAvancementBatchResultApiModel, UpsertValeursAvancementBatchError> =>
-  new ResultAsync(performBatch({ indicateurPublicId, items }))
+  new ResultAsync(performBatch(params))
 
 // Pipeline de validation avant toute écriture en base. En pratique l'appelant
 // enveloppe la commande dans `withTransaction`, donc cette validation s'exécute

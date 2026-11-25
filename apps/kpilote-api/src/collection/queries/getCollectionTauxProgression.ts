@@ -31,30 +31,34 @@ const collectionTauxProgressionArgs = {
 
 type CollectionRow = Prisma.CollectionGetPayload<typeof collectionTauxProgressionArgs>
 
-const performGet = async (
-  collectionPublicId: string,
-  params: GetCollectionTauxProgressionQuery,
-): Promise<CollectionTauxProgressionApiModel> => {
+type GetCollectionTauxProgressionParams = {
+  collectionPublicId: string
+  query: GetCollectionTauxProgressionQuery
+}
+
+const performGet = async ({
+  collectionPublicId,
+  query,
+}: GetCollectionTauxProgressionParams): Promise<CollectionTauxProgressionApiModel> => {
   const principalId = requireCurrentPrincipalId()
   const collection = await db().collection.findFirstOrThrow({
     where: withCollectionReadPermission({ publicId: collectionPublicId }, principalId),
     ...collectionTauxProgressionArgs,
   })
-  return buildResult({ collection, params })
+  return buildResult({ collection, query })
 }
 
 export const getCollectionTauxProgression = (
-  collectionPublicId: string,
-  params: GetCollectionTauxProgressionQuery,
+  params: GetCollectionTauxProgressionParams,
 ): ResultAsync<CollectionTauxProgressionApiModel, never> =>
-  ResultAsync.fromSafePromise(performGet(collectionPublicId, params))
+  ResultAsync.fromSafePromise(performGet(params))
 
 const buildResult = async ({
   collection,
-  params,
+  query,
 }: {
   collection: CollectionRow
-  params: GetCollectionTauxProgressionQuery
+  query: GetCollectionTauxProgressionQuery
 }): Promise<CollectionTauxProgressionApiModel> => {
   const startedAt = performance.now()
 
@@ -62,7 +66,7 @@ const buildResult = async ({
   if (collection.indicateurs.length === 0) {
     return {
       collection: collection.publicId,
-      individu: params.individu,
+      individu: query.individu,
       tauxProgression: null,
       raisonSansTaux: 'COLLECTION_VIDE',
       contributions: [],
@@ -70,22 +74,25 @@ const buildResult = async ({
   }
 
   // Individu inconnu → 404 via le handler global (mappe Prisma P2025).
-  const cible: IndividuRef = await db().individu.findFirstOrThrow({
-    where: { publicId: params.individu },
+  const individuCible: IndividuRef = await db().individu.findFirstOrThrow({
+    where: { publicId: query.individu },
     select: { id: true, publicId: true, referentielId: true },
   })
 
-  const contributions = await computeContributions(collection.indicateurs, cible)
+  const contributions = await computeContributions({
+    indicateurs: collection.indicateurs,
+    individuCible,
+  })
 
   const { tauxProgression, raisonSansTaux } = resolveCollectionTauxProgression(contributions)
 
   const apiContributions: CollectionTauxProgressionContributionApiModel[] = contributions.map(
-    (c) => ({
-      indicateur: c.indicateurPublicId,
-      tauxProgression: c.tauxProgression,
-      date: c.date ? formatBucket(c.date) : null,
-      ponderation: c.ponderation.toNumber(),
-      sensSouhaite: c.sensSouhaite,
+    (contribution) => ({
+      indicateur: contribution.indicateurPublicId,
+      tauxProgression: contribution.tauxProgression,
+      date: contribution.date ? formatBucket(contribution.date) : null,
+      ponderation: contribution.ponderation.toNumber(),
+      sensSouhaite: contribution.sensSouhaite,
     }),
   )
 
@@ -93,7 +100,7 @@ const buildResult = async ({
     {
       event: 'collection.getCollectionTauxProgression.timing',
       collectionId: collection.id,
-      individu: params.individu,
+      individu: query.individu,
       nbIndicateurs: collection.indicateurs.length,
       tauxProgression,
       durationMs: Math.round(performance.now() - startedAt),
@@ -103,7 +110,7 @@ const buildResult = async ({
 
   return {
     collection: collection.publicId,
-    individu: params.individu,
+    individu: query.individu,
     tauxProgression,
     raisonSansTaux,
     contributions: apiContributions,

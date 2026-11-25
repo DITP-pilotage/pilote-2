@@ -48,7 +48,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listObjectifsForIndicateur(indId, { individus: [deptId] }),
+        listObjectifsForIndicateur({ indicateurPublicId: indId, query: { individus: [deptId] } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -101,7 +101,10 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listObjectifsForIndicateur(indId, { individus: [dept1, dept2] }),
+        listObjectifsForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [dept1, dept2] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -129,7 +132,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listObjectifsForIndicateur(indId, { individus: [deptId] }),
+        listObjectifsForIndicateur({ indicateurPublicId: indId, query: { individus: [deptId] } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({ items: [] })
@@ -157,7 +160,10 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listObjectifsForIndicateur(indId, { individus: [deptId, 'DEPT-999'] }),
+        listObjectifsForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId, 'DEPT-999'] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -200,7 +206,10 @@ describe.concurrent('listObjectifsForIndicateur', () => {
 
       // dateTrunc=year → les deux tombent dans le bucket '2025-01-01', on retient le plus récent
       const result = await runAsPrincipal(apiKey.id, () =>
-        listObjectifsForIndicateur(indId, { individus: [deptId], dateTrunc: 'year' }),
+        listObjectifsForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId], dateTrunc: 'year' },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -270,7 +279,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listObjectifsForIndicateur(indId, { individus: [regId] }),
+        listObjectifsForIndicateur({ indicateurPublicId: indId, query: { individus: [regId] } }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -344,7 +353,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listObjectifsForIndicateur(indId, { individus: [regId] }),
+        listObjectifsForIndicateur({ indicateurPublicId: indId, query: { individus: [regId] } }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -424,7 +433,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listObjectifsForIndicateur(indId, { individus: [regId] }),
+        listObjectifsForIndicateur({ indicateurPublicId: indId, query: { individus: [regId] } }),
       )
 
       // Bucket 2024 : dept2 n'a pas encore de valeur → strict → pas de point
@@ -493,7 +502,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listObjectifsForIndicateur(indId, { individus: [regId] }),
+        listObjectifsForIndicateur({ indicateurPublicId: indId, query: { individus: [regId] } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({ items: [] })
@@ -539,7 +548,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listObjectifsForIndicateur(indId, { individus: [regId] }),
+        listObjectifsForIndicateur({ indicateurPublicId: indId, query: { individus: [regId] } }),
       )
 
       // La région lit sa propre saisie, non les enfants
@@ -605,7 +614,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listObjectifsForIndicateur(indId, { individus: [regId] }),
+        listObjectifsForIndicateur({ indicateurPublicId: indId, query: { individus: [regId] } }),
       )
 
       const items = result._unsafeUnwrap().items
