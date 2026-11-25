@@ -9,9 +9,9 @@ La carte « indicateurs non à jour » (onglet de la comparaison territoriale, p
 ## Définitions (par indicateur et territoire)
 
 - **Non applicable** : `est_applicable` différent de `true`.
-- **Donnée absente** : applicable, et le dernier jalon de `indicateur_territoire_jalon` (jalon le plus élevé de la ligne) n'a pas de `date_valeur_actuelle`, ou la ligne n'a aucun jalon. `date_valeur_actuelle_mandat` est déprécié (Triko) et n'est plus lu. Dans dbt (`get_last_vaca_jalon`), chaque jalon reprend la dernière valeur connue jusqu'à lui : le dernier jalon, l'année en cours, porte donc la date de la valeur la plus récente.
+- **Donnée absente** : applicable, `est_a_jour` différent de `true`, et le dernier jalon de `indicateur_territoire_jalon` (jalon le plus élevé de la ligne) n'a pas de `date_valeur_actuelle`, ou la ligne n'a aucun jalon. `date_valeur_actuelle_mandat` est déprécié (Triko) et n'est plus lu. Dans dbt (`get_last_vaca_jalon`), chaque jalon reprend la dernière valeur connue jusqu'à lui : le dernier jalon, l'année en cours, porte donc la date de la valeur la plus récente.
 - **Non à jour** : applicable, une valeur existe, `est_a_jour` différent de `true`. Inclut le cas d'une valeur sans périodicité paramétrée (dbt la marque non à jour), qui reste rouge.
-- **À jour** : applicable, `est_a_jour = true`.
+- **À jour** : applicable, `est_a_jour = true`, même sans date sur le dernier jalon. `est_a_jour` est calculé dans dbt depuis `get_last_vaca`, qui retient aussi une valeur datée d'une année future, alors que les jalons s'arrêtent à l'année en cours : le jalon ne départage donc que « non à jour » et « donnée absente ». Ainsi, « non à jour ou donnée absente » sur la carte correspond exactement au « non à jour » d'Albert (`NON_A_JOUR_WHERE`).
 
 ## Objectifs
 

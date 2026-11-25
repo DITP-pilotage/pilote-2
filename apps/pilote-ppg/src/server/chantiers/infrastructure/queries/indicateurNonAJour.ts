@@ -30,8 +30,8 @@ export const etatMiseAJour = (ligne: {
   dateDerniereValeur: Date | null;
 }): EtatMiseAJour => {
   if (ligne.estApplicable !== true) return "NON_APPLICABLE";
-  if (ligne.dateDerniereValeur === null) return "SANS_DONNEE";
-  return ligne.estAJour === true ? "A_JOUR" : "NON_A_JOUR";
+  if (ligne.estAJour === true) return "A_JOUR";
+  return ligne.dateDerniereValeur === null ? "SANS_DONNEE" : "NON_A_JOUR";
 };
 
 export const etatTerritoireChantier = (territoire: {

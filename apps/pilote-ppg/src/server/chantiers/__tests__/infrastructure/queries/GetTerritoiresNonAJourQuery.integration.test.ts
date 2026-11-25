@@ -104,6 +104,7 @@ describe("GetTerritoiresNonAJourQuery", () => {
           FINISTERE,
           ILLE_ET_VILAINE,
           COTES_D_ARMOR,
+          MORBIHAN,
         ]);
         const indicateur = await fixtures.indicateurIdentite({
           chantier_id: chantier.id,
@@ -191,6 +192,14 @@ describe("GetTerritoiresNonAJourQuery", () => {
           est_applicable: false,
           est_a_jour: false,
         });
+        // à jour pour dbt mais sans date de jalon : reste à jour
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          ...MORBIHAN,
+          est_applicable: true,
+          est_a_jour: true,
+        });
 
         // when
         const result = await query.byChantier({ chantierId: chantier.id });
@@ -214,6 +223,12 @@ describe("GetTerritoiresNonAJourQuery", () => {
             etat: "SANS_DONNEE",
             nbIndicateursNonAJour: 0,
             nbIndicateursSansDonnee: 1,
+          },
+          {
+            territoireCode: "DEPT-56",
+            etat: "A_JOUR",
+            nbIndicateursNonAJour: 0,
+            nbIndicateursSansDonnee: 0,
           },
           {
             territoireCode: "NAT-FR",
@@ -465,6 +480,7 @@ describe("GetTerritoiresNonAJourQuery", () => {
           FINISTERE,
           ILLE_ET_VILAINE,
           COTES_D_ARMOR,
+          MORBIHAN,
         ]);
         const indicateur = await fixtures.indicateurIdentite({
           chantier_id: chantier.id,
@@ -481,6 +497,15 @@ describe("GetTerritoiresNonAJourQuery", () => {
           FINISTERE,
           new Date("2026-01-01"),
         );
+        // à jour pour dbt mais sans date de jalon (valeur datée d'une année future)
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          ...MORBIHAN,
+          est_applicable: true,
+          est_a_jour: true,
+        });
+        await seedDerniereValeur(indicateur.id, MORBIHAN, null);
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
           chantier_id: chantier.id,
@@ -511,7 +536,7 @@ describe("GetTerritoiresNonAJourQuery", () => {
         });
         const assistantResponse = await assistantQuery.execute({
           chantierIds: [chantier.id],
-          territoireCodes: ["DEPT-29", "DEPT-35", "DEPT-22"],
+          territoireCodes: ["DEPT-29", "DEPT-35", "DEPT-22", "DEPT-56"],
           indicateurIds: [indicateur.id],
         });
 

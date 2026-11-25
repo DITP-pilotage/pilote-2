@@ -162,7 +162,7 @@ Expected: FAIL, `etat` absent des résultats (le test « non publié » passe).
 
 - [ ] **Step 4: Ajouter `EtatMiseAJour`, `etatMiseAJour` et `etatTerritoireChantier` dans `indicateurNonAJour.ts`**
 
-`etatMiseAJour`, dans cet ordre : `estApplicable !== true` → `NON_APPLICABLE` ; `dateDerniereValeur === null` → `SANS_DONNEE` ; `estAJour === true` → `A_JOUR` ; sinon `NON_A_JOUR`.
+`etatMiseAJour`, dans cet ordre : `estApplicable !== true` → `NON_APPLICABLE` ; `estAJour === true` → `A_JOUR` ; `dateDerniereValeur === null` → `SANS_DONNEE` ; sinon `NON_A_JOUR`.
 `etatTerritoireChantier`, dans cet ordre : `!estApplicable` → `NON_APPLICABLE` ; `nbIndicateursNonAJour > 0` → `NON_A_JOUR` ; `nbIndicateursSansDonnee > 0` → `SANS_DONNEE` ; sinon `A_JOUR`.
 Ne pas toucher `estNonAJour` ni `NON_A_JOUR_WHERE`.
 
