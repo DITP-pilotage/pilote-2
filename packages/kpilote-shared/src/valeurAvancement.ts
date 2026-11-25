@@ -569,3 +569,71 @@ export const tauxProgressionIndividuListApiModelSchema = z.object({
 export type TauxProgressionIndividuListApiModel = z.infer<
   typeof tauxProgressionIndividuListApiModelSchema
 >
+
+// --- Lectures par lot sur une sélection d'individus -------------------------
+
+const individusSelectionnesSchema = individusCsvSchema
+  .optional()
+  .describe(
+    'Individus sélectionnés, séparés par une virgule (ex. DEPT-84,BV-05). Chaque indicateur est lu ' +
+      'sur le premier individu sélectionné dont le référentiel lui est lié ; sans individu lié, ' +
+      "l'indicateur est omis. Sans ce paramètre, chaque indicateur est lu sur son individu racine : " +
+      "l'individu de ses référentiels liés qui n'a pas de parent dans ces référentiels (le premier " +
+      "par nom s'il y en a plusieurs).",
+  )
+
+const individuLuSchema = individuPublicIdSchema.describe(
+  "Individu sur lequel l'indicateur est lu : l'individu sélectionné qui lui est lié, ou son " +
+    'individu racine sans sélection.',
+)
+
+export const listDernieresValeursQuerySchema = z.object({
+  indicateurs: indicateursCsvSchema.describe(
+    `Liste d'identifiants d'indicateurs séparés par une virgule (ex. IND-A,IND-B). 1..${MAX_INDICATEURS_PAR_REQUETE} identifiants.`,
+  ),
+  individus: individusSelectionnesSchema,
+})
+export type ListDernieresValeursQuery = z.infer<typeof listDernieresValeursQuerySchema>
+
+export const derniereValeurApiModelSchema = dernierValeurIndividuApiModelSchema.extend({
+  individu: individuLuSchema,
+})
+export type DerniereValeurApiModel = z.infer<typeof derniereValeurApiModelSchema>
+
+export const dernieresValeursListApiModelSchema = z.object({
+  items: z
+    .array(derniereValeurApiModelSchema)
+    .describe(
+      'Dernière valeur connue de chaque indicateur demandé, sur son individu lu. Les indicateurs ' +
+        'sans individu lu, sans valeur connue ou non accessibles sont omis de la réponse.',
+    ),
+})
+export type DernieresValeursListApiModel = z.infer<typeof dernieresValeursListApiModelSchema>
+
+export const listDerniersTauxProgressionQuerySchema = z.object({
+  indicateurs: indicateursCsvSchema.describe(
+    `Liste d'identifiants d'indicateurs séparés par une virgule (ex. IND-A,IND-B). 1..${MAX_INDICATEURS_PAR_REQUETE} identifiants.`,
+  ),
+  individus: individusSelectionnesSchema,
+})
+export type ListDerniersTauxProgressionQuery = z.infer<
+  typeof listDerniersTauxProgressionQuerySchema
+>
+
+export const dernierTauxProgressionApiModelSchema = tauxProgressionIndividuApiModelSchema.extend({
+  individu: individuLuSchema,
+})
+export type DernierTauxProgressionApiModel = z.infer<typeof dernierTauxProgressionApiModelSchema>
+
+export const derniersTauxProgressionListApiModelSchema = z.object({
+  items: z
+    .array(dernierTauxProgressionApiModelSchema)
+    .describe(
+      'Taux de progression de chaque indicateur demandé, sur son individu lu. Les indicateurs sans ' +
+        'individu lu, sans objectif ou sans valeur sont omis. Les indicateurs dont la valeurCible ' +
+        'est zéro, ou à la baisse (sensSouhaite = BAISSE), sont inclus avec tauxProgression: null.',
+    ),
+})
+export type DerniersTauxProgressionListApiModel = z.infer<
+  typeof derniersTauxProgressionListApiModelSchema
+>

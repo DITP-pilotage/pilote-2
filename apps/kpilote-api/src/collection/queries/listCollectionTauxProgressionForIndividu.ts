@@ -86,7 +86,7 @@ const computeCollectionTaux = async ({
 }): Promise<CollectionTauxProgressionSummaryApiModel> => {
   const contributions = await computeContributions({
     indicateurs: collection.indicateurs,
-    individuCible,
+    individuCibleOf: () => individuCible,
   })
   const { tauxProgression, raisonSansTaux } = resolveCollectionTauxProgression(contributions)
   return { collection: collection.publicId, tauxProgression, raisonSansTaux }

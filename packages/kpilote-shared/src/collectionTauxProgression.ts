@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { dateSchema } from './dates'
 import { sensSouhaiteSchema } from './indicateur'
 import { individuPublicIdSchema } from './individu'
+import { individusCsvSchema } from './individusCsv'
 import { collectionPublicIdSchema, indicateurPublicIdSchema } from './publicIds'
 
 export const MAX_COLLECTIONS_PAR_REQUETE = 50
@@ -33,6 +34,24 @@ export const listCollectionTauxProgressionForIndividuQuerySchema = z.object({
 })
 export type ListCollectionTauxProgressionForIndividuQuery = z.infer<
   typeof listCollectionTauxProgressionForIndividuQuerySchema
+>
+
+export const listCollectionTauxProgressionQuerySchema = z.object({
+  collections: collectionsCsvSchema.describe(
+    `Liste d'identifiants de collections séparés par une virgule (ex. COL-1,COL-2). 1..${MAX_COLLECTIONS_PAR_REQUETE} identifiants.`,
+  ),
+  individus: individusCsvSchema
+    .optional()
+    .describe(
+      'Individus sélectionnés, séparés par une virgule (ex. DEPT-84,BV-05). Chaque indicateur de la ' +
+        'collection contribue sur le premier individu sélectionné dont le référentiel lui est lié ; ' +
+        "sans individu lié, il n'est pas calculable. Sans ce paramètre, chaque indicateur contribue " +
+        "sur son individu racine : l'individu de ses référentiels liés qui n'a pas de parent dans " +
+        "ces référentiels (le premier par nom s'il y en a plusieurs).",
+    ),
+})
+export type ListCollectionTauxProgressionQuery = z.infer<
+  typeof listCollectionTauxProgressionQuerySchema
 >
 
 export const raisonSansTauxSchema = z
