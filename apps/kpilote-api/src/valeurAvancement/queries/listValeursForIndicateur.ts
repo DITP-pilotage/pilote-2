@@ -16,7 +16,7 @@ import { db } from '@/framework/persistence/dbStore'
 import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import { type PointInterne, resolveSerieNoeud } from '@/valeurAvancement/resolveSerieNoeud'
+import { type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
 
 // Cap par défaut à la granularité mensuelle : sans troncature, une série France
 // avec saisies quotidiennes par département explose (cf. design doc D11).
@@ -52,11 +52,10 @@ export const listValeursForIndicateur = (
 ): ResultAsync<ValeurAvancementListApiModel, ResolveSelectionError> =>
   new ResultAsync(performList(indicateurPublicId, params))
 
-// Orchestration en 3 phases : (1) résoudre les cibles publicId→id, (2) charger
-// en bulk le contexte de résolution (sous-arbre + saisies tronquées + fonctions
-// d'agrégation), (3) calculer les séries en mémoire via le functional core
-// mémoïsé. Filtrage dateDebut/dateFin appliqué en sortie. Cf. doc d'archi
-// `indicateur-derives.md`.
+// Orchestration en 3 phases : (1) résoudre les cibles publicId→id, (2) résoudre
+// leurs séries (`loadResolveSerieContext` charge et calcule fratrie par
+// fratrie), (3) convertir les points. Filtrage dateDebut/dateFin appliqué en
+// sortie. Cf. doc d'archi `indicateur-derives.md`.
 const buildSeries = async ({
   indicateurId,
   indicateurPublicId,
@@ -73,23 +72,18 @@ const buildSeries = async ({
 
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  const { graphe, noeud, allNodes } = await loadResolveSerieContext({
+  const { serieDe, allNodes } = await loadResolveSerieContext({
     indicateurId,
-    individusCibles: individusCibles,
+    individusCibles,
     dateTrunc,
+    selection,
   })
-  const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
   const dateDebut = params.dateDebut ? parseBucket(params.dateDebut) : null
   const dateFin = params.dateFin ? parseBucket(params.dateFin) : null
   const items: ValeurAvancementApiModel[] = []
   for (const individuCible of individusCibles) {
-    const serie = await resolveSerieNoeud(
-      noeud({ individu: individuCible, selection }),
-      graphe,
-      cache,
-    )
-    for (const point of serie) {
+    for (const point of serieDe(individuCible)) {
       if (dateDebut && compareBuckets(point.bucket, dateDebut) < 0) continue
       if (dateFin && compareBuckets(point.bucket, dateFin) > 0) continue
       items.push(
