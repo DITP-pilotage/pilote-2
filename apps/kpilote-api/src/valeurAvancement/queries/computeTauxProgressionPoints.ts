@@ -8,11 +8,7 @@ import {
   resolveObjectifIndividu,
 } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import {
-  type IndividuRef,
-  type PointInterne,
-  resolveSerieNoeud,
-} from '@/valeurAvancement/resolveSerieNoeud'
+import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 import {
   type ObjectifBrut,
   resolveTauxProgression,
@@ -44,7 +40,7 @@ export const computeTauxProgressionPoints = async ({
 
   // Indicateur à axes : la série d'un individu est « Tous » (la marginale), le
   // taux est donc marginale / objectif de l'individu (D6).
-  const [{ graphe: serieGraphe, noeud }, { ctx: objectifCtx }] = await Promise.all([
+  const [{ serieDe }, { ctx: objectifCtx }] = await Promise.all([
     loadResolveSerieContext({
       indicateurId,
       individusCibles,
@@ -56,15 +52,13 @@ export const computeTauxProgressionPoints = async ({
       dateTrunc: dateTruncObjectif,
     }),
   ])
-  const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
   const objectifCache = new Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>()
 
   const valeurs: ValeurBrute[] = []
   const objectifsParIndividu = new Map<string, ObjectifBrut[]>()
 
   for (const cible of individusCibles) {
-    const serie = await resolveSerieNoeud(noeud({ individu: cible }), serieGraphe, serieCache)
-    for (const point of serie) {
+    for (const point of serieDe(cible)) {
       valeurs.push({
         individuId: cible.id,
         individuPublicId: cible.publicId,

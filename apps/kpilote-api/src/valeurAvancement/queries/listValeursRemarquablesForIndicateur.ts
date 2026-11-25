@@ -18,11 +18,7 @@ import { computeMax } from '@/valeurAvancement/computeMax'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeMin } from '@/valeurAvancement/computeMin'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import {
-  type IndividuRef,
-  type PointInterne,
-  resolveSerieNoeud,
-} from '@/valeurAvancement/resolveSerieNoeud'
+import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
 // Aligné sur listValeursForIndicateur : on raisonne sur les buckets mensuels
 // pour les agrégés (cf. doc d'archi `indicateur-derives.md`).
@@ -53,9 +49,9 @@ export const listValeursRemarquablesForIndicateur = (
 
 // Pour chaque référentiel demandé, on calcule min/max/médiane sur la dernière
 // valeur connue de chaque individu — saisie pour les feuilles, dérivée pour les
-// agrégés. On réutilise le moteur de séries de listValeursForIndicateur : un
-// seul chargement DB (arbre + saisies + fonctions d'agrégation), puis la
-// mémoïsation du functional core évite tout recalcul. La "dernière valeur" est
+// agrégés. On réutilise le moteur de séries de listValeursForIndicateur :
+// `loadResolveSerieContext` résout la population fratrie par fratrie. La
+// "dernière valeur" est
 // le dernier bucket de la série calculée — sans alignement sur une date pivot,
 // donc des individus peuvent contribuer à partir de dates différentes.
 //
@@ -77,21 +73,19 @@ const buildStats = async ({
   const cibles: IndividuRef[] = referentiels.flatMap((r) => r.individus)
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  const { graphe, noeud, allNodes } = await loadResolveSerieContext({
+  const { serieDe, allNodes } = await loadResolveSerieContext({
     indicateurId,
     individusCibles: cibles,
     dateTrunc,
+    selection,
   })
-  const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
   const items: ValeursRemarquablesListApiModel['items'] = []
   for (const referentiel of referentiels) {
     const contributions: ValeursRemarquablesContributionApiModel[] = []
     const valeurs: Decimal[] = []
     for (const individu of referentiel.individus) {
-      const dernierPoint = (
-        await resolveSerieNoeud(noeud({ individu, selection }), graphe, cache)
-      ).at(-1)
+      const dernierPoint = serieDe(individu).at(-1)
       if (!dernierPoint) continue
       valeurs.push(dernierPoint.valeur)
       contributions.push({

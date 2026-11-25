@@ -17,13 +17,7 @@ import { computeEcartMediane } from '@/valeurAvancement/computeEcartMediane'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeVariation } from '@/valeurAvancement/computeVariation'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import {
-  type GrapheSerie,
-  type IndividuRef,
-  type Noeud,
-  type PointInterne,
-  resolveSerieNoeud,
-} from '@/valeurAvancement/resolveSerieNoeud'
+import { type IndividuRef, type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
 
 // Aligné sur listValeursForIndicateur : on raisonne sur les buckets mensuels
 // pour les agrégés (cf. doc d'archi `indicateur-derives.md`).
@@ -58,8 +52,8 @@ export const listSyntheseIndividus = (
 // écart à la médiane des dernières valeurs des pairs de son référentiel.
 // Saisie pour les feuilles, dérivée pour les agrégés — on réutilise le moteur
 // de séries : un seul `loadResolveSerieContext` couvre la population complète
-// des référentiels concernés, puis la mémoïsation du functional core évite
-// tout recalcul. Comme pour les valeurs remarquables, la "dernière valeur" est
+// des référentiels concernés, fratrie par fratrie. Comme pour les valeurs
+// remarquables, la "dernière valeur" est
 // le dernier bucket de la série calculée (pas d'alignement sur une date pivot).
 //
 // Avec une sélection de modalités, chaque individu et ses pairs sont lus sur
@@ -86,23 +80,18 @@ const buildSynthese = async ({
 
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  const { graphe, noeud, allNodes } = await loadResolveSerieContext({
+  const { serieDe, allNodes } = await loadResolveSerieContext({
     indicateurId: indicateur.id,
     individusCibles: population,
     dateTrunc,
+    selection,
   })
-  const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-  const medianeParReferentiel = await computeMedianeParReferentiel({
-    population,
-    graphe,
-    noeud: ({ individu }) => noeud({ individu, selection }),
-    cache,
-  })
+  const medianeParReferentiel = computeMedianeParReferentiel({ population, serieDe })
 
   const items: SyntheseIndividusListApiModel['items'] = []
   for (const individu of individusDemandes) {
-    const serie = await resolveSerieNoeud(noeud({ individu, selection }), graphe, cache)
+    const serie = serieDe(individu)
     items.push({
       individu: individu.publicId,
       // computeVariation attend [recente, precedente] ; la série est ASC par bucket.
@@ -129,20 +118,16 @@ const buildSynthese = async ({
   return { items }
 }
 
-const computeMedianeParReferentiel = async ({
+const computeMedianeParReferentiel = ({
   population,
-  graphe,
-  noeud,
-  cache,
+  serieDe,
 }: {
   population: ReadonlyArray<IndividuRef>
-  graphe: GrapheSerie
-  noeud: (params: { individu: IndividuRef }) => Noeud
-  cache: Map<string, ReadonlyArray<PointInterne>>
-}): Promise<Map<string, Decimal | null>> => {
+  serieDe: (individu: IndividuRef) => ReadonlyArray<PointInterne>
+}): Map<string, Decimal | null> => {
   const valeursParReferentiel = new Map<string, Decimal[]>()
   for (const individu of population) {
-    const dernier = (await resolveSerieNoeud(noeud({ individu }), graphe, cache)).at(-1)
+    const dernier = serieDe(individu).at(-1)
     if (!dernier) continue
     const liste = valeursParReferentiel.get(individu.referentielId) ?? []
     liste.push(dernier.valeur)

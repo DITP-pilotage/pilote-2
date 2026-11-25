@@ -12,11 +12,7 @@ import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import {
-  type IndividuRef,
-  type PointInterne,
-  resolveSerieNoeud,
-} from '@/valeurAvancement/resolveSerieNoeud'
+import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
@@ -49,15 +45,12 @@ const build = async (
   const dateTrunc = DEFAULT_DATE_TRUNC
   const resolus = await Promise.all(
     indicateurs.map(async (indicateur) => {
-      const { graphe: serieGraphe, noeud } = await loadResolveSerieContext({
+      const { serieDe } = await loadResolveSerieContext({
         indicateurId: indicateur.id,
         individusCibles: [individu],
         dateTrunc,
       })
-
-      const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
-      const serie = await resolveSerieNoeud(noeud({ individu }), serieGraphe, serieCache)
-      const dernier = serie.at(-1)
+      const dernier = serieDe(individu).at(-1)
       if (!dernier) return null
 
       const item: DernierValeurIndividuApiModel = {
