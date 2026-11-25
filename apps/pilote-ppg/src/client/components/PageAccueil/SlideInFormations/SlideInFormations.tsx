@@ -53,16 +53,13 @@ export const SlideInFormations = ({
       <div className="flex items-start gap-2 pb-2.5 pl-5 pr-3 pt-3.5">
         <div className="flex flex-1 flex-col">
           <span className="text-xs font-bold tracking-[0.06em] text-dsfr-blue-france-sun-113">
-            CAMPUS PILOTE
+            Formez-vous avec le CAMPUS PILOTE
           </span>
           <h2 className="m-0 p-0 text-lg leading-6" id={idTitre}>
             {nombre === 1
               ? "1 formation adaptée à votre profil"
               : `${nombre} formations adaptées à votre profil`}
           </h2>
-          <p className="m-0 mt-0.5 p-0 text-[13px] leading-[18px] text-dsfr-grey-200">
-            Inscription sur Rendez-vous Service Public.
-          </p>
         </div>
         <Button
           aria-label="Fermer"
