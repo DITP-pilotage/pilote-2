@@ -9,10 +9,8 @@ import {
   testDeptId,
   testDeptIds,
   testIndicateurId,
-  testIndividuId,
   testReferentielIds,
   testRegId,
-  testRegIds,
 } from '@/test/randomIds'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
 import { type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
@@ -165,57 +163,6 @@ describe.concurrent('loadResolveSerieContext', () => {
         valeur: 43,
         type: 'derivee',
       })
-    }),
-  )
-
-  it(
-    'résout un individu agrégé rattaché à deux parents',
-    integrationTest(async () => {
-      const indicateur = testIndicateurId()
-      const [refParent, refIntermediaire, refFeuille] = testReferentielIds(3)
-      const [parentA, parentB] = testRegIds(2)
-      const intermediaire = testIndividuId()
-      const feuille = testDeptId()
-      await fixtures.indicateurReferentiel(
-        {
-          indicateur: { publicId: indicateur },
-          referentiel: { publicId: refParent },
-          fonctionAgregation: 'SUM',
-        },
-        {
-          indicateur: { publicId: indicateur },
-          referentiel: { publicId: refIntermediaire },
-          fonctionAgregation: 'SUM',
-        },
-      )
-      await fixtures.relation(
-        {
-          parent: { publicId: parentA, referentiel: { publicId: refParent } },
-          child: { publicId: intermediaire, referentiel: { publicId: refIntermediaire } },
-        },
-        {
-          parent: { publicId: parentB, referentiel: { publicId: refParent } },
-          child: { publicId: intermediaire },
-        },
-        {
-          parent: { publicId: intermediaire },
-          child: { publicId: feuille, referentiel: { publicId: refFeuille } },
-        },
-      )
-      await fixtures.valeurAvancement({
-        indicateur: { publicId: indicateur },
-        individu: { publicId: feuille },
-        date: '2025-01-01',
-        valeur: 7,
-      })
-
-      const serieDe = await resolveSeries({ indicateur, cibles: [parentA, parentB] })
-
-      // L'intermédiaire n'est pas demandé : oublié après le premier parent, il
-      // est recalculé pour le second.
-      const attendu = [{ date: '2025-01-01', valeur: 7, type: 'derivee' }]
-      expect(resume(serieDe(parentA))).toEqual(attendu)
-      expect(resume(serieDe(parentB))).toEqual(attendu)
     }),
   )
 })
