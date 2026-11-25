@@ -1,25 +1,29 @@
 import {
-  type TauxProgressionIndividuApiModel,
+  type DernierTauxProgressionApiModel,
   MAX_INDICATEURS_PAR_REQUETE,
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 import { queryOptions } from '@tanstack/react-query'
 
-import { fetchTauxProgressionForIndividu } from '@/api/individus'
+import { fetchDerniersTauxProgression } from '@/api/indicateurs'
 
 import { DEFAULT_STALE_TIME } from './utils'
 
-const batchersByIndividu = new Map<string, Batcher>()
+// Un lot porte une seule sélection d'individus (ou aucune : chaque indicateur se
+// lit alors sur ses individus racines). On instancie donc un batcher par sélection.
+const RACINES = Symbol('racines')
+const batchersBySelection = new Map<string | typeof RACINES, Batcher>()
 
 type Batcher = ReturnType<typeof createBatcher>
 
-const createBatcher = (individuId: string) =>
+const createBatcher = (individus: ReadonlyArray<string> | undefined) =>
   create({
     fetcher: async (
       indicateurIds: string[],
-    ): Promise<ReadonlyArray<TauxProgressionIndividuApiModel>> => {
-      const { items } = await fetchTauxProgressionForIndividu(individuId, {
+    ): Promise<ReadonlyArray<DernierTauxProgressionApiModel>> => {
+      const { items } = await fetchDerniersTauxProgression({
         indicateurs: indicateurIds,
+        individus,
       })
       return items
     },
@@ -30,18 +34,25 @@ const createBatcher = (individuId: string) =>
     }),
   })
 
-const getBatcher = (individuId: string): Batcher => {
-  const existing = batchersByIndividu.get(individuId)
+const getBatcher = (individus: ReadonlyArray<string> | undefined): Batcher => {
+  const key = individus?.join(',') ?? RACINES
+  const existing = batchersBySelection.get(key)
   if (existing) return existing
-  const batcher = createBatcher(individuId)
-  batchersByIndividu.set(individuId, batcher)
+  const batcher = createBatcher(individus)
+  batchersBySelection.set(key, batcher)
   return batcher
 }
 
-export const tauxProgressionIndividuQueryOptions = (individuId: string, indicateurId: string) =>
+export const dernierTauxProgressionQueryOptions = ({
+  individus,
+  indicateurId,
+}: {
+  individus: ReadonlyArray<string> | undefined
+  indicateurId: string
+}) =>
   queryOptions({
-    queryKey: ['taux-progression', individuId, indicateurId],
-    queryFn: (): Promise<TauxProgressionIndividuApiModel | null> =>
-      getBatcher(individuId).fetch(indicateurId),
+    queryKey: ['dernier-taux-progression', individus ?? null, indicateurId],
+    queryFn: (): Promise<DernierTauxProgressionApiModel | null> =>
+      getBatcher(individus).fetch(indicateurId),
     staleTime: DEFAULT_STALE_TIME,
   })
