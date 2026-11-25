@@ -51,6 +51,16 @@ async function slideInApresRechargement(page: Page): Promise<unknown> {
   return resultat;
 }
 
+// Sans attente, vérifier l'absence de la slide-in juste après la réponse passerait même si React
+// l'affichait l'instant d'après.
+const laisserReactAfficher = (page: Page) =>
+  page.evaluate(
+    () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      ),
+  );
+
 const ligneEtat = () =>
   prisma.formation_periode_information_utilisateur.findFirst({
     where: { utilisateur: { email: UTILISATEUR_FOR_SLIDE_IN_FORMATIONS } },
@@ -58,7 +68,7 @@ const ligneEtat = () =>
   });
 
 test.describe("Slide-in des formations", () => {
-  test("revient après la croix, puis ne revient plus après « Ne plus afficher ces suggestions »", async ({
+  test("reste masquée dans l'onglet après la croix, revient dans un nouvel onglet, puis ne revient plus après « Ne plus afficher ces suggestions »", async ({
     page,
     e2eContext,
   }) => {
@@ -97,30 +107,34 @@ test.describe("Slide-in des formations", () => {
       date_fermeture: null,
     });
 
-    const premierRechargement = attendreAppel(
-      page,
-      "formation.formationsAProposer",
-    );
-    await page.reload();
-    await premierRechargement;
-    await expect(slideIn).toBeVisible({ timeout: 15_000 });
+    // Le serveur propose toujours la formation : seul l'onglet se souvient de la croix.
+    expect(await slideInApresRechargement(page)).not.toBeNull();
+    await laisserReactAfficher(page);
+    await expect(slideIn).toHaveCount(0);
+
+    const nouvelOnglet = await page.context().newPage();
+    await nouvelOnglet.goto(page.url());
+    const slideInNouvelOnglet = nouvelOnglet.getByRole("region", {
+      name: "1 formation adaptée à votre profil",
+    });
+    await expect(slideInNouvelOnglet).toBeVisible({ timeout: 15_000 });
 
     const fermeture = attendreAppel(
-      page,
+      nouvelOnglet,
       "formation.recordSlideInAction",
       "FERMETURE",
     );
-    await slideIn
+    await slideInNouvelOnglet
       .getByRole("button", { name: "Ne plus afficher ces suggestions" })
       .click();
-    await expect(slideIn).toBeHidden();
+    await expect(slideInNouvelOnglet).toBeHidden();
     await fermeture;
     // Fermeture écrite : toute réponse de formation.formationsAProposer, d'avant ou d'après le rechargement, est vide.
     await expect
       .poll(async () => (await ligneEtat())?.date_fermeture instanceof Date)
       .toBe(true);
 
-    expect(await slideInApresRechargement(page)).toBeNull();
-    await expect(slideIn).toHaveCount(0);
+    expect(await slideInApresRechargement(nouvelOnglet)).toBeNull();
+    await expect(slideInNouvelOnglet).toHaveCount(0);
   });
 });

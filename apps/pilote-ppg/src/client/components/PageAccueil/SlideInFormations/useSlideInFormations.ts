@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 import { api } from "@/server/framework/trpc/api";
 import { useAnalytics } from "@/client/analytics/useAnalytics";
 import { useAlbertConversation } from "@/components/_commons/ChatUI/AlbertConversationProvider";
@@ -7,6 +8,7 @@ import type {
   PropositionFormations,
 } from "@/server/formations/queries/GetFormationsAProposerQuery";
 import type { RecordSlideInActionCommand } from "@/server/formations/handlers/RecordSlideInActionHandler";
+import { isSlideInHidden, writeHiddenSlideIn } from "./hiddenSlideInStorage";
 import { inscriptionEvent, slideInEvent } from "./slideInEvents";
 
 export function useSlideInFormations({
@@ -37,9 +39,19 @@ export function useSlideInFormations({
   const { conversation, display } = useAlbertConversation();
   const assistantOuvert = conversation !== null && display !== "minimized";
 
+  const { data: session } = useSession();
+  const utilisateurId = session?.user.id;
   const [masquee, setMasquee] = useState(false);
+  const masqueeDansLOnglet =
+    slideIn !== null &&
+    utilisateurId !== undefined &&
+    isSlideInHidden({ utilisateurId, periodeId: slideIn.periode.id });
   const visible =
-    slideIn !== null && peutAfficher && !assistantOuvert && !masquee;
+    slideIn !== null &&
+    peutAfficher &&
+    !assistantOuvert &&
+    !masquee &&
+    !masqueeDansLOnglet;
 
   const enregistrer = useCallback(
     (action: RecordSlideInActionCommand["action"]) => {
@@ -60,11 +72,16 @@ export function useSlideInFormations({
     trackEvent(slideInEvent("view", slideIn.periode));
   }, [visible, slideIn, enregistrer, trackEvent]);
 
-  // La croix et Échap masquent la slide-in jusqu'à la prochaine visite de l'accueil, sans rien écrire en base.
+  // La croix et Échap masquent la slide-in jusqu'à la prochaine ouverture de PILOTE, sans rien écrire en base.
   const masquer = useCallback(() => {
-    if (slideIn !== null) trackEvent(slideInEvent("minimize", slideIn.periode));
+    if (slideIn !== null) {
+      trackEvent(slideInEvent("minimize", slideIn.periode));
+      if (utilisateurId !== undefined) {
+        writeHiddenSlideIn({ utilisateurId, periodeId: slideIn.periode.id });
+      }
+    }
     setMasquee(true);
-  }, [slideIn, trackEvent]);
+  }, [slideIn, trackEvent, utilisateurId]);
 
   const fermer = useCallback(() => {
     if (slideIn !== null) trackEvent(slideInEvent("close", slideIn.periode));

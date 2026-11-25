@@ -15,7 +15,7 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 ## Objectifs
 
 - Présenter, sur l'accueil, les formations de la période en cours qui correspondent au profil de l'utilisateur et ont au moins une séance ouverte.
-- Laisser l'utilisateur masquer la slide-in jusqu'à sa prochaine visite de l'accueil (croix) ou la refuser pour la période (« Ne plus me les proposer »).
+- Laisser l'utilisateur masquer la slide-in jusqu'à sa prochaine ouverture de PILOTE (croix) ou la refuser pour la période (« Ne plus me les proposer »).
 - Garder l'état par utilisateur et par période dans `formation_periode_information_utilisateur` : première présentation et fermeture. La colonne `date_report` est supprimée (migration `20261123120000_formations_supprime_date_report`).
 
 ## Non-objectifs
@@ -46,13 +46,13 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 
 ### Présentation
 
-| État de la ligne (utilisateur, période) | Slide-in présentée ?              |
-| --------------------------------------- | --------------------------------- |
-| Pas de ligne                            | Oui                               |
-| `date_fermeture` renseignée             | Non, pour toute la période        |
-| Ligne sans fermeture (déjà présentée)   | Oui, à chaque visite de l'accueil |
+| État de la ligne (utilisateur, période) | Slide-in présentée ?            |
+| --------------------------------------- | ------------------------------- |
+| Pas de ligne                            | Oui                             |
+| `date_fermeture` renseignée             | Non, pour toute la période      |
+| Ligne sans fermeture (déjà présentée)   | Oui, sauf masquée dans l'onglet |
 
-- La croix ne laisse aucune trace : la slide-in reste masquée tant que la page d'accueil n'est pas rechargée (changer de filtre ou de territoire ne la fait pas revenir), puis revient à la prochaine visite de l'accueil.
+- La croix ne laisse aucune trace en base : l'onglet s'en souvient (sessionStorage, par utilisateur et par période). La slide-in reste masquée tant que l'onglet est ouvert, même en revenant sur l'accueil ou en rechargeant la page, et revient à la prochaine ouverture de PILOTE (nouvel onglet, autre navigateur) ou pour un autre utilisateur. Se déconnecter puis se reconnecter avec le même compte dans le même onglet ne la fait pas revenir.
 - Une nouvelle période est une nouvelle campagne : pas de ligne, donc la slide-in revient, même pour qui avait fermé la précédente. Modifier une période garde la même campagne (décidé en PR 2).
 
 ### Actions
@@ -60,7 +60,7 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 | Action                           | Effet sur la slide-in affichée                       | Effet en base                                                           |
 | -------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------- |
 | Première apparition à l'écran    | –                                                    | Ligne créée avec `date_presentation` = maintenant, si elle n'existe pas |
-| Croix, touche Échap              | Se masque jusqu'à la prochaine visite de l'accueil   | Aucun                                                                   |
+| Croix, touche Échap              | Se masque jusqu'à la prochaine ouverture de PILOTE   | Aucun                                                                   |
 | « Ne plus me les proposer »      | Se ferme                                             | `date_fermeture` = maintenant                                           |
 | « S'inscrire » ou une autre date | Reste ouverte ; RDV-SP s'ouvre dans un nouvel onglet | Aucun                                                                   |
 
@@ -108,7 +108,7 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 
 - Unitaires : le formatage des séances (date, durée, places restantes).
 - Intégration : la requête (choix de la période, période supprimée ou à venir, profil, motif retiré, séances annulées, complètes ou passées, formation sans séance ouverte, état de la ligne) ; les deux commandes (création et mise à jour de la ligne).
-- E2E : un scénario sur l'accueil (affichage, croix sans écriture et retour au rechargement, « Ne plus me les proposer » et plus d'affichage au rechargement).
+- E2E : un scénario sur l'accueil (affichage, croix sans écriture, toujours masquée au rechargement et de retour dans un nouvel onglet, « Ne plus me les proposer » et plus d'affichage au rechargement).
 
 ## Choix faits pendant la rédaction, à confirmer par Tristan
 
@@ -130,3 +130,9 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 Après une première version avec « Plus tard » (report de 7 jours, colonne `date_report`), relue et ouverte en PR #2733, Tristan retire le bouton « Plus tard » : la croix masque seulement la slide-in, qui revient à la prochaine visite de l'accueil, et seul « Ne plus me les proposer » l'écarte pour la période. La règle des 7 jours, l'action REPORT et la colonne `date_report` disparaissent.
 
 Relecture de la PR #2733 (2026-11-23) : nom complet des formations (plus de suppression du préfixe), requête renommée `formationsAProposer`, composants partagés (`Button`, `TextLink`, `Collapsible`) au lieu d'éléments stylés à la main, slide-in en deux fichiers (`SlideInFormations`, `LigneFormation` avec `AutresSeances`). Le bouton des autres dates garde le libellé « N autres dates » ; la flèche indique l'ouverture.
+
+## Révision du 2026-11-25
+
+À la demande de Tristan, la croix masque la slide-in jusqu'à la prochaine ouverture de PILOTE, et non plus jusqu'à la prochaine visite de l'accueil : revenir sur l'accueil la faisait réapparaître sans cesse. Le masquage est noté dans le sessionStorage de l'onglet (utilisateur et période) ; rien n'est écrit en base. Il n'est pas effacé à la déconnexion : le cas (même compte, même onglet) est rare, et une session Keycloak expirée ne passe de toute façon pas par le bouton « Se déconnecter ».
+
+« À la prochaine connexion » a été écarté : la session PILOTE est glissante (30 jours par défaut, prolongés à chaque visite) et ProConnect ne l'interrompt pas. Un utilisateur régulier ne se reconnecte presque jamais, et la croix aurait valu « Ne plus me les proposer » pour toute la période.
