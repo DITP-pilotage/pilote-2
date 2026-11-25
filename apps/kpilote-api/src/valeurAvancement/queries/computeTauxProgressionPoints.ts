@@ -29,12 +29,15 @@ export const computeTauxProgressionPoints = async ({
   individusCibles,
   dateTruncValeur,
   dateTruncObjectif,
+  derniersPoints = null,
 }: {
   indicateurId: string
   sensSouhaite: SensSouhaite
   individusCibles: ReadonlyArray<IndividuRef>
   dateTruncValeur: DateTrunc
   dateTruncObjectif: DateTrunc
+  // Nombre de derniers points de valeur à rendre par cible ; null pour toute la série.
+  derniersPoints?: number | null
 }): Promise<TauxProgressionPoint[]> => {
   if (individusCibles.length === 0) return []
 
@@ -45,6 +48,7 @@ export const computeTauxProgressionPoints = async ({
       indicateurId,
       individusCibles,
       dateTrunc: dateTruncValeur,
+      derniersPoints,
     }),
     loadResolveObjectifContext({
       indicateurId,

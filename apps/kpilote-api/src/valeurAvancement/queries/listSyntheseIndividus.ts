@@ -23,6 +23,9 @@ import { type IndividuRef, type PointInterne } from '@/valeurAvancement/resolveS
 // pour les agrégés (cf. doc d'archi `indicateur-derives.md`).
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
+// La variation compare les deux derniers points ; la médiane ne lit que le dernier.
+const DERNIERS_POINTS_LUS = 2
+
 const performList = async (
   indicateurPublicId: string,
   params: ListSyntheseIndividusQuery,
@@ -52,8 +55,8 @@ export const listSyntheseIndividus = (
 // écart à la médiane des dernières valeurs des pairs de son référentiel.
 // Saisie pour les feuilles, dérivée pour les agrégés — on réutilise le moteur
 // de séries : un seul `loadResolveSerieContext` couvre la population complète
-// des référentiels concernés, fratrie par fratrie. Comme pour les valeurs
-// remarquables, la "dernière valeur" est
+// des référentiels concernés, en ne chargeant que les deux dernières saisies
+// de chaque cellule. Comme pour les valeurs remarquables, la "dernière valeur" est
 // le dernier bucket de la série calculée (pas d'alignement sur une date pivot).
 //
 // Avec une sélection de modalités, chaque individu et ses pairs sont lus sur
@@ -85,6 +88,7 @@ const buildSynthese = async ({
     individusCibles: population,
     dateTrunc,
     selection,
+    derniersPoints: DERNIERS_POINTS_LUS,
   })
 
   const medianeParReferentiel = computeMedianeParReferentiel({ population, serieDe })

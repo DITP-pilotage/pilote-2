@@ -50,8 +50,8 @@ export const listValeursRemarquablesForIndicateur = (
 // Pour chaque référentiel demandé, on calcule min/max/médiane sur la dernière
 // valeur connue de chaque individu — saisie pour les feuilles, dérivée pour les
 // agrégés. On réutilise le moteur de séries de listValeursForIndicateur :
-// `loadResolveSerieContext` résout la population fratrie par fratrie. La
-// "dernière valeur" est
+// `loadResolveSerieContext` résout la population fratrie par fratrie, en ne
+// chargeant que la dernière saisie de chaque cellule. La "dernière valeur" est
 // le dernier bucket de la série calculée — sans alignement sur une date pivot,
 // donc des individus peuvent contribuer à partir de dates différentes.
 //
@@ -78,6 +78,7 @@ const buildStats = async ({
     individusCibles: cibles,
     dateTrunc,
     selection,
+    derniersPoints: 1,
   })
 
   const items: ValeursRemarquablesListApiModel['items'] = []

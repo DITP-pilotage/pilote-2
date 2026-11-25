@@ -1,14 +1,19 @@
+import { groupBy, mapValues } from 'es-toolkit'
 import { describe, expect, it } from 'vitest'
 
 import { formatBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
+import { getValeursTronqueesPourIndividus } from '@/generated/prisma/sql'
 import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import {
+  testAxeId,
   testDeptId,
   testDeptIds,
   testIndicateurId,
+  testModaliteId,
+  testReferentielId,
   testReferentielIds,
   testRegId,
 } from '@/test/randomIds'
@@ -19,9 +24,11 @@ import { type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
 const resolveSeries = async ({
   indicateur,
   cibles,
+  derniersPoints = null,
 }: {
   indicateur: string
   cibles: ReadonlyArray<string>
+  derniersPoints?: number | null
 }): Promise<(publicId: string) => ReadonlyArray<PointInterne>> => {
   const { id: indicateurId } = await db().indicateur.findUniqueOrThrow({
     where: { publicId: indicateur },
@@ -31,6 +38,7 @@ const resolveSeries = async ({
     indicateurId,
     individusCibles,
     dateTrunc: 'month',
+    derniersPoints,
   })
   return (publicId) => {
     const cible = individusCibles.find((individu) => individu.publicId === publicId)
@@ -110,6 +118,62 @@ describe.concurrent('loadResolveSerieContext', () => {
   )
 
   it(
+    'avec derniersPoints, rend les derniers points de la série entière',
+    integrationTest(async () => {
+      const { indicateur, region } = await regionAuxSaisiesDecalees()
+      const entiere = (await resolveSeries({ indicateur, cibles: [region] }))(region)
+
+      const deuxDerniers = await resolveSeries({ indicateur, cibles: [region], derniersPoints: 2 })
+      const dernier = await resolveSeries({ indicateur, cibles: [region], derniersPoints: 1 })
+
+      // Contributions et couverture comprises : le report lit la dernière
+      // valeur de chaque enfant, même plus ancienne que les points gardés.
+      expect(deuxDerniers(region)).toEqual(entiere.slice(-2))
+      expect(dernier(region)).toEqual(entiere.slice(-1))
+    }),
+  )
+
+  it(
+    'avec derniersPoints, rend le dernier point d’un indicateur à axes',
+    integrationTest(async () => {
+      const indicateur = testIndicateurId()
+      const dept = testDeptId()
+      const axe = { publicId: testAxeId() }
+      const [ft, caf] = [testModaliteId(), testModaliteId()]
+      await fixtures.modalite(
+        { publicId: ft, nom: 'France Travail', niveau: { axe } },
+        { publicId: caf, nom: 'CAF', niveau: { axe } },
+      )
+      await fixtures.indicateurAxe({ indicateur: { publicId: indicateur }, axe, fonction: 'SUM' })
+      const saisie = (modalite: string, date: string, valeur: number) => ({
+        indicateur: { publicId: indicateur },
+        individu: {
+          publicId: dept,
+          referentiel: { publicId: testReferentielId(), nom: 'Départements' },
+        },
+        date,
+        valeur,
+        combinaison: { modalites: [{ publicId: modalite }] },
+      })
+      await fixtures.valeurAvancement(saisie(ft, '2025-01-01', 1))
+      await fixtures.valeurAvancement(
+        { ...saisie(ft, '2025-03-01', 3), individu: { publicId: dept } },
+        { ...saisie(caf, '2025-02-01', 2), individu: { publicId: dept } },
+      )
+      const entiere = (await resolveSeries({ indicateur, cibles: [dept] }))(dept)
+
+      const dernier = await resolveSeries({ indicateur, cibles: [dept], derniersPoints: 1 })
+
+      expect(resume(entiere)).toEqual([
+        { date: '2025-01-01', valeur: 1, type: 'derivee' },
+        { date: '2025-02-01', valeur: 3, type: 'derivee' },
+        { date: '2025-03-01', valeur: 5, type: 'derivee' },
+      ])
+      expect(dernier(dept)).toEqual(entiere.slice(-1))
+    }),
+  )
+
+  it(
     'lit les saisies d’un individu dont le référentiel n’agrège pas, sans ses enfants',
     integrationTest(async () => {
       const indicateur = testIndicateurId()
@@ -162,6 +226,39 @@ describe.concurrent('loadResolveSerieContext', () => {
         date: '2025-04-01',
         valeur: 43,
         type: 'derivee',
+      })
+    }),
+  )
+
+  it(
+    'ne charge que les dernières saisies de chaque cellule quand derniersPoints est donné',
+    integrationTest(async () => {
+      const { indicateur, deptA, deptB } = await regionAuxSaisiesDecalees()
+      const { id: indicateurId } = await db().indicateur.findUniqueOrThrow({
+        where: { publicId: indicateur },
+      })
+      const individus = await loadIndividusParPublicId([deptA, deptB])
+      const publicIdById = new Map(individus.map((individu) => [individu.id, individu.publicId]))
+
+      const rows = await db().$queryRawTyped(
+        getValeursTronqueesPourIndividus(
+          indicateurId,
+          individus.map((individu) => individu.id),
+          'month',
+          null,
+          2,
+        ),
+      )
+
+      // Les deux dernières de chaque département, de la plus ancienne à la plus
+      // récente : le moteur lit les saisies d'une cellule dans cet ordre.
+      const bucketsByIndividu = mapValues(
+        groupBy(rows, (row) => publicIdById.get(row.individuId) ?? ''),
+        (saisies) => saisies.map((row) => row.bucket),
+      )
+      expect(bucketsByIndividu).toEqual({
+        [deptA]: ['2025-02-01', '2025-04-01'],
+        [deptB]: ['2025-01-01', '2025-03-01'],
       })
     }),
   )

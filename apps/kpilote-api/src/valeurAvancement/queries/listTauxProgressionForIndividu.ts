@@ -50,6 +50,7 @@ const build = async (
         individusCibles: [individu],
         dateTruncValeur: dateTrunc,
         dateTruncObjectif: dateTrunc,
+        derniersPoints: 1,
       })
       const point = points.at(-1)
       if (!point) return null
