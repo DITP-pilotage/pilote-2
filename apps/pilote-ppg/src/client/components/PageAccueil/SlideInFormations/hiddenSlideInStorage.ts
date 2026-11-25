@@ -33,7 +33,3 @@ export const isSlideInHidden = ({
 export const writeHiddenSlideIn = (slideIn: SlideInMasquee): void => {
   sessionStorage.setItem(CLE, JSON.stringify(slideIn));
 };
-
-export const clearHiddenSlideIn = (): void => {
-  sessionStorage.removeItem(CLE);
-};

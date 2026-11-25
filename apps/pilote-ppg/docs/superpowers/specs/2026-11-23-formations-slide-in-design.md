@@ -52,7 +52,7 @@ Les PR 1 à 3 sont mergées dans `dev` : tables, paramétrage DITP (profils, pé
 | `date_fermeture` renseignée             | Non, pour toute la période      |
 | Ligne sans fermeture (déjà présentée)   | Oui, sauf masquée dans l'onglet |
 
-- La croix ne laisse aucune trace en base : l'onglet s'en souvient (sessionStorage, par utilisateur et par période). La slide-in reste masquée tant que l'onglet est ouvert, même en revenant sur l'accueil ou en rechargeant la page, et revient à la prochaine ouverture de PILOTE (nouvel onglet, autre navigateur) ou après une déconnexion.
+- La croix ne laisse aucune trace en base : l'onglet s'en souvient (sessionStorage, par utilisateur et par période). La slide-in reste masquée tant que l'onglet est ouvert, même en revenant sur l'accueil ou en rechargeant la page, et revient à la prochaine ouverture de PILOTE (nouvel onglet, autre navigateur) ou pour un autre utilisateur. Se déconnecter puis se reconnecter avec le même compte dans le même onglet ne la fait pas revenir.
 - Une nouvelle période est une nouvelle campagne : pas de ligne, donc la slide-in revient, même pour qui avait fermé la précédente. Modifier une période garde la même campagne (décidé en PR 2).
 
 ### Actions
@@ -133,6 +133,6 @@ Relecture de la PR #2733 (2026-11-23) : nom complet des formations (plus de supp
 
 ## Révision du 2026-11-25
 
-À la demande de Tristan, la croix masque la slide-in jusqu'à la prochaine ouverture de PILOTE, et non plus jusqu'à la prochaine visite de l'accueil : revenir sur l'accueil la faisait réapparaître sans cesse. Le masquage est noté dans le sessionStorage de l'onglet (utilisateur et période), effacé à la déconnexion ; rien n'est écrit en base.
+À la demande de Tristan, la croix masque la slide-in jusqu'à la prochaine ouverture de PILOTE, et non plus jusqu'à la prochaine visite de l'accueil : revenir sur l'accueil la faisait réapparaître sans cesse. Le masquage est noté dans le sessionStorage de l'onglet (utilisateur et période) ; rien n'est écrit en base. Il n'est pas effacé à la déconnexion : le cas (même compte, même onglet) est rare, et une session Keycloak expirée ne passe de toute façon pas par le bouton « Se déconnecter ».
 
 « À la prochaine connexion » a été écarté : la session PILOTE est glissante (30 jours par défaut, prolongés à chaque visite) et ProConnect ne l'interrompt pas. Un utilisateur régulier ne se reconnecte presque jamais, et la croix aurait valu « Ne plus me les proposer » pour toute la période.
