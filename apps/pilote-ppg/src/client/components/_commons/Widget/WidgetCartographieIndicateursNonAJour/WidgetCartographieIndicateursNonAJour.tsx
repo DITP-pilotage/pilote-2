@@ -139,7 +139,7 @@ const NonAJourMapContent = ({
     >
       <TitreWidget>
         {mode === "chantier"
-          ? "Nombre d'indicateurs non à jour"
+          ? "Nombre d'indicateurs non à jour ou sans donnée"
           : "Date de mise à jour par territoire"}
       </TitreWidget>
       <TerritoiresNonAJourTable
