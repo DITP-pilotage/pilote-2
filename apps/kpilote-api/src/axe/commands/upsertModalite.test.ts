@@ -4,7 +4,7 @@ import { upsertModalite } from '@/axe/commands/upsertModalite'
 import { db } from '@/framework/persistence/dbStore'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testAxeId, testModaliteId } from '@/test/randomIds'
+import { testAxeId, testIndicateurId, testIndividuId, testModaliteId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
 // Axe à deux niveaux (Famille → Type) avec une famille et un type.
@@ -19,6 +19,14 @@ const axeImbrique = async () => {
   })
   return { axePublicId: axe.publicId, famille, type }
 }
+
+// Une valeur saisie sur la combinaison de ces modalités, pour un individu dédié.
+const valeurSur = (...modalites: { publicId: string }[]) =>
+  fixtures.valeurAvancement({
+    indicateur: { publicId: testIndicateurId() },
+    individu: { publicId: testIndividuId() },
+    combinaison: { modalites },
+  })
 
 const modaliteEnBase = async (publicId: string) => {
   const modalite = await db().modalite.findUniqueOrThrow({
@@ -194,6 +202,125 @@ describe.concurrent('upsertModalite', () => {
       )
 
       expect(result._unsafeUnwrapErr()).toEqual({ type: 'NIVEAU_INEXISTANT', ordre: 3 })
+    }),
+  )
+
+  it(
+    'refuse d’ajouter un enfant à une modalité qui porte des valeurs',
+    integrationTest(async () => {
+      const { axePublicId } = await axeImbrique()
+      const sociale = await fixtures.modalite({
+        nom: 'Fraude sociale',
+        niveau: { axe: { publicId: axePublicId }, ordre: 1 },
+      })
+      await valeurSur(sociale)
+      await valeurSur(sociale)
+      const publicId = testModaliteId()
+
+      const result = await runAsAdmin('principal-upsert-modalite-parent-valeurs', () =>
+        upsertModalite({
+          axePublicId,
+          publicId,
+          body: { nom: 'Cotisations', parent: sociale.publicId },
+        }),
+      )
+
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'PARENT_PORTE_VALEURS',
+        parent: sociale.publicId,
+        valeurs: 2,
+      })
+      expect(await db().modalite.findUnique({ where: { publicId } })).toBeNull()
+    }),
+  )
+
+  it(
+    'compte les valeurs saisies sur une combinaison de plusieurs axes',
+    integrationTest(async () => {
+      const { axePublicId } = await axeImbrique()
+      const sociale = await fixtures.modalite({
+        nom: 'Fraude sociale',
+        niveau: { axe: { publicId: axePublicId }, ordre: 1 },
+      })
+      const bretagne = await fixtures.modalite({
+        nom: 'Bretagne',
+        niveau: { axe: { publicId: testAxeId() } },
+      })
+      await valeurSur(sociale, bretagne)
+
+      const result = await runAsAdmin('principal-upsert-modalite-parent-multi-axes', () =>
+        upsertModalite({
+          axePublicId,
+          publicId: testModaliteId(),
+          body: { nom: 'Cotisations', parent: sociale.publicId },
+        }),
+      )
+
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'PARENT_PORTE_VALEURS',
+        parent: sociale.publicId,
+        valeurs: 1,
+      })
+    }),
+  )
+
+  it(
+    'accepte un enfant sous une famille dont seuls les enfants portent des valeurs',
+    integrationTest(async () => {
+      const { axePublicId, famille, type } = await axeImbrique()
+      await valeurSur(type)
+      const publicId = testModaliteId()
+
+      const result = await runAsAdmin('principal-upsert-modalite-valeurs-enfants', () =>
+        upsertModalite({
+          axePublicId,
+          publicId,
+          body: { nom: 'Fraude à l’IR', parent: famille.publicId },
+        }),
+      )
+
+      expect(result.isOk()).toBe(true)
+      expect(await modaliteEnBase(publicId)).toMatchObject({
+        niveau: 2,
+        parent: famille.publicId,
+      })
+    }),
+  )
+
+  it(
+    'refuse un parent au dernier niveau avant de regarder ses valeurs',
+    integrationTest(async () => {
+      const { axePublicId, type } = await axeImbrique()
+      await valeurSur(type)
+
+      const result = await runAsAdmin('principal-upsert-modalite-feuille-valeurs', () =>
+        upsertModalite({
+          axePublicId,
+          publicId: testModaliteId(),
+          body: { nom: 'Trop profonde', parent: type.publicId },
+        }),
+      )
+
+      expect(result._unsafeUnwrapErr()).toEqual({ type: 'NIVEAU_INEXISTANT', ordre: 3 })
+    }),
+  )
+
+  it(
+    'renomme une modalité qui porte des valeurs',
+    integrationTest(async () => {
+      const { axePublicId, famille, type } = await axeImbrique()
+      await valeurSur(type)
+
+      const result = await runAsAdmin('principal-upsert-modalite-renommage-valeurs', () =>
+        upsertModalite({
+          axePublicId,
+          publicId: type.publicId,
+          body: { nom: 'TVA', parent: famille.publicId },
+        }),
+      )
+
+      expect(result.isOk()).toBe(true)
+      expect(await modaliteEnBase(type.publicId)).toMatchObject({ nom: 'TVA' })
     }),
   )
 

@@ -1,5 +1,6 @@
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
+import { countValeursForModalite } from '@/axe/countValeursForModalite'
 import { checkModaliteSupprimable, type ModaliteNonSupprimableError } from '@/axe/rules'
 import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { NotFoundError } from '@/framework/errors/AppError'
@@ -23,9 +24,7 @@ const performDelete = async ({
   if (!modalite) {
     throw new NotFoundError('Modalité introuvable dans cet axe.', { axe: axePublicId, publicId })
   }
-  const nombreValeurs = await db().valeurAvancement.count({
-    where: { combinaison: { modalites: { some: { modaliteId: modalite.id } } } },
-  })
+  const nombreValeurs = await countValeursForModalite({ modaliteId: modalite.id })
 
   const supprimable = checkModaliteSupprimable({
     enfants: modalite.enfants.map((enfant) => enfant.publicId),
