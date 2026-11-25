@@ -65,7 +65,7 @@ const getIndicateursRoute = createRoute({
   tags: ['Indicateur'],
   summary: 'Lister les indicateurs',
   description:
-    "Retourne la liste paginée des indicateurs avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. `hasMore` indique s'il reste des pages. Chaque item inclut `referentielIds` (triés par identifiant public ASC).",
+    "Retourne la liste paginée des indicateurs avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. `hasMore` indique s'il reste des pages. Chaque item inclut `referentielIds` (triés par identifiant public ASC). Avec `individus`, les indicateurs liés au référentiel d'un individu sélectionné passent en tête de liste.",
   middleware: [requireAuthentication],
   request: { query: listIndicateursQuerySchema },
   responses: {
@@ -170,9 +170,7 @@ const describeUpsertIndicateurError = (
 export const indicateurRoutes = createOpenApiHono()
 
 indicateurRoutes.openapi(getIndicateursRoute, async (context) => {
-  const { recherche, rechercheIdentifiant, cursor, pageSize, ids } = context.req.valid('query')
-
-  return listIndicateurs({ recherche, rechercheIdentifiant, cursor, pageSize, ids }).match(
+  return listIndicateurs({ query: context.req.valid('query') }).match(
     (data) =>
       jsonResponseOk({
         context,

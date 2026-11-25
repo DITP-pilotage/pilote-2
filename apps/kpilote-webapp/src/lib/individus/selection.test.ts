@@ -6,6 +6,7 @@ import { buildOrderedNodes, groupNodesByRootReferentiel } from './hierarchy'
 import {
   buildSelectors,
   normalizeSelection,
+  removeIndividu,
   resolveCollectionReading,
   resolveIndicateurReading,
   selectIndividu,
@@ -86,6 +87,18 @@ describe('selectIndividu', () => {
   })
 })
 
+describe('removeIndividu', () => {
+  it("retire l'individu et garde les autres stacks", () => {
+    expect(removeIndividu({ selection: ['BV-05', 'DEPT-84'], individu: 'DEPT-84' })).toEqual([
+      'BV-05',
+    ])
+  })
+
+  it('vide la sélection quand on retire le dernier individu', () => {
+    expect(removeIndividu({ selection: ['BV-05'], individu: 'BV-05' })).toEqual([])
+  })
+})
+
 describe('resolveIndicateurReading', () => {
   const territorial = ['REF-NAT', 'REF-REG', 'REF-DEPT']
   const regional = ['REF-REG']
@@ -158,7 +171,7 @@ describe('resolveCollectionReading', () => {
 })
 
 describe('buildSelectors', () => {
-  it('annonce la racine de chaque stack par défaut sans sélection', () => {
+  it('annonce la root de chaque stack par défaut sans sélection', () => {
     const selectors = buildSelectors({ groups, selection: [] })
 
     expect(

@@ -6,26 +6,33 @@ import { ResultAsync } from 'neverthrow'
 
 import { isAdminPrincipal, requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
-import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
+import { paginateBySegments } from '@/framework/persistence/paginateBySegments'
 import { type Prisma } from '@/generated/prisma/client'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { indicateurApiModelInclude, toIndicateurApiModel } from '@/indicateur/utils'
+import { loadSelectedIndividus } from '@/individu/loadSelectedIndividus'
+
+type ListIndicateursParams = {
+  query: ListIndicateursQuery
+}
 
 export const listIndicateurs = (
-  params: ListIndicateursQuery,
-): ResultAsync<IndicateurListApiModel, never> => {
+  params: ListIndicateursParams,
+): ResultAsync<IndicateurListApiModel, never> => ResultAsync.fromSafePromise(build(params))
+
+const build = async ({ query }: ListIndicateursParams): Promise<IndicateurListApiModel> => {
   const principalId = requireCurrentPrincipalId()
   const filters: Prisma.IndicateurWhereInput = {}
-  if (params.recherche) {
-    filters.nom = { contains: params.recherche, mode: 'insensitive' }
+  if (query.recherche) {
+    filters.nom = { contains: query.recherche, mode: 'insensitive' }
   }
   const publicId: Prisma.StringFilter<'Indicateur'> = {}
-  if (params.rechercheIdentifiant) {
-    publicId.contains = params.rechercheIdentifiant
+  if (query.rechercheIdentifiant) {
+    publicId.contains = query.rechercheIdentifiant
     publicId.mode = 'insensitive'
   }
-  if (params.ids && params.ids.length > 0) {
-    publicId.in = params.ids
+  if (query.ids && query.ids.length > 0) {
+    publicId.in = query.ids
   }
   if (Object.keys(publicId).length > 0) filters.publicId = publicId
   // Le bypass ADMIN (administre PUBLIC + PRIVÉ) est géré dans withIndicateurReadPermission.
@@ -33,36 +40,61 @@ export const listIndicateurs = (
     isAdmin: isAdminPrincipal(),
   })
 
-  const fetchPage = db().indicateur.findMany({
-    where,
-    orderBy: { id: 'asc' },
-    include: indicateurApiModelInclude,
-    ...buildPaginationArgs(params.cursor, params.pageSize),
-  })
-  const fetchTotal = db().indicateur.count({ where })
-
-  const loadPage = async (): Promise<IndicateurListApiModel> => {
-    const [rows, total] = await Promise.all([fetchPage, fetchTotal])
-    // Une seule requête pour toutes les dernières valeurs de la page (évite le N+1).
-    // La date est en `YYYY-MM-DD` : MAX lexicographique = MAX chronologique.
-    // Toutes combinaisons confondues (cf. getIndicateurByPublicId).
-    const maxDates = await db().valeurAvancement.groupBy({
-      by: ['indicateurId'],
-      where: { indicateurId: { in: rows.map((row) => row.id) } },
-      _max: { date: true },
-    })
-    const dateParIndicateur = new Map(maxDates.map((m) => [m.indicateurId, m._max.date]))
-    return toPaginatedResponse(
-      rows,
-      total,
-      (row) =>
-        toIndicateurApiModel({
-          indicateur: row,
-          dateDerniereValeur: dateParIndicateur.get(row.id) ?? null,
+  const segments = await buildSegments({ where, selectedPublicIds: query.individus })
+  const [page, total] = await Promise.all([
+    paginateBySegments({
+      segments,
+      cursor: query.cursor,
+      pageSize: query.pageSize,
+      findMany: (args) =>
+        db().indicateur.findMany({
+          ...args,
+          orderBy: { id: 'asc' },
+          include: indicateurApiModelInclude,
         }),
-      params.pageSize,
-    )
-  }
+    }),
+    db().indicateur.count({ where }),
+  ])
 
-  return ResultAsync.fromSafePromise(loadPage())
+  // Une seule requête pour toutes les dernières valeurs de la page (évite le N+1).
+  // La date est en `YYYY-MM-DD` : MAX lexicographique = MAX chronologique.
+  // Toutes combinaisons confondues (cf. getIndicateurByPublicId).
+  const maxDates = await db().valeurAvancement.groupBy({
+    by: ['indicateurId'],
+    where: { indicateurId: { in: page.rows.map((row) => row.id) } },
+    _max: { date: true },
+  })
+  const dateParIndicateur = new Map(maxDates.map((m) => [m.indicateurId, m._max.date]))
+  return {
+    items: page.rows.map((row) =>
+      toIndicateurApiModel({
+        indicateur: row,
+        dateDerniereValeur: dateParIndicateur.get(row.id) ?? null,
+      }),
+    ),
+    pagination: page.pagination,
+    total,
+  }
+}
+
+// Avec une sélection, les indicateurs qu'elle concerne passent en tête : ceux
+// dont un référentiel lié est celui d'un individu sélectionné. La sélection ne
+// filtre rien, elle ordonne.
+const buildSegments = async ({
+  where,
+  selectedPublicIds,
+}: {
+  where: Prisma.IndicateurWhereInput
+  selectedPublicIds: ReadonlyArray<string> | undefined
+}): Promise<Prisma.IndicateurWhereInput[]> => {
+  if (selectedPublicIds === undefined) return [where]
+  const selectedIndividus = await loadSelectedIndividus(selectedPublicIds)
+  const concernedBySelection: Prisma.IndicateurWhereInput = {
+    referentiels: {
+      some: {
+        referentielId: { in: selectedIndividus.map((individu) => individu.referentielId) },
+      },
+    },
+  }
+  return [{ AND: [where, concernedBySelection] }, { AND: [where, { NOT: concernedBySelection }] }]
 }
