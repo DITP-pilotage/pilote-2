@@ -1,22 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { searchUnaccent } from '@pilote/kpilote-shared/texte'
-import { parseNombre } from '@pilote/kpilote-shared/valeurImport/parseNombre'
+import { parseNombre } from '@pilote/kpilote-shared/nombre'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
-import { Command } from 'cmdk'
-import { Check, Search } from 'lucide-react'
+import { PickerList } from '@pilote/kpilote-ui/PickerList'
+import { Check } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { type CorrectionSaisie } from './edition'
 import { type Candidat, type EditionCellule } from './grille'
-
-// Même filtre que `Picker` : sous-chaîne, sans tenir compte de la casse ni des accents.
-const commandFilter = (itemValue: string, query: string): number => {
-  const needle = searchUnaccent(query)
-  if (!needle) return 1
-  return searchUnaccent(itemValue).includes(needle) ? 1 : 0
-}
 
 type RapprochementEdition = Extract<EditionCellule, { type: 'RAPPROCHEMENT' }>
 
@@ -28,39 +20,28 @@ function RapprochementEditor({
   onSelect: (candidat: Candidat) => void
 }) {
   return (
-    <Command filter={commandFilter} className="w-80">
-      <p className="border-b border-border px-3 py-2 text-xs text-text-muted">
-        « {edition.libelle} » dans le fichier. Le choix s’applique à toutes les lignes qui portent
-        ce libellé.
-      </p>
-      <div className="flex items-center gap-2 border-b border-border px-3">
-        <Search aria-hidden className="size-4 shrink-0 text-text-muted" />
-        <Command.Input
-          autoFocus
-          placeholder="Rechercher…"
-          className="h-10 w-full bg-transparent text-sm outline-none placeholder:text-text-subtle"
-        />
-      </div>
-      <Command.List className="max-h-64 overflow-y-auto p-1.5">
-        <Command.Empty className="px-3 py-6 text-center text-sm text-text-muted">
-          Aucun résultat.
-        </Command.Empty>
-        {edition.candidats.map((candidat) => (
-          <Command.Item
-            key={candidat.id}
-            value={`${candidat.nom} ${candidat.id}`}
-            onSelect={() => onSelect(candidat)}
-            className="flex cursor-pointer select-none items-center gap-2 rounded-md px-2.5 py-2 text-sm outline-none data-[selected=true]:bg-surface-tinted data-[selected=true]:text-primary"
-          >
-            <span className="min-w-0 flex-1 truncate">{candidat.nom}</span>
-            <span className="font-mono text-[11px] text-text-muted">{candidat.id}</span>
-            {candidat.id === edition.selected ? (
-              <Check aria-label="Sélectionné" className="size-4 shrink-0 text-primary" />
-            ) : null}
-          </Command.Item>
-        ))}
-      </Command.List>
-    </Command>
+    <PickerList
+      className="w-80"
+      header={
+        <>
+          « {edition.libelle} » dans le fichier. Le choix s’applique à toutes les lignes qui portent
+          ce libellé.
+        </>
+      }
+      items={edition.candidats}
+      onSelect={onSelect}
+      getKey={(candidat) => candidat.id}
+      getSearchText={(candidat) => `${candidat.nom} ${candidat.id}`}
+      renderItem={(candidat) => (
+        <>
+          <span className="min-w-0 flex-1 truncate">{candidat.nom}</span>
+          <span className="font-mono text-[11px] text-text-muted">{candidat.id}</span>
+          {candidat.id === edition.selected ? (
+            <Check aria-label="Sélectionné" className="size-4 shrink-0 text-primary" />
+          ) : null}
+        </>
+      )}
+    />
   )
 }
 

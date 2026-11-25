@@ -8,7 +8,7 @@ import {
   fonctionLabel,
   nodesOfKind,
   normalize,
-  pluralize,
+  pluralizeCount,
   pluralSuffix,
   relatedIds,
   TOUS_ID,
@@ -226,7 +226,7 @@ export const buildGraphLayout = ({
 export const searchSummaryOf = (count: number): string => {
   if (count === 0) return 'Aucune modalité ne correspond.'
   const shown = `affichée${pluralSuffix(count)}`
-  return `${pluralize({ count, word: 'modalité' })} ${shown} (résultats et leurs parents)`
+  return `${pluralizeCount({ count, word: 'modalité' })} ${shown} (résultats et leurs parents)`
 }
 
 export const WARNINGS_LIMIT = 5
@@ -310,9 +310,9 @@ export const nodeMetaOf = ({
   if (node.kind === 'feuille') return 'Saisie'
   if (node.children.length === 0) return 'Aucune modalité'
   if (node.hidden > 0) {
-    return `${pluralize({ count: node.hidden, word: 'modalité' })} repliée${pluralSuffix(node.hidden)}`
+    return `${pluralizeCount({ count: node.hidden, word: 'modalité' })} repliée${pluralSuffix(node.hidden)}`
   }
   const operation = isSimulating ? fonctionLabel(fonction) : 'calcul'
-  const children = pluralize({ count: node.children.length, word: 'enfant' })
+  const children = pluralizeCount({ count: node.children.length, word: 'enfant' })
   return `${operation.charAt(0).toUpperCase()}${operation.slice(1)} de ${children}`
 }

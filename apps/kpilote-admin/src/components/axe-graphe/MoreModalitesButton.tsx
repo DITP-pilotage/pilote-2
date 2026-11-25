@@ -1,4 +1,4 @@
-import { pluralize } from '@/lib/axeArbre'
+import { pluralizeCount } from '@/lib/axeArbre'
 import { type MoreNode, NODE_HEIGHT } from '@/lib/axeGraphe'
 import { clsxm } from '@/lib/clsxm'
 
@@ -24,7 +24,7 @@ export function MoreModalitesButton({
       style={{ left: more.x, top: more.y, width, height: NODE_HEIGHT }}
     >
       <span className="text-sm font-medium text-text">
-        + {pluralize({ count: more.count, word: 'autre modalité' })}
+        + {pluralizeCount({ count: more.count, word: 'autre modalité' })}
       </span>
       <span className="text-[11px] text-primary">Tout afficher</span>
     </button>

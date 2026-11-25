@@ -1,3 +1,4 @@
+import { clamp } from 'es-toolkit'
 import { type LucideIcon } from 'lucide-react'
 
 // Une grille de valeurs au format d'import : une ligne par valeur, une colonne par individu,
@@ -37,15 +38,6 @@ export type LigneGrille = {
   cellules: CelluleGrille[]
 }
 
-export const formatDate = (iso: string): string => {
-  const [annee = '', mois = '', jour = ''] = iso.split('-')
-  return `${jour}/${mois}/${annee}`
-}
-
-const NOMBRE = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 6 })
-
-export const formatValeur = (valeur: number): string => NOMBRE.format(valeur)
-
 // `gridId` distingue deux grilles d'une même page.
 export const cellDomId = ({
   gridId,
@@ -54,9 +46,6 @@ export const cellDomId = ({
   gridId: string
   position: PositionCellule
 }): string => `${gridId}-cellule-${position.ligne}-${position.colonne}`
-
-const clamp = ({ value, max }: { value: number; max: number }): number =>
-  Math.min(Math.max(value, 0), max)
 
 // Déplacement de la sélection au clavier, borné aux lignes affichées. Depuis une ligne qui n'est
 // pas affichée (sélection initiale hors des lignes, ligne filtrée), on va à la première ligne
@@ -74,9 +63,9 @@ export const movePosition = ({
 }): PositionCellule => {
   if (lignes.length === 0) return position
   const rang = lignes.findIndex((ligne) => ligne.index === position.ligne)
-  const nextRang = rang === -1 ? 0 : clamp({ value: rang + delta.ligne, max: lignes.length - 1 })
+  const nextRang = rang === -1 ? 0 : clamp(rang + delta.ligne, 0, lignes.length - 1)
   return {
     ligne: lignes[nextRang]?.index ?? position.ligne,
-    colonne: clamp({ value: position.colonne + delta.colonne, max: nombreColonnes - 1 }),
+    colonne: clamp(position.colonne + delta.colonne, 0, nombreColonnes - 1),
   }
 }

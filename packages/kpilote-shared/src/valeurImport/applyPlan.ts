@@ -1,3 +1,5 @@
+import { parseDateFr } from '../dates'
+import { parseNombre } from '../nombre'
 import {
   type CelluleSource,
   type ColonneRapprochee,
@@ -5,8 +7,6 @@ import {
   type PlanTransformation,
   type TableauSource,
 } from '../valeurImport'
-import { parseDate } from './parseDate'
-import { parseNombre } from './parseNombre'
 
 // Application d'un plan de transformation à un tableau source : une fonction
 // pure, rejouée dans le navigateur à chaque correction. Le même plan sur le même
@@ -103,7 +103,7 @@ const toObservations = ({
         colonneValeur: plan.valeurs.colonneValeur,
         individu,
         modalites,
-        date: { brut: toTexte(dateBrute), lue: parseDate(dateBrute) },
+        date: { brut: toTexte(dateBrute), lue: parseDateFr(dateBrute) },
         valeur: read({ ligne, colonne: plan.valeurs.colonneValeur }),
       })
       continue

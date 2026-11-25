@@ -44,6 +44,19 @@ Pourquoi : le site d'appel dit ce qu'il passe, on ajoute un paramètre sans cass
 Hors composants React : `export const foo = (...): T => ...`. Jamais d'`export default` (lint `import/no-default-export`), jamais de barrel `index.ts`.
 Pourquoi : forme constante de l'API et de shared (324 contre 0) ; un import nommé se renomme et se cherche sans ambiguïté.
 
+## Code générique
+
+### Un helper générique vit dans un module partagé, pas dans le fichier qui l'utilise
+Un helper qui ne parle pas du domaine du fichier où on l'écrit (texte, nombres, dates, collections, flux, lecture de fichier, hook, filtre d'UI) va dans le module transverse du projet. Avant de l'écrire, on cherche s'il existe déjà : dans es-toolkit, puis dans ces modules.
+- `packages/kpilote-shared` : logique pure utile à plusieurs projets (`texte.ts`, `nombre.ts`, `dates.ts`, `record.ts`).
+- `packages/kpilote-ui` : composants et helpers d'interface (`commandFilter`, `PickerList`).
+- `apps/kpilote-api` : `src/framework/` (`collections/`, `concurrency.ts`, `llm/`). Un ajout y reste soumis à « Pas de framework sans discussion ».
+- `apps/kpilote-webapp` et `apps/kpilote-admin` : `src/lib/` (logique pure, hooks), et `src/api/` pour un client transverse (`api/sse.ts`).
+
+Pourquoi : un helper rangé dans un fichier métier ne se trouve pas, et on le réécrit ailleurs. Avant PIL-1995, `commandFilter` existait en trois copies, `emptyToNull` en trois variantes et le `pad` des dates ISO en deux.
+- À éviter : `components/import-valeurs/pluralize.ts`, `duplicatesOf` privé dans `valeurImport/rules.ts`, une liste cmdk recopiée de `Picker`.
+- Exception : un helper de deux lignes sur es-toolkit, à un seul usage, peut rester local (`sortCandidats` dans `components/import-valeurs/grille.ts`).
+
 ## Lisibilité
 
 ### Pas de ternaire imbriqué

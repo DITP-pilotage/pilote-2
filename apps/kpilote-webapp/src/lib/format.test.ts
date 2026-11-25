@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { displayedDifferenceSign, formatMoisAnneeLongFr } from '@/lib/format'
+import {
+  displayedDifferenceSign,
+  formatIsoDateFr,
+  formatMoisAnneeLongFr,
+  formatNumberFrFull,
+} from '@/lib/format'
 
 describe('formatMoisAnneeLongFr', () => {
   it('formate une date ISO en mois-année long fr-FR', () => {
@@ -19,5 +24,19 @@ describe('displayedDifferenceSign', () => {
   it("garde le signe d'une différence affichée non nulle", () => {
     expect(displayedDifferenceSign(0.0005)).toBe(1)
     expect(displayedDifferenceSign(-1.3)).toBe(-1)
+  })
+})
+
+describe('formatIsoDateFr', () => {
+  it('affiche une date ISO au format jour/mois/année', () => {
+    expect(formatIsoDateFr('2024-03-15')).toBe('15/03/2024')
+  })
+})
+
+describe('formatNumberFrFull', () => {
+  it('garde jusqu’à 6 décimales', () => {
+    expect(formatNumberFrFull(0.123456)).toBe(
+      new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 6 }).format(0.123456),
+    )
   })
 })

@@ -1,3 +1,4 @@
+import { pluralize } from '@pilote/kpilote-shared/texte'
 import { MAX_VALEURS_PAR_BATCH } from '@pilote/kpilote-shared/valeurAvancement'
 import {
   applyPlan,
@@ -21,7 +22,6 @@ import { ImportDropZone } from './ImportDropZone'
 import { ImportGrille } from './ImportGrille'
 import { ImportMessage } from './ImportMessage'
 import { type LectureError } from './lecture/matriceVersTableau'
-import { pluralize } from './pluralize'
 import { traduireErreursBatch, traduireIssuesValidation } from './traduireErreursBatch'
 import type { ImportTarget } from './useImportModal'
 import { useImportValeurs } from './useImportValeurs'

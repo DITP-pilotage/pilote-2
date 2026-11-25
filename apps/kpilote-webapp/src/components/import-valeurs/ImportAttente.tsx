@@ -1,9 +1,9 @@
+import { pluralize } from '@pilote/kpilote-shared/texte'
 import { Check, FileSpreadsheet, Loader2 } from 'lucide-react'
 
 import { clsxm } from '@/lib/clsxm'
 
 import { type EtapeAttente, progressionOf } from './etapesAttente'
-import { pluralize } from './pluralize'
 
 function EtapeIcone({ statut }: { statut: EtapeAttente['statut'] }) {
   if (statut === 'TERMINEE') {

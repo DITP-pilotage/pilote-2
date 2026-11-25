@@ -58,6 +58,19 @@ export const INTERPRETATION_LABEL_FR: Record<Interpretation, string | null> = {
 
 export const formatDateFr = (value: Date | string): string => dateFr.format(toDate(value))
 
+// Une date ISO `YYYY-MM-DD` lue telle qu'écrite : sans passer par `Date`, qui la
+// placerait à minuit UTC et pourrait l'afficher la veille selon le fuseau.
+export const formatIsoDateFr = (iso: string): string => {
+  const [annee = '', mois = '', jour = ''] = iso.split('-')
+  return `${jour}/${mois}/${annee}`
+}
+
+// Jusqu'à 6 décimales, contre 3 pour `formatNumberFr` : une valeur importée se
+// relit sans arrondi visible avant d'être enregistrée.
+const numberFrFull = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 6 })
+
+export const formatNumberFrFull = (value: number): string => numberFrFull.format(value)
+
 export const formatDateTimeFr = (value: Date | string): string =>
   toDate(value).toLocaleString('fr-FR')
 

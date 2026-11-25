@@ -1,4 +1,5 @@
-import { isValidCalendarDate } from '@pilote/kpilote-shared/dates'
+import { isValidCalendarDate, parseDateFr } from '@pilote/kpilote-shared/dates'
+import { emptyToNull } from '@pilote/kpilote-shared/texte'
 import {
   type DispositionValeurs,
   type FiltreLignes,
@@ -6,9 +7,9 @@ import {
   type TableauSource,
 } from '@pilote/kpilote-shared/valeurImport'
 import { listLibelles } from '@pilote/kpilote-shared/valeurImport/buildPlan'
-import { parseDate } from '@pilote/kpilote-shared/valeurImport/parseDate'
-import { countBy } from 'es-toolkit'
 import { err, ok, type Result } from 'neverthrow'
+
+import { findDuplicates } from '@/framework/collections/findDuplicates'
 
 // Règles de validation des propositions d'Albert. Chaque règle renvoie toutes
 // les erreurs trouvées : elles repartent telles quelles vers Albert, qui corrige
@@ -46,22 +47,12 @@ export type ErreurStructure =
 
 export type StructureInvalideError = { type: 'STRUCTURE_INVALIDE'; erreurs: ErreurStructure[] }
 
-const clean = (value: string | null | undefined): string | null => {
-  const trimmed = value?.trim()
-  return trimmed ? trimmed : null
-}
-
-const duplicatesOf = (values: ReadonlyArray<string>): string[] =>
-  Object.entries(countBy(values, (value) => value))
-    .filter(([, count]) => count > 1)
-    .map(([value]) => value)
-
 type Disposition = { valeurs: DispositionValeurs | null; erreurs: ErreurStructure[] }
 
 const readDisposition = (proposition: StructureProposee): Disposition => {
   if (proposition.disposition === 'LIGNES') {
-    const colonneDate = clean(proposition.colonneDate)
-    const colonneValeur = clean(proposition.colonneValeur)
+    const colonneDate = emptyToNull(proposition.colonneDate)
+    const colonneValeur = emptyToNull(proposition.colonneValeur)
     const erreurs: ErreurStructure[] = []
     if (!colonneDate) erreurs.push({ type: 'CHAMP_MANQUANT', champ: 'colonneDate' })
     if (!colonneValeur) erreurs.push({ type: 'CHAMP_MANQUANT', champ: 'colonneValeur' })
@@ -76,7 +67,7 @@ const readDisposition = (proposition: StructureProposee): Disposition => {
   // donnée par Albert ne sert que pour les en-têtes qu'il ne tranche pas.
   const colonnes = proposees.map(({ colonne, date }) => ({
     colonne: colonne.trim(),
-    date: parseDate(colonne) ?? clean(date) ?? '',
+    date: parseDateFr(colonne) ?? emptyToNull(date) ?? '',
   }))
   const erreurs = colonnes
     .filter(({ date }) => !isValidCalendarDate(date))
@@ -98,7 +89,7 @@ const readFiltre = ({
   proposition: StructureProposee
   tableau: TableauSource
 }): Filtre => {
-  const colonne = clean(proposition.colonneFiltre)
+  const colonne = emptyToNull(proposition.colonneFiltre)
   if (!colonne) return { filtre: null, erreurs: [] }
   const valeursRetenues = proposition.valeursFiltre ?? []
   // Un filtre sans valeur écarterait toutes les lignes du fichier.
@@ -146,14 +137,14 @@ export const checkStructure = ({
     ...[...new Set(roles)]
       .filter((colonne) => !entetes.has(colonne))
       .map((colonne): ErreurStructure => ({ type: 'COLONNE_INCONNUE', colonne })),
-    ...duplicatesOf(roles).map((colonne): ErreurStructure => ({
+    ...findDuplicates(roles).map((colonne): ErreurStructure => ({
       type: 'COLONNE_A_DEUX_ROLES',
       colonne,
     })),
     ...[...new Set(axesCites)]
       .filter((axe) => !axesConnus.has(axe))
       .map((axe): ErreurStructure => ({ type: 'AXE_INCONNU', axe })),
-    ...duplicatesOf(axesCites).map((axe): ErreurStructure => ({ type: 'AXE_EN_DOUBLE', axe })),
+    ...findDuplicates(axesCites).map((axe): ErreurStructure => ({ type: 'AXE_EN_DOUBLE', axe })),
     ...disposition.erreurs,
     ...filtre.erreurs,
   ]
@@ -256,7 +247,7 @@ export const checkRapprochements = ({
     ...libelles
       .filter((libelle) => !citesSet.has(libelle))
       .map((libelle): ErreurRapprochement => ({ type: 'LIBELLE_MANQUANT', libelle })),
-    ...duplicatesOf(cites).map((libelle): ErreurRapprochement => ({
+    ...findDuplicates(cites).map((libelle): ErreurRapprochement => ({
       type: 'LIBELLE_EN_DOUBLE',
       libelle,
     })),

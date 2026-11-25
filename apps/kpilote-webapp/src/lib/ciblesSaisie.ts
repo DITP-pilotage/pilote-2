@@ -2,6 +2,7 @@ import { type IndividuApiModel } from '@pilote/kpilote-shared/individu'
 import { type CiblesSaisie } from '@pilote/kpilote-shared/valeurImport'
 import { sortBy, uniqBy } from 'es-toolkit'
 
+import { listLeafModalites } from '@/lib/axes/modalites'
 import { type AxeWithModalites } from '@/lib/axes/selection'
 
 // Même ensemble que celui que l'API charge pour Albert : les individus des
@@ -20,14 +21,9 @@ export const buildCiblesSaisie = ({
     uniqBy(individus, (individu) => individu.id),
     [(individu) => individu.id],
   ).map((individu) => ({ id: individu.id, nom: individu.nom, referentiel: individu.referentiel })),
-  axes: axes.map((axe) => ({ id: axe.id, nom: axe.nom, modalites: leafModalitesOf(axe) })),
+  axes: axes.map((axe) => ({
+    id: axe.id,
+    nom: axe.nom,
+    modalites: listLeafModalites(axe).map((modalite) => ({ id: modalite.id, nom: modalite.nom })),
+  })),
 })
-
-const leafModalitesOf = (axe: AxeWithModalites): CiblesSaisie['axes'][number]['modalites'] => {
-  const parentIds = new Set(axe.modalites.map((modalite) => modalite.parent))
-  const leaves = axe.modalites.filter((modalite) => !parentIds.has(modalite.id))
-  return sortBy(leaves, [(modalite) => modalite.id]).map((modalite) => ({
-    id: modalite.id,
-    nom: modalite.nom,
-  }))
-}

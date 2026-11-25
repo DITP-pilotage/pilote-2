@@ -1,3 +1,4 @@
+import { uniq } from 'es-toolkit'
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
 import {
   type ListSyntheseIndividusQuery,
@@ -7,7 +8,6 @@ import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
 import { type Selection } from '@/axe/modalites'
 import { type ResolveSelectionError, resolveSelection } from '@/axe/resolveSelection'
-import { unique } from '@/framework/array'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Decimal } from '@/framework/decimal'
 import { logger } from '@/framework/logger/logger'
@@ -81,7 +81,7 @@ const buildSynthese = async ({
   // Population des référentiels concernés : nécessaire pour calculer la
   // médiane des pairs. Elle contient déjà les individus demandés (mêmes
   // référentiels), donc on s'en sert directement comme cibles unique.
-  const referentielIds = unique(individusDemandes.map((i) => i.referentielId))
+  const referentielIds = uniq(individusDemandes.map((i) => i.referentielId))
   const population = await loadPopulation({ referentielIds })
 
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC

@@ -12,7 +12,7 @@ import {
   uniteIndicateurCodeSchema,
 } from '@pilote/kpilote-shared/indicateur'
 
-import { emptyToNull } from '@/lib/emptyToNull'
+import { emptyToNull } from '@pilote/kpilote-shared/texte'
 
 // Schéma du formulaire (valeurs saisies, toutes en chaînes natives). La
 // conversion vers le body PUT — `'' → null`, `jour → number` — est faite par

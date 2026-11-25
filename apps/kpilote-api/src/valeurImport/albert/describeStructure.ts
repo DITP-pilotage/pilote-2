@@ -7,11 +7,14 @@ import { generateText, stepCountIs, tool } from 'ai'
 import { err, ok, type Result } from 'neverthrow'
 import { z } from 'zod'
 
-import { createAlbertModel, STRUCTURED_TEMPERATURE } from '@/framework/llm/albert'
+import {
+  createAlbertModel,
+  LOW_REASONING_OPTIONS,
+  STRUCTURED_TEMPERATURE,
+} from '@/framework/llm/albert'
 import { logger } from '@/framework/logger/logger'
 import { startTimer } from '@/framework/timer'
 import { buildProfilColonnes } from '@/valeurImport/profilColonnes'
-import { ALBERT_IMPORT_OPTIONS } from '@/valeurImport/albert/providerOptions'
 import { describeFichierInexploitable } from '@/valeurImport/fichierInexploitable'
 import { checkStructure, type StructureValidee } from '@/valeurImport/rules'
 
@@ -175,7 +178,7 @@ export const describeStructure = async ({
     system: SYSTEM_PROMPT,
     prompt: buildPrompt({ indicateur, nomFichier, tableau, axes }),
     temperature: STRUCTURED_TEMPERATURE,
-    providerOptions: ALBERT_IMPORT_OPTIONS,
+    providerOptions: LOW_REASONING_OPTIONS,
     tools: {
       decrire_structure: tool({
         description:

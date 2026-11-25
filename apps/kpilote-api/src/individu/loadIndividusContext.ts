@@ -1,4 +1,4 @@
-import { unique } from '@/framework/array'
+import { uniq } from 'es-toolkit'
 import { db } from '@/framework/persistence/dbStore'
 
 type IndividuRow = { id: string; publicId: string; referentielId: string }
@@ -19,13 +19,13 @@ export const loadIndividusContext = async ({
   individuPublicIds: ReadonlyArray<string>
 }): Promise<IndividusContext> => {
   const individus = await db().individu.findMany({
-    where: { publicId: { in: unique(individuPublicIds) } },
+    where: { publicId: { in: uniq(individuPublicIds) } },
     select: { id: true, publicId: true, referentielId: true },
   })
   const liens = await db().indicateurReferentiel.findMany({
     where: {
       indicateurId,
-      referentielId: { in: unique(individus.map((individu) => individu.referentielId)) },
+      referentielId: { in: uniq(individus.map((individu) => individu.referentielId)) },
     },
     select: { referentielId: true },
   })

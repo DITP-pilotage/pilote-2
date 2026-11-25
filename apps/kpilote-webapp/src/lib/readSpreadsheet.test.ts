@@ -1,27 +1,28 @@
 import { describe, expect, it } from 'vitest'
 import * as XLSX from 'xlsx'
-import { fichierVersMatrice } from '@/components/import-valeurs/lecture/fichierVersMatrice'
+
+import { readSpreadsheet } from '@/lib/readSpreadsheet'
 
 const csvFile = (contenu: string) => new File([contenu], 'valeurs.csv', { type: 'text/csv' })
 
-describe('fichierVersMatrice', () => {
+describe('readSpreadsheet', () => {
   it('lit un CSV en gardant ses cellules en texte, accents et virgule décimale compris', async () => {
-    const lecture = await fichierVersMatrice({
+    const lecture = await readSpreadsheet({
       file: csvFile('Département;Période;Taux\nCôtes-d’Armor;03/04/2024;12,4\n'),
     })
     expect(lecture.ok).toBe(true)
     if (!lecture.ok) return
-    expect(lecture.matrice[0]).toEqual(['Département', 'Période', 'Taux'])
-    expect(lecture.matrice[1]).toEqual(['Côtes-d’Armor', '03/04/2024', '12,4'])
+    expect(lecture.rows[0]).toEqual(['Département', 'Période', 'Taux'])
+    expect(lecture.rows[1]).toEqual(['Côtes-d’Armor', '03/04/2024', '12,4'])
   })
 
   it('lit un CSV encodé en Windows-1252', async () => {
     // « Département » : le é est l’octet 0xE9, invalide en UTF-8.
     const bytes = new Uint8Array([0x44, 0xe9, 0x70, 0x74, 0x0a, 0x41, 0x69, 0x6e, 0x0a])
-    const lecture = await fichierVersMatrice({ file: new File([bytes], 'valeurs.csv') })
+    const lecture = await readSpreadsheet({ file: new File([bytes], 'valeurs.csv') })
     expect(lecture.ok).toBe(true)
     if (!lecture.ok) return
-    expect(lecture.matrice[0]).toEqual(['Dépt'])
+    expect(lecture.rows[0]).toEqual(['Dépt'])
   })
 
   it('lit un XLSX en préservant les cellules Date', async () => {
@@ -36,13 +37,13 @@ describe('fichierVersMatrice', () => {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     })
 
-    const lecture = await fichierVersMatrice({ file })
+    const lecture = await readSpreadsheet({ file })
     expect(lecture.ok).toBe(true)
     if (!lecture.ok) return
-    expect(lecture.matrice[0]).toEqual(['individu', 'date', 'valeur'])
-    expect(lecture.matrice[1]?.[0]).toBe('DEPT-01')
-    expect(lecture.matrice[1]?.[1]).toBeInstanceOf(Date)
-    expect(lecture.matrice[1]?.[2]).toBe(42)
+    expect(lecture.rows[0]).toEqual(['individu', 'date', 'valeur'])
+    expect(lecture.rows[1]?.[0]).toBe('DEPT-01')
+    expect(lecture.rows[1]?.[1]).toBeInstanceOf(Date)
+    expect(lecture.rows[1]?.[2]).toBe(42)
   })
 
   it('remonte ok:false si la lecture du fichier échoue', async () => {
@@ -52,7 +53,7 @@ describe('fichierVersMatrice', () => {
       name: 'illisible.xlsx',
       arrayBuffer: () => Promise.reject(new Error('lecture impossible')),
     } as unknown as File
-    const lecture = await fichierVersMatrice({ file })
+    const lecture = await readSpreadsheet({ file })
     expect(lecture).toEqual({ ok: false })
   })
 })

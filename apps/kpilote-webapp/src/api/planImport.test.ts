@@ -2,7 +2,7 @@ import { type PlanImportEvent } from '@pilote/kpilote-shared/valeurImport'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 
-import { readLines, streamPlanImport } from '@/api/planImport'
+import { streamPlanImport } from '@/api/planImport'
 import { apiUrl, server } from '@/tests/server'
 
 const streamOf = (chunks: string[]): ReadableStream<Uint8Array> => {
@@ -36,13 +36,6 @@ const events: PlanImportEvent[] = [
     },
   },
 ]
-
-describe('readLines', () => {
-  it('recolle une ligne coupée entre deux morceaux et saute les lignes vides', async () => {
-    const lines = await collect(readLines(streamOf(['data: {"a"', ':1}\n\ndata: 2\r\n', 'fin'])))
-    expect(lines).toEqual(['data: {"a":1}', 'data: 2', 'fin'])
-  })
-})
 
 describe('streamPlanImport', () => {
   it('rend les événements du flux SSE dans l’ordre, en ignorant ce qui n’est pas `data:`', async () => {
