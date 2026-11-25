@@ -47,7 +47,7 @@ Trois responsabilités séparées :
 
 - **Use case** (`queries/listValeursForIndicateur.ts`) — orchestration des I/O Prisma : permissions, chargement de l'arbre, des liens indicateur↔référentiel, et des saisies tronquées. Aucun calcul métier.
 - **Functional core** (`resolveSerieDerivee.ts`) — algorithme pur, sans Prisma. Prend un contexte en mémoire (arbres + séries feuilles + fonctions d'agrégation), retourne des séries. Mémoïsé par `individuId`.
-- **TypedSQL** (`prisma/sql/getValeursTronqueesPourIndividus.sql`) — charge les saisies pré-tronquées et pré-dédoublonnées d'une fratrie (les enfants directs d'un même parent), une requête par fratrie que le calcul atteint (`queries/loadResolveSerieContext.ts`).
+- **TypedSQL** (`prisma/sql/getValeursTronqueesPourIndividus.sql`) — charge les saisies pré-tronquées et pré-dédoublonnées d'une fratrie (les enfants directs d'un même parent), une requête par fratrie que le calcul atteint, limitée aux N dernières saisies par cellule quand la lecture ne demande que les derniers points (`queries/loadResolveSerieContext.ts`).
 
 Le découpage isole le calcul (testable sans DB) du chargement (testable par tests d'intégration).
 

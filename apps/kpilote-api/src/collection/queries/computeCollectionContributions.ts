@@ -54,6 +54,7 @@ const computeDernierTaux = async ({
     individusCibles: [individuCible],
     dateTruncValeur: DATE_TRUNC_VALEUR,
     dateTruncObjectif: DATE_TRUNC_OBJECTIF,
+    derniersPoints: 1,
   })
   if (points.length === 0) return null
 

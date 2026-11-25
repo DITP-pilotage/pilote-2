@@ -49,6 +49,7 @@ const build = async (
         indicateurId: indicateur.id,
         individusCibles: [individu],
         dateTrunc,
+        derniersPoints: 1,
       })
       const dernier = serieDe(individu).at(-1)
       if (!dernier) return null

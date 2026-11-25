@@ -36,6 +36,7 @@ type Resolution = {
   indicateurId: string
   dateTrunc: DateTrunc
   selection: Selection
+  derniersPoints: number | null
   cibleIds: ReadonlySet<string>
   hierarchie: {
     enfantsParParent: ReadonlyMap<string, ReadonlyArray<IndividuRef>>
@@ -62,17 +63,24 @@ type Resolution = {
 // d'un même parent) en une requête, on calcule le parent, puis on oublie ce
 // qui n'est pas une cible. La mémoire d'une requête est celle d'une fratrie et
 // des séries gardées, pas celle de tout le sous-arbre.
+//
+// `derniersPoints` : nombre de derniers points à rendre par cible, null pour
+// la série entière. Les N derniers points d'un nœud dérivé ne dépendent que des
+// N derniers points de ses enfants (le report prend la dernière valeur connue
+// de chaque enfant), donc on ne charge que les N dernières saisies par cellule.
 export const loadResolveSerieContext = async ({
   indicateurId,
   individusCibles,
   dateTrunc,
   selection = new Map(),
+  derniersPoints = null,
 }: {
   indicateurId: string
   individusCibles: ReadonlyArray<IndividuRef>
   dateTrunc: DateTrunc
   // Sans sélection, « Tous » sur chaque axe.
   selection?: Selection
+  derniersPoints?: number | null
 }): Promise<ContexteSerie> => {
   const [{ allNodes, enfantsParParent }, fonctionAgregationParReferentiel, declarations] =
     await Promise.all([
@@ -87,6 +95,7 @@ export const loadResolveSerieContext = async ({
     indicateurId,
     dateTrunc,
     selection,
+    derniersPoints,
     cibleIds: new Set(individusCibles.map((cible) => cible.id)),
     hierarchie: {
       enfantsParParent,
@@ -208,9 +217,22 @@ const resolveLot = async ({
 
   for (const individu of gardes) {
     const serie = await resolveSerieNoeud(noeud({ individu, selection }), graphe, cache)
-    resolution.serieByIndividu.set(individu.id, serie)
+    resolution.serieByIndividu.set(
+      individu.id,
+      keepDerniersPoints({ serie, derniersPoints: resolution.derniersPoints }),
+    )
   }
 }
+
+// Avec des saisies limitées aux N dernières par cellule, seuls les N derniers
+// points d'une série sont justes : on ne rend que ceux-là.
+const keepDerniersPoints = ({
+  serie,
+  derniersPoints,
+}: {
+  serie: ReadonlyArray<PointInterne>
+  derniersPoints: number | null
+}): ReadonlyArray<PointInterne> => (derniersPoints === null ? serie : serie.slice(-derniersPoints))
 
 // Saisies des individus, par cellule, et modalités des combinaisons qu'on
 // découvre (indicateur à axes).
@@ -226,6 +248,7 @@ const loadCellules = async ({
     individuIds: individus.map((individu) => individu.id),
     dateTrunc: resolution.dateTrunc,
     combinaisonIds: resolution.combinaisonIds,
+    derniersPoints: resolution.derniersPoints,
   })
   if (resolution.axes.length === 0) return cellules
 
@@ -247,17 +270,19 @@ const loadCellules = async ({
 }
 
 // Saisies tronquées, par cellule. `combinaisonIds` à null : toutes les
-// combinaisons de l'indicateur.
+// combinaisons de l'indicateur. `derniersPoints` à null : tout l'historique.
 const loadSaisiesTronquees = async ({
   indicateurId,
   individuIds,
   dateTrunc,
   combinaisonIds,
+  derniersPoints,
 }: {
   indicateurId: string
   individuIds: ReadonlyArray<string>
   dateTrunc: DateTrunc
   combinaisonIds: ReadonlyArray<string> | null
+  derniersPoints: number | null
 }): Promise<SaisiesCellule[]> => {
   if (individuIds.length === 0) return []
   const rows = await db().$queryRawTyped(
@@ -266,6 +291,7 @@ const loadSaisiesTronquees = async ({
       [...individuIds],
       dateTrunc,
       combinaisonIds === null ? null : [...combinaisonIds],
+      derniersPoints,
     ),
   )
   const cellules = new Map<string, SaisiesCellule & { saisies: SaisieTronquee[] }>()
