@@ -10,27 +10,38 @@
 --      dérivée ne dépendent que des N dernières saisies de chaque cellule.
 -- @param $4:combinaisonIds?
 -- @param {Int} $5:derniersPoints?
-SELECT "individuId", "combinaisonId", "bucket", "dateOrigine", valeur
-FROM (
+WITH tronquees AS (
+  -- Une saisie par (individu, combinaison, bucket) : la plus récente du bucket.
+  SELECT DISTINCT ON (individu_id, combinaison_id, date_trunc($3::text, date::timestamp))
+    individu_id                           AS "individuId",
+    combinaison_id                        AS "combinaisonId",
+    date_trunc($3::text, date::timestamp) AS debut_bucket,
+    date                                  AS "dateOrigine",
+    valeur
+  FROM valeur_avancement
+  WHERE indicateur_id = $1
+    AND individu_id = ANY($2)
+    AND ($4::uuid[] IS NULL OR combinaison_id = ANY($4::uuid[]))
+  ORDER BY individu_id, combinaison_id, date_trunc($3::text, date::timestamp), date DESC, id DESC
+),
+rangees AS (
+  -- Rang 1 : le bucket le plus récent de la cellule.
   SELECT
     tronquees.*,
     row_number() OVER (
       PARTITION BY "individuId", "combinaisonId"
-      ORDER BY "bucket" DESC
+      ORDER BY debut_bucket DESC
     ) AS rang
-  FROM (
-    SELECT DISTINCT ON (individu_id, combinaison_id, date_trunc($3::text, date::timestamp))
-      individu_id                                                       AS "individuId",
-      combinaison_id                                                    AS "combinaisonId",
-      to_char(date_trunc($3::text, date::timestamp), 'YYYY-MM-DD')      AS "bucket",
-      date                                                              AS "dateOrigine",
-      valeur
-    FROM valeur_avancement
-    WHERE indicateur_id = $1
-      AND individu_id = ANY($2)
-      AND ($4::uuid[] IS NULL OR combinaison_id = ANY($4::uuid[]))
-    ORDER BY individu_id, combinaison_id, date_trunc($3::text, date::timestamp), date DESC, id DESC
-  ) AS tronquees
-) AS rangees
+  FROM tronquees
+)
+-- Le bucket reste un timestamp jusqu'ici : la fenêtre et le tri ne comparent pas
+-- du texte, et `to_char` ne tourne que sur les lignes gardées.
+SELECT
+  "individuId",
+  "combinaisonId",
+  to_char(debut_bucket, 'YYYY-MM-DD') AS "bucket",
+  "dateOrigine",
+  valeur
+FROM rangees
 WHERE $5::int IS NULL OR rang <= $5::int
-ORDER BY "individuId", "combinaisonId", "bucket";
+ORDER BY "individuId", "combinaisonId", debut_bucket;

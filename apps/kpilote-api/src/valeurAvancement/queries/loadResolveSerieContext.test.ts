@@ -1,3 +1,4 @@
+import { groupBy, mapValues } from 'es-toolkit'
 import { describe, expect, it } from 'vitest'
 
 import { formatBucket } from '@/framework/bucket'
@@ -249,16 +250,16 @@ describe.concurrent('loadResolveSerieContext', () => {
         ),
       )
 
-      // Les deux dernières de chaque département, de la plus ancienne à la plus récente.
-      const saisies = rows.map((row) => `${publicIdById.get(row.individuId)} ${row.bucket}`)
-      expect(saisies.toSorted()).toEqual(
-        [
-          `${deptA} 2025-02-01`,
-          `${deptA} 2025-04-01`,
-          `${deptB} 2025-01-01`,
-          `${deptB} 2025-03-01`,
-        ].toSorted(),
+      // Les deux dernières de chaque département, de la plus ancienne à la plus
+      // récente : le moteur lit les saisies d'une cellule dans cet ordre.
+      const bucketsByIndividu = mapValues(
+        groupBy(rows, (row) => publicIdById.get(row.individuId) ?? ''),
+        (saisies) => saisies.map((row) => row.bucket),
       )
+      expect(bucketsByIndividu).toEqual({
+        [deptA]: ['2025-02-01', '2025-04-01'],
+        [deptB]: ['2025-01-01', '2025-03-01'],
+      })
     }),
   )
 })
