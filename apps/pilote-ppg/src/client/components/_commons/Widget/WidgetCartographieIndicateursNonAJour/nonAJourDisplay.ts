@@ -7,6 +7,7 @@ import type {
   TerritoireNonAJourIndicateurViewModel,
 } from "@/server/chantiers/infrastructure/queries/GetTerritoiresNonAJourQuery";
 import type { EtatMiseAJour } from "@/server/chantiers/infrastructure/queries/indicateurNonAJour";
+import { pluriel } from "@/client/utils/strings";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 export type NonAJourMode = "chantier" | "indicateur";
@@ -60,9 +61,6 @@ export const compareTerritoires = (
   );
 };
 
-const pluriel = (nombre: number, mot: string) =>
-  `${nombre} ${mot}${nombre > 1 ? "s" : ""}`;
-
 export const formatEtatChantier = (
   territoire: TerritoireNonAJourChantierViewModel,
 ): string => {
@@ -71,9 +69,9 @@ export const formatEtatChantier = (
 
   const { nbIndicateursNonAJour, nbIndicateursSansDonnee } = territoire;
   if (nbIndicateursNonAJour === 0) {
-    return `${pluriel(nbIndicateursSansDonnee, "indicateur")} sans donnée`;
+    return `${pluriel(nbIndicateursSansDonnee, "indicateur", "indicateurs")} sans donnée`;
   }
-  const nonAJour = `${pluriel(nbIndicateursNonAJour, "indicateur")} non à jour`;
+  const nonAJour = `${pluriel(nbIndicateursNonAJour, "indicateur", "indicateurs")} non à jour`;
   return nbIndicateursSansDonnee === 0
     ? nonAJour
     : `${nonAJour} · ${nbIndicateursSansDonnee} sans donnée`;
