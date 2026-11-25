@@ -56,7 +56,9 @@ export const SlideInFormations = ({
             CAMPUS PILOTE
           </span>
           <h2 className="m-0 p-0 text-lg leading-6" id={idTitre}>
-            {`${nombre} ${nombre === 1 ? "formation" : "formations"} pour votre profil`}
+            {nombre === 1
+              ? "1 formation adaptée à votre profil"
+              : `${nombre} formations adaptées à votre profil`}
           </h2>
           <p className="m-0 mt-0.5 p-0 text-[13px] leading-[18px] text-dsfr-grey-200">
             Inscription sur Rendez-vous Service Public.
@@ -97,7 +99,7 @@ export const SlideInFormations = ({
           size="sm"
           variant="tertiary"
         >
-          Ne plus me les proposer
+          Ne plus afficher ces suggestions
         </Button>
       </div>
     </section>

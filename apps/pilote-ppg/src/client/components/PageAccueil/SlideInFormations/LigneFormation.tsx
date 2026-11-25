@@ -46,9 +46,7 @@ const AutresSeances = ({
         size="sm"
         variant="tertiary-no-outline"
       >
-        {seances.length === 1
-          ? "1 autre date"
-          : `${seances.length} autres dates`}
+        Afficher les autres créneaux
       </Button>
     </Collapsible.Trigger>
     <Collapsible.Content>

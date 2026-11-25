@@ -50,9 +50,9 @@ const ReglesPeriodes = () => {
             ou supprimée reste dans la liste, sans pouvoir être modifiée.
           </li>
           <li>
-            Un utilisateur qui choisit « Ne plus me les proposer » ne revoit
-            plus les formations de la période, même si elle est modifiée. Il les
-            reverra à la période suivante.
+            Un utilisateur qui choisit « Ne plus afficher ces suggestions » ne
+            revoit plus les formations de la période, même si elle est modifiée.
+            Il les reverra à la période suivante.
           </li>
         </ul>
       </Callout.Text>
