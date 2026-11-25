@@ -7,6 +7,7 @@ import { ResultAsync } from 'neverthrow'
 
 import { formatBucket } from '@/framework/bucket'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { withConcurrency } from '@/framework/concurrency'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
@@ -42,8 +43,9 @@ const build = async (
 
   const startedAt = performance.now()
   const dateTrunc = DEFAULT_DATE_TRUNC
-  const resolus = await Promise.all(
-    indicateurs.map(async (indicateur) => {
+  // Un contexte de résolution par indicateur : on borne ceux qui vivent en même temps.
+  const resolus = await withConcurrency(
+    indicateurs.map((indicateur) => async () => {
       const points = await computeTauxProgressionPoints({
         indicateurId: indicateur.id,
         sensSouhaite: indicateur.sensSouhaite,
