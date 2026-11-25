@@ -4,7 +4,7 @@ import { chunk, partition, uniq } from 'es-toolkit'
 
 import { getEmptyCombinaisonId } from '@/axe/combinaison'
 import { type AxeCalcul, type ModaliteCalcul, type Selection } from '@/axe/modalites'
-import { parseBucket } from '@/framework/bucket'
+import { type Bucket, parseBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
 import { getValeursTronqueesPourIndividus } from '@/generated/prisma/sql'
 import {
@@ -50,6 +50,9 @@ type Resolution = {
   combinaisonIds: ReadonlyArray<string> | null
   // combinaisonId → (axeId → modaliteId), complété à chaque lot chargé.
   modalitesParCombinaison: Map<string, Map<string, string>>
+  // Une seule instance par date distincte : un `PlainDate` pèse plus que la
+  // valeur qu'il date, et un historique n'a que quelques dizaines de dates.
+  dateByIso: Map<string, Bucket>
   // Séries résolues : celles des cibles, et celles des individus agrégés tant
   // que leur parent ne les a pas lues.
   serieByIndividu: Map<string, ReadonlyArray<PointInterne>>
@@ -111,6 +114,7 @@ export const loadResolveSerieContext = async ({
     modalites: hasAxes ? await db().modalite.findMany({ where: { axeId: { in: axeIds } } }) : [],
     combinaisonIds: hasAxes ? null : [await getEmptyCombinaisonId()],
     modalitesParCombinaison: new Map(),
+    dateByIso: new Map(),
     serieByIndividu: new Map(),
   }
 
@@ -249,6 +253,7 @@ const loadCellules = async ({
     dateTrunc: resolution.dateTrunc,
     combinaisonIds: resolution.combinaisonIds,
     derniersPoints: resolution.derniersPoints,
+    dateByIso: resolution.dateByIso,
   })
   if (resolution.axes.length === 0) return cellules
 
@@ -277,12 +282,14 @@ const loadSaisiesTronquees = async ({
   dateTrunc,
   combinaisonIds,
   derniersPoints,
+  dateByIso,
 }: {
   indicateurId: string
   individuIds: ReadonlyArray<string>
   dateTrunc: DateTrunc
   combinaisonIds: ReadonlyArray<string> | null
   derniersPoints: number | null
+  dateByIso: Map<string, Bucket>
 }): Promise<SaisiesCellule[]> => {
   if (individuIds.length === 0) return []
   const rows = await db().$queryRawTyped(
@@ -301,11 +308,25 @@ const loadSaisiesTronquees = async ({
     const cle = cleCellule(cellule)
     const courante = cellules.get(cle) ?? { ...cellule, saisies: [] }
     courante.saisies.push({
-      bucket: parseBucket(row.bucket),
-      dateOrigine: parseBucket(row.dateOrigine),
+      bucket: sharedBucket({ dateByIso, iso: row.bucket }),
+      dateOrigine: sharedBucket({ dateByIso, iso: row.dateOrigine }),
       valeur: row.valeur,
     })
     cellules.set(cle, courante)
   }
   return [...cellules.values()]
+}
+
+const sharedBucket = ({
+  dateByIso,
+  iso,
+}: {
+  dateByIso: Map<string, Bucket>
+  iso: string
+}): Bucket => {
+  const known = dateByIso.get(iso)
+  if (known) return known
+  const bucket = parseBucket(iso)
+  dateByIso.set(iso, bucket)
+  return bucket
 }
