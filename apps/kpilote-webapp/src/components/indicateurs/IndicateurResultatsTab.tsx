@@ -6,10 +6,81 @@ import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCommentaireConfigProvider } from '@/components/indicateurs/commentaires/IndicateurCommentaireConfigProvider'
 import { IndicateurSynthesePanel } from '@/components/indicateurs/IndicateurSynthesePanel'
 import { IndicateurValeursChart } from '@/components/indicateurs/IndicateurValeursChart'
+import { IndicateurValeursDecomposeesChart } from '@/components/indicateurs/IndicateurValeursDecomposeesChart'
 import { IndicateurWidgets } from '@/components/indicateurs/IndicateurWidgets'
+import { buildDecomposition } from '@/lib/axes/decomposition'
+import { type AxeWithModalites, type SelectionModalites } from '@/lib/axes/selection'
+import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 
 type SousOnglet = 'confiance' | 'evolution' | 'commentaire'
+
+const NO_DECOMPOSITION = ''
+
+function EvolutionChart({
+  indicateurId,
+  individuId,
+  unite,
+  modalites,
+  legend,
+  axes,
+  selection,
+  decomposer,
+  onDecomposerChange,
+}: {
+  indicateurId: string
+  individuId: string
+  unite: UniteIndicateurApiModel | null
+  modalites: ReadonlyArray<string>
+  legend: string | null
+  axes: ReadonlyArray<AxeWithModalites>
+  selection: SelectionModalites
+  decomposer: string | undefined
+  onDecomposerChange: (axeId: string | undefined) => void
+}) {
+  const chart = (
+    <IndicateurValeursChart
+      indicateurId={indicateurId}
+      individuId={individuId}
+      unite={unite}
+      modalites={modalites}
+      legend={legend}
+    />
+  )
+  if (axes.length === 0) return chart
+
+  const axe = axes.find((candidate) => candidate.id === decomposer)
+  return (
+    <div className="space-y-4">
+      <div className="max-w-xs">
+        <FieldSelect
+          label="Décomposer par"
+          value={axe?.id ?? NO_DECOMPOSITION}
+          onValueChange={(value) =>
+            onDecomposerChange(value === NO_DECOMPOSITION ? undefined : value)
+          }
+          options={[
+            { value: NO_DECOMPOSITION, label: 'Aucun axe' },
+            ...axes.map((candidate) => ({ value: candidate.id, label: candidate.nom })),
+          ]}
+        />
+      </div>
+      <Suspense fallback={<RouteLoading message="Chargement du graphique…" />}>
+        {axe ? (
+          <IndicateurValeursDecomposeesChart
+            indicateurId={indicateurId}
+            individuId={individuId}
+            unite={unite}
+            decomposition={buildDecomposition({ axes, selection, axeId: axe.id })}
+            axeNom={axe.nom}
+          />
+        ) : (
+          chart
+        )}
+      </Suspense>
+    </div>
+  )
+}
 
 export function IndicateurResultatsTab({
   indicateurId,
@@ -20,6 +91,10 @@ export function IndicateurResultatsTab({
   referentielNom,
   modalites,
   legend,
+  axes,
+  selection,
+  decomposer,
+  onDecomposerChange,
   sousOnglet,
   onSousOngletChange,
 }: {
@@ -32,6 +107,12 @@ export function IndicateurResultatsTab({
   modalites: ReadonlyArray<string>
   /** Indicateur à axes : la sélection en clair (« Ensemble », « Orange »…). */
   legend: string | null
+  /** Vide pour un indicateur sans axe : graphique simple, sans « Décomposer par ». */
+  axes: ReadonlyArray<AxeWithModalites>
+  selection: SelectionModalites
+  /** Axe selon lequel décomposer le graphique ; ignoré s'il n'est pas déclaré. */
+  decomposer: string | undefined
+  onDecomposerChange: (axeId: string | undefined) => void
   sousOnglet: SousOnglet
   onSousOngletChange: (sousOnglet: SousOnglet) => void
 }) {
@@ -71,12 +152,16 @@ export function IndicateurResultatsTab({
 
         <TabsContent value="evolution">
           <div className="space-y-10">
-            <IndicateurValeursChart
+            <EvolutionChart
               indicateurId={indicateurId}
               individuId={individuId}
               unite={unite}
               modalites={modalites}
               legend={legend}
+              axes={axes}
+              selection={selection}
+              decomposer={decomposer}
+              onDecomposerChange={onDecomposerChange}
             />
             {/* Données (referentiel, individus, valeurs remarquables) déjà
                 préfetchées par le loader de la route, et la carte est un import
