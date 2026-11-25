@@ -1,5 +1,5 @@
 import { type SensSouhaite, type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
-import { Suspense } from 'react'
+import { Suspense, useId, useState } from 'react'
 
 import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
 import { RouteLoading } from '@/components/RouteLoading'
@@ -38,6 +38,8 @@ function EvolutionChart({
   decomposer: string | undefined
   onDecomposerChange: (axeId: string | undefined) => void
 }) {
+  const ensembleCheckboxId = useId()
+  const [showEnsemble, setShowEnsemble] = useState(true)
   const chart = (
     <IndicateurValeursChart
       indicateurId={indicateurId}
@@ -52,18 +54,32 @@ function EvolutionChart({
   const axe = axes.find((candidate) => candidate.id === decomposer)
   return (
     <div className="space-y-4">
-      <div className="max-w-xs">
-        <FieldSelect
-          label="Décomposer par"
-          value={axe?.id ?? NO_DECOMPOSITION}
-          onValueChange={(value) =>
-            onDecomposerChange(value === NO_DECOMPOSITION ? undefined : value)
-          }
-          options={[
-            { value: NO_DECOMPOSITION, label: 'Aucun axe' },
-            ...axes.map((candidate) => ({ value: candidate.id, label: candidate.nom })),
-          ]}
-        />
+      <div className="flex flex-wrap items-end gap-6">
+        <div className="w-full max-w-xs">
+          <FieldSelect
+            label="Décomposer par"
+            value={axe?.id ?? NO_DECOMPOSITION}
+            onValueChange={(value) =>
+              onDecomposerChange(value === NO_DECOMPOSITION ? undefined : value)
+            }
+            options={[
+              { value: NO_DECOMPOSITION, label: 'Aucun axe' },
+              ...axes.map((candidate) => ({ value: candidate.id, label: candidate.nom })),
+            ]}
+          />
+        </div>
+        {axe ? (
+          <label htmlFor={ensembleCheckboxId} className="flex items-center gap-2 pb-2.5 text-sm">
+            <input
+              id={ensembleCheckboxId}
+              type="checkbox"
+              className="size-4 accent-primary"
+              checked={showEnsemble}
+              onChange={(event) => setShowEnsemble(event.target.checked)}
+            />
+            Afficher l'ensemble
+          </label>
+        ) : null}
       </div>
       <Suspense fallback={<RouteLoading message="Chargement du graphique…" />}>
         {axe ? (
@@ -71,6 +87,9 @@ function EvolutionChart({
             indicateurId={indicateurId}
             individuId={individuId}
             unite={unite}
+            modalites={modalites}
+            legend={legend ?? 'Ensemble'}
+            showEnsemble={showEnsemble}
             decomposition={buildDecomposition({ axes, selection, axeId: axe.id })}
             axeNom={axe.nom}
           />

@@ -69,6 +69,23 @@ describe('listDecompositionModalites', () => {
     ])
   })
 
+  it('descend aussi sous une modalité choisie qui n’a qu’un enfant', () => {
+    const zone: AxeWithModalites = {
+      id: 'ZONE',
+      nom: 'Zone',
+      modalites: [
+        modalite('Z-FRANCE', 'France'),
+        modalite('Z-METROPOLE', 'Métropole', 'Z-FRANCE'),
+        modalite('Z-NORD', 'Nord', 'Z-METROPOLE'),
+        modalite('Z-SUD', 'Sud', 'Z-METROPOLE'),
+      ],
+    }
+    expect(nomsOf(listDecompositionModalites({ axe: zone, modaliteId: 'Z-FRANCE' }))).toEqual([
+      'Nord',
+      'Sud',
+    ])
+  })
+
   it('garde une racine unique sans enfant', () => {
     const unique: AxeWithModalites = {
       id: 'UNIQUE',

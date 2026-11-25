@@ -1,4 +1,5 @@
 import { type ModaliteApiModel } from '@pilote/kpilote-shared/axe'
+import { groupBy } from 'es-toolkit'
 
 import {
   type AxeWithModalites,
@@ -7,8 +8,9 @@ import {
   setModalite,
 } from '@/lib/axes/selection'
 
-// Au-delà, la légende et les couleurs du graphique ne sont plus lisibles.
-export const MAX_DECOMPOSITION_SERIES = 12
+// La palette par défaut d'ECharts compte 9 couleurs : la sélection courante
+// plus 8 modalités, sans couleur répétée.
+export const MAX_DECOMPOSITION_SERIES = 8
 
 export type DecompositionSerie = {
   modalite: ModaliteApiModel
@@ -22,11 +24,10 @@ export type Decomposition = {
   total: number
 }
 
-const sortByNom = (modalites: ReadonlyArray<ModaliteApiModel>): ModaliteApiModel[] =>
-  modalites.toSorted((a, b) => a.nom.localeCompare(b.nom, 'fr'))
+const ROOT = ''
 
-// Modalités enfants du niveau courant. Sur « Tous », les racines, en descendant
-// tant qu'il n'y en a qu'une : une série unique égale à « Tous » n'apporte rien.
+// Modalités enfants du niveau courant (les racines sur « Tous »), en descendant
+// tant qu'il n'y en a qu'une : une série unique égale à la sélection n'apporte rien.
 export const listDecompositionModalites = ({
   axe,
   modaliteId,
@@ -34,16 +35,16 @@ export const listDecompositionModalites = ({
   axe: AxeWithModalites
   modaliteId: string | null
 }): ModaliteApiModel[] => {
-  const childrenOf = (parent: string | null) =>
-    sortByNom(axe.modalites.filter((modalite) => modalite.parent === parent))
-  if (modaliteId !== null) return childrenOf(modaliteId)
+  const childrenByParent = groupBy(axe.modalites, (modalite) => modalite.parent ?? ROOT)
+  const childrenOf = (parent: string): ModaliteApiModel[] =>
+    (childrenByParent[parent] ?? []).toSorted((a, b) => a.nom.localeCompare(b.nom, 'fr'))
   const descendSingle = (modalites: ModaliteApiModel[]): ModaliteApiModel[] => {
     const [single, ...others] = modalites
     if (!single || others.length > 0) return modalites
     const children = childrenOf(single.id)
     return children.length > 0 ? descendSingle(children) : modalites
   }
-  return descendSingle(childrenOf(null))
+  return descendSingle(childrenOf(modaliteId ?? ROOT))
 }
 
 export const buildDecomposition = ({

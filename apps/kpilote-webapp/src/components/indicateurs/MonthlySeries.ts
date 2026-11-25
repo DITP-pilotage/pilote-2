@@ -164,7 +164,7 @@ export const buildMonthlySeries = ({
 }
 
 export type MonthlyMultiSeries = Pick<MonthlySeries, 'months' | 'defaultWindow'> & {
-  series: ReadonlyArray<{ key: string; values: ReadonlyArray<number | null> }>
+  series: ReadonlyArray<{ key: string; name: string; values: ReadonlyArray<number | null> }>
 }
 
 // Plusieurs séries sur un même axe des mois, borné par l'ensemble de leurs valeurs.
@@ -173,7 +173,11 @@ export const buildMonthlyMultiSeries = ({
   series,
   windowSize,
 }: {
-  series: ReadonlyArray<{ key: string; valeurs: ReadonlyArray<ValeurDateApiModel> }>
+  series: ReadonlyArray<{
+    key: string
+    name: string
+    valeurs: ReadonlyArray<ValeurDateApiModel>
+  }>
   windowSize: number
 }): MonthlyMultiSeries => {
   const { months, defaultWindow } = buildMonthAxis({
@@ -187,6 +191,7 @@ export const buildMonthlyMultiSeries = ({
       .filter((serie) => serie.valeurs.length > 0)
       .map((serie) => ({
         key: serie.key,
+        name: serie.name,
         values: valuesOnMonths({ months, valeurs: serie.valeurs }),
       })),
   }
