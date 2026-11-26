@@ -63,12 +63,13 @@ function RootComponent() {
             <div className="mx-auto max-w-7xl px-6 py-10 sm:px-10">
               <div className="flex flex-col gap-8 pb-8 sm:flex-row sm:gap-12">
                 <Marianne className="shrink-0" />
-                <div className="max-w-2xl">
-                  <p className="text-sm leading-relaxed text-text-muted">
-                    À DÉFINIR — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                    veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.
+                <div className="flex max-w-2xl flex-col gap-2 text-sm leading-relaxed text-text-muted">
+                  <p>
+                    KPILOTE - Le produit numérique de l’État pour suivre et piloter vos indicateurs.
+                  </p>
+                  <p>
+                    Produit développé et mis à disposition par la Direction interministérielle de la
+                    transformation publique.
                   </p>
                 </div>
               </div>
