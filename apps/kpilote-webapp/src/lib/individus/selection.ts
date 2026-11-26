@@ -151,16 +151,51 @@ export const buildSelectors = ({
     }
   })
 
-// Individu d'une lecture qui concerne l'indicateur, connu même sans valeur. Une
-// collection transmet son individu à toutes ses cartes : il ne vaut que pour les
-// indicateurs liés à son référentiel.
+// Individu racine d'un indicateur, même règle que l'API
+// (getIndividusRacinesForIndicateurs.sql) : parmi les individus de ses
+// référentiels liés, ceux sans parent dans ces référentiels ; le premier par
+// nom, puis par identifiant.
+export const findRootIndividu = ({
+  nodes,
+  referentielIds,
+}: {
+  nodes: ReadonlyArray<IndividuNode>
+  referentielIds: ReadonlyArray<string>
+}): string | undefined => {
+  const linkedReferentielIds = new Set(referentielIds)
+  const referentielByIndividu = new Map(
+    nodes.map((node) => [node.individu.id, node.referentiel.id] as const),
+  )
+  const hasLinkedParent = (node: IndividuNode): boolean =>
+    node.individu.parents.some((parent) => {
+      const parentReferentiel = referentielByIndividu.get(parent)
+      return parentReferentiel !== undefined && linkedReferentielIds.has(parentReferentiel)
+    })
+  const roots = nodes.filter(
+    (node) => linkedReferentielIds.has(node.referentiel.id) && !hasLinkedParent(node),
+  )
+  const [first] = [...roots].sort(
+    (a, b) =>
+      a.individu.nom.localeCompare(b.individu.nom, 'fr') ||
+      a.individu.id.localeCompare(b.individu.id),
+  )
+  return first?.individu.id
+}
+
+// Individu sur lequel une carte est lue, connu même sans valeur. Sans
+// sélection, c'est l'individu racine de l'indicateur. Une collection transmet
+// son individu à toutes ses cartes : il ne vaut que pour les indicateurs liés à
+// son référentiel.
 export const findReadIndividu = ({
   reading,
+  nodes,
   referentielIds,
 }: {
   reading: CardReading
+  nodes: ReadonlyArray<IndividuNode>
   referentielIds: ReadonlyArray<string>
 }): string | undefined => {
+  if (reading.individus === undefined) return findRootIndividu({ nodes, referentielIds })
   const { individu, referentiel } = reading.link
   if (!individu || !referentiel) return undefined
   return referentielIds.includes(referentiel) ? individu : undefined

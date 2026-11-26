@@ -43,7 +43,7 @@ export function IndicateurAvancement({
   unite: UniteIndicateurApiModel | null
   sensSouhaite: SensSouhaite
   groups: ReadonlyArray<ReferentielGroup>
-  // Individu sélectionné qui concerne l'indicateur, connu même sans valeur.
+  // Individu sur lequel la carte est lue (sélection ou racine), connu même sans valeur.
   selectedIndividuId: string | undefined
 }) {
   const [{ data: derniereValeur }, { data: tauxData }] = useSuspenseQueries({

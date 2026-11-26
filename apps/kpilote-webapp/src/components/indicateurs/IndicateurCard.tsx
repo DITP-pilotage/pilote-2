@@ -84,6 +84,7 @@ function IndicateurCardBody({
         groups={groups}
         selectedIndividuId={findReadIndividu({
           reading,
+          nodes: groups.flatMap((group) => group.nodes),
           referentielIds: indicateur.referentiels.map((referentiel) => referentiel.id),
         })}
       />
