@@ -65,6 +65,10 @@
       "types": "./src/EntityCard.tsx",
       "default": "./src/EntityCard.tsx"
     },
+    "./ErrorBoundary": {
+      "types": "./src/ErrorBoundary.tsx",
+      "default": "./src/ErrorBoundary.tsx"
+    },
     "./FadeIn": {
       "types": "./src/FadeIn.tsx",
       "default": "./src/FadeIn.tsx"

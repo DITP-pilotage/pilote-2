@@ -1,50 +1,25 @@
 import { type DernierNiveauConfianceApiModel } from '@pilote/kpilote-shared/niveauConfiance'
-import { MAX_INDICATEURS_PAR_REQUETE } from '@pilote/kpilote-shared/valeurAvancement'
-import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
-import { queryOptions } from '@tanstack/react-query'
+import { type QueryKey, queryOptions } from '@tanstack/react-query'
 
 import { fetchDerniersNiveauxConfiance } from '@/api/niveauConfiance'
+import { createBatchersBySelection } from '@/lib/batchersBySelection'
 
 import { DEFAULT_STALE_TIME } from './utils'
 
-// Même découpage que les dernières valeurs : un lot porte une seule sélection
-// d'individus (ou aucune : chaque indicateur se lit sur son individu racine).
-const RACINES = Symbol('racines')
-const batchersBySelection = new Map<string | typeof RACINES, Batcher>()
-
-type Batcher = ReturnType<typeof createBatcher>
-
-const createBatcher = (individus: ReadonlyArray<string> | undefined) =>
-  create({
-    fetcher: async (
-      indicateurIds: string[],
-    ): Promise<ReadonlyArray<DernierNiveauConfianceApiModel>> => {
-      const { items } = await fetchDerniersNiveauxConfiance({
-        indicateurs: indicateurIds,
-        individus,
-      })
-      return items
-    },
-    // Indicateur sans niveau publié : l'API omet l'item, la carte reçoit `null`.
-    resolver: keyResolver('indicateur'),
-    scheduler: windowedFiniteBatchScheduler({
-      windowMs: 10,
-      maxBatchSize: MAX_INDICATEURS_PAR_REQUETE,
-    }),
-  })
-
-const getBatcher = (individus: ReadonlyArray<string> | undefined): Batcher => {
-  const key = individus?.join(',') ?? RACINES
-  const existing = batchersBySelection.get(key)
-  if (existing) return existing
-  const batcher = createBatcher(individus)
-  batchersBySelection.set(key, batcher)
-  return batcher
-}
+const getBatcher = createBatchersBySelection<DernierNiveauConfianceApiModel>(
+  async ({ indicateurs, individus }) =>
+    (await fetchDerniersNiveauxConfiance({ indicateurs, individus })).items,
+)
 
 export const dernierNiveauConfianceKeys = {
   all: ['dernier-niveau-confiance'] as const,
 }
+
+// Clé : [...all, individus, indicateurId].
+export const isDernierNiveauConfianceQueryFor = (
+  queryKey: QueryKey,
+  indicateurId: string,
+): boolean => queryKey[2] === indicateurId
 
 export const dernierNiveauConfianceQueryOptions = ({
   individus,

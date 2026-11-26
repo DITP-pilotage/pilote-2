@@ -10,11 +10,15 @@ import {
   createCommentaireCollection,
   type IndicateurIndividuCommentaireType,
   type CollectionCommentaireType,
+  typeAvecNiveauConfiance,
   updateCommentaire,
 } from '@/api/commentaires'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { commentairesKeys, commentairesCollectionKeys } from '@/queries/commentaires'
-import { dernierNiveauConfianceKeys } from '@/queries/derniersNiveauxConfiance'
+import {
+  dernierNiveauConfianceKeys,
+  isDernierNiveauConfianceQueryFor,
+} from '@/queries/derniersNiveauxConfiance'
 import { niveauConfianceKeys, niveauConfianceCollectionKeys } from '@/queries/niveauConfiance'
 
 const messageErreur = {
@@ -76,8 +80,14 @@ export function useModifierCommentaire(
       void queryClient.invalidateQueries({
         queryKey: niveauConfianceKeys.parScope(indicateurId, individuId),
       })
-      // La carte de l'accueil lit le niveau du dernier commentaire publié.
-      void queryClient.invalidateQueries({ queryKey: dernierNiveauConfianceKeys.all })
+      // Les cartes indicateur lisent le niveau du dernier commentaire CONFIANCE
+      // publié ; l'éditeur enregistre toujours le niveau avant le commentaire.
+      if (typeAvecNiveauConfiance(type)) {
+        void queryClient.invalidateQueries({
+          queryKey: dernierNiveauConfianceKeys.all,
+          predicate: (query) => isDernierNiveauConfianceQueryFor(query.queryKey, indicateurId),
+        })
+      }
       toast({
         title:
           variables.body.statut === 'PUBLIE' ? 'Commentaire publié.' : 'Commentaire enregistré.',
