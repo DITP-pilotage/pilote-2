@@ -154,22 +154,6 @@ const chantier = ({
 const SYNTHESE_CH_005_BRETAGNE =
   "Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.";
 
-/**
- * La synthèse des résultats du CH-005 en Bretagne, telle que
- * `get_chantier_commentaires` la renvoie : `get_chantiers` n'en porte plus
- * ni le texte ni l'auteur.
- */
-const SYNTHESE_CH_005_RENVOYEE = {
-  type: "synthese_des_resultats",
-  versions: [
-    {
-      date_publication: "2026-09-15",
-      contenu: `<p>${SYNTHESE_CH_005_BRETAGNE}</p>`,
-      auteur: AUTEUR_SYNTHESE,
-    },
-  ],
-};
-
 /** Une fiche figée pour la Bretagne, calquée sur le monde territorial. */
 const FICHE_BRETAGNE: GroundTruth = {
   territoires: [{ code: "REG-53", nom: "Bretagne", maille: "REG" }],
@@ -553,6 +537,19 @@ const COMPARAISON: CalibrationCase[] = [
 
 // --- Synthèse des commentaires ------------------------------------------
 
+/**
+ * Les types interrogés pour la Bretagne : tous, sauf les deux que le profil
+ * n'a pas le droit de lire (`types_non_accessibles`).
+ */
+const TYPES_CONSULTES_BRETAGNE = [
+  "Freins à lever",
+  "Autres résultats obtenus non corrélés aux indicateurs",
+  "Décisions stratégiques",
+  "Commentaires sur les données",
+  "Autres résultats obtenus",
+  "Synthèse des résultats",
+];
+
 const COMMENTAIRES_RESULTS = [
   {
     toolName: "get_chantier_commentaires",
@@ -586,6 +583,7 @@ const COMMENTAIRES_RESULTS = [
           ],
         },
       ],
+      types_consultes: TYPES_CONSULTES_BRETAGNE,
       types_non_accessibles: ["actions_a_venir", "actions_a_valoriser"],
     },
   },
@@ -600,6 +598,7 @@ const COMMENTAIRES_RESULTS = [
           commentaires: [],
         },
       ],
+      types_consultes: TYPES_CONSULTES_BRETAGNE,
       types_non_accessibles: ["actions_a_venir", "actions_a_valoriser"],
     },
   },
@@ -614,7 +613,9 @@ Depuis mars, les appels passent par un numéro unique dans le département. Deux
 **CH-012 — Développer l'apprentissage**
 Aucun commentaire n'est publié pour ce chantier en Bretagne.
 
-Les actions à venir et à valoriser relèvent de la vue nationale, à laquelle vous n'avez pas accès.`;
+Les actions à venir et à valoriser relèvent de la vue nationale, à laquelle vous n'avez pas accès.
+
+Commentaires consultés : freins à lever, autres résultats obtenus non corrélés aux indicateurs, décisions stratégiques, commentaires sur les données, autres résultats obtenus et synthèse des résultats.`;
 
 const commentaires = (matter: string) =>
   evidence({
@@ -934,58 +935,35 @@ const CHANTIER_QUESTION = `Fais moi la synthèse du chantier CH-005 sur le terri
 Quel est son écart à la médiane ?
 Quelles sont les principales difficultés remontées dans les commentaires ?`;
 
+/**
+ * En production, cette demande passe par `rediger_synthese_chantier` : la
+ * sortie de l'encart porte le chantier collecté, synthèse et auteur compris,
+ * et les commentaires du territoire (les encarts ne changent pas).
+ */
 const CHANTIER_RESULTS = [
   {
-    toolName: "get_chantiers",
-    output: sansSynthese({ resultats: FICHE_BRETAGNE.chantiersEnRetard }),
-  },
-  {
-    toolName: "get_chantiers",
-    output: sansSynthese({
-      resultats: [
-        {
-          territoire_code: "REG-52",
-          territoire_nom: "Pays de la Loire",
-          jalon: 2025,
-          chantiers: [
-            {
-              ...chantier({
-                ...CH_005,
-                ecart: 8,
-                meteo: "COUVERT",
-                commentaire: null,
-              }),
-              taux_avancement: 75,
-            },
-          ],
-        },
-      ],
-    }),
-  },
-  {
-    toolName: "get_chantier_commentaires",
+    toolName: "rediger_synthese_chantier",
     output: {
-      resultats: [
-        {
-          territoire_code: "REG-53",
-          territoire_nom: "Bretagne",
-          chantier_id: "CH-005",
-          commentaires: [
-            SYNTHESE_CH_005_RENVOYEE,
-            {
-              type: "commentaires_sur_les_donnees",
-              versions: [
-                {
-                  date_publication: "2026-09-15",
-                  contenu:
-                    "<p>La hausse du délai au premier semestre s'explique par la fermeture estivale de deux lignes de SMUR. La donnée de juin est provisoire.</p>",
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      types_non_accessibles: [],
+      type: "synthese_chantier",
+      jalon: 2025,
+      date_redaction: "2026-09-15T08:00:00.000Z",
+      markdown: "",
+      termine: true,
+      donnees: {
+        jalon: 2025,
+        territoire_code: "REG-53",
+        territoire_nom: "Bretagne",
+        chantier: FICHE_BRETAGNE.chantiersEnRetard[0].chantiers[0],
+        indicateurs: FICHE_BRETAGNE.indicateurs[0].indicateurs,
+        commentaires: [
+          {
+            type: "commentaires_sur_les_donnees",
+            date_publication: "2026-09-15",
+            contenu:
+              "<p>La hausse du délai au premier semestre s'explique par la fermeture estivale de deux lignes de SMUR. La donnée de juin est provisoire.</p>",
+          },
+        ],
+      },
     },
   },
 ];
@@ -1441,6 +1419,18 @@ export const MECHANICAL_MUTANTS: CalibrationCase[] = [
         reference: COMMENTAIRES_REFERENCE,
         from: "Depuis mars, les appels passent par un numéro unique dans le département. Deux urgentistes doivent être recrutés par contrat de territoire, avec une signature visée en novembre.",
         to: "Mise en place d'un numéro de régulation départemental unique en mars. Action engagée : recrutement de deux urgentistes par contrat de territoire, signature prévue en novembre.",
+      }),
+    ),
+  },
+  {
+    suite: SUITES.syntheseCommentaires,
+    label: "Mention des types absente",
+    broken: "Types de commentaires consultés",
+    evidence: commentaires(
+      muter({
+        reference: COMMENTAIRES_REFERENCE,
+        from: /\n\nCommentaires consultés : .+$/,
+        to: "",
       }),
     ),
   },

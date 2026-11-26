@@ -19,6 +19,7 @@ import {
   checkSectionsDashboard,
   checkTableChantiers,
   checkTableTerritories,
+  checkTypesConsultes,
   checkVerbatim,
 } from "./mechanicalChecks";
 
@@ -692,5 +693,93 @@ describe("checkExpectedPersons", () => {
         expected: [],
       }),
     ).toEqual({ ok: true, detail: "aucune personne citée" });
+  });
+});
+
+describe("checkTypesConsultes", () => {
+  const typesConsultes = [
+    "Commentaires sur les données",
+    "Synthèse des résultats",
+    "Autres résultats obtenus",
+  ];
+
+  test("accepte une dernière ligne qui réunit les types de plusieurs appels, dans un autre ordre et en minuscules", () => {
+    // Given
+    const text =
+      "Les commentaires du CH-005 décrivent un numéro unique.\n\nCommentaires consultés : synthèse des résultats, autres résultats obtenus et commentaires sur les données.";
+
+    // When
+    const result = checkTypesConsultes({ text, typesConsultes });
+
+    // Then
+    expect(result).toEqual({ ok: true, detail: "types consultés mentionnés" });
+  });
+
+  test("signale un type reçu absent de la mention, même cité plus haut", () => {
+    // Given
+    const text =
+      "Les autres résultats obtenus sont positifs.\n\nCommentaires consultés : commentaires sur les données et synthèse des résultats.";
+
+    // When
+    const result = checkTypesConsultes({ text, typesConsultes });
+
+    // Then
+    expect(result).toEqual({
+      ok: false,
+      detail: "absents de la mention : autres résultats obtenus",
+    });
+  });
+
+  test("signale un type cité qui n'a pas été consulté", () => {
+    // When
+    const result = checkTypesConsultes({
+      text: "Réponse.\n\nCommentaires consultés : commentaires sur les données, freins à lever.",
+      typesConsultes: ["Commentaires sur les données"],
+    });
+
+    // Then
+    expect(result).toEqual({
+      ok: false,
+      detail: "non consultés : freins à lever",
+    });
+  });
+
+  test("ne confond pas « Autres résultats obtenus » et « Autres résultats obtenus non corrélés aux indicateurs »", () => {
+    // Given
+    const consultes = [
+      "Autres résultats obtenus",
+      "Autres résultats obtenus non corrélés aux indicateurs",
+    ];
+
+    // When
+    const absent = checkTypesConsultes({
+      text: "Réponse.\n\nCommentaires consultés : autres résultats obtenus non corrélés aux indicateurs.",
+      typesConsultes: consultes,
+    });
+    const complet = checkTypesConsultes({
+      text: "Réponse.\n\nCommentaires consultés : autres résultats obtenus non corrélés aux indicateurs et autres résultats obtenus.",
+      typesConsultes: consultes,
+    });
+
+    // Then
+    expect(absent).toEqual({
+      ok: false,
+      detail: "absents de la mention : autres résultats obtenus",
+    });
+    expect(complet.ok).toBe(true);
+  });
+
+  test("signale une réponse sans mention", () => {
+    // When
+    const result = checkTypesConsultes({
+      text: "Réponse sans mention.",
+      typesConsultes,
+    });
+
+    // Then
+    expect(result).toEqual({
+      ok: false,
+      detail: "aucune ligne « Commentaires consultés »",
+    });
   });
 });

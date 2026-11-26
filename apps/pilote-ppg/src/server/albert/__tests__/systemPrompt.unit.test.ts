@@ -427,4 +427,16 @@ describe("buildChatSystemPrompt", () => {
     expect(prompt).toMatch(/ne le confirme ni ne l'infirme/i);
     expect(prompt).toMatch(/adresse e-mail .*cite-la/i);
   });
+
+  it("termine une réponse tirée des commentaires par les types consultés, sauf après un dashboard, un encart ou une clarification", () => {
+    // When
+    const prompt = buildChatSystemPrompt({
+      territoiresAccessibles: [],
+      agentContext: null,
+    });
+
+    // Then
+    expect(prompt).toContain("Commentaires consultés :");
+    expect(prompt).toContain("types_consultes");
+  });
 });

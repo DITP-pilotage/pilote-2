@@ -647,3 +647,62 @@ export function checkRestrictionEncart({
           "commentaires masqués sans la mention de la restriction d'accès",
       };
 }
+
+const MENTION_TYPES_CONSULTES = "commentaires consultes :";
+
+/**
+ * Rédiger : une réponse tirée des commentaires se termine par une ligne
+ * « Commentaires consultés : … » qui reprend les types consultés de tous les
+ * appels. On compare des ensembles normalisés : l'ordre, la casse et le
+ * « et » final ne changent rien pour l'utilisateur, mais un type de moins ou
+ * de plus est une information fausse. Les types sont comparés en entier :
+ * « Autres résultats obtenus » n'est pas « Autres résultats obtenus non
+ * corrélés aux indicateurs », qui le contient.
+ */
+export function checkTypesConsultes({
+  text,
+  typesConsultes,
+}: {
+  text: string;
+  typesConsultes: string[];
+}): CheckResult {
+  const ligne = text
+    .split("\n")
+    .filter((candidate) =>
+      normalize(candidate).startsWith(MENTION_TYPES_CONSULTES),
+    )
+    .at(-1);
+  if (ligne === undefined) {
+    return { ok: false, detail: "aucune ligne « Commentaires consultés »" };
+  }
+
+  const liste = ligne
+    .slice(ligne.indexOf(":") + 1)
+    .trim()
+    .replace(/\.$/, "");
+  const cites = liste
+    .split(/\s*,\s*|\s+et\s+/)
+    .map((type) => typographie(type).toLowerCase().trim())
+    .filter((type) => type !== "");
+  const recus = typesConsultes.map((type) => typographie(type).toLowerCase());
+
+  const citesNormalises = cites.map(normalize);
+  const recusNormalises = recus.map(normalize);
+  const absents = recus.filter(
+    (_type, index) => !citesNormalises.includes(recusNormalises[index]),
+  );
+  const nonConsultes = cites.filter(
+    (_type, index) => !recusNormalises.includes(citesNormalises[index]),
+  );
+
+  if (absents.length > 0) {
+    return {
+      ok: false,
+      detail: `absents de la mention : ${absents.join(", ")}`,
+    };
+  }
+  if (nonConsultes.length > 0) {
+    return { ok: false, detail: `non consultés : ${nonConsultes.join(", ")}` };
+  }
+  return { ok: true, detail: "types consultés mentionnés" };
+}
