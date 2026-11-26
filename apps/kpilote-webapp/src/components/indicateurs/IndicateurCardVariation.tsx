@@ -44,7 +44,7 @@ export function IndicateurCardVariation({
               {formatDifferenceFr(lecture.variation, unite)}
             </span>
             <Pill tone={TONE_BY_INTERPRETATION[lecture.interpretation]}>
-              {lecture.direction}
+              {lecture.label}
               {interpretationLabel && <> · {interpretationLabel}</>}
             </Pill>
           </div>

@@ -202,17 +202,25 @@ function VariationPill({
   unite: UniteIndicateurApiModel | null
   sensSouhaite: SensSouhaite
 }) {
-  const { arrow, direction, interpretation } = describeVariation({ variation, sensSouhaite })
+  const {
+    direction,
+    arrow,
+    label: directionLabel,
+    interpretation,
+  } = describeVariation({
+    variation,
+    sensSouhaite,
+  })
   const label = INTERPRETATION_LABEL_FR[interpretation]
   return (
     <Pill tone={TONE_BY_INTERPRETATION[interpretation]} className="mt-3 w-fit text-sm">
       {direction === 'STABLE' ? (
         <span>
-          <span aria-hidden="true">{arrow}</span> {direction}
+          <span aria-hidden="true">{arrow}</span> {directionLabel}
         </span>
       ) : (
         <span>
-          <span aria-hidden="true">{arrow}</span> {direction} :{' '}
+          <span aria-hidden="true">{arrow}</span> {directionLabel} :{' '}
           {formatDifferenceFr(variation, unite)}
           {label && <> · {label}</>}
         </span>

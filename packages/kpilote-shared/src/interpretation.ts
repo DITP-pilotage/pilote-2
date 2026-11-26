@@ -2,6 +2,16 @@ import { type SensSouhaite } from './indicateur'
 
 export type Interpretation = 'favorable' | 'unfavorable' | 'neutral'
 
+// Sens du mouvement constaté entre deux valeurs, indépendant du sens souhaité.
+export const DIRECTIONS_VARIATION = ['HAUSSE', 'BAISSE', 'STABLE'] as const
+export type DirectionVariation = (typeof DIRECTIONS_VARIATION)[number]
+
+export const directionOfDifference = (difference: number): DirectionVariation => {
+  if (difference > 0) return 'HAUSSE'
+  if (difference < 0) return 'BAISSE'
+  return 'STABLE'
+}
+
 // Interprète une différence signée (variation, écart à la médiane) selon le sens
 // souhaité de l'indicateur (PIL-1778) : plus haut est favorable à la hausse,
 // défavorable à la baisse ; une différence nulle est neutre dans les deux sens.

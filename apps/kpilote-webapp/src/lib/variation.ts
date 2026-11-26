@@ -1,5 +1,10 @@
 import { type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
-import { type Interpretation, interpretDifference } from '@pilote/kpilote-shared/interpretation'
+import {
+  type DirectionVariation,
+  directionOfDifference,
+  type Interpretation,
+  interpretDifference,
+} from '@pilote/kpilote-shared/interpretation'
 import { type PillTone } from '@pilote/kpilote-ui/Pill'
 
 import { displayedDifferenceSign } from '@/lib/format'
@@ -12,9 +17,22 @@ export const TONE_BY_INTERPRETATION: Record<Interpretation, PillTone> = {
   neutral: 'info',
 }
 
+const ARROW_BY_DIRECTION: Record<DirectionVariation, string> = {
+  HAUSSE: '↑',
+  BAISSE: '↓',
+  STABLE: '→',
+}
+
+const LABEL_BY_DIRECTION: Record<DirectionVariation, string> = {
+  HAUSSE: 'EN HAUSSE',
+  BAISSE: 'EN BAISSE',
+  STABLE: 'STABLE',
+}
+
 export type VariationDisplay = {
-  arrow: '↑' | '↓' | '→'
-  direction: 'EN HAUSSE' | 'EN BAISSE' | 'STABLE'
+  direction: DirectionVariation
+  arrow: string
+  label: string
   interpretation: Interpretation
 }
 
@@ -28,8 +46,11 @@ export const describeVariation = ({
   sensSouhaite: SensSouhaite
 }): VariationDisplay => {
   const sign = displayedDifferenceSign(variation)
-  const interpretation = interpretDifference({ difference: sign, sensSouhaite })
-  if (sign > 0) return { arrow: '↑', direction: 'EN HAUSSE', interpretation }
-  if (sign < 0) return { arrow: '↓', direction: 'EN BAISSE', interpretation }
-  return { arrow: '→', direction: 'STABLE', interpretation }
+  const direction = directionOfDifference(sign)
+  return {
+    direction,
+    arrow: ARROW_BY_DIRECTION[direction],
+    label: LABEL_BY_DIRECTION[direction],
+    interpretation: interpretDifference({ difference: sign, sensSouhaite }),
+  }
 }
