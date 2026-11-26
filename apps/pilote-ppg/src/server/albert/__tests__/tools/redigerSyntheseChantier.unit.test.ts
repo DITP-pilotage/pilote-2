@@ -6,7 +6,10 @@ import { encartChantierVersModele } from "@/server/albert/tools/encartChantier";
 import { createRedigerSyntheseChantierTool } from "@/server/albert/tools/redigerSyntheseChantier";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
-import type { GetChantierCommentairesQuery } from "@/server/chantiers/query/GetChantierCommentairesQuery";
+import type {
+  GetChantierCommentairesQuery,
+  GetChantierCommentairesQueryResult,
+} from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { GetChantierIndicateursQuery } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import type {
   ChantierResult,
@@ -97,34 +100,40 @@ const getChantierIndicateursQuery = mock<GetChantierIndicateursQuery>({
 
 const getChantierCommentairesQuery = () =>
   mock<GetChantierCommentairesQuery>({
-    execute: vi.fn(async ({ chantierId, territoireCode }) => ({
-      resultats: [
-        {
-          territoire_code: territoireCode,
-          territoire_nom: "Morbihan",
-          chantier_id: chantierId,
-          commentaires: [
-            {
-              id: "commentaire-2",
-              date_publication: "2026-03-01T10:00:00.000Z",
-              contenu: "<p>Les recrutements reprennent.</p>",
-              type: "commentaires_sur_les_donnees",
-              auteur_creation_id: AUTEUR_ID,
-              auteur_modification_id: AUTEUR_ID,
-            },
-            {
-              id: "commentaire-1",
-              date_publication: "2026-01-01T10:00:00.000Z",
-              contenu: "<p>Les recrutements sont gelés.</p>",
-              type: "commentaires_sur_les_donnees",
-              auteur_creation_id: AUTEUR_ID,
-              auteur_modification_id: AUTEUR_ID,
-            },
-          ],
-        },
-      ],
-      types_non_accessibles: [],
-    })),
+    execute: vi.fn(
+      async ({
+        chantierId,
+        territoireCode,
+      }): Promise<GetChantierCommentairesQueryResult> => ({
+        resultats: [
+          {
+            territoire_code: territoireCode,
+            territoire_nom: "Morbihan",
+            chantier_id: chantierId,
+            commentaires: [
+              {
+                id: "commentaire-2",
+                date_publication: "2026-03-01T10:00:00.000Z",
+                contenu: "<p>Les recrutements reprennent.</p>",
+                type: "commentaires_sur_les_donnees",
+                auteur_creation_id: AUTEUR_ID,
+                auteur_modification_id: AUTEUR_ID,
+              },
+              {
+                id: "commentaire-1",
+                date_publication: "2026-01-01T10:00:00.000Z",
+                contenu: "<p>Les recrutements sont gelés.</p>",
+                type: "commentaires_sur_les_donnees",
+                auteur_creation_id: AUTEUR_ID,
+                auteur_modification_id: AUTEUR_ID,
+              },
+            ],
+          },
+        ],
+        types_consultes: ["commentaires_sur_les_donnees"],
+        types_non_accessibles: [],
+      }),
+    ),
   });
 
 const habilitations = ({

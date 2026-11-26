@@ -36,6 +36,7 @@ const queryResult: GetChantierCommentairesQueryResult = {
       ],
     },
   ],
+  types_consultes: ["freins_a_lever"],
   types_non_accessibles: [],
 };
 
@@ -67,6 +68,7 @@ const resultatAvecCommentaires = (
   commentaires: CommentaireDeLaQuery[],
 ): GetChantierCommentairesQueryResult => ({
   resultats: [{ ...queryResult.resultats[0], commentaires }],
+  types_consultes: [],
   types_non_accessibles: [],
 });
 
@@ -157,6 +159,7 @@ describe("createGetChantierCommentairesTool execute", () => {
           ],
         },
       ],
+      types_consultes: ["Freins à lever"],
       types_non_accessibles: [],
     });
   });
@@ -479,6 +482,110 @@ describe("createGetChantierCommentairesTool execute", () => {
         .mock.calls.map(([params]) => params.territoireCode),
     ).toEqual(["REG-75"]);
   });
+
+  test("renvoie les libellés des types consultés sur tous les territoires, sans doublon, même sans commentaire trouvé", async () => {
+    // Given
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(
+        async ({
+          territoireCode,
+        }): Promise<GetChantierCommentairesQueryResult> => ({
+          resultats: [],
+          types_consultes:
+            territoireCode === "REG-75"
+              ? ["autres_resultats_obtenus", "synthese_des_resultats"]
+              : ["commentaires_sur_les_donnees", "synthese_des_resultats"],
+          types_non_accessibles: [],
+        }),
+      ),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75", "DEPT-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084", {
+      type: "REGION_ET_SES_DEPARTEMENTS",
+      region_code: "REG-75",
+    });
+
+    // Then
+    expect(result.types_consultes).toEqual([
+      "Commentaires sur les données",
+      "Autres résultats obtenus",
+      "Synthèse des résultats",
+    ]);
+  });
+
+  test("plusieurs territoires avec accès au national : un type national lu sur le premier n'est pas signalé non accessible", async () => {
+    // Given
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(
+        async ({
+          inclureCommentairesNationaux,
+        }): Promise<GetChantierCommentairesQueryResult> => ({
+          resultats: [],
+          types_consultes: inclureCommentairesNationaux
+            ? ["freins_a_lever"]
+            : [],
+          types_non_accessibles: inclureCommentairesNationaux
+            ? []
+            : ["freins_a_lever"],
+        }),
+      ),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75", "DEPT-75", "NAT-FR"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084", {
+      type: "REGION_ET_SES_DEPARTEMENTS",
+      region_code: "REG-75",
+    });
+
+    // Then
+    expect({
+      types_consultes: result.types_consultes,
+      types_non_accessibles: result.types_non_accessibles,
+    }).toEqual({
+      types_consultes: ["Freins à lever"],
+      types_non_accessibles: [],
+    });
+  });
+
+  test("sans accès au national : les types nationaux ne sont pas consultés et restent non accessibles", async () => {
+    // Given
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(async (): Promise<GetChantierCommentairesQueryResult> => ({
+        resultats: [],
+        types_consultes: ["commentaires_sur_les_donnees"],
+        types_non_accessibles: ["freins_a_lever"],
+      })),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084");
+
+    // Then
+    expect({
+      types_consultes: result.types_consultes,
+      types_non_accessibles: result.types_non_accessibles,
+    }).toEqual({
+      types_consultes: ["Commentaires sur les données"],
+      types_non_accessibles: ["freins_a_lever"],
+    });
+  });
+
   test("cite l'auteur d'une version par sa référence, sans modifie_par quand il l'a aussi modifiée", async () => {
     // Given
     const query = mock<GetChantierCommentairesQuery>({

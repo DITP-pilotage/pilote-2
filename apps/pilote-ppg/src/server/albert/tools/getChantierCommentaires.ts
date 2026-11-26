@@ -12,6 +12,7 @@ import type {
   TypeContenuChantier,
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
+import { libelleTypeCommentaire } from "@/server/albert/tools/libelles";
 import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
 import { personReference } from "@/shared/personne/personReference";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
@@ -76,6 +77,8 @@ export type GetChantierCommentairesOutput = {
   /** Le nom à écrire avec l'identifiant (« CH-XXX — Nom ») : sans lui, la réponse citait le chantier par son seul code. */
   chantier_nom: string | null;
   resultats: ResultatCommentaires[];
+  /** Les libellés des types de commentaires interrogés, même sans contenu. */
+  types_consultes: string[];
   types_non_accessibles: GetChantierCommentairesQueryResult["types_non_accessibles"];
 };
 
@@ -163,6 +166,7 @@ Types de commentaires :
 
 - Les types nationaux sont cherchés sur NAT-FR quand l'utilisateur y a accès, même pour un territoire régional ou départemental : inutile de rappeler l'outil sur NAT-FR.
 - Sur un territoire régional ou départemental, « difficultés », « actions », « ce qui coince » ne désignent pas \`freins_a_lever\` ni \`actions_a_venir\`, qui sont nationaux : elles se lisent d'abord dans les commentaires du territoire. Pour une telle demande, omets \`types\`.
+- \`types_consultes\` : les types de commentaires interrogés, même sans contenu, hors types non accessibles.
 - \`types_non_accessibles\` : ces types relèvent de la vue nationale, hors du périmètre de l'utilisateur ; ce n'est pas une absence de contenu.
 Utilise-le pour : les commentaires, freins, actions, réussites ou décisions d'un chantier sur un territoire ; plusieurs territoires (« la Bretagne et ses départements ») : un seul appel avec le \`perimetre\` adapté.
 Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il reste à faire → get_chantier_objectifs.`,
@@ -211,6 +215,15 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
           ),
         );
 
+        const typesConsultes = typesContenuChantier.filter((type) =>
+          results.some((result) => result.types_consultes.includes(type)),
+        );
+        // Seul le premier territoire interroge le national : les autres le
+        // signalent non accessible alors qu'il a été lu.
+        const typesNonAccessibles = [
+          ...new Set(results.flatMap((result) => result.types_non_accessibles)),
+        ].filter((type) => !typesConsultes.includes(type));
+
         return {
           chantier_nom: chantier?.nom ?? null,
           resultats: results
@@ -221,11 +234,10 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
                 commentaires: resultat.commentaires,
               }),
             })),
-          types_non_accessibles: [
-            ...new Set(
-              results.flatMap((result) => result.types_non_accessibles),
-            ),
-          ],
+          types_consultes: typesConsultes.map((type) =>
+            libelleTypeCommentaire({ type }),
+          ),
+          types_non_accessibles: typesNonAccessibles,
         };
       },
     });

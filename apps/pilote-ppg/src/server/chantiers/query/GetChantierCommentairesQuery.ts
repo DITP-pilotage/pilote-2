@@ -64,6 +64,8 @@ export type GetChantierCommentairesResult = {
 
 export type GetChantierCommentairesQueryResult = {
   resultats: GetChantierCommentairesResult[];
+  /** Les types interrogés, même sans contenu, hors types non accessibles. */
+  types_consultes: TypeContenuChantier[];
   types_non_accessibles: TypeContenuChantier[];
 };
 
@@ -113,8 +115,13 @@ export class GetChantierCommentairesQuery {
       ),
     );
 
+    const typesConsultes = typesContenuChantier.filter((type) =>
+      appels.some((appel) => appel.types.includes(type)),
+    );
+
     return {
       resultats,
+      types_consultes: typesConsultes,
       types_non_accessibles: typesNonAccessibles,
     };
   }

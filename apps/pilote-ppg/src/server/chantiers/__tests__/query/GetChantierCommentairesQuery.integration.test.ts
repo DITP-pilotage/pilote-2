@@ -71,6 +71,7 @@ describe("GetChantierCommentairesQuery", () => {
             ],
           },
         ],
+        types_consultes: ["commentaires_sur_les_donnees"],
         types_non_accessibles: [],
       });
     }),
@@ -403,6 +404,7 @@ describe("GetChantierCommentairesQuery", () => {
 
       // Then
       expect(result.types_non_accessibles).toEqual([]);
+      expect(result.types_consultes).toEqual(["freins_a_lever"]);
       expect(result.resultats).toHaveLength(1);
       expect(result.resultats[0]).toMatchObject({
         territoire_code: "NAT-FR",
@@ -438,6 +440,7 @@ describe("GetChantierCommentairesQuery", () => {
       // Then
       expect(result.resultats).toEqual([]);
       expect(result.types_non_accessibles).toEqual([...TYPES_NATIONAUX]);
+      expect(result.types_consultes).toEqual([]);
     }),
   );
 
