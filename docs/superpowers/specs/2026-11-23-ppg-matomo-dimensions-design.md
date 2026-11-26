@@ -44,7 +44,7 @@ Transport :
   avec PIL-1923, restent sans numéro tant qu'elles ne sont pas créées dans Matomo.
 - **Module serveur `analytics`** et routeur tRPC :
   - lecture **publique** de la correspondance (rien de sensible, lue avant la connexion) ;
-  - enregistrement d'un numéro ou retrait (numéro vide), réservé à DITP_ADMIN, avec CSRF. Clé hors
+  - enregistrement d'un numéro ou retrait (numéro vide), réservé à DITP_ADMIN. Clé hors
     liste ou numéro hors 1–999 : refus. Numéro déjà pris : refus avec le nom de la dimension qui le
     porte, y compris en cas d'écriture concurrente.
   - La liste des clés doit être importable par le serveur : elle passe dans `src/shared`.

@@ -1,5 +1,4 @@
 import {
-  checkCsrf,
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
@@ -7,7 +6,6 @@ import {
 import { getContainer } from "@/server/dependances";
 import { checkAdminPermission } from "@/server/framework/trpc/checkAdminPermission";
 import { setDimensionSlotCommandSchema } from "@/server/analytics/handlers/SetDimensionSlotHandler";
-import { zodValidateurCSRF } from "@/validation/publication";
 
 export const analyticsRouter = createTRPCRouter({
   // Publique : la page de connexion envoie des événements avant l'authentification.
@@ -16,9 +14,8 @@ export const analyticsRouter = createTRPCRouter({
   ),
 
   setDimensionSlot: protectedProcedure
-    .input(setDimensionSlotCommandSchema.and(zodValidateurCSRF))
+    .input(setDimensionSlotCommandSchema)
     .mutation(async ({ input, ctx }) => {
-      checkCsrf(ctx.csrfDuCookie, input.csrf);
       checkAdminPermission(ctx.session);
       await getContainer("analytics")
         .resolve("setDimensionSlotHandler")

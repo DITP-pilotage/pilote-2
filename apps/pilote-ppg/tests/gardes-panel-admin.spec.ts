@@ -144,7 +144,7 @@ test.describe("Dimensions Matomo sans session", () => {
   test("la correspondance se lit avant la connexion, mais pas une autre procédure du même lot", async ({
     page,
   }) => {
-    const trpc = await TrpcClient.outsideApp(page);
+    const trpc = new TrpcClient(page);
 
     const slots = await trpc.query("analytics.dimensionSlots");
     const batch = await page.request.get(

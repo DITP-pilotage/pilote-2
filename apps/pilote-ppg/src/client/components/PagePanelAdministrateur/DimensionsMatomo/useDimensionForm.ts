@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 import { api } from "@/server/framework/trpc/api";
 import {
   dimensionSlotSchema,
@@ -58,7 +57,6 @@ export const useDimensionForm = ({
     setDimensionSlot.mutate({
       dimension: row.dimension,
       slot: toSlot(slot),
-      csrf: récupérerUnCookie("csrf") ?? "",
     });
   });
 

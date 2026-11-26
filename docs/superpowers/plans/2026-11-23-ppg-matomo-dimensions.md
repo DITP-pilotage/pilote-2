@@ -38,7 +38,7 @@
 - `ANALYTICS_DIMENSIONS`, `AnalyticsDimension`, `DimensionSlots = Partial<Record<AnalyticsDimension, number>>`, `MAX_DIMENSION_SLOT = 999`, `dimensionSlotSchema` (`z.number().int().min(1).max(999)`)
 - `GetDimensionSlotsQuery.run(): Promise<DimensionSlots>` (clés connues seulement)
 - `setDimensionSlotCommandSchema = { dimension: enum, slot: dimensionSlotSchema | null }`, `SetDimensionSlotHandler.execute(command): Promise<void>`
-- Routeur `analytics` : `dimensionSlots` (public), `setDimensionSlot` (CSRF + `checkAdminPermission`)
+- Routeur `analytics` : `dimensionSlots` (public), `setDimensionSlot` (`checkAdminPermission`)
 
 - [ ] Tests d'intégration : la requête rend les clés connues et ignore `ancienne_cle` ; le handler crée, modifie, retire (sans erreur si déjà retirée), refuse par `ConflictError("Le numéro 2 est déjà utilisé par « conversation_id ».")` sans rien modifier, garde son propre numéro sans erreur, reprend le numéro d'une clé retirée du code ; le schéma refuse 0, 1.5, 1000 et une clé inconnue.
 - [ ] Test : la migration donne les 9 numéros.
