@@ -11,6 +11,10 @@ import {
   tauxProgressionListApiModelSchema,
 } from '@pilote/kpilote-shared/tauxProgression'
 import {
+  type DernieresValeursListApiModel,
+  dernieresValeursListApiModelSchema,
+  type DerniersTauxProgressionListApiModel,
+  derniersTauxProgressionListApiModelSchema,
   type IndividusWithValeursListApiModel,
   individusWithValeursListApiModelSchema,
   type ListIndividusWithValeursQuery,
@@ -121,4 +125,36 @@ export const fetchTauxProgressionForIndicateur = async (
     })
     .json()
   return tauxProgressionListApiModelSchema.parse(json)
+}
+
+// Sans `individus`, l'API lit chaque indicateur sur son individu racine. ky ignore
+// les valeurs `undefined` dans `searchParams`.
+export const fetchDernieresValeurs = async ({
+  indicateurs,
+  individus,
+}: {
+  indicateurs: ReadonlyArray<string>
+  individus: ReadonlyArray<string> | undefined
+}): Promise<DernieresValeursListApiModel> => {
+  const json = await apiClient
+    .get('dernieres-valeurs', {
+      searchParams: { indicateurs: indicateurs.join(','), individus: individus?.join(',') },
+    })
+    .json()
+  return dernieresValeursListApiModelSchema.parse(json)
+}
+
+export const fetchDerniersTauxProgression = async ({
+  indicateurs,
+  individus,
+}: {
+  indicateurs: ReadonlyArray<string>
+  individus: ReadonlyArray<string> | undefined
+}): Promise<DerniersTauxProgressionListApiModel> => {
+  const json = await apiClient
+    .get('taux-progression/indicateurs', {
+      searchParams: { indicateurs: indicateurs.join(','), individus: individus?.join(',') },
+    })
+    .json()
+  return derniersTauxProgressionListApiModelSchema.parse(json)
 }

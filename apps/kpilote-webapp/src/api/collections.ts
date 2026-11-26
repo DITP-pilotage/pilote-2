@@ -47,13 +47,17 @@ export const fetchCollectionTauxProgression = async ({
   return collectionTauxProgressionApiModelSchema.parse(json)
 }
 
-export const fetchCollectionTauxProgressionForIndividu = async (
-  individuId: string,
-  collectionIds: string[],
-): Promise<CollectionTauxProgressionSummaryListApiModel> => {
+// Sans `individus`, chaque indicateur d'une collection contribue sur son individu racine.
+export const fetchCollectionsTauxProgression = async ({
+  collections,
+  individus,
+}: {
+  collections: ReadonlyArray<string>
+  individus: ReadonlyArray<string> | undefined
+}): Promise<CollectionTauxProgressionSummaryListApiModel> => {
   const json = await apiClient
-    .get(`individus/${individuId}/taux-progression/collections`, {
-      searchParams: { collections: collectionIds.join(',') },
+    .get('taux-progression/collections', {
+      searchParams: { collections: collections.join(','), individus: individus?.join(',') },
     })
     .json()
   return collectionTauxProgressionSummaryListApiModelSchema.parse(json)

@@ -27,15 +27,6 @@ const collectionsCsvSchema = z
       ),
   )
 
-export const listCollectionTauxProgressionForIndividuQuerySchema = z.object({
-  collections: collectionsCsvSchema.describe(
-    `Liste d'identifiants de collections séparés par une virgule (ex. COL-1,COL-2). 1..${MAX_COLLECTIONS_PAR_REQUETE} identifiants.`,
-  ),
-})
-export type ListCollectionTauxProgressionForIndividuQuery = z.infer<
-  typeof listCollectionTauxProgressionForIndividuQuerySchema
->
-
 export const listCollectionTauxProgressionQuerySchema = z.object({
   collections: collectionsCsvSchema.describe(
     `Liste d'identifiants de collections séparés par une virgule (ex. COL-1,COL-2). 1..${MAX_COLLECTIONS_PAR_REQUETE} identifiants.`,

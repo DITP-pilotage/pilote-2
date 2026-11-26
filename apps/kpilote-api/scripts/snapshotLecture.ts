@@ -114,18 +114,18 @@ const buildRequests = ({ indicateurIds }: { indicateurIds: ReadonlyArray<string>
       ),
     )
   }
-  for (const ind of INDIVIDUS) {
-    // Les routes /individus/{id}/… plafonnent la liste CSV : on découpe par 20.
+  // Les lectures par lot plafonnent la liste CSV : on découpe par 20. Sans
+  // sélection, chaque indicateur est lu sur son individu racine.
+  const selections = [...INDIVIDUS.map((ind) => `&individus=${ind}`), '']
+  for (const selection of selections) {
     for (let i = 0; i < indicateurIds.length; i += 20) {
       const lot = indicateurIds.slice(i, i + 20).join(',')
       requests.push(
-        `/individus/${ind}/dernieres-valeurs?indicateurs=${lot}`,
-        `/individus/${ind}/taux-progression/indicateurs?indicateurs=${lot}`,
+        `/dernieres-valeurs?indicateurs=${lot}${selection}`,
+        `/taux-progression/indicateurs?indicateurs=${lot}${selection}`,
       )
     }
-    requests.push(
-      `/individus/${ind}/taux-progression/collections?collections=${COLLECTIONS.join(',')}`,
-    )
+    requests.push(`/taux-progression/collections?collections=${COLLECTIONS.join(',')}${selection}`)
   }
   return requests
 }
@@ -193,7 +193,7 @@ const listeAvecSeulementDesEntitesAjoutees = ({
 }
 
 // Certaines requêtes n'ont pas d'ORDER BY (ex. `indicateur.findMany` de
-// `listDernieresValeursForIndividu`) : l'ordre suit l'ordre physique des lignes en
+// `listDernieresValeurs`) : l'ordre suit l'ordre physique des lignes en
 // base, que n'importe quel UPDATE peut déplacer. Mêmes éléments, ordre différent.
 const memesItemsDansUnAutreOrdre = ({
   obtenu,

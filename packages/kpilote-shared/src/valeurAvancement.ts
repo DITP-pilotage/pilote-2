@@ -493,83 +493,6 @@ export const valeurAvancementListApiModelSchema = z.object({
 })
 export type ValeurAvancementListApiModel = z.infer<typeof valeurAvancementListApiModelSchema>
 
-export const dernierValeurIndividuApiModelSchema = z.object({
-  indicateur: indicateurPublicIdSchema,
-  valeur: valeurSchema.describe("Dernière valeur connue de l'individu pour cet indicateur."),
-  date: dateSchema.describe(
-    'Date du bucket de la dernière valeur connue (post-troncature mensuelle).',
-  ),
-  type: z
-    .enum(['saisie', 'derivee'])
-    .describe(
-      "`saisie` : la valeur provient d'une saisie directe sur cet individu. " +
-        '`derivee` : la valeur est reconstruite par agrégation hiérarchique des descendants.',
-    ),
-})
-export type DernierValeurIndividuApiModel = z.infer<typeof dernierValeurIndividuApiModelSchema>
-
-export const dernieresValeursIndividuListApiModelSchema = z.object({
-  items: z
-    .array(dernierValeurIndividuApiModelSchema)
-    .describe(
-      "Dernière valeur connue de l'individu pour chaque indicateur demandé ayant au moins une " +
-        'valeur. Les indicateurs sans valeur connue pour cet individu sont omis de la réponse.',
-    ),
-})
-export type DernieresValeursIndividuListApiModel = z.infer<
-  typeof dernieresValeursIndividuListApiModelSchema
->
-
-export const listDernieresValeursForIndividuQuerySchema = z.object({
-  indicateurs: indicateursCsvSchema.describe(
-    `Liste d'identifiants d'indicateurs séparés par une virgule (ex. IND-A,IND-B). 1..${MAX_INDICATEURS_PAR_REQUETE} identifiants.`,
-  ),
-})
-export type ListDernieresValeursForIndividuQuery = z.infer<
-  typeof listDernieresValeursForIndividuQuerySchema
->
-
-export const listTauxProgressionIndividuQuerySchema = z.object({
-  indicateurs: indicateursCsvSchema.describe(
-    `Liste d'identifiants d'indicateurs séparés par une virgule (ex. IND-A,IND-B). 1..${MAX_INDICATEURS_PAR_REQUETE} identifiants.`,
-  ),
-})
-export type ListTauxProgressionIndividuQuery = z.infer<
-  typeof listTauxProgressionIndividuQuerySchema
->
-
-export const tauxProgressionIndividuApiModelSchema = z.object({
-  indicateur: indicateurPublicIdSchema,
-  tauxProgression: z
-    .number()
-    .nullable()
-    .describe(
-      "Taux de progression vers l'objectif courant (0–100). null si la valeur cible est zéro " +
-        "ou si l'indicateur est à la baisse (sensSouhaite = BAISSE).",
-    ),
-  valeurCible: z
-    .number()
-    .describe("Valeur cible de l'objectif courant pour cet indicateur × individu."),
-  dateCible: dateSchema.describe(
-    "Date cible de l'objectif courant (YYYY-MM-DD) pour cet indicateur × individu.",
-  ),
-})
-export type TauxProgressionIndividuApiModel = z.infer<typeof tauxProgressionIndividuApiModelSchema>
-
-export const tauxProgressionIndividuListApiModelSchema = z.object({
-  items: z
-    .array(tauxProgressionIndividuApiModelSchema)
-    .describe(
-      'Taux de progression pour chaque indicateur demandé ayant un objectif défini et une valeur connue. ' +
-        'Les indicateurs sans objectif ou sans valeur sont omis. ' +
-        'Les indicateurs dont la valeurCible est zéro, ou à la baisse (sensSouhaite = BAISSE), sont inclus ' +
-        'avec tauxProgression: null.',
-    ),
-})
-export type TauxProgressionIndividuListApiModel = z.infer<
-  typeof tauxProgressionIndividuListApiModelSchema
->
-
 // --- Lectures par lot sur une sélection d'individus -------------------------
 
 const individusSelectionnesSchema = individusCsvSchema
@@ -595,8 +518,19 @@ export const listDernieresValeursQuerySchema = z.object({
 })
 export type ListDernieresValeursQuery = z.infer<typeof listDernieresValeursQuerySchema>
 
-export const derniereValeurApiModelSchema = dernierValeurIndividuApiModelSchema.extend({
+export const derniereValeurApiModelSchema = z.object({
+  indicateur: indicateurPublicIdSchema,
   individu: individuLuSchema,
+  valeur: valeurSchema.describe("Dernière valeur connue de l'individu pour cet indicateur."),
+  date: dateSchema.describe(
+    'Date du bucket de la dernière valeur connue (post-troncature mensuelle).',
+  ),
+  type: z
+    .enum(['saisie', 'derivee'])
+    .describe(
+      "`saisie` : la valeur provient d'une saisie directe sur cet individu. " +
+        '`derivee` : la valeur est reconstruite par agrégation hiérarchique des descendants.',
+    ),
 })
 export type DerniereValeurApiModel = z.infer<typeof derniereValeurApiModelSchema>
 
@@ -620,8 +554,22 @@ export type ListDerniersTauxProgressionQuery = z.infer<
   typeof listDerniersTauxProgressionQuerySchema
 >
 
-export const dernierTauxProgressionApiModelSchema = tauxProgressionIndividuApiModelSchema.extend({
+export const dernierTauxProgressionApiModelSchema = z.object({
+  indicateur: indicateurPublicIdSchema,
   individu: individuLuSchema,
+  tauxProgression: z
+    .number()
+    .nullable()
+    .describe(
+      "Taux de progression vers l'objectif courant (0–100). null si la valeur cible est zéro " +
+        "ou si l'indicateur est à la baisse (sensSouhaite = BAISSE).",
+    ),
+  valeurCible: z
+    .number()
+    .describe("Valeur cible de l'objectif courant pour cet indicateur × individu."),
+  dateCible: dateSchema.describe(
+    "Date cible de l'objectif courant (YYYY-MM-DD) pour cet indicateur × individu.",
+  ),
 })
 export type DernierTauxProgressionApiModel = z.infer<typeof dernierTauxProgressionApiModelSchema>
 
