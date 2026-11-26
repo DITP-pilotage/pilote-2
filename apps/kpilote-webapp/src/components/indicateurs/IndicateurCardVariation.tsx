@@ -1,8 +1,8 @@
 import { type SensSouhaite, type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 import { type DerniereValeurApiModel } from '@pilote/kpilote-shared/valeurAvancement'
 
+import { IndicateurCardRow } from '@/components/indicateurs/IndicateurCardRow'
 import { Pill } from '@pilote/kpilote-ui/Pill'
-import { Text } from '@pilote/kpilote-ui/Typography'
 import { formatDifferenceFr, formatMonthYearNumericFr, formatNumberFr } from '@/lib/format'
 import {
   describeVariation,
@@ -10,8 +10,8 @@ import {
   TONE_BY_INTERPRETATION,
 } from '@/lib/variation'
 
-// Le bloc garde ses deux lignes même sans valeur précédente : les cartes voisines
-// restent alignées et aucune évolution n'est inventée.
+// Les deux lignes restent en place même sans valeur précédente : les cartes
+// voisines restent alignées et aucune évolution n'est inventée.
 export function IndicateurCardVariation({
   derniereValeur,
   unite,
@@ -27,17 +27,12 @@ export function IndicateurCardVariation({
     variation === null ? null : { variation, ...describeVariation({ variation, sensSouhaite }) }
   return (
     <div className="flex flex-col gap-2">
-      <div>
-        <Text variant="kicker" tone="muted" as="p">
-          Évolution
-        </Text>
+      <IndicateurCardRow label="Évolution">
         {lecture === null ? (
-          <Text variant="body" tone="muted" className="mt-1">
-            Tendance non disponible
-          </Text>
+          <span className="text-text-muted">{derniereValeur ? 'Non disponible' : '-'}</span>
         ) : (
-          <div className="mt-1 flex flex-wrap items-center gap-2">
-            <span className="text-sm font-bold text-text">
+          <>
+            <span className="font-semibold tabular-nums text-text">
               <span
                 aria-hidden="true"
                 className={TEXT_CLASS_BY_INTERPRETATION[lecture.interpretation]}
@@ -46,23 +41,30 @@ export function IndicateurCardVariation({
               </span>{' '}
               {formatDifferenceFr(lecture.variation, unite)}
             </span>
-            <Pill tone={TONE_BY_INTERPRETATION[lecture.interpretation]}>{lecture.label}</Pill>
-          </div>
+            {/* Forme du badge DSFR : coins peu arrondis, capitales. */}
+            <Pill
+              tone={TONE_BY_INTERPRETATION[lecture.interpretation]}
+              className="rounded px-1.5 py-0.5"
+            >
+              {lecture.label}
+            </Pill>
+          </>
         )}
-      </div>
-      <p className="flex flex-wrap items-baseline gap-x-2 text-sm">
-        <span className="font-semibold text-text-muted">Valeur précédente</span>
+      </IndicateurCardRow>
+      <IndicateurCardRow label="Valeur précédente">
         {precedente ? (
           <>
-            <span className="font-bold text-text">{formatNumberFr(precedente.valeur, unite)}</span>
-            <span className="text-xs text-text-muted">
+            <span className="font-semibold tabular-nums text-text">
+              {formatNumberFr(precedente.valeur, unite)}
+            </span>
+            <span className="text-xs tabular-nums text-text-muted">
               {formatMonthYearNumericFr(precedente.date)}
             </span>
           </>
         ) : (
-          <span className="font-bold text-text-muted">-</span>
+          <span className="text-text-muted">-</span>
         )}
-      </p>
+      </IndicateurCardRow>
     </div>
   )
 }
