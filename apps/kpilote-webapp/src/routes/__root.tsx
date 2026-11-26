@@ -1,6 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router'
-import { useRef } from 'react'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
 import { AssistantProvider } from '@/assistant/display/AssistantProvider'
@@ -23,8 +22,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootComponent() {
   const { auth } = Route.useRouteContext()
   // Les barres collantes des pages (stickybar de Page) se placent juste sous l'en-tête.
-  const headerRef = useRef<HTMLElement>(null)
-  useHeightCssVariable({ ref: headerRef, variable: '--app-header-height' })
+  const headerRef = useHeightCssVariable('--app-header-height')
 
   return (
     <AssistantProvider enabled={auth.isAuthenticated}>
