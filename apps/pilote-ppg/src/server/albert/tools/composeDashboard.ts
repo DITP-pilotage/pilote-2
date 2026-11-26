@@ -219,7 +219,7 @@ const widgetParagraph = z
       .enum(["default", "warning"])
       .optional()
       .describe(
-        "default = neutre, warning = incohérence détectée (ex: chantier en retard mais météo favorable).",
+        "default = neutre, warning = mise en garde rédigée dans le paragraphe.",
       ),
     width: z
       .union([z.literal(2), z.literal(4)])

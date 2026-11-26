@@ -1,12 +1,13 @@
 import { buildDashboardSystemPrompt } from "@/server/albert/subagents/dashboardSystemPrompt";
 
 describe("buildDashboardSystemPrompt", () => {
-  it("introduit un chantier par son niveau de confiance, pas par sa météo (D1)", () => {
+  it("ne lie plus le paragraphe à la météo ni au commentaire d'un chantier", () => {
     // When
     const prompt = buildDashboardSystemPrompt();
 
     // Then
-    expect(prompt).toContain('"Niveau de confiance : ⛈️ Objectifs compromis"');
-    expect(prompt).not.toContain("Météo : ");
+    expect(prompt).not.toContain("Niveau de confiance :");
+    expect(prompt).not.toContain("champ `commentaire`");
+    expect(prompt).toContain("n'y reprends ni météo ni commentaire");
   });
 });

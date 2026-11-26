@@ -621,27 +621,19 @@ const COMMENTAIRES: CalibrationCase[] = [
 // --- Tableau de bord du territoire --------------------------------------
 
 const DASHBOARD_QUESTION =
-  "Compose un tableau de bord pour Bretagne. Commence par une première section contenant le taux d'avancement du territoire, le nombre de chantiers en retard, le nombre de chantiers en difficulté et la cartographie du taux d'avancement. Ensuite, récupère la liste des chantiers en difficulté et en retard sur ce territoire, et pour chacun, ajoute une section dédiée avec un titre reprenant le nom du chantier, la météo et le commentaire de synthèse, la cartographie météo en pleine largeur et le tableau de ses indicateurs.";
+  "Compose un tableau de bord pour Bretagne. Commence par une première section contenant le taux d'avancement du territoire, le nombre de chantiers en retard, le nombre de chantiers en difficulté et la cartographie du taux d'avancement. Ensuite, récupère la liste des chantiers en difficulté et en retard sur ce territoire, et pour chacun, ajoute une section dédiée avec un titre reprenant le nom du chantier, la cartographie météo en pleine largeur et le tableau de ses indicateurs.";
 
 const DASHBOARD_TEXTE = "Voici le tableau de bord de la Bretagne.";
 
 const sectionChantier = ({
   id,
   nom,
-  meteo,
-  commentaire,
 }: {
   id: string;
   nom: string;
-  meteo: string;
-  commentaire: string;
 }): { widgets: WidgetDefinition[] } => ({
   widgets: [
     { type: "widget_titre_section", titre: `${id} — ${nom}` },
-    {
-      type: "widget_paragraph",
-      contenu: [`Niveau de confiance : ${meteo}`, commentaire],
-    },
     {
       type: "widget_cartographie_meteo",
       chantier_id: id,
@@ -683,21 +675,7 @@ const SECTION_TERRITOIRE: WidgetDefinition[] = [
   },
 ];
 
-const SECTIONS_CHANTIERS = [
-  sectionChantier({
-    ...CH_005,
-    meteo: "Appuis nécessaires",
-    // Le commentaire de synthèse tel que la fiche le porte : la demande dit
-    // « la météo et le commentaire de synthèse », un résumé n'y répond pas.
-    commentaire:
-      "Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
-  }),
-  sectionChantier({
-    ...CH_006,
-    meteo: "Objectifs compromis",
-    commentaire: "Pas de commentaire disponible.",
-  }),
-];
+const SECTIONS_CHANTIERS = [sectionChantier(CH_005), sectionChantier(CH_006)];
 
 function dashboardAvec(
   premiereSection: WidgetDefinition[],

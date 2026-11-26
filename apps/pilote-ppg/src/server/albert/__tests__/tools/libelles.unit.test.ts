@@ -1,5 +1,4 @@
 import {
-  codeMeteoDepuisLibelle,
   designationMaille,
   libelleCategorieSignalement,
   libelleMaille,
@@ -21,18 +20,6 @@ describe("libelleNiveauDeConfiance", () => {
     ${"INCONNU"}        | ${null}
   `("traduit $meteo en $libelle", ({ meteo, libelle }) => {
     expect(libelleNiveauDeConfiance({ meteo })).toEqual(libelle);
-  });
-});
-
-describe("codeMeteoDepuisLibelle", () => {
-  it("retrouve le code d'un niveau saisissable", () => {
-    expect(codeMeteoDepuisLibelle({ libelle: "Appuis nécessaires" })).toEqual(
-      "NUAGE",
-    );
-  });
-
-  it("ne renvoie pas de code pour un libellé hors des quatre niveaux", () => {
-    expect(codeMeteoDepuisLibelle({ libelle: "Non renseignée" })).toBeNull();
   });
 });
 

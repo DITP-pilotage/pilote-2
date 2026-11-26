@@ -26,8 +26,34 @@ scenarioEval({
   cases: [
     {
       question:
-        "Compose un tableau de bord pour Bretagne. Commence par une première section contenant le taux d'avancement du territoire, le nombre de chantiers en retard, le nombre de chantiers en difficulté et la cartographie du taux d'avancement. Ensuite, récupère la liste des chantiers en difficulté et en retard sur ce territoire, et pour chacun, ajoute une section dédiée avec un titre reprenant le nom du chantier, la météo et le commentaire de synthèse, la cartographie météo en pleine largeur et le tableau de ses indicateurs.",
+        "Compose un tableau de bord pour Bretagne. Commence par une première section contenant le taux d'avancement du territoire, le nombre de chantiers en retard, le nombre de chantiers en difficulté et la cartographie du taux d'avancement. Ensuite, récupère la liste des chantiers en difficulté et en retard sur ce territoire, et pour chacun, ajoute une section dédiée avec un titre reprenant le nom du chantier, la cartographie météo en pleine largeur et le tableau de ses indicateurs.",
       reason: "Message envoyé tel quel",
+      truthScope: { territoires: ["REG-53"] },
+      expected: [
+        {
+          toolName: "get_chantiers",
+          input: {
+            perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+            view: "en_retard",
+          },
+        },
+        {
+          toolName: "get_chantiers",
+          input: {
+            perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
+            view: "en_difficulte",
+          },
+        },
+        {
+          toolName: "create_dashboard",
+          input: { territoire_codes: ["REG-53"] },
+        },
+      ],
+    },
+    {
+      question:
+        "Compose un tableau de bord pour Bretagne. Commence par une première section contenant le taux d'avancement du territoire, le nombre de chantiers en retard, le nombre de chantiers en difficulté et la cartographie du taux d'avancement. Ensuite, récupère la liste des chantiers en difficulté et en retard sur ce territoire, et pour chacun, ajoute une section dédiée avec un titre reprenant le nom du chantier, la météo et le commentaire de synthèse, la cartographie météo en pleine largeur et le tableau de ses indicateurs.",
+      reason: "Ancien message du bouton, dans une conversation existante",
       truthScope: { territoires: ["REG-53"] },
       expected: [
         {
