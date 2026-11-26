@@ -688,12 +688,18 @@ const DASHBOARD_TEXTE = "Voici le tableau de bord de la Bretagne.";
 const sectionChantier = ({
   id,
   nom,
+  paragraphe,
 }: {
   id: string;
   nom: string;
+  /** Le paragraphe que l'ancien bouton plaçait sous le titre du chantier. */
+  paragraphe?: string[];
 }): { widgets: WidgetDefinition[] } => ({
   widgets: [
     { type: "widget_titre_section", titre: `${id} — ${nom}` },
+    ...(paragraphe
+      ? [{ type: "widget_paragraph" as const, contenu: paragraphe }]
+      : []),
     {
       type: "widget_cartographie_meteo",
       chantier_id: id,
@@ -811,6 +817,29 @@ const DASHBOARD: CalibrationCase[] = [
       dashboardAvec(SECTION_TERRITOIRE),
       "Voici le tableau de bord de la Bretagne, dont le taux d'avancement s'établit à 51%.",
     ),
+  },
+  {
+    suite: SUITES.tableauDeBord,
+    label: "Niveau de confiance et commentaire en paragraphe",
+    broken: "Ni météo ni commentaire",
+    evidence: tableauDeBord({
+      titre: "Tableau de bord Bretagne",
+      containers: [
+        { widgets: SECTION_TERRITOIRE },
+        // Sans chiffre : « Chiffres exacts » ne doit pas casser aussi
+        sectionChantier({
+          ...CH_005,
+          paragraphe: [
+            "Niveau de confiance : Appuis nécessaires",
+            "Deux postes d'urgentistes restent vacants à Brest et Quimper.",
+          ],
+        }),
+        sectionChantier({
+          ...CH_006,
+          paragraphe: ["Niveau de confiance : Objectifs compromis"],
+        }),
+      ],
+    }),
   },
 ];
 
