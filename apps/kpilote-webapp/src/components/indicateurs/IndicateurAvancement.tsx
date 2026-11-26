@@ -60,7 +60,7 @@ export function IndicateurAvancement({
     <div className="flex flex-1 flex-col gap-4">
       <IndicateurCardIndividu
         groups={groups}
-        individuId={derniereValeur?.individu ?? selectedIndividuId}
+        individuId={derniereValeur?.individu ?? dernierTaux?.individu ?? selectedIndividuId}
       />
       <IndicateurCardValeur derniereValeur={derniereValeur} unite={unite} />
       <IndicateurCardVariation
