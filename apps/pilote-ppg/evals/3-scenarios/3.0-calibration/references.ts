@@ -13,7 +13,10 @@ import { SYNTHESE_COMMENTAIRES_CRITERIA } from "../3.1-synthese/syntheseCommenta
 import { COMPARER_TERRITOIRES_CRITERIA } from "../3.2-comparaison/comparerTerritoires.criteria";
 import { COMPARER_JALONS_CRITERIA } from "../3.2-comparaison/comparerJalons.criteria";
 import type { GroundTruth } from "../truth";
-import type { ChantierRenvoye } from "@/server/albert/tools/getChantiers";
+import {
+  sansSynthese,
+  type ChantierCollecte,
+} from "@/server/albert/tools/getChantiers";
 import { libelleNiveauDeConfiance } from "@/server/albert/tools/libelles";
 import { PERSONNES_CITEES_CRITERIA } from "../3.6-personnes/personnesCitees.criteria";
 import { NOM_PROPOSE_CRITERIA } from "../3.6-personnes/nomPropose.criteria";
@@ -106,7 +109,11 @@ const DIRECTRICE = referenceDe(PERSONNES.directriceUrgences);
 const DIRECTEUR = referenceDe(PERSONNES.directeurUrgences);
 const AUTEUR_SYNTHESE = referenceDe(PERSONNES.auteurSynthese);
 
-/** Un chantier tel que `get_chantiers` le renvoie : des libellés (PIL-1900). */
+/**
+ * Un chantier tel que la collecte le lit (PIL-1900), synthèse comprise : la
+ * fiche de vérité la garde, les sorties de `get_chantiers` passent par
+ * `sansSynthese`.
+ */
 const chantier = ({
   id,
   nom,
@@ -123,7 +130,7 @@ const chantier = ({
   commentaire: string | null;
   directeurs?: string[];
   auteur?: string;
-}): ChantierRenvoye => ({
+}): ChantierCollecte => ({
   chantier: {
     id,
     nom,
@@ -143,6 +150,25 @@ const chantier = ({
   est_en_difficulte: ecart > -10,
   synthese: { commentaire, date_commentaire: null, ...(auteur && { auteur }) },
 });
+
+const SYNTHESE_CH_005_BRETAGNE =
+  "Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.";
+
+/**
+ * La synthèse des résultats du CH-005 en Bretagne, telle que
+ * `get_chantier_commentaires` la renvoie : `get_chantiers` n'en porte plus
+ * ni le texte ni l'auteur.
+ */
+const SYNTHESE_CH_005_RENVOYEE = {
+  type: "synthese_des_resultats",
+  versions: [
+    {
+      date_publication: "2026-09-15",
+      contenu: `<p>${SYNTHESE_CH_005_BRETAGNE}</p>`,
+      auteur: AUTEUR_SYNTHESE,
+    },
+  ],
+};
 
 /** Une fiche figée pour la Bretagne, calquée sur le monde territorial. */
 const FICHE_BRETAGNE: GroundTruth = {
@@ -167,8 +193,7 @@ const FICHE_BRETAGNE: GroundTruth = {
           ...CH_005,
           ecart: -15,
           meteo: "NUAGE",
-          commentaire:
-            "Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
+          commentaire: SYNTHESE_CH_005_BRETAGNE,
           directeurs: [DIRECTRICE, DIRECTEUR],
           auteur: AUTEUR_SYNTHESE,
         }),
@@ -216,11 +241,25 @@ const TOOL_RESULTS_BRETAGNE = [
   },
   {
     toolName: "get_chantiers",
-    output: { resultats: FICHE_BRETAGNE.chantiersEnRetard },
+    output: sansSynthese({ resultats: FICHE_BRETAGNE.chantiersEnRetard }),
   },
   {
     toolName: "get_chantiers",
-    output: { resultats: FICHE_BRETAGNE.chantiersEnDifficulte },
+    output: sansSynthese({ resultats: FICHE_BRETAGNE.chantiersEnDifficulte }),
+  },
+  {
+    toolName: "get_chantier_commentaires",
+    output: {
+      resultats: [
+        {
+          territoire_code: "REG-53",
+          territoire_nom: "Bretagne",
+          chantier_id: "CH-005",
+          commentaires: [SYNTHESE_CH_005_RENVOYEE],
+        },
+      ],
+      types_non_accessibles: [],
+    },
   },
   {
     toolName: "get_indicateurs",
@@ -842,11 +881,15 @@ const horsPerimetre = (matter: string) =>
       },
       {
         toolName: "get_chantiers",
-        output: { resultats: FICHE_PAYS_DE_LA_LOIRE.chantiersEnRetard },
+        output: sansSynthese({
+          resultats: FICHE_PAYS_DE_LA_LOIRE.chantiersEnRetard,
+        }),
       },
       {
         toolName: "get_chantiers",
-        output: { resultats: FICHE_PAYS_DE_LA_LOIRE.chantiersEnDifficulte },
+        output: sansSynthese({
+          resultats: FICHE_PAYS_DE_LA_LOIRE.chantiersEnDifficulte,
+        }),
       },
     ],
   });
@@ -881,11 +924,11 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`;
 const CHANTIER_RESULTS = [
   {
     toolName: "get_chantiers",
-    output: { resultats: FICHE_BRETAGNE.chantiersEnRetard },
+    output: sansSynthese({ resultats: FICHE_BRETAGNE.chantiersEnRetard }),
   },
   {
     toolName: "get_chantiers",
-    output: {
+    output: sansSynthese({
       resultats: [
         {
           territoire_code: "REG-52",
@@ -904,7 +947,7 @@ const CHANTIER_RESULTS = [
           ],
         },
       ],
-    },
+    }),
   },
   {
     toolName: "get_chantier_commentaires",
@@ -915,6 +958,7 @@ const CHANTIER_RESULTS = [
           territoire_nom: "Bretagne",
           chantier_id: "CH-005",
           commentaires: [
+            SYNTHESE_CH_005_RENVOYEE,
             {
               type: "commentaires_sur_les_donnees",
               versions: [
@@ -1106,11 +1150,15 @@ const sousTerritoires = (matter: string) =>
       },
       {
         toolName: "get_chantiers",
-        output: { resultats: FICHE_SOUS_TERRITOIRES.chantiersEnRetard },
+        output: sansSynthese({
+          resultats: FICHE_SOUS_TERRITOIRES.chantiersEnRetard,
+        }),
       },
       {
         toolName: "get_chantiers",
-        output: { resultats: FICHE_SOUS_TERRITOIRES.chantiersEnDifficulte },
+        output: sansSynthese({
+          resultats: FICHE_SOUS_TERRITOIRES.chantiersEnDifficulte,
+        }),
       },
     ],
   });
@@ -1244,7 +1292,7 @@ const resultatsDuChantier = ({
 }) => [
   {
     toolName: "get_chantiers",
-    output: {
+    output: sansSynthese({
       resultats: [
         {
           territoire_code: "REG-53",
@@ -1261,7 +1309,7 @@ const resultatsDuChantier = ({
           ],
         },
       ],
-    },
+    }),
   },
 ];
 

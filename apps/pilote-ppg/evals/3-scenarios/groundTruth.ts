@@ -5,7 +5,7 @@ import type {
 } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChantierIndicateurs";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
-import type { ResultatChantiers } from "@/server/albert/tools/getChantiers";
+import type { ResultatCollecte } from "@/server/albert/tools/getChantiers";
 import type { EvalUser } from "../world";
 import { createDataTools, executeTool } from "./dataTools";
 import { JALON_COURANT } from "./territoires";
@@ -32,8 +32,8 @@ export async function readGroundTruth({
   };
 
   const tauxAvancement: GetTauxAvancementTerritoireResult[] = [];
-  const chantiersEnRetard: ResultatChantiers[] = [];
-  const chantiersEnDifficulte: ResultatChantiers[] = [];
+  const chantiersEnRetard: ResultatCollecte[] = [];
+  const chantiersEnDifficulte: ResultatCollecte[] = [];
 
   for (const jalon of jalons) {
     const taux = await executeTool<GetTauxAvancementTerritoireOutput>({

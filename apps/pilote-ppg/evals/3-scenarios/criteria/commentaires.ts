@@ -17,12 +17,6 @@ export const COMMENTAIRES_FIDELES = judged({
     "Tout ce que la réponse rapporte des commentaires de synthèse (résumé, citation ou reprise) ne contient que des idées présentes dans ces commentaires. Une cause, un chiffre, une action ou une conséquence qui n'y figure pas est non conforme. Une réponse qui ne rapporte aucun commentaire est conforme : la couverture relève d'autres critères.",
 });
 
-type ResultatChantiers = {
-  chantiers?: {
-    synthese?: { commentaire: string | null } | null;
-  }[];
-};
-
 /** Les commentaires que l'agent a reçus de `get_chantier_commentaires`. */
 function contenusDeGetChantierCommentaires(evidence: Evidence): string[] {
   return evidence.toolResults
@@ -40,35 +34,12 @@ function contenusDeGetChantierCommentaires(evidence: Evidence): string[] {
     );
 }
 
-/**
- * Tous les commentaires que l'agent a reçus : ceux de
- * `get_chantier_commentaires`, et le commentaire de synthèse que porte
- * `get_chantiers` (depuis l'étape 6, il ne porte plus les autres).
- */
-function contenusDesCommentairesRecus(evidence: Evidence): string[] {
-  return [
-    ...contenusDeGetChantierCommentaires(evidence),
-    ...evidence.toolResults.flatMap((result) => {
-      if (result.toolName !== "get_chantiers") return [];
-      const resultats =
-        (result.output as { resultats?: unknown[] }).resultats ?? [];
-      return (resultats as ResultatChantiers[]).flatMap((resultat) =>
-        (resultat.chantiers ?? []).flatMap((chantier) =>
-          [chantier.synthese?.commentaire].filter(
-            (contenu): contenu is string => Boolean(contenu),
-          ),
-        ),
-      );
-    }),
-  ];
-}
-
-/** Les commentaires de synthèse de la fiche, et tous ceux que l'agent a reçus. */
+/** Les commentaires de synthèse de la fiche, et ceux que l'agent a reçus de `get_chantier_commentaires`. */
 const commentairesSources = (evidence: Evidence) => [
   ...synthesesDesChantiers(evidence.truth).flatMap((synthese) =>
     synthese.commentaire ? [synthese.commentaire] : [],
   ),
-  ...contenusDesCommentairesRecus(evidence),
+  ...contenusDeGetChantierCommentaires(evidence),
 ];
 
 export const PAS_DE_RECOPIE = mechanical({

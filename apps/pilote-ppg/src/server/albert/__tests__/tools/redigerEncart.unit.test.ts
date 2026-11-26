@@ -15,7 +15,7 @@ import {
   createRedigerComparaisonTerritoiresTool,
   redigerComparaisonTerritoiresInputSchema,
 } from "@/server/albert/tools/redigerComparaisonTerritoires";
-import type { ChantierRenvoye } from "@/server/albert/tools/getChantiers";
+import type { ChantierCollecte } from "@/server/albert/tools/getChantiers";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type {
@@ -97,7 +97,7 @@ const chantier = (id: string): ChantierResult => ({
 });
 
 // Le même chantier, tel que get_chantiers le renvoie
-const chantierRenvoye = (id: string): ChantierRenvoye => ({
+const chantierRenvoye = (id: string): ChantierCollecte => ({
   chantier: {
     id,
     nom: `Chantier ${id}`,

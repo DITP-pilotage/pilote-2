@@ -6,7 +6,7 @@ import {
 } from "@/server/albert/tools/encart";
 import {
   collecterChantiers,
-  type ChantierRenvoye,
+  type ChantierCollecte,
 } from "@/server/albert/tools/getChantiers";
 import { regrouperParType } from "@/server/albert/tools/getChantierCommentaires";
 import {
@@ -43,7 +43,7 @@ export type DonneesEncartChantier = {
   /** Territoire hors de l'accès complet : tendance et commentaires y sont masqués. */
   acces_restreint?: true;
   /** `null` : le chantier n'a pas de donnée sur ce territoire (maille non pilotée). */
-  chantier: ChantierRenvoye | null;
+  chantier: ChantierCollecte | null;
   indicateurs: GetChantierIndicateursResult["indicateurs"];
   commentaires: CommentaireEncart[];
 };

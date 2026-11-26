@@ -2,7 +2,7 @@ import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChan
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type { GetTauxAvancementTerritoireResult } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
-import type { ResultatChantiers } from "@/server/albert/tools/getChantiers";
+import type { ResultatCollecte } from "@/server/albert/tools/getChantiers";
 
 /**
  * La forme de la fiche de vérité, et ce qu'on en déduit, sans rien charger du
@@ -28,8 +28,8 @@ export type TruthScope = {
 export type GroundTruth = {
   territoires: { code: string; nom: string; maille: string }[];
   tauxAvancement: GetTauxAvancementTerritoireResult[];
-  chantiersEnRetard: ResultatChantiers[];
-  chantiersEnDifficulte: ResultatChantiers[];
+  chantiersEnRetard: ResultatCollecte[];
+  chantiersEnDifficulte: ResultatCollecte[];
   indicateurs: GetChantierIndicateursOutput["resultats"][];
   commentaires: GetChantierCommentairesOutput[];
 };
@@ -37,7 +37,7 @@ export type GroundTruth = {
 type ChantierRef = { id: string; nom: string };
 
 export function chantiersDistincts(
-  resultats: ResultatChantiers[],
+  resultats: ResultatCollecte[],
 ): ChantierRef[] {
   const parId = new Map<string, string>();
   for (const resultat of resultats) {
