@@ -38,10 +38,10 @@ Transport :
 ## Conception
 
 - **Table `analytics_dimension`** : `cle` (clé primaire), `slot` (entier, unique), `created_at`,
-  `updated_at`. Une ligne = une dimension configurée. La migration insère les 9 valeurs actuelles :
+  `updated_at`. Une ligne = une dimension configurée. La migration insère les 11 valeurs actuelles :
   `profil_pilote` 1, `conversation_id` 2, `llm_call_id` 3, `proposition_id` 4, `proposition_mode` 5,
-  `type_question` 6, `nombre_choix` 7, `position_choix` 8, `environnement` 9. `periode_information` et `formation`, arrivées
-  avec PIL-1923, restent sans numéro tant qu'elles ne sont pas créées dans Matomo.
+  `type_question` 6, `nombre_choix` 7, `position_choix` 8, `environnement` 9, `periode_information` 10,
+  `formation` 11.
 - **Module serveur `analytics`** et routeur tRPC :
   - lecture **publique** de la correspondance (rien de sensible, lue avant la connexion) ;
   - enregistrement d'un numéro ou retrait (numéro vide), réservé à DITP_ADMIN. Clé hors

@@ -26,6 +26,8 @@ describe("GetDimensionSlotsQuery", () => {
         nombre_choix: 7,
         position_choix: 8,
         environnement: 9,
+        periode_information: 10,
+        formation: 11,
       });
     }),
   );

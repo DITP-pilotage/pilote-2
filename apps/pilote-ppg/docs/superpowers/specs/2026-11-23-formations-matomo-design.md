@@ -87,7 +87,7 @@ La décision de la PR 1 tient : la ligne d'état en base ne garde que ce qu'il f
 
 ## Hors du dépôt
 
-- Créer les deux dimensions, de portée Action, sur le site Matomo de PILOTE (`stats.beta.gouv.fr`, instance mutualisée), puis saisir leurs numéros dans `/panel-administrateur/dimensions-matomo` sur chaque environnement (PIL-1958).
+- Créer les deux dimensions, de portée Action, sur le site Matomo de PILOTE (`stats.beta.gouv.fr`, instance mutualisée), sous les numéros 10 (`periode_information`) et 11 (`formation`) : la migration de PIL-1958 les reprend sur chaque environnement, et `/panel-administrateur/dimensions-matomo` permet de les corriger.
 - PILOTE utilise déjà sept dimensions de portée Action, au-delà des cinq prévues par défaut : vérifier qu'il reste deux emplacements, sinon les faire ajouter par l'administrateur de l'instance.
 - À faire avant la mise en production : les événements envoyés sans emplacement restent en suffixe du nom dans Matomo et ne basculent pas après coup. Sans cela, la première campagne serait coupée en deux.
 

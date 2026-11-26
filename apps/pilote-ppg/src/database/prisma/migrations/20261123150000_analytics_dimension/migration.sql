@@ -20,4 +20,6 @@ INSERT INTO "analytics_dimension" ("cle", "slot") VALUES
     ('type_question', 6),
     ('nombre_choix', 7),
     ('position_choix', 8),
-    ('environnement', 9);
+    ('environnement', 9),
+    ('periode_information', 10),
+    ('formation', 11);

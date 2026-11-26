@@ -13,7 +13,7 @@
 ## Global Constraints
 
 - Aucun package `@pilote/kpilote-*`. Identifiants techniques en anglais, textes en français, exports nommés.
-- Numéros inchangés : `profil_pilote` 1, `conversation_id` 2, `llm_call_id` 3, `proposition_id` 4, `proposition_mode` 5, `type_question` 6, `nombre_choix` 7, `position_choix` 8, `environnement` 9.
+- Numéros inchangés : `profil_pilote` 1, `conversation_id` 2, `llm_call_id` 3, `proposition_id` 4, `proposition_mode` 5, `type_question` 6, `nombre_choix` 7, `position_choix` 8, `environnement` 9, `periode_information` 10, `formation` 11.
 - Numéro : entier de 1 à 999. Attente des envois : 3000 ms au plus.
 - Ni `as never`, ni `as unknown`.
 
@@ -41,7 +41,7 @@
 - Routeur `analytics` : `dimensionSlots` (public), `setDimensionSlot` (`checkAdminPermission`)
 
 - [ ] Tests d'intégration : la requête rend les clés connues et ignore `ancienne_cle` ; le handler crée, modifie, retire (sans erreur si déjà retirée), refuse par `ConflictError("Le numéro 2 est déjà utilisé par « conversation_id ».")` sans rien modifier, garde son propre numéro sans erreur, reprend le numéro d'une clé retirée du code ; le schéma refuse 0, 1.5, 1000 et une clé inconnue.
-- [ ] Test : la migration donne les 9 numéros.
+- [ ] Test : la migration donne les 11 numéros.
 - [ ] Échec constaté, implémentation (P2002 → `ConflictError("Le numéro N vient d'être pris par une autre dimension.")`), succès : `pnpm -F @pilote/ppg exec vitest run --project server-integration src/server/analytics`
 - [ ] E2E : `/panel-administrateur/dimensions-matomo` dans `ADMIN_ONLY_PAGES` ; `analytics.setDimensionSlot` refusée à un coordinateur, table inchangée.
 - [ ] Commit
