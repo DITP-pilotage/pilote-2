@@ -23,6 +23,7 @@ export function IndicateurCardCible({
         unite={unite}
         label="Cible"
         tone="primary"
+        compact
       />
     )
   }

@@ -15,6 +15,7 @@ export function IndicateurProgression({
   unite,
   label = 'Progression',
   tone = 'neutral',
+  compact = false,
 }: {
   taux: number | null
   valeurCible: number
@@ -22,6 +23,9 @@ export function IndicateurProgression({
   unite: UniteIndicateurApiModel | null
   label?: string
   tone?: ComponentProps<typeof ProgressBar>['tone']
+  // Objectif et date sur une seule ligne : le bloc garde la même hauteur qu'avec
+  // « Pas de cible », les cartes voisines restent alignées.
+  compact?: boolean
 }) {
   return (
     <div>
@@ -54,10 +58,13 @@ export function IndicateurProgression({
           <span className="font-semibold text-text-muted">
             {formatNumberFr(valeurCible, unite)}
           </span>
+          {compact && <> · {formatMonthYearNumericFr(dateCible)}</>}
         </Text>
-        <Text variant="caption" tone="muted">
-          {formatMonthYearNumericFr(dateCible)}
-        </Text>
+        {!compact && (
+          <Text variant="caption" tone="muted">
+            {formatMonthYearNumericFr(dateCible)}
+          </Text>
+        )}
       </div>
     </div>
   )
