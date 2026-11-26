@@ -40,6 +40,8 @@ const paramsSchema = z.object({
 const searchSchema = z.object({
   individu: individuPublicIdSchema.optional(),
   referentiel: referentielPublicIdSchema.optional(),
+  // Sélection du tableau de bord, rendue par le lien de retour.
+  selectedIndividus: z.string().optional(),
   onglet: z.enum(['resultats', 'gouvernance', 'confiance', 'commentaires']).default('resultats'),
 })
 
@@ -138,10 +140,7 @@ function CollectionDetailComponent() {
 
   const back = (
     <BackLink asChild>
-      <Link
-        to="/collections"
-        search={{ individu: search.individu, referentiel: search.referentiel }}
-      >
+      <Link to="/collections" search={{ selectedIndividus: search.selectedIndividus }}>
         Tableau de bord
       </Link>
     </BackLink>
@@ -211,7 +210,20 @@ function CollectionDetailComponent() {
                     indicateur={indicateur}
                     source="collection"
                     collectionId={id}
-                    {...(cardContext ? { context: cardContext } : {})}
+                    {...(cardContext
+                      ? {
+                          reading: {
+                            individus: [cardContext.individu],
+                            link: {
+                              ...cardContext,
+                              ...(search.selectedIndividus
+                                ? { selectedIndividus: search.selectedIndividus }
+                                : {}),
+                            },
+                            isUnavailable: false,
+                          },
+                        }
+                      : {})}
                   />
                 ))}
               </CardGrid>

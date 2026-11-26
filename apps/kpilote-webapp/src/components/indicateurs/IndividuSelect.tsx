@@ -23,6 +23,7 @@ type IndividuSelectProps = {
   referentielIds: ReadonlyArray<string>
   value: string
   onChange: (next: IndividuSelection) => void
+  placeholder?: string
 }
 
 // Réutilise le scorer par défaut de cmdk (matching par initiales, sous-séquence,
@@ -215,7 +216,13 @@ function GroupedIndividuList({
   )
 }
 
-export function IndividuSelect({ id, referentielIds, value, onChange }: IndividuSelectProps) {
+export function IndividuSelect({
+  id,
+  referentielIds,
+  value,
+  onChange,
+  placeholder = 'Sélectionner un individu…',
+}: IndividuSelectProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [expandedGroups, setExpandedGroups] = useState<ReadonlySet<string>>(new Set())
@@ -302,7 +309,7 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
               ) : null}
             </>
           ) : (
-            <span className="text-text-subtle">Sélectionner un individu…</span>
+            <span className="text-text-subtle">{placeholder}</span>
           )}
         </span>
         <ChevronDown className="size-4 shrink-0 text-text-muted" />

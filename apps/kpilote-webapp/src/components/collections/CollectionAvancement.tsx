@@ -20,13 +20,13 @@ export function CollectionAvancementSkeleton() {
 
 export function CollectionAvancement({
   collectionId,
-  individuId,
+  individus,
 }: {
   collectionId: string
-  individuId: string
+  individus: ReadonlyArray<string> | undefined
 }) {
   const { data } = useSuspenseQuery(
-    collectionTauxProgressionQueryOptions({ individus: [individuId], collectionId }),
+    collectionTauxProgressionQueryOptions({ individus, collectionId }),
   )
 
   if (data == null) return null
