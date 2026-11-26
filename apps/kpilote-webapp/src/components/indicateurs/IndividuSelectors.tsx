@@ -5,9 +5,10 @@ import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelec
 import { type ReferentielGroup } from '@/lib/individus/hierarchy'
 import { buildSelectors, removeIndividu, selectIndividu } from '@/lib/individus/selection'
 
-// Un sélecteur d'individu par stack de référentiels, sur une ligne à colonnes
-// égales (empilés sur mobile). Choisir un individu remplace celui de son stack ;
-// le retirer libère le stack.
+// Un sélecteur d'individu par stack de référentiels, sur une ligne (empilés sur
+// mobile). Les colonnes ont une largeur bornée : un seul stack ne s'étire pas sur
+// toute la page, plusieurs stacks se partagent la ligne. Choisir un individu
+// remplace celui de son stack ; le retirer libère le stack.
 export function IndividuSelectors({
   groups,
   selection,
@@ -18,7 +19,7 @@ export function IndividuSelectors({
   onChange: (selection: string[]) => void
 }) {
   return (
-    <div className="grid gap-3 md:auto-cols-fr md:grid-flow-col">
+    <div className="grid gap-3 md:auto-cols-[minmax(0,22rem)] md:grid-flow-col md:justify-start">
       {buildSelectors({ groups, selection }).map((selector) => (
         <FieldIndividuSelect
           key={selector.group.referentiel.id}
