@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { analytics } from '@/analytics/tracker'
 import { importValeursBatch, ImportError } from '@/api/valeursImport'
+import { derniereValeurKeys } from '@/queries/dernieresValeurs'
+import { dernierTauxProgressionKeys } from '@/queries/tauxProgression'
 
 export function useImportValeursBatch({ indicateurId }: { indicateurId: string }) {
   const queryClient = useQueryClient()
@@ -25,6 +27,9 @@ export function useImportValeursBatch({ indicateurId }: { indicateurId: string }
         }),
       )
       void queryClient.invalidateQueries({ queryKey: ['indicateur', indicateurId] })
+      // Les cartes indicateur lisent la dernière valeur et le taux sur leur propre clé.
+      void queryClient.invalidateQueries({ queryKey: derniereValeurKeys.all })
+      void queryClient.invalidateQueries({ queryKey: dernierTauxProgressionKeys.all })
     },
   })
 }

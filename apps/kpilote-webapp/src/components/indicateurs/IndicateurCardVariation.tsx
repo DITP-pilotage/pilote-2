@@ -24,25 +24,37 @@ export function IndicateurCardVariation({
 }) {
   const variation = derniereValeur?.variation ?? null
   const precedente = derniereValeur?.precedente ?? null
+  const lecture =
+    variation === null ? null : { variation, ...describeVariation({ variation, sensSouhaite }) }
+  const interpretationLabel = lecture ? INTERPRETATION_LABEL_FR[lecture.interpretation] : null
   return (
     <div className="flex flex-col gap-2">
       <div>
         <Text variant="kicker" tone="muted" as="p">
           Évolution
         </Text>
-        {variation === null ? (
+        {lecture === null ? (
           <Text variant="body" tone="muted" className="mt-1">
             Tendance non disponible
           </Text>
         ) : (
-          <VariationRow variation={variation} unite={unite} sensSouhaite={sensSouhaite} />
+          <div className="mt-1 flex flex-wrap items-center gap-2">
+            <span className="text-sm font-bold text-text">
+              <span aria-hidden="true">{lecture.arrow}</span>{' '}
+              {formatDifferenceFr(lecture.variation, unite)}
+            </span>
+            <Pill tone={TONE_BY_INTERPRETATION[lecture.interpretation]}>
+              {lecture.direction}
+              {interpretationLabel && <> · {interpretationLabel}</>}
+            </Pill>
+          </div>
         )}
       </div>
       <p className="flex flex-wrap items-baseline gap-x-2 text-sm">
         <span className="font-semibold text-text-muted">Valeur précédente</span>
         {precedente ? (
           <>
-            <span className="font-bold text-text">{formatNumberFr(precedente.valeur)}</span>
+            <span className="font-bold text-text">{formatNumberFr(precedente.valeur, unite)}</span>
             <span className="text-xs text-text-muted">
               {formatMonthYearNumericFr(precedente.date)}
             </span>
@@ -51,30 +63,6 @@ export function IndicateurCardVariation({
           <span className="font-bold text-text-muted">-</span>
         )}
       </p>
-    </div>
-  )
-}
-
-function VariationRow({
-  variation,
-  unite,
-  sensSouhaite,
-}: {
-  variation: number
-  unite: UniteIndicateurApiModel | null
-  sensSouhaite: SensSouhaite
-}) {
-  const { arrow, direction, interpretation } = describeVariation({ variation, sensSouhaite })
-  const label = INTERPRETATION_LABEL_FR[interpretation]
-  return (
-    <div className="mt-1 flex flex-wrap items-center gap-2">
-      <span className="text-sm font-bold text-text">
-        <span aria-hidden="true">{arrow}</span> {formatDifferenceFr(variation, unite)}
-      </span>
-      <Pill tone={TONE_BY_INTERPRETATION[interpretation]}>
-        {direction}
-        {label && <> · {label}</>}
-      </Pill>
     </div>
   )
 }
