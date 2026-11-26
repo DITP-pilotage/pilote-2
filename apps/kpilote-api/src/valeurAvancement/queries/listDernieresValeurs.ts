@@ -12,6 +12,7 @@ import { withConcurrency } from '@/framework/concurrency'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
+import { computeVariation } from '@/valeurAvancement/computeVariation'
 import { loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
 import { resolveIndividusCibles } from '@/valeurAvancement/resolveIndividusCibles'
 
@@ -51,10 +52,12 @@ const build = async ({
         indicateurId: indicateur.id,
         individusCibles: [individu],
         dateTrunc,
-        lastPointCount: 1,
+        lastPointCount: 2,
       })
-      const lastPoint = serieOf(individu).at(-1)
+      const serie = serieOf(individu)
+      const lastPoint = serie.at(-1)
       if (!lastPoint) return null
+      const previousPoint = serie.at(-2)
 
       const item: DerniereValeurApiModel = {
         indicateur: indicateur.publicId,
@@ -62,6 +65,11 @@ const build = async ({
         valeur: lastPoint.valeur.toNumber(),
         date: formatBucket(lastPoint.bucket),
         type: lastPoint.type,
+        precedente: previousPoint
+          ? { valeur: previousPoint.valeur.toNumber(), date: formatBucket(previousPoint.bucket) }
+          : null,
+        // computeVariation attend [recente, precedente] ; la série est ASC par bucket.
+        variation: computeVariation(serie.slice(-2).reverse()),
       }
       return item
     }),
