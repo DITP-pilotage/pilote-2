@@ -2,11 +2,17 @@ import { CollectionPermissionAction, IndicateurPermissionAction } from '@/genera
 import { describe, expect, it } from 'vitest'
 
 import { db } from '@/framework/persistence/dbStore'
-import { encodeCursor } from '@/framework/persistence/paginate'
+import { encodeSegmentCursor } from '@/framework/persistence/paginateBySegments'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds, testCollectionId, testReferentielId } from '@/test/randomIds'
+import {
+  testCollectionId,
+  testDeptId,
+  testIndicateurIds,
+  testReferentielId,
+  testReferentielIds,
+} from '@/test/randomIds'
 import { runAsAdmin, runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listIndicateurs', () => {
@@ -14,7 +20,7 @@ describe.concurrent('listIndicateurs', () => {
     "retourne une liste vide quand aucun indicateur n'existe",
     integrationTest(async () => {
       const apiKey = await fixtures.apiKey()
-      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ query: {} }))
 
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap()).toEqual({
@@ -36,7 +42,7 @@ describe.concurrent('listIndicateurs', () => {
         ],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ query: {} }))
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual([accessible])
@@ -54,7 +60,7 @@ describe.concurrent('listIndicateurs', () => {
       )
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ query: {} }))
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual([pub])
@@ -82,7 +88,7 @@ describe.concurrent('listIndicateurs', () => {
         ],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ query: {} }))
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual([viaCollection])
@@ -107,7 +113,7 @@ describe.concurrent('listIndicateurs', () => {
         ],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ query: {} }))
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual([viaCollection])
@@ -131,7 +137,7 @@ describe.concurrent('listIndicateurs', () => {
         ],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ query: {} }))
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual([ind1, ind2, ind3])
@@ -159,11 +165,16 @@ describe.concurrent('listIndicateurs', () => {
         })),
       })
 
-      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ pageSize: 5 }))
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listIndicateurs({ query: { pageSize: 5 } }),
+      )
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual(ids.slice(0, 5))
-      expect(value.pagination).toEqual({ cursor: encodeCursor(created[4]!.id), hasMore: true })
+      expect(value.pagination).toEqual({
+        cursor: encodeSegmentCursor({ segment: 0, id: created[4]!.id }),
+        hasMore: true,
+      })
       expect(value.total).toBe(6)
     }),
   )
@@ -188,7 +199,9 @@ describe.concurrent('listIndicateurs', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listIndicateurs({ cursor: encodeCursor(created[4]!.id) }),
+        listIndicateurs({
+          query: { cursor: encodeSegmentCursor({ segment: 0, id: created[4]!.id }) },
+        }),
       )
 
       const value = result._unsafeUnwrap()
@@ -216,7 +229,7 @@ describe.concurrent('listIndicateurs', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listIndicateurs({ recherche: 'satisfaction' }),
+        listIndicateurs({ query: { recherche: 'satisfaction' } }),
       )
 
       const value = result._unsafeUnwrap()
@@ -247,12 +260,15 @@ describe.concurrent('listIndicateurs', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listIndicateurs({ recherche: 'satisfaction', pageSize: 5 }),
+        listIndicateurs({ query: { recherche: 'satisfaction', pageSize: 5 } }),
       )
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual(ids.slice(0, 5))
-      expect(value.pagination).toEqual({ cursor: encodeCursor(created[4]!.id), hasMore: true })
+      expect(value.pagination).toEqual({
+        cursor: encodeSegmentCursor({ segment: 0, id: created[4]!.id }),
+        hasMore: true,
+      })
       expect(value.total).toBe(6)
     }),
   )
@@ -270,7 +286,9 @@ describe.concurrent('listIndicateurs', () => {
         ],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ ids: [ind1, ind3] }))
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listIndicateurs({ query: { ids: [ind1, ind3] } }),
+      )
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id).sort()).toEqual([ind1, ind3].sort())
@@ -286,7 +304,7 @@ describe.concurrent('listIndicateurs', () => {
       await fixtures.indicateur({ publicId: trouve }, { publicId: horsRecherche })
 
       const result = await runAsAdmin('00000000-0000-0000-0000-0000000000a1', () =>
-        listIndicateurs({ ids: [trouve, horsRecherche], rechercheIdentifiant: prefixe }),
+        listIndicateurs({ query: { ids: [trouve, horsRecherche], rechercheIdentifiant: prefixe } }),
       )
 
       expect(result._unsafeUnwrap().items.map((i) => i.id)).toEqual([trouve])
@@ -305,7 +323,7 @@ describe.concurrent('listIndicateurs', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listIndicateurs({ ids: [accessible, hidden] }),
+        listIndicateurs({ query: { ids: [accessible, hidden] } }),
       )
 
       const value = result._unsafeUnwrap()
@@ -337,7 +355,7 @@ describe.concurrent('listIndicateurs', () => {
         ],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ query: {} }))
 
       const referentielsTries = [
         {
@@ -356,4 +374,78 @@ describe.concurrent('listIndicateurs', () => {
       expect(value.items.find((i) => i.id === accessible)?.referentiels).toEqual(referentielsTries)
     }),
   )
+
+  describe.concurrent('trié par une sélection d’individus', () => {
+    // Trois indicateurs lisibles, créés dans l'ordre A, B, C : seul B est lié au
+    // référentiel de l'individu sélectionné.
+    const troisIndicateurs = async () => {
+      const [indA, indB, indC] = testIndicateurIds(3)
+      const [refSelection, refAutre] = testReferentielIds(2)
+      const deptId = testDeptId()
+      await fixtures.indicateur(
+        { publicId: indA, visibilite: 'PUBLIC' },
+        { publicId: indB, visibilite: 'PUBLIC' },
+        { publicId: indC, visibilite: 'PUBLIC' },
+      )
+      await fixtures.indicateurReferentiel(
+        { indicateur: { publicId: indA }, referentiel: { publicId: refAutre } },
+        { indicateur: { publicId: indB }, referentiel: { publicId: refSelection } },
+      )
+      await fixtures.individu({ publicId: deptId, referentiel: { publicId: refSelection } })
+      const apiKey = await fixtures.apiKey()
+      return { indA, indB, indC, deptId, apiKeyId: apiKey.id }
+    }
+
+    it(
+      'met en tête les indicateurs concernés sans rien filtrer',
+      integrationTest(async () => {
+        const { indA, indB, indC, deptId, apiKeyId } = await troisIndicateurs()
+
+        const result = await runAsPrincipal(apiKeyId, () =>
+          listIndicateurs({ query: { individus: [deptId] } }),
+        )
+
+        const value = result._unsafeUnwrap()
+        expect(value.items.map((item) => item.id)).toEqual([indB, indA, indC])
+        expect(value.total).toBe(3)
+      }),
+    )
+
+    it(
+      'pagine à travers les indicateurs concernés puis les autres',
+      integrationTest(async () => {
+        const { indA, indB, indC, deptId, apiKeyId } = await troisIndicateurs()
+        const readPage = async (cursor?: string) => {
+          const result = await runAsPrincipal(apiKeyId, () =>
+            listIndicateurs({
+              query: { individus: [deptId], pageSize: 1, ...(cursor ? { cursor } : {}) },
+            }),
+          )
+          return result._unsafeUnwrap()
+        }
+
+        const firstPage = await readPage()
+        const secondPage = await readPage(firstPage.pagination.cursor!)
+        const thirdPage = await readPage(secondPage.pagination.cursor!)
+
+        expect([firstPage, secondPage, thirdPage].map((page) => page.items[0]?.id)).toEqual([
+          indB,
+          indA,
+          indC,
+        ])
+        expect(thirdPage.pagination).toEqual({ cursor: null, hasMore: false })
+      }),
+    )
+
+    it(
+      'lève une erreur quand un individu sélectionné est inconnu',
+      integrationTest(async () => {
+        const apiKey = await fixtures.apiKey()
+
+        await expect(
+          runAsPrincipal(apiKey.id, () => listIndicateurs({ query: { individus: ['DEPT-99'] } })),
+        ).rejects.toThrow('Individus introuvables')
+      }),
+    )
+  })
 })

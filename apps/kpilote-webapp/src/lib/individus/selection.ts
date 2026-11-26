@@ -46,6 +46,15 @@ export const selectIndividu = ({
   return normalizeSelection({ individus: [individu, ...otherStacks], groups })
 }
 
+// Retirer un individu libère son stack ; une sélection vidée revient aux racines.
+export const removeIndividu = ({
+  selection,
+  individu,
+}: {
+  selection: ReadonlyArray<string>
+  individu: string
+}): string[] => selection.filter((selected) => selected !== individu)
+
 // Search d'un lien vers une fiche (indicateur ou collection) : l'individu sur
 // lequel l'ouvrir, et la sélection du tableau de bord, que la fiche rend par son
 // lien de retour.

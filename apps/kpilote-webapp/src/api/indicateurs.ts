@@ -37,10 +37,12 @@ export const fetchIndicateurs = async (
   // ky filters out `undefined` values from object-form searchParams (see
   // Ky.#normalizeSearchParams). Le filtre `ids` est CSV côté API : on le
   // sérialise explicitement, sinon ky le rendrait en multi-value `?ids=a&ids=b`.
-  const { ids, ...rest } = params
+  // Même chose pour la sélection `individus`, qui ordonne la liste.
+  const { ids, individus, ...rest } = params
   const searchParams = {
     ...rest,
     ...(ids && ids.length > 0 ? { ids: ids.join(',') } : {}),
+    ...(individus && individus.length > 0 ? { individus: individus.join(',') } : {}),
   }
   const json = await apiClient.get('indicateurs', { searchParams }).json()
   return indicateurListApiModelSchema.parse(json)
