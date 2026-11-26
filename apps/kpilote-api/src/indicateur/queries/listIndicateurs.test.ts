@@ -356,4 +356,95 @@ describe.concurrent('listIndicateurs', () => {
       expect(value.items.find((i) => i.id === accessible)?.referentiels).toEqual(referentielsTries)
     }),
   )
+
+  describe.concurrent('avec acces = attribue', () => {
+    it(
+      'garde un indicateur sur lequel le principal a une permission directe, même PUBLIC',
+      integrationTest(async () => {
+        const [prive, pub] = testIndicateurIds(2)
+        await fixtures.indicateur(
+          { publicId: prive, visibilite: 'PRIVE' },
+          { publicId: pub, visibilite: 'PUBLIC' },
+        )
+        const apiKey = await fixtures.apiKey({
+          permissions: [
+            { indicateur: { publicId: prive }, action: IndicateurPermissionAction.WRITE_DATA },
+            { indicateur: { publicId: pub }, action: IndicateurPermissionAction.READ },
+          ],
+        })
+
+        const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ acces: 'attribue' }))
+
+        const value = result._unsafeUnwrap()
+        expect(value.items.map((i) => i.id).sort()).toEqual([prive, pub].sort())
+        expect(value.total).toBe(2)
+      }),
+    )
+
+    it(
+      'garde un indicateur accessible via une permission sur une collection',
+      integrationTest(async () => {
+        const [viaCollection] = testIndicateurIds(1)
+        const collection = testCollectionId()
+        await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
+        await fixtures.collection({
+          publicId: collection,
+          visibilite: 'PRIVE',
+          indicateurs: [{ publicId: viaCollection }],
+        })
+        const apiKey = await fixtures.apiKey({
+          collectionPermissions: [
+            { collection: { publicId: collection }, action: CollectionPermissionAction.READ },
+          ],
+        })
+
+        const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ acces: 'attribue' }))
+
+        const value = result._unsafeUnwrap()
+        expect(value.items.map((i) => i.id)).toEqual([viaCollection])
+        expect(value.total).toBe(1)
+      }),
+    )
+
+    it(
+      "exclut un indicateur PUBLIC sur lequel le principal n'a aucune permission",
+      integrationTest(async () => {
+        const [attribue, pub] = testIndicateurIds(2)
+        await fixtures.indicateur(
+          { publicId: attribue, visibilite: 'PRIVE' },
+          { publicId: pub, visibilite: 'PUBLIC' },
+        )
+        const apiKey = await fixtures.apiKey({
+          permissions: [
+            { indicateur: { publicId: attribue }, action: IndicateurPermissionAction.READ },
+          ],
+        })
+
+        const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ acces: 'attribue' }))
+
+        const value = result._unsafeUnwrap()
+        expect(value.items.map((i) => i.id)).toEqual([attribue])
+        expect(value.total).toBe(1)
+      }),
+    )
+
+    it(
+      'ne renvoie à un admin que les indicateurs sur lesquels il a une permission',
+      integrationTest(async () => {
+        const [attribue, autre] = testIndicateurIds(2)
+        await fixtures.indicateur({ publicId: attribue }, { publicId: autre })
+        const apiKey = await fixtures.apiKey({
+          permissions: [
+            { indicateur: { publicId: attribue }, action: IndicateurPermissionAction.READ },
+          ],
+        })
+
+        const result = await runAsAdmin(apiKey.id, () => listIndicateurs({ acces: 'attribue' }))
+
+        const value = result._unsafeUnwrap()
+        expect(value.items.map((i) => i.id)).toEqual([attribue])
+        expect(value.total).toBe(1)
+      }),
+    )
+  })
 })

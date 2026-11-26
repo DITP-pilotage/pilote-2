@@ -1,4 +1,5 @@
 import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
+import { type ListIndicateursQuery } from '@pilote/kpilote-shared/indicateur'
 import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
@@ -15,6 +16,7 @@ import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelec
 import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
+import { Section } from '@pilote/kpilote-ui/Section'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
@@ -30,9 +32,12 @@ const indicateursSearchSchema = z.object({
 
 type IndicateursSearch = z.infer<typeof indicateursSearchSchema>
 
-const toIndicateursQuery = (search: IndicateursSearch) => ({
+// Le tableau de bord n'affiche que les indicateurs attribués à l'utilisateur : les
+// indicateurs visibles seulement parce qu'ils sont publics n'y figurent pas (PIL-1976).
+const toIndicateursQuery = (search: IndicateursSearch): ListIndicateursQuery => ({
   ...search,
   pageSize: search.pageSize ?? DEFAULT_PAGE_SIZE,
+  acces: 'attribue',
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/')({
@@ -72,7 +77,7 @@ function IndicateursListComponent() {
   return (
     <Page
       title="Tableau de bord"
-      description="Consultez et gérez l'ensemble de vos indicateurs par valeur ou par collection."
+      description="Consultez et gérez vos indicateurs par valeur ou par collection."
       stickybar={
         <>
           {search.individu ? (
@@ -99,13 +104,16 @@ function IndicateursListComponent() {
         </>
       }
     >
-      <div className="flex flex-col gap-6">
+      <Section tone="plain" title="Mes indicateurs">
         <Text as="span" variant="kicker" tone="muted">
           {data.total} indicateur{data.total > 1 ? 's' : ''}
         </Text>
 
         {data.items.length === 0 ? (
-          <EmptyState title="Aucun indicateur disponible." />
+          <EmptyState
+            title="Vous n'avez encore accès à aucun indicateur KPILOTE."
+            description="Vous pouvez vous rapprocher de votre référent KPILOTE ou du support."
+          />
         ) : (
           <CardGrid>
             {data.items.map((indicateur) => (
@@ -145,7 +153,7 @@ function IndicateursListComponent() {
             void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
           }}
         />
-      </div>
+      </Section>
     </Page>
   )
 }

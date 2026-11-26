@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router'
 import { render, screen, waitFor } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { MeApiModel } from '@pilote/kpilote-shared/me'
@@ -10,6 +11,8 @@ import { tokenStore } from '@/auth/tokenStore'
 import { ImportModalProvider } from '@/components/import-valeurs/ImportModalProvider'
 import { ToastProvider } from '@pilote/kpilote-ui/Toast'
 import { routeTree } from '@/routeTree.gen'
+import { buildIndicateursList } from '@/tests/factories/api'
+import { apiUrl, server } from '@/tests/server'
 
 const stubAuth = (user: MeApiModel | null): Auth => ({
   get isAuthenticated() {
@@ -82,5 +85,25 @@ describe('routing', () => {
     await waitFor(() => {
       expect(screen.getByRole('heading', { level: 1, name: 'Tableau de bord' })).toBeInTheDocument()
     })
+  })
+
+  it("n'affiche sur le tableau de bord que les indicateurs attribués à l'utilisateur", async () => {
+    const requestedUrls: URL[] = []
+    server.use(
+      http.get(apiUrl('/indicateurs'), ({ request }) => {
+        requestedUrls.push(new URL(request.url))
+        return HttpResponse.json(buildIndicateursList())
+      }),
+    )
+
+    renderAt('/indicateurs', stubAuth({ userId: 'sub-1', prenom: 'Admin', nom: 'DITP' }))
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Vous n'avez encore accès à aucun indicateur KPILOTE."),
+      ).toBeInTheDocument()
+    })
+    expect(screen.getByRole('heading', { level: 2, name: 'Mes indicateurs' })).toBeInTheDocument()
+    expect(requestedUrls.map((url) => url.searchParams.get('acces'))).toContain('attribue')
   })
 })

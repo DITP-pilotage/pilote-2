@@ -311,6 +311,12 @@ export const listIndicateursQuerySchema = listQuerySchema.extend({
     .optional()
     .describe("Filtre case-insensitive sur l'identifiant public (`publicId`, ex. `IND-01`)."),
   ids: idsFilterSchema(indicateurPublicIdSchema, 'IND-001,IND-002'),
+  acces: z
+    .enum(['attribue'])
+    .optional()
+    .describe(
+      "`attribue` : ne garde que les indicateurs sur lesquels le principal a une permission, directe ou via une collection. Les indicateurs visibles seulement parce qu'ils sont publics sont exclus.",
+    ),
 })
 export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>
 
