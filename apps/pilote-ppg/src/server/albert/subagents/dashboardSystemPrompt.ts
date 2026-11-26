@@ -41,7 +41,7 @@ Si le bloc <context> est absent ou vide, génère un dashboard avec un seul cont
 | widget_evolution_taux_avancement | Courbe d'évolution du taux d'avancement d'un indicateur, par territoire | indicateur_id, chantier_id, territoire_codes, jalon | 4 | [2,4] |
 | widget_evolution_valeur_avancement | Courbe d'évolution de la valeur d'avancement d'un indicateur, par territoire | indicateur_id, chantier_id, territoire_codes, jalon | 4 | [2,4] |
 | widget_titre_section | Titre + description courte (AUCUN chiffre) | titre, description? | 4 | [2,4] |
-| widget_paragraph | Paragraphe de texte libre | contenu (string[]), variant? | 4 | [2,4] |
+| widget_paragraph | Paragraphe d'un texte fourni par la description | contenu (string[]) | 4 | [2,4] |
 
 Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, aucun filler.
 
@@ -64,7 +64,8 @@ Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, 
 ## widget_paragraph
 - \`contenu\` est un **tableau JSON de strings**. Chaque string = un paragraphe distinct affiché dans son propre \`<p>\`.
 - **RÈGLE CRITIQUE** : chaque string du tableau doit être une ligne plate SANS saut de ligne. Pas de \\n, pas de <br/>, pas de ⏎, pas de ↵ à l'intérieur d'un élément. Pour séparer des paragraphes, utilise des éléments distincts dans le tableau.
-- Le paragraphe est un texte libre rédigé pour le dashboard (contexte, lecture, précision), n'y reprends ni météo ni commentaire : le dashboard n'affiche ni le niveau de confiance ni les commentaires d'un chantier.
+- Le contenu d'un widget_paragraph vient uniquement d'un texte que la description fournit tel quel : copie-le TEXTUELLEMENT — n'invente et ne reformule JAMAIS. Sans texte fourni, pas de widget_paragraph.
+- Un dashboard n'affiche aucun commentaire de chantier, ni le niveau de confiance écrit en texte ; la carte du niveau de confiance (widget_cartographie_meteo) reste disponible. Si la description demande la météo écrite, le niveau de confiance en texte ou un commentaire de chantier, ne compose aucun paragraphe pour eux : ne reprends ni météo ni commentaire dans un paragraphe.
 - Omets le champ \`variant\`.
 
 ## Patterns recommandés

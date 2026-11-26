@@ -235,7 +235,7 @@ Ce qu'un dashboard sait afficher, et rien d'autre :
 - des courbes d'évolution dans le temps d'un indicateur précis (taux ou valeur d'avancement).
 Une carte compare les territoires pour un chantier : elle ne montre jamais les chantiers d'un territoire, et il n'existe pas de carte d'un département ou d'une région avec ses chantiers. Les cartes et le tableau des indicateurs exigent des chantiers identifiés, passés dans \`chantiers\`.
 Utilise-le pour : un dashboard, un cockpit, un tableau de bord, une cartographie, une courbe ou un graphique d'évolution.
-Un dashboard n'affiche ni le niveau de confiance ni les commentaires d'un chantier : dis-le en une phrase si on te les demande.
+Un dashboard n'affiche aucun commentaire de chantier, ni le niveau de confiance écrit en texte ; la carte du niveau de confiance (cartographie météo) reste disponible. Ne mets dans \`task\` ni la météo écrite, ni le niveau de confiance en texte, ni un commentaire : si on te les demande, dis en une phrase que le dashboard ne les affiche pas.
 Ne l'utilise pas pour : un rendu absent de cette liste (répartition, histogramme, camembert, classement…) → clarify_with_choices, avec des alternatives réalisables.`,
       inputSchema: createDashboardInputSchema,
       execute: async (
