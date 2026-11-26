@@ -17,6 +17,7 @@ import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { computeMax } from '@/valeurAvancement/computeMax'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeMin } from '@/valeurAvancement/computeMin'
+import { loadReferentielsWithIndividus } from '@/valeurAvancement/loadReferentielsWithIndividus'
 import { loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
@@ -73,7 +74,9 @@ const buildStats = async ({
   query: ListValeursRemarquablesForIndicateurQuery
   selection: Selection
 }): Promise<ValeursRemarquablesListApiModel> => {
-  const referentiels = await loadReferentielsWithIndividus(query.referentiels)
+  const referentiels = await loadReferentielsWithIndividus({
+    referentielPublicIds: query.referentiels,
+  })
   if (referentiels.length === 0) return { items: [] }
 
   const cibles: IndividuRef[] = referentiels.flatMap((referentiel) => referentiel.individus)
@@ -124,22 +127,4 @@ const buildStats = async ({
     'listValeursRemarquablesForIndicateur computed',
   )
   return { items }
-}
-
-const loadReferentielsWithIndividus = async (
-  referentielPublicIds: ReadonlyArray<string>,
-): Promise<ReadonlyArray<{ publicId: string; individus: IndividuRef[] }>> => {
-  const rows = await db().referentiel.findMany({
-    where: { publicId: { in: [...referentielPublicIds] } },
-    orderBy: { publicId: 'asc' },
-    include: { individus: { orderBy: { publicId: 'asc' } } },
-  })
-  return rows.map((row) => ({
-    publicId: row.publicId,
-    individus: row.individus.map(({ id, publicId, referentielId }) => ({
-      id,
-      publicId,
-      referentielId,
-    })),
-  }))
 }
