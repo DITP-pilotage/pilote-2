@@ -116,6 +116,13 @@ Pourquoi : le schéma dit d'un bloc la forme attendue et donne le type ; on test
 Pas de `(async () => { ... })()` ni de `(() => ...)()` en JSX : on extrait une fonction nommée.
 Pourquoi : une IIFE est une fonction anonyme déguisée en expression ; son nom manque à la lecture et au test.
 
+### Pas de valeur magique : une énumération typée, sinon une constante nommée
+Un ensemble fermé de valeurs (états, sens, catégories) devient une constante `as const` et le type qui en dérive, dans `kpilote-shared` dès que l'API ou un autre front s'en sert. Les dérivés (libellé affiché, icône, couleur) se lisent dans un `Record<Type, …>` indexé par cette énumération. Une valeur isolée qui porte un sens (plafond, délai, clé de cache) devient une constante nommée.
+Pourquoi : le compilateur signale une faute de frappe ou un cas oublié, la fiche et la carte restent synchronisées, et le nom dit à quoi sert la valeur. Un libellé d'UI ne sert jamais de valeur de comparaison.
+- À faire : `DIRECTIONS_VARIATION` et `directionOfDifference` (`kpilote-shared/interpretation.ts`), puis `LABEL_BY_DIRECTION: Record<DirectionVariation, string>` côté webapp ; `SENS_SOUHAITES` et ses libellés (`kpilote-shared/indicateur.ts`) ; `maxBatchSize: MAX_INDICATEURS_PAR_REQUETE`.
+- À éviter : `direction: 'EN HAUSSE' | 'EN BAISSE' | 'STABLE'` comparé à la main dans deux composants, `if (label === 'Objectifs compromis')`, `maxBatchSize: 100` sans nom.
+- Un littéral reste acceptable quand il est déjà typé par une union (`tone="success"`, `statut: 'PUBLIE'` vérifié par Prisma) : le compilateur le contrôle.
+
 ## Textes de l'UI
 
 ### Pas de tiret cadratin « — » dans les textes affichés
