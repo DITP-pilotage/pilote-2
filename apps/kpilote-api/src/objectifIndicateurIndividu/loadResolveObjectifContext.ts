@@ -1,4 +1,5 @@
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
+import { type FonctionAgregation } from '@pilote/kpilote-shared/indicateur'
 
 import { type BucketKey, parseBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
@@ -10,6 +11,56 @@ import {
 } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
+export type ObjectifHierarchy = {
+  indicateurId: string
+  allNodes: Map<string, IndividuRef>
+  enfantsByParent: Map<string, IndividuRef[]>
+  fonctionAgregationByReferentiel: Map<string, FonctionAgregation>
+  referentielByIndividu: Map<string, string>
+}
+
+// Le sous-arbre des cibles et les fonctions d'agrégation, qui ne dépendent pas
+// du découpage : un appelant qui lit les objectifs à plusieurs découpages ne
+// les charge qu'une fois.
+export const loadObjectifHierarchy = async ({
+  indicateurId,
+  individusCibles,
+}: {
+  indicateurId: string
+  individusCibles: ReadonlyArray<IndividuRef>
+}): Promise<ObjectifHierarchy> => {
+  const [{ allNodes, enfantsByParent }, fonctionAgregationByReferentiel] = await Promise.all([
+    loadSousArbre(individusCibles),
+    loadFonctionsAgregation(indicateurId),
+  ])
+  return {
+    indicateurId,
+    allNodes,
+    enfantsByParent,
+    fonctionAgregationByReferentiel,
+    referentielByIndividu: new Map(
+      [...allNodes.values()].map((individu) => [individu.id, individu.referentielId]),
+    ),
+  }
+}
+
+export const buildResolveObjectifContext = async ({
+  hierarchy,
+  dateTrunc,
+}: {
+  hierarchy: ObjectifHierarchy
+  dateTrunc: DateTrunc
+}): Promise<ResolveObjectifContext> => ({
+  enfantsByParent: hierarchy.enfantsByParent,
+  fonctionAgregationByReferentiel: hierarchy.fonctionAgregationByReferentiel,
+  referentielByIndividu: hierarchy.referentielByIndividu,
+  objectifBucketByIndividu: await loadObjectifsBucketises({
+    indicateurId: hierarchy.indicateurId,
+    individuIds: [...hierarchy.allNodes.keys()],
+    dateTrunc,
+  }),
+})
+
 export const loadResolveObjectifContext = async ({
   indicateurId,
   individusCibles,
@@ -19,25 +70,9 @@ export const loadResolveObjectifContext = async ({
   individusCibles: ReadonlyArray<IndividuRef>
   dateTrunc: DateTrunc
 }): Promise<{ ctx: ResolveObjectifContext; allNodes: Map<string, IndividuRef> }> => {
-  const [{ allNodes, enfantsByParent }, fonctionAgregationByReferentiel] = await Promise.all([
-    loadSousArbre(individusCibles),
-    loadFonctionsAgregation(indicateurId),
-  ])
-  const objectifBucketByIndividu = await loadObjectifsBucketises({
-    indicateurId,
-    individuIds: [...allNodes.keys()],
-    dateTrunc,
-  })
-
-  const ctx: ResolveObjectifContext = {
-    enfantsByParent,
-    fonctionAgregationByReferentiel,
-    objectifBucketByIndividu,
-    referentielByIndividu: new Map(
-      [...allNodes.values()].map((individu) => [individu.id, individu.referentielId]),
-    ),
-  }
-  return { ctx, allNodes }
+  const hierarchy = await loadObjectifHierarchy({ indicateurId, individusCibles })
+  const ctx = await buildResolveObjectifContext({ hierarchy, dateTrunc })
+  return { ctx, allNodes: hierarchy.allNodes }
 }
 
 const loadObjectifsBucketises = async ({

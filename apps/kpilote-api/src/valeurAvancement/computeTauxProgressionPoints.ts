@@ -5,10 +5,11 @@ import { type BucketKey, compareBuckets } from '@/framework/bucket'
 import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/loadResolveObjectifContext'
 import {
   type PointObjectifInterne,
+  type ResolveObjectifContext,
   resolveObjectifIndividu,
 } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 import { loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
+import { type IndividuRef, type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
 import {
   type ObjectifBrut,
   resolveTauxProgression,
@@ -56,6 +57,22 @@ export const computeTauxProgressionPoints = async ({
       dateTrunc: dateTruncObjectif,
     }),
   ])
+  return buildTauxProgressionPoints({ individusCibles, serieOf, objectifCtx, sensSouhaite })
+}
+
+// Le calcul pur, sur des séries et des objectifs déjà chargés : un appelant qui a
+// déjà résolu les séries n'a pas à les recharger.
+export const buildTauxProgressionPoints = ({
+  individusCibles,
+  serieOf,
+  objectifCtx,
+  sensSouhaite,
+}: {
+  individusCibles: ReadonlyArray<IndividuRef>
+  serieOf: (individu: IndividuRef) => ReadonlyArray<PointInterne>
+  objectifCtx: ResolveObjectifContext
+  sensSouhaite: SensSouhaite
+}): TauxProgressionPoint[] => {
   const objectifCache = new Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>()
 
   const valeurs: ValeurBrute[] = []

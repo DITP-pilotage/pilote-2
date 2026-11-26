@@ -7,16 +7,36 @@ import {
   type SyntheseIndicateurOutput,
 } from '@pilote/kpilote-shared/assistant/tools'
 import { type IndicateurApiModel, type SensSouhaite } from '@pilote/kpilote-shared/indicateur'
+import { type DateTrunc } from '@pilote/kpilote-shared/dates'
 import { interpretDifference } from '@pilote/kpilote-shared/interpretation'
 
 import { resolvePerimetre, type ResolvedPerimetre } from '@/assistant/tools/perimetre'
 import { type QueryToolDefinition } from '@/assistant/tools/toolDefinition'
+import { type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
+import { type Decimal } from '@/framework/decimal'
+import { db } from '@/framework/persistence/dbStore'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
-import { listObjectifsForIndicateur } from '@/objectifIndicateurIndividu/queries/listObjectifsForIndicateur'
-import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
-import { listTauxProgressionForIndicateur } from '@/valeurAvancement/queries/listTauxProgressionForIndicateur'
-import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
-import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries/listValeursRemarquablesForIndicateur'
+import {
+  buildResolveObjectifContext,
+  loadObjectifHierarchy,
+} from '@/objectifIndicateurIndividu/loadResolveObjectifContext'
+import {
+  type PointObjectifInterne,
+  type ResolveObjectifContext,
+  resolveObjectifIndividu,
+} from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
+import { computeEcartMediane } from '@/valeurAvancement/computeEcartMediane'
+import { computeMax } from '@/valeurAvancement/computeMax'
+import { computeMediane } from '@/valeurAvancement/computeMediane'
+import { computeMin } from '@/valeurAvancement/computeMin'
+import { buildTauxProgressionPoints } from '@/valeurAvancement/computeTauxProgressionPoints'
+import { computeVariation } from '@/valeurAvancement/computeVariation'
+import {
+  loadReferentielsWithIndividus,
+  type ReferentielWithIndividus,
+} from '@/valeurAvancement/loadReferentielsWithIndividus'
+import { loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
+import { type IndividuRef, type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
 
 /** L'indicateur s'il existe et que le principal peut le lire, `null` sinon : l'API ne distingue pas. */
 export const findReadableIndicateur = async (id: string): Promise<IndicateurApiModel | null> => {
@@ -25,22 +45,6 @@ export const findReadableIndicateur = async (id: string): Promise<IndicateurApiM
   } catch {
     return null
   }
-}
-
-/** Le point le plus récent de chaque individu. */
-const latestByIndividu = <T extends { individu: string }>({
-  items,
-  dateOf,
-}: {
-  items: ReadonlyArray<T>
-  dateOf: (item: T) => string
-}) => {
-  const latest = new Map<string, T>()
-  for (const item of items) {
-    const current = latest.get(item.individu)
-    if (!current || dateOf(item) > dateOf(current)) latest.set(item.individu, item)
-  }
-  return latest
 }
 
 const withoutIndividus = (
@@ -65,65 +69,167 @@ const resolveCible = async ({
   return null
 }
 
-const readIndividus = async ({
+// Le mois pour les valeurs et le taux, l'année pour l'objectif affiché : les
+// découpages par défaut des écrans de valeurs, de taux et d'objectifs.
+const DATE_TRUNC: DateTrunc = 'month'
+const OBJECTIF_DATE_TRUNC: DateTrunc = 'year'
+// La variation compare les deux derniers points ; la dernière valeur, la médiane,
+// les valeurs remarquables et le taux ne lisent que le dernier.
+const LAST_POINT_COUNT = 2
+
+type RequestedIndividu = { entity: EntityRef; ref: IndividuRef }
+
+type Series = {
+  serieOf: (individu: IndividuRef) => ReadonlyArray<PointInterne>
+  lastValeursByReferentiel: ReadonlyMap<string, ReadonlyArray<Decimal>>
+  medianeByReferentiel: ReadonlyMap<string, Decimal | null>
+}
+
+// Une seule résolution, sur la population des référentiels en jeu, sert les
+// quatre lectures : dernière valeur, variation, écart à la médiane et valeurs
+// remarquables.
+const readSeries = async ({
   indicateurId,
-  sensSouhaite,
-  individus,
+  referentiels,
 }: {
   indicateurId: string
-  sensSouhaite: SensSouhaite
-  individus: EntityRef[]
-}): Promise<SyntheseIndicateurOutput['individus']> => {
-  const ids = individus.map((individu) => individu.id)
-  const [valeurs, objectifs, taux, synthese] = await Promise.all([
-    listValeursForIndicateur({
-      indicateurPublicId: indicateurId,
-      query: { individus: ids },
-    }).unwrapOr({ items: [] }),
-    listObjectifsForIndicateur({
-      indicateurPublicId: indicateurId,
-      query: { individus: ids },
-    }).unwrapOr({ items: [] }),
-    listTauxProgressionForIndicateur({
-      indicateurPublicId: indicateurId,
-      query: { individus: ids },
-    }).unwrapOr({ items: [] }),
-    listSyntheseIndividus({
-      indicateurPublicId: indicateurId,
-      query: { individus: ids },
-    }).unwrapOr({ items: [] }),
-  ])
-  const lastValeurByIndividu = latestByIndividu({
-    items: valeurs.items,
-    dateOf: (item) => item.date,
+  referentiels: ReadonlyArray<ReferentielWithIndividus>
+}): Promise<Series> => {
+  const { serieOf } = await loadResolveSerieContext({
+    indicateurId,
+    individusCibles: referentiels.flatMap((referentiel) => referentiel.individus),
+    dateTrunc: DATE_TRUNC,
+    lastPointCount: LAST_POINT_COUNT,
   })
-  const objectifByIndividu = latestByIndividu({
-    items: objectifs.items,
-    dateOf: (item) => item.dateCible,
-  })
-  const lastTauxByIndividu = latestByIndividu({ items: taux.items, dateOf: (item) => item.date })
-  const syntheseByIndividu = new Map(synthese.items.map((item) => [item.individu, item]))
+  const lastValeursByReferentiel = new Map(
+    referentiels.map((referentiel) => [
+      referentiel.id,
+      referentiel.individus.flatMap((individu) => {
+        const lastPoint = serieOf(individu).at(-1)
+        return lastPoint ? [lastPoint.valeur] : []
+      }),
+    ]),
+  )
+  const medianeByReferentiel = new Map(
+    [...lastValeursByReferentiel].map(([referentielId, valeurs]) => [
+      referentielId,
+      computeMediane(valeurs),
+    ]),
+  )
+  return { serieOf, lastValeursByReferentiel, medianeByReferentiel }
+}
 
-  const dated = ({
-    valeur,
-    date,
-  }: {
-    valeur: number | undefined
-    date: string | undefined
-  }): DatedValue | null => (valeur === undefined || date === undefined ? null : { valeur, date })
+// Les référentiels de l'indicateur seulement : ceux des individus demandés ne
+// servent qu'à la médiane de leurs pairs.
+const readValeursRemarquables = ({
+  referentiels,
+  series,
+  indicateurReferentiels,
+}: {
+  referentiels: ReadonlyArray<ReferentielWithIndividus>
+  series: Series
+  indicateurReferentiels: ReadonlyArray<EntityRef>
+}): SyntheseIndicateurOutput['valeursRemarquables'] => {
+  const entityByPublicId = new Map(
+    indicateurReferentiels.map((referentiel) => [referentiel.id, referentiel]),
+  )
+  return referentiels.flatMap((referentiel) => {
+    const entity = entityByPublicId.get(referentiel.publicId)
+    if (!entity) return []
+    const valeurs = series.lastValeursByReferentiel.get(referentiel.id) ?? []
+    return [
+      {
+        referentiel: entity,
+        min: computeMin(valeurs),
+        max: computeMax(valeurs),
+        mediane: series.medianeByReferentiel.get(referentiel.id)?.toNumber() ?? null,
+      },
+    ]
+  })
+}
+
+type ObjectifContexts = { displayed: ResolveObjectifContext; taux: ResolveObjectifContext }
+
+// L'indicateur est déjà lu avec contrôle d'accès : les objectifs se chargent
+// sans repasser par la query, qui refait ce contrôle. Les deux découpages
+// partagent le même sous-arbre.
+const loadObjectifContexts = async ({
+  indicateurId,
+  refs,
+}: {
+  indicateurId: string
+  refs: ReadonlyArray<IndividuRef>
+}): Promise<ObjectifContexts | null> => {
+  if (refs.length === 0) return null
+  const hierarchy = await loadObjectifHierarchy({ indicateurId, individusCibles: refs })
+  const [displayed, taux] = await Promise.all([
+    buildResolveObjectifContext({ hierarchy, dateTrunc: OBJECTIF_DATE_TRUNC }),
+    buildResolveObjectifContext({ hierarchy, dateTrunc: DATE_TRUNC }),
+  ])
+  return { displayed, taux }
+}
+
+// L'objectif à la date cible la plus lointaine, comme sur l'écran des objectifs.
+const lastObjectifOf = ({
+  ref,
+  ctx,
+  cache,
+}: {
+  ref: IndividuRef
+  ctx: ResolveObjectifContext
+  cache: Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>
+}): DatedValue | null => {
+  const points = [...resolveObjectifIndividu({ individuId: ref.id, ctx, cache }).values()]
+  const last = points.reduce<PointObjectifInterne | undefined>(
+    (latest, point) =>
+      latest && compareBuckets(latest.bucket, point.bucket) >= 0 ? latest : point,
+    undefined,
+  )
+  return last ? { valeur: last.valeur.toNumber(), date: formatBucket(last.bucket) } : null
+}
+
+const buildIndividus = ({
+  individus,
+  sensSouhaite,
+  series,
+  objectifContexts,
+}: {
+  individus: ReadonlyArray<RequestedIndividu>
+  sensSouhaite: SensSouhaite
+  series: Series
+  objectifContexts: ObjectifContexts
+}): SyntheseIndicateurOutput['individus'] => {
+  const refs = individus.map(({ ref }) => ref)
+  // Les points d'un individu suivent sa série, par date croissante : le dernier
+  // inscrit est le plus récent.
+  const lastTauxByIndividu = new Map(
+    buildTauxProgressionPoints({
+      individusCibles: refs,
+      serieOf: series.serieOf,
+      objectifCtx: objectifContexts.taux,
+      sensSouhaite,
+    }).map((point) => [point.individuId, point.tauxProgression]),
+  )
+  const objectifCache = new Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>()
   const interpret = (difference: number | null) =>
     difference === null ? null : interpretDifference({ difference, sensSouhaite })
 
-  return individus.map((individu) => {
-    const valeur = lastValeurByIndividu.get(individu.id)
-    const cible = objectifByIndividu.get(individu.id)
-    const variation = syntheseByIndividu.get(individu.id)?.variation ?? null
-    const ecartMediane = syntheseByIndividu.get(individu.id)?.ecartMediane ?? null
+  return individus.map(({ entity, ref }) => {
+    const serie = series.serieOf(ref)
+    const lastPoint = serie.at(-1)
+    // computeVariation attend [recente, precedente] ; la série est ASC par bucket.
+    const variation = computeVariation(serie.slice(-2).reverse())
+    const ecartMediane = computeEcartMediane(
+      lastPoint?.valeur,
+      series.medianeByReferentiel.get(ref.referentielId) ?? null,
+    )
     return {
-      individu,
-      derniereValeur: dated({ valeur: valeur?.valeur, date: valeur?.date }),
-      objectif: dated({ valeur: cible?.valeurCible, date: cible?.dateCible }),
-      tauxProgression: lastTauxByIndividu.get(individu.id)?.tauxProgression ?? null,
+      individu: entity,
+      derniereValeur: lastPoint
+        ? { valeur: lastPoint.valeur.toNumber(), date: formatBucket(lastPoint.bucket) }
+        : null,
+      objectif: lastObjectifOf({ ref, ctx: objectifContexts.displayed, cache: objectifCache }),
+      tauxProgression: lastTauxByIndividu.get(ref.id) ?? null,
       variation,
       lectureVariation: interpret(variation),
       ecartMediane,
@@ -159,30 +265,39 @@ ${PERIMETRE_DESCRIPTION}`,
       })),
     }
 
-    const referentielIds = identite.referentiels.map((referentiel) => referentiel.id)
-    const valeursRemarquables =
-      referentielIds.length === 0
-        ? []
-        : (
-            await listValeursRemarquablesForIndicateur({
-              indicateurPublicId: indicateurId,
-              query: {
-                referentiels: referentielIds,
-              },
-            }).unwrapOr({ items: [] })
-          ).items.map((item) => ({
-            referentiel: identite.referentiels.find(
-              (referentiel) => referentiel.id === item.referentiel,
-            ) ?? {
-              id: item.referentiel,
-              nom: item.referentiel,
-            },
-            min: item.min,
-            max: item.max,
-            mediane: item.mediane,
-          }))
+    const [{ id }, cible] = await Promise.all([
+      db().indicateur.findUniqueOrThrow({
+        where: { publicId: indicateurId },
+        select: { id: true },
+      }),
+      resolveCible({ perimetre, individuId }),
+    ])
+    const requested = cible?.individus ?? []
+    // La population contient les individus demandés : leurs référentiels en font partie.
+    const referentiels = await loadReferentielsWithIndividus({
+      referentielPublicIds: identite.referentiels.map((referentiel) => referentiel.id),
+      individuPublicIds: requested.map((individu) => individu.id),
+    })
+    const refByPublicId = new Map(
+      referentiels.flatMap((referentiel) =>
+        referentiel.individus.map((ref) => [ref.publicId, ref] as const),
+      ),
+    )
+    const individus: RequestedIndividu[] = requested.flatMap((entity) => {
+      const ref = refByPublicId.get(entity.id)
+      return ref ? [{ entity, ref }] : []
+    })
 
-    const cible = await resolveCible({ perimetre, individuId })
+    const [series, objectifContexts] = await Promise.all([
+      readSeries({ indicateurId: id, referentiels }),
+      loadObjectifContexts({ indicateurId: id, refs: individus.map(({ ref }) => ref) }),
+    ])
+    const valeursRemarquables = readValeursRemarquables({
+      referentiels,
+      series,
+      indicateurReferentiels: identite.referentiels,
+    })
+
     if (!cible) {
       return withoutIndividus({
         indicateur: identite,
@@ -194,14 +309,15 @@ ${PERIMETRE_DESCRIPTION}`,
 
     return {
       indicateur: identite,
-      individus:
-        cible.individus.length === 0
-          ? []
-          : await readIndividus({
-              indicateurId,
-              sensSouhaite: indicateur.sensSouhaite,
-              individus: cible.individus,
-            }),
+      // Pas de contexte d'objectifs sans individu demandé.
+      individus: objectifContexts
+        ? buildIndividus({
+            individus,
+            sensSouhaite: indicateur.sensSouhaite,
+            series,
+            objectifContexts,
+          })
+        : [],
       valeursRemarquables,
       notFound: cible.notFound,
       ...(cible.truncated ? { total: cible.total, truncated: true } : {}),
