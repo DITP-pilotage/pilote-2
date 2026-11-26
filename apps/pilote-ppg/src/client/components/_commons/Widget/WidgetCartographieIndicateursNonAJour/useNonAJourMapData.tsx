@@ -3,9 +3,9 @@ import { getLabelTerritoire } from "@/client/constants/territoires";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
 import {
   formatDateDerniereValeur,
+  formatEtatChantier,
   formatEtatIndicateur,
   formatMiseAJourAttendueDepuis,
-  formatNbIndicateursNonAJour,
   getFill,
   isChantierMode,
   NonAJourMode,
@@ -14,11 +14,9 @@ import {
 
 const TooltipContent = ({ territoire }: { territoire: TerritoireNonAJour }) => {
   if (isChantierMode(territoire)) {
-    return (
-      <div className="font-bold">{formatNbIndicateursNonAJour(territoire)}</div>
-    );
+    return <div className="font-bold">{formatEtatChantier(territoire)}</div>;
   }
-  if (!territoire.estApplicable || territoire.estAJour) {
+  if (territoire.etat !== "NON_A_JOUR") {
     return <div className="font-bold">{formatEtatIndicateur(territoire)}</div>;
   }
   return (

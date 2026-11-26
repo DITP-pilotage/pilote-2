@@ -40,6 +40,13 @@ const COTES_D_ARMOR: TerritoireTest = {
   zone_id: "D22",
   territoire_nom: "Côtes-d'Armor",
 };
+const MORBIHAN: TerritoireTest = {
+  territoire_code: "DEPT-56",
+  code_insee: "56",
+  maille: "DEPT",
+  zone_id: "D56",
+  territoire_nom: "Morbihan",
+};
 
 async function seedChantier(
   territoires: TerritoireTest[],
@@ -58,6 +65,23 @@ async function seedChantier(
   return chantier;
 }
 
+async function seedDerniereValeur(
+  indicateurId: string,
+  territoire: TerritoireTest,
+  dateValeurActuelle: Date | null,
+  jalon = 2026,
+) {
+  await fixtures.indicateurTerritoireJalon({
+    id: indicateurId,
+    territoire_code: territoire.territoire_code,
+    code_insee: territoire.code_insee,
+    maille: territoire.maille,
+    zone_id: territoire.zone_id,
+    jalon,
+    date_valeur_actuelle: dateValeurActuelle,
+  });
+}
+
 const sortByTerritoireCode = <T extends { territoireCode: string }>(
   territoires: T[],
 ) =>
@@ -72,13 +96,15 @@ describe("GetTerritoiresNonAJourQuery", () => {
 
   describe("byChantier", () => {
     it(
-      "compte les indicateurs non à jour par territoire",
+      "déduit l'état de chaque territoire : non à jour, puis sans donnée, puis à jour",
       createIntegrationTest(async () => {
         // given
         const chantier = await seedChantier([
           FRANCE,
           FINISTERE,
           ILLE_ET_VILAINE,
+          COTES_D_ARMOR,
+          MORBIHAN,
         ]);
         const indicateur = await fixtures.indicateurIdentite({
           chantier_id: chantier.id,
@@ -86,21 +112,26 @@ describe("GetTerritoiresNonAJourQuery", () => {
         const secondIndicateur = await fixtures.indicateurIdentite({
           chantier_id: chantier.id,
         });
+        // est_a_jour NULL avec une valeur : non à jour, pas sans donnée
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
-          chantier_id: chantier.id,
-          ...FINISTERE,
-          est_applicable: true,
-          est_a_jour: false,
-        });
-        // est_a_jour NULL : aucune valeur remontée, compté non à jour
-        await fixtures.indicateurTerritoire({
-          id: secondIndicateur.id,
           chantier_id: chantier.id,
           ...FINISTERE,
           est_applicable: true,
           est_a_jour: null,
         });
+        await seedDerniereValeur(
+          indicateur.id,
+          FINISTERE,
+          new Date("2026-01-01"),
+        );
+        await fixtures.indicateurTerritoire({
+          id: secondIndicateur.id,
+          chantier_id: chantier.id,
+          ...FINISTERE,
+          est_applicable: true,
+          est_a_jour: false,
+        });
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
           chantier_id: chantier.id,
@@ -108,6 +139,11 @@ describe("GetTerritoiresNonAJourQuery", () => {
           est_applicable: true,
           est_a_jour: true,
         });
+        await seedDerniereValeur(
+          indicateur.id,
+          ILLE_ET_VILAINE,
+          new Date("2026-07-01"),
+        );
         await fixtures.indicateurTerritoire({
           id: secondIndicateur.id,
           chantier_id: chantier.id,
@@ -115,6 +151,7 @@ describe("GetTerritoiresNonAJourQuery", () => {
           est_applicable: true,
           est_a_jour: false,
         });
+        await seedDerniereValeur(secondIndicateur.id, ILLE_ET_VILAINE, null);
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
           chantier_id: chantier.id,
@@ -122,10 +159,44 @@ describe("GetTerritoiresNonAJourQuery", () => {
           est_applicable: true,
           est_a_jour: true,
         });
+        await seedDerniereValeur(indicateur.id, FRANCE, new Date("2026-07-01"));
         await fixtures.indicateurTerritoire({
           id: secondIndicateur.id,
           chantier_id: chantier.id,
           ...FRANCE,
+          est_applicable: true,
+          est_a_jour: true,
+        });
+        await seedDerniereValeur(
+          secondIndicateur.id,
+          FRANCE,
+          new Date("2026-07-01"),
+        );
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          ...COTES_D_ARMOR,
+          est_applicable: true,
+          est_a_jour: true,
+        });
+        await seedDerniereValeur(
+          indicateur.id,
+          COTES_D_ARMOR,
+          new Date("2026-07-01"),
+        );
+        // indicateur non applicable sur un territoire applicable : ignoré
+        await fixtures.indicateurTerritoire({
+          id: secondIndicateur.id,
+          chantier_id: chantier.id,
+          ...COTES_D_ARMOR,
+          est_applicable: false,
+          est_a_jour: false,
+        });
+        // à jour pour dbt mais sans date de jalon : reste à jour
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          ...MORBIHAN,
           est_applicable: true,
           est_a_jour: true,
         });
@@ -136,19 +207,34 @@ describe("GetTerritoiresNonAJourQuery", () => {
         // then
         expect(sortByTerritoireCode(result)).toEqual([
           {
+            territoireCode: "DEPT-22",
+            etat: "A_JOUR",
+            nbIndicateursNonAJour: 0,
+            nbIndicateursSansDonnee: 0,
+          },
+          {
             territoireCode: "DEPT-29",
-            estApplicable: true,
-            nbIndicateursNonAJour: 2,
+            etat: "NON_A_JOUR",
+            nbIndicateursNonAJour: 1,
+            nbIndicateursSansDonnee: 1,
           },
           {
             territoireCode: "DEPT-35",
-            estApplicable: true,
-            nbIndicateursNonAJour: 1,
+            etat: "SANS_DONNEE",
+            nbIndicateursNonAJour: 0,
+            nbIndicateursSansDonnee: 1,
+          },
+          {
+            territoireCode: "DEPT-56",
+            etat: "A_JOUR",
+            nbIndicateursNonAJour: 0,
+            nbIndicateursSansDonnee: 0,
           },
           {
             territoireCode: "NAT-FR",
-            estApplicable: true,
+            etat: "A_JOUR",
             nbIndicateursNonAJour: 0,
+            nbIndicateursSansDonnee: 0,
           },
         ]);
       }),
@@ -177,8 +263,9 @@ describe("GetTerritoiresNonAJourQuery", () => {
         expect(result).toEqual([
           {
             territoireCode: "DEPT-29",
-            estApplicable: false,
+            etat: "NON_APPLICABLE",
             nbIndicateursNonAJour: 0,
+            nbIndicateursSansDonnee: 0,
           },
         ]);
       }),
@@ -207,6 +294,11 @@ describe("GetTerritoiresNonAJourQuery", () => {
           est_applicable: true,
           est_a_jour: true,
         });
+        await seedDerniereValeur(
+          indicateur.id,
+          FINISTERE,
+          new Date("2026-07-01"),
+        );
         await fixtures.indicateurTerritoire({
           id: indicateurSupprime.id,
           chantier_id: chantier.id,
@@ -229,8 +321,9 @@ describe("GetTerritoiresNonAJourQuery", () => {
         expect(result).toEqual([
           {
             territoireCode: "DEPT-29",
-            estApplicable: true,
+            etat: "A_JOUR",
             nbIndicateursNonAJour: 0,
+            nbIndicateursSansDonnee: 0,
           },
         ]);
       }),
@@ -270,6 +363,7 @@ describe("GetTerritoiresNonAJourQuery", () => {
           FINISTERE,
           ILLE_ET_VILAINE,
           COTES_D_ARMOR,
+          MORBIHAN,
           FRANCE,
         ]);
         const indicateur = await fixtures.indicateurIdentite({
@@ -281,19 +375,36 @@ describe("GetTerritoiresNonAJourQuery", () => {
           ...FINISTERE,
           est_applicable: true,
           est_a_jour: false,
-          date_valeur_actuelle_mandat: new Date("2026-01-01"),
+          // déprécié : ignoré au profit de la date du dernier jalon
+          date_valeur_actuelle_mandat: new Date("2024-01-01"),
           prochaine_date_maj: new Date("2026-05-31"),
         });
+        await seedDerniereValeur(
+          indicateur.id,
+          FINISTERE,
+          new Date("2025-06-01"),
+          2025,
+        );
+        await seedDerniereValeur(
+          indicateur.id,
+          FINISTERE,
+          new Date("2026-01-01"),
+          2026,
+        );
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
           chantier_id: chantier.id,
           ...ILLE_ET_VILAINE,
           est_applicable: true,
           est_a_jour: true,
-          date_valeur_actuelle_mandat: new Date("2026-07-01"),
           prochaine_date_maj: new Date("2026-11-30"),
         });
-        // aucune valeur remontée
+        await seedDerniereValeur(
+          indicateur.id,
+          ILLE_ET_VILAINE,
+          new Date("2026-07-01"),
+        );
+        // aucun jalon : aucune valeur remontée
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
           chantier_id: chantier.id,
@@ -301,6 +412,15 @@ describe("GetTerritoiresNonAJourQuery", () => {
           est_applicable: true,
           est_a_jour: null,
         });
+        // jalon présent mais sans valeur
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          ...MORBIHAN,
+          est_applicable: true,
+          est_a_jour: false,
+        });
+        await seedDerniereValeur(indicateur.id, MORBIHAN, null);
         // applicabilité inconnue : traitée comme non applicable
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
@@ -320,29 +440,31 @@ describe("GetTerritoiresNonAJourQuery", () => {
         expect(sortByTerritoireCode(result)).toEqual([
           {
             territoireCode: "DEPT-22",
-            estApplicable: true,
-            estAJour: false,
+            etat: "SANS_DONNEE",
             dateDerniereValeur: null,
             miseAJourAttendueDepuis: null,
           },
           {
             territoireCode: "DEPT-29",
-            estApplicable: true,
-            estAJour: false,
+            etat: "NON_A_JOUR",
             dateDerniereValeur: "2026-01-01",
             miseAJourAttendueDepuis: "2026-05-31",
           },
           {
             territoireCode: "DEPT-35",
-            estApplicable: true,
-            estAJour: true,
+            etat: "A_JOUR",
             dateDerniereValeur: "2026-07-01",
             miseAJourAttendueDepuis: "2026-11-30",
           },
           {
+            territoireCode: "DEPT-56",
+            etat: "SANS_DONNEE",
+            dateDerniereValeur: null,
+            miseAJourAttendueDepuis: null,
+          },
+          {
             territoireCode: "NAT-FR",
-            estApplicable: false,
-            estAJour: false,
+            etat: "NON_APPLICABLE",
             dateDerniereValeur: null,
             miseAJourAttendueDepuis: null,
           },
@@ -351,13 +473,14 @@ describe("GetTerritoiresNonAJourQuery", () => {
     );
 
     it(
-      "liste les mêmes territoires non à jour que la requête de l'assistant",
+      "les territoires non à jour ou sans donnée sont ceux que l'assistant liste comme non à jour",
       createIntegrationTest(async () => {
         // given
         const chantier = await seedChantier([
           FINISTERE,
           ILLE_ET_VILAINE,
           COTES_D_ARMOR,
+          MORBIHAN,
         ]);
         const indicateur = await fixtures.indicateurIdentite({
           chantier_id: chantier.id,
@@ -369,6 +492,20 @@ describe("GetTerritoiresNonAJourQuery", () => {
           est_applicable: true,
           est_a_jour: false,
         });
+        await seedDerniereValeur(
+          indicateur.id,
+          FINISTERE,
+          new Date("2026-01-01"),
+        );
+        // à jour pour dbt mais sans date de jalon (valeur datée d'une année future)
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          ...MORBIHAN,
+          est_applicable: true,
+          est_a_jour: true,
+        });
+        await seedDerniereValeur(indicateur.id, MORBIHAN, null);
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
           chantier_id: chantier.id,
@@ -376,6 +513,11 @@ describe("GetTerritoiresNonAJourQuery", () => {
           est_applicable: true,
           est_a_jour: true,
         });
+        await seedDerniereValeur(
+          indicateur.id,
+          ILLE_ET_VILAINE,
+          new Date("2026-07-01"),
+        );
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
           chantier_id: chantier.id,
@@ -394,14 +536,14 @@ describe("GetTerritoiresNonAJourQuery", () => {
         });
         const assistantResponse = await assistantQuery.execute({
           chantierIds: [chantier.id],
-          territoireCodes: ["DEPT-29", "DEPT-35", "DEPT-22"],
+          territoireCodes: ["DEPT-29", "DEPT-35", "DEPT-22", "DEPT-56"],
           indicateurIds: [indicateur.id],
         });
 
         // then
         const mapCodes = mapTerritoires
-          .filter(
-            (territoire) => territoire.estApplicable && !territoire.estAJour,
+          .filter((territoire) =>
+            ["NON_A_JOUR", "SANS_DONNEE"].includes(territoire.etat),
           )
           .map((territoire) => territoire.territoireCode)
           .toSorted();

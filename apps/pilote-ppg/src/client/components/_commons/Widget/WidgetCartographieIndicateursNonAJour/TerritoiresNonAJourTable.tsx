@@ -5,47 +5,64 @@ import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMes
 import { TerritoireLabel } from "@/components/_commons/Widget/TerritoireLabel";
 import { clsxm } from "@/utils/clsxm";
 import {
+  compareTerritoires,
   formatDateDerniereValeur,
   formatMiseAJourAttendueDepuis,
-  formatNbIndicateursNonAJour,
   isChantierMode,
-  isTerritoireNonAJour,
   NonAJourMode,
   TerritoireNonAJour,
 } from "./nonAJourDisplay";
 
-const getNbIndicateursNonAJour = (territoire: TerritoireNonAJour) =>
-  isChantierMode(territoire) ? territoire.nbIndicateursNonAJour : 0;
+const CelluleDouble = ({ children }: { children: string }) => (
+  <div className="col-span-2 py-2 flex items-center justify-center border-b">
+    {children}
+  </div>
+);
+
+const Cellule = ({
+  children,
+  className,
+}: {
+  children: string | number;
+  className?: string;
+}) => (
+  <div
+    className={clsxm(
+      "py-2 flex items-center justify-center border-b",
+      className,
+    )}
+  >
+    {children}
+  </div>
+);
 
 const Cells = ({ territoire }: { territoire: TerritoireNonAJour }) => {
-  if (isChantierMode(territoire)) {
-    return (
-      <div className="py-2 flex items-center justify-center border-b">
-        {formatNbIndicateursNonAJour(territoire)}
-      </div>
-    );
+  if (territoire.etat === "NON_APPLICABLE") {
+    return <CelluleDouble>Non applicable</CelluleDouble>;
   }
-  if (!territoire.estApplicable) {
+  if (isChantierMode(territoire)) {
+    if (territoire.etat === "A_JOUR") {
+      return <CelluleDouble>À jour</CelluleDouble>;
+    }
     return (
-      <div className="col-span-2 py-2 flex items-center justify-center border-b">
-        Non applicable
-      </div>
+      <>
+        <Cellule>{territoire.nbIndicateursNonAJour}</Cellule>
+        <Cellule>{territoire.nbIndicateursSansDonnee}</Cellule>
+      </>
     );
   }
   return (
     <>
-      <div className="py-2 flex items-center justify-center border-b">
-        {formatDateDerniereValeur(territoire)}
-      </div>
-      <div
-        className={clsxm("py-2 flex items-center justify-center border-b", {
-          "text-dsfr-warning-425 font-bold": !territoire.estAJour,
+      <Cellule>{formatDateDerniereValeur(territoire)}</Cellule>
+      <Cellule
+        className={clsxm({
+          "text-dsfr-warning-425 font-bold": territoire.etat === "NON_A_JOUR",
         })}
       >
-        {territoire.estAJour
+        {territoire.etat === "A_JOUR"
           ? "À jour"
           : formatMiseAJourAttendueDepuis(territoire)}
-      </div>
+      </Cellule>
     </>
   );
 };
@@ -64,28 +81,17 @@ export const TerritoiresNonAJourTable = ({
   const { isModeP } = useMesureWidget();
 
   const sortedTerritoires = useMemo(
-    () =>
-      [...territoiresSelectionnes].sort(
-        (left, right) =>
-          Number(isTerritoireNonAJour(right)) -
-            Number(isTerritoireNonAJour(left)) ||
-          getNbIndicateursNonAJour(right) - getNbIndicateursNonAJour(left),
-      ),
+    () => [...territoiresSelectionnes].sort(compareTerritoires),
     [territoiresSelectionnes],
   );
 
   const headers =
     mode === "chantier"
-      ? ["Indicateurs non à jour"]
+      ? ["Non à jour", "Sans donnée"]
       : ["Dernière valeur", "Mise à jour attendue depuis"];
 
   return (
-    <div
-      className={clsxm("grid border-y text-xs", {
-        "grid-cols-2": mode === "chantier",
-        "grid-cols-3": mode === "indicateur",
-      })}
-    >
+    <div className="grid grid-cols-3 border-y text-xs">
       <div className="grid col-span-full grid-cols-subgrid border-b border-b-black">
         <div />
         {headers.map((header) => (

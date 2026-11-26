@@ -21,7 +21,26 @@ export const NON_A_JOUR_WHERE: Prisma.indicateur_territoireWhereInput = {
   OR: [{ est_a_jour: false }, { est_a_jour: null }],
 };
 
-export const estNonAJour = (row: {
-  est_applicable: boolean | null;
-  est_a_jour: boolean | null;
-}) => row.est_applicable === true && row.est_a_jour !== true;
+export type EtatMiseAJour =
+  "A_JOUR" | "NON_A_JOUR" | "SANS_DONNEE" | "NON_APPLICABLE";
+
+export const etatMiseAJour = (ligne: {
+  estApplicable: boolean | null;
+  estAJour: boolean | null;
+  dateDerniereValeur: Date | null;
+}): EtatMiseAJour => {
+  if (ligne.estApplicable !== true) return "NON_APPLICABLE";
+  if (ligne.estAJour === true) return "A_JOUR";
+  return ligne.dateDerniereValeur === null ? "SANS_DONNEE" : "NON_A_JOUR";
+};
+
+export const etatTerritoireChantier = (territoire: {
+  estApplicable: boolean;
+  nbIndicateursNonAJour: number;
+  nbIndicateursSansDonnee: number;
+}): EtatMiseAJour => {
+  if (!territoire.estApplicable) return "NON_APPLICABLE";
+  if (territoire.nbIndicateursNonAJour > 0) return "NON_A_JOUR";
+  if (territoire.nbIndicateursSansDonnee > 0) return "SANS_DONNEE";
+  return "A_JOUR";
+};
