@@ -2,6 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { startTransition } from 'react'
 import { z } from 'zod'
+import { joinCsv, splitCsv } from '@pilote/kpilote-shared/texte'
 
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { DashboardSwitch } from '@/components/DashboardSwitch'
@@ -16,12 +17,7 @@ import { Page } from '@pilote/kpilote-ui/Page'
 import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureSelectionIndividus } from '@/lib/individus/ensureSelection'
-import {
-  parseIndividusParam,
-  resolveLectureCollection,
-  selectIndividu,
-  serializeIndividusParam,
-} from '@/lib/individus/selection'
+import { resolveLectureCollection, selectIndividu } from '@/lib/individus/selection'
 import { loadCollections, collectionsQueryOptions } from '@/queries/collections'
 import {
   allReferentielsQueryOptions,
@@ -74,7 +70,7 @@ function CollectionsListComponent() {
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
   const { groups } = useIndividuHierarchy(referentielIds)
-  const selection = parseIndividusParam(search.individus)
+  const selection = splitCsv(search.individus)
 
   const lecture = resolveLectureCollection({ selection })
 
@@ -91,9 +87,7 @@ function CollectionsListComponent() {
               analytics.trackEvent(
                 analyticsEvents.dashboard.individuChange({ referentiel_id: referentiel }),
               )
-              const individus = serializeIndividusParam(
-                selectIndividu({ selection, groups, individu }),
-              )
+              const individus = joinCsv(selectIndividu({ selection, groups, individu }))
               startTransition(() => {
                 void navigate({ search: (prev) => ({ ...prev, individus }) })
               })

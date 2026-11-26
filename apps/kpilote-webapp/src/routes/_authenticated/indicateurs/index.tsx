@@ -2,6 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { startTransition } from 'react'
 import { z } from 'zod'
+import { joinCsv, splitCsv } from '@pilote/kpilote-shared/texte'
 
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { DashboardSwitch } from '@/components/DashboardSwitch'
@@ -15,12 +16,7 @@ import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureSelectionIndividus } from '@/lib/individus/ensureSelection'
-import {
-  parseIndividusParam,
-  resolveLectureIndicateur,
-  selectIndividu,
-  serializeIndividusParam,
-} from '@/lib/individus/selection'
+import { resolveLectureIndicateur, selectIndividu } from '@/lib/individus/selection'
 import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
 import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
 import {
@@ -73,7 +69,7 @@ function IndicateursListComponent() {
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
   const { nodes, groups } = useIndividuHierarchy(referentielIds)
-  const selection = parseIndividusParam(search.individus)
+  const selection = splitCsv(search.individus)
 
   return (
     <Page
@@ -88,9 +84,7 @@ function IndicateursListComponent() {
               analytics.trackEvent(
                 analyticsEvents.dashboard.individuChange({ referentiel_id: referentiel }),
               )
-              const individus = serializeIndividusParam(
-                selectIndividu({ selection, groups, individu }),
-              )
+              const individus = joinCsv(selectIndividu({ selection, groups, individu }))
               startTransition(() => {
                 void navigate({ search: (prev) => ({ ...prev, individus }) })
               })

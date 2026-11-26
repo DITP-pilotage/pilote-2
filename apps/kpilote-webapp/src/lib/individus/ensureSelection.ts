@@ -1,11 +1,8 @@
+import { joinCsv, splitCsv } from '@pilote/kpilote-shared/texte'
 import { type QueryClient } from '@tanstack/react-query'
 
 import { groupNodesByRootReferentiel } from '@/lib/individus/hierarchy'
-import {
-  normalizeSelection,
-  parseIndividusParam,
-  serializeIndividusParam,
-} from '@/lib/individus/selection'
+import { normalizeSelection } from '@/lib/individus/selection'
 import { loadHierarchyFromReferentiels } from '@/queries/referentiels'
 
 // Charge la hiérarchie des sélecteurs et remet la sélection de l'URL en forme
@@ -24,9 +21,9 @@ export const ensureSelectionIndividus = async ({
 }): Promise<void> => {
   const nodes = await loadHierarchyFromReferentiels({ queryClient, referentielIds })
   if (individus === undefined) return
-  const normalized = serializeIndividusParam(
+  const normalized = joinCsv(
     normalizeSelection({
-      individus: parseIndividusParam(individus),
+      individus: splitCsv(individus),
       groups: groupNodesByRootReferentiel(nodes),
     }),
   )

@@ -1,3 +1,4 @@
+import { joinCsv } from '@pilote/kpilote-shared/texte'
 import { uniq } from 'es-toolkit'
 
 import {
@@ -9,17 +10,9 @@ import {
 
 // Sélection d'individus de l'accueil : au plus un individu par stack de
 // référentiels (un stack = un référentiel racine et son sous-arbre, voir
-// groupNodesByRootReferentiel). Dans l'URL : `?individus=DEPT-84,BV-05`.
+// groupNodesByRootReferentiel). Dans l'URL : `?individus=DEPT-84,BV-05`, lue par
+// splitCsv et écrite par joinCsv.
 // Sélection vide : chaque indicateur se lit sur son individu racine (API).
-
-export const parseIndividusParam = (raw: string | undefined): string[] =>
-  (raw ?? '')
-    .split(',')
-    .map((segment) => segment.trim())
-    .filter((segment) => segment.length > 0)
-
-export const serializeIndividusParam = (individus: ReadonlyArray<string>): string | undefined =>
-  individus.length > 0 ? individus.join(',') : undefined
 
 // Garde le premier individu connu de chaque stack, dans l'ordre des stacks. Un
 // individu absent de la hiérarchie est ignoré.
@@ -73,7 +66,7 @@ const toLien = ({
   individuOuvert: IndividuNode | undefined
   selection: ReadonlyArray<string>
 }): LienFiche => {
-  const individus = serializeIndividusParam(selection)
+  const individus = joinCsv(selection)
   return {
     ...(individuOuvert
       ? { individu: individuOuvert.individu.id, referentiel: individuOuvert.referentiel.id }

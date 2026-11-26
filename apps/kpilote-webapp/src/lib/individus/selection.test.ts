@@ -6,11 +6,9 @@ import { buildOrderedNodes, groupNodesByRootReferentiel } from './hierarchy'
 import {
   buildSelecteurs,
   normalizeSelection,
-  parseIndividusParam,
   resolveLectureCollection,
   resolveLectureIndicateur,
   selectIndividu,
-  serializeIndividusParam,
 } from './selection'
 
 const referentiel = (id: string, nom: string): ReferentielApiModel => ({
@@ -59,21 +57,6 @@ const nodes = buildOrderedNodes(
   new Map(referentiels.map((ref) => [ref.id, ref] as const)),
 )
 const groups = groupNodesByRootReferentiel(nodes)
-
-describe('parseIndividusParam / serializeIndividusParam', () => {
-  it('lit une liste CSV en ignorant les segments vides', () => {
-    expect(parseIndividusParam('DEPT-84, ,BV-05,')).toEqual(['DEPT-84', 'BV-05'])
-  })
-
-  it('lit une sélection vide sans paramètre', () => {
-    expect(parseIndividusParam(undefined)).toEqual([])
-  })
-
-  it("n'écrit pas de paramètre pour une sélection vide", () => {
-    expect(serializeIndividusParam([])).toBeUndefined()
-    expect(serializeIndividusParam(['DEPT-84', 'BV-05'])).toBe('DEPT-84,BV-05')
-  })
-})
 
 describe('normalizeSelection', () => {
   it("garde un individu par stack, dans l'ordre des stacks", () => {
