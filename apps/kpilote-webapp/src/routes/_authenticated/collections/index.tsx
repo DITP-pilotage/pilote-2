@@ -29,7 +29,7 @@ const collectionsSearchSchema = z.object({
   cursor: z.string().optional(),
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
   // Sélection d'individus, un par stack de référentiels (`DEPT-84,BV-05`).
-  individus: z.string().optional(),
+  selectedIndividus: z.string().optional(),
 })
 
 export const Route = createFileRoute('/_authenticated/collections/')({
@@ -42,9 +42,13 @@ export const Route = createFileRoute('/_authenticated/collections/')({
     await ensureSelectionIndividus({
       queryClient,
       referentielIds,
-      individus: deps.individus,
-      onChange: (individus) => {
-        throw redirect({ to: '/collections', search: { ...deps, individus }, replace: true })
+      selectedIndividus: deps.selectedIndividus,
+      onChange: (selectedIndividus) => {
+        throw redirect({
+          to: '/collections',
+          search: { ...deps, selectedIndividus },
+          replace: true,
+        })
       },
     })
 
@@ -70,7 +74,7 @@ function CollectionsListComponent() {
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
   const { groups } = useIndividuHierarchy(referentielIds)
-  const selection = splitCsv(search.individus)
+  const selection = splitCsv(search.selectedIndividus)
 
   const lecture = resolveLectureCollection({ selection })
 
@@ -87,9 +91,9 @@ function CollectionsListComponent() {
               analytics.trackEvent(
                 analyticsEvents.dashboard.individuChange({ referentiel_id: referentiel }),
               )
-              const individus = joinCsv(selectIndividu({ selection, groups, individu }))
+              const selectedIndividus = joinCsv(selectIndividu({ selection, groups, individu }))
               startTransition(() => {
-                void navigate({ search: (prev) => ({ ...prev, individus }) })
+                void navigate({ search: (prev) => ({ ...prev, selectedIndividus }) })
               })
             }}
           />

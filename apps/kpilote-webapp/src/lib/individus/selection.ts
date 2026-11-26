@@ -10,7 +10,7 @@ import {
 
 // Sélection d'individus de l'accueil : au plus un individu par stack de
 // référentiels (un stack = un référentiel racine et son sous-arbre, voir
-// groupNodesByRootReferentiel). Dans l'URL : `?individus=DEPT-84,BV-05`, lue par
+// groupNodesByRootReferentiel). Dans l'URL : `?selectedIndividus=DEPT-84,BV-05`, lue par
 // splitCsv et écrite par joinCsv.
 // Sélection vide : chaque indicateur se lit sur son individu racine (API).
 
@@ -49,7 +49,7 @@ export const selectIndividu = ({
 // Search d'un lien vers une fiche (indicateur ou collection) : l'individu sur
 // lequel l'ouvrir, et la sélection du tableau de bord, que la fiche rend par son
 // lien de retour.
-export type LienFiche = { individu?: string; referentiel?: string; individus?: string }
+export type LienFiche = { individu?: string; referentiel?: string; selectedIndividus?: string }
 
 export type Lecture = {
   // Individus à transmettre à l'API ; undefined pour lire les individus racines.
@@ -66,12 +66,12 @@ const toLien = ({
   individuOuvert: IndividuNode | undefined
   selection: ReadonlyArray<string>
 }): LienFiche => {
-  const individus = joinCsv(selection)
+  const selectedIndividus = joinCsv(selection)
   return {
     ...(individuOuvert
       ? { individu: individuOuvert.individu.id, referentiel: individuOuvert.referentiel.id }
       : {}),
-    ...(individus ? { individus } : {}),
+    ...(selectedIndividus ? { selectedIndividus } : {}),
   }
 }
 

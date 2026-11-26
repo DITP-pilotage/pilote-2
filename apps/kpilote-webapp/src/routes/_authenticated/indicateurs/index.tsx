@@ -29,7 +29,7 @@ const indicateursSearchSchema = z.object({
   cursor: z.string().optional(),
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
   // Sélection d'individus, un par stack de référentiels (`DEPT-84,BV-05`).
-  individus: z.string().optional(),
+  selectedIndividus: z.string().optional(),
 })
 
 type IndicateursSearch = z.infer<typeof indicateursSearchSchema>
@@ -49,9 +49,13 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
     await ensureSelectionIndividus({
       queryClient,
       referentielIds,
-      individus: deps.individus,
-      onChange: (individus) => {
-        throw redirect({ to: '/indicateurs', search: { ...deps, individus }, replace: true })
+      selectedIndividus: deps.selectedIndividus,
+      onChange: (selectedIndividus) => {
+        throw redirect({
+          to: '/indicateurs',
+          search: { ...deps, selectedIndividus },
+          replace: true,
+        })
       },
     })
 
@@ -69,7 +73,7 @@ function IndicateursListComponent() {
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
   const { nodes, groups } = useIndividuHierarchy(referentielIds)
-  const selection = splitCsv(search.individus)
+  const selection = splitCsv(search.selectedIndividus)
 
   return (
     <Page
@@ -84,9 +88,9 @@ function IndicateursListComponent() {
               analytics.trackEvent(
                 analyticsEvents.dashboard.individuChange({ referentiel_id: referentiel }),
               )
-              const individus = joinCsv(selectIndividu({ selection, groups, individu }))
+              const selectedIndividus = joinCsv(selectIndividu({ selection, groups, individu }))
               startTransition(() => {
-                void navigate({ search: (prev) => ({ ...prev, individus }) })
+                void navigate({ search: (prev) => ({ ...prev, selectedIndividus }) })
               })
             }}
           />

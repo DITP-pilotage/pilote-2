@@ -11,21 +11,21 @@ import { loadHierarchyFromReferentiels } from '@/queries/referentiels'
 export const ensureSelectionIndividus = async ({
   queryClient,
   referentielIds,
-  individus,
+  selectedIndividus,
   onChange,
 }: {
   queryClient: QueryClient
   referentielIds: ReadonlyArray<string>
-  individus: string | undefined
-  onChange: (individus: string | undefined) => never
+  selectedIndividus: string | undefined
+  onChange: (selectedIndividus: string | undefined) => never
 }): Promise<void> => {
   const nodes = await loadHierarchyFromReferentiels({ queryClient, referentielIds })
-  if (individus === undefined) return
+  if (selectedIndividus === undefined) return
   const normalized = joinCsv(
     normalizeSelection({
-      individus: splitCsv(individus),
+      individus: splitCsv(selectedIndividus),
       groups: groupNodesByRootReferentiel(nodes),
     }),
   )
-  if (normalized !== individus) onChange(normalized)
+  if (normalized !== selectedIndividus) onChange(normalized)
 }

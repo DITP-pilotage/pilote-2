@@ -27,7 +27,7 @@ export function DashboardSwitch() {
         analytics.trackEvent(analyticsEvents.dashboard.view({ from: vue, to: prochaineVue }))
         void navigate({
           to: ROUTE_BY_VUE[prochaineVue],
-          search: { individus: search.individus },
+          search: { selectedIndividus: search.selectedIndividus },
         })
       }}
       options={[

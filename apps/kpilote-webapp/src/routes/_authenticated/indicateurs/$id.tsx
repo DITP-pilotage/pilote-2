@@ -49,7 +49,7 @@ const searchSchema = z.object({
   individu: individuPublicIdSchema.optional(),
   referentiel: referentielPublicIdSchema.optional(),
   // Sélection du tableau de bord, rendue par le lien de retour.
-  individus: z.string().optional(),
+  selectedIndividus: z.string().optional(),
   // Modalités séparées par une virgule, au plus une par axe ; un axe absent vaut « Tous ».
   modalites: z.string().optional(),
   // Axe du graphique « Décomposer par » ; un axe non déclaré est ignoré.
@@ -186,7 +186,7 @@ function IndicateurDetailComponent() {
 
   const back = (
     <BackLink asChild>
-      <Link to="/indicateurs" search={{ individus: search.individus }}>
+      <Link to="/indicateurs" search={{ selectedIndividus: search.selectedIndividus }}>
         Tableau de bord
       </Link>
     </BackLink>

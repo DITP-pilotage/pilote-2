@@ -41,7 +41,7 @@ const searchSchema = z.object({
   individu: individuPublicIdSchema.optional(),
   referentiel: referentielPublicIdSchema.optional(),
   // Sélection du tableau de bord, rendue par le lien de retour.
-  individus: z.string().optional(),
+  selectedIndividus: z.string().optional(),
   onglet: z.enum(['resultats', 'gouvernance', 'confiance', 'commentaires']).default('resultats'),
 })
 
@@ -140,7 +140,7 @@ function CollectionDetailComponent() {
 
   const back = (
     <BackLink asChild>
-      <Link to="/collections" search={{ individus: search.individus }}>
+      <Link to="/collections" search={{ selectedIndividus: search.selectedIndividus }}>
         Tableau de bord
       </Link>
     </BackLink>
@@ -216,7 +216,9 @@ function CollectionDetailComponent() {
                             individus: [cardContext.individu],
                             lien: {
                               ...cardContext,
-                              ...(search.individus ? { individus: search.individus } : {}),
+                              ...(search.selectedIndividus
+                                ? { selectedIndividus: search.selectedIndividus }
+                                : {}),
                             },
                             indisponible: false,
                           },

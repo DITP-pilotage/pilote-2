@@ -108,7 +108,11 @@ describe('resolveLectureIndicateur', () => {
 
     expect(lecture).toEqual({
       individus: ['DEPT-84', 'BV-05'],
-      lien: { individu: 'DEPT-84', referentiel: 'REF-DEPT', individus: 'DEPT-84,BV-05' },
+      lien: {
+        individu: 'DEPT-84',
+        referentiel: 'REF-DEPT',
+        selectedIndividus: 'DEPT-84,BV-05',
+      },
       indisponible: false,
     })
   })
@@ -122,7 +126,7 @@ describe('resolveLectureIndicateur', () => {
 
     expect(lecture).toEqual({
       individus: ['DEPT-84'],
-      lien: { individus: 'DEPT-84' },
+      lien: { selectedIndividus: 'DEPT-84' },
       indisponible: true,
     })
   })
@@ -147,7 +151,7 @@ describe('resolveLectureCollection', () => {
   it('lit toute la sélection et ne transmet que la sélection à la fiche', () => {
     expect(resolveLectureCollection({ selection: ['BV-05', 'DEPT-84'] })).toEqual({
       individus: ['BV-05', 'DEPT-84'],
-      lien: { individus: 'BV-05,DEPT-84' },
+      lien: { selectedIndividus: 'BV-05,DEPT-84' },
       indisponible: false,
     })
   })
