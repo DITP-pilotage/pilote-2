@@ -99,6 +99,60 @@ describe("GetChantiersQuery — plusieurs territoires", () => {
   );
 });
 
+describe("GetChantiersQuery — synthèse des résultats", () => {
+  const query = new GetChantiersQuery({ prisma: new PrismaPilote() });
+
+  it(
+    "renvoie la dernière synthèse publiée, pas un brouillon plus récent",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await fixtures.chantierIdentite({
+        ministeres_acronymes: ["MIN-01"],
+        statut: "PUBLIE",
+      });
+      const territoire = {
+        territoire_code: "DEPT-29",
+        code_insee: "29",
+        maille: "DEPT" as const,
+      };
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        ...territoire,
+        zone_id: "DEPT-29",
+        est_applicable: true,
+      });
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        ...territoire,
+        statut: "PUBLIE",
+        commentaire: "<p>Synthèse publiée</p>",
+        date_modification: new Date("2026-05-01T10:00:00Z"),
+      });
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        ...territoire,
+        statut: "BROUILLON",
+        commentaire: "<p>Test brouillon</p>",
+        date_modification: new Date("2026-11-10T10:00:00Z"),
+      });
+
+      // When
+      const [resultat] = await query.execute({
+        territoireCodes: ["DEPT-29"],
+        jalon: 2026,
+      });
+
+      // Then
+      expect(
+        resultat.chantiers.map((chantierResult) => ({
+          id: chantierResult.chantier.id,
+          commentaire: chantierResult.synthese?.commentaire,
+        })),
+      ).toEqual([{ id: chantier.id, commentaire: "<p>Synthèse publiée</p>" }]);
+    }),
+  );
+});
+
 describe("GetChantiersQuery — taux d'avancement", () => {
   const query = new GetChantiersQuery({ prisma: new PrismaPilote() });
 

@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import { $Enums, type Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { SEUIL_ECART_MEDIANE } from "@/shared/chantier/avancement/ecartMediane";
 
@@ -89,7 +89,9 @@ export class GetChantiersQuery {
         chantier_territoire_jalon: {
           where: { jalon: params.jalon },
         },
+        // Sans filtre, un brouillon plus récent remplaçait la synthèse publiée
         syntheses_des_resultats: {
+          where: { statut: $Enums.statut_publication.PUBLIE },
           orderBy: { date_modification: "desc" },
           take: 1,
         },
