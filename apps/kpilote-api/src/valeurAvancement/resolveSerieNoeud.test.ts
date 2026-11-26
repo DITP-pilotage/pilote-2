@@ -12,12 +12,12 @@ import {
   type SaisieTronquee,
 } from '@/valeurAvancement/resolveSerieNoeud'
 
-const d = (n: number): Decimal => new Decimal(n)
-const b = parseBucket
+const decimal = (valeur: number): Decimal => new Decimal(valeur)
+const toBucket = parseBucket
 const saisie = (bucket: string, valeur: number, dateOrigine = bucket): SaisieTronquee => ({
-  bucket: b(bucket),
-  dateOrigine: b(dateOrigine),
-  valeur: d(valeur),
+  bucket: toBucket(bucket),
+  dateOrigine: toBucket(dateOrigine),
+  valeur: decimal(valeur),
 })
 
 const REF_PAYS = 'ref-pays'
@@ -41,30 +41,30 @@ const TOUS: ReadonlyArray<IndividuRef> = [FRANCE, REG_N, REG_S, DEPT_A, DEPT_B, 
 // `individusReferentiel` n'a pas de référentiel : il est saisi, comme un
 // individu dont le référentiel n'est pas lié à l'indicateur.
 const buildContext = (input: {
-  enfantsParParent?: Record<string, IndividuRef[]>
-  fonctionAgregationParReferentiel?: Record<string, 'SUM' | 'AVG' | 'NONE'>
-  serieFeuilleParIndividu?: Record<string, SaisieTronquee[]>
+  enfantsByParent?: Record<string, IndividuRef[]>
+  fonctionAgregationByReferentiel?: Record<string, 'SUM' | 'AVG' | 'NONE'>
+  serieFeuilleByIndividu?: Record<string, SaisieTronquee[]>
   individusReferentiel?: Record<string, string>
 }) => {
   const referentiels = input.individusReferentiel ?? {}
-  const saisies = Object.entries(input.serieFeuilleParIndividu ?? {})
+  const saisies = Object.entries(input.serieFeuilleByIndividu ?? {})
   return buildGrapheSerie({
     individus: TOUS.map((individu) => ({
       ...individu,
       referentielId: referentiels[individu.id] ?? '',
     })),
-    enfantsParParent: new Map(Object.entries(input.enfantsParParent ?? {})),
-    fonctionAgregationParReferentiel: new Map(
-      Object.entries(input.fonctionAgregationParReferentiel ?? {}),
+    enfantsByParent: new Map(Object.entries(input.enfantsByParent ?? {})),
+    fonctionAgregationByReferentiel: new Map(
+      Object.entries(input.fonctionAgregationByReferentiel ?? {}),
     ),
     axes: [],
     modalites: [],
-    cellules: saisies.map(([individuId, liste]) => ({
+    cellules: saisies.map(([individuId, individuSaisies]) => ({
       individuId,
       combinaisonId: COMBINAISON,
-      saisies: liste,
+      saisies: individuSaisies,
     })),
-    modalitesParCombinaison: new Map(),
+    modalitesByCombinaison: new Map(),
   })
 }
 
@@ -89,7 +89,7 @@ describe('resolveSerieNoeud — feuille', () => {
   it('retourne la série de saisies tronquée pour une feuille', async () => {
     const { graphe, noeud } = buildContext({
       individusReferentiel: { [DEPT_A.id]: REF_DEPT },
-      serieFeuilleParIndividu: {
+      serieFeuilleByIndividu: {
         [DEPT_A.id]: [
           saisie('2025-01-01', 10, '2025-01-18'),
           saisie('2025-02-01', 20, '2025-02-05'),
@@ -102,24 +102,24 @@ describe('resolveSerieNoeud — feuille', () => {
     expect(serie).toHaveLength(2)
     expect(serie[0]).toEqual({
       type: 'saisie',
-      bucket: b('2025-01-01'),
-      dateOrigine: b('2025-01-18'),
-      valeur: d(10),
+      bucket: toBucket('2025-01-01'),
+      dateOrigine: toBucket('2025-01-18'),
+      valeur: decimal(10),
     })
     expect(serie[1]).toEqual({
       type: 'saisie',
-      bucket: b('2025-02-01'),
-      dateOrigine: b('2025-02-05'),
-      valeur: d(20),
+      bucket: toBucket('2025-02-01'),
+      dateOrigine: toBucket('2025-02-05'),
+      valeur: decimal(20),
     })
   })
 
   it('traite un nœud sans fonctionAgregation comme une feuille (lit ses saisies)', async () => {
     const { graphe, noeud } = buildContext({
       individusReferentiel: { [FRANCE.id]: REF_PAYS },
-      enfantsParParent: { [FRANCE.id]: [REG_N] },
-      fonctionAgregationParReferentiel: { [REF_PAYS]: 'NONE' },
-      serieFeuilleParIndividu: {
+      enfantsByParent: { [FRANCE.id]: [REG_N] },
+      fonctionAgregationByReferentiel: { [REF_PAYS]: 'NONE' },
+      serieFeuilleByIndividu: {
         [FRANCE.id]: [saisie('2025-01-01', 99)],
       },
     })
@@ -127,7 +127,7 @@ describe('resolveSerieNoeud — feuille', () => {
     const serie = await resolveSerieNoeud({ noeud: noeud({ individu: FRANCE }), graphe, cache })
 
     expect(serie).toHaveLength(1)
-    expect(serie[0]).toMatchObject({ type: 'saisie', valeur: d(99) })
+    expect(serie[0]).toMatchObject({ type: 'saisie', valeur: decimal(99) })
   })
 })
 
@@ -139,9 +139,9 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
         [DEPT_A.id]: REF_DEPT,
         [DEPT_B.id]: REF_DEPT,
       },
-      enfantsParParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
-      fonctionAgregationParReferentiel: { [REF_REG]: 'SUM' },
-      serieFeuilleParIndividu: {
+      enfantsByParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
+      fonctionAgregationByReferentiel: { [REF_REG]: 'SUM' },
+      serieFeuilleByIndividu: {
         [DEPT_A.id]: [saisie('2025-01-01', 10), saisie('2025-02-01', 15)],
         [DEPT_B.id]: [saisie('2025-01-01', 100), saisie('2025-02-01', 200)],
       },
@@ -152,15 +152,15 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
       type: 'derivee',
-      bucket: b('2025-01-01'),
-      valeur: d(110),
+      bucket: toBucket('2025-01-01'),
+      valeur: decimal(110),
       fonctionAgregation: 'SUM',
       couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
     })
     expect(serie[1]).toMatchObject({
       type: 'derivee',
-      bucket: b('2025-02-01'),
-      valeur: d(215),
+      bucket: toBucket('2025-02-01'),
+      valeur: decimal(215),
       couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
     })
   })
@@ -172,9 +172,9 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
         [DEPT_A.id]: REF_DEPT,
         [DEPT_B.id]: REF_DEPT,
       },
-      enfantsParParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
-      fonctionAgregationParReferentiel: { [REF_REG]: 'SUM' },
-      serieFeuilleParIndividu: {
+      enfantsByParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
+      fonctionAgregationByReferentiel: { [REF_REG]: 'SUM' },
+      serieFeuilleByIndividu: {
         [DEPT_A.id]: [saisie('2025-01-01', 10), saisie('2025-03-01', 30)],
         [DEPT_B.id]: [saisie('2025-02-01', 50)],
       },
@@ -185,16 +185,16 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
     expect(serie).toHaveLength(3)
     // 2025-01 : seul DEPT-A connu → valeur=10, couverture 1/2
     expect(serie[0]).toMatchObject({
-      bucket: b('2025-01-01'),
-      valeur: d(10),
+      bucket: toBucket('2025-01-01'),
+      valeur: decimal(10),
       couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
     })
     expect((serie[0] as { contributions: unknown[] }).contributions).toEqual([
       {
         individuPublicId: 'DEPT-A',
         modalites: [],
-        valeur: d(10),
-        dateOrigine: b('2025-01-01'),
+        valeur: decimal(10),
+        dateOrigine: toBucket('2025-01-01'),
         source: 'saisie',
       },
       {
@@ -207,12 +207,12 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
     ])
     // 2025-02 : DEPT-A carry-forward (10) + DEPT-B (50) → 60, couverture 2/2
     expect(serie[1]).toMatchObject({
-      bucket: b('2025-02-01'),
-      valeur: d(60),
+      bucket: toBucket('2025-02-01'),
+      valeur: decimal(60),
       couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
     })
     // 2025-03 : DEPT-A (30) + DEPT-B carry-forward (50) → 80
-    expect(serie[2]).toMatchObject({ bucket: b('2025-03-01'), valeur: d(80) })
+    expect(serie[2]).toMatchObject({ bucket: toBucket('2025-03-01'), valeur: decimal(80) })
   })
 
   it('trie les contributions par publicId', async () => {
@@ -223,9 +223,9 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
         [DEPT_B.id]: REF_DEPT,
         [DEPT_A.id]: REF_DEPT,
       },
-      enfantsParParent: { [REG_S.id]: [DEPT_B, DEPT_A] },
-      fonctionAgregationParReferentiel: { [REF_REG]: 'SUM' },
-      serieFeuilleParIndividu: {
+      enfantsByParent: { [REG_S.id]: [DEPT_B, DEPT_A] },
+      fonctionAgregationByReferentiel: { [REF_REG]: 'SUM' },
+      serieFeuilleByIndividu: {
         [DEPT_A.id]: [saisie('2025-01-01', 1)],
         [DEPT_B.id]: [saisie('2025-01-01', 2)],
       },
@@ -235,7 +235,10 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
     const contributions = (serie[0] as { contributions: { individuPublicId: string }[] })
       .contributions
 
-    expect(contributions.map((c) => c.individuPublicId)).toEqual(['DEPT-A', 'DEPT-B'])
+    expect(contributions.map((contribution) => contribution.individuPublicId)).toEqual([
+      'DEPT-A',
+      'DEPT-B',
+    ])
   })
 
   it("n'émet rien si aucun enfant n'a jamais saisi", async () => {
@@ -245,8 +248,8 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
         [DEPT_A.id]: REF_DEPT,
         [DEPT_B.id]: REF_DEPT,
       },
-      enfantsParParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
-      fonctionAgregationParReferentiel: { [REF_REG]: 'SUM' },
+      enfantsByParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
+      fonctionAgregationByReferentiel: { [REF_REG]: 'SUM' },
     })
 
     expect(await resolveWithFreshCache({ graphe, noeud, individu: REG_S })).toEqual([])
@@ -258,9 +261,9 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
         [REG_S.id]: REF_REG,
         [DEPT_A.id]: REF_DEPT,
       },
-      enfantsParParent: { [REG_S.id]: [DEPT_A] },
-      fonctionAgregationParReferentiel: { [REF_REG]: 'SUM' },
-      serieFeuilleParIndividu: {
+      enfantsByParent: { [REG_S.id]: [DEPT_A] },
+      fonctionAgregationByReferentiel: { [REF_REG]: 'SUM' },
+      serieFeuilleByIndividu: {
         [REG_S.id]: [saisie('2025-01-01', 9999)], // saisie parasite sur le nœud agrégé
         [DEPT_A.id]: [saisie('2025-01-01', 42)],
       },
@@ -269,7 +272,7 @@ describe('resolveSerieNoeud — agrégation 1 niveau', () => {
     const serie = await resolveWithFreshCache({ graphe, noeud, individu: REG_S })
 
     expect(serie).toHaveLength(1)
-    expect(serie[0]).toMatchObject({ type: 'derivee', valeur: d(42) })
+    expect(serie[0]).toMatchObject({ type: 'derivee', valeur: decimal(42) })
   })
 })
 
@@ -281,9 +284,9 @@ describe('resolveSerieNoeud — agrégation AVG', () => {
         [DEPT_A.id]: REF_DEPT,
         [DEPT_B.id]: REF_DEPT,
       },
-      enfantsParParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
-      fonctionAgregationParReferentiel: { [REF_REG]: 'AVG' },
-      serieFeuilleParIndividu: {
+      enfantsByParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
+      fonctionAgregationByReferentiel: { [REF_REG]: 'AVG' },
+      serieFeuilleByIndividu: {
         [DEPT_A.id]: [saisie('2025-01-01', 10), saisie('2025-02-01', 20)],
         [DEPT_B.id]: [saisie('2025-01-01', 30), saisie('2025-02-01', 40)],
       },
@@ -294,12 +297,12 @@ describe('resolveSerieNoeud — agrégation AVG', () => {
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
       type: 'derivee',
-      bucket: b('2025-01-01'),
-      valeur: d(20), // (10 + 30) / 2
+      bucket: toBucket('2025-01-01'),
+      valeur: decimal(20), // (10 + 30) / 2
       fonctionAgregation: 'AVG',
       couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
     })
-    expect(serie[1]).toMatchObject({ bucket: b('2025-02-01'), valeur: d(30) }) // (20 + 40) / 2
+    expect(serie[1]).toMatchObject({ bucket: toBucket('2025-02-01'), valeur: decimal(30) }) // (20 + 40) / 2
   })
 
   it('moyenne sur les enfants connus uniquement (permissif, comme SUM)', async () => {
@@ -309,9 +312,9 @@ describe('resolveSerieNoeud — agrégation AVG', () => {
         [DEPT_A.id]: REF_DEPT,
         [DEPT_B.id]: REF_DEPT,
       },
-      enfantsParParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
-      fonctionAgregationParReferentiel: { [REF_REG]: 'AVG' },
-      serieFeuilleParIndividu: {
+      enfantsByParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
+      fonctionAgregationByReferentiel: { [REF_REG]: 'AVG' },
+      serieFeuilleByIndividu: {
         [DEPT_A.id]: [saisie('2025-01-01', 10)],
         [DEPT_B.id]: [saisie('2025-02-01', 40)],
       },
@@ -322,12 +325,12 @@ describe('resolveSerieNoeud — agrégation AVG', () => {
     expect(serie).toHaveLength(2)
     // 2025-01 : seul DEPT-A → moyenne sur 1 = 10, couverture 1/2
     expect(serie[0]).toMatchObject({
-      bucket: b('2025-01-01'),
-      valeur: d(10),
+      bucket: toBucket('2025-01-01'),
+      valeur: decimal(10),
       couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
     })
     // 2025-02 : DEPT-A carry-forward (10) + DEPT-B (40) → moyenne 25
-    expect(serie[1]).toMatchObject({ bucket: b('2025-02-01'), valeur: d(25) })
+    expect(serie[1]).toMatchObject({ bucket: toBucket('2025-02-01'), valeur: decimal(25) })
   })
 
   it("n'émet rien si aucun enfant n'a jamais saisi (évite la division par zéro)", async () => {
@@ -337,8 +340,8 @@ describe('resolveSerieNoeud — agrégation AVG', () => {
         [DEPT_A.id]: REF_DEPT,
         [DEPT_B.id]: REF_DEPT,
       },
-      enfantsParParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
-      fonctionAgregationParReferentiel: { [REF_REG]: 'AVG' },
+      enfantsByParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
+      fonctionAgregationByReferentiel: { [REF_REG]: 'AVG' },
     })
 
     expect(await resolveWithFreshCache({ graphe, noeud, individu: REG_S })).toEqual([])
@@ -352,9 +355,9 @@ describe('resolveSerieNoeud — agrégation AVG', () => {
         [DEPT_B.id]: REF_DEPT,
         [DEPT_C.id]: REF_DEPT,
       },
-      enfantsParParent: { [REG_S.id]: [DEPT_A, DEPT_B, DEPT_C] },
-      fonctionAgregationParReferentiel: { [REF_REG]: 'AVG' },
-      serieFeuilleParIndividu: {
+      enfantsByParent: { [REG_S.id]: [DEPT_A, DEPT_B, DEPT_C] },
+      fonctionAgregationByReferentiel: { [REF_REG]: 'AVG' },
+      serieFeuilleByIndividu: {
         [DEPT_A.id]: [saisie('2025-01-01', 1)],
         [DEPT_B.id]: [saisie('2025-01-01', 2)],
         [DEPT_C.id]: [saisie('2025-01-01', 2)],
@@ -381,13 +384,13 @@ describe('resolveSerieNoeud — agrégation multi-niveaux', () => {
         [DEPT_C.id]: REF_DEPT,
         [DEPT_D.id]: REF_DEPT,
       },
-      enfantsParParent: {
+      enfantsByParent: {
         [FRANCE.id]: [REG_N, REG_S],
         [REG_N.id]: [DEPT_A, DEPT_B],
         [REG_S.id]: [DEPT_C, DEPT_D],
       },
-      fonctionAgregationParReferentiel: { [REF_PAYS]: 'SUM', [REF_REG]: 'SUM' },
-      serieFeuilleParIndividu: {
+      fonctionAgregationByReferentiel: { [REF_PAYS]: 'SUM', [REF_REG]: 'SUM' },
+      serieFeuilleByIndividu: {
         [DEPT_A.id]: [saisie('2025-01-01', 1)],
         [DEPT_B.id]: [saisie('2025-01-01', 2)],
         [DEPT_C.id]: [saisie('2025-01-01', 10)],
@@ -400,8 +403,8 @@ describe('resolveSerieNoeud — agrégation multi-niveaux', () => {
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({
       type: 'derivee',
-      bucket: b('2025-01-01'),
-      valeur: d(33),
+      bucket: toBucket('2025-01-01'),
+      valeur: decimal(33),
       couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
     })
     // Contributions France = régions, source = 'derivee'
@@ -411,15 +414,15 @@ describe('resolveSerieNoeud — agrégation multi-niveaux', () => {
       {
         individuPublicId: 'REG-N',
         modalites: [],
-        valeur: d(3),
-        dateOrigine: b('2025-01-01'),
+        valeur: decimal(3),
+        dateOrigine: toBucket('2025-01-01'),
         source: 'derivee',
       },
       {
         individuPublicId: 'REG-S',
         modalites: [],
-        valeur: d(30),
-        dateOrigine: b('2025-01-01'),
+        valeur: decimal(30),
+        dateOrigine: toBucket('2025-01-01'),
         source: 'derivee',
       },
     ])
@@ -434,13 +437,13 @@ describe('resolveSerieNoeud — agrégation multi-niveaux', () => {
         [DEPT_A.id]: REF_DEPT,
         [DEPT_C.id]: REF_DEPT,
       },
-      enfantsParParent: {
+      enfantsByParent: {
         [FRANCE.id]: [REG_N, REG_S],
         [REG_N.id]: [DEPT_A],
         [REG_S.id]: [DEPT_C],
       },
-      fonctionAgregationParReferentiel: { [REF_PAYS]: 'SUM', [REF_REG]: 'SUM' },
-      serieFeuilleParIndividu: {
+      fonctionAgregationByReferentiel: { [REF_PAYS]: 'SUM', [REF_REG]: 'SUM' },
+      serieFeuilleByIndividu: {
         [DEPT_A.id]: [saisie('2025-01-01', 5)],
         [DEPT_C.id]: [saisie('2025-03-01', 50)],
       },
@@ -450,16 +453,16 @@ describe('resolveSerieNoeud — agrégation multi-niveaux', () => {
 
     expect(serie).toHaveLength(2)
     // 2025-01 : REG-N = 5, REG-S inconnu → 5
-    expect(serie[0]).toMatchObject({ bucket: b('2025-01-01'), valeur: d(5) })
+    expect(serie[0]).toMatchObject({ bucket: toBucket('2025-01-01'), valeur: decimal(5) })
     // 2025-03 : REG-N (carry-forward 5) + REG-S (50) → 55
-    expect(serie[1]).toMatchObject({ bucket: b('2025-03-01'), valeur: d(55) })
+    expect(serie[1]).toMatchObject({ bucket: toBucket('2025-03-01'), valeur: decimal(55) })
   })
 })
 
 // Nœud d'un indicateur à axes, construit à la main : le moteur ne lit que le
 // graphe, il ne sait pas d'où viennent les modalités.
-const noeudAvecModalites = (individu: IndividuRef, modalites: string[]): Noeud => ({
-  cle: [individu.id, ...modalites].join('~'),
+const noeudWithModalites = (individu: IndividuRef, modalites: string[]): Noeud => ({
+  key: [individu.id, ...modalites].join('~'),
   individuPublicId: individu.publicId,
   modalites,
 })
@@ -467,14 +470,14 @@ const noeudAvecModalites = (individu: IndividuRef, modalites: string[]): Noeud =
 describe('resolveSerieNoeud — nœuds avec modalités', () => {
   it('porte les modalités de chaque enfant dans les contributions, triées après l’individu', async () => {
     // DEPT-A · Tous = FT + CAF : deux enfants du même individu.
-    const tous = noeudAvecModalites(DEPT_A, [])
-    const ft = noeudAvecModalites(DEPT_A, ['FT'])
-    const caf = noeudAvecModalites(DEPT_A, ['CAF'])
+    const tous = noeudWithModalites(DEPT_A, [])
+    const ft = noeudWithModalites(DEPT_A, ['FT'])
+    const caf = noeudWithModalites(DEPT_A, ['CAF'])
     const graphe: GrapheSerie = {
-      agregationParNoeud: new Map([[tous.cle, { fonction: 'SUM', enfants: [ft, caf] }]]),
-      saisiesParNoeud: new Map([
-        [ft.cle, [saisie('2025-01-01', 1)]],
-        [caf.cle, [saisie('2025-02-01', 2)]],
+      agregationByNoeud: new Map([[tous.key, { fonction: 'SUM', enfants: [ft, caf] }]]),
+      saisiesByNoeud: new Map([
+        [ft.key, [saisie('2025-01-01', 1)]],
+        [caf.key, [saisie('2025-02-01', 2)]],
       ]),
     }
 
@@ -482,22 +485,22 @@ describe('resolveSerieNoeud — nœuds avec modalités', () => {
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
-      valeur: d(1),
+      valeur: decimal(1),
       couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
     })
     expect((serie[1] as { contributions: unknown[] }).contributions).toEqual([
       {
         individuPublicId: 'DEPT-A',
         modalites: ['CAF'],
-        valeur: d(2),
-        dateOrigine: b('2025-02-01'),
+        valeur: decimal(2),
+        dateOrigine: toBucket('2025-02-01'),
         source: 'saisie',
       },
       {
         individuPublicId: 'DEPT-A',
         modalites: ['FT'],
-        valeur: d(1),
-        dateOrigine: b('2025-01-01'),
+        valeur: decimal(1),
+        dateOrigine: toBucket('2025-01-01'),
         source: 'saisie',
       },
     ])
@@ -508,13 +511,13 @@ describe('resolveSerieNoeud — mémoïsation', () => {
   it('retourne la même référence pour une même cellule réinterrogée', async () => {
     const { graphe, noeud } = buildContext({
       individusReferentiel: { [DEPT_A.id]: REF_DEPT },
-      serieFeuilleParIndividu: { [DEPT_A.id]: [saisie('2025-01-01', 7)] },
+      serieFeuilleByIndividu: { [DEPT_A.id]: [saisie('2025-01-01', 7)] },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-    const a = await resolveSerieNoeud({ noeud: noeud({ individu: DEPT_A }), graphe, cache })
-    const b = await resolveSerieNoeud({ noeud: noeud({ individu: DEPT_A }), graphe, cache })
-    expect(b).toBe(a)
+    const first = await resolveSerieNoeud({ noeud: noeud({ individu: DEPT_A }), graphe, cache })
+    const second = await resolveSerieNoeud({ noeud: noeud({ individu: DEPT_A }), graphe, cache })
+    expect(second).toBe(first)
   })
 
   it("partage la série d'un enfant entre deux appels parents distincts", async () => {
@@ -524,23 +527,23 @@ describe('resolveSerieNoeud — mémoïsation', () => {
         [REG_S.id]: REF_REG,
         [DEPT_A.id]: REF_DEPT,
       },
-      enfantsParParent: {
+      enfantsByParent: {
         [FRANCE.id]: [REG_S],
         [REG_S.id]: [DEPT_A],
       },
-      fonctionAgregationParReferentiel: { [REF_PAYS]: 'SUM', [REF_REG]: 'SUM' },
-      serieFeuilleParIndividu: { [DEPT_A.id]: [saisie('2025-01-01', 12)] },
+      fonctionAgregationByReferentiel: { [REF_PAYS]: 'SUM', [REF_REG]: 'SUM' },
+      serieFeuilleByIndividu: { [DEPT_A.id]: [saisie('2025-01-01', 12)] },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
     await resolveSerieNoeud({ noeud: noeud({ individu: REG_S }), graphe, cache })
-    const tailleAvant = cache.size
+    const sizeBefore = cache.size
 
     await resolveSerieNoeud({ noeud: noeud({ individu: FRANCE }), graphe, cache })
     // Cache : REG_S et DEPT_A déjà présents avant l'appel FRANCE, qui n'ajoute que France.
-    expect(cache.has(noeud({ individu: DEPT_A }).cle)).toBe(true)
-    expect(cache.has(noeud({ individu: REG_S }).cle)).toBe(true)
-    expect(cache.has(noeud({ individu: FRANCE }).cle)).toBe(true)
-    expect(cache.size).toBe(tailleAvant + 1)
+    expect(cache.has(noeud({ individu: DEPT_A }).key)).toBe(true)
+    expect(cache.has(noeud({ individu: REG_S }).key)).toBe(true)
+    expect(cache.has(noeud({ individu: FRANCE }).key)).toBe(true)
+    expect(cache.size).toBe(sizeBefore + 1)
   })
 })

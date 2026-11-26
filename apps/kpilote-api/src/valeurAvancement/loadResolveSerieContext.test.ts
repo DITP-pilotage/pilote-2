@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest'
 import { formatBucket, parseBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
-import { getValeursTronqueesPourIndividus } from '@/generated/prisma/sql'
-import { loadIndividusParPublicId } from '@/indicateur/loadIndicateurIndividuContext'
+import { getValeursTronqueesForIndividus } from '@/generated/prisma/sql'
+import { loadIndividusByPublicId } from '@/indicateur/loadIndicateurIndividuContext'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import {
@@ -18,40 +18,37 @@ import {
   testReferentielIds,
   testRegId,
 } from '@/test/randomIds'
-import {
-  keepDerniersPoints,
-  loadResolveSerieContext,
-} from '@/valeurAvancement/loadResolveSerieContext'
+import { keepLastPoints, loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
 import { type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
 
 // Résout les séries des cibles et rend un accès par publicId.
 const resolveSeries = async ({
   indicateur,
   cibles,
-  derniersPoints = null,
+  lastPointCount = null,
 }: {
   indicateur: string
   cibles: ReadonlyArray<string>
-  derniersPoints?: number | null
+  lastPointCount?: number | null
 }): Promise<(publicId: string) => ReadonlyArray<PointInterne>> => {
   const { id: indicateurId } = await db().indicateur.findUniqueOrThrow({
     where: { publicId: indicateur },
   })
-  const individusCibles = await loadIndividusParPublicId(cibles)
-  const { serieDe } = await loadResolveSerieContext({
+  const individusCibles = await loadIndividusByPublicId(cibles)
+  const { serieOf } = await loadResolveSerieContext({
     indicateurId,
     individusCibles,
     dateTrunc: 'month',
-    derniersPoints,
+    lastPointCount,
   })
   return (publicId) => {
     const cible = individusCibles.find((individu) => individu.publicId === publicId)
     if (!cible) throw new Error(`Cible inconnue : ${publicId}`)
-    return serieDe(cible)
+    return serieOf(cible)
   }
 }
 
-const resume = (serie: ReadonlyArray<PointInterne>) =>
+const summarize = (serie: ReadonlyArray<PointInterne>) =>
   serie.map((point) => ({
     date: formatBucket(point.bucket),
     valeur: point.valeur.toNumber(),
@@ -110,9 +107,9 @@ describe.concurrent('loadResolveSerieContext', () => {
     integrationTest(async () => {
       const { indicateur, region } = await regionAuxSaisiesDecalees()
 
-      const serieDe = await resolveSeries({ indicateur, cibles: [region] })
+      const serieOf = await resolveSeries({ indicateur, cibles: [region] })
 
-      expect(resume(serieDe(region))).toEqual([
+      expect(summarize(serieOf(region))).toEqual([
         { date: '2025-01-01', valeur: 11, type: 'derivee' },
         { date: '2025-02-01', valeur: 21, type: 'derivee' },
         { date: '2025-03-01', valeur: 23, type: 'derivee' },
@@ -122,23 +119,31 @@ describe.concurrent('loadResolveSerieContext', () => {
   )
 
   it(
-    'avec derniersPoints, rend les derniers points de la série entière',
+    'avec lastPointCount, rend les derniers points de la série entière',
     integrationTest(async () => {
       const { indicateur, region } = await regionAuxSaisiesDecalees()
-      const entiere = (await resolveSeries({ indicateur, cibles: [region] }))(region)
+      const fullSerie = (await resolveSeries({ indicateur, cibles: [region] }))(region)
 
-      const deuxDerniers = await resolveSeries({ indicateur, cibles: [region], derniersPoints: 2 })
-      const dernier = await resolveSeries({ indicateur, cibles: [region], derniersPoints: 1 })
+      const serieOfLastTwo = await resolveSeries({
+        indicateur,
+        cibles: [region],
+        lastPointCount: 2,
+      })
+      const serieOfLastOne = await resolveSeries({
+        indicateur,
+        cibles: [region],
+        lastPointCount: 1,
+      })
 
       // Contributions et couverture comprises : le report lit la dernière
       // valeur de chaque enfant, même plus ancienne que les points gardés.
-      expect(deuxDerniers(region)).toEqual(entiere.slice(-2))
-      expect(dernier(region)).toEqual(entiere.slice(-1))
+      expect(serieOfLastTwo(region)).toEqual(fullSerie.slice(-2))
+      expect(serieOfLastOne(region)).toEqual(fullSerie.slice(-1))
     }),
   )
 
   it(
-    'avec derniersPoints, rend le dernier point d’un indicateur à axes',
+    'avec lastPointCount, rend le dernier point d’un indicateur à axes',
     integrationTest(async () => {
       const indicateur = testIndicateurId()
       const dept = testDeptId()
@@ -164,16 +169,16 @@ describe.concurrent('loadResolveSerieContext', () => {
         { ...saisie(ft, '2025-03-01', 3), individu: { publicId: dept } },
         { ...saisie(caf, '2025-02-01', 2), individu: { publicId: dept } },
       )
-      const entiere = (await resolveSeries({ indicateur, cibles: [dept] }))(dept)
+      const fullSerie = (await resolveSeries({ indicateur, cibles: [dept] }))(dept)
 
-      const dernier = await resolveSeries({ indicateur, cibles: [dept], derniersPoints: 1 })
+      const serieOfLastOne = await resolveSeries({ indicateur, cibles: [dept], lastPointCount: 1 })
 
-      expect(resume(entiere)).toEqual([
+      expect(summarize(fullSerie)).toEqual([
         { date: '2025-01-01', valeur: 1, type: 'derivee' },
         { date: '2025-02-01', valeur: 3, type: 'derivee' },
         { date: '2025-03-01', valeur: 5, type: 'derivee' },
       ])
-      expect(dernier(dept)).toEqual(entiere.slice(-1))
+      expect(serieOfLastOne(dept)).toEqual(fullSerie.slice(-1))
     }),
   )
 
@@ -208,9 +213,11 @@ describe.concurrent('loadResolveSerieContext', () => {
         },
       )
 
-      const serieDe = await resolveSeries({ indicateur, cibles: [region] })
+      const serieOf = await resolveSeries({ indicateur, cibles: [region] })
 
-      expect(resume(serieDe(region))).toEqual([{ date: '2025-01-01', valeur: 99, type: 'saisie' }])
+      expect(summarize(serieOf(region))).toEqual([
+        { date: '2025-01-01', valeur: 99, type: 'saisie' },
+      ])
     }),
   )
 
@@ -219,14 +226,14 @@ describe.concurrent('loadResolveSerieContext', () => {
     integrationTest(async () => {
       const { indicateur, region, deptA } = await regionAuxSaisiesDecalees()
 
-      const serieDe = await resolveSeries({ indicateur, cibles: [region, deptA] })
+      const serieOf = await resolveSeries({ indicateur, cibles: [region, deptA] })
 
-      expect(resume(serieDe(deptA))).toEqual([
+      expect(summarize(serieOf(deptA))).toEqual([
         { date: '2025-01-01', valeur: 10, type: 'saisie' },
         { date: '2025-02-01', valeur: 20, type: 'saisie' },
         { date: '2025-04-01', valeur: 40, type: 'saisie' },
       ])
-      expect(resume(serieDe(region)).at(-1)).toEqual({
+      expect(summarize(serieOf(region)).at(-1)).toEqual({
         date: '2025-04-01',
         valeur: 43,
         type: 'derivee',
@@ -235,17 +242,17 @@ describe.concurrent('loadResolveSerieContext', () => {
   )
 
   it(
-    'ne charge que les dernières saisies de chaque cellule quand derniersPoints est donné',
+    'ne charge que les dernières saisies de chaque cellule quand lastPointCount est donné',
     integrationTest(async () => {
       const { indicateur, deptA, deptB } = await regionAuxSaisiesDecalees()
       const { id: indicateurId } = await db().indicateur.findUniqueOrThrow({
         where: { publicId: indicateur },
       })
-      const individus = await loadIndividusParPublicId([deptA, deptB])
+      const individus = await loadIndividusByPublicId([deptA, deptB])
       const publicIdById = new Map(individus.map((individu) => [individu.id, individu.publicId]))
 
       const rows = await db().$queryRawTyped(
-        getValeursTronqueesPourIndividus(
+        getValeursTronqueesForIndividus(
           indicateurId,
           individus.map((individu) => individu.id),
           'month',
@@ -268,7 +275,7 @@ describe.concurrent('loadResolveSerieContext', () => {
   )
 })
 
-describe.concurrent('keepDerniersPoints', () => {
+describe.concurrent('keepLastPoints', () => {
   const serie = ['2026-01-01', '2026-02-01', '2026-03-01'].map((date): PointInterne => ({
     type: 'saisie',
     bucket: parseBucket(date),
@@ -277,15 +284,15 @@ describe.concurrent('keepDerniersPoints', () => {
   }))
 
   it('rend les N derniers points', () => {
-    expect(keepDerniersPoints({ serie, derniersPoints: 2 })).toEqual(serie.slice(1))
+    expect(keepLastPoints({ serie, lastPointCount: 2 })).toEqual(serie.slice(1))
   })
 
   it('rend la série entière sans limite, ou quand on demande plus de points qu’elle n’en a', () => {
-    expect(keepDerniersPoints({ serie, derniersPoints: null })).toEqual(serie)
-    expect(keepDerniersPoints({ serie, derniersPoints: 5 })).toEqual(serie)
+    expect(keepLastPoints({ serie, lastPointCount: null })).toEqual(serie)
+    expect(keepLastPoints({ serie, lastPointCount: 5 })).toEqual(serie)
   })
 
   it('rend une série vide pour 0 point', () => {
-    expect(keepDerniersPoints({ serie, derniersPoints: 0 })).toEqual([])
+    expect(keepLastPoints({ serie, lastPointCount: 0 })).toEqual([])
   })
 })

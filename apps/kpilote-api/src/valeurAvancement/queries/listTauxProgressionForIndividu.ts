@@ -48,7 +48,7 @@ const build = async ({
   const startedAt = performance.now()
   const dateTrunc = DEFAULT_DATE_TRUNC
   // Un contexte de résolution par indicateur : on borne ceux qui vivent en même temps.
-  const resolus = await withConcurrency(
+  const resolved = await withConcurrency(
     indicateurs.map((indicateur) => async () => {
       const points = await computeTauxProgressionPoints({
         indicateurId: indicateur.id,
@@ -56,7 +56,7 @@ const build = async ({
         individusCibles: [individu],
         dateTruncValeur: dateTrunc,
         dateTruncObjectif: dateTrunc,
-        derniersPoints: 1,
+        lastPointCount: 1,
       })
       const point = points.at(-1)
       if (!point) return null
@@ -70,7 +70,7 @@ const build = async ({
     }),
   )
 
-  const items = resolus.filter((item) => item !== null)
+  const items = resolved.filter((item) => item !== null)
 
   logger.info(
     {

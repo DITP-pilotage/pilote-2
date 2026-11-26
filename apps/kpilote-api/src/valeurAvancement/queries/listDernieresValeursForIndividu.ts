@@ -49,27 +49,27 @@ const build = async ({
   const startedAt = performance.now()
   const dateTrunc = DEFAULT_DATE_TRUNC
   // Un contexte de résolution par indicateur : on borne ceux qui vivent en même temps.
-  const resolus = await withConcurrency(
+  const resolved = await withConcurrency(
     indicateurs.map((indicateur) => async () => {
-      const { serieDe } = await loadResolveSerieContext({
+      const { serieOf } = await loadResolveSerieContext({
         indicateurId: indicateur.id,
         individusCibles: [individu],
         dateTrunc,
-        derniersPoints: 1,
+        lastPointCount: 1,
       })
-      const dernier = serieDe(individu).at(-1)
-      if (!dernier) return null
+      const lastPoint = serieOf(individu).at(-1)
+      if (!lastPoint) return null
 
       const item: DernierValeurIndividuApiModel = {
         indicateur: indicateur.publicId,
-        valeur: dernier.valeur.toNumber(),
-        date: formatBucket(dernier.bucket),
-        type: dernier.type,
+        valeur: lastPoint.valeur.toNumber(),
+        date: formatBucket(lastPoint.bucket),
+        type: lastPoint.type,
       }
       return item
     }),
   )
-  const items = resolus.filter((item): item is DernierValeurIndividuApiModel => item !== null)
+  const items = resolved.filter((item): item is DernierValeurIndividuApiModel => item !== null)
 
   logger.info(
     {

@@ -12,7 +12,7 @@ import { compareBuckets, formatBucket, parseBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { loadIndividusParPublicId } from '@/indicateur/loadIndicateurIndividuContext'
+import { loadIndividusByPublicId } from '@/indicateur/loadIndicateurIndividuContext'
 import { computeTauxProgressionPoints } from '@/valeurAvancement/computeTauxProgressionPoints'
 
 // Défauts compromis lisibilité × coût : mensuel des deux côtés (cf. doc archi
@@ -51,7 +51,7 @@ const buildList = async ({
   indicateur: { id: string; publicId: string; sensSouhaite: SensSouhaite }
   query: ListTauxProgressionQuery
 }): Promise<TauxProgressionListApiModel> => {
-  const individusCibles = await loadIndividusParPublicId(query.individus)
+  const individusCibles = await loadIndividusByPublicId(query.individus)
   if (individusCibles.length === 0) return { items: [] }
 
   const dateTruncValeur = query.dateTruncValeur ?? DEFAULT_DATE_TRUNC_VALEUR
@@ -70,9 +70,9 @@ const buildList = async ({
   // carry-forward des séries dérivées (cf. design doc indicateur-derives.md).
   const dateDebut = query.dateDebut ? parseBucket(query.dateDebut) : null
   const dateFin = query.dateFin ? parseBucket(query.dateFin) : null
-  const filtered = points.filter((p) => {
-    if (dateDebut && compareBuckets(p.date, dateDebut) < 0) return false
-    if (dateFin && compareBuckets(p.date, dateFin) > 0) return false
+  const filtered = points.filter((point) => {
+    if (dateDebut && compareBuckets(point.date, dateDebut) < 0) return false
+    if (dateFin && compareBuckets(point.date, dateFin) > 0) return false
     return true
   })
 
@@ -82,14 +82,14 @@ const buildList = async ({
       : compareBuckets(a.date, b.date),
   )
 
-  const items: TauxProgressionPointApiModel[] = filtered.map((p) => ({
+  const items: TauxProgressionPointApiModel[] = filtered.map((point) => ({
     indicateur: indicateur.publicId,
-    individu: p.individuPublicId,
-    date: formatBucket(p.date),
-    valeur: p.valeur.toNumber(),
-    valeurCible: p.valeurCible.toNumber(),
-    dateCible: formatBucket(p.dateCible),
-    tauxProgression: p.tauxProgression,
+    individu: point.individuPublicId,
+    date: formatBucket(point.date),
+    valeur: point.valeur.toNumber(),
+    valeurCible: point.valeurCible.toNumber(),
+    dateCible: formatBucket(point.dateCible),
+    tauxProgression: point.tauxProgression,
   }))
 
   logger.info(

@@ -45,7 +45,7 @@ const celluleADeuxCombinaisons = async () => {
   return { indicateurId, individuId, apiKey, orangeId }
 }
 
-const valeursParCombinaison = async (indicateurPublicId: string) => {
+const valeursByCombinaison = async (indicateurPublicId: string) => {
   const valeurs = await db().valeurAvancement.findMany({
     where: { indicateur: { publicId: indicateurPublicId } },
   })
@@ -58,7 +58,7 @@ describe.concurrent('valeurs de plusieurs combinaisons sur une même cellule', (
     integrationTest(async () => {
       const { indicateurId, orangeId } = await celluleADeuxCombinaisons()
 
-      const valeurs = await valeursParCombinaison(indicateurId)
+      const valeurs = await valeursByCombinaison(indicateurId)
 
       expect(valeurs.get(await getEmptyCombinaisonId())).toBe(10)
       expect(valeurs.get(orangeId)).toBe(3)
@@ -78,7 +78,7 @@ describe.concurrent('valeurs de plusieurs combinaisons sur une même cellule', (
       )
 
       expect(result.isOk()).toBe(true)
-      const valeurs = await valeursParCombinaison(indicateurId)
+      const valeurs = await valeursByCombinaison(indicateurId)
       expect([...valeurs.entries()]).toEqual([[orangeId, 3]])
     }),
   )
@@ -98,7 +98,7 @@ describe.concurrent('valeurs de plusieurs combinaisons sur une même cellule', (
       )
 
       expect(result.isOk()).toBe(true)
-      const valeurs = await valeursParCombinaison(indicateurId)
+      const valeurs = await valeursByCombinaison(indicateurId)
       expect(valeurs.get(await getEmptyCombinaisonId())).toBe(42)
       expect(valeurs.get(orangeId)).toBe(3)
     }),

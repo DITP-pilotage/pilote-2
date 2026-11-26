@@ -1,9 +1,10 @@
 import { type FonctionAgregation } from '@pilote/kpilote-shared/indicateur'
+import { groupBy } from 'es-toolkit'
 
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
-export const loadIndividusParPublicId = async (
+export const loadIndividusByPublicId = async (
   publicIds: ReadonlyArray<string>,
 ): Promise<IndividuRef[]> => {
   const rows = await db().individu.findMany({
@@ -13,16 +14,22 @@ export const loadIndividusParPublicId = async (
   return rows.map(({ id, publicId, referentielId }) => ({ id, publicId, referentielId }))
 }
 
+const toIndividuRef = ({ id, publicId, referentielId }: IndividuRef): IndividuRef => ({
+  id,
+  publicId,
+  referentielId,
+})
+
 export const loadSousArbre = async (
   cibles: ReadonlyArray<IndividuRef>,
 ): Promise<{
   allNodes: Map<string, IndividuRef>
-  enfantsParParent: Map<string, IndividuRef[]>
+  enfantsByParent: Map<string, IndividuRef[]>
 }> => {
   const allNodes = new Map<string, IndividuRef>()
   for (const cible of cibles) allNodes.set(cible.id, cible)
-  const enfantsParParent = new Map<string, IndividuRef[]>()
-  let currentLevel = cibles.map((c) => c.id)
+  const enfantsByParent = new Map<string, IndividuRef[]>()
+  let currentLevel = cibles.map((cible) => cible.id)
 
   while (currentLevel.length > 0) {
     const relations = await db().relation.findMany({
@@ -31,32 +38,41 @@ export const loadSousArbre = async (
     })
     if (relations.length === 0) break
 
-    const nextLevelSet = new Set<string>()
-    for (const relation of relations) {
-      const childRef: IndividuRef = {
-        id: relation.child.id,
-        publicId: relation.child.publicId,
-        referentielId: relation.child.referentielId,
-      }
-      if (!allNodes.has(childRef.id)) {
-        allNodes.set(childRef.id, childRef)
-        nextLevelSet.add(childRef.id)
-      }
-      const liste = enfantsParParent.get(relation.parentId) ?? []
-      liste.push(childRef)
-      enfantsParParent.set(relation.parentId, liste)
+    const nextLevel: string[] = []
+    // Un individu déjà vu garde son objet : `allNodes` et `enfantsByParent` le partagent.
+    const refOf = (child: IndividuRef): IndividuRef => {
+      const known = allNodes.get(child.id)
+      if (known) return known
+      const ref = toIndividuRef(child)
+      allNodes.set(child.id, ref)
+      nextLevel.push(child.id)
+      return ref
     }
-    currentLevel = [...nextLevelSet]
+    const enfants = relations.map(({ parentId, child }) => ({ parentId, enfant: refOf(child) }))
+    // Un parent n'est interrogé qu'une fois : ses enfants arrivent tous dans ce niveau.
+    const enfantsOfLevel = groupBy(enfants, (enfant) => enfant.parentId)
+    for (const [parentId, parentEnfants] of Object.entries(enfantsOfLevel)) {
+      enfantsByParent.set(
+        parentId,
+        parentEnfants.map(({ enfant }) => enfant),
+      )
+    }
+    currentLevel = nextLevel
   }
 
-  return { allNodes, enfantsParParent }
+  return { allNodes, enfantsByParent }
 }
 
 export const loadFonctionsAgregation = async (
   indicateurId: string,
 ): Promise<Map<string, FonctionAgregation>> => {
-  const liens = await db().indicateurReferentiel.findMany({
+  const indicateurReferentiels = await db().indicateurReferentiel.findMany({
     where: { indicateurId },
   })
-  return new Map(liens.map((lien) => [lien.referentielId, lien.fonctionAgregation]))
+  return new Map(
+    indicateurReferentiels.map((indicateurReferentiel) => [
+      indicateurReferentiel.referentielId,
+      indicateurReferentiel.fonctionAgregation,
+    ]),
+  )
 }

@@ -1,5 +1,6 @@
-import { uniq } from 'es-toolkit'
+import { groupBy, mapValues, uniq } from 'es-toolkit'
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
+import { toMap } from '@pilote/kpilote-shared/record'
 import {
   type ListSyntheseIndividusQuery,
   type SyntheseIndividusListApiModel,
@@ -24,7 +25,7 @@ import { type IndividuRef, type PointInterne } from '@/valeurAvancement/resolveS
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
 // La variation compare les deux derniers points ; la médiane ne lit que le dernier.
-const DERNIERS_POINTS_LUS = 2
+const LAST_POINT_COUNT = 2
 
 type ListSyntheseIndividusParams = {
   indicateurPublicId: string
@@ -82,31 +83,31 @@ const buildSynthese = async ({
   // Population des référentiels concernés : nécessaire pour calculer la
   // médiane des pairs. Elle contient déjà les individus demandés (mêmes
   // référentiels), donc on s'en sert directement comme cibles unique.
-  const referentielIds = uniq(individusDemandes.map((i) => i.referentielId))
+  const referentielIds = uniq(individusDemandes.map((individu) => individu.referentielId))
   const population = await loadPopulation({ referentielIds })
 
   const dateTrunc: DateTrunc = query.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  const { serieDe, allNodes } = await loadResolveSerieContext({
+  const { serieOf, allNodes } = await loadResolveSerieContext({
     indicateurId: indicateur.id,
     individusCibles: population,
     dateTrunc,
     selection,
-    derniersPoints: DERNIERS_POINTS_LUS,
+    lastPointCount: LAST_POINT_COUNT,
   })
 
-  const medianeParReferentiel = computeMedianeParReferentiel({ population, serieDe })
+  const medianeByReferentiel = computeMedianeByReferentiel({ population, serieOf })
 
   const items: SyntheseIndividusListApiModel['items'] = []
   for (const individu of individusDemandes) {
-    const serie = serieDe(individu)
+    const serie = serieOf(individu)
     items.push({
       individu: individu.publicId,
       // computeVariation attend [recente, precedente] ; la série est ASC par bucket.
       variation: computeVariation(serie.slice(-2).reverse()),
       ecartMediane: computeEcartMediane(
         serie.at(-1)?.valeur,
-        medianeParReferentiel.get(individu.referentielId) ?? null,
+        medianeByReferentiel.get(individu.referentielId) ?? null,
       ),
     })
   }
@@ -126,26 +127,23 @@ const buildSynthese = async ({
   return { items }
 }
 
-const computeMedianeParReferentiel = ({
+const computeMedianeByReferentiel = ({
   population,
-  serieDe,
+  serieOf,
 }: {
   population: ReadonlyArray<IndividuRef>
-  serieDe: (individu: IndividuRef) => ReadonlyArray<PointInterne>
+  serieOf: (individu: IndividuRef) => ReadonlyArray<PointInterne>
 }): Map<string, Decimal | null> => {
-  const valeursParReferentiel = new Map<string, Decimal[]>()
-  for (const individu of population) {
-    const dernier = serieDe(individu).at(-1)
-    if (!dernier) continue
-    const liste = valeursParReferentiel.get(individu.referentielId) ?? []
-    liste.push(dernier.valeur)
-    valeursParReferentiel.set(individu.referentielId, liste)
-  }
-  const result = new Map<string, Decimal | null>()
-  for (const [referentielId, valeurs] of valeursParReferentiel) {
-    result.set(referentielId, computeMediane(valeurs))
-  }
-  return result
+  const lastValeurs = population.flatMap((individu) => {
+    const lastPoint = serieOf(individu).at(-1)
+    return lastPoint ? [{ referentielId: individu.referentielId, valeur: lastPoint.valeur }] : []
+  })
+  return toMap(
+    mapValues(
+      groupBy(lastValeurs, (lastValeur) => lastValeur.referentielId),
+      (valeursReferentiel) => computeMediane(valeursReferentiel.map(({ valeur }) => valeur)),
+    ),
+  )
 }
 
 const loadIndividus = async ({

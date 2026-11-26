@@ -27,22 +27,22 @@ export const computeContributions = ({
 }): Promise<IndicateurContribution[]> =>
   withConcurrency(
     indicateurs.map(({ indicateur, ponderation }) => async () => {
-      const dernier = await computeDernierTaux({
+      const lastTaux = await computeLastTaux({
         indicateurId: indicateur.id,
         sensSouhaite: indicateur.sensSouhaite,
         individuCible,
       })
       return {
         indicateurPublicId: indicateur.publicId,
-        tauxProgression: dernier?.tauxProgression ?? null,
-        date: dernier?.date ?? null,
+        tauxProgression: lastTaux?.tauxProgression ?? null,
+        date: lastTaux?.date ?? null,
         ponderation,
         sensSouhaite: indicateur.sensSouhaite,
       }
     }),
   )
 
-const computeDernierTaux = async ({
+const computeLastTaux = async ({
   indicateurId,
   sensSouhaite,
   individuCible,
@@ -57,13 +57,13 @@ const computeDernierTaux = async ({
     individusCibles: [individuCible],
     dateTruncValeur: DATE_TRUNC_VALEUR,
     dateTruncObjectif: DATE_TRUNC_OBJECTIF,
-    derniersPoints: 1,
+    lastPointCount: 1,
   })
   if (points.length === 0) return null
 
-  const dernier = points.reduce<TauxProgressionPoint>(
-    (acc, p) => (compareBuckets(p.date, acc.date) > 0 ? p : acc),
+  const lastTaux = points.reduce<TauxProgressionPoint>(
+    (latest, point) => (compareBuckets(point.date, latest.date) > 0 ? point : latest),
     points[0]!,
   )
-  return { tauxProgression: dernier.tauxProgression, date: dernier.date }
+  return { tauxProgression: lastTaux.tauxProgression, date: lastTaux.date }
 }

@@ -2,7 +2,7 @@ import { type DateTrunc } from '@pilote/kpilote-shared/dates'
 
 import { type BucketKey, parseBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
-import { getObjectifsTronquesPourIndividus } from '@/generated/prisma/sql'
+import { getObjectifsTronquesForIndividus } from '@/generated/prisma/sql'
 import { loadFonctionsAgregation, loadSousArbre } from '@/indicateur/loadIndicateurIndividuContext'
 import {
   type ObjectifSaisieBucketise,
@@ -19,21 +19,21 @@ export const loadResolveObjectifContext = async ({
   individusCibles: ReadonlyArray<IndividuRef>
   dateTrunc: DateTrunc
 }): Promise<{ ctx: ResolveObjectifContext; allNodes: Map<string, IndividuRef> }> => {
-  const [{ allNodes, enfantsParParent }, fonctionAgregationParReferentiel] = await Promise.all([
+  const [{ allNodes, enfantsByParent }, fonctionAgregationByReferentiel] = await Promise.all([
     loadSousArbre(individusCibles),
     loadFonctionsAgregation(indicateurId),
   ])
-  const objectifBucketParIndividu = await loadObjectifsBucketises({
+  const objectifBucketByIndividu = await loadObjectifsBucketises({
     indicateurId,
     individuIds: [...allNodes.keys()],
     dateTrunc,
   })
 
   const ctx: ResolveObjectifContext = {
-    enfantsParParent,
-    fonctionAgregationParReferentiel,
-    objectifBucketParIndividu,
-    referentielParIndividu: new Map(
+    enfantsByParent,
+    fonctionAgregationByReferentiel,
+    objectifBucketByIndividu,
+    referentielByIndividu: new Map(
       [...allNodes.values()].map((individu) => [individu.id, individu.referentielId]),
     ),
   }
@@ -51,7 +51,7 @@ const loadObjectifsBucketises = async ({
 }): Promise<Map<string, Map<BucketKey, ObjectifSaisieBucketise>>> => {
   if (individuIds.length === 0) return new Map()
   const rows = await db().$queryRawTyped(
-    getObjectifsTronquesPourIndividus(indicateurId, [...individuIds], dateTrunc),
+    getObjectifsTronquesForIndividus(indicateurId, [...individuIds], dateTrunc),
   )
   const result = new Map<string, Map<BucketKey, ObjectifSaisieBucketise>>()
   for (const row of rows) {

@@ -2,7 +2,7 @@ import { type FonctionAgregation } from '@pilote/kpilote-shared/indicateur'
 
 import { type Bucket, type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
-import { agreger, getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
+import { aggregate, getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
 export type ObjectifSaisieBucketise = {
@@ -11,19 +11,19 @@ export type ObjectifSaisieBucketise = {
 }
 
 export type ResolveObjectifContext = {
-  enfantsParParent: ReadonlyMap<string, ReadonlyArray<IndividuRef>>
-  fonctionAgregationParReferentiel: ReadonlyMap<string, FonctionAgregation>
+  enfantsByParent: ReadonlyMap<string, ReadonlyArray<IndividuRef>>
+  fonctionAgregationByReferentiel: ReadonlyMap<string, FonctionAgregation>
   // Une `Map<BucketKey, …>` plutôt qu'un tableau permet la lookup O(1) lors
   // du carry-forward et garantit l'unicité d'un bucket par individu.
-  objectifBucketParIndividu: ReadonlyMap<string, ReadonlyMap<BucketKey, ObjectifSaisieBucketise>>
-  referentielParIndividu: ReadonlyMap<string, string>
+  objectifBucketByIndividu: ReadonlyMap<string, ReadonlyMap<BucketKey, ObjectifSaisieBucketise>>
+  referentielByIndividu: ReadonlyMap<string, string>
 }
 
 export type ContributionObjectifInterne = {
   individuPublicId: string
   valeur: Decimal
   bucketCible: Bucket
-  estAgregee: boolean
+  isAgregee: boolean
 }
 
 export type PointObjectifInterne =
@@ -64,7 +64,7 @@ const buildSaisieMap = ({
   individuId: string
   ctx: ResolveObjectifContext
 }): ReadonlyMap<BucketKey, PointObjectifInterne> => {
-  const saisies = ctx.objectifBucketParIndividu.get(individuId)
+  const saisies = ctx.objectifBucketByIndividu.get(individuId)
   const result = new Map<BucketKey, PointObjectifInterne>()
   if (!saisies) return result
   for (const [key, { bucket, valeur }] of saisies) {
@@ -90,8 +90,8 @@ const computeObjectifDerive = ({
   cache: Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>
   fonctionAgregation: FonctionAgregation
 }): ReadonlyMap<BucketKey, PointObjectifInterne> => {
-  const enfants = ctx.enfantsParParent.get(parentId) ?? []
-  const enfantsTries = [...enfants].sort((a, b) => collator.compare(a.publicId, b.publicId))
+  const enfants = ctx.enfantsByParent.get(parentId) ?? []
+  const sortedEnfants = [...enfants].sort((a, b) => collator.compare(a.publicId, b.publicId))
 
   type EnfantState = {
     enfant: IndividuRef
@@ -102,7 +102,7 @@ const computeObjectifDerive = ({
     pointer: number
   }
 
-  const states: EnfantState[] = enfantsTries.map((enfant) => {
+  const states: EnfantState[] = sortedEnfants.map((enfant) => {
     const values = resolveObjectifIndividu({ individuId: enfant.id, ctx, cache })
     const buckets = [...values.values()].map((point) => point.bucket).sort(compareBuckets)
     return { enfant, buckets, values, pointer: -1 }
@@ -158,7 +158,7 @@ const computeObjectifDerive = ({
         individuPublicId: state.enfant.publicId,
         valeur: point.valeur,
         bucketCible,
-        estAgregee: point.type === 'derivee',
+        isAgregee: point.type === 'derivee',
       })
       valeurs.push(point.valeur)
     }
@@ -167,7 +167,7 @@ const computeObjectifDerive = ({
       result.set(formatBucket(bucket), {
         type: 'derivee',
         bucket,
-        valeur: agreger({ valeurs, fonction: fonctionAgregation }),
+        valeur: aggregate({ valeurs, fonction: fonctionAgregation }),
         fonctionAgregation,
         contributions,
       })

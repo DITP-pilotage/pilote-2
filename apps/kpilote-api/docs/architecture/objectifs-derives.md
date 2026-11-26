@@ -37,7 +37,7 @@ Même patron que les valeurs dérivées, trois responsabilités séparées :
 
 - **Use case** (`queries/listObjectifsForIndicateur.ts`) — orchestration des I/O : permissions, chargement du contexte, itération sur les cibles. Aucun calcul métier.
 - **Functional core** (`resolveObjectifIndividu.ts`) — algorithme pur, sans Prisma. Prend un `ResolveObjectifContext` en mémoire, retourne des maps bucket → point. Mémoïsé par `individuId`.
-- **TypedSQL** (`prisma/sql/getObjectifsTronquesPourIndividus.sql`) — requête bulk qui charge les objectifs pré-tronqués et pré-dédoublonnés pour tous les individus du sous-arbre.
+- **TypedSQL** (`prisma/sql/getObjectifsTronquesForIndividus.sql`) — requête bulk qui charge les objectifs pré-tronqués et pré-dédoublonnés pour tous les individus du sous-arbre.
 
 Les loaders DB partagés (`loadSousArbre`, `loadFonctionsAgregation`) sont réutilisés depuis `indicateur/loadIndicateurIndividuContext.ts`, commun avec les valeurs dérivées.
 
@@ -45,9 +45,9 @@ Les loaders DB partagés (`loadSousArbre`, `loadFonctionsAgregation`) sont réut
 
 `buildList` (`listObjectifsForIndicateur.ts`) déroule trois phases :
 
-1. **Résolution des cibles** — `loadIndividusParPublicId` traduit les `publicId` demandés en `id` internes + `referentielId`.
+1. **Résolution des cibles** — `loadIndividusByPublicId` traduit les `publicId` demandés en `id` internes + `referentielId`.
 2. **Chargement bulk en parallèle** :
-   - `loadSousArbre` — BFS itératif sur `relation`. Construit `enfantsParParent` et `allNodes`.
+   - `loadSousArbre` — BFS itératif sur `relation`. Construit `enfantsByParent` et `allNodes`.
    - `loadFonctionsAgregation` — map `referentielId → FonctionAgregation` pour l'indicateur courant.
    - Puis `loadObjectifsBucketises` (séquentiel : a besoin de `allNodes`) — une requête `$queryRawTyped` pour tous les objectifs, déjà groupés par bucket via `date_trunc` Postgres.
 3. **Calcul** — pour chaque cible, `resolveObjectifIndividu` produit une map bucket → point ; on aplatit et trie en sortie, puis on convertit en `ObjectifIndicateurIndividuApiModel`.
@@ -73,7 +73,7 @@ Trivial : on retourne la map `bucket → { type: 'saisie', valeur }` issue du ch
 
 À chaque bucket :
 
-- Si **tous** les enfants ont un pointer valide (≥ 0) → `agreger()` → émettre un point `derivee`.
+- Si **tous** les enfants ont un pointer valide (≥ 0) → `aggregate()` → émettre un point `derivee`.
 - Si **un seul** enfant n'a pas encore de valeur portée → bucket ignoré, aucun point émis.
 
 **Strict** signifie : on n'émet pas de point tant que la couverture n'est pas complète. Il n'y a pas de notion de `couverture` ni de contribution `manquante` dans la réponse — soit tous les enfants ont contribué, soit le point n'existe pas.
@@ -126,7 +126,7 @@ Les objectifs sont typiquement annuels. Le défaut `year` reflète l'usage réel
 
 ### Bucketisation déléguée à PostgreSQL
 
-La troncature et le dédoublonnage sont faits dans `getObjectifsTronquesPourIndividus.sql` via `date_trunc`. L'algorithme JS reçoit des séries déjà propres — un point max par individu par bucket.
+La troncature et le dédoublonnage sont faits dans `getObjectifsTronquesForIndividus.sql` via `date_trunc`. L'algorithme JS reçoit des séries déjà propres — un point max par individu par bucket.
 
 ### Loaders DB partagés
 

@@ -38,7 +38,7 @@ const findObjectifApplicable = (
 ): ObjectifBrut | null => {
   if (objectifs.length === 0) return null
   return (
-    objectifs.find((o) => compareBuckets(o.dateCible, valeurDate) >= 0) ??
+    objectifs.find((objectif) => compareBuckets(objectif.dateCible, valeurDate) >= 0) ??
     objectifs[objectifs.length - 1]!
   )
 }
@@ -56,18 +56,18 @@ const computeTaux = (valeur: Decimal, valeurCible: Decimal): number | null => {
 
 export const resolveTauxProgression = ({
   valeurs,
-  objectifsParIndividu,
+  objectifsByIndividu,
   sensSouhaite,
 }: {
   valeurs: ReadonlyArray<ValeurBrute>
   // valeurs dans chaque liste triées par dateCible ASC
-  objectifsParIndividu: Map<string, ReadonlyArray<ObjectifBrut>>
+  objectifsByIndividu: Map<string, ReadonlyArray<ObjectifBrut>>
   sensSouhaite: SensSouhaite
 }): TauxProgressionPoint[] => {
   const points: TauxProgressionPoint[] = []
 
   for (const valeur of valeurs) {
-    const objectifs = objectifsParIndividu.get(valeur.individuId)
+    const objectifs = objectifsByIndividu.get(valeur.individuId)
     if (!objectifs || objectifs.length === 0) continue
 
     const objectif = findObjectifApplicable(valeur.date, objectifs)

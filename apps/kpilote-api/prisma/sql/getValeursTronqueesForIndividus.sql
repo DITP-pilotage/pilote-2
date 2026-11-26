@@ -9,7 +9,7 @@
 --      Suffit aux lectures des derniers points : les N derniers points d'une série
 --      dérivée ne dépendent que des N dernières saisies de chaque cellule.
 -- @param $4:combinaisonIds?
--- @param {Int} $5:derniersPoints?
+-- @param {Int} $5:lastPointCount?
 WITH tronquees AS (
   -- Une saisie par (individu, combinaison, bucket) : la plus récente du bucket.
   SELECT DISTINCT ON (individu_id, combinaison_id, date_trunc($3::text, date::timestamp))

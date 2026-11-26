@@ -86,9 +86,9 @@ describe.concurrent('listValeursForIndicateur', () => {
       )
 
       const value = result._unsafeUnwrap()
-      const individus = value.items.map((v) => v.individu).sort()
+      const individus = value.items.map((item) => item.individu).sort()
       expect(individus).toEqual([dept1, dept2].sort())
-      expect(value.items.find((v) => v.individu === dept3)).toBeUndefined()
+      expect(value.items.find((item) => item.individu === dept3)).toBeUndefined()
       for (const item of value.items) expect(item.type).toBe('saisie')
     }),
   )
@@ -141,7 +141,7 @@ describe.concurrent('listValeursForIndicateur', () => {
       )
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((v) => v.date)).toEqual(['2024-01-01', '2024-06-30'])
+      expect(value.items.map((item) => item.date)).toEqual(['2024-01-01', '2024-06-30'])
     }),
   )
 
@@ -267,7 +267,9 @@ describe.concurrent('listValeursForIndicateur', () => {
         couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
       })
       if (point.type !== 'derivee') throw new Error('Expected derivee')
-      expect(point.contributions.map((c) => c.individu).sort()).toEqual([dept1, dept2].sort())
+      expect(point.contributions.map((contribution) => contribution.individu).sort()).toEqual(
+        [dept1, dept2].sort(),
+      )
     }),
   )
 
@@ -334,12 +336,14 @@ describe.concurrent('listValeursForIndicateur', () => {
       )
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((v) => ({ date: v.date, valeur: v.valeur }))).toEqual([
+      expect(value.items.map((item) => ({ date: item.date, valeur: item.valeur }))).toEqual([
         { date: '2025-01-15', valeur: 10 }, // dept1 seul → couverture 1/2
         { date: '2025-02-15', valeur: 60 }, // dept1 (carry 10) + dept2 (50) → 60
         { date: '2025-03-15', valeur: 80 }, // dept1 (30) + dept2 (carry 50) → 80
       ])
-      const couvertures = value.items.map((v) => (v.type === 'derivee' ? v.couverture : null))
+      const couvertures = value.items.map((item) =>
+        item.type === 'derivee' ? item.couverture : null,
+      )
       expect(couvertures).toEqual([
         { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
         { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
@@ -452,12 +456,14 @@ describe.concurrent('listValeursForIndicateur', () => {
         couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
       })
       if (point.type !== 'derivee') throw new Error('Expected derivee')
-      const contributionsParRegion = new Map(point.contributions.map((c) => [c.individu, c]))
-      expect(contributionsParRegion.get(regN)).toMatchObject({ valeur: 3, source: 'derivee' })
-      expect(contributionsParRegion.get(regS)).toMatchObject({ valeur: 30, source: 'derivee' })
+      const contributionsByRegion = new Map(
+        point.contributions.map((contribution) => [contribution.individu, contribution]),
+      )
+      expect(contributionsByRegion.get(regN)).toMatchObject({ valeur: 3, source: 'derivee' })
+      expect(contributionsByRegion.get(regS)).toMatchObject({ valeur: 30, source: 'derivee' })
       // contributions triées par publicId
-      expect(point.contributions.map((c) => c.individu)).toEqual(
-        [...point.contributions.map((c) => c.individu)].sort(),
+      expect(point.contributions.map((contribution) => contribution.individu)).toEqual(
+        [...point.contributions.map((contribution) => contribution.individu)].sort(),
       )
     }),
   )
@@ -618,7 +624,7 @@ describe.concurrent('listValeursForIndicateur', () => {
 
       const value = result._unsafeUnwrap()
       const sortedByIndividu = [...value.items].sort((a, b) => a.individu.localeCompare(b.individu))
-      const types = sortedByIndividu.map((v) => ({ individu: v.individu, type: v.type }))
+      const types = sortedByIndividu.map((item) => ({ individu: item.individu, type: item.type }))
       expect(types).toContainEqual({ individu: dept1, type: 'saisie' })
       expect(types).toContainEqual({ individu: regId, type: 'derivee' })
     }),

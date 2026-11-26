@@ -46,8 +46,8 @@ HTTP route  ─►  use case          ─►  functional core      ◄──  Ty
 Trois responsabilités séparées :
 
 - **Use case** (`queries/listValeursForIndicateur.ts`) — permissions et conversion des points. Le chargement (arbre, liens indicateur↔référentiel, saisies tronquées) passe par `loadResolveSerieContext.ts`. Aucun calcul métier.
-- **Functional core** (`buildGrapheSerie.ts` + `resolveSerieNoeud.ts`) — algorithme pur, sans Prisma. `buildGrapheSerie` construit le graphe des nœuds (individu × modalités fixées) ; `resolveSerieNoeud` en calcule les séries. Mémoïsé par `noeud.cle`.
-- **TypedSQL** (`prisma/sql/getValeursTronqueesPourIndividus.sql`) — charge les saisies pré-tronquées et pré-dédoublonnées d'une fratrie (les enfants directs d'un même parent), une requête par fratrie que le calcul atteint, limitée aux N dernières saisies par cellule quand la lecture ne demande que les derniers points (`loadResolveSerieContext.ts`).
+- **Functional core** (`buildGrapheSerie.ts` + `resolveSerieNoeud.ts`) — algorithme pur, sans Prisma. `buildGrapheSerie` construit le graphe des nœuds (individu × modalités fixées) ; `resolveSerieNoeud` en calcule les séries. Mémoïsé par `noeud.key`.
+- **TypedSQL** (`prisma/sql/getValeursTronqueesForIndividus.sql`) — charge les saisies pré-tronquées et pré-dédoublonnées d'une fratrie (les enfants directs d'un même parent), une requête par fratrie que le calcul atteint, limitée aux N dernières saisies par cellule quand la lecture ne demande que les derniers points (`loadResolveSerieContext.ts`).
 
 Le découpage isole le calcul (testable sans DB) du chargement (testable par tests d'intégration).
 
@@ -55,11 +55,11 @@ Le découpage isole le calcul (testable sans DB) du chargement (testable par tes
 
 `buildSeries` (`listValeursForIndicateur.ts`) déroule trois phases :
 
-1. **Résolution des cibles** — `loadIndividusParPublicId` traduit les `publicId` demandés en `id` internes + `referentielId`.
+1. **Résolution des cibles** — `loadIndividusByPublicId` traduit les `publicId` demandés en `id` internes + `referentielId`.
 2. **Chargement et calcul, fratrie par fratrie** — `loadResolveSerieContext` :
    - charge la hiérarchie (`loadSousArbre`, BFS itératif niveau par niveau sur la table `relation`) et les fonctions d'agrégation (`loadFonctionsAgregation`, map `referentielId → FonctionAgregation`) ;
    - descend sous un individu seulement si son référentiel agrège, charge les saisies d'une fratrie (les enfants directs d'un même parent) en une requête `$queryRawTyped`, déjà groupées par bucket, calcule le parent avec le moteur, puis oublie ce qui n'est pas une cible ;
-   - rend `serieDe(individu)` pour lire la série de chaque cible.
+   - rend `serieOf(individu)` pour lire la série de chaque cible.
 3. **Conversion** — on filtre par `dateDebut`/`dateFin` en sortie, puis on convertit en `ValeurAvancementApiModel`.
 
 La mémoire d'une requête est celle d'une fratrie et des séries gardées, pas celle de tout le sous-arbre.
@@ -68,7 +68,7 @@ La mémoire d'une requête est celle d'une fratrie et des séries gardées, pas 
 
 ### Distinction feuille / agrégé
 
-`getFonctionAgregationActive` (`indicateur/resolveAgregation.ts`) : un individu est agrégé pour cet indicateur s'il a **au moins un enfant direct** *et* que son référentiel est lié à l'indicateur avec une `fonctionAgregation ≠ NONE`. Sinon il est feuille — sa série, ce sont ses saisies. Pour un indicateur à axes, la série d'une feuille sur « Tous » ou sur une modalité parente est elle aussi dérivée : `buildGrapheSerie` (règle 2 de `deciderRegle`) la calcule à partir des modalités enfants observées, avec la fonction de l'axe.
+`getFonctionAgregationActive` (`indicateur/resolveAgregation.ts`) : un individu est agrégé pour cet indicateur s'il a **au moins un enfant direct** *et* que son référentiel est lié à l'indicateur avec une `fonctionAgregation ≠ NONE`. Sinon il est feuille — sa série, ce sont ses saisies. Pour un indicateur à axes, la série d'une feuille sur « Tous » ou sur une modalité parente est elle aussi dérivée : `buildGrapheSerie` (règle 2 de `decideRule`) la calcule à partir des modalités enfants observées, avec la fonction de l'axe.
 
 Conséquence importante : si un individu intermédiaire (ex. région) a des saisies *mais* que l'indicateur est configuré avec `SUM` sur les régions, ses saisies sont **ignorées**. La série exposée est toujours la dérivée. Cela évite l'ambiguïté sémantique d'avoir deux sources de vérité, en attendant le blocage strict de la saisie côté commande.
 
@@ -95,7 +95,7 @@ Mécanique en deux passes :
 
 ### Mémoïsation
 
-`resolveSerieNoeud` consulte un cache `Map<noeud.cle, Point[]>` local à un lot. D'un lot à l'autre, les séries déjà résolues passent par `serieByIndividu` : un individu résolu n'est pas recalculé tant que sa série est gardée, et elle est oubliée dès qu'elle a servi si ce n'est pas une cible (un individu à deux parents, hors cibles, peut donc se calculer deux fois). Si `/valeurs?individus=FRANCE,REG-PACA` est appelé, la série de `REG-PACA` est calculée une seule fois — le calcul de FRANCE réutilise la série déjà résolue. La complexité d'un appel multi-cibles reste celle d'une seule passe sur l'arbre.
+`resolveSerieNoeud` consulte un cache `Map<noeud.key, Point[]>` local à un lot. D'un lot à l'autre, les séries déjà résolues passent par `serieByIndividu` : un individu résolu n'est pas recalculé tant que sa série est gardée, et elle est oubliée dès qu'elle a servi si ce n'est pas une cible (un individu à deux parents, hors cibles, peut donc se calculer deux fois). Si `/valeurs?individus=FRANCE,REG-PACA` est appelé, la série de `REG-PACA` est calculée une seule fois — le calcul de FRANCE réutilise la série déjà résolue. La complexité d'un appel multi-cibles reste celle d'une seule passe sur l'arbre.
 
 ### Dédoublonnage par bucket (côté SQL)
 
