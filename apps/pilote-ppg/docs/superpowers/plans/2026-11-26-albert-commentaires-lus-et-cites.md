@@ -10,6 +10,8 @@
 
 **Spec:** `apps/pilote-ppg/docs/superpowers/specs/2026-11-26-albert-commentaires-lus-et-cites-design.md`
 
+> **Révision après la relecture de la PR #2799.** Ce plan est celui qui a été exécuté. La relecture a retiré depuis : le scénario « Synthèse des commentaires d'un chantier par département » (remplacé par deux cas de l'eval d'outil de `get_chantier_commentaires`), le critère mécanique « Types de commentaires consultés », le second cas du tableau de bord et son critère « Ni météo ni commentaire », les consignes qui listent ce qu'un tableau de bord n'affiche pas, et les tests unitaires qui vérifient un texte de prompt. La spec fait foi.
+
 ## Global Constraints
 
 - Tout le travail est dans `apps/pilote-ppg` ; aucune dépendance à un package `@pilote/kpilote-*`. Chemins ci-dessous relatifs à `apps/pilote-ppg/`.
@@ -48,12 +50,14 @@
 Changement neutre : la fiche lit les mêmes synthèses par la collecte que les encarts, et gagne une option pour lire les commentaires sur tous les territoires d'un scénario.
 
 **Files:**
+
 - Modify: `evals/3-scenarios/dataTools.ts`
 - Modify: `evals/3-scenarios/groundTruth.ts:46-53` (lecture des vues), `:78-91` (lecture des commentaires)
 - Modify: `evals/3-scenarios/truth.ts:14-24` (`TruthScope`)
 - Test: `evals/3-scenarios/groundTruth.integration.test.ts`
 
 **Interfaces:**
+
 - Produces: `createDataTools(...).collecterChantiers(input: CollecteChantiersInput)`, qui appelle `collecterChantiers` de `src/server/albert/tools/getChantiers.ts` avec `getChantiersQuery` et `territoireResolver` résolus dans le conteneur `albert`, et les accès du profil.
 - Produces: `TruthScope.commentairesSurChaqueTerritoire?: boolean` — avec `true`, la fiche lit les commentaires de chaque `chantiersCommentes` sur chacun des `territoires` (un appel `SELECTION` de tous les codes) ; sans, sur le premier seulement, comme aujourd'hui.
 
@@ -79,6 +83,7 @@ Ajuster la liste attendue du premier test aux territoires qui portent effectivem
 ### Task 2: Nouveau scénario « Synthèse des commentaires d'un chantier par département », et cas périmé
 
 **Files:**
+
 - Create: `evals/3-scenarios/3.1-synthese/seedCommentairesDepartementsBretons.ts`
 - Create: `evals/3-scenarios/3.1-synthese/syntheseCommentairesDepartements.criteria.ts`
 - Create: `evals/3-scenarios/3.1-synthese/syntheseCommentairesDepartements.eval.ts`
@@ -86,17 +91,18 @@ Ajuster la liste attendue du premier test aux territoires qui portent effectivem
 - Modify: `evals/2-tools/2.2-donnees/getChantiers.eval.ts:113-118`
 
 **Interfaces:**
+
 - Consumes: `TruthScope.commentairesSurChaqueTerritoire` (tâche 1) ; `scenarioEval({ seedSupplementaire })` ; `fixtures.commentaire`, `getPrisma()`.
 - Produces: `seedCommentairesDepartementsBretons(): Promise<void>` ; `SYNTHESE_COMMENTAIRES_DEPARTEMENTS_CRITERIA: Criterion[]`.
 
 Les données, semées pour ce seul fichier, retouchent CH-005 au jalon courant :
 
-| Département | Niveau de confiance | Synthèse | Commentaires typés |
-|---|---|---|---|
-| DEPT-22 Côtes-d'Armor | `COUVERT` (n'est plus en difficulté) | celle du monde | un `commentaires_sur_les_donnees` sur la régulation (piège : il ne doit pas apparaître) |
-| DEPT-29 Finistère | `NUAGE` | remplacée par un texte propre au Finistère | `commentaires_sur_les_donnees` : fermetures de nuit des urgences (Carhaix) ; `autres_resultats_obtenus` : maison médicale de garde ouverte à Quimperlé |
-| DEPT-35 Ille-et-Vilaine | `NUAGE` | **supprimée** (cas de la recette) | `commentaires_sur_les_donnees` : fermetures de nuit des urgences (Redon) ; `autres_resultats_obtenus` : trois médecins régulateurs recrutés par contrat de territoire |
-| DEPT-56 Morbihan | `NUAGE` | **supprimée** | aucun |
+| Département             | Niveau de confiance                  | Synthèse                                   | Commentaires typés                                                                                                                                                    |
+| ----------------------- | ------------------------------------ | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DEPT-22 Côtes-d'Armor   | `COUVERT` (n'est plus en difficulté) | celle du monde                             | un `commentaires_sur_les_donnees` sur la régulation (piège : il ne doit pas apparaître)                                                                               |
+| DEPT-29 Finistère       | `NUAGE`                              | remplacée par un texte propre au Finistère | `commentaires_sur_les_donnees` : fermetures de nuit des urgences (Carhaix) ; `autres_resultats_obtenus` : maison médicale de garde ouverte à Quimperlé                |
+| DEPT-35 Ille-et-Vilaine | `NUAGE`                              | **supprimée** (cas de la recette)          | `commentaires_sur_les_donnees` : fermetures de nuit des urgences (Redon) ; `autres_resultats_obtenus` : trois médecins régulateurs recrutés par contrat de territoire |
+| DEPT-56 Morbihan        | `NUAGE`                              | **supprimée**                              | aucun                                                                                                                                                                 |
 
 Sujet commun : les fermetures de nuit des urgences (Finistère, Ille-et-Vilaine). Sujets propres : la maison médicale de garde (Finistère), les recrutements (Ille-et-Vilaine). Le niveau de confiance se change sur `chantier_territoire.meteo` (le filtre `en_difficulte` de `GetChantiersQuery` le lit) et sur la synthèse qui reste.
 
@@ -106,7 +112,11 @@ Sujet commun : les fermetures de nuit des urgences (Finistère, Ille-et-Vilaine)
 expect(departementsEnDifficulte).toEqual(["DEPT-29", "DEPT-35", "DEPT-56"]);
 expect(typesParDepartement).toEqual({
   "DEPT-22": ["commentaires_sur_les_donnees", "synthese_des_resultats"],
-  "DEPT-29": ["autres_resultats_obtenus", "commentaires_sur_les_donnees", "synthese_des_resultats"],
+  "DEPT-29": [
+    "autres_resultats_obtenus",
+    "commentaires_sur_les_donnees",
+    "synthese_des_resultats",
+  ],
   "DEPT-35": ["autres_resultats_obtenus", "commentaires_sur_les_donnees"],
 });
 // DEPT-56 n'apparaît dans aucun résultat de commentaires
@@ -188,6 +198,7 @@ Attendu : un relevé complet ; les essais en erreur (service indisponible) sont 
 ### Task 4: `get_chantier_commentaires` renvoie les types consultés
 
 **Files:**
+
 - Modify: `src/server/chantiers/query/GetChantierCommentairesQuery.ts:66-122`
 - Modify: `src/server/albert/tools/getChantierCommentaires.ts:75-80` (sortie), `:159-170` (description), `:213-232` (réunion des résultats)
 - Test: `src/server/chantiers/__tests__/query/GetChantierCommentairesQuery.integration.test.ts`
@@ -195,6 +206,7 @@ Attendu : un relevé complet ; les essais en erreur (service indisponible) sont 
 - Modify: `src/server/albert/__tests__/tools/redigerSyntheseChantier.unit.test.ts` (le mock de la query gagne `types_consultes`)
 
 **Interfaces:**
+
 - Produces: `GetChantierCommentairesQueryResult.types_consultes: TypeContenuChantier[]` — les types interrogés par la query (sur le territoire et, si inclus, au national), dans l'ordre de `typesContenuChantier`.
 - Produces: `GetChantierCommentairesOutput.types_consultes: string[]` — les libellés (`libelleTypeCommentaire`) des types consultés sur tous les territoires de l'appel, sans doublon, dans l'ordre de `typesContenuChantier`.
 - Produces: `GetChantierCommentairesOutput.types_non_accessibles` — désormais sans les types consultés sur un autre territoire de l'appel.
@@ -238,6 +250,7 @@ Mettre à jour l'attendu complet du test « retourne les commentaires d'un chant
 ### Task 5: Tableaux de bord sans météo ni commentaire
 
 **Files:**
+
 - Modify: `src/server/albert/tools/createDashboard.ts:14-34` (`chantierContextSchema`), `:209-247` (`pourLeSousAgent`, `buildSubagentPrompt`), `:257-266` (description)
 - Modify: `src/server/albert/subagents/dashboardSystemPrompt.ts:64-91` (paragraphe et variante), `:105-116` (modèles), `:139-143` (exemple 2), `:150` (règle 4)
 - Modify: `src/server/albert/tools/composeDashboard.ts:216-222` (description de `variant`)
@@ -249,6 +262,7 @@ Mettre à jour l'attendu complet du test « retourne les commentaires d'un chant
 - Modify: `evals/3-scenarios/3.0-calibration/references.ts:623-760` (question, `sectionChantier` sans paragraphe)
 
 **Interfaces:**
+
 - Produces: `ChantierContext = { id: string; nom: string; statut?: "en_retard" | "en_difficulte" }`.
 
 - [ ] **Step 1: Tests qui échouent** :
@@ -263,11 +277,21 @@ it("ne lie plus le paragraphe à la météo ni au commentaire d'un chantier", ()
 });
 // scenariosTerritoire.unit.test.ts
 test("le tableau de bord du territoire ne demande plus la météo ni le commentaire de synthèse", () => {
-  const scenarios = scenariosTerritoireDITP({ territoireCode: "REG-53", jalon: 2026, estDITPAdmin: true });
-  const messages = scenarios.kind === "grouped"
-    ? scenarios.groups.flatMap((groupe) => groupe.scenarios).filter((scenario) => scenario.id === "tableau_de_bord_territoire").map((scenario) => scenario.message)
-    : [];
-  expect(messages).toEqual([expect.not.stringContaining("la météo et le commentaire de synthèse")]);
+  const scenarios = scenariosTerritoireDITP({
+    territoireCode: "REG-53",
+    jalon: 2026,
+    estDITPAdmin: true,
+  });
+  const messages =
+    scenarios.kind === "grouped"
+      ? scenarios.groups
+          .flatMap((groupe) => groupe.scenarios)
+          .filter((scenario) => scenario.id === "tableau_de_bord_territoire")
+          .map((scenario) => scenario.message)
+      : [];
+  expect(messages).toEqual([
+    expect.not.stringContaining("la météo et le commentaire de synthèse"),
+  ]);
 });
 ```
 
@@ -290,6 +314,7 @@ test("le tableau de bord du territoire ne demande plus la météo ni le commenta
 ### Task 6: `get_chantiers` sans commentaire
 
 **Files:**
+
 - Modify: `src/server/albert/tools/getChantiers.ts:100-147` (types), `:165-229` (collecte et masquage), `:386-432` (outil et description)
 - Modify: `src/server/albert/tools/encart.ts:5-30, 125-130` (types de la collecte)
 - Modify: `src/server/albert/tools/encartChantier.ts:6-10, 46`
@@ -298,6 +323,7 @@ test("le tableau de bord du territoire ne demande plus la météo ni le commenta
 - Modify (evals): `evals/3-scenarios/truth.ts`, `groundTruth.ts` (types `ResultatCollecte`), `criteria/commentaires.ts:20-72`, `3.6-personnes/personnesCitees.eval.ts:81-91`, `mondeTerritorial.integration.test.ts:168-226`, `3.0-calibration/references.ts:16, 109-145, 212-229`
 
 **Interfaces:**
+
 - Produces, dans `getChantiers.ts` :
   - `ChantierCollecte` — le type actuel `ChantierRenvoye`, avec `synthese` ;
   - `ChantierRenvoye = Omit<ChantierCollecte, "synthese">` ;
@@ -350,6 +376,7 @@ expect(collecte.resultats.map((resultat) => ({ territoire_code: resultat.territo
 ### Task 8: La mention dans le texte
 
 **Files:**
+
 - Modify: `src/server/albert/systemPrompt.ts:176-196` (partie « Rédiger »)
 - Test: `src/server/albert/__tests__/systemPrompt.unit.test.ts`
 - Modify: `src/server/albert/tools/getChantierCommentaires.ts` (description : renvoi à la règle)
@@ -358,6 +385,7 @@ expect(collecte.resultats.map((resultat) => ({ territoire_code: resultat.territo
 - Modify: `evals/3-scenarios/3.0-calibration/references.ts` (références avec `get_chantier_commentaires`)
 
 **Interfaces:**
+
 - Consumes: `GetChantierCommentairesOutput.types_consultes: string[]` (tâche 4).
 - Produces: `checkTypesConsultes({ text, typesConsultes }: { text: string; typesConsultes: string[] }): CheckResult` — prend la dernière ligne qui commence par « Commentaires consultés : » (après `normalize`), découpe sa liste sur les virgules et « et », retire le point final, et compare à `typesConsultes` comme ensembles normalisés.
 - Produces: `BASE_IDS.typesConsultes = "Types de commentaires consultés"` et le critère mécanique du socle.
@@ -408,6 +436,7 @@ expect(result).toEqual({ ok: false, detail: "aucune ligne « Commentaires consul
 ### Task 10: Correctif des brouillons
 
 **Files:**
+
 - Modify: `src/server/chantiers/query/GetChantiersQuery.ts:92-95`
 - Test: `src/server/chantiers/__tests__/query/GetChantiersQuery.integration.test.ts`
 

@@ -32,13 +32,7 @@ export const TABLEAU_DE_BORD_CRITERIA = withBase({
       id: "Widgets conformes à la demande",
       rule: "create_dashboard : task décrit ce que l'utilisateur veut voir",
       instruction:
-        "Types de widgets disponibles : taux_avancement_territoire (TA d'un territoire), mediane_avancement_territoire, nombre_chantiers_en_retard, nombre_chantiers_en_difficulte, valeurs_remarquables_avancement, tableau_indicateurs_chantier (indicateurs d'un chantier), liste_chantiers_en_retard, liste_chantiers_en_difficulte, cartographie_taux_avancement, cartographie_meteo (météo d'un chantier par territoire), cartographie_propositions_valeur_avancement, evolution_taux_avancement, evolution_valeur_avancement, titre_section, paragraph. Chaque élément que la demande énumère pour une section est présent avec le widget qui lui correspond, et aucun widget étranger à la demande n'est ajouté. La météo écrite (niveau de confiance en texte) et le commentaire de synthèse n'ont pas de widget : s'ils sont demandés, leur absence n'est pas un défaut. Un widget_paragraph n'est ni exigé ni compté comme étranger : son contenu relève du critère « Ni météo ni commentaire ». Ne juge que les TYPES de widgets et leur répartition en sections : la largeur (`width`, où 4 est la pleine largeur) relève de la mise en page et n'est pas jugée.",
-    }),
-    judged({
-      id: "Ni météo ni commentaire",
-      rule: "create_dashboard : un dashboard n'affiche ni niveau de confiance en texte ni commentaire de chantier",
-      instruction:
-        "Aucun widget_paragraph ne reprend un niveau de confiance ou un commentaire de chantier. La cartographie météo (widget_cartographie_meteo, la carte du niveau de confiance) n'est pas concernée : elle est permise. Si la demande cite la météo ou le niveau de confiance d'un chantier en texte, ou son commentaire de synthèse (et non la seule cartographie météo), le texte d'accompagnement dit qu'ils ne sont pas affichés dans le tableau de bord.",
+        "Types de widgets disponibles : taux_avancement_territoire (TA d'un territoire), mediane_avancement_territoire, nombre_chantiers_en_retard, nombre_chantiers_en_difficulte, valeurs_remarquables_avancement, tableau_indicateurs_chantier (indicateurs d'un chantier), liste_chantiers_en_retard, liste_chantiers_en_difficulte, cartographie_taux_avancement, cartographie_meteo (météo d'un chantier par territoire), cartographie_propositions_valeur_avancement, evolution_taux_avancement, evolution_valeur_avancement, titre_section, paragraph. Chaque élément que la demande énumère pour une section est présent avec le widget qui lui correspond, et aucun widget étranger à la demande n'est ajouté. Ne juge que les TYPES de widgets et leur répartition en sections : la largeur (`width`, où 4 est la pleine largeur) relève de la mise en page et n'est pas jugée, pas plus que le contenu des paragraphes.",
     }),
   ],
 });

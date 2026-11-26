@@ -7,7 +7,6 @@ import {
   checkNoMeteoCode,
   checkNoToolName,
   checkPersonReferences,
-  checkTypesConsultes,
   type CheckResult,
 } from "./mechanicalChecks";
 
@@ -55,45 +54,11 @@ export const BASE_IDS = {
   noHtml: "Pas de HTML",
   personReferences: "Références de personnes",
   personsAsNames: "Personnes citées comme des noms",
-  typesConsultes: "Types de commentaires consultés",
 } as const;
 
 /** Une sortie d'outil de la conversation cite au moins une personne. */
 export const personnesRecues = (evidence: Evidence) =>
   JSON.stringify(evidence.toolResults).includes("@[personne:");
-
-/**
- * Les types de commentaires que `get_chantier_commentaires` a rendus dans la
- * conversation : la réunion de leurs `types_consultes`, sans doublon.
- */
-export function typesConsultesRecus(evidence: Evidence): string[] {
-  const types = evidence.toolResults
-    .filter((result) => result.toolName === "get_chantier_commentaires")
-    .flatMap((result) => {
-      const consultes = (result.output as { types_consultes?: unknown })
-        ?.types_consultes;
-      return Array.isArray(consultes) ? (consultes as string[]) : [];
-    });
-  return [...new Set(types)];
-}
-
-/**
- * Après un dashboard, un encart ou une clarification, la réponse tient en une
- * phrase et ne porte pas la mention. On regarde les appels comme les
- * résultats : la calibration n'écrit parfois que les résultats.
- */
-const OUTILS_SANS_MENTION = [
-  "create_dashboard",
-  "rediger_synthese_territoire",
-  "rediger_synthese_chantier",
-  "rediger_comparaison_territoires",
-  "clarify_with_choices",
-];
-
-const sansMention = (evidence: Evidence) =>
-  [...evidence.toolCalls, ...evidence.toolResults].some((observed) =>
-    OUTILS_SANS_MENTION.includes(observed.toolName),
-  );
 
 /**
  * Les données reçues, sans le texte des encarts : un encart est rédigé par un
@@ -168,17 +133,6 @@ const BASE: Criterion[] = [
         text: evidence.matter,
         toolResults: sansTexteDesEncarts(evidence.toolResults),
       }),
-  }),
-  mechanical({
-    id: BASE_IDS.typesConsultes,
-    rule: "Rédiger : une réponse tirée des commentaires se termine par les types consultés",
-    check: (evidence) =>
-      checkTypesConsultes({
-        text: evidence.answer,
-        typesConsultes: typesConsultesRecus(evidence),
-      }),
-    applicable: (evidence) =>
-      typesConsultesRecus(evidence).length > 0 && !sansMention(evidence),
   }),
   judged({
     id: BASE_IDS.personsAsNames,

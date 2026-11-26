@@ -111,8 +111,7 @@ const CASES: ToolCase[] = [
   },
   {
     question: "Quel est le niveau de confiance du CH-005 en Bretagne ?",
-    reason:
-      "chantier explicite → chantier_ids (« où en est » part vers l'encart depuis PIL-1966)",
+    reason: "chantier explicite → chantier_ids",
     expected: [
       { toolName: "get_chantiers", input: { chantier_ids: ["CH-005"] } },
     ],

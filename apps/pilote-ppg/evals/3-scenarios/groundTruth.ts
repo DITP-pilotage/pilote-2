@@ -72,9 +72,6 @@ export async function readGroundTruth({
     }
   }
 
-  const territoiresCommentes = scope.commentairesSurChaqueTerritoire
-    ? scope.territoires
-    : [territoirePrincipal];
   const commentaires: GetChantierCommentairesOutput[] = [];
   for (const chantierId of scope.chantiersCommentes ?? []) {
     commentaires.push(
@@ -84,7 +81,7 @@ export async function readGroundTruth({
           chantier_id: chantierId,
           perimetre: {
             type: "SELECTION",
-            territoire_codes: territoiresCommentes,
+            territoire_codes: [territoirePrincipal],
           },
         },
       }),

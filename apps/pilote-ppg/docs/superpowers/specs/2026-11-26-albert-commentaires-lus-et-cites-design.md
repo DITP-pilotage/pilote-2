@@ -3,6 +3,7 @@
 Date : 2026-11-26
 Statut : en relecture
 Reprend l'objectif de la PR #2785, sans en reprendre le code : on repart de `dev`.
+Révisée après la relecture de la PR #2799 : le scénario par département est remplacé par deux cas de l'eval d'outil de `get_chantier_commentaires` ; le critère mécanique de la mention et le second cas du tableau de bord sont retirés ; aucune consigne ne liste plus ce qu'un tableau de bord n'affiche pas.
 
 ## Intention
 
@@ -94,7 +95,7 @@ Aujourd'hui, le modèle passe à `create_dashboard` un `commentaire` par chantie
 - Entrée de `create_dashboard` : `niveau_de_confiance` et `commentaire` disparaissent du contexte des chantiers, avec la conversion du libellé en code météo (`pourLeSousAgent`, `codeMeteoDepuisLibelle` et son test s'ils n'ont plus d'usage).
 - Prompt du sous-agent (`dashboardSystemPrompt.ts`) : plus de règle « Niveau de confiance + commentaire d'un chantier », plus de paragraphe dans les modèles « Focus chantier » et « Indicateurs d'un chantier », exemple 2 et règle 4 du protocole mis à jour. `widget_paragraph` reste disponible pour du texte libre ; aucune consigne ne le lie plus à la météo ni au commentaire.
 - Bouton « Tableau de bord du territoire » de l'accueil (`scenariosTerritoire.ts`, profil `DITP_ADMIN` uniquement) : on retire « la météo et le commentaire de synthèse » du message.
-- Quand on demande encore la météo ou un commentaire dans un tableau de bord (ancien message du bouton dans une conversation existante, demande libre) : le tableau de bord ne les affiche pas, et la phrase qui l'accompagne le dit. La description de `create_dashboard` l'annonce ; le prompt du sous-agent interdit de reprendre une météo ou un commentaire, y compris dans un paragraphe de texte libre ; la variante `warning` du paragraphe ne s'appuie plus sur la météo.
+- On ne liste pas au modèle ce qu'un tableau de bord n'affiche pas : la description de `create_dashboard` énumère déjà ce qu'il sait afficher, « et rien d'autre ». Le sous-agent ne remplit un `widget_paragraph` que d'un texte que la description fournit tel quel, sans l'inventer ni le reformuler ; la variante `warning` du paragraphe disparaît du tableau des widgets.
 
 ### 5. Le correctif des brouillons
 
@@ -121,16 +122,10 @@ Les changements d'evals passent d'abord, et sont mesurés sur le code de `dev` :
 ### Avant tout changement produit
 
 1. **Cas périmé** : dans `getChantiers.eval.ts`, « Où en est le CH-005 en Bretagne ? » attend `get_chantiers`, alors que le prompt l'envoie vers l'encart depuis PIL-1966. On remplace la question par une demande qui relève vraiment de `get_chantiers`.
-2. **Données du scénario** : le monde partagé ne bouge pas. CH-005 y est « Appuis nécessaires » dans les quatre départements bretons, avec la même synthèse partout. On ne pourrait pas y créer les cas utiles sans changer la fiche d'autres scénarios (synthèse de la Bretagne et de ses départements, comparaisons de départements, questions de suivi). Le nouveau scénario a donc son propre `seedSupplementaire`, semé pour son seul fichier (`seedWorldPerFile`), comme `seedValeursACompleter`. Il retouche CH-005 dans les départements bretons pour obtenir, par ordre de priorité :
-   - un département avec des commentaires typés et **aucune synthèse** : c'est le cas exact de la recette (Yvelines, Essonne, Hauts-de-Seine) ;
-   - un département sans aucun commentaire, pour vérifier que l'absence est dite à bon escient ;
-   - un département dont les commentaires typés disent autre chose que sa synthèse ;
-   - un département où CH-005 n'est pas en difficulté, pour vérifier le filtre ;
-   - des contenus distincts d'un département à l'autre, avec un sujet commun à deux départements et un sujet propre à un seul.
-3. **Fiche de vérité** : une option du `truthScope` permet de lire les commentaires sur tous les territoires du scénario ; sans elle, la lecture reste sur le premier territoire, comme aujourd'hui. Les fiches des scénarios existants ne changent pas. La lecture des synthèses passe par la collecte (changement neutre : même contenu).
-4. **Nouveau scénario** « Synthèse des commentaires d'un chantier par département » (3.1) : la demande de recette transposée au monde, plus une reformulation. Outils attendus : `get_chantiers` (vue `en_difficulte`, CH-005), puis `get_chantier_commentaires` (CH-005). Critères jugés : chaque département en difficulté et seulement eux ; tous les types de commentaires de la fiche, pas la seule synthèse ; pas d'absence inventée ; sujets récurrents réellement communs à plusieurs départements ; pas de recopie.
-5. **Le nouveau scénario seul, sur ce code** : il doit reproduire le défaut de la recette. Dans la majorité des essais, il échoue sur « Outils attendus » (pas d'appel à `get_chantier_commentaires`), et sur « Tous les types de commentaires » ou « Pas d'absence inventée ». Sinon, on ajuste ses données ou sa reformulation, en restant au plus près de la demande de recette, et on le relance seul : reproduire un défaut réellement observé n'est pas régler l'eval sur le résultat. Après deux ajustements sans succès, on s'arrête et on en rend compte.
-6. **Passage de référence** : toutes les suites listées plus bas, une fois le scénario figé.
+2. **Cas de la demande de recette** : deux cas dans l'eval d'outil de `get_chantier_commentaires` (2.2), la demande transposée au monde des evals d'outils et une reformulation. CH-006 y est semé en difficulté en Bretagne : la question porte donc sur les régions où il est en difficulté. La suite sème en plus, pour elle seule (`seedSupplementaire` de `toolSelectionEval`), une synthèse publiée de CH-006 en Bretagne : sans elle, l'agent n'a rien dont se contenter, et le défaut ne se reproduit pas sur `dev` (5 essais sur 6 réussis). Outils attendus : `get_chantiers` (vue `en_difficulte`, CH-006), puis `get_chantier_commentaires` (CH-006). Les evals d'outils font tourner l'agent complet sur le monde semé, avec les vrais outils : elles mesurent l'enchaînement, qui était tout le défaut. La rédaction (absence inventée, sujets récurrents) n'est pas mesurée par un scénario à part : sans `get_chantier_commentaires`, l'agent n'a plus aucun commentaire, et le scénario « Synthèse des commentaires » couvre déjà la rédaction.
+3. **Fiche de vérité** : la lecture des synthèses passe par la collecte (changement neutre : même contenu). Les fiches des scénarios existants ne changent pas.
+4. **Les cas de la demande de recette, sur ce code** : ils doivent reproduire le défaut, sans quoi ils ne protègent rien. Avec la synthèse semée, 3 essais sur 6 s'arrêtent à `get_chantiers` sur `dev` et répondent de la seule synthèse ; sur la branche, 11 essais sur 12 enchaînent les deux outils.
+5. **Passage de référence** : toutes les suites listées plus bas.
 
 ### Après les changements produit
 
@@ -138,9 +133,8 @@ Les changements d'evals passent d'abord, et sont mesurés sur le code de `dev` :
   - 3.6 « Qui a rédigé la synthèse des résultats du CH-005 en Bretagne ? » attend désormais `get_chantier_commentaires` ;
   - `criteria/commentaires.ts` ne lit plus la synthèse dans la sortie de `get_chantiers` ;
   - `mondeTerritorial.integration.test.ts` ne vérifie plus l'auteur de la synthèse dans `get_chantiers` ;
-  - 3.1 « Tableau de bord du territoire » : question alignée sur le nouveau message du bouton, critère sans « un paragraphe pour la météo et le commentaire de synthèse », référence de calibration sans ce paragraphe ;
-  - 3.1 « Tableau de bord du territoire » : un second cas avec l'ancien message du bouton, et un critère jugé « aucun paragraphe ne reprend une météo ni un commentaire ; la réponse dit qu'ils ne sont pas affichés ».
-- Nouveau critère mécanique « Types de commentaires consultés », dans le socle : applicable seulement si `get_chantier_commentaires` a été appelé et que la matière est un texte (ni tableau de bord, ni encart, ni clarification) ; la dernière ligne « Commentaires consultés : … » contient chaque libellé reçu, et aucun type non accessible.
+  - 3.1 « Tableau de bord du territoire » : question alignée sur le nouveau message du bouton, critère sans « un paragraphe pour la météo et le commentaire de synthèse », référence de calibration sans ce paragraphe. L'ancien message, dans une conversation existante, n'a pas de cas : c'est un cas marginal.
+- La mention n'a pas de critère : elle n'est pas structurante pour l'assistant, et la vérifier ligne à ligne coûtait plus qu'elle ne protège.
 - Deux passages : l'un après les changements 1, 2 et 4 (sans la règle de la mention), l'autre après le changement 3. La règle de la mention touche toutes les réponses tirées des commentaires : on isole son effet.
 
 ### Suites mesurées
@@ -149,7 +143,7 @@ Chaque suite tourne deux fois, soit 6 essais par cas, sans toucher à `trialCoun
 
 - 2.2 `get_chantiers`, 2.2 `get_chantier_commentaires`, 2.3 `create_dashboard` ;
 - 3.0 calibration du juge ;
-- 3.1 synthèse des commentaires, synthèse d'un chantier, synthèse d'un territoire, synthèse des départements, synthèse des difficultés, chantiers en retard, tableau de bord du territoire, tableau de bord sans chantier, et le nouveau scénario ;
+- 3.1 synthèse des commentaires, synthèse d'un chantier, synthèse d'un territoire, synthèse des départements, synthèse des difficultés, chantiers en retard, tableau de bord du territoire, tableau de bord sans chantier ;
 - 3.4 commentaires restitués ;
 - 3.5 questions de suivi ;
 - 3.6 personnes citées.
@@ -158,10 +152,9 @@ Les résultats avant et après sont exportés à côté des précédents (`evals
 
 ### Seuils et marge de manœuvre
 
-- Nouveau scénario : `get_chantier_commentaires` appelé dans au moins 5 essais sur 6 par question ; « Tous les types de commentaires » et « Pas d'absence inventée » à au moins 5/6.
-- Critère de la mention : au moins 5/6 là où il s'applique.
+- Cas de la demande de recette : `get_chantiers` puis `get_chantier_commentaires` appelés dans au moins 5 essais sur 6 par question.
 - Suites voisines : aucune baisse de plus d'un essai sur 6 sur un critère sans explication essai par essai ; une baisse expliquée par la variance est notée comme telle dans la PR.
-- Si un seuil n'est pas atteint après l'étape 4 : on peut ajuster les descriptions des deux outils et ajouter, dans la partie « Collecter » du prompt système, un exemple de la demande de recette. Ces ajustements font partie de l'étape 4, pour que le second passage isole toujours l'effet de la mention. On relance le nouveau scénario et les suites directement touchées, puis toutes les suites. Au plus deux tours ; au-delà, on s'arrête et on en rend compte.
+- Si un seuil n'est pas atteint après l'étape 4 : on peut ajuster les descriptions des deux outils et ajouter, dans la partie « Collecter » du prompt système, un exemple de la demande de recette. Ces ajustements font partie de l'étape 4, pour que le second passage isole toujours l'effet de la mention. On relance les cas de la demande de recette et les suites directement touchées, puis toutes les suites. Au plus deux tours ; au-delà, on s'arrête et on en rend compte.
 - Si un seuil n'est pas atteint après l'étape 5 : seule la règle de la mention et la description du champ peuvent bouger, avec la même limite de deux tours.
 - Coût : environ 17 suites, deux fois chacune, pour chacun des trois passages (référence, après l'étape 4, après l'étape 5).
 
@@ -173,11 +166,11 @@ Sur `pilote_demo`, dans l'app locale : la demande de recette sur CH-070 (13 dép
 
 Sur une branche tirée de `dev` :
 
-1. Evals sans effet produit : cas périmé, option de la fiche de vérité, lecture des synthèses par la collecte, nouveau scénario et ses données. → le nouveau scénario seul jusqu'à reproduire le défaut, puis passage de référence.
+1. Evals sans effet produit : cas périmé, lecture des synthèses par la collecte, cas de la demande de recette. → ces cas seuls jusqu'à reproduire le défaut, puis passage de référence.
 2. `get_chantier_commentaires` : types consultés et correctif des types non accessibles.
 3. Tableaux de bord sans météo ni commentaire, bouton de l'accueil, evals du tableau de bord.
 4. `get_chantiers` sans commentaire, evals adaptées. → premier passage après.
-5. Règle de la mention dans le prompt système, critère mécanique. → second passage après.
+5. Règle de la mention dans le prompt système. → second passage après.
 6. Correctif des brouillons et son test d'intégration.
 
 Chaque étape passe les tests unitaires et d'intégration concernés, `tsc`, oxlint et prettier sur les fichiers modifiés.
@@ -186,9 +179,7 @@ Chaque étape passe les tests unitaires et d'intégration concernés, `tsc`, oxl
 
 - La forme des types TypeScript entre la collecte et la sortie de l'outil.
 - Le nom du champ des types consultés, l'ordre des libellés, la formulation exacte des descriptions et de la règle du prompt.
-- Le contenu exact des commentaires semés, et la question qui remplace le cas périmé.
-- L'analyse de la dernière ligne par le critère mécanique.
-- Le profil du nouveau scénario (DITP, comme la recette), et la mise à jour des références de calibration pour le nouveau critère du socle.
+- La question qui remplace le cas périmé.
 - La phrase de la description de `get_chantier_commentaires` qui renvoie à la règle de la mention arrive avec elle, à l'étape 5.
 
 ## Suites
