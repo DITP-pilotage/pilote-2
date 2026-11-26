@@ -334,16 +334,18 @@ Sources analysées : données quantitatives et qualitatives des chantiers publi�
 /**
  * En production, la synthèse d'un territoire passe par
  * `rediger_synthese_territoire` : la sortie de l'encart porte les chantiers
- * collectés, synthèse et auteur compris (les encarts ne changent pas).
+ * collectés, synthèse et auteur compris (les encarts ne changent pas). Son
+ * `markdown` est la matière du cas : le juge ne doit pas y lire la référence à
+ * côté d'un mutant.
  */
-const TOOL_RESULTS_SYNTHESE_TERRITOIRE = [
+const toolResultsSyntheseTerritoire = (markdown: string) => [
   {
     toolName: "rediger_synthese_territoire",
     output: {
       type: "synthese",
       jalon: 2025,
       date_redaction: "2026-09-15T08:00:00.000Z",
-      markdown: SYNTHESE_REFERENCE,
+      markdown,
       termine: true,
       donnees: {
         taux: FICHE_BRETAGNE.tauxAvancement,
@@ -356,23 +358,22 @@ const TOOL_RESULTS_SYNTHESE_TERRITOIRE = [
   },
 ];
 
-const synthese = ({ from, to }: { from: string | RegExp; to: string }) =>
+const syntheseTerritoire = (matter: string) =>
   evidence({
     question: SYNTHESE_QUESTION,
-    matter: muter({ reference: SYNTHESE_REFERENCE, from, to }),
-    toolResults: TOOL_RESULTS_SYNTHESE_TERRITOIRE,
+    matter,
+    toolResults: toolResultsSyntheseTerritoire(matter),
   });
+
+const synthese = ({ from, to }: { from: string | RegExp; to: string }) =>
+  syntheseTerritoire(muter({ reference: SYNTHESE_REFERENCE, from, to }));
 
 const SYNTHESE: CalibrationCase[] = [
   {
     suite: SUITES.syntheseTerritoire,
     label: "Référence",
     broken: null,
-    evidence: evidence({
-      question: SYNTHESE_QUESTION,
-      matter: SYNTHESE_REFERENCE,
-      toolResults: TOOL_RESULTS_SYNTHESE_TERRITOIRE,
-    }),
+    evidence: syntheseTerritoire(SYNTHESE_REFERENCE),
   },
   {
     suite: SUITES.syntheseTerritoire,
@@ -538,16 +539,22 @@ const COMPARAISON: CalibrationCase[] = [
 // --- Synthèse des commentaires ------------------------------------------
 
 /**
- * Les types interrogés pour la Bretagne : tous, sauf les deux que le profil
- * n'a pas le droit de lire (`types_non_accessibles`).
+ * Les types interrogés pour la Bretagne par un coordinateur sans accès au
+ * national : les seuls types territoriaux. En production, l'accès aux types
+ * nationaux est tout ou rien : ils sont tous non accessibles.
  */
 const TYPES_CONSULTES_BRETAGNE = [
-  "Freins à lever",
-  "Autres résultats obtenus non corrélés aux indicateurs",
-  "Décisions stratégiques",
   "Commentaires sur les données",
   "Autres résultats obtenus",
   "Synthèse des résultats",
+];
+
+const TYPES_NATIONAUX_NON_ACCESSIBLES = [
+  "freins_a_lever",
+  "actions_a_venir",
+  "actions_a_valoriser",
+  "autres_resultats_obtenus_non_correles_aux_indicateurs",
+  "decision_strategique",
 ];
 
 const COMMENTAIRES_RESULTS = [
@@ -584,7 +591,7 @@ const COMMENTAIRES_RESULTS = [
         },
       ],
       types_consultes: TYPES_CONSULTES_BRETAGNE,
-      types_non_accessibles: ["actions_a_venir", "actions_a_valoriser"],
+      types_non_accessibles: TYPES_NATIONAUX_NON_ACCESSIBLES,
     },
   },
   {
@@ -599,7 +606,7 @@ const COMMENTAIRES_RESULTS = [
         },
       ],
       types_consultes: TYPES_CONSULTES_BRETAGNE,
-      types_non_accessibles: ["actions_a_venir", "actions_a_valoriser"],
+      types_non_accessibles: TYPES_NATIONAUX_NON_ACCESSIBLES,
     },
   },
 ];
@@ -613,9 +620,9 @@ Depuis mars, les appels passent par un numéro unique dans le département. Deux
 **CH-012 — Développer l'apprentissage**
 Aucun commentaire n'est publié pour ce chantier en Bretagne.
 
-Les actions à venir et à valoriser relèvent de la vue nationale, à laquelle vous n'avez pas accès.
+Les actions à venir et à valoriser, comme les autres commentaires nationaux, relèvent de la vue nationale, à laquelle vous n'avez pas accès.
 
-Commentaires consultés : freins à lever, autres résultats obtenus non corrélés aux indicateurs, décisions stratégiques, commentaires sur les données, autres résultats obtenus et synthèse des résultats.`;
+Commentaires consultés : commentaires sur les données, autres résultats obtenus et synthèse des résultats.`;
 
 const commentaires = (matter: string) =>
   evidence({
@@ -664,7 +671,7 @@ const COMMENTAIRES: CalibrationCase[] = [
     evidence: commentaires(
       muter({
         reference: COMMENTAIRES_REFERENCE,
-        from: "Les actions à venir et à valoriser relèvent de la vue nationale, à laquelle vous n'avez pas accès.",
+        from: "Les actions à venir et à valoriser, comme les autres commentaires nationaux, relèvent de la vue nationale, à laquelle vous n'avez pas accès.",
         to: "Aucune action à venir ni à valoriser n'a été identifiée.",
       }),
     ),
@@ -938,16 +945,17 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`;
 /**
  * En production, cette demande passe par `rediger_synthese_chantier` : la
  * sortie de l'encart porte le chantier collecté, synthèse et auteur compris,
- * et les commentaires du territoire (les encarts ne changent pas).
+ * et les commentaires du territoire (les encarts ne changent pas). Son
+ * `markdown` est la matière du cas.
  */
-const CHANTIER_RESULTS = [
+const chantierResults = (markdown: string) => [
   {
     toolName: "rediger_synthese_chantier",
     output: {
       type: "synthese_chantier",
       jalon: 2025,
       date_redaction: "2026-09-15T08:00:00.000Z",
-      markdown: "",
+      markdown,
       termine: true,
       donnees: {
         jalon: 2025,
@@ -980,7 +988,7 @@ const syntheseChantier = (matter: string) =>
   evidence({
     question: CHANTIER_QUESTION,
     matter,
-    toolResults: CHANTIER_RESULTS,
+    toolResults: chantierResults(matter),
   });
 
 const SYNTHESE_CHANTIER: CalibrationCase[] = [

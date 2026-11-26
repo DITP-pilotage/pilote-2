@@ -1,4 +1,4 @@
-import type { Evidence } from "./evidence";
+import { OUTILS_ENCART, type Evidence } from "./evidence";
 import {
   checkChantierFormat,
   checkFrench,
@@ -96,6 +96,30 @@ const sansMention = (evidence: Evidence) =>
   );
 
 /**
+ * Les données reçues, sans le texte des encarts : un encart est rédigé par un
+ * sous-agent, c'est de la matière, pas une donnée. Sans ça, une référence de
+ * personne inventée dans un encart serait « reçue » par son propre texte.
+ */
+function sansTexteDesEncarts(
+  toolResults: Evidence["toolResults"],
+): Evidence["toolResults"] {
+  return toolResults.map((result) =>
+    OUTILS_ENCART.includes(result.toolName) &&
+    typeof result.output === "object" &&
+    result.output !== null
+      ? {
+          ...result,
+          output: Object.fromEntries(
+            Object.entries(result.output).filter(
+              ([champ]) => champ !== "markdown",
+            ),
+          ),
+        }
+      : result,
+  );
+}
+
+/**
  * Le socle : les « Règles fondamentales » du prompt, valables pour toute
  * réponse. Elles portent sur la matière, qui peut être un rapport ou un
  * dashboard décrit.
@@ -142,7 +166,7 @@ const BASE: Criterion[] = [
     check: (evidence) =>
       checkPersonReferences({
         text: evidence.matter,
-        toolResults: evidence.toolResults,
+        toolResults: sansTexteDesEncarts(evidence.toolResults),
       }),
   }),
   mechanical({
