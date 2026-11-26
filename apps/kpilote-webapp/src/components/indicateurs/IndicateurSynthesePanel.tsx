@@ -1,9 +1,5 @@
 import { type SensSouhaite, type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
-import {
-  type Interpretation,
-  interpretDifference,
-  interpretExtremes,
-} from '@pilote/kpilote-shared/interpretation'
+import { interpretDifference, interpretExtremes } from '@pilote/kpilote-shared/interpretation'
 import { useSuspenseQueries } from '@tanstack/react-query'
 
 import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
@@ -17,7 +13,11 @@ import {
   formatNumberFr,
   INTERPRETATION_LABEL_FR,
 } from '@/lib/format'
-import { describeVariation, TONE_BY_INTERPRETATION } from '@/lib/variation'
+import {
+  describeVariation,
+  TEXT_CLASS_BY_INTERPRETATION,
+  TONE_BY_INTERPRETATION,
+} from '@/lib/variation'
 import {
   indicateurSyntheseIndividuQueryOptions,
   indicateurTauxProgressionQueryOptions,
@@ -32,12 +32,6 @@ type DatedValue = { date: string; valeur: number }
 // sans appel API dédié (la série est déjà en cache).
 const sortByDateDesc = (items: ReadonlyArray<DatedValue>): DatedValue[] =>
   [...items].sort((a, b) => b.date.localeCompare(a.date))
-
-const TEXT_CLASS_BY_INTERPRETATION: Record<Interpretation, string> = {
-  favorable: 'text-success',
-  unfavorable: 'text-error',
-  neutral: 'text-blue-cumulus',
-}
 
 type IndicateurSynthesePanelProps = {
   indicateurId: string

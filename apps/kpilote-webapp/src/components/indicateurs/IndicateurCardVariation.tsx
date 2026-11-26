@@ -4,7 +4,11 @@ import { type DerniereValeurApiModel } from '@pilote/kpilote-shared/valeurAvance
 import { Pill } from '@pilote/kpilote-ui/Pill'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { formatDifferenceFr, formatMonthYearNumericFr, formatNumberFr } from '@/lib/format'
-import { describeVariation, TONE_BY_INTERPRETATION } from '@/lib/variation'
+import {
+  describeVariation,
+  TEXT_CLASS_BY_INTERPRETATION,
+  TONE_BY_INTERPRETATION,
+} from '@/lib/variation'
 
 // Le bloc garde ses deux lignes même sans valeur précédente : les cartes voisines
 // restent alignées et aucune évolution n'est inventée.
@@ -34,7 +38,12 @@ export function IndicateurCardVariation({
         ) : (
           <div className="mt-1 flex flex-wrap items-center gap-2">
             <span className="text-sm font-bold text-text">
-              <span aria-hidden="true">{lecture.arrow}</span>{' '}
+              <span
+                aria-hidden="true"
+                className={TEXT_CLASS_BY_INTERPRETATION[lecture.interpretation]}
+              >
+                {lecture.arrow}
+              </span>{' '}
               {formatDifferenceFr(lecture.variation, unite)}
             </span>
             <Pill tone={TONE_BY_INTERPRETATION[lecture.interpretation]}>{lecture.label}</Pill>

@@ -17,6 +17,12 @@ export const TONE_BY_INTERPRETATION: Record<Interpretation, PillTone> = {
   neutral: 'info',
 }
 
+export const TEXT_CLASS_BY_INTERPRETATION: Record<Interpretation, string> = {
+  favorable: 'text-success',
+  unfavorable: 'text-error',
+  neutral: 'text-blue-cumulus',
+}
+
 const ARROW_BY_DIRECTION: Record<DirectionVariation, string> = {
   HAUSSE: '↑',
   BAISSE: '↓',
