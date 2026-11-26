@@ -6,10 +6,9 @@ import {
 import { keyBy } from 'es-toolkit'
 import { ResultAsync } from 'neverthrow'
 
-import { filtreVisibiliteCommentaire } from '@/commentaire/visibilite'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
-import { IndicateurIndividuCommentaireType } from '@/generated/prisma/enums'
+import { getDerniersNiveauxConfiance } from '@/generated/prisma/sql'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { resolveIndividusCibles } from '@/valeurAvancement/resolveIndividusCibles'
 
@@ -25,9 +24,6 @@ export const listDerniersNiveauxConfiance = (
 const keyOf = ({ indicateurId, individuId }: { indicateurId: string; individuId: string }) =>
   `${indicateurId}:${individuId}`
 
-// Même lecture que la fiche indicateur : le niveau affiché est celui du dernier
-// commentaire CONFIANCE publié. Si ce commentaire n'en porte pas, on ne remonte
-// pas vers un commentaire plus ancien.
 const build = async ({
   query,
 }: ListDerniersNiveauxConfianceParams): Promise<DerniersNiveauxConfianceListApiModel> => {
@@ -47,28 +43,18 @@ const build = async ({
   })
   if (lectures.length === 0) return { items: [] }
 
-  const derniersCommentaires = await db().indicateurIndividuCommentaire.findMany({
-    where: {
-      type: IndicateurIndividuCommentaireType.CONFIANCE,
-      commentaire: filtreVisibiliteCommentaire(principalId, 'PUBLIE'),
-      OR: lectures.map(({ indicateur, individu }) => ({
-        indicateurId: indicateur.id,
-        individuId: individu.id,
-      })),
-    },
-    // uuidv7 → antichronologique : `distinct` garde le dernier commentaire de chaque couple.
-    orderBy: { commentaireId: 'desc' },
-    distinct: ['indicateurId', 'individuId'],
-    include: {
-      commentaire: { include: { niveauxConfiance: { orderBy: { id: 'desc' }, take: 1 } } },
-    },
-  })
-  const dernierCommentaireByKey = keyBy(derniersCommentaires, keyOf)
+  // Une ligne au plus par couple : la requête ne lit que le dernier commentaire
+  // publié, quelle que soit la profondeur de l'historique.
+  const niveaux = await db().$queryRawTyped(
+    getDerniersNiveauxConfiance(
+      lectures.map(({ indicateur }) => indicateur.id),
+      lectures.map(({ individu }) => individu.id),
+    ),
+  )
+  const niveauByKey = keyBy(niveaux, keyOf)
 
   const items = lectures.flatMap(({ indicateur, individu }) => {
-    const dernierCommentaire =
-      dernierCommentaireByKey[keyOf({ indicateurId: indicateur.id, individuId: individu.id })]
-    const niveau = dernierCommentaire?.commentaire.niveauxConfiance[0]
+    const niveau = niveauByKey[keyOf({ indicateurId: indicateur.id, individuId: individu.id })]
     if (!niveau) return []
     const item: DernierNiveauConfianceApiModel = {
       indicateur: indicateur.publicId,
