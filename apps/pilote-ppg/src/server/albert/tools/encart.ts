@@ -4,6 +4,7 @@ import { Albert } from "@/server/albert/Albert";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import {
+  type ChantierCollecte,
   collecterChantiers,
   type GetChantiersOutput,
 } from "@/server/albert/tools/getChantiers";
@@ -23,8 +24,8 @@ import type { DonneesEncartChantier } from "@/server/albert/tools/encartChantier
 /** Ce que l'outil a collecté et passé au sous-agent de rédaction. */
 export type DonneesEncart = {
   taux: GetTauxAvancementTerritoireResult[];
-  chantiers_en_retard: GetChantiersOutput;
-  chantiers_en_difficulte: GetChantiersOutput;
+  chantiers_en_retard: GetChantiersOutput<ChantierCollecte>;
+  chantiers_en_difficulte: GetChantiersOutput<ChantierCollecte>;
   /** Les indicateurs des chantiers des deux vues, quand la demande les cite. */
   indicateurs?: GetChantierIndicateursResult[];
 };
@@ -124,7 +125,7 @@ export const indicateursPourLeSousAgent = (
   }));
 
 const vuePourLeSousAgent = (
-  vue: GetChantiersOutput,
+  vue: GetChantiersOutput<ChantierCollecte>,
   indicateurs?: GetChantierIndicateursResult[],
 ) => ({
   resultats: vue.resultats.map((resultat) => ({

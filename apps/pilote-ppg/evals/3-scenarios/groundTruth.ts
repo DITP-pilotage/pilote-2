@@ -1,12 +1,14 @@
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import type { GetChantiersOutput } from "@/server/albert/tools/getChantiers";
 import type {
   GetTauxAvancementTerritoireOutput,
   GetTauxAvancementTerritoireResult,
 } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChantierIndicateurs";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
-import type { ResultatChantiers } from "@/server/albert/tools/getChantiers";
+import type {
+  ChantierCollecte,
+  ResultatChantiers,
+} from "@/server/albert/tools/getChantiers";
 import type { EvalUser } from "../world";
 import { createDataTools, executeTool } from "./dataTools";
 import { JALON_COURANT } from "./territoires";
@@ -33,8 +35,8 @@ export async function readGroundTruth({
   };
 
   const tauxAvancement: GetTauxAvancementTerritoireResult[] = [];
-  const chantiersEnRetard: ResultatChantiers[] = [];
-  const chantiersEnDifficulte: ResultatChantiers[] = [];
+  const chantiersEnRetard: ResultatChantiers<ChantierCollecte>[] = [];
+  const chantiersEnDifficulte: ResultatChantiers<ChantierCollecte>[] = [];
 
   for (const jalon of jalons) {
     const taux = await executeTool<GetTauxAvancementTerritoireOutput>({
@@ -43,11 +45,10 @@ export async function readGroundTruth({
     });
     tauxAvancement.push(...taux.resultats);
 
+    // La collecte plutôt que l'outil : elle garde les commentaires de synthèse,
+    // que les encarts résument et que « Pas de recopie » compare à la réponse
     const lireVue = (view: "en_retard" | "en_difficulte") =>
-      executeTool<GetChantiersOutput>({
-        tool: tools.getChantiers,
-        input: { perimetre, jalon, view },
-      });
+      tools.collecterChantiers({ perimetre, jalon, view });
 
     chantiersEnRetard.push(...(await lireVue("en_retard")).resultats);
     chantiersEnDifficulte.push(...(await lireVue("en_difficulte")).resultats);
@@ -83,7 +84,7 @@ export async function readGroundTruth({
           chantier_id: chantierId,
           perimetre: {
             type: "SELECTION",
-            territoire_codes: [territoirePrincipal],
+            territoire_codes: scope.territoires,
           },
         },
       }),

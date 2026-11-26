@@ -24,6 +24,11 @@ import { JALON_COURANT, TERRITOIRES } from "./territoires";
  * à valoriser » sont des types nationaux, invisibles sur une région. En
  * Bretagne, CH-006 porte deux commentaires qui disent la même chose.
  *
+ * CH-005 porte aussi des commentaires typés dans le Finistère et en
+ * Ille-et-Vilaine, qui disent autre chose que sa synthèse des résultats : une
+ * synthèse des commentaires par département qui s'arrête à la synthèse les
+ * manque.
+ *
  * Les personnes de CH-005 et d'IND-005 sont semées ensuite
  * (`seedPersonnes`) : chaque rôle qu'un outil renvoie en a au moins une.
  */
@@ -170,11 +175,13 @@ const departementBreton = ({
   tauxCh005,
   ecartCh005,
   tauxCh006,
+  commentairesCh005,
 }: {
   tauxCh001: number;
   tauxCh005: number;
   ecartCh005: number;
   tauxCh006: number;
+  commentairesCh005?: SeededChantier["commentaires"];
 }): SeededChantier[] => [
   aLHeure({
     chantierId: "CH-001",
@@ -195,6 +202,7 @@ const departementBreton = ({
       valeurCible: 180,
       tauxAvancement: tauxCh005,
     },
+    commentaires: commentairesCh005,
   },
   {
     chantierId: "CH-006",
@@ -237,6 +245,18 @@ const PEUPLEMENT_2025: {
       tauxCh005: 28,
       ecartCh005: -22,
       tauxCh006: 60,
+      commentairesCh005: [
+        {
+          type: "commentaires_sur_les_donnees",
+          contenu:
+            "<p>La hausse du délai en juin tient à la fermeture de nuit des urgences de Carhaix. La donnée de juillet est provisoire.</p>",
+        },
+        {
+          type: "autres_resultats_obtenus",
+          contenu:
+            "<p>Une maison médicale de garde a ouvert à Quimperlé en mai. Le recrutement de deux médecins régulateurs reste à pourvoir.</p>",
+        },
+      ],
     }),
   },
   {
@@ -246,6 +266,18 @@ const PEUPLEMENT_2025: {
       tauxCh005: 30,
       ecartCh005: -18,
       tauxCh006: 50,
+      commentairesCh005: [
+        {
+          type: "commentaires_sur_les_donnees",
+          contenu:
+            "<p>Jusqu'en avril, le délai médian n'était mesuré qu'au CHU de Rennes : les valeurs antérieures ne sont pas comparables.</p>",
+        },
+        {
+          type: "autres_resultats_obtenus",
+          contenu:
+            "<p>Trois médecins régulateurs ont été recrutés en septembre par un contrat de territoire.</p>",
+        },
+      ],
     }),
   },
   {

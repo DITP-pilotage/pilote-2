@@ -2,7 +2,10 @@ import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChan
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type { GetTauxAvancementTerritoireResult } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
-import type { ResultatChantiers } from "@/server/albert/tools/getChantiers";
+import type {
+  ChantierCollecte,
+  ResultatChantiers,
+} from "@/server/albert/tools/getChantiers";
 
 /**
  * La forme de la fiche de vérité, et ce qu'on en déduit, sans rien charger du
@@ -17,7 +20,7 @@ export type TruthScope = {
   jalons?: number[];
   /** Défaut : la sélection des `territoires`. */
   perimetre?: Perimetre;
-  /** Chantiers dont la fiche lit les commentaires, sur le premier territoire. */
+  /** Chantiers dont la fiche lit les commentaires, sur chacun des `territoires`. */
   chantiersCommentes?: string[];
   /** Lit les indicateurs des chantiers en retard et en difficulté. */
   indicateurs?: boolean;
@@ -26,8 +29,8 @@ export type TruthScope = {
 export type GroundTruth = {
   territoires: { code: string; nom: string; maille: string }[];
   tauxAvancement: GetTauxAvancementTerritoireResult[];
-  chantiersEnRetard: ResultatChantiers[];
-  chantiersEnDifficulte: ResultatChantiers[];
+  chantiersEnRetard: ResultatChantiers<ChantierCollecte>[];
+  chantiersEnDifficulte: ResultatChantiers<ChantierCollecte>[];
   indicateurs: GetChantierIndicateursOutput["resultats"][];
   commentaires: GetChantierCommentairesOutput[];
 };

@@ -193,8 +193,6 @@ describe("seedMondeTerritorial", () => {
           directeurs: resultat.chantiers[0]?.chantier.directeurs_projet,
           responsables: resultat.chantiers[0]?.responsables_locaux,
           coordinateurs: resultat.chantiers[0]?.coordinateurs_territoriaux,
-          auteur: resultat.chantiers[0]?.synthese?.auteur,
-          modifiePar: resultat.chantiers[0]?.synthese?.modifie_par,
         })),
       ).toEqual([
         {
@@ -207,8 +205,6 @@ describe("seedMondeTerritorial", () => {
           coordinateurs: [
             referenceDe(PERSONNES.coordinatriceTerritorialeBretagne),
           ],
-          auteur: referenceDe(PERSONNES.auteurSynthese),
-          modifiePar: referenceDe(PERSONNES.modificatriceSynthese),
         },
         {
           territoire: "REG-52",
@@ -218,8 +214,6 @@ describe("seedMondeTerritorial", () => {
           ],
           responsables: [],
           coordinateurs: [],
-          auteur: undefined,
-          modifiePar: undefined,
         },
       ]);
     }),

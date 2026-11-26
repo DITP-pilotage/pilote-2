@@ -1,5 +1,9 @@
 import type { Tool } from "ai";
 import { getContainer } from "@/server/dependances";
+import {
+  type CollecteChantiersInput,
+  collecterChantiers,
+} from "@/server/albert/tools/getChantiers";
 import type { EvalUser } from "../world";
 
 /**
@@ -26,6 +30,18 @@ export function createDataTools({ user }: { user: EvalUser }) {
     getChantierCommentaires: container.resolve(
       "createGetChantierCommentairesTool",
     )({ territoiresAccessibles, chantiersAccessibles }),
+    /**
+     * La collecte de `get_chantiers`, telle que les encarts la reçoivent : avec
+     * le commentaire de synthèse, que l'outil ne renvoie pas.
+     */
+    collecterChantiers: (input: CollecteChantiersInput) =>
+      collecterChantiers({
+        input,
+        getChantiersQuery: container.resolve("getChantiersQuery"),
+        territoireResolver: container.resolve("territoireResolver"),
+        territoiresAccessibles,
+        chantiersAccessibles,
+      }),
   };
 }
 
