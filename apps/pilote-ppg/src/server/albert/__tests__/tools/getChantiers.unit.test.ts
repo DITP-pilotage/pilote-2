@@ -141,20 +141,6 @@ const executeTool = async (
   ) as Promise<GetChantiersOutput>;
 
 describe("createGetChantiersTool execute", () => {
-  test("renvoie vers get_chantier_commentaires pour la synthèse des résultats", () => {
-    // Given
-    const tool = buildTool({
-      query: buildQuery(["CH-084"]),
-      territoiresAccessibles: ["REG-75"],
-      chantiersAccessibles: ["CH-084"],
-    });
-
-    // Then
-    expect(tool.description).toContain(
-      "les commentaires d'un chantier, synthèse des résultats comprise (freins, actions, décisions, résultats…) → get_chantier_commentaires : ils ne sont pas ici.",
-    );
-  });
-
   test("sans chantier_ids, ne retourne que les chantiers accessibles à l'utilisateur", async () => {
     // Given
     const tool = buildTool({

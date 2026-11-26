@@ -429,7 +429,7 @@ export function createGetChantiersTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Renvoie les chantiers de chaque territoire du périmètre à un jalon. Pour chacun : taux d'avancement, écart à la médiane en points, tendance, niveau de confiance, s'il est en retard ou en difficulté, maille de pilotage. Aucun commentaire.
+      description: `Renvoie les chantiers de chaque territoire du périmètre à un jalon. Pour chacun : taux d'avancement, écart à la médiane en points, tendance, niveau de confiance, s'il est en retard ou en difficulté, maille de pilotage.
 - \`view\`, \`tendance\` et \`chantier_ids\` se combinent.
 - \`non_applicable\` : les territoires où l'analyse demandée n'a pas de sens (pas de chantiers en retard au niveau national), avec la raison ; ce n'est pas une absence de résultat.
 - \`acces_refuse\` : l'utilisateur n'a accès à aucun des chantiers demandés.

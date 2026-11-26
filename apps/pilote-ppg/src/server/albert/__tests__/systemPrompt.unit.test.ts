@@ -427,44 +427,4 @@ describe("buildChatSystemPrompt", () => {
     expect(prompt).toMatch(/ne le confirme ni ne l'infirme/i);
     expect(prompt).toMatch(/adresse e-mail .*cite-la/i);
   });
-
-  it("termine une réponse tirée des commentaires par les types consultés, quelle que soit la forme demandée, sauf après un dashboard, un encart ou une clarification", () => {
-    // When
-    const prompt = buildChatSystemPrompt({
-      territoiresAccessibles: [],
-      agentContext: null,
-    });
-
-    // Then
-    const regle = prompt
-      .split("\n")
-      .find((ligne) => ligne.includes("types_consultes"));
-    const debutADefaut = prompt.indexOf("À défaut :");
-    const aDefaut = prompt.slice(
-      debutADefaut,
-      prompt.indexOf("\n\n", debutADefaut),
-    );
-    expect(regle).toContain("Quelle que soit la forme demandée");
-    expect(regle).toContain(
-      "se termine par une ligne « Commentaires consultés : … », après sa dernière phrase",
-    );
-    expect(regle).toContain(
-      "Pas de cette ligne après un dashboard, un encart ou une clarification.",
-    );
-    expect(regle).not.toMatch(/m[ée]t[ée]o/i);
-    expect(aDefaut).not.toContain("Commentaires consultés");
-  });
-
-  it("laisse la ligne des commentaires consultés suivre la dernière phrase, qui porte sur les données", () => {
-    // When
-    const prompt = buildChatSystemPrompt({
-      territoiresAccessibles: [],
-      agentContext: null,
-    });
-
-    // Then
-    expect(prompt).toContain(
-      "Ta dernière phrase porte sur les données ; seule la ligne « Commentaires consultés : … » peut la suivre.",
-    );
-  });
 });

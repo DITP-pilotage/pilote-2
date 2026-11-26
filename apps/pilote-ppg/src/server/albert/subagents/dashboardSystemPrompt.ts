@@ -65,8 +65,6 @@ Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, 
 - \`contenu\` est un **tableau JSON de strings**. Chaque string = un paragraphe distinct affiché dans son propre \`<p>\`.
 - **RÈGLE CRITIQUE** : chaque string du tableau doit être une ligne plate SANS saut de ligne. Pas de \\n, pas de <br/>, pas de ⏎, pas de ↵ à l'intérieur d'un élément. Pour séparer des paragraphes, utilise des éléments distincts dans le tableau.
 - Le contenu d'un widget_paragraph vient uniquement d'un texte que la description fournit tel quel : copie-le TEXTUELLEMENT — n'invente et ne reformule JAMAIS. Sans texte fourni, pas de widget_paragraph.
-- Un dashboard n'affiche aucun commentaire de chantier, ni le niveau de confiance écrit en texte ; la carte du niveau de confiance (widget_cartographie_meteo) reste disponible. Si la description demande la météo écrite, le niveau de confiance en texte ou un commentaire de chantier, ne compose aucun paragraphe pour eux : ne reprends ni météo ni commentaire dans un paragraphe.
-- Omets le champ \`variant\`.
 
 ## Patterns recommandés
 
