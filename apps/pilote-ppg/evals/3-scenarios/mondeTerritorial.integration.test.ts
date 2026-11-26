@@ -270,20 +270,26 @@ describe("seedMondeTerritorial", () => {
           .map((commentaire) => ({
             type: commentaire.type,
             auteurs: commentaire.versions.map((version) => version.auteur),
+            modifiePar: commentaire.versions.map(
+              (version) => version.modifie_par,
+            ),
           }))
           .sort((left, right) => left.type.localeCompare(right.type)),
       ).toEqual([
         {
           type: "autres_resultats_obtenus",
           auteurs: [referenceDe(PERSONNES.auteurCommentaire)],
+          modifiePar: [undefined],
         },
         {
           type: "commentaires_sur_les_donnees",
           auteurs: [referenceDe(PERSONNES.agentDitp)],
+          modifiePar: [undefined],
         },
         {
           type: "synthese_des_resultats",
           auteurs: [referenceDe(PERSONNES.auteurSynthese)],
+          modifiePar: [referenceDe(PERSONNES.modificatriceSynthese)],
         },
       ]);
     }),

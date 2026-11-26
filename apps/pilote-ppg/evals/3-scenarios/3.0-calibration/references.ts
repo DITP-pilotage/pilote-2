@@ -248,20 +248,6 @@ const TOOL_RESULTS_BRETAGNE = [
     output: sansSynthese({ resultats: FICHE_BRETAGNE.chantiersEnDifficulte }),
   },
   {
-    toolName: "get_chantier_commentaires",
-    output: {
-      resultats: [
-        {
-          territoire_code: "REG-53",
-          territoire_nom: "Bretagne",
-          chantier_id: "CH-005",
-          commentaires: [SYNTHESE_CH_005_RENVOYEE],
-        },
-      ],
-      types_non_accessibles: [],
-    },
-  },
-  {
     toolName: "get_indicateurs",
     output: { resultats: FICHE_BRETAGNE.indicateurs[0] },
   },
@@ -361,10 +347,36 @@ Synthèse rédigée par ${AUTEUR_SYNTHESE}
 
 Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.`;
 
+/**
+ * En production, la synthèse d'un territoire passe par
+ * `rediger_synthese_territoire` : la sortie de l'encart porte les chantiers
+ * collectés, synthèse et auteur compris (les encarts ne changent pas).
+ */
+const TOOL_RESULTS_SYNTHESE_TERRITOIRE = [
+  {
+    toolName: "rediger_synthese_territoire",
+    output: {
+      type: "synthese",
+      jalon: 2025,
+      date_redaction: "2026-09-15T08:00:00.000Z",
+      markdown: SYNTHESE_REFERENCE,
+      termine: true,
+      donnees: {
+        taux: FICHE_BRETAGNE.tauxAvancement,
+        chantiers_en_retard: { resultats: FICHE_BRETAGNE.chantiersEnRetard },
+        chantiers_en_difficulte: {
+          resultats: FICHE_BRETAGNE.chantiersEnDifficulte,
+        },
+      },
+    },
+  },
+];
+
 const synthese = ({ from, to }: { from: string | RegExp; to: string }) =>
   evidence({
     question: SYNTHESE_QUESTION,
     matter: muter({ reference: SYNTHESE_REFERENCE, from, to }),
+    toolResults: TOOL_RESULTS_SYNTHESE_TERRITOIRE,
   });
 
 const SYNTHESE: CalibrationCase[] = [
@@ -375,6 +387,7 @@ const SYNTHESE: CalibrationCase[] = [
     evidence: evidence({
       question: SYNTHESE_QUESTION,
       matter: SYNTHESE_REFERENCE,
+      toolResults: TOOL_RESULTS_SYNTHESE_TERRITOIRE,
     }),
   },
   {

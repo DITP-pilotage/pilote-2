@@ -52,7 +52,8 @@ const buildChantier = (id: string): ChantierResult => ({
 });
 
 // Le même chantier, tel que l'outil le renvoie : des libellés, pas des codes,
-// et sans commentaires territoriaux (get_chantier_commentaires les porte)
+// et sans aucun commentaire, synthèse des résultats comprise
+// (get_chantier_commentaires les porte tous)
 const chantierRenvoye = (id: string) => ({
   chantier: {
     id,
@@ -140,6 +141,20 @@ const executeTool = async (
   ) as Promise<GetChantiersOutput>;
 
 describe("createGetChantiersTool execute", () => {
+  test("renvoie vers get_chantier_commentaires pour la synthèse des résultats", () => {
+    // Given
+    const tool = buildTool({
+      query: buildQuery(["CH-084"]),
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // Then
+    expect(tool.description).toContain(
+      "les commentaires d'un chantier, synthèse des résultats comprise (freins, actions, décisions, résultats…) → get_chantier_commentaires : ils ne sont pas ici.",
+    );
+  });
+
   test("sans chantier_ids, ne retourne que les chantiers accessibles à l'utilisateur", async () => {
     // Given
     const tool = buildTool({
@@ -359,16 +374,7 @@ describe("collecterChantiers", () => {
       resoudre: async (perimetre: Perimetre) =>
         perimetre.type === "SELECTION" ? perimetre.territoire_codes : [],
     });
-    const getChantiersQuery = mock<GetChantiersQuery>({
-      execute: vi.fn(async (params: GetChantiersParams) =>
-        params.territoireCodes.map((territoireCode) => ({
-          territoire_code: territoireCode,
-          territoire_nom: territoireCode,
-          jalon: params.jalon,
-          chantiers: [buildChantier("CH-084")],
-        })),
-      ),
-    });
+    const getChantiersQuery = buildQuery(["CH-084"]);
 
     // When
     const collecte = await collecterChantiers({

@@ -137,7 +137,7 @@ export type ChantierCollecte = {
 export type ChantierRenvoye = Omit<ChantierCollecte, "synthese">;
 
 export type ResultatCollecte = Omit<GetChantiersResult, "chantiers"> & {
-  /** Territoire hors de l'accès complet : tendance et commentaire de synthèse y sont masqués. */
+  /** Territoire hors de l'accès complet : tendance, personnes et, quand le chantier en porte, commentaire de synthèse y sont masqués. */
   acces_restreint?: true;
   chantiers: ChantierCollecte[];
 };
@@ -444,7 +444,7 @@ Ne l'utilise pas pour :
 - plusieurs catégories de signalement, ou une catégorie sans équivalent ici → get_chantiers_signales ;
 - les valeurs des indicateurs d'un chantier → get_indicateurs ;
 - les VA non à jour, les VI ou VC manquantes → get_indicateurs_a_completer ;
-- les commentaires d'un chantier (freins, actions, décisions, résultats…) → get_chantier_commentaires : ils ne sont pas ici.`,
+- les commentaires d'un chantier, synthèse des résultats comprise (freins, actions, décisions, résultats…) → get_chantier_commentaires : ils ne sont pas ici.`,
       inputSchema: getChantiersInputSchema,
       execute: async (input): Promise<GetChantiersOutput> =>
         classerChantiers({
