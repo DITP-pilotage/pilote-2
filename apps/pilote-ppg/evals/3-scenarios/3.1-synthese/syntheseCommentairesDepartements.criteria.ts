@@ -1,5 +1,16 @@
-import { judged, withBase } from "../criterion";
+import { judged, withBase, type MechanicalCriterion } from "../criterion";
 import { PAS_DE_RECOPIE } from "../criteria/commentaires";
+import { normalize } from "../mechanicalChecks";
+
+/**
+ * « Pas de recopie » ne vaut que pour une question qui demande une synthèse
+ * ou un résumé : sinon (« Que disent les commentaires… »), la règle D2
+ * prescrit une restitution fidèle. Même critère, dans ce seul scénario.
+ */
+const PAS_DE_RECOPIE_SUR_DEMANDE_DE_SYNTHESE: MechanicalCriterion = {
+  ...PAS_DE_RECOPIE,
+  applicable: (evidence) => /synth|resum/.test(normalize(evidence.question)),
+};
 
 /**
  * Les critères du scénario « Synthèse des commentaires d'un chantier par
@@ -15,7 +26,7 @@ export const SYNTHESE_COMMENTAIRES_DEPARTEMENTS_CRITERIA = withBase({
       id: "Départements en difficulté",
       rule: "Demande : pour chaque département où le chantier est en difficulté",
       instruction:
-        "La réponse traite chaque département où la fiche de vérité (chantiersEnDifficulte) place le chantier en difficulté, et seulement ceux-là. Un département omis, ou ajouté alors que le chantier n'y est pas en difficulté (par exemple les Côtes-d'Armor), est non conforme : le citer dans la preuve. NAT-FR (national) n'est pas un département : ne pas l'exiger, et ne pas le compter comme tel.",
+        "La réponse traite chaque département où la fiche de vérité (chantiersEnDifficulte) place le chantier en difficulté, et seulement ceux-là. Un département omis est non conforme. Restituer les commentaires d'un département où le chantier n'est pas en difficulté (par exemple les Côtes-d'Armor) comme ceux d'un département en difficulté est non conforme : le citer dans la preuve. Citer un département pour dire qu'il n'est pas en difficulté, ou qu'il est écarté, est conforme. NAT-FR (national) n'est pas un département : ne pas l'exiger, et ne pas le compter comme tel.",
     }),
     judged({
       id: "Tous les types de commentaires",
@@ -33,8 +44,8 @@ export const SYNTHESE_COMMENTAIRES_DEPARTEMENTS_CRITERIA = withBase({
       id: "Sujets récurrents",
       rule: "Demande : mettre en évidence les sujets récurrents",
       instruction:
-        "Un sujet présenté comme récurrent apparaît dans les commentaires d'au moins deux départements selon la fiche, et la réponse nomme ces départements. Ici, seules les fermetures de nuit des urgences reviennent (Finistère et Ille-et-Vilaine). Un sujet propre à un seul département (la maison médicale de garde, les recrutements de médecins régulateurs) présenté comme récurrent est non conforme. Une réponse qui ne présente aucun sujet comme récurrent alors que la fiche en contient un est non conforme.",
+        "Un sujet présenté comme récurrent nomme au moins deux départements, et s'appuie, pour chaque département nommé, sur un fait de la fiche de ce département. Sujets communs au Finistère et à l'Ille-et-Vilaine, entre autres : les fermetures de nuit des urgences, et le report des patients vers d'autres villes (Quimper ou Brest pour le Finistère, Vannes et Rennes pour l'Ille-et-Vilaine). Un sujet propre à un seul département (la maison médicale de garde, les recrutements de médecins régulateurs) présenté comme récurrent est non conforme. Une réponse qui ne présente aucun sujet comme récurrent alors que la fiche en contient un est non conforme.",
     }),
-    PAS_DE_RECOPIE,
+    PAS_DE_RECOPIE_SUR_DEMANDE_DE_SYNTHESE,
   ],
 });
