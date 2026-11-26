@@ -495,7 +495,7 @@ export type ValeurAvancementListApiModel = z.infer<typeof valeurAvancementListAp
 
 // --- Lectures par lot sur une sélection d'individus -------------------------
 
-const individusSelectionnesSchema = individusCsvSchema
+export const individusSelectionnesSchema = individusCsvSchema
   .optional()
   .describe(
     'Individus sélectionnés, séparés par une virgule (ex. DEPT-84,BV-05). Chaque indicateur est lu ' +
@@ -505,7 +505,7 @@ const individusSelectionnesSchema = individusCsvSchema
       "par nom s'il y en a plusieurs).",
   )
 
-const individuLuSchema = individuPublicIdSchema.describe(
+export const individuLuSchema = individuPublicIdSchema.describe(
   "Individu sur lequel l'indicateur est lu : l'individu sélectionné qui lui est lié, ou son " +
     'individu racine sans sélection.',
 )
