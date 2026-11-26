@@ -530,10 +530,12 @@ T0 ──► T1.1 ──► T1.2 ──► T1.3
 **Étapes :**
 
 - [ ] Créer le premier indicateur à axes (carto-sp ? données dans le commit local `2f9ea9d21` du POC, `prisma/seedData/cartoSp/carto-sp-territoire-operateurs.csv.gz`).
-- [ ] Axe dans les événements analytics (`packages/kpilote-shared/src/analytics/`).
+- [x] Supprimer le snapshot des lectures : `scripts/snapshotLecture.ts`, l'entrée `snapshot:lecture` du `package.json` et sa section du README de kpilote-api.
+- Axe dans les événements analytics : extrait dans PIL-2073, à cadrer avec Benjamin.
 - [ ] Relecture des libellés (admin, webapp, erreurs).
 - [ ] Prévenir l'équipe.
 
 **DoD :**
 
 - [ ] Parcours complet en prod : déclaration des axes, import, fiche, décomposition.
+- [x] Le snapshot des lectures est supprimé du dépôt.
