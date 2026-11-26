@@ -14,9 +14,11 @@ type EntityCardProps = Omit<ComponentProps<'div'>, 'title'> & {
   body?: ReactNode
   // Légende de pied de carte, épinglée en bas.
   footer?: ReactNode
-  // Actions posées dans le coin de la carte (menu…). Elles restent hors de la
-  // carte, et donc hors du lien quand la carte en est un : un bouton dans un
-  // lien n'est ni valide ni accessible.
+  // Actions posées dans le coin de la carte (bouton, menu…). Elles restent hors
+  // de la carte, et donc hors du lien quand la carte en est un : un bouton dans
+  // un lien n'est ni valide ni accessible. Pour réagir au survol ou au focus de
+  // la carte, elles utilisent le groupe `entity-card`
+  // (`group-hover/entity-card:opacity-100`).
   actions?: ReactNode
 }
 
@@ -73,7 +75,7 @@ export function EntityCard({
   )
   if (!actions) return card
   return (
-    <div className="relative h-full">
+    <div className="group/entity-card relative h-full">
       {card}
       <div className="absolute right-3 top-3">{actions}</div>
     </div>

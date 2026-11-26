@@ -29,7 +29,7 @@ export function IndicateurCard({
   groups: ReadonlyArray<ReferentielGroup>
   source: AnalyticsSource
   collectionId?: string | undefined
-  // Menu de la carte, hors du lien vers la fiche.
+  // Actions de la carte (épingle…), hors du lien vers la fiche.
   actions?: ReactNode
 }) {
   return (

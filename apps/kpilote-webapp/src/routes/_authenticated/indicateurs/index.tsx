@@ -15,7 +15,7 @@ import { analytics } from '@/analytics/tracker'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
-import { IndicateurPinMenu } from '@/components/indicateurs/IndicateurPinMenu'
+import { IndicateurPinButton } from '@/components/indicateurs/IndicateurPinButton'
 import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
@@ -152,7 +152,7 @@ function IndicateursListComponent() {
                   source="dashboard"
                   reading={readingOf(indicateur)}
                   actions={
-                    <IndicateurPinMenu
+                    <IndicateurPinButton
                       indicateur={indicateur}
                       isPinned
                       source="dashboard"
@@ -193,7 +193,7 @@ function IndicateursListComponent() {
                     source="dashboard"
                     reading={readingOf(indicateur)}
                     actions={
-                      <IndicateurPinMenu
+                      <IndicateurPinButton
                         indicateur={indicateur}
                         isPinned={pinnedIds.has(indicateur.id)}
                         source="dashboard"
