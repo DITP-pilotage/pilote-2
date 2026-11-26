@@ -7,6 +7,7 @@ import { joinCsv, splitCsv } from '@pilote/kpilote-shared/texte'
 
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { DashboardStickybar } from '@/components/DashboardStickybar'
+import { DashboardSwitch } from '@/components/DashboardSwitch'
 import { analytics } from '@/analytics/tracker'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
@@ -14,7 +15,7 @@ import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
 import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
-import { Text } from '@pilote/kpilote-ui/Typography'
+import { Section } from '@pilote/kpilote-ui/Section'
 import { ensureSelectionIndividus } from '@/lib/individus/ensureSelection'
 import { resolveIndicateurReading } from '@/lib/individus/selection'
 import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
@@ -34,6 +35,8 @@ const indicateursSearchSchema = z.object({
 
 type IndicateursSearch = z.infer<typeof indicateursSearchSchema>
 
+// Le tableau de bord n'affiche que les indicateurs attribués à l'utilisateur : les
+// indicateurs visibles seulement parce qu'ils sont publics n'y figurent pas (PIL-1976).
 // La sélection ordonne la liste : les indicateurs qu'elle concerne passent en tête.
 const toIndicateursQuery = ({
   selectedIndividus,
@@ -43,6 +46,7 @@ const toIndicateursQuery = ({
   return {
     ...search,
     pageSize: search.pageSize ?? DEFAULT_PAGE_SIZE,
+    acces: 'attribue',
     ...(selection.length > 0 ? { individus: selection } : {}),
   }
 }
@@ -86,7 +90,7 @@ function IndicateursListComponent() {
   return (
     <Page
       title="Tableau de bord"
-      description="Consultez et gérez l'ensemble de vos indicateurs par valeur ou par collection."
+      description="Consultez et gérez vos indicateurs par valeur ou par collection."
       stickybar={
         <DashboardStickybar
           groups={groups}
@@ -103,55 +107,64 @@ function IndicateursListComponent() {
         />
       }
     >
-      <div className="flex flex-col gap-6">
-        <Text as="span" variant="kicker" tone="muted">
-          {data.total} indicateur{data.total > 1 ? 's' : ''}
-        </Text>
-
-        {data.items.length === 0 ? (
-          <EmptyState title="Aucun indicateur disponible." />
-        ) : (
-          <CardGrid>
-            {data.items.map((indicateur) => (
-              <IndicateurCard
-                key={indicateur.id}
-                indicateur={indicateur}
-                source="dashboard"
-                reading={resolveIndicateurReading({
-                  selection,
-                  nodes,
-                  referentielIds: indicateur.referentiels.map((ref) => ref.id),
-                })}
-              />
-            ))}
-          </CardGrid>
-        )}
-
-        <Pagination
-          hasNext={data.pagination.hasMore}
-          onNext={() => {
-            const next = data.pagination.cursor
-            if (!next) return
-            analytics.trackEvent(
-              analyticsEvents.dashboard.paginationNext({
-                entity_type: 'indicateur',
-                page_size: search.pageSize ?? DEFAULT_PAGE_SIZE,
-              }),
-            )
-            void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
-          }}
-          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE}
-          onPageSizeChange={(pageSize) => {
-            analytics.trackEvent(
-              analyticsEvents.dashboard.paginationSize({
-                entity_type: 'indicateur',
-                page_size: pageSize,
-              }),
-            )
-            void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
-          }}
-        />
+      <div>
+        <DashboardSwitch />
       </div>
+
+      <Section
+        tone="plain"
+        title="Mes indicateurs"
+        description={`${data.total} indicateur${data.total > 1 ? 's' : ''}`}
+      >
+        <div className="flex flex-col gap-6">
+          {data.items.length === 0 ? (
+            <EmptyState
+              title="Vous n'avez encore accès à aucun indicateur KPILOTE."
+              description="Vous pouvez vous rapprocher de votre référent KPILOTE ou du support."
+            />
+          ) : (
+            <CardGrid>
+              {data.items.map((indicateur) => (
+                <IndicateurCard
+                  key={indicateur.id}
+                  indicateur={indicateur}
+                  source="dashboard"
+                  reading={resolveIndicateurReading({
+                    selection,
+                    nodes,
+                    referentielIds: indicateur.referentiels.map((ref) => ref.id),
+                  })}
+                />
+              ))}
+            </CardGrid>
+          )}
+
+          <Pagination
+            hasNext={data.pagination.hasMore}
+            onNext={() => {
+              const next = data.pagination.cursor
+              if (!next) return
+              analytics.trackEvent(
+                analyticsEvents.dashboard.paginationNext({
+                  entity_type: 'indicateur',
+                  page_size: search.pageSize ?? DEFAULT_PAGE_SIZE,
+                }),
+              )
+              void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
+            }}
+            pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE}
+            onPageSizeChange={(pageSize) => {
+              analytics.trackEvent(
+                analyticsEvents.dashboard.paginationSize({
+                  entity_type: 'indicateur',
+                  page_size: pageSize,
+                }),
+              )
+              void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
+            }}
+          />
+        </div>
+      </Section>
     </Page>
   )
 }

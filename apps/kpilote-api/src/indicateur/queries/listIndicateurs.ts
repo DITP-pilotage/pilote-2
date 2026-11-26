@@ -35,6 +35,14 @@ const build = async ({ query }: ListIndicateursParams): Promise<IndicateurListAp
     publicId.in = query.ids
   }
   if (Object.keys(publicId).length > 0) filters.publicId = publicId
+  // Toutes les actions de permission donnent la lecture : avoir une permission suffit.
+  // Le filtre s'ajoute au contrôle de lecture et s'applique aussi aux admins.
+  if (query.acces === 'attribue') {
+    filters.OR = [
+      { permissions: { some: { principalId } } },
+      { collections: { some: { collection: { permissions: { some: { principalId } } } } } },
+    ]
+  }
   // Le bypass ADMIN (administre PUBLIC + PRIVÉ) est géré dans withIndicateurReadPermission.
   const where = withIndicateurReadPermission(filters, principalId, {
     isAdmin: isAdminPrincipal(),

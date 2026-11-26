@@ -6,6 +6,7 @@ import { joinCsv, splitCsv } from '@pilote/kpilote-shared/texte'
 
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { DashboardStickybar } from '@/components/DashboardStickybar'
+import { DashboardSwitch } from '@/components/DashboardSwitch'
 import { analytics } from '@/analytics/tracker'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
@@ -80,7 +81,7 @@ function CollectionsListComponent() {
   return (
     <Page
       title="Tableau de bord"
-      description="Consultez et gérez l'ensemble de vos indicateurs par valeur ou par collection."
+      description="Consultez et gérez vos indicateurs par valeur ou par collection."
       stickybar={
         <DashboardStickybar
           groups={groups}
@@ -97,6 +98,10 @@ function CollectionsListComponent() {
         />
       }
     >
+      <div>
+        <DashboardSwitch />
+      </div>
+
       <div className="flex flex-col gap-6">
         <Text as="span" variant="kicker" tone="muted">
           {data.total} collection{data.total > 1 ? 's' : ''}
