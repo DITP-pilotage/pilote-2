@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
@@ -143,6 +144,94 @@ describe("GetChantiersQuery — taux d'avancement", () => {
           taux_avancement: null,
         }),
       ]);
+    }),
+  );
+});
+
+describe("GetChantiersQuery — synthèse des résultats", () => {
+  const query = new GetChantiersQuery({ prisma: new PrismaPilote() });
+
+  const semerChantierAvecSynthese = async () => {
+    const chantier = await fixtures.chantierIdentite({
+      ministeres_acronymes: ["MIN-01"],
+      statut: "PUBLIE",
+    });
+    await fixtures.chantierTerritoire({
+      id: chantier.id,
+      territoire_code: "DEPT-29",
+      code_insee: "29",
+      maille: "DEPT",
+      zone_id: "DEPT-29",
+      est_applicable: true,
+    });
+    return chantier;
+  };
+
+  it(
+    "renvoie la dernière synthèse publiée, pas un brouillon plus récent",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await semerChantierAvecSynthese();
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: "DEPT-29",
+        maille: "DEPT",
+        code_insee: "29",
+        statut: $Enums.statut_publication.PUBLIE,
+        commentaire: "<p>Synthèse publiée</p>",
+        date_modification: new Date("2026-05-01T10:00:00Z"),
+      });
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: "DEPT-29",
+        maille: "DEPT",
+        code_insee: "29",
+        statut: $Enums.statut_publication.BROUILLON,
+        commentaire: "<p>Test brouillon</p>",
+        date_modification: new Date("2026-11-10T10:00:00Z"),
+      });
+
+      // When
+      const [resultat] = await query.execute({
+        territoireCodes: ["DEPT-29"],
+        jalon: 2026,
+        chantierIds: [chantier.id],
+      });
+
+      // Then
+      expect(
+        resultat.chantiers.map(
+          (chantierResult) => chantierResult.synthese?.commentaire,
+        ),
+      ).toEqual(["<p>Synthèse publiée</p>"]);
+    }),
+  );
+
+  it(
+    "n'a pas de synthèse quand la seule synthèse est un brouillon",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await semerChantierAvecSynthese();
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: "DEPT-29",
+        maille: "DEPT",
+        code_insee: "29",
+        statut: $Enums.statut_publication.BROUILLON,
+        commentaire: "<p>Test brouillon</p>",
+      });
+
+      // When
+      const [resultat] = await query.execute({
+        territoireCodes: ["DEPT-29"],
+        jalon: 2026,
+        chantierIds: [chantier.id],
+      });
+
+      // Then
+      expect(
+        resultat.chantiers.map((chantierResult) => chantierResult.synthese),
+      ).toEqual([null]);
     }),
   );
 });
