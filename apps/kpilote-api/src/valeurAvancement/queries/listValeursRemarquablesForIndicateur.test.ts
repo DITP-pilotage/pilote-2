@@ -64,7 +64,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -87,7 +90,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -132,7 +138,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -177,7 +186,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -207,7 +219,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -246,7 +261,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refA, refB] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refA, refB] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -275,7 +293,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId, refInconnu] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refId, refInconnu] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -308,7 +329,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refLast, refFirst] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refLast, refFirst] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -346,7 +370,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -385,7 +412,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -418,7 +448,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refA] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refA] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -435,7 +468,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          listValeursRemarquablesForIndicateur(testIndicateurId(), { referentiels: [refId] }),
+          listValeursRemarquablesForIndicateur({
+            indicateurPublicId: testIndicateurId(),
+            query: { referentiels: [refId] },
+          }),
         ),
       ).rejects.toThrow()
     }),
@@ -452,7 +488,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
+          listValeursRemarquablesForIndicateur({
+            indicateurPublicId: indId,
+            query: { referentiels: [refId] },
+          }),
         ),
       ).rejects.toThrow()
     }),
@@ -531,7 +570,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refReg] },
+        }),
       )
 
       // reg1 = 10+30 = 40 ; reg2 = 50+70 = 120
@@ -591,7 +633,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refReg] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -669,7 +714,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refReg] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -726,7 +774,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg, refDept] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refReg, refDept] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -810,7 +861,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg, refDept] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refReg, refDept] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -843,7 +897,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: indId,
+          query: { referentiels: [refId] },
+        }),
       )
 
       expect(result.isOk()).toBe(true)
@@ -856,7 +913,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const t = await trancheOrangeAbsentDeC()
 
       const result = await runAsPrincipal(t.apiKeyId, () =>
-        listValeursRemarquablesForIndicateur(t.indId, { referentiels: [t.refId] }),
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: t.indId,
+          query: { referentiels: [t.refId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -871,9 +931,12 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const t = await trancheOrangeAbsentDeC()
 
       const result = await runAsPrincipal(t.apiKeyId, () =>
-        listValeursRemarquablesForIndicateur(t.indId, {
-          referentiels: [t.refId],
-          modalites: [t.orange],
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: t.indId,
+          query: {
+            referentiels: [t.refId],
+            modalites: [t.orange],
+          },
         }),
       )
 
@@ -892,9 +955,12 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const inconnue = testModaliteId()
 
       const result = await runAsPrincipal(t.apiKeyId, () =>
-        listValeursRemarquablesForIndicateur(t.indId, {
-          referentiels: [t.refId],
-          modalites: [inconnue],
+        listValeursRemarquablesForIndicateur({
+          indicateurPublicId: t.indId,
+          query: {
+            referentiels: [t.refId],
+            modalites: [inconnue],
+          },
         }),
       )
 

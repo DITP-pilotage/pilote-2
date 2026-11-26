@@ -19,35 +19,39 @@ import {
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'year'
 
-const performList = async (
-  indicateurPublicId: string,
-  params: ListObjectifsForIndicateurQuery,
-): Promise<ObjectifIndicateurIndividuListApiModel> => {
+type ListObjectifsForIndicateurParams = {
+  indicateurPublicId: string
+  query: ListObjectifsForIndicateurQuery
+}
+
+const performList = async ({
+  indicateurPublicId,
+  query,
+}: ListObjectifsForIndicateurParams): Promise<ObjectifIndicateurIndividuListApiModel> => {
   const principalId = requireCurrentPrincipalId()
   const indicateur = await db().indicateur.findFirstOrThrow({
     where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
     select: { id: true, publicId: true },
   })
-  return buildList({ indicateur, params })
+  return buildList({ indicateur, query })
 }
 
 export const listObjectifsForIndicateur = (
-  indicateurPublicId: string,
-  params: ListObjectifsForIndicateurQuery,
+  params: ListObjectifsForIndicateurParams,
 ): ResultAsync<ObjectifIndicateurIndividuListApiModel, never> =>
-  ResultAsync.fromSafePromise(performList(indicateurPublicId, params))
+  ResultAsync.fromSafePromise(performList(params))
 
 const buildList = async ({
   indicateur,
-  params,
+  query,
 }: {
   indicateur: { id: string; publicId: string }
-  params: ListObjectifsForIndicateurQuery
+  query: ListObjectifsForIndicateurQuery
 }): Promise<ObjectifIndicateurIndividuListApiModel> => {
-  const individusCibles = await loadIndividusParPublicId(params.individus)
+  const individusCibles = await loadIndividusParPublicId(query.individus)
   if (individusCibles.length === 0) return { items: [] }
 
-  const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
+  const dateTrunc: DateTrunc = query.dateTrunc ?? DEFAULT_DATE_TRUNC
   const { ctx } = await loadResolveObjectifContext({
     indicateurId: indicateur.id,
     individusCibles: individusCibles,

@@ -15,7 +15,10 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [] }),
+        listCollectionTauxProgressionForIndividu({
+          individuPublicId: deptId,
+          query: { collections: [] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({ items: [] })
@@ -32,7 +35,10 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
+        listCollectionTauxProgressionForIndividu({
+          individuPublicId: deptId,
+          query: { collections: [colId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -90,7 +96,10 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
+        listCollectionTauxProgressionForIndividu({
+          individuPublicId: deptId,
+          query: { collections: [colId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -140,7 +149,10 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
+        listCollectionTauxProgressionForIndividu({
+          individuPublicId: deptId,
+          query: { collections: [colId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -192,7 +204,10 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
+        listCollectionTauxProgressionForIndividu({
+          individuPublicId: deptId,
+          query: { collections: [colId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -235,7 +250,10 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
+        listCollectionTauxProgressionForIndividu({
+          individuPublicId: deptId,
+          query: { collections: [colId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -286,7 +304,10 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
+        listCollectionTauxProgressionForIndividu({
+          individuPublicId: deptId,
+          query: { collections: [colId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -304,7 +325,10 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          listCollectionTauxProgressionForIndividu('DEPT-INCONNU', { collections: [colId] }),
+          listCollectionTauxProgressionForIndividu({
+            individuPublicId: 'DEPT-INCONNU',
+            query: { collections: [colId] },
+          }),
         ),
       ).rejects.toThrow()
     }),
@@ -344,7 +368,10 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [colPublic, colPrive] }),
+        listCollectionTauxProgressionForIndividu({
+          individuPublicId: deptId,
+          query: { collections: [colPublic, colPrive] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -408,7 +435,10 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [colA, colB] }),
+        listCollectionTauxProgressionForIndividu({
+          individuPublicId: deptId,
+          query: { collections: [colA, colB] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items

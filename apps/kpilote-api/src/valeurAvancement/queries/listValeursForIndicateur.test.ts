@@ -38,7 +38,7 @@ describe.concurrent('listValeursForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursForIndicateur(indId, { individus: [deptId] }),
+        listValeursForIndicateur({ indicateurPublicId: indId, query: { individus: [deptId] } }),
       )
 
       const value = result._unsafeUnwrap()
@@ -79,7 +79,10 @@ describe.concurrent('listValeursForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursForIndicateur(indId, { individus: [dept1, dept2] }),
+        listValeursForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [dept1, dept2] },
+        }),
       )
 
       const value = result._unsafeUnwrap()
@@ -126,11 +129,14 @@ describe.concurrent('listValeursForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursForIndicateur(indId, {
-          individus: [deptId],
-          dateDebut: '2024-01-01',
-          dateFin: '2024-06-30',
-          dateTrunc: 'day',
+        listValeursForIndicateur({
+          indicateurPublicId: indId,
+          query: {
+            individus: [deptId],
+            dateDebut: '2024-01-01',
+            dateFin: '2024-06-30',
+            dateTrunc: 'day',
+          },
         }),
       )
 
@@ -151,7 +157,7 @@ describe.concurrent('listValeursForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursForIndicateur(indId, { individus: [deptId] }),
+        listValeursForIndicateur({ indicateurPublicId: indId, query: { individus: [deptId] } }),
       )
 
       const value = result._unsafeUnwrap()
@@ -165,7 +171,10 @@ describe.concurrent('listValeursForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          listValeursForIndicateur(testIndicateurId(), { individus: [testDeptId()] }),
+          listValeursForIndicateur({
+            indicateurPublicId: testIndicateurId(),
+            query: { individus: [testDeptId()] },
+          }),
         ),
       ).rejects.toThrow()
     }),
@@ -185,7 +194,9 @@ describe.concurrent('listValeursForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        runAsPrincipal(apiKey.id, () => listValeursForIndicateur(indId, { individus: [deptId] })),
+        runAsPrincipal(apiKey.id, () =>
+          listValeursForIndicateur({ indicateurPublicId: indId, query: { individus: [deptId] } }),
+        ),
       ).rejects.toThrow()
     }),
   )
@@ -240,7 +251,7 @@ describe.concurrent('listValeursForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursForIndicateur(indId, { individus: [regId] }),
+        listValeursForIndicateur({ indicateurPublicId: indId, query: { individus: [regId] } }),
       )
 
       const value = result._unsafeUnwrap()
@@ -316,7 +327,10 @@ describe.concurrent('listValeursForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursForIndicateur(indId, { individus: [regId], dateTrunc: 'day' }),
+        listValeursForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [regId], dateTrunc: 'day' },
+        }),
       )
 
       const value = result._unsafeUnwrap()
@@ -424,7 +438,7 @@ describe.concurrent('listValeursForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursForIndicateur(indId, { individus: [franceId] }),
+        listValeursForIndicateur({ indicateurPublicId: indId, query: { individus: [franceId] } }),
       )
 
       const value = result._unsafeUnwrap()
@@ -478,7 +492,10 @@ describe.concurrent('listValeursForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursForIndicateur(indId, { individus: [deptId], dateTrunc: 'month' }),
+        listValeursForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId], dateTrunc: 'month' },
+        }),
       )
 
       const value = result._unsafeUnwrap()
@@ -533,7 +550,7 @@ describe.concurrent('listValeursForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursForIndicateur(indId, { individus: [regId] }),
+        listValeursForIndicateur({ indicateurPublicId: indId, query: { individus: [regId] } }),
       )
 
       const value = result._unsafeUnwrap()
@@ -593,7 +610,10 @@ describe.concurrent('listValeursForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursForIndicateur(indId, { individus: [regId, dept1] }),
+        listValeursForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [regId, dept1] },
+        }),
       )
 
       const value = result._unsafeUnwrap()

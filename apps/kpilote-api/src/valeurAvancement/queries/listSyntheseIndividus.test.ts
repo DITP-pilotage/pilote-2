@@ -62,7 +62,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [deptId] }),
+        listSyntheseIndividus({ indicateurPublicId: indId, query: { individus: [deptId] } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -88,7 +88,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [dept1] }),
+        listSyntheseIndividus({ indicateurPublicId: indId, query: { individus: [dept1] } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -113,7 +113,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [deptId] }),
+        listSyntheseIndividus({ indicateurPublicId: indId, query: { individus: [deptId] } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -152,7 +152,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [deptId] }),
+        listSyntheseIndividus({ indicateurPublicId: indId, query: { individus: [deptId] } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -191,7 +191,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [deptId] }),
+        listSyntheseIndividus({ indicateurPublicId: indId, query: { individus: [deptId] } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -239,7 +239,10 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [dept3, dept1, dept2] }),
+        listSyntheseIndividus({
+          indicateurPublicId: indId,
+          query: { individus: [dept3, dept1, dept2] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -276,7 +279,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [deptId] }),
+        listSyntheseIndividus({ indicateurPublicId: indId, query: { individus: [deptId] } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -302,7 +305,10 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [deptId, inconnu] }),
+        listSyntheseIndividus({
+          indicateurPublicId: indId,
+          query: { individus: [deptId, inconnu] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -335,7 +341,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [deptId] }),
+        listSyntheseIndividus({ indicateurPublicId: indId, query: { individus: [deptId] } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -374,7 +380,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [dept1] }),
+        listSyntheseIndividus({ indicateurPublicId: indId, query: { individus: [dept1] } }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -419,7 +425,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [dept1] }),
+        listSyntheseIndividus({ indicateurPublicId: indId, query: { individus: [dept1] } }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
@@ -465,7 +471,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [deptA] }),
+        listSyntheseIndividus({ indicateurPublicId: indId, query: { individus: [deptA] } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -511,7 +517,10 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listSyntheseIndividus(indId, { individus: [deptA1, deptB1] }),
+        listSyntheseIndividus({
+          indicateurPublicId: indId,
+          query: { individus: [deptA1, deptB1] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -528,7 +537,10 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          listSyntheseIndividus(testIndicateurId(), { individus: [testDeptId()] }),
+          listSyntheseIndividus({
+            indicateurPublicId: testIndicateurId(),
+            query: { individus: [testDeptId()] },
+          }),
         ),
       ).rejects.toThrow()
     }),
@@ -545,7 +557,9 @@ describe.concurrent('listSyntheseIndividus', () => {
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        runAsPrincipal(apiKey.id, () => listSyntheseIndividus(indId, { individus: [deptId] })),
+        runAsPrincipal(apiKey.id, () =>
+          listSyntheseIndividus({ indicateurPublicId: indId, query: { individus: [deptId] } }),
+        ),
       ).rejects.toThrow()
     }),
   )
@@ -556,7 +570,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       const t = await trancheOrangeAbsentDeC()
 
       const result = await runAsPrincipal(t.apiKeyId, () =>
-        listSyntheseIndividus(t.indId, { individus: [t.a, t.c] }),
+        listSyntheseIndividus({ indicateurPublicId: t.indId, query: { individus: [t.a, t.c] } }),
       )
 
       // Médiane des « Tous » : 15 (7, 15, 20).
@@ -580,7 +594,10 @@ describe.concurrent('listSyntheseIndividus', () => {
       const t = await trancheOrangeAbsentDeC()
 
       const result = await runAsPrincipal(t.apiKeyId, () =>
-        listSyntheseIndividus(t.indId, { individus: [t.a, t.c], modalites: [t.orange] }),
+        listSyntheseIndividus({
+          indicateurPublicId: t.indId,
+          query: { individus: [t.a, t.c], modalites: [t.orange] },
+        }),
       )
 
       // Médiane Orange : 15 (10, 20) ; C n'a pas Orange.
@@ -605,7 +622,10 @@ describe.concurrent('listSyntheseIndividus', () => {
       const inconnue = testModaliteId()
 
       const result = await runAsPrincipal(t.apiKeyId, () =>
-        listSyntheseIndividus(t.indId, { individus: [t.a], modalites: [inconnue] }),
+        listSyntheseIndividus({
+          indicateurPublicId: t.indId,
+          query: { individus: [t.a], modalites: [inconnue] },
+        }),
       )
 
       expect(result._unsafeUnwrapErr()).toEqual({

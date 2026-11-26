@@ -26,10 +26,17 @@ const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 // La variation compare les deux derniers points ; la médiane ne lit que le dernier.
 const DERNIERS_POINTS_LUS = 2
 
-const performList = async (
-  indicateurPublicId: string,
-  params: ListSyntheseIndividusQuery,
-): Promise<Result<SyntheseIndividusListApiModel, ResolveSelectionError>> => {
+type ListSyntheseIndividusParams = {
+  indicateurPublicId: string
+  query: ListSyntheseIndividusQuery
+}
+
+const performList = async ({
+  indicateurPublicId,
+  query,
+}: ListSyntheseIndividusParams): Promise<
+  Result<SyntheseIndividusListApiModel, ResolveSelectionError>
+> => {
   const principalId = requireCurrentPrincipalId()
   const indicateur = await db().indicateur.findFirstOrThrow({
     where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
@@ -37,19 +44,16 @@ const performList = async (
   })
   const selection = await resolveSelection({
     indicateurId: indicateur.id,
-    modalitePublicIds: params.modalites ?? [],
+    modalitePublicIds: query.modalites ?? [],
   })
   if (selection.isErr()) return err(selection.error)
-  return ok(
-    await buildSynthese({ indicateurId: indicateur.id, params, selection: selection.value }),
-  )
+  return ok(await buildSynthese({ indicateurId: indicateur.id, query, selection: selection.value }))
 }
 
 export const listSyntheseIndividus = (
-  indicateurPublicId: string,
-  params: ListSyntheseIndividusQuery,
+  params: ListSyntheseIndividusParams,
 ): ResultAsync<SyntheseIndividusListApiModel, ResolveSelectionError> =>
-  new ResultAsync(performList(indicateurPublicId, params))
+  new ResultAsync(performList(params))
 
 // Pour chaque individu demandé : variation (derniers 2 buckets de sa série) et
 // écart à la médiane des dernières valeurs des pairs de son référentiel.
@@ -63,16 +67,16 @@ export const listSyntheseIndividus = (
 // ces modalités (« individus du référentiel × modalités fixées »).
 const buildSynthese = async ({
   indicateurId,
-  params,
+  query,
   selection,
 }: {
   indicateurId: string
-  params: ListSyntheseIndividusQuery
+  query: ListSyntheseIndividusQuery
   selection: Selection
 }): Promise<SyntheseIndividusListApiModel> => {
   const indicateur = { id: indicateurId }
 
-  const individusDemandes = await loadIndividus({ publicIds: params.individus })
+  const individusDemandes = await loadIndividus({ publicIds: query.individus })
   if (individusDemandes.length === 0) return { items: [] }
 
   // Population des référentiels concernés : nécessaire pour calculer la
@@ -81,7 +85,7 @@ const buildSynthese = async ({
   const referentielIds = uniq(individusDemandes.map((i) => i.referentielId))
   const population = await loadPopulation({ referentielIds })
 
-  const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
+  const dateTrunc: DateTrunc = query.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
   const { serieDe, allNodes } = await loadResolveSerieContext({
     indicateurId: indicateur.id,

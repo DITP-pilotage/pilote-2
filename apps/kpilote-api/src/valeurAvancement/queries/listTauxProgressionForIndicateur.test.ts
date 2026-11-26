@@ -27,7 +27,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: ['DEPT-INCONNU'] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: ['DEPT-INCONNU'] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({ items: [] })
@@ -51,7 +54,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({ items: [] })
@@ -85,7 +91,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -131,7 +140,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -177,7 +189,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -214,7 +229,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -263,7 +281,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -315,7 +336,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -369,10 +393,13 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, {
-          individus: [deptId],
-          dateTruncValeur: 'day',
-          dateTruncObjectif: 'day',
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: {
+            individus: [deptId],
+            dateTruncValeur: 'day',
+            dateTruncObjectif: 'day',
+          },
         }),
       )
 
@@ -423,7 +450,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -481,10 +511,13 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, {
-          individus: [deptId],
-          dateDebut: '2024-01-01',
-          dateFin: '2024-12-31',
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: {
+            individus: [deptId],
+            dateDebut: '2024-01-01',
+            dateFin: '2024-12-31',
+          },
         }),
       )
 
@@ -541,7 +574,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [dept1, dept2] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [dept1, dept2] },
+        }),
       )
 
       const items = result._unsafeUnwrap().items
@@ -589,7 +625,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [deptId] },
+        }),
       )
 
       // bucket mensuel : '2025-01-15' → '2025-01-01'
@@ -674,7 +713,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [regId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [regId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -730,7 +772,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [regId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [regId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({ items: [] })
@@ -806,7 +851,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, { individus: [regId] }),
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: { individus: [regId] },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -901,9 +949,12 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, {
-          individus: [regId],
-          dateDebut: '2025-02-01',
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: {
+            individus: [regId],
+            dateDebut: '2025-02-01',
+          },
         }),
       )
 
@@ -963,10 +1014,13 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, {
-          individus: [deptId],
-          dateTruncValeur: 'month',
-          dateTruncObjectif: 'year',
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: {
+            individus: [deptId],
+            dateTruncValeur: 'month',
+            dateTruncObjectif: 'year',
+          },
         }),
       )
 
@@ -1020,10 +1074,13 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listTauxProgressionForIndicateur(indId, {
-          individus: [deptId],
-          dateTruncValeur: 'month',
-          dateTruncObjectif: 'year',
+        listTauxProgressionForIndicateur({
+          indicateurPublicId: indId,
+          query: {
+            individus: [deptId],
+            dateTruncValeur: 'month',
+            dateTruncObjectif: 'year',
+          },
         }),
       )
 
@@ -1057,7 +1114,10 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+          listTauxProgressionForIndicateur({
+            indicateurPublicId: indId,
+            query: { individus: [deptId] },
+          }),
         ),
       ).rejects.toThrow()
     }),

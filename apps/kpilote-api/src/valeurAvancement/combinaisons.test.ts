@@ -89,8 +89,11 @@ describe.concurrent('valeurs de plusieurs combinaisons sur une même cellule', (
       const { indicateurId, individuId, apiKey, orangeId } = await celluleADeuxCombinaisons()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch(indicateurId, {
-          items: [{ individu: individuId, date: DATE, valeur: 42 }],
+        upsertValeursAvancementBatch({
+          indicateurPublicId: indicateurId,
+          body: {
+            items: [{ individu: individuId, date: DATE, valeur: 42 }],
+          },
         }),
       )
 

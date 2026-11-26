@@ -298,11 +298,14 @@ describe.concurrent('suppression avec modalités', () => {
     integrationTest(async () => {
       const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
       await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch(indicateurId, {
-          items: [
-            { individu: individuId, modalites: [ids.orange, ids.tva], date: DATE, valeur: 1 },
-            { individu: individuId, modalites: [ids.sfr, ids.tva], date: DATE, valeur: 2 },
-          ],
+        upsertValeursAvancementBatch({
+          indicateurPublicId: indicateurId,
+          body: {
+            items: [
+              { individu: individuId, modalites: [ids.orange, ids.tva], date: DATE, valeur: 1 },
+              { individu: individuId, modalites: [ids.sfr, ids.tva], date: DATE, valeur: 2 },
+            ],
+          },
         }),
       )
 

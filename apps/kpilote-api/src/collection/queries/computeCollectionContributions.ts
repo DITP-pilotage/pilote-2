@@ -18,10 +18,13 @@ type CollectionIndicateurRef = {
   indicateur: { id: string; publicId: string; sensSouhaite: SensSouhaite }
 }
 
-export const computeContributions = (
-  indicateurs: CollectionIndicateurRef[],
-  individuCible: IndividuRef,
-): Promise<IndicateurContribution[]> =>
+export const computeContributions = ({
+  indicateurs,
+  individuCible,
+}: {
+  indicateurs: CollectionIndicateurRef[]
+  individuCible: IndividuRef
+}): Promise<IndicateurContribution[]> =>
   withConcurrency(
     indicateurs.map(({ indicateur, ponderation }) => async () => {
       const dernier = await computeDernierTaux({

@@ -45,12 +45,15 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch(indId, {
-          items: [
-            { individu: deptA, date: '2025-03-01', valeur: 10 },
-            { individu: deptB, date: '2025-03-01', valeur: 20 },
-            { individu: deptC, date: '2025-03-01', valeur: 30 },
-          ],
+        upsertValeursAvancementBatch({
+          indicateurPublicId: indId,
+          body: {
+            items: [
+              { individu: deptA, date: '2025-03-01', valeur: 10 },
+              { individu: deptB, date: '2025-03-01', valeur: 20 },
+              { individu: deptC, date: '2025-03-01', valeur: 30 },
+            ],
+          },
         }),
       )
 
@@ -94,12 +97,15 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch(indId, {
-          items: [
-            { individu: deptA, date: '2025-03-01', valeur: 10 },
-            { individu: deptB, date: '2025-03-01', valeur: 20 },
-            { individu: deptA, date: '2025-03-01', valeur: 99 },
-          ],
+        upsertValeursAvancementBatch({
+          indicateurPublicId: indId,
+          body: {
+            items: [
+              { individu: deptA, date: '2025-03-01', valeur: 10 },
+              { individu: deptB, date: '2025-03-01', valeur: 20 },
+              { individu: deptA, date: '2025-03-01', valeur: 99 },
+            ],
+          },
         }),
       )
 
@@ -142,13 +148,16 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch(indId, {
-          items: [
-            { individu: deptLie, date: '2025-03-01', valeur: 1 },
-            { individu: deptInconnu, date: '2025-03-01', valeur: 2 },
-            { individu: deptDansRefNonLie, date: '2025-03-01', valeur: 3 },
-            { individu: deptInconnu, date: '2025-04-01', valeur: 4 },
-          ],
+        upsertValeursAvancementBatch({
+          indicateurPublicId: indId,
+          body: {
+            items: [
+              { individu: deptLie, date: '2025-03-01', valeur: 1 },
+              { individu: deptInconnu, date: '2025-03-01', valeur: 2 },
+              { individu: deptDansRefNonLie, date: '2025-03-01', valeur: 3 },
+              { individu: deptInconnu, date: '2025-04-01', valeur: 4 },
+            ],
+          },
         }),
       )
 
@@ -191,13 +200,16 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch(indId, {
-          items: [
-            { individu: deptA, date: '2025-03-01', valeur: 1 },
-            { individu: deptA, date: '2025-03-01', valeur: 2 },
-            { individu: deptInconnu, date: '2025-04-01', valeur: 3 },
-            { individu: deptB, date: '2025-04-01', valeur: 4 },
-          ],
+        upsertValeursAvancementBatch({
+          indicateurPublicId: indId,
+          body: {
+            items: [
+              { individu: deptA, date: '2025-03-01', valeur: 1 },
+              { individu: deptA, date: '2025-03-01', valeur: 2 },
+              { individu: deptInconnu, date: '2025-04-01', valeur: 3 },
+              { individu: deptB, date: '2025-04-01', valeur: 4 },
+            ],
+          },
         }),
       )
 
@@ -224,8 +236,11 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          upsertValeursAvancementBatch(indId, {
-            items: [{ individu: deptA, date: '2025-03-01', valeur: 1 }],
+          upsertValeursAvancementBatch({
+            indicateurPublicId: indId,
+            body: {
+              items: [{ individu: deptA, date: '2025-03-01', valeur: 1 }],
+            },
           }),
         ),
       ).rejects.toMatchObject({
@@ -252,8 +267,11 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          upsertValeursAvancementBatch(indId, {
-            items: [{ individu: deptA, date: '2025-03-01', valeur: 1 }],
+          upsertValeursAvancementBatch({
+            indicateurPublicId: indId,
+            body: {
+              items: [{ individu: deptA, date: '2025-03-01', valeur: 1 }],
+            },
           }),
         ),
       ).rejects.toBeInstanceOf(ForbiddenError)
@@ -293,11 +311,14 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch(indId, {
-          items: [
-            { individu: deptA, date: '2025-03-01', valeur: 11 },
-            { individu: deptB, date: '2025-03-01', valeur: 22 },
-          ],
+        upsertValeursAvancementBatch({
+          indicateurPublicId: indId,
+          body: {
+            items: [
+              { individu: deptA, date: '2025-03-01', valeur: 11 },
+              { individu: deptB, date: '2025-03-01', valeur: 22 },
+            ],
+          },
         }),
       )
 
@@ -321,12 +342,15 @@ describe.concurrent('saisie en lot avec modalités', () => {
       const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
       const batch = (valeur: number) =>
         runAsPrincipal(apiKey.id, () =>
-          upsertValeursAvancementBatch(indicateurId, {
-            items: [
-              { individu: individuId, modalites: [ids.orange, ids.tva], date: DATE, valeur },
-              { individu: individuId, modalites: [ids.sfr, ids.tva], date: DATE, valeur },
-              { individu: individuId, modalites: [ids.ir, ids.sfr], date: DATE, valeur },
-            ],
+          upsertValeursAvancementBatch({
+            indicateurPublicId: indicateurId,
+            body: {
+              items: [
+                { individu: individuId, modalites: [ids.orange, ids.tva], date: DATE, valeur },
+                { individu: individuId, modalites: [ids.sfr, ids.tva], date: DATE, valeur },
+                { individu: individuId, modalites: [ids.ir, ids.sfr], date: DATE, valeur },
+              ],
+            },
           }),
         )
 
@@ -349,26 +373,29 @@ describe.concurrent('saisie en lot avec modalités', () => {
       const unknownModalite = testModaliteId()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch(indicateurId, {
-          items: [
-            {
-              individu: individuId,
-              modalites: [ids.orange, unknownModalite],
-              date: DATE,
-              valeur: 1,
-            },
-            { individu: individuId, modalites: [ids.orange], date: DATE, valeur: 1 },
-            {
-              individu: individuId,
-              modalites: [ids.sfr, unknownModalite],
-              date: '2025-04-01',
-              valeur: 1,
-            },
-            { individu: individuId, modalites: [ids.sfr, ids.fiscale], date: DATE, valeur: 1 },
-            { individu: individuId, modalites: [ids.sfr, ids.orange], date: DATE, valeur: 1 },
-            { individu: individuId, modalites: [ids.autre], date: DATE, valeur: 1 },
-            { individu: individuId, modalites: [ids.sfr, ids.ir], date: DATE, valeur: 1 },
-          ],
+        upsertValeursAvancementBatch({
+          indicateurPublicId: indicateurId,
+          body: {
+            items: [
+              {
+                individu: individuId,
+                modalites: [ids.orange, unknownModalite],
+                date: DATE,
+                valeur: 1,
+              },
+              { individu: individuId, modalites: [ids.orange], date: DATE, valeur: 1 },
+              {
+                individu: individuId,
+                modalites: [ids.sfr, unknownModalite],
+                date: '2025-04-01',
+                valeur: 1,
+              },
+              { individu: individuId, modalites: [ids.sfr, ids.fiscale], date: DATE, valeur: 1 },
+              { individu: individuId, modalites: [ids.sfr, ids.orange], date: DATE, valeur: 1 },
+              { individu: individuId, modalites: [ids.autre], date: DATE, valeur: 1 },
+              { individu: individuId, modalites: [ids.sfr, ids.ir], date: DATE, valeur: 1 },
+            ],
+          },
         }),
       )
 
@@ -392,12 +419,15 @@ describe.concurrent('saisie en lot avec modalités', () => {
       const { indicateurId, individuId, apiKey, ids } = await indicateurWithTwoAxes()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch(indicateurId, {
-          items: [
-            { individu: individuId, modalites: [ids.orange, ids.tva], date: DATE, valeur: 1 },
-            { individu: individuId, modalites: [ids.sfr, ids.tva], date: DATE, valeur: 2 },
-            { individu: individuId, modalites: [ids.tva, ids.orange], date: DATE, valeur: 3 },
-          ],
+        upsertValeursAvancementBatch({
+          indicateurPublicId: indicateurId,
+          body: {
+            items: [
+              { individu: individuId, modalites: [ids.orange, ids.tva], date: DATE, valeur: 1 },
+              { individu: individuId, modalites: [ids.sfr, ids.tva], date: DATE, valeur: 2 },
+              { individu: individuId, modalites: [ids.tva, ids.orange], date: DATE, valeur: 3 },
+            ],
+          },
         }),
       )
 
@@ -422,11 +452,14 @@ describe.concurrent('saisie en lot avec modalités', () => {
       const { indicateurId, individuId, apiKey, orange } = await indicateurWithoutAxe()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch(indicateurId, {
-          items: [
-            { individu: individuId, date: DATE, valeur: 1 },
-            { individu: individuId, modalites: [orange], date: '2025-04-01', valeur: 1 },
-          ],
+        upsertValeursAvancementBatch({
+          indicateurPublicId: indicateurId,
+          body: {
+            items: [
+              { individu: individuId, date: DATE, valeur: 1 },
+              { individu: individuId, modalites: [orange], date: '2025-04-01', valeur: 1 },
+            ],
+          },
         }),
       )
 

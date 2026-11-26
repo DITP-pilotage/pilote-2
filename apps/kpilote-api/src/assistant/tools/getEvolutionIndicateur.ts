@@ -36,8 +36,11 @@ Ne l'utilise pas pour : l'état actuel (dernière valeur, objectif, taux) → ge
     }
     if (!indicateur || !individu) return output
 
-    const valeurs = await listValeursForIndicateur(indicateurId, {
-      individus: [individuId],
+    const valeurs = await listValeursForIndicateur({
+      indicateurPublicId: indicateurId,
+      query: {
+        individus: [individuId],
+      },
     }).unwrapOr({ items: [] })
     const serie = valeurs.items
       .filter((item) => item.individu === individuId)

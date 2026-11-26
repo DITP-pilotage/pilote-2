@@ -20,7 +20,10 @@ describe.concurrent('getCollectionTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getCollectionTauxProgression('COL-PROG-EMPTY', { individu: deptId }),
+        getCollectionTauxProgression({
+          collectionPublicId: 'COL-PROG-EMPTY',
+          query: { individu: deptId },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -85,7 +88,10 @@ describe.concurrent('getCollectionTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getCollectionTauxProgression('COL-PROG-OK', { individu: deptId }),
+        getCollectionTauxProgression({
+          collectionPublicId: 'COL-PROG-OK',
+          query: { individu: deptId },
+        }),
       )
 
       const data = result._unsafeUnwrap()
@@ -154,7 +160,10 @@ describe.concurrent('getCollectionTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getCollectionTauxProgression('COL-PROG-NO-OBJ', { individu: deptId }),
+        getCollectionTauxProgression({
+          collectionPublicId: 'COL-PROG-NO-OBJ',
+          query: { individu: deptId },
+        }),
       )
 
       const data = result._unsafeUnwrap()
@@ -223,7 +232,10 @@ describe.concurrent('getCollectionTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getCollectionTauxProgression('COL-PROG-NO-VAL', { individu: deptId }),
+        getCollectionTauxProgression({
+          collectionPublicId: 'COL-PROG-NO-VAL',
+          query: { individu: deptId },
+        }),
       )
 
       const data = result._unsafeUnwrap()
@@ -270,7 +282,10 @@ describe.concurrent('getCollectionTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getCollectionTauxProgression('COL-PROG-ZERO', { individu: deptId }),
+        getCollectionTauxProgression({
+          collectionPublicId: 'COL-PROG-ZERO',
+          query: { individu: deptId },
+        }),
       )
 
       const data = result._unsafeUnwrap()
@@ -327,7 +342,10 @@ describe.concurrent('getCollectionTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getCollectionTauxProgression('COL-PROG-HIST', { individu: deptId }),
+        getCollectionTauxProgression({
+          collectionPublicId: 'COL-PROG-HIST',
+          query: { individu: deptId },
+        }),
       )
 
       const data = result._unsafeUnwrap()
@@ -356,7 +374,10 @@ describe.concurrent('getCollectionTauxProgression', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          getCollectionTauxProgression('COL-PROG-INCONNU', { individu: 'DEPT-INCONNU' }),
+          getCollectionTauxProgression({
+            collectionPublicId: 'COL-PROG-INCONNU',
+            query: { individu: 'DEPT-INCONNU' },
+          }),
         ),
       ).rejects.toThrow()
     }),
@@ -373,7 +394,10 @@ describe.concurrent('getCollectionTauxProgression', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          getCollectionTauxProgression('COL-PROG-PRIV', { individu: testDeptId() }),
+          getCollectionTauxProgression({
+            collectionPublicId: 'COL-PROG-PRIV',
+            query: { individu: testDeptId() },
+          }),
         ),
       ).rejects.toThrow()
     }),
@@ -413,7 +437,10 @@ describe.concurrent('getCollectionTauxProgression', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getCollectionTauxProgression('COL-PROG-PRIV-OK', { individu: deptId }),
+        getCollectionTauxProgression({
+          collectionPublicId: 'COL-PROG-PRIV-OK',
+          query: { individu: deptId },
+        }),
       )
 
       expect(result._unsafeUnwrap().tauxProgression).toBe(25)
@@ -465,7 +492,7 @@ describe.concurrent('getCollectionTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getCollectionTauxProgression(colId, { individu: deptId }),
+        getCollectionTauxProgression({ collectionPublicId: colId, query: { individu: deptId } }),
       )
 
       const data = result._unsafeUnwrap()
@@ -501,7 +528,7 @@ describe.concurrent('getCollectionTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getCollectionTauxProgression(colId, { individu: deptId }),
+        getCollectionTauxProgression({ collectionPublicId: colId, query: { individu: deptId } }),
       )
 
       const data = result._unsafeUnwrap()

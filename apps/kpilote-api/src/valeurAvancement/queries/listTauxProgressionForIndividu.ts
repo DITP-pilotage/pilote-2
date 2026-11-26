@@ -16,16 +16,20 @@ import { computeTauxProgressionPoints } from '@/valeurAvancement/computeTauxProg
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
-export const listTauxProgressionForIndividu = (
-  individuPublicId: string,
-  params: ListTauxProgressionIndividuQuery,
-): ResultAsync<TauxProgressionIndividuListApiModel, never> =>
-  ResultAsync.fromSafePromise(build(individuPublicId, params))
+type ListTauxProgressionForIndividuParams = {
+  individuPublicId: string
+  query: ListTauxProgressionIndividuQuery
+}
 
-const build = async (
-  individuPublicId: string,
-  params: ListTauxProgressionIndividuQuery,
-): Promise<TauxProgressionIndividuListApiModel> => {
+export const listTauxProgressionForIndividu = (
+  params: ListTauxProgressionForIndividuParams,
+): ResultAsync<TauxProgressionIndividuListApiModel, never> =>
+  ResultAsync.fromSafePromise(build(params))
+
+const build = async ({
+  individuPublicId,
+  query,
+}: ListTauxProgressionForIndividuParams): Promise<TauxProgressionIndividuListApiModel> => {
   const principalId = requireCurrentPrincipalId()
 
   const individuRow = await db().individu.findUnique({
@@ -36,7 +40,7 @@ const build = async (
   const individu: IndividuRef = individuRow
 
   const indicateurs = await db().indicateur.findMany({
-    where: withIndicateurReadPermission({ publicId: { in: [...params.indicateurs] } }, principalId),
+    where: withIndicateurReadPermission({ publicId: { in: [...query.indicateurs] } }, principalId),
     select: { id: true, publicId: true, sensSouhaite: true },
   })
   if (indicateurs.length === 0) return { items: [] }
@@ -72,7 +76,7 @@ const build = async (
     {
       event: 'valeurAvancement.listTauxProgressionForIndividu.timing',
       individuId: individu.id,
-      nbIndicateursDemandes: params.indicateurs.length,
+      nbIndicateursDemandes: query.indicateurs.length,
       nbIndicateursAccessibles: indicateurs.length,
       nbItems: items.length,
       durationMs: Math.round(performance.now() - startedAt),

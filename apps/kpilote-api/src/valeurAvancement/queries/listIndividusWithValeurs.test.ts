@@ -61,7 +61,9 @@ describe.concurrent('listIndividusWithValeurs', () => {
         permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () => listIndividusWithValeurs(indId, {}))
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listIndividusWithValeurs({ indicateurPublicId: indId, query: {} }),
+      )
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [
@@ -137,7 +139,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listIndividusWithValeurs(indId, { referentiel: refReg }),
+        listIndividusWithValeurs({ indicateurPublicId: indId, query: { referentiel: refReg } }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -167,7 +169,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
     integrationTest(async () => {
       const apiKey = await fixtures.apiKey()
       const result = await runAsPrincipal(apiKey.id, () =>
-        listIndividusWithValeurs(testIndicateurId(), {}),
+        listIndividusWithValeurs({ indicateurPublicId: testIndicateurId(), query: {} }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -188,7 +190,10 @@ describe.concurrent('listIndividusWithValeurs', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listIndividusWithValeurs(indId, { referentiel: 'REF-INCONNU' }),
+        listIndividusWithValeurs({
+          indicateurPublicId: indId,
+          query: { referentiel: 'REF-INCONNU' },
+        }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -212,7 +217,9 @@ describe.concurrent('listIndividusWithValeurs', () => {
       })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () => listIndividusWithValeurs(indId, {}))
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listIndividusWithValeurs({ indicateurPublicId: indId, query: {} }),
+      )
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [],

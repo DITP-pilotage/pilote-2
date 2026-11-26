@@ -219,10 +219,10 @@ collectionRoutes.openapi(getCollectionByIdRoute, async (context) => {
 })
 
 collectionRoutes.openapi(getCollectionTauxProgressionRoute, async (context) => {
-  const { id } = context.req.valid('param')
-  const query = context.req.valid('query')
-
-  return getCollectionTauxProgression(id, query).match(
+  return getCollectionTauxProgression({
+    collectionPublicId: context.req.valid('param').id,
+    query: context.req.valid('query'),
+  }).match(
     (data) =>
       jsonResponseOk({
         context,
