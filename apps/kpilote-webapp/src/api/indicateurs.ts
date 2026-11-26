@@ -48,6 +48,14 @@ export const fetchIndicateurs = async (
   return indicateurListApiModelSchema.parse(json)
 }
 
+export const pinIndicateur = async (indicateurId: string): Promise<void> => {
+  await apiClient.put(`indicateurs/${indicateurId}/epingle`)
+}
+
+export const unpinIndicateur = async (indicateurId: string): Promise<void> => {
+  await apiClient.delete(`indicateurs/${indicateurId}/epingle`)
+}
+
 export const fetchIndicateurById = async (id: string): Promise<IndicateurApiModel> => {
   const json = await apiClient.get(`indicateurs/${id}`).json()
   return indicateurApiModelSchema.parse(json)

@@ -35,6 +35,8 @@ import {
   erreur409,
 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
+import { pinIndicateur, type PinIndicateurError } from '@/indicateur/commands/pinIndicateur'
+import { unpinIndicateur } from '@/indicateur/commands/unpinIndicateur'
 import {
   upsertIndicateur,
   type UpsertIndicateurError,
@@ -332,6 +334,80 @@ indicateurRoutes.openapi(listerNiveauxParCommentairesIndicateurIndividuRoute, as
   return listerNiveauxParCommentaires(indicateurIndividuConfig, { params, query }).match(
     (data) =>
       jsonResponseOk({ context, data, schema: NiveauConfianceListApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+// --- PUT /indicateurs/:id/epingle --------------------------------------------
+
+const pinIndicateurRoute = createRoute({
+  method: 'put',
+  path: '/indicateurs/{id}/epingle',
+  tags: ['Indicateur'],
+  summary: 'Épingler un indicateur',
+  description:
+    'Épingle l’indicateur pour l’utilisateur courant ; recommencer ne change rien. Un utilisateur ' +
+    'épingle au plus 20 indicateurs qu’il peut lire : au-delà, la requête répond 409 ' +
+    '(`LIMITE_EPINGLES_ATTEINTE`). Réservé aux utilisateurs : une clé API n’a pas d’épingle.',
+  middleware: [requireAuthentication],
+  request: { params: detailParamsSchema },
+  responses: {
+    204: { description: 'Indicateur épinglé' },
+    404: erreur404,
+    409: erreur409,
+  },
+})
+
+const describePinIndicateurError = (
+  error: PinIndicateurError,
+): { status: 409; message: string; details?: Record<string, unknown> } => {
+  switch (error.type) {
+    case 'LIMITE_EPINGLES_ATTEINTE':
+      return {
+        status: 409,
+        message: `Vous avez déjà épinglé ${error.limite} indicateurs. Désépinglez-en un pour en épingler un autre.`,
+        details: { limite: error.limite },
+      }
+  }
+}
+
+indicateurRoutes.openapi(pinIndicateurRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  return withTransaction(() => pinIndicateur({ publicId: id })).match(
+    () => context.body(null, 204),
+    (error) => {
+      const { status, message, details } = describePinIndicateurError(error)
+      return jsonResponseError({
+        context,
+        error: { code: error.type, message, details },
+        schema: ErrorApiModelSchema,
+        status,
+      })
+    },
+  )
+})
+
+// --- DELETE /indicateurs/:id/epingle -----------------------------------------
+
+const unpinIndicateurRoute = createRoute({
+  method: 'delete',
+  path: '/indicateurs/{id}/epingle',
+  tags: ['Indicateur'],
+  summary: 'Désépingler un indicateur',
+  description:
+    'Retire l’épingle de l’utilisateur courant. Un indicateur inconnu ou non épinglé ne change ' +
+    'rien. Réservé aux utilisateurs : une clé API n’a pas d’épingle.',
+  middleware: [requireAuthentication],
+  request: { params: detailParamsSchema },
+  responses: {
+    204: { description: 'Indicateur désépinglé' },
+  },
+})
+
+indicateurRoutes.openapi(unpinIndicateurRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  return withTransaction(() => unpinIndicateur({ publicId: id })).match(
+    () => context.body(null, 204),
     never,
   )
 })

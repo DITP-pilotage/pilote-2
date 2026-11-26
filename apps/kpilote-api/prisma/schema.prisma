@@ -51,6 +51,7 @@ model Utilisateur {
   responsabilitesIndicateur IndicateurResponsable[]
   featuresAutorises         FeatureUtilisateur[]
   accesAssistant            AssistantAccesUtilisateur?
+  indicateursEpingles       IndicateurEpingle[]
 
   @@map("utilisateur")
 }
@@ -120,6 +121,7 @@ model Indicateur {
   individuCommentaires IndicateurIndividuCommentaire[]
   responsables         IndicateurResponsable[]
   axes                 IndicateurAxe[]
+  epingles             IndicateurEpingle[]
 
   @@map("indicateur")
 }
@@ -755,6 +757,22 @@ model Feature {
   utilisateursAutorises FeatureUtilisateur[]
 
   @@map("feature")
+}
+
+// Indicateurs qu'un utilisateur a épinglés sur son tableau de bord. Le nombre
+// d'épingles par utilisateur est borné par MAX_INDICATEURS_EPINGLES
+// (@pilote/kpilote-shared/indicateur), vérifié à l'écriture.
+model IndicateurEpingle {
+  utilisateurId String   @map("utilisateur_id") @db.Uuid
+  indicateurId  String   @map("indicateur_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  indicateur  Indicateur  @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+
+  @@id([utilisateurId, indicateurId])
+  @@index([indicateurId])
+  @@map("indicateur_epingle")
 }
 
 model FeatureUtilisateur {

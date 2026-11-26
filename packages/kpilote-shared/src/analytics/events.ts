@@ -43,6 +43,11 @@ export type IndicateurIndividuChangeContext = {
   source?: 'map'
 }
 
+export type IndicateurPinContext = {
+  entity_id: string
+  source: AnalyticsSource
+}
+
 export type CommentaireSectionViewContext = {
   entity_type: AnalyticsEntityType
   section: string
@@ -202,6 +207,18 @@ export const analyticsEvents = {
       category: 'kpilote.indicateur',
       action: 'filter',
       name: 'indicateur.individu.change',
+      context: { ...context },
+    }),
+    pin: (context: IndicateurPinContext): AnalyticsEvent => ({
+      category: 'kpilote.indicateur',
+      action: 'select',
+      name: 'indicateur.pin',
+      context: { ...context },
+    }),
+    unpin: (context: IndicateurPinContext): AnalyticsEvent => ({
+      category: 'kpilote.indicateur',
+      action: 'select',
+      name: 'indicateur.unpin',
       context: { ...context },
     }),
   },

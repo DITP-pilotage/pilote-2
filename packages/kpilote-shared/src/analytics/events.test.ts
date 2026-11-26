@@ -48,6 +48,8 @@ const CONTRAT = [
     'kpilote.indicateur',
     'filter',
   ],
+  ['indicateur.pin', analyticsEvents.indicateur.pin, 'kpilote.indicateur', 'select'],
+  ['indicateur.unpin', analyticsEvents.indicateur.unpin, 'kpilote.indicateur', 'select'],
   [
     'commentaire.section.view',
     analyticsEvents.commentaire.sectionView,

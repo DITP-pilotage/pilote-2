@@ -1,14 +1,17 @@
 import { type ValidationErrorApiModel } from '@pilote/kpilote-shared/error'
 import { type IndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 import { type ResultAsync } from 'neverthrow'
+import { OpenAPIHono } from '@hono/zod-openapi'
 import { describe, expect, it, vi } from 'vitest'
 
+import { registerErrorHandler } from '@/framework/errors/errorHandler'
 import { ApiKeyRole } from '@/generated/prisma/enums'
 import { indicateurRoutes } from '@/indicateur/routes'
 import { buildTestApp } from '@/test/buildTestApp'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testApiKeyRawKey, testAxeId, testIndicateurNumericId } from '@/test/randomIds'
+import { runAsUser } from '@/test/runAsPrincipal'
 
 // La route ouvre sa propre transaction (`withTransaction`), qui ne verrait pas les
 // fixtures de la transaction de test : ici elle rejoint la transaction courante
@@ -167,6 +170,82 @@ describe.concurrent('PUT /indicateurs/{id} : validation', () => {
       expect(response.status).toBe(400)
       const body = (await response.json()) as ValidationErrorApiModel
       expect(body.details.issues.map((issue) => issue.path)).toEqual([['sensSouhaite']])
+    }),
+  )
+})
+
+// Les épingles appartiennent à un utilisateur : l'app de test le pose dans le
+// contexte, comme le ferait la session.
+const appAsUser = (utilisateurId: string) => {
+  const app = new OpenAPIHono()
+  app.use('*', (_context, next) => runAsUser(utilisateurId, next))
+  app.route('/', indicateurRoutes)
+  registerErrorHandler(app)
+  return app
+}
+
+describe.concurrent('PUT et DELETE /indicateurs/:id/epingle', () => {
+  it(
+    'épingle puis désépingle un indicateur, en 204',
+    integrationTest(async () => {
+      const indicateurId = testIndicateurNumericId()
+      await fixtures.indicateur({ publicId: indicateurId, visibilite: 'PUBLIC' })
+      const utilisateur = await fixtures.utilisateur()
+      const app = appAsUser(utilisateur.id)
+      const epingles = async () => {
+        const response = await app.request('/indicateurs?epingle=true')
+        const body = (await response.json()) as { items: IndicateurApiModel[] }
+        return body.items.map((item) => item.id)
+      }
+
+      const pin = await app.request(`/indicateurs/${indicateurId}/epingle`, { method: 'PUT' })
+      expect(pin.status).toBe(204)
+      expect(await epingles()).toEqual([indicateurId])
+
+      const unpin = await app.request(`/indicateurs/${indicateurId}/epingle`, { method: 'DELETE' })
+      expect(unpin.status).toBe(204)
+      expect(await epingles()).toEqual([])
+    }),
+  )
+
+  it(
+    'répond 409 au-delà de la limite d’épingles',
+    integrationTest(async () => {
+      const epingles = Array.from({ length: 20 }, () => testIndicateurNumericId())
+      const enTrop = testIndicateurNumericId()
+      const utilisateur = await fixtures.utilisateur()
+      for (const publicId of epingles) {
+        await fixtures.indicateurEpingle({
+          indicateur: { publicId, visibilite: 'PUBLIC' },
+          utilisateur: { email: utilisateur.email },
+        })
+      }
+      await fixtures.indicateur({ publicId: enTrop, visibilite: 'PUBLIC' })
+
+      const response = await appAsUser(utilisateur.id).request(`/indicateurs/${enTrop}/epingle`, {
+        method: 'PUT',
+      })
+
+      expect(response.status).toBe(409)
+      expect(await response.json()).toMatchObject({
+        code: 'LIMITE_EPINGLES_ATTEINTE',
+        details: { limite: 20 },
+      })
+    }),
+  )
+
+  it(
+    'répond 404 sur un indicateur que l’utilisateur ne peut pas lire',
+    integrationTest(async () => {
+      const prive = testIndicateurNumericId()
+      await fixtures.indicateur({ publicId: prive, visibilite: 'PRIVE' })
+      const utilisateur = await fixtures.utilisateur()
+
+      const response = await appAsUser(utilisateur.id).request(`/indicateurs/${prive}/epingle`, {
+        method: 'PUT',
+      })
+
+      expect(response.status).toBe(404)
     }),
   )
 })

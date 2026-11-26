@@ -1,4 +1,7 @@
-import { type ListIndicateursQuery } from '@pilote/kpilote-shared/indicateur'
+import {
+  type ListIndicateursQuery,
+  MAX_INDICATEURS_EPINGLES,
+} from '@pilote/kpilote-shared/indicateur'
 import { type QueryClient, queryOptions } from '@tanstack/react-query'
 
 import {
@@ -19,6 +22,30 @@ export const indicateursQueryOptions = (params: ListIndicateursQuery) =>
     queryFn: () => fetchIndicateurs(params),
     staleTime: DEFAULT_STALE_TIME,
   })
+
+// Clé partielle de toutes les listes d'épinglés, quelle que soit la sélection.
+export const indicateursEpinglesKey = ['indicateurs', { epingle: true }] as const
+
+// Les épinglés tiennent sur une page : leur nombre est borné par l'API. La
+// sélection place les épinglés qu'elle concerne en tête, comme dans la liste.
+export const indicateursEpinglesQueryOptions = ({
+  individus,
+}: {
+  individus: ReadonlyArray<string>
+}) =>
+  indicateursQueryOptions({
+    epingle: true,
+    pageSize: MAX_INDICATEURS_EPINGLES,
+    ...(individus.length > 0 ? { individus: [...individus] } : {}),
+  })
+
+export const loadIndicateursEpingles = ({
+  queryClient,
+  individus,
+}: {
+  queryClient: QueryClient
+  individus: ReadonlyArray<string>
+}) => queryClient.fetchQuery(indicateursEpinglesQueryOptions({ individus }))
 
 /**
  * Toutes les pages d'indicateurs en une liste, pour un filtrage 100% client
