@@ -10,14 +10,14 @@ import { analytics } from '@/analytics/tracker'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { CollectionCard } from '@/components/collections/CollectionCard'
-import { IndividusSelecteurs } from '@/components/indicateurs/IndividusSelecteurs'
+import { IndividuSelectors } from '@/components/indicateurs/IndividuSelectors'
 import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
 import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureSelectionIndividus } from '@/lib/individus/ensureSelection'
-import { resolveLectureCollection, selectIndividu } from '@/lib/individus/selection'
+import { resolveCollectionReading, selectIndividu } from '@/lib/individus/selection'
 import { loadCollections, collectionsQueryOptions } from '@/queries/collections'
 import {
   allReferentielsQueryOptions,
@@ -76,7 +76,7 @@ function CollectionsListComponent() {
   const { groups } = useIndividuHierarchy(referentielIds)
   const selection = splitCsv(search.selectedIndividus)
 
-  const lecture = resolveLectureCollection({ selection })
+  const reading = resolveCollectionReading({ selection })
 
   return (
     <Page
@@ -84,7 +84,7 @@ function CollectionsListComponent() {
       description="Consultez et gérez l'ensemble de vos indicateurs par valeur ou par collection."
       stickybar={
         <>
-          <IndividusSelecteurs
+          <IndividuSelectors
             groups={groups}
             selection={selection}
             onSelect={({ individu, referentiel }) => {
@@ -114,7 +114,7 @@ function CollectionsListComponent() {
               <CollectionCard
                 key={collection.id}
                 collection={collection}
-                lecture={lecture}
+                reading={reading}
                 source="dashboard"
               />
             ))}

@@ -212,15 +212,15 @@ function CollectionDetailComponent() {
                     collectionId={id}
                     {...(cardContext
                       ? {
-                          lecture: {
+                          reading: {
                             individus: [cardContext.individu],
-                            lien: {
+                            link: {
                               ...cardContext,
                               ...(search.selectedIndividus
                                 ? { selectedIndividus: search.selectedIndividus }
                                 : {}),
                             },
-                            indisponible: false,
+                            isUnavailable: false,
                           },
                         }
                       : {})}

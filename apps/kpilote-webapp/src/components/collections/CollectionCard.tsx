@@ -8,16 +8,16 @@ import {
   CollectionAvancementSkeleton,
 } from '@/components/collections/CollectionAvancement'
 import { analytics } from '@/analytics/tracker'
-import { type Lecture } from '@/lib/individus/selection'
+import { type CardReading } from '@/lib/individus/selection'
 import { EntityCard } from '@pilote/kpilote-ui/EntityCard'
 
 export function CollectionCard({
   collection,
-  lecture,
+  reading,
   source,
 }: {
   collection: Pick<CollectionApiModel, 'id' | 'nom' | 'description' | 'indicateurs'>
-  lecture: Lecture
+  reading: CardReading
   source: AnalyticsSource
 }) {
   const nb = collection.indicateurs.length
@@ -27,7 +27,7 @@ export function CollectionCard({
       title={collection.nom}
       body={
         <Suspense fallback={<CollectionAvancementSkeleton />}>
-          <CollectionAvancement collectionId={collection.id} individus={lecture.individus} />
+          <CollectionAvancement collectionId={collection.id} individus={reading.individus} />
         </Suspense>
       }
       footer={
@@ -40,7 +40,7 @@ export function CollectionCard({
       <Link
         to="/collections/$id"
         params={{ id: collection.id }}
-        search={lecture.lien}
+        search={reading.link}
         onClick={() =>
           analytics.trackEvent(
             analyticsEvents.collection.open({ entity_id: collection.id, source }),

@@ -4,10 +4,10 @@ import { describe, expect, it } from 'vitest'
 
 import { buildOrderedNodes, groupNodesByRootReferentiel } from './hierarchy'
 import {
-  buildSelecteurs,
+  buildSelectors,
   normalizeSelection,
-  resolveLectureCollection,
-  resolveLectureIndicateur,
+  resolveCollectionReading,
+  resolveIndicateurReading,
   selectIndividu,
 } from './selection'
 
@@ -86,83 +86,83 @@ describe('selectIndividu', () => {
   })
 })
 
-describe('resolveLectureIndicateur', () => {
+describe('resolveIndicateurReading', () => {
   const territorial = ['REF-NAT', 'REF-REG', 'REF-DEPT']
   const regional = ['REF-REG']
   const bassin = ['REF-BV']
 
   it('lit les racines sans sélection', () => {
-    expect(resolveLectureIndicateur({ selection: [], nodes, referentielIds: bassin })).toEqual({
+    expect(resolveIndicateurReading({ selection: [], nodes, referentielIds: bassin })).toEqual({
       individus: undefined,
-      lien: {},
-      indisponible: false,
+      link: {},
+      isUnavailable: false,
     })
   })
 
   it("lit l'individu sélectionné qui concerne l'indicateur", () => {
-    const lecture = resolveLectureIndicateur({
+    const reading = resolveIndicateurReading({
       selection: ['DEPT-84', 'BV-05'],
       nodes,
       referentielIds: territorial,
     })
 
-    expect(lecture).toEqual({
+    expect(reading).toEqual({
       individus: ['DEPT-84', 'BV-05'],
-      lien: {
+      link: {
         individu: 'DEPT-84',
         referentiel: 'REF-DEPT',
         selectedIndividus: 'DEPT-84,BV-05',
       },
-      indisponible: false,
+      isUnavailable: false,
     })
   })
 
   it("rend l'indicateur indisponible sans remonter vers un ancêtre", () => {
-    const lecture = resolveLectureIndicateur({
+    const reading = resolveIndicateurReading({
       selection: ['DEPT-84'],
       nodes,
       referentielIds: regional,
     })
 
-    expect(lecture).toEqual({
+    expect(reading).toEqual({
       individus: ['DEPT-84'],
-      lien: { selectedIndividus: 'DEPT-84' },
-      indisponible: true,
+      link: { selectedIndividus: 'DEPT-84' },
+      isUnavailable: true,
     })
   })
 
   it("rend indisponible un indicateur d'un stack sans sélection", () => {
     expect(
-      resolveLectureIndicateur({ selection: ['DEPT-84'], nodes, referentielIds: bassin })
-        .indisponible,
+      resolveIndicateurReading({ selection: ['DEPT-84'], nodes, referentielIds: bassin })
+        .isUnavailable,
     ).toBe(true)
   })
 })
 
-describe('resolveLectureCollection', () => {
+describe('resolveCollectionReading', () => {
   it('lit les racines sans sélection', () => {
-    expect(resolveLectureCollection({ selection: [] })).toEqual({
+    expect(resolveCollectionReading({ selection: [] })).toEqual({
       individus: undefined,
-      lien: {},
-      indisponible: false,
+      link: {},
+      isUnavailable: false,
     })
   })
 
   it('lit toute la sélection et ne transmet que la sélection à la fiche', () => {
-    expect(resolveLectureCollection({ selection: ['BV-05', 'DEPT-84'] })).toEqual({
+    expect(resolveCollectionReading({ selection: ['BV-05', 'DEPT-84'] })).toEqual({
       individus: ['BV-05', 'DEPT-84'],
-      lien: { selectedIndividus: 'BV-05,DEPT-84' },
-      indisponible: false,
+      link: { selectedIndividus: 'BV-05,DEPT-84' },
+      isUnavailable: false,
     })
   })
 })
 
-describe('buildSelecteurs', () => {
+describe('buildSelectors', () => {
   it('annonce la racine de chaque stack par défaut sans sélection', () => {
-    const selecteurs = buildSelecteurs({ groups, selection: [] })
+    const selectors = buildSelectors({ groups, selection: [] })
 
     expect(
-      selecteurs.map(({ group, value, placeholder, referentielIds }) => ({
+      selectors.map(({ group, value, placeholder, referentielIds }) => ({
         stack: group.referentiel.id,
         referentielIds,
         value,
@@ -185,9 +185,9 @@ describe('buildSelecteurs', () => {
   })
 
   it("n'annonce plus de défaut dès qu'un stack a une sélection", () => {
-    const selecteurs = buildSelecteurs({ groups, selection: ['BV-05'] })
+    const selectors = buildSelectors({ groups, selection: ['BV-05'] })
 
-    expect(selecteurs.map(({ value, placeholder }) => ({ value, placeholder }))).toEqual([
+    expect(selectors.map(({ value, placeholder }) => ({ value, placeholder }))).toEqual([
       { value: 'BV-05', placeholder: 'Aucune sélection' },
       { value: '', placeholder: 'Aucune sélection' },
     ])

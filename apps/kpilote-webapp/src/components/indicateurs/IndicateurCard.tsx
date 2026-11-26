@@ -9,19 +9,19 @@ import {
 } from '@/components/indicateurs/IndicateurAvancement'
 import { analytics } from '@/analytics/tracker'
 import { clsxm } from '@/lib/clsxm'
-import { type Lecture } from '@/lib/individus/selection'
+import { type CardReading } from '@/lib/individus/selection'
 import { EntityCard } from '@pilote/kpilote-ui/EntityCard'
 import { Text } from '@pilote/kpilote-ui/Typography'
 
 // Sans `lecture`, la carte n'affiche pas d'avancement.
 export function IndicateurCard({
   indicateur,
-  lecture,
+  reading,
   source,
   collectionId,
 }: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'unite'>
-  lecture?: Lecture | undefined
+  reading?: CardReading | undefined
   source: AnalyticsSource
   collectionId?: string | undefined
 }) {
@@ -29,13 +29,13 @@ export function IndicateurCard({
     <EntityCard
       asChild
       title={indicateur.nom}
-      className={clsxm(lecture?.indisponible && 'opacity-60')}
-      body={lecture ? <IndicateurCardBody indicateur={indicateur} lecture={lecture} /> : undefined}
+      className={clsxm(reading?.isUnavailable && 'opacity-60')}
+      body={reading ? <IndicateurCardBody indicateur={indicateur} reading={reading} /> : undefined}
     >
       <Link
         to="/indicateurs/$id"
         params={{ id: indicateur.id }}
-        search={lecture?.lien ?? {}}
+        search={reading?.link ?? {}}
         onClick={() =>
           analytics.trackEvent(
             analyticsEvents.indicateur.open({
@@ -52,12 +52,12 @@ export function IndicateurCard({
 
 function IndicateurCardBody({
   indicateur,
-  lecture,
+  reading,
 }: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'unite'>
-  lecture: Lecture
+  reading: CardReading
 }) {
-  if (lecture.indisponible) {
+  if (reading.isUnavailable) {
     return (
       <Text variant="body" tone="muted" className="text-sm">
         Cet indicateur n’est pas disponible pour le périmètre sélectionné
@@ -68,7 +68,7 @@ function IndicateurCardBody({
     <Suspense fallback={<IndicateurAvancementSkeleton />}>
       <IndicateurAvancement
         indicateurId={indicateur.id}
-        individus={lecture.individus}
+        individus={reading.individus}
         unite={indicateur.unite}
       />
     </Suspense>

@@ -1,10 +1,10 @@
 import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelect'
 import { type ReferentielGroup } from '@/lib/individus/hierarchy'
-import { buildSelecteurs } from '@/lib/individus/selection'
+import { buildSelectors } from '@/lib/individus/selection'
 
 // Un sélecteur d'individu par stack de référentiels, chacun limité aux
 // référentiels de son stack.
-export function IndividusSelecteurs({
+export function IndividuSelectors({
   groups,
   selection,
   onSelect,
@@ -15,13 +15,13 @@ export function IndividusSelecteurs({
 }) {
   return (
     <div className="flex flex-wrap items-end gap-3">
-      {buildSelecteurs({ groups, selection }).map((selecteur) => (
+      {buildSelectors({ groups, selection }).map((selector) => (
         <FieldIndividuSelect
-          key={selecteur.group.referentiel.id}
-          label={selecteur.group.referentiel.nom}
-          referentielIds={selecteur.referentielIds}
-          value={selecteur.value}
-          placeholder={selecteur.placeholder}
+          key={selector.group.referentiel.id}
+          label={selector.group.referentiel.nom}
+          referentielIds={selector.referentielIds}
+          value={selector.value}
+          placeholder={selector.placeholder}
           onChange={onSelect}
         />
       ))}
