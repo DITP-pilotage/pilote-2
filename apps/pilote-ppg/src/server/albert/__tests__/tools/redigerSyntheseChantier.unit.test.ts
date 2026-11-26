@@ -123,6 +123,7 @@ const getChantierCommentairesQuery = () =>
           ],
         },
       ],
+      types_consultes: ["commentaires_sur_les_donnees" as const],
       types_non_accessibles: [],
     })),
   });

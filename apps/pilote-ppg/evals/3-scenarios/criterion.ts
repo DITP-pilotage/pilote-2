@@ -7,6 +7,7 @@ import {
   checkNoMeteoCode,
   checkNoToolName,
   checkPersonReferences,
+  checkTypesConsultes,
   type CheckResult,
 } from "./mechanicalChecks";
 
@@ -54,11 +55,21 @@ export const BASE_IDS = {
   noHtml: "Pas de HTML",
   personReferences: "Références de personnes",
   personsAsNames: "Personnes citées comme des noms",
+  typesConsultes: "Types de commentaires consultés",
 } as const;
 
 /** Une sortie d'outil de la conversation cite au moins une personne. */
 export const personnesRecues = (evidence: Evidence) =>
   JSON.stringify(evidence.toolResults).includes("@[personne:");
+
+/** Les mentions des types consultés que `get_chantier_commentaires` a renvoyées. */
+const mentionsDesTypesConsultes = (evidence: Evidence) =>
+  evidence.toolResults.flatMap((result) => {
+    if (result.toolName !== "get_chantier_commentaires") return [];
+    const mention = (result.output as { mention_types_consultes?: unknown })
+      ?.mention_types_consultes;
+    return typeof mention === "string" ? [mention] : [];
+  });
 
 /**
  * Le socle : les « Règles fondamentales » du prompt, valables pour toute
@@ -108,6 +119,16 @@ const BASE: Criterion[] = [
       checkPersonReferences({
         text: evidence.matter,
         toolResults: evidence.toolResults,
+      }),
+  }),
+  mechanical({
+    id: BASE_IDS.typesConsultes,
+    rule: "Rédiger : une réponse tirée des commentaires se termine par la mention des types consultés",
+    applicable: (evidence) => mentionsDesTypesConsultes(evidence).length > 0,
+    check: (evidence) =>
+      checkTypesConsultes({
+        text: evidence.answer,
+        mentions: mentionsDesTypesConsultes(evidence),
       }),
   }),
   judged({

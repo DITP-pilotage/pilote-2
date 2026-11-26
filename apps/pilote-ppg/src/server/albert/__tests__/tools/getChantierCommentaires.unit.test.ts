@@ -36,6 +36,7 @@ const queryResult: GetChantierCommentairesQueryResult = {
       ],
     },
   ],
+  types_consultes: ["freins_a_lever"],
   types_non_accessibles: [],
 };
 
@@ -67,6 +68,7 @@ const resultatAvecCommentaires = (
   commentaires: CommentaireDeLaQuery[],
 ): GetChantierCommentairesQueryResult => ({
   resultats: [{ ...queryResult.resultats[0], commentaires }],
+  types_consultes: ["freins_a_lever"],
   types_non_accessibles: [],
 });
 
@@ -158,6 +160,85 @@ describe("createGetChantierCommentairesTool execute", () => {
         },
       ],
       types_non_accessibles: [],
+      mention_types_consultes: "Commentaires consultés : freins à lever.",
+    });
+  });
+
+  test("termine par une seule mention des types consultés sur tous les territoires, et de ceux qui ne sont pas accessibles", async () => {
+    // Given — la région et le département ne sont pas interrogés sur les mêmes types
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(
+        async ({
+          territoireCode,
+        }: {
+          territoireCode: string;
+        }): Promise<GetChantierCommentairesQueryResult> => ({
+          resultats: [],
+          types_consultes:
+            territoireCode === "REG-75"
+              ? ["autres_resultats_obtenus", "synthese_des_resultats"]
+              : ["commentaires_sur_les_donnees", "synthese_des_resultats"],
+          types_non_accessibles: ["actions_a_venir", "freins_a_lever"],
+        }),
+      ),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["REG-75", "DEPT-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084", {
+      type: "REGION_ET_SES_DEPARTEMENTS",
+      region_code: "REG-75",
+    });
+
+    // Then
+    expect(result.mention_types_consultes).toEqual(
+      "Commentaires consultés : commentaires sur les données, autres résultats obtenus, synthèse des résultats.\nNon accessibles (vue nationale) : freins à lever, actions à venir.",
+    );
+  });
+
+  test("plusieurs territoires avec accès au national : les types nationaux lus une fois ne sont pas signalés non accessibles", async () => {
+    // Given — comme la query : sans le national, ses types sont signalés non accessibles
+    const query = mock<GetChantierCommentairesQuery>({
+      execute: vi.fn(
+        async ({
+          inclureCommentairesNationaux,
+        }: {
+          inclureCommentairesNationaux: boolean;
+        }): Promise<GetChantierCommentairesQueryResult> => ({
+          resultats: [],
+          types_consultes: inclureCommentairesNationaux
+            ? ["freins_a_lever", "commentaires_sur_les_donnees"]
+            : ["commentaires_sur_les_donnees"],
+          types_non_accessibles: inclureCommentairesNationaux
+            ? []
+            : ["freins_a_lever"],
+        }),
+      ),
+    });
+    const tool = buildTool({
+      query,
+      territoiresAccessibles: ["NAT-FR", "REG-75", "DEPT-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // When
+    const result = await executeTool(tool, "CH-084", {
+      type: "SELECTION",
+      territoire_codes: ["REG-75", "DEPT-75"],
+    });
+
+    // Then
+    expect({
+      types_non_accessibles: result.types_non_accessibles,
+      mention_types_consultes: result.mention_types_consultes,
+    }).toEqual({
+      types_non_accessibles: [],
+      mention_types_consultes:
+        "Commentaires consultés : freins à lever, commentaires sur les données.",
     });
   });
 

@@ -13,6 +13,7 @@ import type {
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
 import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
+import { libelleTypeCommentaire } from "@/server/albert/tools/libelles";
 import { personReference } from "@/shared/personne/personReference";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import {
@@ -77,7 +78,38 @@ export type GetChantierCommentairesOutput = {
   chantier_nom: string | null;
   resultats: ResultatCommentaires[];
   types_non_accessibles: GetChantierCommentairesQueryResult["types_non_accessibles"];
+  /** La ligne qui clôt la réponse, recopiée telle quelle par le modèle. */
+  mention_types_consultes: string;
 };
+
+const libellesDesTypes = (types: TypeContenuChantier[]) =>
+  types
+    .map((type) => libelleTypeCommentaire({ type }).toLowerCase())
+    .join(", ");
+
+/**
+ * Les types de commentaires lus pour la réponse, et ceux que l'utilisateur ne
+ * peut pas lire. Écrite par le code et recopiée par le modèle : une réponse
+ * tirée des commentaires dit toujours sur quoi elle s'appuie.
+ */
+export function mentionTypesConsultes({
+  typesConsultes,
+  typesNonAccessibles,
+}: {
+  typesConsultes: TypeContenuChantier[];
+  typesNonAccessibles: TypeContenuChantier[];
+}): string {
+  return [
+    typesConsultes.length > 0
+      ? `Commentaires consultés : ${libellesDesTypes(typesConsultes)}.`
+      : "Commentaires consultés : aucun.",
+    ...(typesNonAccessibles.length > 0
+      ? [
+          `Non accessibles (vue nationale) : ${libellesDesTypes(typesNonAccessibles)}.`,
+        ]
+      : []),
+  ].join("\n");
+}
 
 const normaliserEspaces = (texte: string) => texte.replace(/\s+/g, " ");
 
@@ -164,6 +196,7 @@ Types de commentaires :
 - Les types nationaux sont cherchés sur NAT-FR quand l'utilisateur y a accès, même pour un territoire régional ou départemental : inutile de rappeler l'outil sur NAT-FR.
 - Sur un territoire régional ou départemental, « difficultés », « actions », « ce qui coince » ne désignent pas \`freins_a_lever\` ni \`actions_a_venir\`, qui sont nationaux : elles se lisent d'abord dans les commentaires du territoire. Pour une telle demande, omets \`types\`.
 - \`types_non_accessibles\` : ces types relèvent de la vue nationale, hors du périmètre de l'utilisateur ; ce n'est pas une absence de contenu.
+- \`mention_types_consultes\` : les types de commentaires lus. Termine toujours ta réponse par cette mention, recopiée telle quelle sur ses propres lignes, même sans aucun commentaire trouvé. Plusieurs appels : une seule mention, qui réunit leurs types.
 Utilise-le pour : les commentaires, freins, actions, réussites ou décisions d'un chantier sur un territoire ; plusieurs territoires (« la Bretagne et ses départements ») : un seul appel avec le \`perimetre\` adapté.
 Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il reste à faire → get_chantier_objectifs.`,
       inputSchema: getChantierCommentairesInputSchema,
@@ -211,6 +244,19 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
           ),
         );
 
+        const typesConsultes = typesContenuChantier.filter((type) =>
+          results.some((result) => result.types_consultes.includes(type)),
+        );
+        // Seul le premier territoire interroge le national : les suivants
+        // signalent ses types non accessibles, alors qu'ils ont été lus.
+        const typesNonAccessibles = typesContenuChantier.filter(
+          (type) =>
+            !typesConsultes.includes(type) &&
+            results.some((result) =>
+              result.types_non_accessibles.includes(type),
+            ),
+        );
+
         return {
           chantier_nom: chantier?.nom ?? null,
           resultats: results
@@ -221,11 +267,11 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
                 commentaires: resultat.commentaires,
               }),
             })),
-          types_non_accessibles: [
-            ...new Set(
-              results.flatMap((result) => result.types_non_accessibles),
-            ),
-          ],
+          types_non_accessibles: typesNonAccessibles,
+          mention_types_consultes: mentionTypesConsultes({
+            typesConsultes,
+            typesNonAccessibles,
+          }),
         };
       },
     });

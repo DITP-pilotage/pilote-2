@@ -405,6 +405,50 @@ export function checkNoHtml({ text }: { text: string }): CheckResult {
     : { ok: false, detail: `balises HTML : ${balises.join(", ")}` };
 }
 
+/**
+ * Les libellés d'une mention telle que `get_chantier_commentaires` l'écrit :
+ * « Commentaires consultés : a, b. », puis au besoin « Non accessibles (vue
+ * nationale) : c. ».
+ */
+function libellesDeLaMention(mention: string): string[] {
+  return mention.split("\n").flatMap((ligne) => {
+    const liste = ligne.slice(ligne.indexOf(":") + 1).replace(/\.\s*$/, "");
+    return liste
+      .split(",")
+      .map((libelle) => libelle.trim())
+      .filter((libelle) => libelle !== "" && libelle !== "aucun");
+  });
+}
+
+/**
+ * La réponse se termine par la mention des types consultés : chaque libellé
+ * des mentions reçues figure après « Commentaires consultés ». Plusieurs
+ * appels donnent plusieurs mentions, que la réponse réunit en une.
+ */
+export function checkTypesConsultes({
+  text,
+  mentions,
+}: {
+  text: string;
+  mentions: string[];
+}): CheckResult {
+  const texte = normalize(text);
+  const debut = texte.lastIndexOf("commentaires consultes");
+  if (debut === -1) {
+    return { ok: false, detail: "aucune mention des commentaires consultés" };
+  }
+  const mention = texte.slice(debut);
+  const manquants = unique(mentions.flatMap(libellesDeLaMention)).filter(
+    (libelle) => !mention.includes(normalize(libelle)),
+  );
+  return manquants.length === 0
+    ? { ok: true, detail: "types consultés mentionnés" }
+    : {
+        ok: false,
+        detail: `types absents de la mention : ${manquants.join(", ")}`,
+      };
+}
+
 type ChantierDeLEncart = {
   chantier: { id: string };
   ecart: number | null;

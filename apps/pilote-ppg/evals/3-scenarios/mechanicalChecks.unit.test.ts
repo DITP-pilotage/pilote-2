@@ -10,6 +10,7 @@ import {
   checkHasTable,
   checkNoLink,
   checkNoHtml,
+  checkTypesConsultes,
   checkNoMeteo,
   checkNoMeteoCode,
   checkNoVerbatim,
@@ -417,6 +418,44 @@ describe("checkNoMeteo", () => {
         text: "CH-005 — Urgences : niveau de confiance « Appuis nécessaires ».",
       }),
     ).toEqual({ ok: true, detail: "aucune mention de la météo" });
+  });
+});
+
+describe("checkTypesConsultes", () => {
+  const mentions = [
+    "Commentaires consultés : commentaires sur les données, synthèse des résultats.\nNon accessibles (vue nationale) : freins à lever.",
+    "Commentaires consultés : autres résultats obtenus, synthèse des résultats.",
+  ];
+
+  test("accepte une seule mention finale qui réunit les types de tous les appels", () => {
+    expect(
+      checkTypesConsultes({
+        text: "Le délai remonte à Brest.\n\nCommentaires consultés : synthèse des résultats, commentaires sur les données, autres résultats obtenus.\nNon accessibles (vue nationale) : freins à lever.",
+        mentions,
+      }),
+    ).toEqual({ ok: true, detail: "types consultés mentionnés" });
+  });
+
+  test("signale un type reçu absent de la mention, même cité plus haut dans la réponse", () => {
+    expect(
+      checkTypesConsultes({
+        text: "Les autres résultats obtenus montrent un recrutement.\n\nCommentaires consultés : synthèse des résultats, commentaires sur les données.",
+        mentions,
+      }),
+    ).toEqual({
+      ok: false,
+      detail:
+        "types absents de la mention : freins à lever, autres résultats obtenus",
+    });
+  });
+
+  test("signale une réponse sans mention", () => {
+    expect(
+      checkTypesConsultes({ text: "Le délai remonte à Brest.", mentions }),
+    ).toEqual({
+      ok: false,
+      detail: "aucune mention des commentaires consultés",
+    });
   });
 });
 
