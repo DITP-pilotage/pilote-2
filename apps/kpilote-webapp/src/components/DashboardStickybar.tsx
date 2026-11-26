@@ -1,9 +1,8 @@
-import { DashboardSwitch } from '@/components/DashboardSwitch'
 import { IndividuSelectors } from '@/components/indicateurs/IndividuSelectors'
 import { type ReferentielGroup } from '@/lib/individus/hierarchy'
 
-// Barre du tableau de bord : les sélecteurs d'individus sur une ligne, la bascule
-// indicateurs / collections sur la suivante.
+// Barre sticky du tableau de bord : seuls les sélecteurs d'individus restent visibles au
+// défilement. La bascule indicateurs / collections est en tête de page, hors de la barre.
 export function DashboardStickybar({
   groups,
   selection,
@@ -14,11 +13,8 @@ export function DashboardStickybar({
   onSelectionChange: (selection: string[]) => void
 }) {
   return (
-    <div className="flex w-full flex-col gap-3">
+    <div className="w-full">
       <IndividuSelectors groups={groups} selection={selection} onChange={onSelectionChange} />
-      <div>
-        <DashboardSwitch />
-      </div>
     </div>
   )
 }

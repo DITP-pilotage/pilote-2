@@ -7,6 +7,7 @@ import { joinCsv, splitCsv } from '@pilote/kpilote-shared/texte'
 
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { DashboardStickybar } from '@/components/DashboardStickybar'
+import { DashboardSwitch } from '@/components/DashboardSwitch'
 import { analytics } from '@/analytics/tracker'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
@@ -15,7 +16,6 @@ import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
 import { Section } from '@pilote/kpilote-ui/Section'
-import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureSelectionIndividus } from '@/lib/individus/ensureSelection'
 import { resolveIndicateurReading } from '@/lib/individus/selection'
 import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
@@ -107,57 +107,63 @@ function IndicateursListComponent() {
         />
       }
     >
-      <Section tone="plain" title="Mes indicateurs">
-        <Text as="span" variant="kicker" tone="muted">
-          {data.total} indicateur{data.total > 1 ? 's' : ''}
-        </Text>
+      <div>
+        <DashboardSwitch />
+      </div>
 
-        {data.items.length === 0 ? (
-          <EmptyState
-            title="Vous n'avez encore accès à aucun indicateur KPILOTE."
-            description="Vous pouvez vous rapprocher de votre référent KPILOTE ou du support."
+      <Section
+        tone="plain"
+        title="Mes indicateurs"
+        description={`${data.total} indicateur${data.total > 1 ? 's' : ''}`}
+      >
+        <div className="flex flex-col gap-6">
+          {data.items.length === 0 ? (
+            <EmptyState
+              title="Vous n'avez encore accès à aucun indicateur KPILOTE."
+              description="Vous pouvez vous rapprocher de votre référent KPILOTE ou du support."
+            />
+          ) : (
+            <CardGrid>
+              {data.items.map((indicateur) => (
+                <IndicateurCard
+                  key={indicateur.id}
+                  indicateur={indicateur}
+                  source="dashboard"
+                  reading={resolveIndicateurReading({
+                    selection,
+                    nodes,
+                    referentielIds: indicateur.referentiels.map((ref) => ref.id),
+                  })}
+                />
+              ))}
+            </CardGrid>
+          )}
+
+          <Pagination
+            hasNext={data.pagination.hasMore}
+            onNext={() => {
+              const next = data.pagination.cursor
+              if (!next) return
+              analytics.trackEvent(
+                analyticsEvents.dashboard.paginationNext({
+                  entity_type: 'indicateur',
+                  page_size: search.pageSize ?? DEFAULT_PAGE_SIZE,
+                }),
+              )
+              void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
+            }}
+            pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE}
+            onPageSizeChange={(pageSize) => {
+              analytics.trackEvent(
+                analyticsEvents.dashboard.paginationSize({
+                  entity_type: 'indicateur',
+                  page_size: pageSize,
+                }),
+              )
+              void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
+            }}
           />
-        ) : (
-          <CardGrid>
-            {data.items.map((indicateur) => (
-              <IndicateurCard
-                key={indicateur.id}
-                indicateur={indicateur}
-                source="dashboard"
-                reading={resolveIndicateurReading({
-                  selection,
-                  nodes,
-                  referentielIds: indicateur.referentiels.map((ref) => ref.id),
-                })}
-              />
-            ))}
-          </CardGrid>
-        )}
-
-        <Pagination
-          hasNext={data.pagination.hasMore}
-          onNext={() => {
-            const next = data.pagination.cursor
-            if (!next) return
-            analytics.trackEvent(
-              analyticsEvents.dashboard.paginationNext({
-                entity_type: 'indicateur',
-                page_size: search.pageSize ?? DEFAULT_PAGE_SIZE,
-              }),
-            )
-            void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
-          }}
-          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE}
-          onPageSizeChange={(pageSize) => {
-            analytics.trackEvent(
-              analyticsEvents.dashboard.paginationSize({
-                entity_type: 'indicateur',
-                page_size: pageSize,
-              }),
-            )
-            void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
-          }}
-        />
+        </div>
       </Section>
     </Page>
   )
