@@ -9,6 +9,7 @@ import {
 } from '@/components/indicateurs/IndicateurAvancement'
 import { analytics } from '@/analytics/tracker'
 import { clsxm } from '@/lib/clsxm'
+import { type ReferentielGroup } from '@/lib/individus/hierarchy'
 import { type CardReading } from '@/lib/individus/selection'
 import { EntityCard } from '@pilote/kpilote-ui/EntityCard'
 import { Text } from '@pilote/kpilote-ui/Typography'
@@ -17,11 +18,14 @@ import { Text } from '@pilote/kpilote-ui/Typography'
 export function IndicateurCard({
   indicateur,
   reading,
+  groups,
   source,
   collectionId,
 }: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'unite' | 'sensSouhaite'>
   reading?: CardReading | undefined
+  // Stacks de référentiels, pour nommer l'individu sur lequel la carte est lue.
+  groups: ReadonlyArray<ReferentielGroup>
   source: AnalyticsSource
   collectionId?: string | undefined
 }) {
@@ -30,7 +34,11 @@ export function IndicateurCard({
       asChild
       title={indicateur.nom}
       className={clsxm(reading?.isUnavailable && 'opacity-60')}
-      body={reading ? <IndicateurCardBody indicateur={indicateur} reading={reading} /> : undefined}
+      body={
+        reading ? (
+          <IndicateurCardBody indicateur={indicateur} reading={reading} groups={groups} />
+        ) : undefined
+      }
     >
       <Link
         to="/indicateurs/$id"
@@ -53,9 +61,11 @@ export function IndicateurCard({
 function IndicateurCardBody({
   indicateur,
   reading,
+  groups,
 }: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'unite' | 'sensSouhaite'>
   reading: CardReading
+  groups: ReadonlyArray<ReferentielGroup>
 }) {
   if (reading.isUnavailable) {
     return (
@@ -71,6 +81,8 @@ function IndicateurCardBody({
         individus={reading.individus}
         unite={indicateur.unite}
         sensSouhaite={indicateur.sensSouhaite}
+        groups={groups}
+        selectedIndividuId={reading.link.individu}
       />
     </Suspense>
   )

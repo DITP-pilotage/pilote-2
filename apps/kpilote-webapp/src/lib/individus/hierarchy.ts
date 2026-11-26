@@ -81,3 +81,22 @@ export const findRootReferentielIdForIndividu = (
 ): string | null =>
   groups.find((group) => group.nodes.some((node) => node.individu.id === individuId))?.referentiel
     .id ?? null
+
+export type IndividuInStack = { stackNom: string; individuNom: string }
+
+// Libellé d'un individu tel que l'accueil le présente : le nom du référentiel
+// racine de son stack (celui du sélecteur), puis le nom de l'individu. Plusieurs
+// stacks coexistent : deux cartes voisines peuvent se lire sur des stacks différents.
+export const findIndividuInStacks = ({
+  groups,
+  individuId,
+}: {
+  groups: ReadonlyArray<ReferentielGroup>
+  individuId: string
+}): IndividuInStack | null => {
+  for (const group of groups) {
+    const node = group.nodes.find((candidate) => candidate.individu.id === individuId)
+    if (node) return { stackNom: group.referentiel.nom, individuNom: node.individu.nom }
+  }
+  return null
+}

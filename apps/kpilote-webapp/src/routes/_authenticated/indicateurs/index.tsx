@@ -128,6 +128,7 @@ function IndicateursListComponent() {
                 <IndicateurCard
                   key={indicateur.id}
                   indicateur={indicateur}
+                  groups={groups}
                   source="dashboard"
                   reading={resolveIndicateurReading({
                     selection,
