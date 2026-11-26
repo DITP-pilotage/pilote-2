@@ -6,8 +6,12 @@ import {
   batchInvalidErrorDetailsApiModelSchema,
   deleteValeurAvancementBodySchema,
   dernieresValeursIndividuListApiModelSchema,
+  dernieresValeursListApiModelSchema,
+  derniersTauxProgressionListApiModelSchema,
   individuAvecValeursApiModelSchema,
   listDernieresValeursForIndividuQuerySchema,
+  listDernieresValeursQuerySchema,
+  listDerniersTauxProgressionQuerySchema,
   listIndividusWithValeursQuerySchema,
   listSyntheseIndividusQuerySchema,
   listTauxProgressionIndividuQuerySchema,
@@ -28,6 +32,7 @@ import {
 } from '@pilote/kpilote-shared/tauxProgression'
 import {
   listCollectionTauxProgressionForIndividuQuerySchema,
+  listCollectionTauxProgressionQuerySchema,
   collectionTauxProgressionSummaryListApiModelSchema,
 } from '@pilote/kpilote-shared/collectionTauxProgression'
 
@@ -54,6 +59,9 @@ import {
 import { listDernieresValeursForIndividu } from '@/valeurAvancement/queries/listDernieresValeursForIndividu'
 import { listTauxProgressionForIndividu } from '@/valeurAvancement/queries/listTauxProgressionForIndividu'
 import { listCollectionTauxProgressionForIndividu } from '@/collection/queries/listCollectionTauxProgressionForIndividu'
+import { listCollectionTauxProgression } from '@/collection/queries/listCollectionTauxProgression'
+import { listDernieresValeurs } from '@/valeurAvancement/queries/listDernieresValeurs'
+import { listDerniersTauxProgression } from '@/valeurAvancement/queries/listDerniersTauxProgression'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 import { listTauxProgressionForIndicateur } from '@/valeurAvancement/queries/listTauxProgressionForIndicateur'
@@ -101,6 +109,12 @@ const TauxProgressionListApiModelSchema = tauxProgressionListApiModelSchema.open
 )
 const TauxProgressionIndividuListApiModelSchema = tauxProgressionIndividuListApiModelSchema.openapi(
   'TauxProgressionIndividuListApiModel',
+)
+const DernieresValeursListApiModelSchema = dernieresValeursListApiModelSchema.openapi(
+  'DernieresValeursListApiModel',
+)
+const DerniersTauxProgressionListApiModelSchema = derniersTauxProgressionListApiModelSchema.openapi(
+  'DerniersTauxProgressionListApiModel',
 )
 const CollectionTauxProgressionSummaryListApiModelSchema =
   collectionTauxProgressionSummaryListApiModelSchema.openapi(
@@ -431,6 +445,94 @@ const getCollectionTauxProgressionForIndividuRoute = createRoute({
   },
 })
 
+// --- GET /dernieres-valeurs --------------------------------------------------
+
+const getDernieresValeursRoute = createRoute({
+  method: 'get',
+  path: '/dernieres-valeurs',
+  tags: ['Indicateur'],
+  summary: "Lister la dernière valeur connue d'un lot d'indicateurs",
+  description:
+    'Retourne, pour chaque indicateur demandé accessible en lecture, la dernière valeur connue ' +
+    '(saisie ou dérivée par agrégation hiérarchique) sur son individu lu. Avec `individus`, ' +
+    "l'individu lu est le premier individu sélectionné dont le référentiel est lié à " +
+    "l'indicateur ; un indicateur qu'aucun individu sélectionné ne concerne est omis. Sans " +
+    "`individus`, l'individu lu est l'individu racine de l'indicateur. Chaque item précise " +
+    "l'individu lu. Un individu sélectionné inconnu renvoie une 404. Les indicateurs sans " +
+    'valeur connue ou non accessibles sont omis. Granularité de troncature `month`. Endpoint ' +
+    "pensé pour des appels batch côté client (afficher l'avancement sur une liste de cartes).",
+  middleware: [requireAuthentication],
+  request: {
+    query: listDernieresValeursQuerySchema,
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: DernieresValeursListApiModelSchema } },
+      description: 'Dernières valeurs pour les indicateurs demandés',
+    },
+    400: erreur400,
+  },
+})
+
+// --- GET /taux-progression/indicateurs ---------------------------------------
+
+const getDerniersTauxProgressionRoute = createRoute({
+  method: 'get',
+  path: '/taux-progression/indicateurs',
+  tags: ['Indicateur'],
+  summary: "Lister le taux de progression d'un lot d'indicateurs",
+  description:
+    'Retourne, pour chaque indicateur demandé accessible en lecture, le taux de progression ' +
+    'calculé sur la dernière valeur connue de son individu lu (`min(100, valeur / valeurCible × 100)`, ' +
+    "tronqué à 2 décimales). L'individu lu se choisit comme pour `GET /dernieres-valeurs` et " +
+    'chaque item le précise. Un individu sélectionné inconnu renvoie une 404. Les indicateurs ' +
+    'sans individu lu, sans objectif défini ou sans valeur connue sont omis. Les indicateurs ' +
+    'dont la valeurCible est zéro, ou à la baisse (`sensSouhaite = BAISSE`), sont inclus avec ' +
+    '`tauxProgression: null`. Endpoint pensé pour des appels batch côté client en parallèle de ' +
+    '`dernieres-valeurs`.',
+  middleware: [requireAuthentication],
+  request: {
+    query: listDerniersTauxProgressionQuerySchema,
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: DerniersTauxProgressionListApiModelSchema } },
+      description: 'Taux de progression pour les indicateurs demandés',
+    },
+    400: erreur400,
+  },
+})
+
+// --- GET /taux-progression/collections ---------------------------------------
+
+const getCollectionsTauxProgressionRoute = createRoute({
+  method: 'get',
+  path: '/taux-progression/collections',
+  tags: ['Collection'],
+  summary: "Lister le taux de progression d'un lot de collections",
+  description:
+    'Retourne, pour chaque collection demandée accessible en lecture, la moyenne pondérée du ' +
+    'dernier taux de progression connu de chaque indicateur de la collection, chacun lu sur son ' +
+    'individu lu (choisi comme pour `GET /dernieres-valeurs`). Un individu sélectionné inconnu ' +
+    'renvoie une 404. Règle tout-ou-rien : `tauxProgression` est null si au moins un indicateur ' +
+    "pondéré de la collection n'est pas calculable, y compris un indicateur à la baisse ou sans " +
+    'individu lu. Les collections inaccessibles ou inexistantes sont omises. Endpoint pensé pour ' +
+    'des appels batch côté client (liste de cartes de collections).',
+  middleware: [requireAuthentication],
+  request: {
+    query: listCollectionTauxProgressionQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': { schema: CollectionTauxProgressionSummaryListApiModelSchema },
+      },
+      description: 'Taux de progression pour les collections demandées',
+    },
+    400: erreur400,
+  },
+})
+
 // --- GET /indicateurs/:id/taux-progression -----------------------------------
 
 const getTauxProgressionRoute = createRoute({
@@ -721,6 +823,40 @@ valeurAvancementRoutes.openapi(getCollectionTauxProgressionForIndividuRoute, asy
     never,
   )
 })
+
+valeurAvancementRoutes.openapi(getDernieresValeursRoute, async (context) =>
+  listDernieresValeurs({ query: context.req.valid('query') }).match(
+    (data) =>
+      jsonResponseOk({ context, data, schema: DernieresValeursListApiModelSchema, status: 200 }),
+    never,
+  ),
+)
+
+valeurAvancementRoutes.openapi(getDerniersTauxProgressionRoute, async (context) =>
+  listDerniersTauxProgression({ query: context.req.valid('query') }).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: DerniersTauxProgressionListApiModelSchema,
+        status: 200,
+      }),
+    never,
+  ),
+)
+
+valeurAvancementRoutes.openapi(getCollectionsTauxProgressionRoute, async (context) =>
+  listCollectionTauxProgression({ query: context.req.valid('query') }).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: CollectionTauxProgressionSummaryListApiModelSchema,
+        status: 200,
+      }),
+    never,
+  ),
+)
 
 valeurAvancementRoutes.openapi(getTauxProgressionRoute, async (context) => {
   const { id } = context.req.valid('param')

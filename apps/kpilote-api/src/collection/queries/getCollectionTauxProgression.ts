@@ -81,7 +81,7 @@ const buildResult = async ({
 
   const contributions = await computeContributions({
     indicateurs: collection.indicateurs,
-    individuCible,
+    individuCibleOf: () => individuCible,
   })
 
   const { tauxProgression, raisonSansTaux } = resolveCollectionTauxProgression(contributions)
