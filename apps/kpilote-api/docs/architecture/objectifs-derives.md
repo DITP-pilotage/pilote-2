@@ -39,11 +39,11 @@ Même patron que les valeurs dérivées, trois responsabilités séparées :
 - **Functional core** (`resolveObjectifIndividu.ts`) — algorithme pur, sans Prisma. Prend un `ResolveObjectifContext` en mémoire, retourne des maps bucket → point. Mémoïsé par `individuId`.
 - **TypedSQL** (`prisma/sql/getObjectifsTronquesPourIndividus.sql`) — requête bulk qui charge les objectifs pré-tronqués et pré-dédoublonnés pour tous les individus du sous-arbre.
 
-Les loaders DB partagés (`loadSousArbre`, `loadFonctionsAgregation`) sont réutilisés depuis `indicateur/queries/loadIndicateurIndividuContext.ts`, commun avec les valeurs dérivées.
+Les loaders DB partagés (`loadSousArbre`, `loadFonctionsAgregation`) sont réutilisés depuis `indicateur/loadIndicateurIndividuContext.ts`, commun avec les valeurs dérivées.
 
 ## Cycle de vie d'une requête
 
-`buildList` (`listObjectifsForIndicateur.ts:34`) déroule trois phases :
+`buildList` (`listObjectifsForIndicateur.ts`) déroule trois phases :
 
 1. **Résolution des cibles** — `loadIndividusParPublicId` traduit les `publicId` demandés en `id` internes + `referentielId`.
 2. **Chargement bulk en parallèle** :
@@ -66,7 +66,7 @@ Trivial : on retourne la map `bucket → { type: 'saisie', valeur }` issue du ch
 
 ### Cas agrégé : carry-forward strict
 
-`computeObjectifDerive` (`resolveObjectifIndividu.ts:62`). Pour chaque enfant direct, on récupère récursivement sa résolution (feuille ou dérivée). On fusionne ensuite en deux passes :
+`computeObjectifDerive` (`resolveObjectifIndividu.ts`). Pour chaque enfant direct, on récupère récursivement sa résolution (feuille ou dérivée). On fusionne ensuite en deux passes :
 
 1. **Union des buckets** — tous les buckets distincts présents chez au moins un enfant, triés ASC. Squelette temporel du parent.
 2. **Sweep avec pointers** — on parcourt les buckets en ordre croissant. Pour chaque enfant, un pointer avance tant que le prochain bucket de l'enfant est ≤ bucket courant. La valeur courante est donc *sa dernière valeur connue* — le carry-forward.

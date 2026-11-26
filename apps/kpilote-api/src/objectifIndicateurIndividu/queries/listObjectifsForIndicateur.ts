@@ -9,9 +9,9 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Bucket, type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
-import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
+import { loadIndividusParPublicId } from '@/indicateur/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/queries/loadResolveObjectifContext'
+import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/loadResolveObjectifContext'
 import {
   type PointObjectifInterne,
   resolveObjectifIndividu,
@@ -61,7 +61,7 @@ const buildList = async ({
   const withBuckets: ItemWithBucket[] = []
 
   for (const individuCible of individusCibles) {
-    const objectifs = resolveObjectifIndividu(individuCible.id, ctx, cache)
+    const objectifs = resolveObjectifIndividu({ individuId: individuCible.id, ctx, cache })
     for (const point of objectifs.values()) {
       withBuckets.push({
         bucket: point.bucket,

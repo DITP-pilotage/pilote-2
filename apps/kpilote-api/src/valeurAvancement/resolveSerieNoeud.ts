@@ -72,24 +72,34 @@ export type GrapheSerie = {
 // au temps de calcul lui-même.
 //
 // Le cache est indexé par `noeud.cle`.
-export const resolveSerieNoeud = async (
-  noeud: Noeud,
-  graphe: GrapheSerie,
-  cache: Map<string, ReadonlyArray<PointInterne>>,
-): Promise<ReadonlyArray<PointInterne>> => {
+export const resolveSerieNoeud = async ({
+  noeud,
+  graphe,
+  cache,
+}: {
+  noeud: Noeud
+  graphe: GrapheSerie
+  cache: Map<string, ReadonlyArray<PointInterne>>
+}): Promise<ReadonlyArray<PointInterne>> => {
   const cached = cache.get(noeud.cle)
   if (cached) return cached
 
   const agregation = graphe.agregationParNoeud.get(noeud.cle)
   const serie = agregation
-    ? await computeSerieDerivee(agregation, graphe, cache)
-    : computeSerieSaisie(noeud, graphe)
+    ? await computeSerieDerivee({ agregation, graphe, cache })
+    : computeSerieSaisie({ noeud, graphe })
 
   cache.set(noeud.cle, serie)
   return serie
 }
 
-const computeSerieSaisie = (noeud: Noeud, graphe: GrapheSerie): ReadonlyArray<PointInterne> => {
+const computeSerieSaisie = ({
+  noeud,
+  graphe,
+}: {
+  noeud: Noeud
+  graphe: GrapheSerie
+}): ReadonlyArray<PointInterne> => {
   const saisies = graphe.saisiesParNoeud.get(noeud.cle) ?? []
   return saisies.map(({ bucket, dateOrigine, valeur }) => ({
     type: 'saisie',
@@ -98,6 +108,11 @@ const computeSerieSaisie = (noeud: Noeud, graphe: GrapheSerie): ReadonlyArray<Po
     valeur,
   }))
 }
+
+const cleDeTri = (noeud: Noeud): string => [noeud.individuPublicId, ...noeud.modalites].join('|')
+
+// Même ordre que `localeCompare`, sans recréer le collator à chaque comparaison.
+const collator = new Intl.Collator()
 
 // Calcule la série dérivée d'un parent par combineLatest permissif sur ses
 // enfants directs (cf. design doc D3) :
@@ -111,15 +126,21 @@ const computeSerieSaisie = (noeud: Noeud, graphe: GrapheSerie): ReadonlyArray<Po
 // - Récursion + mémoïsation via `resolveSerieNoeud` : la série d'un enfant
 //   intermédiaire (ex. région) n'est calculée qu'une fois même si plusieurs
 //   parents (ou plusieurs cibles dans la même requête) la sollicitent.
-const cleDeTri = (noeud: Noeud): string => [noeud.individuPublicId, ...noeud.modalites].join('|')
-
-const computeSerieDerivee = async (
-  { fonction: fonctionAgregation, enfants }: AgregationNoeud,
-  graphe: GrapheSerie,
-  cache: Map<string, ReadonlyArray<PointInterne>>,
-): Promise<ReadonlyArray<PointInterne>> => {
-  // Tri stable par publicId (puis modalités) pour des contributions déterministes.
-  const enfantsTries = [...enfants].sort((a, b) => cleDeTri(a).localeCompare(cleDeTri(b)))
+const computeSerieDerivee = async ({
+  agregation: { fonction: fonctionAgregation, enfants },
+  graphe,
+  cache,
+}: {
+  agregation: AgregationNoeud
+  graphe: GrapheSerie
+  cache: Map<string, ReadonlyArray<PointInterne>>
+}): Promise<ReadonlyArray<PointInterne>> => {
+  // Tri stable par publicId (puis modalités) pour des contributions déterministes,
+  // avec la clé de chaque enfant calculée une seule fois.
+  const enfantsTries = enfants
+    .map((enfant) => ({ enfant, sortKey: cleDeTri(enfant) }))
+    .sort((a, b) => collator.compare(a.sortKey, b.sortKey))
+    .map(({ enfant }) => enfant)
 
   type EnfantState = {
     enfant: Noeud
@@ -134,7 +155,7 @@ const computeSerieDerivee = async (
   for (const enfant of enfantsTries) {
     states.push({
       enfant,
-      points: await resolveSerieNoeud(enfant, graphe, cache),
+      points: await resolveSerieNoeud({ noeud: enfant, graphe, cache }),
       estAgrege: graphe.agregationParNoeud.has(enfant.cle),
       pointer: -1,
     })
@@ -214,7 +235,7 @@ const computeSerieDerivee = async (
     // valeur connue d'un enfant, le point sort avec une couverture < total.
     if (valeursAAgreger.length === 0) continue
 
-    const valeur = agreger(valeursAAgreger, fonctionAgregation)
+    const valeur = agreger({ valeurs: valeursAAgreger, fonction: fonctionAgregation })
     result.push({
       type: 'derivee',
       bucket,

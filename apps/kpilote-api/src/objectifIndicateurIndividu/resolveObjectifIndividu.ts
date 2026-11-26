@@ -36,27 +36,34 @@ export type PointObjectifInterne =
       contributions: ContributionObjectifInterne[]
     }
 
-export const resolveObjectifIndividu = (
-  individuId: string,
-  ctx: ResolveObjectifContext,
-  cache: Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>,
-): ReadonlyMap<BucketKey, PointObjectifInterne> => {
+export const resolveObjectifIndividu = ({
+  individuId,
+  ctx,
+  cache,
+}: {
+  individuId: string
+  ctx: ResolveObjectifContext
+  cache: Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>
+}): ReadonlyMap<BucketKey, PointObjectifInterne> => {
   const cached = cache.get(individuId)
   if (cached) return cached
 
-  const fonctionAgregation = getFonctionAgregationActive(individuId, ctx)
+  const fonctionAgregation = getFonctionAgregationActive({ individuId, hierarchy: ctx })
   const result = fonctionAgregation
-    ? computeObjectifDerive(individuId, ctx, cache, fonctionAgregation)
-    : buildSaisieMap(individuId, ctx)
+    ? computeObjectifDerive({ parentId: individuId, ctx, cache, fonctionAgregation })
+    : buildSaisieMap({ individuId, ctx })
 
   cache.set(individuId, result)
   return result
 }
 
-const buildSaisieMap = (
-  individuId: string,
-  ctx: ResolveObjectifContext,
-): ReadonlyMap<BucketKey, PointObjectifInterne> => {
+const buildSaisieMap = ({
+  individuId,
+  ctx,
+}: {
+  individuId: string
+  ctx: ResolveObjectifContext
+}): ReadonlyMap<BucketKey, PointObjectifInterne> => {
   const saisies = ctx.objectifBucketParIndividu.get(individuId)
   const result = new Map<BucketKey, PointObjectifInterne>()
   if (!saisies) return result
@@ -66,17 +73,25 @@ const buildSaisieMap = (
   return result
 }
 
+// Même ordre que `localeCompare`, sans recréer le collator à chaque comparaison.
+const collator = new Intl.Collator()
+
 // Carry-forward strict : pour chaque bucket de l'union des buckets enfants, on
 // porte la dernière valeur connue de chaque enfant ≤ bucket courant. Si un seul
 // enfant n'a pas encore de valeur portée, on n'émet pas de point pour ce bucket.
-const computeObjectifDerive = (
-  parentId: string,
-  ctx: ResolveObjectifContext,
-  cache: Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>,
-  fonctionAgregation: FonctionAgregation,
-): ReadonlyMap<BucketKey, PointObjectifInterne> => {
+const computeObjectifDerive = ({
+  parentId,
+  ctx,
+  cache,
+  fonctionAgregation,
+}: {
+  parentId: string
+  ctx: ResolveObjectifContext
+  cache: Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>
+  fonctionAgregation: FonctionAgregation
+}): ReadonlyMap<BucketKey, PointObjectifInterne> => {
   const enfants = ctx.enfantsParParent.get(parentId) ?? []
-  const enfantsTries = [...enfants].sort((a, b) => a.publicId.localeCompare(b.publicId))
+  const enfantsTries = [...enfants].sort((a, b) => collator.compare(a.publicId, b.publicId))
 
   type EnfantState = {
     enfant: IndividuRef
@@ -88,16 +103,16 @@ const computeObjectifDerive = (
   }
 
   const states: EnfantState[] = enfantsTries.map((enfant) => {
-    const values = resolveObjectifIndividu(enfant.id, ctx, cache)
-    const buckets = [...values.values()].map((p) => p.bucket).sort(compareBuckets)
+    const values = resolveObjectifIndividu({ individuId: enfant.id, ctx, cache })
+    const buckets = [...values.values()].map((point) => point.bucket).sort(compareBuckets)
     return { enfant, buckets, values, pointer: -1 }
   })
 
   const bucketsByKey = new Map<BucketKey, Bucket>()
   for (const state of states) {
-    for (const b of state.buckets) {
-      const key = formatBucket(b)
-      if (!bucketsByKey.has(key)) bucketsByKey.set(key, b)
+    for (const bucket of state.buckets) {
+      const key = formatBucket(bucket)
+      if (!bucketsByKey.has(key)) bucketsByKey.set(key, bucket)
     }
   }
   const sortedBuckets = [...bucketsByKey.values()].sort(compareBuckets)
@@ -152,7 +167,7 @@ const computeObjectifDerive = (
       result.set(formatBucket(bucket), {
         type: 'derivee',
         bucket,
-        valeur: agreger(valeurs, fonctionAgregation),
+        valeur: agreger({ valeurs, fonction: fonctionAgregation }),
         fonctionAgregation,
         contributions,
       })

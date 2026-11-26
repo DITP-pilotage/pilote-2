@@ -17,7 +17,7 @@ import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { computeMax } from '@/valeurAvancement/computeMax'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeMin } from '@/valeurAvancement/computeMin'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
+import { loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
 // Aligné sur listValeursForIndicateur : on raisonne sur les buckets mensuels

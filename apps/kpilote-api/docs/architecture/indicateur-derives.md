@@ -22,7 +22,7 @@ Un individu est donc soit :
 - **feuille** pour cet indicateur — ses valeurs sont les saisies directes,
 - **agrégé** — ses valeurs sont calculées à partir de ses enfants directs, eux-mêmes feuilles ou agrégés (récursivement).
 
-Le statut feuille/agrégé n'est pas une propriété intrinsèque de l'individu : il dépend de l'indicateur. La règle est unique : c'est la `fonctionAgregation` portée par le lien `IndicateurReferentiel` du référentiel de l'individu qui détermine son statut (cf. `isIndividuAgrege`). `NONE` → feuille ; `SUM` (ou autre fonction à venir) → agrégé.
+Le statut feuille/agrégé n'est pas une propriété intrinsèque de l'individu : il dépend de l'indicateur. La règle est unique : c'est la `fonctionAgregation` portée par le lien `IndicateurReferentiel` du référentiel de l'individu qui détermine son statut (cf. `getFonctionAgregationActive`, `indicateur/resolveAgregation.ts`). `NONE` → feuille ; `SUM` (ou autre fonction à venir) → agrégé. Pour un indicateur à axes, une feuille côté individus peut encore être dérivée sur ses modalités (voir plus bas).
 
 ### Enjeux
 
@@ -39,36 +39,36 @@ Exposer, pour un indicateur donné, la **série temporelle** de valeurs d'un ind
 
 ```
 HTTP route  ─►  use case          ─►  functional core      ◄──  TypedSQL
-/valeurs        listValeurs…ts        resolveSerieDerivee       getValeursTronquees…sql
+/valeurs        listValeurs…ts        resolveSerieNoeud         getValeursTronquees…sql
                 (orchestration I/O)   (pur, mémoïsé)            (bulk, par bucket)
 ```
 
 Trois responsabilités séparées :
 
-- **Use case** (`queries/listValeursForIndicateur.ts`) — orchestration des I/O Prisma : permissions, chargement de l'arbre, des liens indicateur↔référentiel, et des saisies tronquées. Aucun calcul métier.
-- **Functional core** (`resolveSerieDerivee.ts`) — algorithme pur, sans Prisma. Prend un contexte en mémoire (arbres + séries feuilles + fonctions d'agrégation), retourne des séries. Mémoïsé par `individuId`.
-- **TypedSQL** (`prisma/sql/getValeursTronqueesPourIndividus.sql`) — charge les saisies pré-tronquées et pré-dédoublonnées d'une fratrie (les enfants directs d'un même parent), une requête par fratrie que le calcul atteint, limitée aux N dernières saisies par cellule quand la lecture ne demande que les derniers points (`queries/loadResolveSerieContext.ts`).
+- **Use case** (`queries/listValeursForIndicateur.ts`) — permissions et conversion des points. Le chargement (arbre, liens indicateur↔référentiel, saisies tronquées) passe par `loadResolveSerieContext.ts`. Aucun calcul métier.
+- **Functional core** (`buildGrapheSerie.ts` + `resolveSerieNoeud.ts`) — algorithme pur, sans Prisma. `buildGrapheSerie` construit le graphe des nœuds (individu × modalités fixées) ; `resolveSerieNoeud` en calcule les séries. Mémoïsé par `noeud.cle`.
+- **TypedSQL** (`prisma/sql/getValeursTronqueesPourIndividus.sql`) — charge les saisies pré-tronquées et pré-dédoublonnées d'une fratrie (les enfants directs d'un même parent), une requête par fratrie que le calcul atteint, limitée aux N dernières saisies par cellule quand la lecture ne demande que les derniers points (`loadResolveSerieContext.ts`).
 
 Le découpage isole le calcul (testable sans DB) du chargement (testable par tests d'intégration).
 
 ## Cycle de vie d'une requête
 
-`buildSeries` (`listValeursForIndicateur.ts:49`) déroule trois phases :
+`buildSeries` (`listValeursForIndicateur.ts`) déroule trois phases :
 
-1. **Résolution des cibles** — `loadCibles` traduit les `publicId` demandés en `id` internes + `referentielId`.
-2. **Chargement bulk en parallèle** :
-   - `loadSousArbre` — BFS itératif niveau par niveau sur la table `relation`. Construit `enfantsParParent` (la topologie locale dont l'algo a besoin) et `allNodes` (l'univers des descendants).
-   - `loadFonctionsAgregation` — map `referentielId → FonctionAgregation` (`SUM` ou `NONE`) pour l'indicateur courant.
-   - Puis `loadSaisiesTronquees` (séquentiel : a besoin de `allNodes`) — une requête `$queryRawTyped` pour toutes les saisies, déjà groupées par bucket.
-3. **Calcul** — pour chaque cible, `resolveSerieNoeud` produit une série ; on filtre par `dateDebut`/`dateFin` en sortie, puis on convertit en `ValeurAvancementApiModel`.
+1. **Résolution des cibles** — `loadIndividusParPublicId` traduit les `publicId` demandés en `id` internes + `referentielId`.
+2. **Chargement et calcul, fratrie par fratrie** — `loadResolveSerieContext` :
+   - charge la hiérarchie (`loadSousArbre`, BFS itératif niveau par niveau sur la table `relation`) et les fonctions d'agrégation (`loadFonctionsAgregation`, map `referentielId → FonctionAgregation`) ;
+   - descend sous un individu seulement si son référentiel agrège, charge les saisies d'une fratrie (les enfants directs d'un même parent) en une requête `$queryRawTyped`, déjà groupées par bucket, calcule le parent avec le moteur, puis oublie ce qui n'est pas une cible ;
+   - rend `serieDe(individu)` pour lire la série de chaque cible.
+3. **Conversion** — on filtre par `dateDebut`/`dateFin` en sortie, puis on convertit en `ValeurAvancementApiModel`.
 
-Tout le travail DB est concentré au début. Le reste vit en mémoire avec un cache local à la requête.
+La mémoire d'une requête est celle d'une fratrie et des séries gardées, pas celle de tout le sous-arbre.
 
 ## Calcul de la série
 
 ### Distinction feuille / agrégé
 
-`isIndividuAgrege` (`resolveSerieDerivee.ts:46`) : un individu est agrégé pour cet indicateur s'il a **au moins un enfant direct** *et* que son référentiel est lié à l'indicateur avec une `fonctionAgregation ≠ NONE`. Sinon il est feuille — sa série, ce sont ses saisies.
+`getFonctionAgregationActive` (`indicateur/resolveAgregation.ts`) : un individu est agrégé pour cet indicateur s'il a **au moins un enfant direct** *et* que son référentiel est lié à l'indicateur avec une `fonctionAgregation ≠ NONE`. Sinon il est feuille — sa série, ce sont ses saisies. Pour un indicateur à axes, la série d'une feuille sur « Tous » ou sur une modalité parente est elle aussi dérivée : `buildGrapheSerie` (règle 2 de `deciderRegle`) la calcule à partir des modalités enfants observées, avec la fonction de l'axe.
 
 Conséquence importante : si un individu intermédiaire (ex. région) a des saisies *mais* que l'indicateur est configuré avec `SUM` sur les régions, ses saisies sont **ignorées**. La série exposée est toujours la dérivée. Cela évite l'ambiguïté sémantique d'avoir deux sources de vérité, en attendant le blocage strict de la saisie côté commande.
 
@@ -78,7 +78,7 @@ Trivial : on prend la série déjà tronquée chargée depuis SQL et on emballe 
 
 ### Cas agrégé : combineLatest permissif
 
-Le cœur du système (`computeSerieDerivee`, `resolveSerieDerivee.ts:96`). Pour chaque enfant direct, on récupère récursivement sa série (feuille ou dérivée). On fusionne ensuite ces séries niveau par niveau, en répondant à la question : « à chaque date où *au moins un enfant* a une valeur connue, quelle est la somme des dernières valeurs connues de tous les enfants ? »
+Le cœur du système (`computeSerieDerivee`, `resolveSerieNoeud.ts`). Pour chaque enfant direct, on récupère récursivement sa série (feuille ou dérivée). On fusionne ensuite ces séries niveau par niveau, en répondant à la question : « à chaque date où *au moins un enfant* a une valeur connue, quelle est la somme des dernières valeurs connues de tous les enfants ? »
 
 Mécanique en deux passes :
 
@@ -95,11 +95,11 @@ Mécanique en deux passes :
 
 ### Mémoïsation
 
-`resolveSerieNoeud` consulte un cache `Map<individuId, Point[]>` local à la requête. Si `/valeurs?individus=FRANCE,REG-PACA` est appelé, la série de `REG-PACA` est calculée une seule fois — la branche du calcul de FRANCE qui la traverse réutilise le résultat caché. La complexité d'un appel multi-cibles reste celle d'une seule passe sur l'arbre.
+`resolveSerieNoeud` consulte un cache `Map<noeud.cle, Point[]>` local à un lot. D'un lot à l'autre, les séries déjà résolues passent par `serieByIndividu` : un individu résolu n'est pas recalculé tant que sa série est gardée, et elle est oubliée dès qu'elle a servi si ce n'est pas une cible (un individu à deux parents, hors cibles, peut donc se calculer deux fois). Si `/valeurs?individus=FRANCE,REG-PACA` est appelé, la série de `REG-PACA` est calculée une seule fois — le calcul de FRANCE réutilise la série déjà résolue. La complexité d'un appel multi-cibles reste celle d'une seule passe sur l'arbre.
 
 ### Dédoublonnage par bucket (côté SQL)
 
-Si un individu a plusieurs saisies dans le même bucket (ex. deux saisies en janvier avec `dateTrunc=month`), on conserve **la plus récente**. C'est fait au load via `DISTINCT ON (individu_id, date_trunc(...)) ORDER BY ..., date DESC, id DESC` — l'algo voit déjà une série propre à un point par bucket.
+Si un individu a plusieurs saisies dans le même bucket (ex. deux saisies en janvier avec `dateTrunc=month`), on conserve **la plus récente**. C'est fait au load via `DISTINCT ON (individu_id, combinaison_id, date_trunc(...)) ORDER BY ..., date DESC, id DESC` — l'algo voit déjà une série propre à un point par bucket.
 
 ### Complexité
 
@@ -140,7 +140,7 @@ Le calcul reste en JS. La hiérarchie réelle est peu profonde (3-4 niveaux), le
 
 ### Functional core pur
 
-`resolveSerieDerivee` ne touche jamais Prisma. Toute la donnée nécessaire (arbre, séries feuilles, fonctions d'agrégation) est passée dans un `ResolveSerieContext`. Tests purs rapides, le use case sert d'adaptateur I/O.
+`resolveSerieNoeud` ne touche jamais Prisma. Toute la donnée nécessaire (nœuds agrégés et leurs enfants, saisies, fonctions d'agrégation) est passée dans un `GrapheSerie`. Tests purs rapides, le use case sert d'adaptateur I/O.
 
 ### Carry-forward sans coupe à l'entrée
 

@@ -12,7 +12,7 @@ import { withConcurrency } from '@/framework/concurrency'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
+import { loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'

@@ -3,10 +3,7 @@ import { type DateTrunc } from '@pilote/kpilote-shared/dates'
 import { type BucketKey, parseBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
 import { getObjectifsTronquesPourIndividus } from '@/generated/prisma/sql'
-import {
-  loadFonctionsAgregation,
-  loadSousArbre,
-} from '@/indicateur/queries/loadIndicateurIndividuContext'
+import { loadFonctionsAgregation, loadSousArbre } from '@/indicateur/loadIndicateurIndividuContext'
 import {
   type ObjectifSaisieBucketise,
   type ResolveObjectifContext,

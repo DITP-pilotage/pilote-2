@@ -12,7 +12,7 @@ import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
-import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
+import { computeTauxProgressionPoints } from '@/valeurAvancement/computeTauxProgressionPoints'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 

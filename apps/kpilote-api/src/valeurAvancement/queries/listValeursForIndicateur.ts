@@ -13,9 +13,9 @@ import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { compareBuckets, formatBucket, parseBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
-import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
+import { loadIndividusParPublicId } from '@/indicateur/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
+import { loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
 import { type PointInterne } from '@/valeurAvancement/resolveSerieNoeud'
 
 // Cap par défaut à la granularité mensuelle : sans troncature, une série France

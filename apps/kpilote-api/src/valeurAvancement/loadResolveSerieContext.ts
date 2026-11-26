@@ -7,10 +7,7 @@ import { type AxeCalcul, type ModaliteCalcul, type Selection } from '@/axe/modal
 import { type Bucket, parseBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
 import { getValeursTronqueesPourIndividus } from '@/generated/prisma/sql'
-import {
-  loadFonctionsAgregation,
-  loadSousArbre,
-} from '@/indicateur/queries/loadIndicateurIndividuContext'
+import { loadFonctionsAgregation, loadSousArbre } from '@/indicateur/loadIndicateurIndividuContext'
 import { getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
 import { buildGrapheSerie } from '@/valeurAvancement/buildGrapheSerie'
 import { cleCellule, type SaisiesCellule } from '@/valeurAvancement/cellule'
@@ -144,7 +141,11 @@ const isAgrege = ({
 }: {
   resolution: Resolution
   individu: IndividuRef
-}): boolean => getFonctionAgregationActive(individu.id, resolution.hierarchie) !== null
+}): boolean =>
+  getFonctionAgregationActive({
+    individuId: individu.id,
+    hierarchy: resolution.hierarchie,
+  }) !== null
 
 // Résout un individu agrégé : ses enfants agrégés d'abord (en profondeur), puis
 // lui-même à partir de leurs séries et des saisies de ses enfants saisis.
@@ -220,7 +221,7 @@ const resolveLot = async ({
   }
 
   for (const individu of gardes) {
-    const serie = await resolveSerieNoeud(noeud({ individu, selection }), graphe, cache)
+    const serie = await resolveSerieNoeud({ noeud: noeud({ individu, selection }), graphe, cache })
     resolution.serieByIndividu.set(
       individu.id,
       keepDerniersPoints({ serie, derniersPoints: resolution.derniersPoints }),
@@ -230,13 +231,14 @@ const resolveLot = async ({
 
 // Avec des saisies limitées aux N dernières par cellule, seuls les N derniers
 // points d'une série sont justes : on ne rend que ceux-là.
-const keepDerniersPoints = ({
+export const keepDerniersPoints = ({
   serie,
   derniersPoints,
 }: {
   serie: ReadonlyArray<PointInterne>
   derniersPoints: number | null
-}): ReadonlyArray<PointInterne> => (derniersPoints === null ? serie : serie.slice(-derniersPoints))
+}): ReadonlyArray<PointInterne> =>
+  derniersPoints === null ? serie : serie.slice(Math.max(serie.length - derniersPoints, 0))
 
 // Saisies des individus, par cellule, et modalités des combinaisons qu'on
 // découvre (indicateur à axes).
