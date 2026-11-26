@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { createNiveauConfiance, updateNiveauConfiance } from '@/api/niveauConfiance'
 import { useToast } from '@pilote/kpilote-ui/Toast'
+import { dernierNiveauConfianceKeys } from '@/queries/derniersNiveauxConfiance'
 import { niveauConfianceKeys, niveauConfianceCollectionKeys } from '@/queries/niveauConfiance'
 
 function useEnregistrerNiveauConfianceInterne(invalider: () => Promise<void>) {
@@ -39,6 +40,7 @@ export function useEnregistrerNiveauConfiance(indicateurId: string, individuId: 
     await queryClient.invalidateQueries({
       queryKey: niveauConfianceKeys.parScope(indicateurId, individuId),
     })
+    await queryClient.invalidateQueries({ queryKey: dernierNiveauConfianceKeys.all })
   })
 }
 
