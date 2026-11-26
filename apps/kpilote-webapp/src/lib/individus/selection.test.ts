@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { buildOrderedNodes, groupNodesByRootReferentiel } from './hierarchy'
 import {
   buildSelectors,
+  findReadIndividu,
   normalizeSelection,
   removeIndividu,
   resolveCollectionReading,
@@ -204,5 +205,30 @@ describe('buildSelectors', () => {
       { value: 'BV-05', placeholder: 'Aucune sélection' },
       { value: '', placeholder: 'Aucune sélection' },
     ])
+  })
+})
+
+describe('findReadIndividu', () => {
+  const reading = {
+    individus: ['DEPT-29'],
+    link: { individu: 'DEPT-29', referentiel: 'REF-DEPT' },
+    isUnavailable: false,
+  }
+
+  it("renvoie l'individu de la lecture quand l'indicateur est lié à son référentiel", () => {
+    expect(findReadIndividu({ reading, referentielIds: ['REF-NAT', 'REF-DEPT'] })).toBe('DEPT-29')
+  })
+
+  it("ne renvoie rien quand l'indicateur n'est pas lié au référentiel de l'individu", () => {
+    expect(findReadIndividu({ reading, referentielIds: ['REF-BV'] })).toBeUndefined()
+  })
+
+  it('ne renvoie rien pour une lecture sur les individus racines', () => {
+    expect(
+      findReadIndividu({
+        reading: { individus: undefined, link: {}, isUnavailable: false },
+        referentielIds: ['REF-DEPT'],
+      }),
+    ).toBeUndefined()
   })
 })

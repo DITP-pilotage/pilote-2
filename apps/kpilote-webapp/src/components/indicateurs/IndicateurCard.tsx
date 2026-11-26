@@ -10,7 +10,7 @@ import {
 import { analytics } from '@/analytics/tracker'
 import { clsxm } from '@/lib/clsxm'
 import { type ReferentielGroup } from '@/lib/individus/hierarchy'
-import { type CardReading } from '@/lib/individus/selection'
+import { type CardReading, findReadIndividu } from '@/lib/individus/selection'
 import { EntityCard } from '@pilote/kpilote-ui/EntityCard'
 import { Text } from '@pilote/kpilote-ui/Typography'
 
@@ -22,7 +22,7 @@ export function IndicateurCard({
   source,
   collectionId,
 }: {
-  indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'unite' | 'sensSouhaite'>
+  indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'unite' | 'sensSouhaite' | 'referentiels'>
   reading?: CardReading | undefined
   // Stacks de référentiels, pour nommer l'individu sur lequel la carte est lue.
   groups: ReadonlyArray<ReferentielGroup>
@@ -63,7 +63,7 @@ function IndicateurCardBody({
   reading,
   groups,
 }: {
-  indicateur: Pick<IndicateurApiModel, 'id' | 'unite' | 'sensSouhaite'>
+  indicateur: Pick<IndicateurApiModel, 'id' | 'unite' | 'sensSouhaite' | 'referentiels'>
   reading: CardReading
   groups: ReadonlyArray<ReferentielGroup>
 }) {
@@ -82,7 +82,10 @@ function IndicateurCardBody({
         unite={indicateur.unite}
         sensSouhaite={indicateur.sensSouhaite}
         groups={groups}
-        selectedIndividuId={reading.link.individu}
+        selectedIndividuId={findReadIndividu({
+          reading,
+          referentielIds: indicateur.referentiels.map((referentiel) => referentiel.id),
+        })}
       />
     </Suspense>
   )

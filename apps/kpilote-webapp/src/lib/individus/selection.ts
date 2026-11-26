@@ -150,3 +150,18 @@ export const buildSelectors = ({
       placeholder,
     }
   })
+
+// Individu d'une lecture qui concerne l'indicateur, connu même sans valeur. Une
+// collection transmet son individu à toutes ses cartes : il ne vaut que pour les
+// indicateurs liés à son référentiel.
+export const findReadIndividu = ({
+  reading,
+  referentielIds,
+}: {
+  reading: CardReading
+  referentielIds: ReadonlyArray<string>
+}): string | undefined => {
+  const { individu, referentiel } = reading.link
+  if (!individu || !referentiel) return undefined
+  return referentielIds.includes(referentiel) ? individu : undefined
+}
