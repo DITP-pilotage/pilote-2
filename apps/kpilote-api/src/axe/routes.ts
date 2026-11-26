@@ -133,7 +133,7 @@ const upsertModaliteRoute = createRoute({
   path: '/axes/{id}/modalites/{modaliteId}',
   tags: ['Axe', 'Admin'],
   summary: 'Créer ou renommer une modalité',
-  description: `${ADMIN} Crée la modalité si elle n’existe pas, sinon la renomme. Son niveau se déduit de \`parent\` : premier niveau sans parent, sinon niveau du parent + 1. Le parent est fixé à la création : pour déplacer une modalité, la supprimer puis la recréer. Identifiant unique tous axes confondus. Erreurs : 400 \`PARENT_INCONNU\`, \`PARENT_AUTRE_AXE\`, \`NIVEAU_INEXISTANT\` (le parent est au dernier niveau) ; 409 \`MODALITE_AUTRE_AXE\` (identifiant pris dans un autre axe), \`CHANGEMENT_PARENT_INTERDIT\`.`,
+  description: `${ADMIN} Crée la modalité si elle n’existe pas, sinon la renomme. Son niveau se déduit de \`parent\` : premier niveau sans parent, sinon niveau du parent + 1. Le parent est fixé à la création : pour déplacer une modalité, la supprimer puis la recréer. Identifiant unique tous axes confondus. Erreurs : 400 \`PARENT_INCONNU\`, \`PARENT_AUTRE_AXE\`, \`NIVEAU_INEXISTANT\` (le parent est au dernier niveau) ; 409 \`MODALITE_AUTRE_AXE\` (identifiant pris dans un autre axe), \`CHANGEMENT_PARENT_INTERDIT\`, \`PARENT_PORTE_VALEURS\` (le parent porte des valeurs saisies : une modalité parente se calcule à partir de ses enfants, ses propres valeurs ne seraient plus lues).`,
   middleware: [requireAuthentication],
   request: {
     params: modaliteParamsSchema,
@@ -242,6 +242,12 @@ const describeUpsertModaliteError = (
         status: 400,
         message: `L’axe n’a pas de niveau ${error.ordre} : la modalité parente est au dernier niveau.`,
         details: { ordre: error.ordre },
+      }
+    case 'PARENT_PORTE_VALEURS':
+      return {
+        status: 409,
+        message: `La modalité ${error.parent} porte ${error.valeurs} valeur(s) saisie(s). Une modalité parente se calcule à partir de ses enfants : ces valeurs ne seraient plus lues. Supprimez ou déplacez d’abord les valeurs saisies sur cette modalité.`,
+        details: { parent: error.parent, valeurs: error.valeurs },
       }
   }
 }

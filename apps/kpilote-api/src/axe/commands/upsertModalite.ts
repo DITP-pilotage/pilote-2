@@ -2,15 +2,18 @@ import { type UpsertModaliteBody } from '@pilote/kpilote-shared/axe'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
+import { countValeursForModalite } from '@/axe/countValeursForModalite'
 import {
   type ChangementParentInterditError,
   checkModaliteDansAxe,
   checkNiveauExiste,
   checkParentInchange,
   checkParentModalite,
+  checkParentSansValeur,
   type ModaliteAutreAxeError,
   type NiveauInexistantError,
   type ParentModaliteError,
+  type ParentPorteValeursError,
 } from '@/axe/rules'
 import { ensureAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
@@ -20,6 +23,7 @@ export type UpsertModaliteError =
   | ChangementParentInterditError
   | ParentModaliteError
   | NiveauInexistantError
+  | ParentPorteValeursError
 
 type UpsertModaliteParams = { axePublicId: string; publicId: string; body: UpsertModaliteBody }
 
@@ -27,14 +31,17 @@ const loadParent = async ({ publicId }: { publicId: string | null }) => {
   if (publicId === null) return null
   const parent = await db().modalite.findUnique({
     where: { publicId },
-    include: { axe: true, niveauAxe: true },
+    include: { axe: true, niveauAxe: true, _count: { select: { enfants: true } } },
   })
   if (!parent) return null
   return {
     id: parent.id,
+    publicId: parent.publicId,
     axeId: parent.axeId,
     axePublicId: parent.axe.publicId,
     ordre: parent.niveauAxe.ordre,
+    nombreValeurs: await countValeursForModalite({ modaliteId: parent.id }),
+    nombreEnfants: parent._count.enfants,
   }
 }
 
@@ -72,15 +79,16 @@ const performUpsert = async ({
     return ok()
   }
 
-  const position = checkParentModalite({
-    axeId: axe.id,
-    parentPublicId: body.parent,
-    parent: await loadParent({ publicId: body.parent }),
-  })
+  const parent = await loadParent({ publicId: body.parent })
+
+  const position = checkParentModalite({ axeId: axe.id, parentPublicId: body.parent, parent })
   if (position.isErr()) return err(position.error)
 
   const niveau = checkNiveauExiste({ niveaux: axe.niveaux, ordre: position.value.ordre })
   if (niveau.isErr()) return err(niveau.error)
+
+  const sansValeur = checkParentSansValeur({ parent })
+  if (sansValeur.isErr()) return err(sansValeur.error)
 
   await db().modalite.create({
     data: {

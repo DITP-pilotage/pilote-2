@@ -182,6 +182,32 @@ export const checkNiveauExiste = <N extends { ordre: number }>({
   return ok(niveau)
 }
 
+export type ParentPorteValeursError = {
+  type: 'PARENT_PORTE_VALEURS'
+  parent: string
+  valeurs: number
+}
+
+// Une modalité qui a des enfants se calcule à partir d'eux : ses propres
+// saisies ne sont plus lues (`buildGrapheSerie`). Lui ajouter un premier enfant
+// ferait baisser les totaux sans prévenir. Une modalité déjà parente ne lit
+// déjà plus ses saisies : un enfant de plus ne change rien.
+export const checkParentSansValeur = ({
+  parent,
+}: {
+  // null : la modalité est créée au premier niveau.
+  parent: { publicId: string; nombreValeurs: number; nombreEnfants: number } | null
+}): Result<void, ParentPorteValeursError> => {
+  if (parent === null) return ok()
+  if (parent.nombreEnfants > 0) return ok()
+  if (parent.nombreValeurs === 0) return ok()
+  return err({
+    type: 'PARENT_PORTE_VALEURS',
+    parent: parent.publicId,
+    valeurs: parent.nombreValeurs,
+  })
+}
+
 export type ModaliteNonSupprimableError =
   | { type: 'MODALITE_A_DES_ENFANTS'; enfants: string[] }
   | { type: 'MODALITE_UTILISEE'; valeurs: number }

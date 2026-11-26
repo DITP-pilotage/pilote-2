@@ -11,6 +11,7 @@ import {
   checkNombreNiveauxModifiable,
   checkParentInchange,
   checkParentModalite,
+  checkParentSansValeur,
 } from '@/axe/rules'
 
 describe.concurrent('checkNombreNiveauxModifiable', () => {
@@ -227,6 +228,39 @@ describe.concurrent('checkNiveauExiste', () => {
   it('rejette un ordre au-delà des niveaux de l’axe', () => {
     const result = checkNiveauExiste({ niveaux: [{ id: 'n1', ordre: 1 }], ordre: 2 })
     expect(result._unsafeUnwrapErr()).toEqual({ type: 'NIVEAU_INEXISTANT', ordre: 2 })
+  })
+})
+
+describe.concurrent('checkParentSansValeur', () => {
+  it('accepte une modalité du premier niveau', () => {
+    expect(checkParentSansValeur({ parent: null }).isOk()).toBe(true)
+  })
+
+  it('accepte un parent qui ne porte aucune valeur', () => {
+    expect(
+      checkParentSansValeur({
+        parent: { publicId: 'P1', nombreValeurs: 0, nombreEnfants: 0 },
+      }).isOk(),
+    ).toBe(true)
+  })
+
+  it('accepte un parent qui a déjà des enfants, même s’il porte des valeurs', () => {
+    expect(
+      checkParentSansValeur({
+        parent: { publicId: 'P1', nombreValeurs: 3, nombreEnfants: 1 },
+      }).isOk(),
+    ).toBe(true)
+  })
+
+  it('rejette un parent qui porte des valeurs, en donnant leur nombre', () => {
+    const result = checkParentSansValeur({
+      parent: { publicId: 'P1', nombreValeurs: 3, nombreEnfants: 0 },
+    })
+    expect(result._unsafeUnwrapErr()).toEqual({
+      type: 'PARENT_PORTE_VALEURS',
+      parent: 'P1',
+      valeurs: 3,
+    })
   })
 })
 
