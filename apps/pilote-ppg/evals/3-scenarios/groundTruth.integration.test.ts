@@ -74,4 +74,53 @@ describe("readGroundTruth", () => {
       );
     }),
   );
+
+  it(
+    "lit les commentaires d'un chantier sur chacun des territoires quand l'option est posée",
+    createIntegrationTest(async () => {
+      // Given
+      const world = await seedEvalWorld();
+      await seedMondeTerritorial({ authorId: world.userId });
+
+      // When
+      const truth = await readGroundTruth({
+        scope: {
+          territoires: ["DEPT-22", "DEPT-29", "DEPT-35", "DEPT-56"],
+          chantiersCommentes: ["CH-005"],
+          commentairesSurChaqueTerritoire: true,
+        },
+        user: world.users.ditp,
+      });
+
+      // Then
+      expect(
+        truth.commentaires.flatMap((sortie) =>
+          sortie.resultats.map((resultat) => resultat.territoire_code),
+        ),
+      ).toEqual(["DEPT-22", "NAT-FR", "DEPT-29", "DEPT-35", "DEPT-56"]);
+    }),
+  );
+
+  it(
+    "sans l'option, ne lit les commentaires que sur le premier territoire",
+    createIntegrationTest(async () => {
+      // Given
+      const world = await seedEvalWorld();
+      await seedMondeTerritorial({ authorId: world.userId });
+
+      // When
+      const truth = await readGroundTruth({
+        scope: {
+          territoires: ["DEPT-22", "DEPT-29", "DEPT-35", "DEPT-56"],
+          chantiersCommentes: ["CH-005"],
+        },
+        user: world.users.ditp,
+      });
+
+      // Then
+      expect(truth.commentaires[0].resultats[0].territoire_code).toEqual(
+        "DEPT-22",
+      );
+    }),
+  );
 });

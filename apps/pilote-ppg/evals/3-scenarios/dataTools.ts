@@ -1,5 +1,9 @@
 import type { Tool } from "ai";
 import { getContainer } from "@/server/dependances";
+import {
+  collecterChantiers,
+  type CollecteChantiersInput,
+} from "@/server/albert/tools/getChantiers";
 import type { EvalUser } from "../world";
 
 /**
@@ -12,7 +16,21 @@ export function createDataTools({ user }: { user: EvalUser }) {
   const territoiresAccessibles = user.habilitations.lecture.territoires;
   const chantiersAccessibles = user.habilitations.lecture.chantiers;
 
+  /**
+   * La collecte des chantiers, avec les synthèses : celle des encarts, pas la
+   * sortie de l'outil `get_chantiers`, qui n'en renvoie plus.
+   */
+  const collecter = (input: CollecteChantiersInput) =>
+    collecterChantiers({
+      input,
+      getChantiersQuery: container.resolve("getChantiersQuery"),
+      territoireResolver: container.resolve("territoireResolver"),
+      territoiresAccessibles,
+      chantiersAccessibles,
+    });
+
   return {
+    collecterChantiers: collecter,
     getTauxAvancementTerritoire: container.resolve(
       "createGetTauxAvancementTerritoireTool",
     )({ habilitations: user.habilitations }),

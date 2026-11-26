@@ -19,6 +19,8 @@ export type TruthScope = {
   perimetre?: Perimetre;
   /** Chantiers dont la fiche lit les commentaires, sur le premier territoire. */
   chantiersCommentes?: string[];
+  /** Lit les commentaires de `chantiersCommentes` sur chacun des `territoires`. */
+  commentairesSurChaqueTerritoire?: boolean;
   /** Lit les indicateurs des chantiers en retard et en difficulté. */
   indicateurs?: boolean;
 };
