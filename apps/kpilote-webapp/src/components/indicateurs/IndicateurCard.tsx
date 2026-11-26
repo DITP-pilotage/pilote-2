@@ -20,7 +20,7 @@ export function IndicateurCard({
   source,
   collectionId,
 }: {
-  indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'unite'>
+  indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'unite' | 'sensSouhaite'>
   reading?: CardReading | undefined
   source: AnalyticsSource
   collectionId?: string | undefined
@@ -54,7 +54,7 @@ function IndicateurCardBody({
   indicateur,
   reading,
 }: {
-  indicateur: Pick<IndicateurApiModel, 'id' | 'unite'>
+  indicateur: Pick<IndicateurApiModel, 'id' | 'unite' | 'sensSouhaite'>
   reading: CardReading
 }) {
   if (reading.isUnavailable) {
@@ -70,6 +70,7 @@ function IndicateurCardBody({
         indicateurId={indicateur.id}
         individus={reading.individus}
         unite={indicateur.unite}
+        sensSouhaite={indicateur.sensSouhaite}
       />
     </Suspense>
   )

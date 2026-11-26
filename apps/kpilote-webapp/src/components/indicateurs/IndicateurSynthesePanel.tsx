@@ -7,7 +7,7 @@ import {
 import { useSuspenseQueries } from '@tanstack/react-query'
 
 import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
-import { Pill, type PillTone } from '@pilote/kpilote-ui/Pill'
+import { Pill } from '@pilote/kpilote-ui/Pill'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 import {
@@ -17,6 +17,7 @@ import {
   formatNumberFr,
   INTERPRETATION_LABEL_FR,
 } from '@/lib/format'
+import { describeVariation, TONE_BY_INTERPRETATION } from '@/lib/variation'
 import {
   indicateurSyntheseIndividuQueryOptions,
   indicateurTauxProgressionQueryOptions,
@@ -31,14 +32,6 @@ type DatedValue = { date: string; valeur: number }
 // sans appel API dédié (la série est déjà en cache).
 const sortByDateDesc = (items: ReadonlyArray<DatedValue>): DatedValue[] =>
   [...items].sort((a, b) => b.date.localeCompare(a.date))
-
-// Lecture selon le sens souhaité (PIL-1778) : vert favorable, rouge défavorable,
-// bleu neutre. Le mot affiché porte la même information sans la couleur (RGAA 3.1).
-const TONE_BY_INTERPRETATION: Record<Interpretation, PillTone> = {
-  favorable: 'success',
-  unfavorable: 'error',
-  neutral: 'info',
-}
 
 const TEXT_CLASS_BY_INTERPRETATION: Record<Interpretation, string> = {
   favorable: 'text-success',
@@ -200,8 +193,6 @@ export function IndicateurSynthesePanel({
   )
 }
 
-// Flèche et libellé décrivent le mouvement réel ; la couleur et le mot l'interprètent.
-// Tous suivent le signe affiché : une variation lue « 0 » est stable.
 function VariationPill({
   variation,
   unite,
@@ -211,19 +202,18 @@ function VariationPill({
   unite: UniteIndicateurApiModel | null
   sensSouhaite: SensSouhaite
 }) {
-  const sign = displayedDifferenceSign(variation)
-  const interpretation = interpretDifference({ difference: sign, sensSouhaite })
+  const { arrow, direction, interpretation } = describeVariation({ variation, sensSouhaite })
   const label = INTERPRETATION_LABEL_FR[interpretation]
   return (
     <Pill tone={TONE_BY_INTERPRETATION[interpretation]} className="mt-3 w-fit text-sm">
-      {sign === 0 ? (
+      {direction === 'STABLE' ? (
         <span>
-          <span aria-hidden="true">→</span> STABLE
+          <span aria-hidden="true">{arrow}</span> {direction}
         </span>
       ) : (
         <span>
-          <span aria-hidden="true">{sign > 0 ? '↑' : '↓'}</span>{' '}
-          {sign > 0 ? 'EN HAUSSE' : 'EN BAISSE'} : {formatDifferenceFr(variation, unite)}
+          <span aria-hidden="true">{arrow}</span> {direction} :{' '}
+          {formatDifferenceFr(variation, unite)}
           {label && <> · {label}</>}
         </span>
       )}
