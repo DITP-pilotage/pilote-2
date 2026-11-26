@@ -651,13 +651,25 @@ export function checkRestrictionEncart({
 const MENTION_TYPES_CONSULTES = "commentaires consultes :";
 
 /**
+ * Une ligne telle que l'utilisateur la lit : sans puce ni citation en tête,
+ * sans gras, italique ni code, sans ponctuation finale.
+ */
+function sansMiseEnForme(ligne: string): string {
+  return ligne
+    .replace(/^\s*(?:[-*•>]\s*)+/, "")
+    .replace(/[*_`]/g, "")
+    .replace(/[.\s*_]+$/, "");
+}
+
+/**
  * Rédiger : une réponse tirée des commentaires se termine par une ligne
  * « Commentaires consultés : … » qui reprend les types consultés de tous les
- * appels. On compare des ensembles normalisés : l'ordre, la casse et le
- * « et » final ne changent rien pour l'utilisateur, mais un type de moins ou
- * de plus est une information fausse. Les types sont comparés en entier :
- * « Autres résultats obtenus » n'est pas « Autres résultats obtenus non
- * corrélés aux indicateurs », qui le contient.
+ * appels. On compare des ensembles normalisés : l'ordre, la casse, la mise en
+ * forme markdown et les séparateurs (« , », « ; », « et », « , et ») ne
+ * changent rien pour l'utilisateur, mais un type de moins ou de plus est une
+ * information fausse. Les types sont comparés en entier : « Autres résultats
+ * obtenus » n'est pas « Autres résultats obtenus non corrélés aux
+ * indicateurs », qui le contient.
  */
 export function checkTypesConsultes({
   text,
@@ -668,6 +680,7 @@ export function checkTypesConsultes({
 }): CheckResult {
   const ligne = text
     .split("\n")
+    .map(sansMiseEnForme)
     .filter((candidate) =>
       normalize(candidate).startsWith(MENTION_TYPES_CONSULTES),
     )
@@ -676,12 +689,9 @@ export function checkTypesConsultes({
     return { ok: false, detail: "aucune ligne « Commentaires consultés »" };
   }
 
-  const liste = ligne
-    .slice(ligne.indexOf(":") + 1)
-    .trim()
-    .replace(/\.$/, "");
+  const liste = ligne.slice(ligne.indexOf(":") + 1).trim();
   const cites = liste
-    .split(/\s*,\s*|\s+et\s+/)
+    .split(/\s*[,;]\s*(?:et\s+)?|\s+et\s+/)
     .map((type) => typographie(type).toLowerCase().trim())
     .filter((type) => type !== "");
   const recus = typesConsultes.map((type) => typographie(type).toLowerCase());

@@ -769,6 +769,50 @@ describe("checkTypesConsultes", () => {
     expect(complet.ok).toBe(true);
   });
 
+  test.each([
+    [
+      "en gras",
+      "**Commentaires consultés :** synthèse des résultats, autres résultats obtenus et commentaires sur les données.",
+    ],
+    [
+      "en gras jusqu'au point final",
+      "**Commentaires consultés : synthèse des résultats, autres résultats obtenus et commentaires sur les données.**",
+    ],
+    [
+      "en italique",
+      "_Commentaires consultés : synthèse des résultats, autres résultats obtenus et commentaires sur les données._",
+    ],
+    [
+      "en puce",
+      "- Commentaires consultés : synthèse des résultats, autres résultats obtenus et commentaires sur les données.",
+    ],
+    [
+      "en puce ronde",
+      "• Commentaires consultés : synthèse des résultats, autres résultats obtenus et commentaires sur les données.",
+    ],
+    [
+      "en citation",
+      "> Commentaires consultés : synthèse des résultats, autres résultats obtenus et commentaires sur les données.",
+    ],
+    [
+      "avec « , et » avant le dernier type",
+      "Commentaires consultés : synthèse des résultats, autres résultats obtenus, et commentaires sur les données.",
+    ],
+    [
+      "aux types séparés par « ; »",
+      "Commentaires consultés : synthèse des résultats ; autres résultats obtenus ; commentaires sur les données.",
+    ],
+  ])("lit une mention %s", (_forme, mention) => {
+    // When
+    const result = checkTypesConsultes({
+      text: `Les commentaires du CH-005 décrivent un numéro unique.\n\n${mention}`,
+      typesConsultes,
+    });
+
+    // Then
+    expect(result).toEqual({ ok: true, detail: "types consultés mentionnés" });
+  });
+
   test("signale une réponse sans mention", () => {
     // When
     const result = checkTypesConsultes({
