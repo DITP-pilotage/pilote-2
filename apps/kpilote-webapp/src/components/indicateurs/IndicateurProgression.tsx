@@ -1,4 +1,5 @@
 import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import { type ComponentProps } from 'react'
 
 import { ProgressBar } from '@pilote/kpilote-ui/ProgressBar'
 import { Text } from '@pilote/kpilote-ui/Typography'
@@ -12,17 +13,21 @@ export function IndicateurProgression({
   valeurCible,
   dateCible,
   unite,
+  label = 'Progression',
+  tone = 'neutral',
 }: {
   taux: number | null
   valeurCible: number
   dateCible: string
   unite: UniteIndicateurApiModel | null
+  label?: string
+  tone?: ComponentProps<typeof ProgressBar>['tone']
 }) {
   return (
     <div>
       <div className="flex items-baseline justify-between">
         <Text variant="kicker" tone="muted" as="p">
-          Progression
+          {label}
         </Text>
         {taux === null ? (
           <span className="text-sm font-bold tabular-nums text-text-muted">
@@ -38,7 +43,7 @@ export function IndicateurProgression({
       {taux !== null && (
         <ProgressBar
           value={taux}
-          tone="neutral"
+          tone={tone}
           label={`Progression vers l'objectif : ${formatNumberFr(taux)} %`}
           className="mt-2"
         />

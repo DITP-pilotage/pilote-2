@@ -21,6 +21,8 @@ export function IndicateurCardCible({
         valeurCible={dernierTaux.valeurCible}
         dateCible={dernierTaux.dateCible}
         unite={unite}
+        label="Cible"
+        tone="primary"
       />
     )
   }
@@ -28,11 +30,11 @@ export function IndicateurCardCible({
     <div>
       <div className="flex items-baseline justify-between">
         <Text variant="kicker" tone="muted" as="p">
-          Progression
+          Cible
         </Text>
         <span className="text-sm font-bold text-text-muted">-</span>
       </div>
-      <div aria-hidden="true" className="mt-2 h-2 rounded-full bg-text-muted/20" />
+      <div aria-hidden="true" className="mt-2 h-2 rounded-full bg-primary/20" />
       <div className="mt-2 text-right">
         <Text variant="caption" tone="muted">
           Pas de cible
