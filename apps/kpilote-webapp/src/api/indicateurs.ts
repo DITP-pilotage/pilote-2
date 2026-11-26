@@ -11,6 +11,10 @@ import {
   tauxProgressionListApiModelSchema,
 } from '@pilote/kpilote-shared/tauxProgression'
 import {
+  type DernieresValeursListApiModel,
+  dernieresValeursListApiModelSchema,
+  type DerniersTauxProgressionListApiModel,
+  derniersTauxProgressionListApiModelSchema,
   type IndividusWithValeursListApiModel,
   individusWithValeursListApiModelSchema,
   type ListIndividusWithValeursQuery,
@@ -33,10 +37,12 @@ export const fetchIndicateurs = async (
   // ky filters out `undefined` values from object-form searchParams (see
   // Ky.#normalizeSearchParams). Le filtre `ids` est CSV côté API : on le
   // sérialise explicitement, sinon ky le rendrait en multi-value `?ids=a&ids=b`.
-  const { ids, ...rest } = params
+  // Même chose pour la sélection `individus`, qui ordonne la liste.
+  const { ids, individus, ...rest } = params
   const searchParams = {
     ...rest,
     ...(ids && ids.length > 0 ? { ids: ids.join(',') } : {}),
+    ...(individus && individus.length > 0 ? { individus: individus.join(',') } : {}),
   }
   const json = await apiClient.get('indicateurs', { searchParams }).json()
   return indicateurListApiModelSchema.parse(json)
@@ -121,4 +127,36 @@ export const fetchTauxProgressionForIndicateur = async (
     })
     .json()
   return tauxProgressionListApiModelSchema.parse(json)
+}
+
+// Sans `individus`, l'API lit chaque indicateur sur son individu racine. ky ignore
+// les valeurs `undefined` dans `searchParams`.
+export const fetchDernieresValeurs = async ({
+  indicateurs,
+  individus,
+}: {
+  indicateurs: ReadonlyArray<string>
+  individus: ReadonlyArray<string> | undefined
+}): Promise<DernieresValeursListApiModel> => {
+  const json = await apiClient
+    .get('dernieres-valeurs', {
+      searchParams: { indicateurs: indicateurs.join(','), individus: individus?.join(',') },
+    })
+    .json()
+  return dernieresValeursListApiModelSchema.parse(json)
+}
+
+export const fetchDerniersTauxProgression = async ({
+  indicateurs,
+  individus,
+}: {
+  indicateurs: ReadonlyArray<string>
+  individus: ReadonlyArray<string> | undefined
+}): Promise<DerniersTauxProgressionListApiModel> => {
+  const json = await apiClient
+    .get('taux-progression/indicateurs', {
+      searchParams: { indicateurs: indicateurs.join(','), individus: individus?.join(',') },
+    })
+    .json()
+  return derniersTauxProgressionListApiModelSchema.parse(json)
 }

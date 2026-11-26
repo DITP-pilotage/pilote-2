@@ -2,7 +2,7 @@ import { Popover as PopoverPrimitive } from 'radix-ui'
 import { useSuspenseQueries } from '@tanstack/react-query'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@pilote/kpilote-ui/Collapsible'
 import { Command, defaultFilter } from 'cmdk'
-import { Check, ChevronDown, ChevronRight, Search } from 'lucide-react'
+import { Check, ChevronDown, ChevronRight, Search, X } from 'lucide-react'
 import { useMemo, useState, type ReactNode } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
@@ -23,6 +23,10 @@ type IndividuSelectProps = {
   referentielIds: ReadonlyArray<string>
   value: string
   onChange: (next: IndividuSelection) => void
+  placeholder?: string
+  // Affiche « Retirer la sélection » en tête de liste quand une valeur est choisie.
+  onClear?: (() => void) | undefined
+  className?: string | undefined
 }
 
 // Réutilise le scorer par défaut de cmdk (matching par initiales, sous-séquence,
@@ -215,7 +219,15 @@ function GroupedIndividuList({
   )
 }
 
-export function IndividuSelect({ id, referentielIds, value, onChange }: IndividuSelectProps) {
+export function IndividuSelect({
+  id,
+  referentielIds,
+  value,
+  onChange,
+  placeholder = 'Sélectionner un individu…',
+  onClear,
+  className,
+}: IndividuSelectProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [expandedGroups, setExpandedGroups] = useState<ReadonlySet<string>>(new Set())
@@ -284,25 +296,21 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
           'hover:border-border-strong',
           'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
           'data-[state=open]:border-primary',
+          className,
         )}
       >
         <span className="flex min-w-0 flex-col">
+          {/* Une seule ligne, sans le chemin hiérarchique (visible dans la liste) :
+              tous les sélecteurs gardent la même hauteur, choisis ou non. */}
           {selected ? (
-            <>
-              <span className="flex items-baseline gap-2">
-                <span className="truncate">{selected.individu.nom}</span>
-                <span className="shrink-0 font-mono text-xs font-normal text-text-subtle">
-                  {selected.individu.id}
-                </span>
+            <span className="flex items-baseline gap-2">
+              <span className="truncate">{selected.individu.nom}</span>
+              <span className="shrink-0 font-mono text-xs font-normal text-text-subtle">
+                {selected.individu.id}
               </span>
-              {selected.parentPath.length > 0 ? (
-                <span className="truncate text-xs font-normal text-text-muted">
-                  {selected.parentPath.join(' › ')}
-                </span>
-              ) : null}
-            </>
+            </span>
           ) : (
-            <span className="text-text-subtle">Sélectionner un individu…</span>
+            <span className="text-text-subtle">{placeholder}</span>
           )}
         </span>
         <ChevronDown className="size-4 shrink-0 text-text-muted" />
@@ -322,6 +330,20 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
             />
             <Command.List className="max-h-[min(20rem,var(--radix-popover-content-available-height))] overflow-y-auto p-1.5">
               {isEmpty ? <CommandEmptyMessage>Aucun individu trouvé.</CommandEmptyMessage> : null}
+
+              {onClear && value && !hasSearch ? (
+                <Command.Item
+                  value="__retirer-selection__"
+                  onSelect={() => {
+                    onClear()
+                    setOpen(false)
+                  }}
+                  className={clsxm(itemClassName, 'text-text-muted')}
+                >
+                  <X className="size-4 shrink-0" />
+                  Retirer la sélection
+                </Command.Item>
+              ) : null}
 
               {singleGroup ? (
                 <FlatIndividuList

@@ -1,7 +1,8 @@
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
 import {
-  type ListTauxProgressionIndividuQuery,
-  type TauxProgressionIndividuListApiModel,
+  type ListDerniersTauxProgressionQuery,
+  type DernierTauxProgressionApiModel,
+  type DerniersTauxProgressionListApiModel,
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
@@ -11,45 +12,42 @@ import { withConcurrency } from '@/framework/concurrency'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 import { computeTauxProgressionPoints } from '@/valeurAvancement/computeTauxProgressionPoints'
+import { resolveIndividusCibles } from '@/valeurAvancement/resolveIndividusCibles'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
-type ListTauxProgressionForIndividuParams = {
-  individuPublicId: string
-  query: ListTauxProgressionIndividuQuery
+type ListDerniersTauxProgressionParams = {
+  query: ListDerniersTauxProgressionQuery
 }
 
-export const listTauxProgressionForIndividu = (
-  params: ListTauxProgressionForIndividuParams,
-): ResultAsync<TauxProgressionIndividuListApiModel, never> =>
+export const listDerniersTauxProgression = (
+  params: ListDerniersTauxProgressionParams,
+): ResultAsync<DerniersTauxProgressionListApiModel, never> =>
   ResultAsync.fromSafePromise(build(params))
 
 const build = async ({
-  individuPublicId,
   query,
-}: ListTauxProgressionForIndividuParams): Promise<TauxProgressionIndividuListApiModel> => {
+}: ListDerniersTauxProgressionParams): Promise<DerniersTauxProgressionListApiModel> => {
   const principalId = requireCurrentPrincipalId()
-
-  const individuRow = await db().individu.findUnique({
-    where: { publicId: individuPublicId },
-    select: { id: true, publicId: true, referentielId: true },
-  })
-  if (!individuRow) return { items: [] }
-  const individu: IndividuRef = individuRow
 
   const indicateurs = await db().indicateur.findMany({
     where: withIndicateurReadPermission({ publicId: { in: [...query.indicateurs] } }, principalId),
     select: { id: true, publicId: true, sensSouhaite: true },
   })
-  if (indicateurs.length === 0) return { items: [] }
+  const individusCibles = await resolveIndividusCibles({
+    selectedPublicIds: query.individus,
+    indicateurIds: indicateurs.map((indicateur) => indicateur.id),
+  })
 
   const startedAt = performance.now()
   const dateTrunc = DEFAULT_DATE_TRUNC
   // Un contexte de résolution par indicateur : on borne ceux qui vivent en même temps.
   const resolved = await withConcurrency(
     indicateurs.map((indicateur) => async () => {
+      const individu = individusCibles.get(indicateur.id)
+      if (!individu) return null
+
       const points = await computeTauxProgressionPoints({
         indicateurId: indicateur.id,
         sensSouhaite: indicateur.sensSouhaite,
@@ -61,12 +59,14 @@ const build = async ({
       const point = points.at(-1)
       if (!point) return null
 
-      return {
+      const item: DernierTauxProgressionApiModel = {
         indicateur: indicateur.publicId,
+        individu: individu.publicId,
         tauxProgression: point.tauxProgression,
         valeurCible: point.valeurCible.toNumber(),
         dateCible: formatBucket(point.dateCible),
       }
+      return item
     }),
   )
 
@@ -74,14 +74,14 @@ const build = async ({
 
   logger.info(
     {
-      event: 'valeurAvancement.listTauxProgressionForIndividu.timing',
-      individuId: individu.id,
+      event: 'valeurAvancement.listDerniersTauxProgression.timing',
+      individus: query.individus ?? null,
       nbIndicateursDemandes: query.indicateurs.length,
       nbIndicateursAccessibles: indicateurs.length,
       nbItems: items.length,
       durationMs: Math.round(performance.now() - startedAt),
     },
-    'listTauxProgressionForIndividu computed',
+    'listDerniersTauxProgression computed',
   )
   return { items }
 }

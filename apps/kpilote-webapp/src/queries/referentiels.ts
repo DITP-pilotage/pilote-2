@@ -1,11 +1,17 @@
-import { type QueryClient, queryOptions } from '@tanstack/react-query'
+import { type QueryClient, queryOptions, useSuspenseQueries } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 import {
   fetchIndividusForReferentiel,
   fetchReferentielById,
   fetchReferentiels,
 } from '@/api/referentiels'
-import { buildOrderedNodes, type IndividuNode } from '@/lib/individus/hierarchy'
+import {
+  buildOrderedNodes,
+  groupNodesByRootReferentiel,
+  type IndividuNode,
+  type ReferentielGroup,
+} from '@/lib/individus/hierarchy'
 
 import { DEFAULT_STALE_TIME, fetchAllPaginatedItems } from './utils'
 
@@ -69,4 +75,24 @@ export const loadHierarchyFromReferentiels = async ({
   const referentielsById = new Map(groupes.map((g) => [g.referentiel.id, g.referentiel] as const))
   const allIndividus = groupes.flatMap((g) => [...g.individus])
   return buildOrderedNodes(allIndividus, referentielsById)
+}
+
+// Hiérarchie des individus des référentiels donnés, et ses stacks (un par
+// référentiel racine). Mêmes requêtes que loadHierarchyFromReferentiels.
+export const useIndividuHierarchy = (
+  referentielIds: ReadonlyArray<string>,
+): { nodes: IndividuNode[]; groups: ReferentielGroup[] } => {
+  const referentiels = useSuspenseQueries({
+    queries: referentielIds.map((refId) => referentielQueryOptions(refId)),
+    combine: (results) => results.map((result) => result.data),
+  })
+  const individusByReferentiel = useSuspenseQueries({
+    queries: referentielIds.map((refId) => referentielIndividusQueryOptions(refId)),
+    combine: (results) => results.map((result) => result.data),
+  })
+  return useMemo(() => {
+    const referentielsById = new Map(referentiels.map((r) => [r.id, r] as const))
+    const nodes = buildOrderedNodes(individusByReferentiel.flat(), referentielsById)
+    return { nodes, groups: groupNodesByRootReferentiel(nodes) }
+  }, [referentiels, individusByReferentiel])
 }

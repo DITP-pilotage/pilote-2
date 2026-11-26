@@ -52,8 +52,12 @@ export function Page({
         </div>
         {actions && <div className="flex shrink-0 items-center gap-3">{actions}</div>}
       </header>
+      {/* Collante à partir de la tablette, sous l'en-tête de l'application dont la
+          hauteur varie avec la largeur (5rem quand l'application ne publie pas
+          --app-header-height). Sur mobile, elle occuperait une trop grande part de
+          l'écran. */}
       {stickybar && (
-        <div className="sticky top-20 z-20 -mx-6 flex items-end justify-between gap-4 bg-surface/90 px-6 py-3 backdrop-blur sm:-mx-8 sm:px-8">
+        <div className="z-20 md:sticky md:top-[var(--app-header-height,5rem)] -mx-6 flex items-end justify-between gap-4 bg-surface/90 px-6 py-3 backdrop-blur sm:-mx-8 sm:px-8">
           {stickybar}
         </div>
       )}

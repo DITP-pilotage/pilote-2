@@ -1,44 +1,55 @@
-import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
 import { type ListIndicateursQuery } from '@pilote/kpilote-shared/indicateur'
-import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { startTransition } from 'react'
 import { z } from 'zod'
+import { joinCsv, splitCsv } from '@pilote/kpilote-shared/texte'
 
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
-import { DashboardSwitch } from '@/components/DashboardSwitch'
+import { DashboardStickybar } from '@/components/DashboardStickybar'
 import { analytics } from '@/analytics/tracker'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
-import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelect'
 import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
 import { Section } from '@pilote/kpilote-ui/Section'
 import { Text } from '@pilote/kpilote-ui/Typography'
-import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
+import { ensureSelectionIndividus } from '@/lib/individus/ensureSelection'
+import { resolveIndicateurReading } from '@/lib/individus/selection'
 import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
 import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
-import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
+import {
+  allReferentielsQueryOptions,
+  loadAllReferentielIds,
+  useIndividuHierarchy,
+} from '@/queries/referentiels'
 
 const indicateursSearchSchema = z.object({
   cursor: z.string().optional(),
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
-  individu: individuPublicIdSchema.optional(),
-  referentiel: referentielPublicIdSchema.optional(),
+  // Sélection d'individus, un par stack de référentiels (`DEPT-84,BV-05`).
+  selectedIndividus: z.string().optional(),
 })
 
 type IndicateursSearch = z.infer<typeof indicateursSearchSchema>
 
 // Le tableau de bord n'affiche que les indicateurs attribués à l'utilisateur : les
 // indicateurs visibles seulement parce qu'ils sont publics n'y figurent pas (PIL-1976).
-const toIndicateursQuery = (search: IndicateursSearch): ListIndicateursQuery => ({
-  ...search,
-  pageSize: search.pageSize ?? DEFAULT_PAGE_SIZE,
-  acces: 'attribue',
-})
+// La sélection ordonne la liste : les indicateurs qu'elle concerne passent en tête.
+const toIndicateursQuery = ({
+  selectedIndividus,
+  ...search
+}: IndicateursSearch): ListIndicateursQuery => {
+  const selection = splitCsv(selectedIndividus)
+  return {
+    ...search,
+    pageSize: search.pageSize ?? DEFAULT_PAGE_SIZE,
+    acces: 'attribue',
+    ...(selection.length > 0 ? { individus: selection } : {}),
+  }
+}
 
 export const Route = createFileRoute('/_authenticated/indicateurs/')({
   staticData: { title: 'Indicateurs' },
@@ -47,14 +58,14 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
   loader: async ({ context, deps }) => {
     const { queryClient } = context
     const referentielIds = await loadAllReferentielIds({ queryClient })
-    await ensureIndividuReferentielPair({
+    await ensureSelectionIndividus({
       queryClient,
       referentielIds,
-      deps,
-      onMismatch: ({ individu, referentiel }) => {
+      selectedIndividus: deps.selectedIndividus,
+      onChange: (selectedIndividus) => {
         throw redirect({
           to: '/indicateurs',
-          search: { ...deps, individu, referentiel },
+          search: { ...deps, selectedIndividus },
           replace: true,
         })
       },
@@ -73,35 +84,27 @@ function IndicateursListComponent() {
   const { data } = useSuspenseQuery(indicateursQueryOptions(toIndicateursQuery(search)))
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
+  const { nodes, groups } = useIndividuHierarchy(referentielIds)
+  const selection = splitCsv(search.selectedIndividus)
 
   return (
     <Page
       title="Tableau de bord"
       description="Consultez et gérez vos indicateurs par valeur ou par collection."
       stickybar={
-        <>
-          {search.individu ? (
-            <div>
-              <FieldIndividuSelect
-                referentielIds={referentielIds}
-                value={search.individu}
-                onChange={({ individu, referentiel }) => {
-                  analytics.trackEvent(
-                    analyticsEvents.dashboard.individuChange({ referentiel_id: referentiel }),
-                  )
-                  startTransition(() => {
-                    void navigate({
-                      search: (prev) => ({ ...prev, individu, referentiel }),
-                    })
-                  })
-                }}
-              />
-            </div>
-          ) : (
-            <div />
-          )}
-          <DashboardSwitch />
-        </>
+        <DashboardStickybar
+          groups={groups}
+          selection={selection}
+          onSelectionChange={(next) => {
+            // Le curseur ne vaut que pour la sélection qui l'a produit.
+            const selectedIndividus = joinCsv(next)
+            startTransition(() => {
+              void navigate({
+                search: (prev) => ({ ...prev, selectedIndividus, cursor: undefined }),
+              })
+            })
+          }}
+        />
       }
     >
       <Section tone="plain" title="Mes indicateurs">
@@ -121,9 +124,11 @@ function IndicateursListComponent() {
                 key={indicateur.id}
                 indicateur={indicateur}
                 source="dashboard"
-                {...(search.individu && search.referentiel
-                  ? { context: { individu: search.individu, referentiel: search.referentiel } }
-                  : {})}
+                reading={resolveIndicateurReading({
+                  selection,
+                  nodes,
+                  referentielIds: indicateur.referentiels.map((ref) => ref.id),
+                })}
               />
             ))}
           </CardGrid>

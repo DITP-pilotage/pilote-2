@@ -3,8 +3,8 @@ import { useSuspenseQueries } from '@tanstack/react-query'
 
 import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
 import { formatMonthYearNumericFr, formatNumberFr } from '@/lib/format'
-import { dernierValeurIndividuQueryOptions } from '@/queries/dernieresValeurs'
-import { tauxProgressionIndividuQueryOptions } from '@/queries/tauxProgression'
+import { derniereValeurQueryOptions } from '@/queries/dernieresValeurs'
+import { dernierTauxProgressionQueryOptions } from '@/queries/tauxProgression'
 
 export function IndicateurAvancementSkeleton() {
   return (
@@ -21,17 +21,17 @@ export function IndicateurAvancementSkeleton() {
 
 export function IndicateurAvancement({
   indicateurId,
-  individuId,
+  individus,
   unite,
 }: {
   indicateurId: string
-  individuId: string
+  individus: ReadonlyArray<string> | undefined
   unite: UniteIndicateurApiModel | null
 }) {
   const [{ data }, { data: tauxData }] = useSuspenseQueries({
     queries: [
-      dernierValeurIndividuQueryOptions(individuId, indicateurId),
-      tauxProgressionIndividuQueryOptions(individuId, indicateurId),
+      derniereValeurQueryOptions({ individus, indicateurId }),
+      dernierTauxProgressionQueryOptions({ individus, indicateurId }),
     ],
   })
   if (!data) {

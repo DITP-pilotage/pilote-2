@@ -1,7 +1,7 @@
 import {
   type CollectionTauxProgressionSummaryApiModel,
   type CollectionTauxProgressionSummaryListApiModel,
-  type ListCollectionTauxProgressionForIndividuQuery,
+  type ListCollectionTauxProgressionQuery,
 } from '@pilote/kpilote-shared/collectionTauxProgression'
 import { ResultAsync } from 'neverthrow'
 
@@ -13,6 +13,7 @@ import { Prisma } from '@/generated/prisma/client'
 import { computeContributions } from '@/collection/queries/computeCollectionContributions'
 import { withCollectionReadPermission } from '@/collection/permissions'
 import { resolveCollectionTauxProgression } from '@/collection/resolveCollectionTauxProgression'
+import { resolveIndividusCibles } from '@/valeurAvancement/resolveIndividusCibles'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
 
 const collectionListArgs = {
@@ -30,48 +31,48 @@ const collectionListArgs = {
 
 type CollectionRow = Prisma.CollectionGetPayload<typeof collectionListArgs>
 
-type ListCollectionTauxProgressionForIndividuParams = {
-  individuPublicId: string
-  query: ListCollectionTauxProgressionForIndividuQuery
+type ListCollectionTauxProgressionParams = {
+  query: ListCollectionTauxProgressionQuery
 }
 
-export const listCollectionTauxProgressionForIndividu = (
-  params: ListCollectionTauxProgressionForIndividuParams,
+export const listCollectionTauxProgression = (
+  params: ListCollectionTauxProgressionParams,
 ): ResultAsync<CollectionTauxProgressionSummaryListApiModel, never> =>
   ResultAsync.fromSafePromise(build(params))
 
 const build = async ({
-  individuPublicId,
   query,
-}: ListCollectionTauxProgressionForIndividuParams): Promise<CollectionTauxProgressionSummaryListApiModel> => {
+}: ListCollectionTauxProgressionParams): Promise<CollectionTauxProgressionSummaryListApiModel> => {
   const principalId = requireCurrentPrincipalId()
-
-  const individuCible = await db().individu.findFirstOrThrow({
-    where: { publicId: individuPublicId },
-    select: { id: true, publicId: true, referentielId: true },
-  })
-
-  const startedAt = performance.now()
 
   const collections = await db().collection.findMany({
     where: withCollectionReadPermission({ publicId: { in: query.collections } }, principalId),
     ...collectionListArgs,
   })
+  // Les racines se résolvent en une fois pour tous les indicateurs des collections.
+  const individusCibles = await resolveIndividusCibles({
+    selectedPublicIds: query.individus,
+    indicateurIds: collections.flatMap((collection) =>
+      collection.indicateurs.map(({ indicateur }) => indicateur.id),
+    ),
+  })
+
+  const startedAt = performance.now()
 
   const items = await withConcurrency(
-    collections.map((collection) => () => computeCollectionTaux({ collection, individuCible })),
+    collections.map((collection) => () => computeCollectionTaux({ collection, individusCibles })),
   )
 
   logger.info(
     {
-      event: 'collection.listCollectionTauxProgressionForIndividu.timing',
-      individuId: individuCible.id,
+      event: 'collection.listCollectionTauxProgression.timing',
+      individus: query.individus ?? null,
       nbCollectionsDemandes: query.collections.length,
       nbCollectionsAccessibles: collections.length,
       nbItems: items.length,
       durationMs: Math.round(performance.now() - startedAt),
     },
-    'listCollectionTauxProgressionForIndividu computed',
+    'listCollectionTauxProgression computed',
   )
 
   return { items }
@@ -79,14 +80,14 @@ const build = async ({
 
 const computeCollectionTaux = async ({
   collection,
-  individuCible,
+  individusCibles,
 }: {
   collection: CollectionRow
-  individuCible: IndividuRef
+  individusCibles: ReadonlyMap<string, IndividuRef>
 }): Promise<CollectionTauxProgressionSummaryApiModel> => {
   const contributions = await computeContributions({
     indicateurs: collection.indicateurs,
-    individuCible,
+    individuCibleOf: (indicateurId) => individusCibles.get(indicateurId),
   })
   const { tauxProgression, raisonSansTaux } = resolveCollectionTauxProgression(contributions)
   return { collection: collection.publicId, tauxProgression, raisonSansTaux }

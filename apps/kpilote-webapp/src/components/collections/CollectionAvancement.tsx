@@ -3,7 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { ProgressBar } from '@pilote/kpilote-ui/ProgressBar'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { formatNumberFr } from '@/lib/format'
-import { collectionTauxProgressionIndividuQueryOptions } from '@/queries/collectionTauxProgression'
+import { collectionTauxProgressionQueryOptions } from '@/queries/collectionTauxProgression'
 
 export function CollectionAvancementSkeleton() {
   return (
@@ -20,13 +20,13 @@ export function CollectionAvancementSkeleton() {
 
 export function CollectionAvancement({
   collectionId,
-  individuId,
+  individus,
 }: {
   collectionId: string
-  individuId: string
+  individus: ReadonlyArray<string> | undefined
 }) {
   const { data } = useSuspenseQuery(
-    collectionTauxProgressionIndividuQueryOptions(individuId, collectionId),
+    collectionTauxProgressionQueryOptions({ individus, collectionId }),
   )
 
   if (data == null) return null

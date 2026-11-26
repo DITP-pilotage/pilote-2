@@ -93,8 +93,12 @@ describe.concurrent('lectures de valeurs : seule la combinaison vide est lue', (
       path: (c, id) => `/indicateurs/${id}/synthese-individus?individus=${c.individuId}`,
     },
     {
-      nom: 'dernières valeurs',
-      path: (c, id) => `/individus/${c.individuId}/dernieres-valeurs?indicateurs=${id}`,
+      nom: 'dernières valeurs sur une sélection',
+      path: (c, id) => `/dernieres-valeurs?indicateurs=${id}&individus=${c.individuId}`,
+    },
+    {
+      nom: 'dernières valeurs sur les racines',
+      path: (_c, id) => `/dernieres-valeurs?indicateurs=${id}`,
     },
     {
       nom: 'taux de progression',

@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { dateSchema } from './dates'
 import { fonctionAgregationAxeSchema } from './axe'
+import { individusCsvSchema } from './individusCsv'
 import { createPaginatedApiListSchema, idsFilterSchema, listQuerySchema } from './pagination'
 import { axePublicIdSchema, indicateurPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 import { responsableApiModelSchema } from './responsable'
@@ -316,6 +317,14 @@ export const listIndicateursQuerySchema = listQuerySchema.extend({
     .optional()
     .describe(
       "`attribue` : ne garde que les indicateurs sur lesquels le principal a une permission, directe ou via une collection. Les indicateurs visibles seulement parce qu'ils sont publics sont exclus.",
+    ),
+  individus: individusCsvSchema
+    .optional()
+    .describe(
+      'Sélection d’individus séparés par une virgule (ex. DEPT-84,BV-05), qui sert au tri sans ' +
+        'rien filtrer : les indicateurs liés au référentiel d’un individu sélectionné passent en ' +
+        'tête, puis les autres, chaque groupe trié par identifiant. Un individu inconnu renvoie ' +
+        'une 404. Le curseur ne vaut que pour la sélection qui l’a produit.',
     ),
 })
 export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>

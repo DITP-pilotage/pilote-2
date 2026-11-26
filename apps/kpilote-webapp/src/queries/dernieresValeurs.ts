@@ -1,30 +1,25 @@
 import {
-  type DernierValeurIndividuApiModel,
+  type DerniereValeurApiModel,
   MAX_INDICATEURS_PAR_REQUETE,
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 import { queryOptions } from '@tanstack/react-query'
 
-import { fetchDernieresValeursForIndividu } from '@/api/individus'
+import { fetchDernieresValeurs } from '@/api/indicateurs'
 
 import { DEFAULT_STALE_TIME } from './utils'
 
-// L'endpoint /individus/{id}/dernieres-valeurs est paramétré par individu.
-// On instancie un batcher par individuId pour ne pas mélanger les requêtes
-// de plusieurs individus actifs simultanément (rare en pratique : un seul
-// individu observé est sélectionné à la fois).
-const batchersByIndividu = new Map<string, Batcher>()
+// Un lot porte une seule sélection d'individus (ou aucune : chaque indicateur se
+// lit alors sur ses individus racines). On instancie donc un batcher par sélection.
+const RACINES = Symbol('racines')
+const batchersBySelection = new Map<string | typeof RACINES, Batcher>()
 
 type Batcher = ReturnType<typeof createBatcher>
 
-const createBatcher = (individuId: string) =>
+const createBatcher = (individus: ReadonlyArray<string> | undefined) =>
   create({
-    fetcher: async (
-      indicateurIds: string[],
-    ): Promise<ReadonlyArray<DernierValeurIndividuApiModel>> => {
-      const { items } = await fetchDernieresValeursForIndividu(individuId, {
-        indicateurs: indicateurIds,
-      })
+    fetcher: async (indicateurIds: string[]): Promise<ReadonlyArray<DerniereValeurApiModel>> => {
+      const { items } = await fetchDernieresValeurs({ indicateurs: indicateurIds, individus })
       return items
     },
     // Indicateur sans valeur connue : l'API omet l'item. `keyResolver` renvoie
@@ -37,18 +32,25 @@ const createBatcher = (individuId: string) =>
     }),
   })
 
-const getBatcher = (individuId: string): Batcher => {
-  const existing = batchersByIndividu.get(individuId)
+const getBatcher = (individus: ReadonlyArray<string> | undefined): Batcher => {
+  const key = individus?.join(',') ?? RACINES
+  const existing = batchersBySelection.get(key)
   if (existing) return existing
-  const batcher = createBatcher(individuId)
-  batchersByIndividu.set(individuId, batcher)
+  const batcher = createBatcher(individus)
+  batchersBySelection.set(key, batcher)
   return batcher
 }
 
-export const dernierValeurIndividuQueryOptions = (individuId: string, indicateurId: string) =>
+export const derniereValeurQueryOptions = ({
+  individus,
+  indicateurId,
+}: {
+  individus: ReadonlyArray<string> | undefined
+  indicateurId: string
+}) =>
   queryOptions({
-    queryKey: ['dernier-valeur', individuId, indicateurId],
-    queryFn: (): Promise<DernierValeurIndividuApiModel | null> =>
-      getBatcher(individuId).fetch(indicateurId),
+    queryKey: ['derniere-valeur', individus ?? null, indicateurId],
+    queryFn: (): Promise<DerniereValeurApiModel | null> =>
+      getBatcher(individus).fetch(indicateurId),
     staleTime: DEFAULT_STALE_TIME,
   })

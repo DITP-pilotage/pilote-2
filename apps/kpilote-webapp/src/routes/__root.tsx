@@ -5,6 +5,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { AssistantProvider } from '@/assistant/display/AssistantProvider'
 import { AssistantOverlay, AssistantSidePanel } from '@/assistant/display/AssistantSurfaces'
 import { HeaderNav } from '@/components/HeaderNav'
+import { useHeightCssVariable } from '@/lib/useHeightCssVariable'
 import { Marianne } from '@pilote/kpilote-ui/Marianne'
 import type { Auth } from '@/auth'
 
@@ -20,13 +21,18 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   const { auth } = Route.useRouteContext()
+  // Les barres collantes des pages (stickybar de Page) se placent juste sous l'en-tête.
+  const headerRef = useHeightCssVariable('--app-header-height')
 
   return (
     <AssistantProvider enabled={auth.isAuthenticated}>
       {/* Le panneau latéral de l'assistant prend sa place à droite de la page. */}
       <div className="flex min-h-screen bg-background text-text">
         <div className="flex min-h-screen min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 border-b border-border bg-surface/90 shadow-raised backdrop-blur">
+          <header
+            ref={headerRef}
+            className="sticky top-0 z-30 border-b border-border bg-surface/90 shadow-raised backdrop-blur"
+          >
             <div className="mx-auto flex max-w-7xl items-center justify-between gap-8 px-6 py-3 sm:px-10">
               <Link
                 to="/"

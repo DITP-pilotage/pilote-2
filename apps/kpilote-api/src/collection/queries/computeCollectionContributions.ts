@@ -18,20 +18,24 @@ type CollectionIndicateurRef = {
   indicateur: { id: string; publicId: string; sensSouhaite: SensSouhaite }
 }
 
+// Un indicateur sans individu cible (pas de racine) contribue sans taux.
 export const computeContributions = ({
   indicateurs,
-  individuCible,
+  individuCibleOf,
 }: {
   indicateurs: CollectionIndicateurRef[]
-  individuCible: IndividuRef
+  individuCibleOf: (indicateurId: string) => IndividuRef | undefined
 }): Promise<IndicateurContribution[]> =>
   withConcurrency(
     indicateurs.map(({ indicateur, ponderation }) => async () => {
-      const lastTaux = await computeLastTaux({
-        indicateurId: indicateur.id,
-        sensSouhaite: indicateur.sensSouhaite,
-        individuCible,
-      })
+      const individuCible = individuCibleOf(indicateur.id)
+      const lastTaux = individuCible
+        ? await computeLastTaux({
+            indicateurId: indicateur.id,
+            sensSouhaite: indicateur.sensSouhaite,
+            individuCible,
+          })
+        : null
       return {
         indicateurPublicId: indicateur.publicId,
         tauxProgression: lastTaux?.tauxProgression ?? null,

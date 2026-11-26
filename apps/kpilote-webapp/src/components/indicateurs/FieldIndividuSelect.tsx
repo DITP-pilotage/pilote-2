@@ -12,11 +12,17 @@ export function FieldIndividuSelect({
   referentielIds,
   value,
   onChange,
+  placeholder,
+  onClear,
+  className,
 }: {
   label?: string
   referentielIds: ReadonlyArray<string>
   value: string
   onChange: (next: { individu: string; referentiel: string }) => void
+  placeholder?: string
+  onClear?: (() => void) | undefined
+  className?: string | undefined
 }) {
   const selectId = useId()
 
@@ -27,6 +33,9 @@ export function FieldIndividuSelect({
         referentielIds={referentielIds}
         value={value}
         onChange={onChange}
+        {...(placeholder ? { placeholder } : {})}
+        onClear={onClear}
+        className={className}
       />
     </Field>
   )

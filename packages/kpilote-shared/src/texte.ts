@@ -32,3 +32,15 @@ export const pluralize = ({
   singular: string
   plural: string
 }): string => (count > 1 ? plural : singular)
+
+// Découpe une liste séparée par des virgules (paramètre d'URL, filtre CSV), en
+// retirant les blancs aux bords et les segments vides : « a, ,b, » → ['a', 'b'].
+export const splitCsv = (valeur: string | undefined): string[] =>
+  (valeur ?? '')
+    .split(',')
+    .map((segment) => segment.trim())
+    .filter((segment) => segment.length > 0)
+
+// Inverse de splitCsv. Une liste vide donne `undefined`, pour omettre le paramètre.
+export const joinCsv = (valeurs: ReadonlyArray<string>): string | undefined =>
+  valeurs.length > 0 ? valeurs.join(',') : undefined

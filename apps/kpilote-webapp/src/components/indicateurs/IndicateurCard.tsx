@@ -8,21 +8,20 @@ import {
   IndicateurAvancementSkeleton,
 } from '@/components/indicateurs/IndicateurAvancement'
 import { analytics } from '@/analytics/tracker'
+import { clsxm } from '@/lib/clsxm'
+import { type CardReading } from '@/lib/individus/selection'
 import { EntityCard } from '@pilote/kpilote-ui/EntityCard'
+import { Text } from '@pilote/kpilote-ui/Typography'
 
-export type IndicateurCardContext = {
-  individu: string
-  referentiel: string
-}
-
+// Sans `lecture`, la carte n'affiche pas d'avancement.
 export function IndicateurCard({
   indicateur,
-  context,
+  reading,
   source,
   collectionId,
 }: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'unite'>
-  context?: IndicateurCardContext | undefined
+  reading?: CardReading | undefined
   source: AnalyticsSource
   collectionId?: string | undefined
 }) {
@@ -30,22 +29,13 @@ export function IndicateurCard({
     <EntityCard
       asChild
       title={indicateur.nom}
-      body={
-        context ? (
-          <Suspense fallback={<IndicateurAvancementSkeleton />}>
-            <IndicateurAvancement
-              indicateurId={indicateur.id}
-              individuId={context.individu}
-              unite={indicateur.unite}
-            />
-          </Suspense>
-        ) : undefined
-      }
+      className={clsxm(reading?.isUnavailable && 'opacity-60')}
+      body={reading ? <IndicateurCardBody indicateur={indicateur} reading={reading} /> : undefined}
     >
       <Link
         to="/indicateurs/$id"
         params={{ id: indicateur.id }}
-        search={context ?? {}}
+        search={reading?.link ?? {}}
         onClick={() =>
           analytics.trackEvent(
             analyticsEvents.indicateur.open({
@@ -57,5 +47,30 @@ export function IndicateurCard({
         }
       />
     </EntityCard>
+  )
+}
+
+function IndicateurCardBody({
+  indicateur,
+  reading,
+}: {
+  indicateur: Pick<IndicateurApiModel, 'id' | 'unite'>
+  reading: CardReading
+}) {
+  if (reading.isUnavailable) {
+    return (
+      <Text variant="body" tone="muted" className="text-sm">
+        Cet indicateur n’est pas disponible pour le périmètre sélectionné
+      </Text>
+    )
+  }
+  return (
+    <Suspense fallback={<IndicateurAvancementSkeleton />}>
+      <IndicateurAvancement
+        indicateurId={indicateur.id}
+        individus={reading.individus}
+        unite={indicateur.unite}
+      />
+    </Suspense>
   )
 }

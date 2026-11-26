@@ -1,8 +1,8 @@
 import { type DateTrunc } from '@pilote/kpilote-shared/dates'
 import {
-  type DernieresValeursIndividuListApiModel,
-  type DernierValeurIndividuApiModel,
-  type ListDernieresValeursForIndividuQuery,
+  type DernieresValeursListApiModel,
+  type DerniereValeurApiModel,
+  type ListDernieresValeursQuery,
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
@@ -13,44 +13,40 @@ import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { loadResolveSerieContext } from '@/valeurAvancement/loadResolveSerieContext'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieNoeud'
+import { resolveIndividusCibles } from '@/valeurAvancement/resolveIndividusCibles'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
-type ListDernieresValeursForIndividuParams = {
-  individuPublicId: string
-  query: ListDernieresValeursForIndividuQuery
+type ListDernieresValeursParams = {
+  query: ListDernieresValeursQuery
 }
 
-export const listDernieresValeursForIndividu = (
-  params: ListDernieresValeursForIndividuParams,
-): ResultAsync<DernieresValeursIndividuListApiModel, never> =>
-  ResultAsync.fromSafePromise(build(params))
+export const listDernieresValeurs = (
+  params: ListDernieresValeursParams,
+): ResultAsync<DernieresValeursListApiModel, never> => ResultAsync.fromSafePromise(build(params))
 
 const build = async ({
-  individuPublicId,
   query,
-}: ListDernieresValeursForIndividuParams): Promise<DernieresValeursIndividuListApiModel> => {
+}: ListDernieresValeursParams): Promise<DernieresValeursListApiModel> => {
   const principalId = requireCurrentPrincipalId()
-
-  const individuRow = await db().individu.findUnique({
-    where: { publicId: individuPublicId },
-    select: { id: true, publicId: true, referentielId: true },
-  })
-  if (!individuRow) return { items: [] }
-  const individu: IndividuRef = individuRow
 
   const indicateurs = await db().indicateur.findMany({
     where: withIndicateurReadPermission({ publicId: { in: [...query.indicateurs] } }, principalId),
     select: { id: true, publicId: true },
   })
-  if (indicateurs.length === 0) return { items: [] }
+  const individusCibles = await resolveIndividusCibles({
+    selectedPublicIds: query.individus,
+    indicateurIds: indicateurs.map((indicateur) => indicateur.id),
+  })
 
   const startedAt = performance.now()
   const dateTrunc = DEFAULT_DATE_TRUNC
   // Un contexte de résolution par indicateur : on borne ceux qui vivent en même temps.
   const resolved = await withConcurrency(
     indicateurs.map((indicateur) => async () => {
+      const individu = individusCibles.get(indicateur.id)
+      if (!individu) return null
+
       const { serieOf } = await loadResolveSerieContext({
         indicateurId: indicateur.id,
         individusCibles: [individu],
@@ -60,8 +56,9 @@ const build = async ({
       const lastPoint = serieOf(individu).at(-1)
       if (!lastPoint) return null
 
-      const item: DernierValeurIndividuApiModel = {
+      const item: DerniereValeurApiModel = {
         indicateur: indicateur.publicId,
+        individu: individu.publicId,
         valeur: lastPoint.valeur.toNumber(),
         date: formatBucket(lastPoint.bucket),
         type: lastPoint.type,
@@ -69,18 +66,18 @@ const build = async ({
       return item
     }),
   )
-  const items = resolved.filter((item): item is DernierValeurIndividuApiModel => item !== null)
+  const items = resolved.filter((item): item is DerniereValeurApiModel => item !== null)
 
   logger.info(
     {
-      event: 'valeurAvancement.listDernieresValeursForIndividu.timing',
-      individuId: individu.id,
+      event: 'valeurAvancement.listDernieresValeurs.timing',
+      individus: query.individus ?? null,
       nbIndicateursDemandes: query.indicateurs.length,
       nbIndicateursAccessibles: indicateurs.length,
       nbItems: items.length,
       durationMs: Math.round(performance.now() - startedAt),
     },
-    'listDernieresValeursForIndividu computed',
+    'listDernieresValeurs computed',
   )
   return { items }
 }
