@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
+import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { unpinIndicateur } from '@/indicateur/commands/unpinIndicateur'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurIds } from '@/test/randomIds'
-import { runAsUser } from '@/test/runAsPrincipal'
+import { runAsPrincipal, runAsUser } from '@/test/runAsPrincipal'
 
 describe.concurrent('unpinIndicateur', () => {
   it(
@@ -59,6 +60,19 @@ describe.concurrent('unpinIndicateur', () => {
       )
 
       expect(result.isOk()).toBe(true)
+    }),
+  )
+
+  it(
+    'rejette une clé API, qui n’a pas d’épingle',
+    integrationTest(async () => {
+      const [indicateurId] = testIndicateurIds(1)
+      await fixtures.indicateur({ publicId: indicateurId, visibilite: 'PUBLIC' })
+      const apiKey = await fixtures.apiKey()
+
+      await expect(
+        runAsPrincipal(apiKey.id, () => unpinIndicateur({ publicId: indicateurId })),
+      ).rejects.toBeInstanceOf(ForbiddenError)
     }),
   )
 })

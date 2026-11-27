@@ -1,6 +1,7 @@
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 
-import { isAdminPrincipal, requireUser } from '@/framework/auth/userContext'
+import { ensureOidcUser } from '@/framework/auth/principalPredicates'
+import { requireUser } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { type Prisma } from '@/generated/prisma/client'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
@@ -18,7 +19,7 @@ const loadPinIndicateurContext = async ({
   utilisateurId: string
 }) => {
   const readable = (where: Prisma.IndicateurWhereInput) =>
-    withIndicateurReadPermission(where, utilisateurId, { isAdmin: isAdminPrincipal() })
+    withIndicateurReadPermission(where, utilisateurId)
 
   // Un indicateur illisible répond comme un indicateur inconnu (404).
   const indicateur = await db().indicateur.findFirstOrThrow({ where: readable({ publicId }) })
@@ -36,6 +37,7 @@ const loadPinIndicateurContext = async ({
 const performPin = async ({
   publicId,
 }: PinIndicateurParams): Promise<Result<void, PinIndicateurError>> => {
+  ensureOidcUser()
   const { id: utilisateurId } = requireUser()
 
   const context = await loadPinIndicateurContext({ publicId, utilisateurId })

@@ -353,6 +353,7 @@ const pinIndicateurRoute = createRoute({
   request: { params: detailParamsSchema },
   responses: {
     204: { description: 'Indicateur épinglé' },
+    403: erreur403,
     404: erreur404,
     409: erreur409,
   },
@@ -401,6 +402,7 @@ const unpinIndicateurRoute = createRoute({
   request: { params: detailParamsSchema },
   responses: {
     204: { description: 'Indicateur désépinglé' },
+    403: erreur403,
   },
 })
 

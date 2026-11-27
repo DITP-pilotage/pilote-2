@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { UnauthorizedError } from '@/framework/auth/UnauthorizedError'
+import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
 import { pinIndicateur } from '@/indicateur/commands/pinIndicateur'
@@ -114,7 +114,7 @@ describe.concurrent('pinIndicateur', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () => pinIndicateur({ publicId: indicateurId })),
-      ).rejects.toBeInstanceOf(UnauthorizedError)
+      ).rejects.toBeInstanceOf(ForbiddenError)
     }),
   )
 })

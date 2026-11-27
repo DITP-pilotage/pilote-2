@@ -1,5 +1,6 @@
 import { ResultAsync } from 'neverthrow'
 
+import { ensureOidcUser } from '@/framework/auth/principalPredicates'
 import { requireUser } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 
@@ -9,6 +10,7 @@ type UnpinIndicateurParams = { publicId: string }
 // illisible. Un indicateur inconnu ou non épinglé ne change rien, sans erreur,
 // ce qui ne dit pas non plus si un indicateur privé existe.
 const performUnpin = async ({ publicId }: UnpinIndicateurParams): Promise<void> => {
+  ensureOidcUser()
   const { id: utilisateurId } = requireUser()
   await db().indicateurEpingle.deleteMany({ where: { utilisateurId, indicateur: { publicId } } })
 }
