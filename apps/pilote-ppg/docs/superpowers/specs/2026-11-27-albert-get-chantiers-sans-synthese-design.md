@@ -69,7 +69,7 @@ Le travail est un échec, même si les cas de la demande de recette passent, si 
 ### 1. La sortie de `get_chantiers`
 
 - La sortie de l'outil ne porte plus `synthese` (commentaire, date, auteur, modificateur), sur aucun territoire, accès restreint compris.
-- Le retrait se fait à la frontière de l'outil, après la collecte, le tri et la limite. `collecterChantiers` et `classerChantiers` gardent leur comportement.
+- Le retrait se fait à la frontière de l'outil, entre la collecte et le classement : `retirerSynthese` s'applique à la sortie de `collecterChantiers`, puis `classerChantiers` trie et limite. Les deux gardent leur comportement ; `classerChantiers` devient générique sur le type de chantier classé.
 - Les types distinguent ce que renvoie la collecte (avec synthèse) de ce que renvoie l'outil (sans synthèse).
 
 ### 2. La description de `get_chantiers`
@@ -106,12 +106,12 @@ Les changements d'evals sans effet produit passent d'abord, et sont mesurés sur
 
 1. **Cas périmé** de `getChantiers.eval.ts` : « Où en est le CH-005 en Bretagne ? » attend `get_chantiers`, alors que le prompt l'envoie vers l'encart depuis PIL-1966. On le remplace par « Quel est le niveau de confiance du CH-005 en Bretagne ? », même `expected`.
 2. **Fiche de vérité** : `groundTruth.ts` lit les vues par `collecterChantiers`, plus par l'outil `get_chantiers`. Son type devient celui de la collecte. Changement neutre : même contenu, les fiches de calibration ne changent pas.
-3. **Semis propre à une suite d'outil** : `toolSelectionEval` accepte un `seedSupplementaire`, comme `scenarioEval`.
+3. **Synthèse semée dans le monde commun** : `seedChantierEnDifficulte` sème, avec la météo ORAGE, une synthèse publiée de CH-006 en Bretagne, datée de `DATE_SAISIE` (`world.ts`). `toolSelectionEval` l'appelle pour toutes les suites d'outils du niveau 2, comme le chantier en retard : un cas négatif d'une suite est souvent le cas positif d'une autre. Toutes ces suites voient donc cette synthèse, dans `get_chantier_commentaires`, dans les encarts et, sur le code de référence, dans `get_chantiers`. Un `seedSupplementaire` propre à la suite, d'abord prévu, a été abandonné à la relecture.
 4. **Cas de la demande de recette** : deux cas dans `getChantierCommentaires.eval.ts`, la demande transposée au monde des evals et une reformulation :
    - « Fais-moi la synthèse des commentaires du CH-006 pour chaque région où il est en difficulté. Mets en évidence les sujets récurrents. »
    - « Que disent les commentaires du CH-006 dans les régions où il est en difficulté ? Quels sujets reviennent ? »
    - Outils attendus : `get_chantiers` (`view: "en_difficulte"`, `chantier_ids: ["CH-006"]`), puis `get_chantier_commentaires` (`chantier_id: "CH-006"`).
-   - La suite sème, pour elle seule, une synthèse publiée de CH-006 en Bretagne (météo ORAGE, date fixe du monde territorial). Sans elle, l'agent n'a rien dont se contenter et le défaut ne se reproduit pas.
+   - Ils s'appuient sur la synthèse semée au point 3. Sans elle, l'agent n'a rien dont se contenter et le défaut ne se reproduit pas.
    - Un troisième cas couvre l'approche A, une question sur les chantiers d'un territoire : « Quels chantiers sont en difficulté en Bretagne, et pourquoi ? ». Outils attendus : `get_chantiers` (`view: "en_difficulte"`), puis `get_chantier_commentaires` (`chantier_id: "CH-006"`, en difficulté en Bretagne dans ce monde). Il tombe dans une suite déjà mesurée : aucun lancement de plus.
    - Le score reste celui de toutes les suites d'outils (`scoreExpectedTools`, inchangé) : les appels en trop sont tolérés, y compris un encart, et l'ordre n'est pas vérifié. Aucun outil n'est interdit.
 5. **Reproduction** : ces trois cas doivent échouer dans au moins 2 essais sur 6 chacun sur le code de référence, sans quoi ils ne protègent rien. Sinon : ajuster la synthèse semée ou la formulation, au plus deux fois, puis rendre compte.
@@ -163,7 +163,7 @@ Si un seuil n'est pas atteint : on peut ajuster les descriptions des deux outils
 
 ## Ordre des travaux
 
-1. Evals sans effet produit : cas périmé, fiche de vérité par la collecte, `seedSupplementaire`, cas de recette → reproduction, puis passage de référence.
+1. Evals sans effet produit : cas périmé, fiche de vérité par la collecte, synthèse semée dans le monde commun, cas de recette → reproduction, puis passage de référence.
 2. Sortie et description de `get_chantiers`, tests unitaires.
 3. Adaptations des evals qui dépendent du produit → passage après.
 4. Si besoin, ajustements (au plus deux tours).
