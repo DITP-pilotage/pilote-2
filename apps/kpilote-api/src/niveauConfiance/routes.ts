@@ -1,6 +1,8 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import {
   creerNiveauConfianceBodySchema,
+  derniersNiveauxConfianceListApiModelSchema,
+  listDerniersNiveauxConfianceQuerySchema,
   modifierNiveauConfianceBodySchema,
 } from '@pilote/kpilote-shared/niveauConfiance'
 
@@ -10,14 +12,18 @@ import {
 } from '@/niveauConfiance/commands/creerNiveauConfiance'
 import { modifierNiveauConfiance } from '@/niveauConfiance/commands/modifierNiveauConfiance'
 import { NiveauConfianceApiModelSchema, reponseNiveauConfiance } from '@/niveauConfiance/openapi'
+import { listDerniersNiveauxConfiance } from '@/niveauConfiance/queries/listDerniersNiveauxConfiance'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { ErrorApiModelSchema } from '@/framework/openapi/responses'
+import { ErrorApiModelSchema, erreur400, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 
 export const niveauConfianceRoutes = createOpenApiHono()
+
+const DerniersNiveauxConfianceListApiModelSchema =
+  derniersNiveauxConfianceListApiModelSchema.openapi('DerniersNiveauxConfianceListApiModel')
 
 // --- POST /niveau-confiance --------------------------------------------------
 
@@ -87,3 +93,44 @@ niveauConfianceRoutes.openapi(modifierRoute, async (context) => {
     never,
   )
 })
+
+// --- GET /derniers-niveaux-confiance -------------------------------------------
+
+const listDerniersNiveauxConfianceRoute = createRoute({
+  method: 'get',
+  path: '/derniers-niveaux-confiance',
+  tags: ['NiveauConfiance'],
+  summary: "Lister le dernier niveau de confiance publié d'un lot d'indicateurs",
+  description:
+    'Retourne, pour chaque indicateur demandé accessible en lecture, l’indice du dernier ' +
+    'commentaire CONFIANCE publié sur son individu lu. L’individu lu se résout comme pour ' +
+    '`/dernieres-valeurs` : avec `individus`, le premier individu sélectionné dont le référentiel ' +
+    'est lié à l’indicateur ; sans, l’individu racine de l’indicateur. Un individu sélectionné ' +
+    'inconnu renvoie une 404. Les indicateurs sans individu lu, non accessibles, ou dont le ' +
+    'dernier commentaire CONFIANCE publié ne porte pas de niveau, sont omis.',
+  middleware: [requireAuthentication],
+  request: {
+    query: listDerniersNiveauxConfianceQuerySchema,
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: DerniersNiveauxConfianceListApiModelSchema } },
+      description: 'Dernier niveau de confiance publié pour les indicateurs demandés',
+    },
+    400: erreur400,
+    404: erreur404,
+  },
+})
+
+niveauConfianceRoutes.openapi(listDerniersNiveauxConfianceRoute, async (context) =>
+  listDerniersNiveauxConfiance({ query: context.req.valid('query') }).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: DerniersNiveauxConfianceListApiModelSchema,
+        status: 200,
+      }),
+    never,
+  ),
+)

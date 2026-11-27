@@ -2,7 +2,10 @@ import { z } from 'zod'
 
 import { auteurApiModelSchema } from './auteur'
 import { commentaireApiModelSchema } from './commentaire'
+import { indicateursCsvSchema, MAX_INDICATEURS_PAR_REQUETE } from './indicateursCsv'
 import { createPaginatedApiListSchema } from './pagination'
+import { indicateurPublicIdSchema } from './publicIds'
+import { individuLuSchema, individusSelectionnesSchema } from './valeurAvancement'
 
 export const indiceConfianceSchema = z
   .enum(['OBJECTIF_COMPROMIS', 'APPUIS_NECESSAIRE', 'OBJECTIF_ATTEIGNABLE', 'OBJECTIF_SECURISE'])
@@ -58,3 +61,37 @@ export const niveauConfianceListApiModelSchema = createPaginatedApiListSchema(
   niveauConfianceApiModelSchema,
 )
 export type NiveauConfianceListApiModel = z.infer<typeof niveauConfianceListApiModelSchema>
+
+// --- Lecture par lot sur une sélection d'individus --------------------------
+
+export const listDerniersNiveauxConfianceQuerySchema = z.object({
+  indicateurs: indicateursCsvSchema.describe(
+    `Liste d'identifiants d'indicateurs séparés par une virgule (ex. IND-A,IND-B). 1..${MAX_INDICATEURS_PAR_REQUETE} identifiants.`,
+  ),
+  individus: individusSelectionnesSchema,
+})
+export type ListDerniersNiveauxConfianceQuery = z.infer<
+  typeof listDerniersNiveauxConfianceQuerySchema
+>
+
+export const dernierNiveauConfianceApiModelSchema = z.object({
+  indicateur: indicateurPublicIdSchema,
+  individu: individuLuSchema,
+  indice: indiceConfianceSchema.describe(
+    "Indice du dernier commentaire CONFIANCE publié sur l'individu lu.",
+  ),
+})
+export type DernierNiveauConfianceApiModel = z.infer<typeof dernierNiveauConfianceApiModelSchema>
+
+export const derniersNiveauxConfianceListApiModelSchema = z.object({
+  items: z
+    .array(dernierNiveauConfianceApiModelSchema)
+    .describe(
+      'Niveau de confiance de chaque indicateur demandé, sur son individu lu. Les indicateurs ' +
+        'sans individu lu, non accessibles, ou dont le dernier commentaire CONFIANCE publié ne ' +
+        'porte pas de niveau, sont omis.',
+    ),
+})
+export type DerniersNiveauxConfianceListApiModel = z.infer<
+  typeof derniersNiveauxConfianceListApiModelSchema
+>
