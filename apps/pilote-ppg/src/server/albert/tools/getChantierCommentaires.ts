@@ -13,6 +13,7 @@ import type {
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { GetChantiersIdentiteQuery } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
 import { texteDepuisHtml } from "@/server/albert/tools/texteDepuisHtml";
+import { libelleTypeCommentaire } from "@/server/albert/tools/libelles";
 import { personReference } from "@/shared/personne/personReference";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import {
@@ -77,6 +78,8 @@ export type GetChantierCommentairesOutput = {
   chantier_nom: string | null;
   resultats: ResultatCommentaires[];
   types_non_accessibles: GetChantierCommentairesQueryResult["types_non_accessibles"];
+  /** Les libellés des types interrogés sur l'ensemble du périmètre, même sans contenu : ce que la réponse dit avoir consulté. */
+  types_consultes: string[];
 };
 
 const normaliserEspaces = (texte: string) => texte.replace(/\s+/g, " ");
@@ -164,6 +167,7 @@ Types de commentaires :
 - Les types nationaux sont cherchés sur NAT-FR quand l'utilisateur y a accès, même pour un territoire régional ou départemental : inutile de rappeler l'outil sur NAT-FR.
 - Sur un territoire régional ou départemental, « difficultés », « actions », « ce qui coince » ne désignent pas \`freins_a_lever\` ni \`actions_a_venir\`, qui sont nationaux : elles se lisent d'abord dans les commentaires du territoire. Pour une telle demande, omets \`types\`.
 - \`types_non_accessibles\` : ces types relèvent de la vue nationale, hors du périmètre de l'utilisateur ; ce n'est pas une absence de contenu.
+- \`types_consultes\` : les types interrogés, même sans contenu, à citer dans la ligne « Commentaires consultés » de ta réponse ; un type absent de cette liste n'a pas été lu.
 Utilise-le pour : les commentaires, freins, actions, réussites ou décisions d'un chantier sur un territoire ; plusieurs territoires (« la Bretagne et ses départements ») : un seul appel avec le \`perimetre\` adapté.
 Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il reste à faire → get_chantier_objectifs.`,
       inputSchema: getChantierCommentairesInputSchema,
@@ -211,6 +215,12 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
           ),
         );
 
+        // Seul le premier territoire interroge le national : un type qu'il a
+        // lu n'est pas non accessible pour les suivants.
+        const typesConsultes = new Set(
+          results.flatMap((result) => result.types_consultes),
+        );
+
         return {
           chantier_nom: chantier?.nom ?? null,
           resultats: results
@@ -225,7 +235,10 @@ Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il 
             ...new Set(
               results.flatMap((result) => result.types_non_accessibles),
             ),
-          ],
+          ].filter((type) => !typesConsultes.has(type)),
+          types_consultes: typesContenuChantier
+            .filter((type) => typesConsultes.has(type))
+            .map((type) => libelleTypeCommentaire({ type })),
         };
       },
     });

@@ -65,6 +65,8 @@ export type GetChantierCommentairesResult = {
 export type GetChantierCommentairesQueryResult = {
   resultats: GetChantierCommentairesResult[];
   types_non_accessibles: TypeContenuChantier[];
+  /** Les types interrogés, sur le territoire puis au national, même sans commentaire. */
+  types_consultes: TypeContenuChantier[];
 };
 
 export class GetChantierCommentairesQuery {
@@ -116,6 +118,7 @@ export class GetChantierCommentairesQuery {
     return {
       resultats,
       types_non_accessibles: typesNonAccessibles,
+      types_consultes: appels.flatMap((appel) => appel.types),
     };
   }
 
