@@ -12,14 +12,10 @@ export function IndicateurPinButton({
   indicateur,
   isPinned,
   source,
-  onUnpinned,
 }: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'nom'>
   isPinned: boolean
   source: AnalyticsSource
-  // Appelé une fois l'épingle retirée, par exemple pour replacer le focus
-  // quand la carte quitte la section des épinglés.
-  onUnpinned?: () => void
 }) {
   const pin = usePinIndicateur()
   const unpin = useUnpinIndicateur()
@@ -36,7 +32,7 @@ export function IndicateurPinButton({
       disabled={pin.isPending || unpin.isPending}
       onClick={() => {
         if (isPinned) {
-          unpin.mutate(variables, { onSuccess: () => onUnpinned?.() })
+          unpin.mutate(variables)
           return
         }
         pin.mutate(variables)

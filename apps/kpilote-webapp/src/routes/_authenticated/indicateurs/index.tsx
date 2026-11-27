@@ -4,7 +4,7 @@ import {
 } from '@pilote/kpilote-shared/indicateur'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
-import { type RefObject, startTransition, useRef } from 'react'
+import { startTransition } from 'react'
 import { z } from 'zod'
 import { joinCsv, splitCsv } from '@pilote/kpilote-shared/texte'
 
@@ -103,8 +103,6 @@ function IndicateursListComponent() {
     indicateursEpinglesQueryOptions({ individus: selection }),
   )
   const pinnedIds = new Set(epingles.items.map((indicateur) => indicateur.id))
-  const epinglesRef = useRef<HTMLDivElement>(null)
-  const listRef = useRef<HTMLDivElement>(null)
   const readingOf = (indicateur: IndicateurApiModel) =>
     resolveIndicateurReading({
       selection,
@@ -137,14 +135,42 @@ function IndicateursListComponent() {
       </div>
 
       {epingles.items.length > 0 ? (
-        <div ref={epinglesRef} tabIndex={-1} className="outline-none">
-          <Section
-            tone="plain"
-            title="Indicateurs épinglés"
-            description={`${epingles.items.length} indicateur${epingles.items.length > 1 ? 's' : ''} épinglé${epingles.items.length > 1 ? 's' : ''}`}
-          >
+        <Section
+          tone="plain"
+          title="Indicateurs épinglés"
+          description={`${epingles.items.length} indicateur${epingles.items.length > 1 ? 's' : ''} épinglé${epingles.items.length > 1 ? 's' : ''}`}
+        >
+          <CardGrid>
+            {epingles.items.map((indicateur) => (
+              <IndicateurCard
+                key={indicateur.id}
+                indicateur={indicateur}
+                groups={groups}
+                source="dashboard"
+                reading={readingOf(indicateur)}
+                actions={
+                  <IndicateurPinButton indicateur={indicateur} isPinned source="dashboard" />
+                }
+              />
+            ))}
+          </CardGrid>
+        </Section>
+      ) : null}
+
+      <Section
+        tone="plain"
+        title="Mes indicateurs"
+        description={`${data.total} indicateur${data.total > 1 ? 's' : ''}`}
+      >
+        <div className="flex flex-col gap-6">
+          {data.items.length === 0 ? (
+            <EmptyState
+              title="Vous n'avez encore accès à aucun indicateur KPILOTE."
+              description="Vous pouvez vous rapprocher de votre référent KPILOTE ou du support."
+            />
+          ) : (
             <CardGrid>
-              {epingles.items.map((indicateur) => (
+              {data.items.map((indicateur) => (
                 <IndicateurCard
                   key={indicateur.id}
                   indicateur={indicateur}
@@ -154,100 +180,41 @@ function IndicateursListComponent() {
                   actions={
                     <IndicateurPinButton
                       indicateur={indicateur}
-                      isPinned
+                      isPinned={pinnedIds.has(indicateur.id)}
                       source="dashboard"
-                      onUnpinned={() =>
-                        focusAfterUnpin({
-                          remaining: epingles.items.length - 1,
-                          epinglesRef,
-                          listRef,
-                        })
-                      }
                     />
                   }
                 />
               ))}
             </CardGrid>
-          </Section>
+          )}
+
+          <Pagination
+            hasNext={data.pagination.hasMore}
+            onNext={() => {
+              const next = data.pagination.cursor
+              if (!next) return
+              analytics.trackEvent(
+                analyticsEvents.dashboard.paginationNext({
+                  entity_type: 'indicateur',
+                  page_size: search.pageSize ?? DEFAULT_PAGE_SIZE,
+                }),
+              )
+              void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
+            }}
+            pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE}
+            onPageSizeChange={(pageSize) => {
+              analytics.trackEvent(
+                analyticsEvents.dashboard.paginationSize({
+                  entity_type: 'indicateur',
+                  page_size: pageSize,
+                }),
+              )
+              void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
+            }}
+          />
         </div>
-      ) : null}
-
-      <div ref={listRef} tabIndex={-1} className="outline-none">
-        <Section
-          tone="plain"
-          title="Mes indicateurs"
-          description={`${data.total} indicateur${data.total > 1 ? 's' : ''}`}
-        >
-          <div className="flex flex-col gap-6">
-            {data.items.length === 0 ? (
-              <EmptyState
-                title="Vous n'avez encore accès à aucun indicateur KPILOTE."
-                description="Vous pouvez vous rapprocher de votre référent KPILOTE ou du support."
-              />
-            ) : (
-              <CardGrid>
-                {data.items.map((indicateur) => (
-                  <IndicateurCard
-                    key={indicateur.id}
-                    indicateur={indicateur}
-                    groups={groups}
-                    source="dashboard"
-                    reading={readingOf(indicateur)}
-                    actions={
-                      <IndicateurPinButton
-                        indicateur={indicateur}
-                        isPinned={pinnedIds.has(indicateur.id)}
-                        source="dashboard"
-                      />
-                    }
-                  />
-                ))}
-              </CardGrid>
-            )}
-
-            <Pagination
-              hasNext={data.pagination.hasMore}
-              onNext={() => {
-                const next = data.pagination.cursor
-                if (!next) return
-                analytics.trackEvent(
-                  analyticsEvents.dashboard.paginationNext({
-                    entity_type: 'indicateur',
-                    page_size: search.pageSize ?? DEFAULT_PAGE_SIZE,
-                  }),
-                )
-                void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
-              }}
-              pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE}
-              onPageSizeChange={(pageSize) => {
-                analytics.trackEvent(
-                  analyticsEvents.dashboard.paginationSize({
-                    entity_type: 'indicateur',
-                    page_size: pageSize,
-                  }),
-                )
-                void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
-              }}
-            />
-          </div>
-        </Section>
-      </div>
+      </Section>
     </Page>
   )
-}
-
-// Désépinglée, la carte quitte la section des épinglés et emporte le bouton qui
-// avait le focus : on le replace sur la section, ou sur la liste quand la section
-// disparaît avec sa dernière carte.
-const focusAfterUnpin = ({
-  remaining,
-  epinglesRef,
-  listRef,
-}: {
-  remaining: number
-  epinglesRef: RefObject<HTMLDivElement | null>
-  listRef: RefObject<HTMLDivElement | null>
-}) => {
-  const target = remaining > 0 ? epinglesRef.current : listRef.current
-  target?.focus()
 }
