@@ -1,7 +1,5 @@
-import {
-  type ListIndicateursQuery,
-  MAX_INDICATEURS_EPINGLES,
-} from '@pilote/kpilote-shared/indicateur'
+import { type ListIndicateursQuery } from '@pilote/kpilote-shared/indicateur'
+import { MAX_PAGE_SIZE } from '@pilote/kpilote-shared/pagination'
 import { type QueryClient, queryOptions } from '@tanstack/react-query'
 
 import {
@@ -26,7 +24,9 @@ export const indicateursQueryOptions = (params: ListIndicateursQuery) =>
 // Clé partielle de toutes les listes d'épinglés, quelle que soit la sélection.
 export const indicateursEpinglesKey = ['indicateurs', { epingle: true }] as const
 
-// Les épinglés tiennent sur une page : leur nombre est borné par l'API. La
+// Les épinglés tiennent sur une page : l'API borne leur nombre à l'ajout. On
+// demande la page la plus grande plutôt que cette borne : un épinglé au-delà
+// (accès retrouvé, ajouts simultanés) reste affiché et désépinglable. La
 // sélection place les épinglés qu'elle concerne en tête, comme dans la liste.
 export const indicateursEpinglesQueryOptions = ({
   individus,
@@ -35,7 +35,7 @@ export const indicateursEpinglesQueryOptions = ({
 }) =>
   indicateursQueryOptions({
     epingle: true,
-    pageSize: MAX_INDICATEURS_EPINGLES,
+    pageSize: MAX_PAGE_SIZE,
     ...(individus.length > 0 ? { individus: [...individus] } : {}),
   })
 
