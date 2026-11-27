@@ -72,6 +72,78 @@ describe("GetChantierCommentairesQuery", () => {
           },
         ],
         types_non_accessibles: [],
+        types_consultes: ["commentaires_sur_les_donnees"],
+      });
+    }),
+  );
+
+  it(
+    "renvoie les types interrogés, sur le territoire puis au national, même sans commentaire",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+      });
+
+      // When
+      const result = await query.execute({
+        chantierId: chantier.id,
+        territoireCode: TERRITOIRE_CODE,
+        types: [
+          "freins_a_lever",
+          "commentaires_sur_les_donnees",
+          "synthese_des_resultats",
+        ],
+        inclureCommentairesNationaux: true,
+      });
+
+      // Then
+      expect(result.types_consultes).toEqual([
+        "commentaires_sur_les_donnees",
+        "synthese_des_resultats",
+        "freins_a_lever",
+      ]);
+    }),
+  );
+
+  it(
+    "ne compte pas parmi les types interrogés un type national hors de l'accès de l'utilisateur",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+      });
+
+      // When
+      const result = await query.execute({
+        chantierId: chantier.id,
+        territoireCode: TERRITOIRE_CODE,
+        types: [
+          "freins_a_lever",
+          "commentaires_sur_les_donnees",
+          "synthese_des_resultats",
+        ],
+        inclureCommentairesNationaux: false,
+      });
+
+      // Then
+      expect({
+        types_consultes: result.types_consultes,
+        types_non_accessibles: result.types_non_accessibles,
+      }).toEqual({
+        types_consultes: [
+          "commentaires_sur_les_donnees",
+          "synthese_des_resultats",
+        ],
+        types_non_accessibles: ["freins_a_lever"],
       });
     }),
   );

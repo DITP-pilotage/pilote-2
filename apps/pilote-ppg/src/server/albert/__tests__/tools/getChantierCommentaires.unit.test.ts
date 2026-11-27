@@ -8,6 +8,7 @@ import {
 import type {
   GetChantierCommentairesQuery,
   GetChantierCommentairesQueryResult,
+  TypeContenuChantier,
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
@@ -37,6 +38,7 @@ const queryResult: GetChantierCommentairesQueryResult = {
     },
   ],
   types_non_accessibles: [],
+  types_consultes: ["freins_a_lever"],
 };
 
 type CommentaireDeLaQuery =
@@ -68,6 +70,9 @@ const resultatAvecCommentaires = (
 ): GetChantierCommentairesQueryResult => ({
   resultats: [{ ...queryResult.resultats[0], commentaires }],
   types_non_accessibles: [],
+  types_consultes: [
+    ...new Set(commentaires.map(({ type }) => type as TypeContenuChantier)),
+  ],
 });
 
 const buildTool = ({
@@ -158,6 +163,70 @@ describe("createGetChantierCommentairesTool execute", () => {
         },
       ],
       types_non_accessibles: [],
+      types_consultes: ["Freins à lever"],
+    });
+  });
+
+  describe("sur une région et ses départements, avec l'accès national", () => {
+    // Comme la query : seul l'appel qui inclut le national lit les types
+    // nationaux, les autres les signalent non accessibles
+    const queryParTerritoire = () =>
+      mock<GetChantierCommentairesQuery>({
+        execute: vi.fn(
+          async ({ territoireCode, inclureCommentairesNationaux }) => ({
+            resultats: [
+              {
+                ...queryResult.resultats[0],
+                territoire_code: territoireCode,
+                commentaires: [],
+              },
+            ],
+            types_non_accessibles: inclureCommentairesNationaux
+              ? []
+              : ["freins_a_lever" as const],
+            types_consultes: inclureCommentairesNationaux
+              ? [
+                  "synthese_des_resultats" as const,
+                  "commentaires_sur_les_donnees" as const,
+                  "freins_a_lever" as const,
+                ]
+              : [
+                  "synthese_des_resultats" as const,
+                  "commentaires_sur_les_donnees" as const,
+                ],
+          }),
+        ),
+      });
+
+    const lireLaRegionEtSesDepartements = () =>
+      executeTool(
+        buildTool({
+          query: queryParTerritoire(),
+          territoiresAccessibles: ["NAT-FR", "REG-75", "DEPT-75"],
+          chantiersAccessibles: ["CH-084"],
+        }),
+        "CH-084",
+        { type: "REGION_ET_SES_DEPARTEMENTS", region_code: "REG-75" },
+      );
+
+    test("renvoie les libellés des types consultés sur tous les territoires, sans doublon, dans l'ordre du référentiel", async () => {
+      // When
+      const result = await lireLaRegionEtSesDepartements();
+
+      // Then
+      expect(result.types_consultes).toEqual([
+        "Freins à lever",
+        "Commentaires sur les données",
+        "Synthèse des résultats",
+      ]);
+    });
+
+    test("ne signale pas non accessible un type lu au national", async () => {
+      // When
+      const result = await lireLaRegionEtSesDepartements();
+
+      // Then
+      expect(result.types_non_accessibles).toEqual([]);
     });
   });
 
