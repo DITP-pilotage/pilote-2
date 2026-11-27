@@ -81,9 +81,14 @@ scenarioEval({
     {
       question:
         "Qui a rédigé la synthèse des résultats du CH-005 en Bretagne, et qui l'a modifiée ?",
-      reason:
-        "Auteur et modificatrice de la synthèse, deux personnes ; get_chantiers et get_chantier_commentaires la renvoient tous deux, aucun outil n'est attendu",
+      reason: "Auteur et modificatrice de la synthèse, deux personnes",
       truthScope: { territoires: ["REG-53"] },
+      expected: [
+        {
+          toolName: "get_chantier_commentaires",
+          input: { chantier_id: "CH-005" },
+        },
+      ],
       expectedPersons: [
         referenceDe(PERSONNES.auteurSynthese),
         referenceDe(PERSONNES.modificatriceSynthese),

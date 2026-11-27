@@ -1,5 +1,10 @@
 import type { Tool } from "ai";
 import { getContainer } from "@/server/dependances";
+import { classerChantiers } from "@/server/albert/tools/getChantiers";
+import {
+  collecterChantiers,
+  type CollecteChantiersInput,
+} from "@/server/albert/tools/collecteChantiers";
 import type { EvalUser } from "../world";
 
 /**
@@ -26,6 +31,22 @@ export function createDataTools({ user }: { user: EvalUser }) {
     getChantierCommentaires: container.resolve(
       "createGetChantierCommentairesTool",
     )({ territoiresAccessibles, chantiersAccessibles }),
+    /**
+     * Les chantiers tels que les lit `get_chantiers`, synthèse comprise : la
+     * collecte partagée avec les encarts, classée comme l'outil sans tri ni
+     * limite. La sortie de l'outil ne porte plus la synthèse, que la fiche de
+     * vérité doit pourtant connaître.
+     */
+    collecterChantiers: async (input: CollecteChantiersInput) =>
+      classerChantiers({
+        sortie: await collecterChantiers({
+          input,
+          getChantiersQuery: container.resolve("getChantiersQuery"),
+          territoireResolver: container.resolve("territoireResolver"),
+          territoiresAccessibles,
+          chantiersAccessibles,
+        }),
+      }),
   };
 }
 

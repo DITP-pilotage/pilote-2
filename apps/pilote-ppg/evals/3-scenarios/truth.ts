@@ -2,7 +2,7 @@ import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChan
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type { GetTauxAvancementTerritoireResult } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
-import type { ResultatChantiers } from "@/server/albert/tools/getChantiers";
+import type { ResultatChantiers } from "@/server/albert/tools/collecteChantiers";
 
 /**
  * La forme de la fiche de vérité, et ce qu'on en déduit, sans rien charger du

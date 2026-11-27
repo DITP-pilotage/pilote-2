@@ -1,12 +1,11 @@
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import type { GetChantiersOutput } from "@/server/albert/tools/getChantiers";
 import type {
   GetTauxAvancementTerritoireOutput,
   GetTauxAvancementTerritoireResult,
 } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChantierIndicateurs";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
-import type { ResultatChantiers } from "@/server/albert/tools/getChantiers";
+import type { ResultatChantiers } from "@/server/albert/tools/collecteChantiers";
 import type { EvalUser } from "../world";
 import { createDataTools, executeTool } from "./dataTools";
 import { JALON_COURANT } from "./territoires";
@@ -44,10 +43,7 @@ export async function readGroundTruth({
     tauxAvancement.push(...taux.resultats);
 
     const lireVue = (view: "en_retard" | "en_difficulte") =>
-      executeTool<GetChantiersOutput>({
-        tool: tools.getChantiers,
-        input: { perimetre, jalon, view },
-      });
+      tools.collecterChantiers({ perimetre, jalon, view });
 
     chantiersEnRetard.push(...(await lireVue("en_retard")).resultats);
     chantiersEnDifficulte.push(...(await lireVue("en_difficulte")).resultats);

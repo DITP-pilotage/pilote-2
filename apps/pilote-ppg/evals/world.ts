@@ -338,6 +338,10 @@ export const BRETAGNE = {
  */
 export const EVAL_TIMEOUT_MS = 400_000;
 
+// Date fixe : une date du jour rendrait les réponses différentes d'un run à
+// l'autre dès qu'Albert cite la date d'un commentaire.
+export const DATE_SAISIE = new Date("2026-09-15T10:00:00Z");
+
 async function seedDetailedChantier({
   chantierId,
   authorId,

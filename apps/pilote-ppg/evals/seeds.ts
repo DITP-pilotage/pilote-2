@@ -1,5 +1,5 @@
 import { fixtures } from "@/test/fixtures";
-import { indicateurDuChantier } from "./world";
+import { DATE_SAISIE, indicateurDuChantier } from "./world";
 
 /**
  * Briques de données réutilisables, appelées au seed du monde d'un fichier.
@@ -96,5 +96,21 @@ export async function seedChantierEnDifficulte({
     meteo: "ORAGE",
     ecart: ECART_A_L_HEURE,
     taux: 58,
+  });
+
+  // La synthèse qui accompagne le niveau de confiance. Sans elle, une demande
+  // sur les commentaires des territoires en difficulté ne reproduisait pas le
+  // défaut de recette : l'agent qui s'arrête à get_chantiers n'avait aucun
+  // commentaire dont se contenter.
+  await fixtures.syntheseDesResultats({
+    chantier_id: chantierId,
+    territoire_code: territoire.territoire_code,
+    maille: territoire.maille,
+    code_insee: territoire.code_insee,
+    meteo: "ORAGE",
+    commentaire:
+      "Les recrutements de médecins prennent du retard : trois postes restent vacants. Le déploiement des maisons de santé est décalé au second semestre.",
+    date_creation: DATE_SAISIE,
+    date_modification: DATE_SAISIE,
   });
 }

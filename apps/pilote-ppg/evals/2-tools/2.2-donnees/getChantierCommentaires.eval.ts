@@ -22,9 +22,48 @@ import { toolSelectionEval } from "../toolSelectionEval";
  *
  * Les questions précisent le territoire, que l'outil exige. Les objectifs ne
  * sont pas territorialisés : les négatifs s'en passent.
+ *
+ * Les commentaires des territoires où un chantier est en difficulté (demande
+ * de recette) : `get_chantiers` trouve les territoires, puis
+ * `get_chantier_commentaires` lit tous leurs commentaires. L'agent se
+ * contentait de la synthèse des résultats que portait `get_chantiers`, et
+ * disait « sans commentaire » un territoire qui n'avait pas de synthèse. Le
+ * monde commun sème une synthèse pour CH-006, en difficulté en Bretagne : sans
+ * elle, l'agent n'a rien dont se contenter et le défaut ne se reproduit pas.
  */
 
 const CASES: ToolCase[] = [
+  {
+    question:
+      "Fais-moi la synthèse des commentaires du CH-006 pour chaque région où il est en difficulté. Mets en évidence les sujets récurrents.",
+    reason:
+      "demande de recette : les régions en difficulté, puis tous leurs commentaires, pas la seule synthèse des résultats",
+    expected: [
+      {
+        toolName: "get_chantiers",
+        input: { view: "en_difficulte", chantier_ids: ["CH-006"] },
+      },
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-006" },
+      },
+    ],
+  },
+  {
+    question:
+      "Que disent les commentaires du CH-006 dans les régions où il est en difficulté ? Quels sujets reviennent ?",
+    reason: "même demande autrement formulée",
+    expected: [
+      {
+        toolName: "get_chantiers",
+        input: { view: "en_difficulte", chantier_ids: ["CH-006"] },
+      },
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-006" },
+      },
+    ],
+  },
   {
     question: "Qui a rédigé les commentaires du CH-004 au national ?",
     reason: "l'auteur d'un commentaire est porté par le commentaire (PIL-1860)",

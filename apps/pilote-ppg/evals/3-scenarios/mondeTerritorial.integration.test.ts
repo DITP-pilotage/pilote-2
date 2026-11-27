@@ -193,8 +193,6 @@ describe("seedMondeTerritorial", () => {
           directeurs: resultat.chantiers[0]?.chantier.directeurs_projet,
           responsables: resultat.chantiers[0]?.responsables_locaux,
           coordinateurs: resultat.chantiers[0]?.coordinateurs_territoriaux,
-          auteur: resultat.chantiers[0]?.synthese?.auteur,
-          modifiePar: resultat.chantiers[0]?.synthese?.modifie_par,
         })),
       ).toEqual([
         {
@@ -207,8 +205,6 @@ describe("seedMondeTerritorial", () => {
           coordinateurs: [
             referenceDe(PERSONNES.coordinatriceTerritorialeBretagne),
           ],
-          auteur: referenceDe(PERSONNES.auteurSynthese),
-          modifiePar: referenceDe(PERSONNES.modificatriceSynthese),
         },
         {
           territoire: "REG-52",
@@ -218,8 +214,6 @@ describe("seedMondeTerritorial", () => {
           ],
           responsables: [],
           coordinateurs: [],
-          auteur: undefined,
-          modifiePar: undefined,
         },
       ]);
     }),
@@ -253,7 +247,7 @@ describe("seedMondeTerritorial", () => {
   );
 
   it(
-    "rend l'auteur de chaque commentaire de CH-005 en Bretagne, synthèse comprise",
+    "rend l'auteur et le modificateur de chaque commentaire de CH-005 en Bretagne, synthèse comprise",
     createIntegrationTest(async () => {
       // Given
       const world = await seedEvalWorld();
@@ -276,20 +270,26 @@ describe("seedMondeTerritorial", () => {
           .map((commentaire) => ({
             type: commentaire.type,
             auteurs: commentaire.versions.map((version) => version.auteur),
+            modifiePar: commentaire.versions.map(
+              (version) => version.modifie_par,
+            ),
           }))
           .sort((left, right) => left.type.localeCompare(right.type)),
       ).toEqual([
         {
           type: "autres_resultats_obtenus",
           auteurs: [referenceDe(PERSONNES.auteurCommentaire)],
+          modifiePar: [undefined],
         },
         {
           type: "commentaires_sur_les_donnees",
           auteurs: [referenceDe(PERSONNES.agentDitp)],
+          modifiePar: [undefined],
         },
         {
           type: "synthese_des_resultats",
           auteurs: [referenceDe(PERSONNES.auteurSynthese)],
+          modifiePar: [referenceDe(PERSONNES.modificatriceSynthese)],
         },
       ]);
     }),
