@@ -69,6 +69,8 @@ describe.concurrent('listDernieresValeurs', () => {
               valeur: 3,
               date: '2026-01-01',
               type: 'saisie',
+              precedente: null,
+              variation: null,
             },
             {
               indicateur: indBassin,
@@ -76,6 +78,8 @@ describe.concurrent('listDernieresValeurs', () => {
               valeur: 4,
               date: '2026-01-01',
               type: 'saisie',
+              precedente: null,
+              variation: null,
             },
           ]),
         )
@@ -220,6 +224,8 @@ describe.concurrent('listDernieresValeurs', () => {
               valeur: 12,
               date: '2026-02-01',
               type: 'derivee',
+              precedente: null,
+              variation: null,
             },
           ],
         })
@@ -353,6 +359,85 @@ describe.concurrent('listDernieresValeurs', () => {
         )
 
         expect(result._unsafeUnwrap()).toEqual({ items: [] })
+      }),
+    )
+  })
+
+  describe.concurrent('valeur précédente', () => {
+    it(
+      'renvoie la valeur du mois précédent et la variation depuis celle-ci',
+      integrationTest(async () => {
+        const indId = testIndicateurId()
+        const deptId = testDeptId()
+        const refDept = testReferentielId()
+        await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
+        await fixtures.indicateurReferentiel({
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept, nom: 'Dép.' },
+        })
+        await fixtures.valeurAvancement(
+          {
+            indicateur: { publicId: indId },
+            individu: { publicId: deptId, referentiel: { publicId: refDept } },
+            date: '2025-10-01',
+            valeur: 60,
+          },
+          {
+            indicateur: { publicId: indId },
+            individu: { publicId: deptId },
+            date: '2025-11-01',
+            valeur: 65.9,
+          },
+          {
+            indicateur: { publicId: indId },
+            individu: { publicId: deptId },
+            date: '2025-12-01',
+            valeur: 66.4,
+          },
+        )
+        const apiKey = await fixtures.apiKey()
+
+        const result = await runAsPrincipal(apiKey.id, () =>
+          listDernieresValeurs({ query: { indicateurs: [indId], individus: [deptId] } }),
+        )
+
+        expect(result._unsafeUnwrap().items).toEqual([
+          expect.objectContaining({
+            valeur: 66.4,
+            date: '2025-12-01',
+            precedente: { valeur: 65.9, date: '2025-11-01' },
+            variation: 0.5,
+          }),
+        ])
+      }),
+    )
+
+    it(
+      "n'invente aucune variation quand l'individu n'a qu'une valeur",
+      integrationTest(async () => {
+        const indId = testIndicateurId()
+        const deptId = testDeptId()
+        const refDept = testReferentielId()
+        await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
+        await fixtures.indicateurReferentiel({
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept, nom: 'Dép.' },
+        })
+        await fixtures.valeurAvancement({
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId, referentiel: { publicId: refDept } },
+          date: '2025-12-01',
+          valeur: 66.4,
+        })
+        const apiKey = await fixtures.apiKey()
+
+        const result = await runAsPrincipal(apiKey.id, () =>
+          listDernieresValeurs({ query: { indicateurs: [indId], individus: [deptId] } }),
+        )
+
+        expect(result._unsafeUnwrap().items).toEqual([
+          expect.objectContaining({ valeur: 66.4, precedente: null, variation: null }),
+        ])
       }),
     )
   })

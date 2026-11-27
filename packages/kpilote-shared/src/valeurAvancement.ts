@@ -531,6 +531,19 @@ export const derniereValeurApiModelSchema = z.object({
       "`saisie` : la valeur provient d'une saisie directe sur cet individu. " +
         '`derivee` : la valeur est reconstruite par agrégation hiérarchique des descendants.',
     ),
+  precedente: valeurDateApiModelSchema
+    .nullable()
+    .describe(
+      'Valeur du bucket mensuel qui précède la dernière valeur connue, sur le même individu. ' +
+        "null si l'individu n'a qu'une valeur.",
+    ),
+  variation: z
+    .number()
+    .nullable()
+    .describe(
+      'Variation absolue entre la dernière valeur et la précédente. ' +
+        "null si l'individu n'a qu'une valeur (aucune valeur précédente à comparer).",
+    ),
 })
 export type DerniereValeurApiModel = z.infer<typeof derniereValeurApiModelSchema>
 
