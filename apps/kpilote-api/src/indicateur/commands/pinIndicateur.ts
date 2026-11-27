@@ -44,8 +44,11 @@ const performPin = async ({
   const limite = checkLimiteEpingles({ nombreEpingles: context.nombreEpingles })
   if (limite.isErr()) return err(limite.error)
 
-  await db().indicateurEpingle.create({
-    data: { utilisateurId, indicateurId: context.indicateur.id },
+  // Deux épinglages simultanés du même indicateur ne trouvent ni l'un ni l'autre
+  // l'épingle : le second ne doit pas échouer sur la clé primaire.
+  await db().indicateurEpingle.createMany({
+    data: [{ utilisateurId, indicateurId: context.indicateur.id }],
+    skipDuplicates: true,
   })
   return ok()
 }
