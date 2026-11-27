@@ -23,13 +23,15 @@ export type PaginatedApiList<T extends z.ZodTypeAny> = z.infer<
   ReturnType<typeof createPaginatedApiListSchema<T>>
 >
 
+export const MAX_PAGE_SIZE = 100
+
 export const pageSizeSchema = z.coerce
   .number()
   .int()
   .min(1)
-  .max(100)
+  .max(MAX_PAGE_SIZE)
   .optional()
-  .describe("Nombre d'items par page (défaut serveur, max 100).")
+  .describe(`Nombre d'items par page (défaut serveur, max ${MAX_PAGE_SIZE}).`)
 
 export type PaginateQuery = {
   cursor?: string | undefined

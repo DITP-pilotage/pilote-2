@@ -1,4 +1,5 @@
 import { type ListIndicateursQuery } from '@pilote/kpilote-shared/indicateur'
+import { MAX_PAGE_SIZE } from '@pilote/kpilote-shared/pagination'
 import { type QueryClient, queryOptions } from '@tanstack/react-query'
 
 import {
@@ -19,6 +20,35 @@ export const indicateursQueryOptions = (params: ListIndicateursQuery) =>
     queryFn: () => fetchIndicateurs(params),
     staleTime: DEFAULT_STALE_TIME,
   })
+
+// Clé partielle de toutes les listes d'épinglés, quelle que soit la sélection.
+export const indicateursEpinglesKey = ['indicateurs', { epingle: true }] as const
+
+// Les épinglés tiennent sur une page : l'API borne leur nombre à l'ajout. On
+// demande la page la plus grande plutôt que cette borne : un épinglé au-delà
+// (accès retrouvé, ajouts simultanés) reste affiché et désépinglable. Comme
+// « Mes indicateurs », la section ne garde que les indicateurs attribués : un
+// épinglé dont l'attribution est retirée en sort. La sélection place les
+// épinglés qu'elle concerne en tête, comme dans la liste.
+export const indicateursEpinglesQueryOptions = ({
+  individus,
+}: {
+  individus: ReadonlyArray<string>
+}) =>
+  indicateursQueryOptions({
+    epingle: true,
+    acces: 'attribue',
+    pageSize: MAX_PAGE_SIZE,
+    ...(individus.length > 0 ? { individus: [...individus] } : {}),
+  })
+
+export const loadIndicateursEpingles = ({
+  queryClient,
+  individus,
+}: {
+  queryClient: QueryClient
+  individus: ReadonlyArray<string>
+}) => queryClient.fetchQuery(indicateursEpinglesQueryOptions({ individus }))
 
 /**
  * Toutes les pages d'indicateurs en une liste, pour un filtrage 100% client

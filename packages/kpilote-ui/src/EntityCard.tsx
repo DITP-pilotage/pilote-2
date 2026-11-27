@@ -14,6 +14,12 @@ type EntityCardProps = Omit<ComponentProps<'div'>, 'title'> & {
   body?: ReactNode
   // Légende de pied de carte, épinglée en bas.
   footer?: ReactNode
+  // Actions posées dans le coin de la carte (bouton, menu…). Elles restent hors
+  // de la carte, et donc hors du lien quand la carte en est un : un bouton dans
+  // un lien n'est ni valide ni accessible. Pour réagir au survol ou au focus de
+  // la carte, elles utilisent le groupe `entity-card`
+  // (`group-hover/entity-card:opacity-100`).
+  actions?: ReactNode
 }
 
 const styles = [
@@ -29,12 +35,13 @@ export function EntityCard({
   title,
   body,
   footer,
+  actions,
   className,
   children,
   ...props
 }: EntityCardProps) {
   const Comp = asChild ? SlotPrimitive.Slot : 'div'
-  return (
+  const card = (
     <Comp className={clsxm(styles, className)} {...props}>
       {kicker && (
         <Text as="span" variant="kicker">
@@ -44,7 +51,10 @@ export function EntityCard({
       <Heading
         as="h3"
         size="md"
-        className="text-blue-cumulus transition-colors group-hover:text-primary"
+        className={clsxm(
+          'text-blue-cumulus transition-colors group-hover:text-primary',
+          actions && 'pr-8',
+        )}
       >
         {title}
       </Heading>
@@ -55,10 +65,19 @@ export function EntityCard({
           {footer}
         </Text>
       )}
-      <ArrowUpRight
-        className="absolute right-5 top-5 size-4 text-text-subtle opacity-0 transition-opacity group-hover:text-primary group-hover:opacity-100"
-        aria-hidden
-      />
+      {actions ? null : (
+        <ArrowUpRight
+          className="absolute right-5 top-5 size-4 text-text-subtle opacity-0 transition-opacity group-hover:text-primary group-hover:opacity-100"
+          aria-hidden
+        />
+      )}
     </Comp>
+  )
+  if (!actions) return card
+  return (
+    <div className="group/entity-card relative h-full">
+      {card}
+      <div className="absolute right-3 top-3">{actions}</div>
+    </div>
   )
 }

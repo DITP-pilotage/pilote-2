@@ -33,6 +33,7 @@ import {
   type CollectionContactUtileModel,
   type CollectionModel,
   type CollectionPermissionModel,
+  type IndicateurEpingleModel,
   type IndicateurResponsableModel,
   type CollectionResponsableModel,
   type ReferentielModel,
@@ -1113,6 +1114,43 @@ async function indicateurResponsable(
   return results
 }
 
+// --- IndicateurEpingle (deps requises) ---------------------------------------
+
+type IndicateurEpingleOverrides = {
+  indicateur: IndicateurOverrides
+  utilisateur: UtilisateurOverrides
+}
+
+const upsertIndicateurEpingle = async (o: IndicateurEpingleOverrides) => {
+  const indicateurRow = await upsertIndicateur(o.indicateur)
+  const utilisateurRow = await upsertUtilisateur(o.utilisateur)
+  return db().indicateurEpingle.upsert({
+    where: {
+      utilisateurId_indicateurId: {
+        utilisateurId: utilisateurRow.id,
+        indicateurId: indicateurRow.id,
+      },
+    },
+    update: {},
+    create: { utilisateurId: utilisateurRow.id, indicateurId: indicateurRow.id },
+  })
+}
+
+function indicateurEpingle(override: IndicateurEpingleOverrides): Promise<IndicateurEpingleModel>
+function indicateurEpingle(
+  o1: IndicateurEpingleOverrides,
+  o2: IndicateurEpingleOverrides,
+  ...rest: IndicateurEpingleOverrides[]
+): Promise<IndicateurEpingleModel[]>
+async function indicateurEpingle(
+  ...overrides: IndicateurEpingleOverrides[]
+): Promise<IndicateurEpingleModel | IndicateurEpingleModel[]> {
+  if (overrides.length === 1) return upsertIndicateurEpingle(overrides[0]!)
+  const results: IndicateurEpingleModel[] = []
+  for (const o of overrides) results.push(await upsertIndicateurEpingle(o))
+  return results
+}
+
 // --- Commentaire (indicateur + individu) -------------------------------------
 
 type CommentaireOverrides = {
@@ -1312,6 +1350,7 @@ export const fixtures = {
   collectionPermission,
   collectionResponsable,
   indicateurResponsable,
+  indicateurEpingle,
   organisme,
   contactUtile,
   collectionContactUtile,

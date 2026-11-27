@@ -29,6 +29,9 @@ export const ensurePrincipal = (
 export const ensureAdmin = (): void =>
   ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
 
+export const ensureOidcUser = (): void =>
+  ensurePrincipal(isOidcUser, 'Cette opération est réservée aux utilisateurs')
+
 export const ensureAdminOrOidcUser = (): void =>
   ensurePrincipal(
     (principal) => isApiKeyAdmin(principal) || isOidcUser(principal),

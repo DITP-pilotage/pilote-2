@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { checkAxesModifiables } from '@/indicateur/rules'
+import { checkAxesModifiables, checkLimiteEpingles } from '@/indicateur/rules'
 
 describe.concurrent('checkAxesModifiables', () => {
   it('accepte un changement d’ordre des mêmes axes, même avec des valeurs', () => {
@@ -37,5 +37,18 @@ describe.concurrent('checkAxesModifiables', () => {
       nombreValeurs: 1,
     })
     expect(result._unsafeUnwrapErr()).toEqual({ type: 'AXES_VERROUILLES', nombreValeurs: 1 })
+  })
+})
+
+describe.concurrent('checkLimiteEpingles', () => {
+  it('accepte une épingle tant que la limite n’est pas atteinte', () => {
+    expect(checkLimiteEpingles({ nombreEpingles: 19 }).isOk()).toBe(true)
+  })
+
+  it('rejette une épingle quand la limite est atteinte', () => {
+    expect(checkLimiteEpingles({ nombreEpingles: 20 })._unsafeUnwrapErr()).toEqual({
+      type: 'LIMITE_EPINGLES_ATTEINTE',
+      limite: 20,
+    })
   })
 })

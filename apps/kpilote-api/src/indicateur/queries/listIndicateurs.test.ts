@@ -13,7 +13,7 @@ import {
   testReferentielId,
   testReferentielIds,
 } from '@/test/randomIds'
-import { runAsAdmin, runAsPrincipal } from '@/test/runAsPrincipal'
+import { runAsAdmin, runAsPrincipal, runAsUser } from '@/test/runAsPrincipal'
 
 describe.concurrent('listIndicateurs', () => {
   it(
@@ -544,6 +544,89 @@ describe.concurrent('listIndicateurs', () => {
         const value = result._unsafeUnwrap()
         expect(value.items.map((i) => i.id)).toEqual([attribue])
         expect(value.total).toBe(1)
+      }),
+    )
+  })
+
+  describe.concurrent('filtré par les épingles', () => {
+    // Trois indicateurs publics : l'utilisateur courant épingle A, un autre utilisateur épingle B.
+    const troisIndicateursEpingles = async () => {
+      const [indA, indB, indC] = testIndicateurIds(3)
+      await fixtures.indicateur(
+        { publicId: indA, visibilite: 'PUBLIC' },
+        { publicId: indB, visibilite: 'PUBLIC' },
+        { publicId: indC, visibilite: 'PUBLIC' },
+      )
+      const utilisateur = await fixtures.utilisateur()
+      const autreUtilisateur = await fixtures.utilisateur()
+      await fixtures.indicateurEpingle(
+        { indicateur: { publicId: indA }, utilisateur: { email: utilisateur.email } },
+        { indicateur: { publicId: indB }, utilisateur: { email: autreUtilisateur.email } },
+      )
+      return { indA, indB, indC, utilisateurId: utilisateur.id }
+    }
+
+    it(
+      'ne garde que les indicateurs épinglés par l’utilisateur courant',
+      integrationTest(async () => {
+        const { indA, utilisateurId } = await troisIndicateursEpingles()
+
+        const result = await runAsUser(utilisateurId, () =>
+          listIndicateurs({ query: { epingle: true } }),
+        )
+
+        const value = result._unsafeUnwrap()
+        expect(value.items.map((item) => item.id)).toEqual([indA])
+        expect(value.total).toBe(1)
+      }),
+    )
+
+    it(
+      'ne garde que les indicateurs non épinglés par l’utilisateur courant',
+      integrationTest(async () => {
+        const { indB, indC, utilisateurId } = await troisIndicateursEpingles()
+
+        const result = await runAsUser(utilisateurId, () =>
+          listIndicateurs({ query: { epingle: false } }),
+        )
+
+        expect(result._unsafeUnwrap().items.map((item) => item.id)).toEqual([indB, indC])
+      }),
+    )
+
+    it(
+      'exclut un indicateur épinglé que l’utilisateur ne peut plus lire',
+      integrationTest(async () => {
+        const [lisible, illisible] = testIndicateurIds(2)
+        await fixtures.indicateur(
+          { publicId: lisible, visibilite: 'PUBLIC' },
+          { publicId: illisible, visibilite: 'PRIVE' },
+        )
+        const utilisateur = await fixtures.utilisateur()
+        await fixtures.indicateurEpingle(
+          { indicateur: { publicId: lisible }, utilisateur: { email: utilisateur.email } },
+          { indicateur: { publicId: illisible }, utilisateur: { email: utilisateur.email } },
+        )
+
+        const result = await runAsUser(utilisateur.id, () =>
+          listIndicateurs({ query: { epingle: true } }),
+        )
+
+        expect(result._unsafeUnwrap().items.map((item) => item.id)).toEqual([lisible])
+      }),
+    )
+
+    it(
+      'renvoie une liste vide à une clé API',
+      integrationTest(async () => {
+        await troisIndicateursEpingles()
+        const apiKey = await fixtures.apiKey()
+
+        const result = await runAsPrincipal(apiKey.id, () =>
+          listIndicateurs({ query: { epingle: true } }),
+        )
+
+        expect(result._unsafeUnwrap().items).toEqual([])
       }),
     )
   })

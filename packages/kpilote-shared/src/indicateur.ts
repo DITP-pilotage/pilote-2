@@ -306,6 +306,10 @@ export type IndicateurApiModel = z.infer<typeof indicateurApiModelSchema>
 export const indicateurListApiModelSchema = createPaginatedApiListSchema(indicateurApiModelSchema)
 export type IndicateurListApiModel = z.infer<typeof indicateurListApiModelSchema>
 
+// Nombre d'indicateurs qu'un utilisateur peut épingler sur son tableau de bord :
+// la section des épinglés n'est pas paginée.
+export const MAX_INDICATEURS_EPINGLES = 20
+
 export const listIndicateursQuerySchema = listQuerySchema.extend({
   rechercheIdentifiant: z
     .string()
@@ -325,6 +329,14 @@ export const listIndicateursQuerySchema = listQuerySchema.extend({
         'rien filtrer : les indicateurs liés au référentiel d’un individu sélectionné passent en ' +
         'tête, puis les autres, chaque groupe trié par identifiant. Un individu inconnu renvoie ' +
         'une 404. Le curseur ne vaut que pour la sélection qui l’a produit.',
+    ),
+  epingle: z
+    .stringbool()
+    .optional()
+    .describe(
+      'Filtre sur les épingles de l’utilisateur courant : `true` ne garde que les indicateurs ' +
+        'qu’il a épinglés, `false` que les autres. Absent, la liste ne tient pas compte des ' +
+        'épingles. Une clé API n’a pas d’épingle.',
     ),
 })
 export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>

@@ -1,4 +1,7 @@
-import { type ListIndicateursQuery } from '@pilote/kpilote-shared/indicateur'
+import {
+  type IndicateurApiModel,
+  type ListIndicateursQuery,
+} from '@pilote/kpilote-shared/indicateur'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { startTransition } from 'react'
@@ -12,6 +15,7 @@ import { analytics } from '@/analytics/tracker'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
+import { IndicateurPinButton } from '@/components/indicateurs/IndicateurPinButton'
 import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
@@ -19,7 +23,12 @@ import { Section } from '@pilote/kpilote-ui/Section'
 import { ensureSelectionIndividus } from '@/lib/individus/ensureSelection'
 import { resolveIndicateurReading } from '@/lib/individus/selection'
 import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
-import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
+import {
+  indicateursEpinglesQueryOptions,
+  indicateursQueryOptions,
+  loadIndicateurs,
+  loadIndicateursEpingles,
+} from '@/queries/indicateurs'
 import {
   allReferentielsQueryOptions,
   loadAllReferentielIds,
@@ -71,7 +80,11 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
       },
     })
 
-    return loadIndicateurs({ queryClient, query: toIndicateursQuery(deps) })
+    const [indicateurs] = await Promise.all([
+      loadIndicateurs({ queryClient, query: toIndicateursQuery(deps) }),
+      loadIndicateursEpingles({ queryClient, individus: splitCsv(deps.selectedIndividus) }),
+    ])
+    return indicateurs
   },
   pendingComponent: () => <RouteLoading message="Chargement des indicateurs…" />,
   errorComponent: RouteError,
@@ -86,6 +99,16 @@ function IndicateursListComponent() {
   const referentielIds = referentiels.map((r) => r.id)
   const { nodes, groups } = useIndividuHierarchy(referentielIds)
   const selection = splitCsv(search.selectedIndividus)
+  const { data: epingles } = useSuspenseQuery(
+    indicateursEpinglesQueryOptions({ individus: selection }),
+  )
+  const pinnedIds = new Set(epingles.items.map((indicateur) => indicateur.id))
+  const readingOf = (indicateur: IndicateurApiModel) =>
+    resolveIndicateurReading({
+      selection,
+      nodes,
+      referentielIds: indicateur.referentiels.map((ref) => ref.id),
+    })
 
   return (
     <Page
@@ -111,6 +134,29 @@ function IndicateursListComponent() {
         <DashboardSwitch />
       </div>
 
+      {epingles.items.length > 0 ? (
+        <Section
+          tone="plain"
+          title="Indicateurs épinglés"
+          description={`${epingles.items.length} indicateur${epingles.items.length > 1 ? 's' : ''} épinglé${epingles.items.length > 1 ? 's' : ''}`}
+        >
+          <CardGrid>
+            {epingles.items.map((indicateur) => (
+              <IndicateurCard
+                key={indicateur.id}
+                indicateur={indicateur}
+                groups={groups}
+                source="dashboard"
+                reading={readingOf(indicateur)}
+                actions={
+                  <IndicateurPinButton indicateur={indicateur} isPinned source="dashboard" />
+                }
+              />
+            ))}
+          </CardGrid>
+        </Section>
+      ) : null}
+
       <Section
         tone="plain"
         title="Mes indicateurs"
@@ -130,11 +176,14 @@ function IndicateursListComponent() {
                   indicateur={indicateur}
                   groups={groups}
                   source="dashboard"
-                  reading={resolveIndicateurReading({
-                    selection,
-                    nodes,
-                    referentielIds: indicateur.referentiels.map((ref) => ref.id),
-                  })}
+                  reading={readingOf(indicateur)}
+                  actions={
+                    <IndicateurPinButton
+                      indicateur={indicateur}
+                      isPinned={pinnedIds.has(indicateur.id)}
+                      source="dashboard"
+                    />
+                  }
                 />
               ))}
             </CardGrid>

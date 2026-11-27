@@ -43,6 +43,9 @@ const build = async ({ query }: ListIndicateursParams): Promise<IndicateurListAp
       { collections: { some: { collection: { permissions: { some: { principalId } } } } } },
     ]
   }
+  // L'id d'un utilisateur est celui de son principal ; une clé API n'a pas d'épingle.
+  if (query.epingle === true) filters.epingles = { some: { utilisateurId: principalId } }
+  if (query.epingle === false) filters.epingles = { none: { utilisateurId: principalId } }
   // Le bypass ADMIN (administre PUBLIC + PRIVÉ) est géré dans withIndicateurReadPermission.
   const where = withIndicateurReadPermission(filters, principalId, {
     isAdmin: isAdminPrincipal(),

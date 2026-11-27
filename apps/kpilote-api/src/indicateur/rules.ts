@@ -1,3 +1,4 @@
+import { MAX_INDICATEURS_EPINGLES } from '@pilote/kpilote-shared/indicateur'
 import { err, ok, type Result } from 'neverthrow'
 
 import { diff } from '@/framework/collections/diff'
@@ -23,4 +24,17 @@ export const checkAxesModifiables = ({
   if (axesInchanges) return ok()
   if (nombreValeurs === 0) return ok()
   return err({ type: 'AXES_VERROUILLES', nombreValeurs })
+}
+
+export type LimiteEpinglesAtteinteError = { type: 'LIMITE_EPINGLES_ATTEINTE'; limite: number }
+
+// Les épinglés forment une section du tableau de bord qui n'est pas paginée :
+// le nombre d'indicateurs qu'un utilisateur épingle reste borné.
+export const checkLimiteEpingles = ({
+  nombreEpingles,
+}: {
+  nombreEpingles: number
+}): Result<void, LimiteEpinglesAtteinteError> => {
+  if (nombreEpingles < MAX_INDICATEURS_EPINGLES) return ok()
+  return err({ type: 'LIMITE_EPINGLES_ATTEINTE', limite: MAX_INDICATEURS_EPINGLES })
 }

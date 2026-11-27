@@ -1,7 +1,7 @@
 import type { IndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 import { analyticsEvents, type AnalyticsSource } from '@pilote/kpilote-shared/analytics/events'
 import { Link } from '@tanstack/react-router'
-import { Suspense } from 'react'
+import { type ReactNode, Suspense } from 'react'
 
 import {
   IndicateurAvancement,
@@ -21,6 +21,7 @@ export function IndicateurCard({
   groups,
   source,
   collectionId,
+  actions,
 }: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'unite' | 'sensSouhaite' | 'referentiels'>
   reading?: CardReading | undefined
@@ -28,11 +29,14 @@ export function IndicateurCard({
   groups: ReadonlyArray<ReferentielGroup>
   source: AnalyticsSource
   collectionId?: string | undefined
+  // Actions de la carte (épingle…), hors du lien vers la fiche.
+  actions?: ReactNode
 }) {
   return (
     <EntityCard
       asChild
       title={indicateur.nom}
+      actions={actions}
       className={clsxm(reading?.isUnavailable && 'opacity-60')}
       body={
         reading ? (
