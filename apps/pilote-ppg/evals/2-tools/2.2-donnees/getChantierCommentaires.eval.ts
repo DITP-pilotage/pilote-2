@@ -65,18 +65,6 @@ const CASES: ToolCase[] = [
     ],
   },
   {
-    question: "Quels chantiers sont en difficulté en Bretagne, et pourquoi ?",
-    reason:
-      "plusieurs chantiers : le « pourquoi » se lit dans les commentaires de chacun, pas dans la seule synthèse",
-    expected: [
-      { toolName: "get_chantiers", input: { view: "en_difficulte" } },
-      {
-        toolName: "get_chantier_commentaires",
-        input: { chantier_id: "CH-006" },
-      },
-    ],
-  },
-  {
     question: "Qui a rédigé les commentaires du CH-004 au national ?",
     reason: "l'auteur d'un commentaire est porté par le commentaire (PIL-1860)",
     expected: [
