@@ -1,5 +1,7 @@
 import {
   type CreerNiveauConfianceBody,
+  type DerniersNiveauxConfianceListApiModel,
+  derniersNiveauxConfianceListApiModelSchema,
   type ModifierNiveauConfianceBody,
   type NiveauConfianceApiModel,
   niveauConfianceApiModelSchema,
@@ -49,4 +51,19 @@ export const updateNiveauConfiance = async (
 ): Promise<NiveauConfianceApiModel> => {
   const json = await apiClient.put(`niveaux-confiance/${niveauConfianceId}`, { json: body }).json()
   return niveauConfianceApiModelSchema.parse(json)
+}
+
+export const fetchDerniersNiveauxConfiance = async ({
+  indicateurs,
+  individus,
+}: {
+  indicateurs: ReadonlyArray<string>
+  individus: ReadonlyArray<string> | undefined
+}): Promise<DerniersNiveauxConfianceListApiModel> => {
+  const json = await apiClient
+    .get('derniers-niveaux-confiance', {
+      searchParams: { indicateurs: indicateurs.join(','), individus: individus?.join(',') },
+    })
+    .json()
+  return derniersNiveauxConfianceListApiModelSchema.parse(json)
 }

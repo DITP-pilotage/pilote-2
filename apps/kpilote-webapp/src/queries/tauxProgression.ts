@@ -1,47 +1,15 @@
-import {
-  type DernierTauxProgressionApiModel,
-  MAX_INDICATEURS_PAR_REQUETE,
-} from '@pilote/kpilote-shared/valeurAvancement'
-import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
+import { type DernierTauxProgressionApiModel } from '@pilote/kpilote-shared/valeurAvancement'
 import { queryOptions } from '@tanstack/react-query'
 
 import { fetchDerniersTauxProgression } from '@/api/indicateurs'
+import { createBatchersBySelection } from '@/lib/batchersBySelection'
 
 import { DEFAULT_STALE_TIME } from './utils'
 
-// Un lot porte une seule sélection d'individus (ou aucune : chaque indicateur se
-// lit alors sur ses individus racines). On instancie donc un batcher par sélection.
-const RACINES = Symbol('racines')
-const batchersBySelection = new Map<string | typeof RACINES, Batcher>()
-
-type Batcher = ReturnType<typeof createBatcher>
-
-const createBatcher = (individus: ReadonlyArray<string> | undefined) =>
-  create({
-    fetcher: async (
-      indicateurIds: string[],
-    ): Promise<ReadonlyArray<DernierTauxProgressionApiModel>> => {
-      const { items } = await fetchDerniersTauxProgression({
-        indicateurs: indicateurIds,
-        individus,
-      })
-      return items
-    },
-    resolver: keyResolver('indicateur'),
-    scheduler: windowedFiniteBatchScheduler({
-      windowMs: 10,
-      maxBatchSize: MAX_INDICATEURS_PAR_REQUETE,
-    }),
-  })
-
-const getBatcher = (individus: ReadonlyArray<string> | undefined): Batcher => {
-  const key = individus?.join(',') ?? RACINES
-  const existing = batchersBySelection.get(key)
-  if (existing) return existing
-  const batcher = createBatcher(individus)
-  batchersBySelection.set(key, batcher)
-  return batcher
-}
+const getBatcher = createBatchersBySelection<DernierTauxProgressionApiModel>(
+  async ({ indicateurs, individus }) =>
+    (await fetchDerniersTauxProgression({ indicateurs, individus })).items,
+)
 
 export const dernierTauxProgressionKeys = {
   all: ['dernier-taux-progression'] as const,

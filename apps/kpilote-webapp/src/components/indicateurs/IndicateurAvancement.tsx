@@ -2,11 +2,13 @@ import { type SensSouhaite, type UniteIndicateurApiModel } from '@pilote/kpilote
 import { useSuspenseQueries } from '@tanstack/react-query'
 
 import { IndicateurCardCible } from '@/components/indicateurs/IndicateurCardCible'
+import { IndicateurCardConfiance } from '@/components/indicateurs/IndicateurCardConfiance'
 import { IndicateurCardIndividu } from '@/components/indicateurs/IndicateurCardIndividu'
 import { IndicateurCardValeur } from '@/components/indicateurs/IndicateurCardValeur'
 import { IndicateurCardVariation } from '@/components/indicateurs/IndicateurCardVariation'
 import { type ReferentielGroup } from '@/lib/individus/hierarchy'
 import { derniereValeurQueryOptions } from '@/queries/dernieresValeurs'
+import { dernierNiveauConfianceQueryOptions } from '@/queries/derniersNiveauxConfiance'
 import { dernierTauxProgressionQueryOptions } from '@/queries/tauxProgression'
 
 export function IndicateurAvancementSkeleton() {
@@ -30,6 +32,10 @@ export function IndicateurAvancementSkeleton() {
         <span className="h-4 w-full rounded bg-border" />
         <span className="h-2 w-full rounded-full bg-border" />
       </span>
+      <span className="flex flex-col gap-2 border-t border-border pt-4">
+        <span className="h-4 w-32 rounded bg-border" />
+        <span className="h-6 w-48 rounded bg-border" />
+      </span>
     </span>
   )
 }
@@ -50,17 +56,24 @@ export function IndicateurAvancement({
   // Individu sur lequel la carte est lue (sélection ou racine), connu même sans valeur.
   selectedIndividuId: string | undefined
 }) {
-  const [{ data: derniereValeur }, { data: dernierTaux }] = useSuspenseQueries({
-    queries: [
-      derniereValeurQueryOptions({ individus, indicateurId }),
-      dernierTauxProgressionQueryOptions({ individus, indicateurId }),
-    ],
-  })
+  const [{ data: derniereValeur }, { data: dernierTaux }, { data: dernierNiveau }] =
+    useSuspenseQueries({
+      queries: [
+        derniereValeurQueryOptions({ individus, indicateurId }),
+        dernierTauxProgressionQueryOptions({ individus, indicateurId }),
+        dernierNiveauConfianceQueryOptions({ individus, indicateurId }),
+      ],
+    })
   return (
     <div className="flex flex-1 flex-col gap-4">
       <IndicateurCardIndividu
         groups={groups}
-        individuId={derniereValeur?.individu ?? dernierTaux?.individu ?? selectedIndividuId}
+        individuId={
+          derniereValeur?.individu ??
+          dernierTaux?.individu ??
+          dernierNiveau?.individu ??
+          selectedIndividuId
+        }
       />
       <IndicateurCardValeur derniereValeur={derniereValeur} unite={unite} />
       <IndicateurCardVariation
@@ -68,8 +81,9 @@ export function IndicateurAvancement({
         unite={unite}
         sensSouhaite={sensSouhaite}
       />
-      <div className="mt-auto">
+      <div className="mt-auto flex flex-col gap-4">
         <IndicateurCardCible dernierTaux={dernierTaux} unite={unite} />
+        <IndicateurCardConfiance dernierNiveau={dernierNiveau} />
       </div>
     </div>
   )
