@@ -104,7 +104,7 @@ function IndicateursListComponent() {
   )
   const pinnedIds = new Set(epingles.items.map((indicateur) => indicateur.id))
   const epinglesRef = useRef<HTMLDivElement>(null)
-  const listeRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
   const readingOf = (indicateur: IndicateurApiModel) =>
     resolveIndicateurReading({
       selection,
@@ -160,7 +160,7 @@ function IndicateursListComponent() {
                         focusAfterUnpin({
                           remaining: epingles.items.length - 1,
                           epinglesRef,
-                          listeRef,
+                          listRef,
                         })
                       }
                     />
@@ -172,7 +172,7 @@ function IndicateursListComponent() {
         </div>
       ) : null}
 
-      <div ref={listeRef} tabIndex={-1} className="outline-none">
+      <div ref={listRef} tabIndex={-1} className="outline-none">
         <Section
           tone="plain"
           title="Mes indicateurs"
@@ -242,12 +242,12 @@ function IndicateursListComponent() {
 const focusAfterUnpin = ({
   remaining,
   epinglesRef,
-  listeRef,
+  listRef,
 }: {
   remaining: number
   epinglesRef: RefObject<HTMLDivElement | null>
-  listeRef: RefObject<HTMLDivElement | null>
+  listRef: RefObject<HTMLDivElement | null>
 }) => {
-  const target = remaining > 0 ? epinglesRef.current : listeRef.current
+  const target = remaining > 0 ? epinglesRef.current : listRef.current
   target?.focus()
 }
