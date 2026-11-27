@@ -167,7 +167,7 @@ Types de commentaires :
 - Les types nationaux sont cherchés sur NAT-FR quand l'utilisateur y a accès, même pour un territoire régional ou départemental : inutile de rappeler l'outil sur NAT-FR.
 - Sur un territoire régional ou départemental, « difficultés », « actions », « ce qui coince » ne désignent pas \`freins_a_lever\` ni \`actions_a_venir\`, qui sont nationaux : elles se lisent d'abord dans les commentaires du territoire. Pour une telle demande, omets \`types\`.
 - \`types_non_accessibles\` : ces types relèvent de la vue nationale, hors du périmètre de l'utilisateur ; ce n'est pas une absence de contenu.
-- \`types_consultes\` : les types interrogés, même sans contenu, à citer dans ta réponse ; un type absent de cette liste n'a pas été lu.
+- \`types_consultes\` : les types interrogés, même sans contenu, à citer dans la ligne « Commentaires consultés » de ta réponse ; un type absent de cette liste n'a pas été lu.
 Utilise-le pour : les commentaires, freins, actions, réussites ou décisions d'un chantier sur un territoire ; plusieurs territoires (« la Bretagne et ses départements ») : un seul appel avec le \`perimetre\` adapté.
 Ne l'utilise pas pour : l'ambition du chantier, ce qui a été fait ou ce qu'il reste à faire → get_chantier_objectifs.`,
       inputSchema: getChantierCommentairesInputSchema,
