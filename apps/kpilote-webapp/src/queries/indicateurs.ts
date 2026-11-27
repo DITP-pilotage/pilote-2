@@ -26,8 +26,10 @@ export const indicateursEpinglesKey = ['indicateurs', { epingle: true }] as cons
 
 // Les épinglés tiennent sur une page : l'API borne leur nombre à l'ajout. On
 // demande la page la plus grande plutôt que cette borne : un épinglé au-delà
-// (accès retrouvé, ajouts simultanés) reste affiché et désépinglable. La
-// sélection place les épinglés qu'elle concerne en tête, comme dans la liste.
+// (accès retrouvé, ajouts simultanés) reste affiché et désépinglable. Comme
+// « Mes indicateurs », la section ne garde que les indicateurs attribués : un
+// épinglé dont l'attribution est retirée en sort. La sélection place les
+// épinglés qu'elle concerne en tête, comme dans la liste.
 export const indicateursEpinglesQueryOptions = ({
   individus,
 }: {
@@ -35,6 +37,7 @@ export const indicateursEpinglesQueryOptions = ({
 }) =>
   indicateursQueryOptions({
     epingle: true,
+    acces: 'attribue',
     pageSize: MAX_PAGE_SIZE,
     ...(individus.length > 0 ? { individus: [...individus] } : {}),
   })
