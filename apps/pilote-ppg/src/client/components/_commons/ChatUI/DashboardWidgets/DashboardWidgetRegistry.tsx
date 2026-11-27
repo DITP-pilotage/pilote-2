@@ -5,6 +5,7 @@ import { DashboardWidgetNombreChantiersEnRetard } from "./DashboardWidgetNombreC
 import { DashboardWidgetNombreChantiersEnDifficulte } from "./DashboardWidgetNombreChantiersEnDifficulte";
 import { DashboardWidgetValeursRemarquablesAvancement } from "./DashboardWidgetValeursRemarquablesAvancement";
 import { DashboardWidgetTableauIndicateursChantier } from "./DashboardWidgetTableauIndicateursChantier";
+import { DashboardWidgetSyntheseDesResultats } from "./DashboardWidgetSyntheseDesResultats";
 import { DashboardWidgetListeChantiersEnRetard } from "./DashboardWidgetListeChantiersEnRetard";
 import { DashboardWidgetListeChantiersEnDifficulte } from "./DashboardWidgetListeChantiersEnDifficulte";
 import { DashboardWidgetCartographieTauxAvancement } from "./DashboardWidgetCartographieTauxAvancement";
@@ -62,6 +63,13 @@ export const DashboardWidgetRegistry = ({
           chantierId={widget.chantier_id}
           territoireCode={widget.territoire_code}
           jalon={widget.jalon}
+        />
+      );
+    case "widget_synthese_des_resultats":
+      return (
+        <DashboardWidgetSyntheseDesResultats
+          chantierId={widget.chantier_id}
+          territoireCode={widget.territoire_code}
         />
       );
     case "widget_liste_chantiers_en_retard":
@@ -130,11 +138,6 @@ export const DashboardWidgetRegistry = ({
         />
       );
     case "widget_paragraph":
-      return (
-        <DashboardWidgetParagraph
-          contenu={widget.contenu}
-          variant={widget.variant}
-        />
-      );
+      return <DashboardWidgetParagraph contenu={widget.contenu} />;
   }
 };

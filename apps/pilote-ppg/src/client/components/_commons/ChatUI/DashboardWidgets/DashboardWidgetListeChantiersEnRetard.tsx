@@ -22,7 +22,7 @@ export const DashboardWidgetListeChantiersEnRetard = ({
         id: chantier.chantier.id,
         nom: chantier.chantier.nom,
         ecart: chantier.ecart,
-        meteo: chantier.synthese?.meteo ?? null,
+        meteo: chantier.meteo,
       }))}
     />
   );

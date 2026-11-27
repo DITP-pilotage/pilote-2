@@ -111,6 +111,20 @@ export const syntheseDesResultatsRouter = createTRPCRouter({
         });
     }),
 
+  recupererDerniere: protectedProcedure
+    .input(validationSynthèseDesRésultatsContexte)
+    .query(({ input, ctx }) => {
+      new Habilitation(
+        ctx.session.habilitations,
+      ).vérifierLesHabilitationsEnLecture(
+        input.chantierId,
+        input.territoireCode,
+      );
+      return getContainer("importSyntheseDesResultats")
+        .resolve("récupérerDerniereSyntheseDesResultatsQuery")
+        .run(input.chantierId, input.territoireCode);
+    }),
+
   recupererHistorique: protectedProcedure
     .input(validationSynthèseDesRésultatsContexte)
     .query(({ input, ctx }) => {

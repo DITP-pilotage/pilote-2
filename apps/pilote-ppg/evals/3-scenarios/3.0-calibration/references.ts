@@ -628,19 +628,16 @@ const DASHBOARD_TEXTE = "Voici le tableau de bord de la Bretagne.";
 const sectionChantier = ({
   id,
   nom,
-  meteo,
-  commentaire,
 }: {
   id: string;
   nom: string;
-  meteo: string;
-  commentaire: string;
 }): { widgets: WidgetDefinition[] } => ({
   widgets: [
     { type: "widget_titre_section", titre: `${id} — ${nom}` },
     {
-      type: "widget_paragraph",
-      contenu: [`Niveau de confiance : ${meteo}`, commentaire],
+      type: "widget_synthese_des_resultats",
+      chantier_id: id,
+      territoire_code: "REG-53",
     },
     {
       type: "widget_cartographie_meteo",
@@ -683,21 +680,7 @@ const SECTION_TERRITOIRE: WidgetDefinition[] = [
   },
 ];
 
-const SECTIONS_CHANTIERS = [
-  sectionChantier({
-    ...CH_005,
-    meteo: "Appuis nécessaires",
-    // Le commentaire de synthèse tel que la fiche le porte : la demande dit
-    // « la météo et le commentaire de synthèse », un résumé n'y répond pas.
-    commentaire:
-      "Deux postes d'urgentistes restent vacants à Brest et Quimper. Le délai médian de passage remonte à 4 h 10 au premier semestre, malgré la régulation téléphonique mise en place en mars.",
-  }),
-  sectionChantier({
-    ...CH_006,
-    meteo: "Objectifs compromis",
-    commentaire: "Pas de commentaire disponible.",
-  }),
-];
+const SECTIONS_CHANTIERS = [sectionChantier(CH_005), sectionChantier(CH_006)];
 
 function dashboardAvec(
   premiereSection: WidgetDefinition[],
@@ -764,6 +747,30 @@ const DASHBOARD: CalibrationCase[] = [
         },
       ]),
     ),
+  },
+  {
+    suite: SUITES.tableauDeBord,
+    label: "Paragraphe à la place de la synthèse des résultats",
+    broken: "Widgets conformes à la demande",
+    evidence: tableauDeBord({
+      titre: "Tableau de bord Bretagne",
+      containers: [
+        { widgets: SECTION_TERRITOIRE },
+        ...SECTIONS_CHANTIERS.map(({ widgets }) => ({
+          widgets: widgets.map((widget): WidgetDefinition =>
+            widget.type === "widget_synthese_des_resultats"
+              ? {
+                  type: "widget_paragraph",
+                  contenu: [
+                    "Niveau de confiance : Appuis nécessaires",
+                    "Deux postes d'urgentistes restent vacants à Brest et Quimper.",
+                  ],
+                }
+              : widget,
+          ),
+        })),
+      ],
+    }),
   },
   {
     suite: SUITES.tableauDeBord,

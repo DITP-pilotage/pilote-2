@@ -157,6 +157,30 @@ describe("composeDashboardInputSchema", () => {
       expect(result.success).toBe(true);
     });
 
+    test("accepte widget_synthese_des_resultats, sans jalon", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_synthese_des_resultats",
+                chantier_id: "CH-005",
+                territoire_code: "REG-53",
+              },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(true);
+    });
+
     test("accepte widget_liste_chantiers_en_retard et widget_liste_chantiers_en_difficulte cote a cote", () => {
       // Given
       const input = {

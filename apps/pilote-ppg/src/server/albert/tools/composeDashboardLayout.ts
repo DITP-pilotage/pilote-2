@@ -5,6 +5,7 @@ export type WidgetType =
   | "widget_nombre_chantiers_en_difficulte"
   | "widget_valeurs_remarquables_avancement"
   | "widget_tableau_indicateurs_chantier"
+  | "widget_synthese_des_resultats"
   | "widget_liste_chantiers_en_retard"
   | "widget_liste_chantiers_en_difficulte"
   | "widget_cartographie_taux_avancement"
@@ -22,6 +23,7 @@ export const DEFAULT_WIDTHS: Record<WidgetType, number> = {
   widget_nombre_chantiers_en_difficulte: 1,
   widget_valeurs_remarquables_avancement: 2,
   widget_tableau_indicateurs_chantier: 4,
+  widget_synthese_des_resultats: 4,
   widget_liste_chantiers_en_retard: 2,
   widget_liste_chantiers_en_difficulte: 2,
   widget_cartographie_taux_avancement: 2,
