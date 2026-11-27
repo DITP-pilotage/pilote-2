@@ -5,6 +5,8 @@ import { describe, expect, it } from 'vitest'
 import { buildOrderedNodes, groupNodesByRootReferentiel } from './hierarchy'
 import {
   buildSelectors,
+  findReadIndividu,
+  findRootIndividu,
   normalizeSelection,
   removeIndividu,
   resolveCollectionReading,
@@ -204,5 +206,49 @@ describe('buildSelectors', () => {
       { value: 'BV-05', placeholder: 'Aucune sélection' },
       { value: '', placeholder: 'Aucune sélection' },
     ])
+  })
+})
+
+describe('findRootIndividu', () => {
+  it("prend l'individu sans parent dans les référentiels liés", () => {
+    expect(findRootIndividu({ nodes, referentielIds: ['REF-DEPT', 'REF-REG', 'REF-NAT'] })).toBe(
+      'NAT-FR',
+    )
+  })
+
+  it('ne remonte pas vers un parent hors des référentiels liés, et départage par le nom', () => {
+    expect(findRootIndividu({ nodes, referentielIds: ['REF-DEPT'] })).toBe('DEPT-13')
+  })
+
+  it('ne renvoie rien sans référentiel lié', () => {
+    expect(findRootIndividu({ nodes, referentielIds: [] })).toBeUndefined()
+  })
+})
+
+describe('findReadIndividu', () => {
+  const reading = {
+    individus: ['DEPT-84'],
+    link: { individu: 'DEPT-84', referentiel: 'REF-DEPT' },
+    isUnavailable: false,
+  }
+
+  it("renvoie l'individu de la lecture quand l'indicateur est lié à son référentiel", () => {
+    expect(findReadIndividu({ reading, nodes, referentielIds: ['REF-NAT', 'REF-DEPT'] })).toBe(
+      'DEPT-84',
+    )
+  })
+
+  it("ne renvoie rien quand l'indicateur n'est pas lié au référentiel de l'individu", () => {
+    expect(findReadIndividu({ reading, nodes, referentielIds: ['REF-BV'] })).toBeUndefined()
+  })
+
+  it("lit l'individu racine sans sélection", () => {
+    expect(
+      findReadIndividu({
+        reading: { individus: undefined, link: {}, isUnavailable: false },
+        nodes,
+        referentielIds: ['REF-BV'],
+      }),
+    ).toBe('BV-05')
   })
 })

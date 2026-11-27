@@ -31,7 +31,11 @@ import {
   collectionQueryOptions,
   collectionTauxProgressionQueryOptions,
 } from '@/queries/collections'
-import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
+import {
+  allReferentielsQueryOptions,
+  loadAllReferentielIds,
+  useIndividuHierarchy,
+} from '@/queries/referentiels'
 
 const paramsSchema = z.object({
   id: collectionPublicIdSchema,
@@ -106,6 +110,7 @@ function CollectionDetailComponent() {
   const { data: indicateurs } = useSuspenseQuery(indicateursQueryOptions({ ids: indicateurIds }))
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
+  const { groups } = useIndividuHierarchy(referentielIds)
 
   // Re-tri selon l'ordre de la collection : la query indicateurs ne garantit pas
   // l'ordre du filtre `ids`.
@@ -208,6 +213,7 @@ function CollectionDetailComponent() {
                   <IndicateurCard
                     key={indicateur.id}
                     indicateur={indicateur}
+                    groups={groups}
                     source="collection"
                     collectionId={id}
                     {...(cardContext

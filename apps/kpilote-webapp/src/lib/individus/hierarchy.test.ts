@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   buildOrderedNodes,
+  findIndividuInStacks,
   findRootReferentielIdForIndividu,
   groupNodesByRootReferentiel,
   pickRoot,
@@ -216,5 +217,40 @@ describe('findRootReferentielIdForIndividu', () => {
 
   it('renvoie null sur une liste de groupes vide', () => {
     expect(findRootReferentielIdForIndividu([], 'IND-A')).toBeNull()
+  })
+})
+
+describe('findIndividuInStacks', () => {
+  const refTerritoire = referentiel('REF-NAT', 'Territoire')
+  const refDept = referentiel('REF-DEPT', 'Département')
+  const refBassin = referentiel('REF-BV', 'Bassin versant')
+  const refsById = new Map([refTerritoire, refDept, refBassin].map((ref) => [ref.id, ref] as const))
+  const groups = groupNodesByRootReferentiel(
+    buildOrderedNodes(
+      [
+        individu('NAT-FR', 'France', 'REF-NAT'),
+        individu('DEPT-29', 'Finistère', 'REF-DEPT', ['NAT-FR']),
+        individu('BV-FR', 'France – bassins versants', 'REF-BV'),
+      ],
+      refsById,
+    ),
+  )
+
+  it('nomme un individu descendant par le référentiel racine de son stack', () => {
+    expect(findIndividuInStacks({ groups, individuId: 'DEPT-29' })).toEqual({
+      stackNom: 'Territoire',
+      individuNom: 'Finistère',
+    })
+  })
+
+  it('nomme chaque individu par son propre stack quand plusieurs coexistent', () => {
+    expect(findIndividuInStacks({ groups, individuId: 'BV-FR' })).toEqual({
+      stackNom: 'Bassin versant',
+      individuNom: 'France – bassins versants',
+    })
+  })
+
+  it('renvoie null pour un individu hors des stacks connus', () => {
+    expect(findIndividuInStacks({ groups, individuId: 'DEPT-99' })).toBeNull()
   })
 })
