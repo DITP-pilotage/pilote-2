@@ -2,12 +2,11 @@ import { describe, expect, test, vi } from "vitest";
 import { mock } from "vitest-mock-extended";
 import {
   classerChantiers,
-  collecterChantiers,
   createGetChantiersTool,
   getChantiersInputSchema,
   type GetChantiersInput,
+  type ChantierRenvoye,
   type GetChantiersOutput,
-  type GetChantiersToolOutput,
 } from "@/server/albert/tools/getChantiers";
 import type {
   ChantierResult,
@@ -54,14 +53,14 @@ const buildChantier = (id: string): ChantierResult => ({
 
 // Le même chantier, tel que l'outil le renvoie : des libellés, pas des codes,
 // et aucun commentaire, synthèse comprise (get_chantier_commentaires les porte)
-const chantierRenvoye = (id: string) => ({
+const chantierRenvoye = (id: string): ChantierRenvoye => ({
   chantier: {
     id,
     nom: `Chantier ${id}`,
     axe: "Axe",
     ppg: "PPG",
     ministeres: [],
-    maille_de_pilotage: "régionale" as const,
+    maille_de_pilotage: "régionale",
     directeurs_projet: [personReference(DIRECTEUR_PROJET_ID)],
   },
   responsables_locaux: [personReference(RESPONSABLE_LOCAL_ID)],
@@ -125,7 +124,7 @@ const executeTool = async (
     tri?: GetChantiersInput["tri"];
     limite?: number;
   },
-): Promise<GetChantiersToolOutput> =>
+): Promise<GetChantiersOutput> =>
   tool.execute!(
     {
       jalon: 2026,
@@ -139,158 +138,9 @@ const executeTool = async (
       abortSignal: undefined,
       context: {},
     },
-  ) as Promise<GetChantiersToolOutput>;
-
-describe("collecterChantiers", () => {
-  test("garde la synthèse, en texte, avec son auteur par sa référence", async () => {
-    // When
-    const sortie = await collecterChantiers({
-      input: {
-        perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
-        jalon: 2026,
-        view: "all",
-      },
-      getChantiersQuery: buildQuery(["CH-084"]),
-      territoireResolver,
-      territoiresAccessibles: ["REG-75"],
-      chantiersAccessibles: ["CH-084"],
-    });
-
-    // Then
-    expect(
-      sortie.resultats.flatMap((resultat) =>
-        resultat.chantiers.map((chantier) => chantier.synthese),
-      ),
-    ).toEqual([
-      {
-        commentaire: "Deux postes restent vacants.",
-        date_commentaire: "2026-01-12",
-        auteur: personReference(AUTEUR_SYNTHESE_ID),
-      },
-    ]);
-  });
-
-  test("hors périmètre, masque le commentaire, la date et l'auteur de la synthèse", async () => {
-    // When
-    const sortie = await collecterChantiers({
-      input: {
-        perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
-        jalon: 2026,
-        view: "all",
-      },
-      getChantiersQuery: buildQuery(["CH-084"]),
-      territoireResolver,
-      territoiresAccessibles: ["REG-53"],
-      chantiersAccessibles: ["CH-084"],
-    });
-
-    // Then
-    expect(
-      sortie.resultats.flatMap((resultat) =>
-        resultat.chantiers.map((chantier) => chantier.synthese),
-      ),
-    ).toEqual([{ commentaire: null, date_commentaire: null }]);
-  });
-});
+  ) as Promise<GetChantiersOutput>;
 
 describe("createGetChantiersTool execute", () => {
-  test("sans chantier_ids, ne retourne que les chantiers accessibles à l'utilisateur", async () => {
-    // Given
-    const tool = buildTool({
-      query: buildQuery(["CH-062", "CH-084"]),
-      territoiresAccessibles: ["REG-75"],
-      chantiersAccessibles: ["CH-084"],
-    });
-
-    // When
-    const result = await executeTool(tool, {
-      perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
-      view: "en_difficulte",
-    });
-
-    // Then
-    expect(result.resultats).toEqual([
-      {
-        territoire_code: "REG-75",
-        territoire_nom: "Île-de-France",
-        jalon: 2026,
-        chantiers: [chantierRenvoye("CH-084")],
-      },
-    ]);
-  });
-
-  test("avec chantier_ids, exclut les chantiers non accessibles", async () => {
-    // Given
-    const tool = buildTool({
-      query: buildQuery(["CH-062", "CH-084"]),
-      territoiresAccessibles: ["REG-75"],
-      chantiersAccessibles: ["CH-084"],
-    });
-
-    // When
-    const result = await executeTool(tool, {
-      perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
-      chantier_ids: ["CH-062", "CH-084"],
-    });
-
-    // Then
-    expect(result.resultats).toEqual([
-      {
-        territoire_code: "REG-75",
-        territoire_nom: "Île-de-France",
-        jalon: 2026,
-        chantiers: [chantierRenvoye("CH-084")],
-      },
-    ]);
-  });
-
-  test("signale un accès refusé quand aucun chantier_ids demandé n'est accessible", async () => {
-    // Given
-    const query = buildQuery(["CH-062", "CH-084"]);
-    const tool = buildTool({
-      query,
-      territoiresAccessibles: ["REG-75"],
-      chantiersAccessibles: ["CH-084"],
-    });
-
-    // When
-    const result = await executeTool(tool, {
-      perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
-      chantier_ids: ["CH-062"],
-    });
-
-    // Then
-    expect(result).toEqual({
-      resultats: [],
-      acces_refuse: true,
-      total: 0,
-    });
-    expect(query.execute).not.toHaveBeenCalled();
-  });
-
-  test("signale un accès refusé quand l'utilisateur n'a accès à aucun chantier", async () => {
-    // Given
-    const query = buildQuery(["CH-062", "CH-084"]);
-    const tool = buildTool({
-      query,
-      territoiresAccessibles: ["REG-75"],
-      chantiersAccessibles: [],
-    });
-
-    // When
-    const result = await executeTool(tool, {
-      perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
-    });
-
-    // Then
-    expect(result).toEqual({
-      resultats: [],
-      acces_refuse: true,
-      total: 0,
-    });
-    expect(query.execute).not.toHaveBeenCalled();
-  });
-
   test("renvoie les libellés de la tendance, du niveau de confiance et de la maille de pilotage (D1) et les personnes par leur référence, sans la synthèse", async () => {
     // Given
     const tool = buildTool({
@@ -348,33 +198,7 @@ describe("createGetChantiersTool execute", () => {
     ]);
   });
 
-  test("au national, signale l'analyse en retard sans objet, sans rien demander à la query", async () => {
-    // Given
-    const query = buildQuery(["CH-084"]);
-    const tool = buildTool({
-      query,
-      territoiresAccessibles: ["NAT-FR"],
-      chantiersAccessibles: ["CH-084"],
-    });
-
-    // When
-    const result = await executeTool(tool, {
-      perimetre: { type: "SELECTION", territoire_codes: ["NAT-FR"] },
-      view: "en_retard",
-    });
-
-    // Then
-    expect(result).toEqual({
-      resultats: [],
-      non_applicable: [
-        { territoire_code: "NAT-FR", raison: expect.any(String) },
-      ],
-      total: 0,
-    });
-    expect(query.execute).not.toHaveBeenCalled();
-  });
-
-  test("la France et ses régions en retard : renvoie les régions et rattache l'analyse sans objet au national", async () => {
+  test("garde l'analyse sans objet de la collecte et compte les chantiers", async () => {
     // Given
     const tool = buildTool({
       query: buildQuery(["CH-084"]),
@@ -404,14 +228,29 @@ describe("createGetChantiersTool execute", () => {
       total: 1,
     });
   });
+
+  test("garde l'accès refusé de la collecte, sans chantier", async () => {
+    // Given
+    const tool = buildTool({
+      query: buildQuery(["CH-062", "CH-084"]),
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: [],
+    });
+
+    // When
+    const result = await executeTool(tool, {
+      perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
+    });
+
+    // Then
+    expect(result).toEqual({ resultats: [], acces_refuse: true, total: 0 });
+  });
 });
 
 describe("classerChantiers", () => {
-  // classerChantiers opère sur la collecte, qui porte la synthèse
   const ligne = (id: string, ecart: number | null) => ({
     ...chantierRenvoye(id),
     ecart,
-    synthese: null,
   });
   const territoire = (
     territoire_code: string,

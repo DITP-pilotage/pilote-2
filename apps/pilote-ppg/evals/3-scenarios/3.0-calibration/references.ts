@@ -13,7 +13,7 @@ import { SYNTHESE_COMMENTAIRES_CRITERIA } from "../3.1-synthese/syntheseCommenta
 import { COMPARER_TERRITOIRES_CRITERIA } from "../3.2-comparaison/comparerTerritoires.criteria";
 import { COMPARER_JALONS_CRITERIA } from "../3.2-comparaison/comparerJalons.criteria";
 import type { GroundTruth } from "../truth";
-import type { ChantierRenvoye } from "@/server/albert/tools/getChantiers";
+import type { ChantierCollecte } from "@/server/albert/tools/collecteChantiers";
 import { libelleNiveauDeConfiance } from "@/server/albert/tools/libelles";
 import { PERSONNES_CITEES_CRITERIA } from "../3.6-personnes/personnesCitees.criteria";
 import { NOM_PROPOSE_CRITERIA } from "../3.6-personnes/nomPropose.criteria";
@@ -106,7 +106,7 @@ const DIRECTRICE = referenceDe(PERSONNES.directriceUrgences);
 const DIRECTEUR = referenceDe(PERSONNES.directeurUrgences);
 const AUTEUR_SYNTHESE = referenceDe(PERSONNES.auteurSynthese);
 
-/** Un chantier tel que `get_chantiers` le renvoie : des libellés (PIL-1900). */
+/** Un chantier tel que la collecte le lit, synthèse comprise : des libellés (PIL-1900). */
 const chantier = ({
   id,
   nom,
@@ -123,7 +123,7 @@ const chantier = ({
   commentaire: string | null;
   directeurs?: string[];
   auteur?: string;
-}): ChantierRenvoye => ({
+}): ChantierCollecte => ({
   chantier: {
     id,
     nom,

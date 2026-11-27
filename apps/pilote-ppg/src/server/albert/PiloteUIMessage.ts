@@ -25,7 +25,7 @@ import {
 } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import {
   getChantiersInputSchema,
-  type GetChantiersToolOutput,
+  type GetChantiersOutput,
 } from "@/server/albert/tools/getChantiers";
 import {
   getChantierIndicateursInputSchema,
@@ -85,7 +85,7 @@ export type PiloteUITools = {
   };
   get_chantiers: {
     input: z.input<typeof getChantiersInputSchema>;
-    output: GetChantiersToolOutput;
+    output: GetChantiersOutput;
   };
   get_indicateurs: {
     input: z.input<typeof getChantierIndicateursInputSchema>;

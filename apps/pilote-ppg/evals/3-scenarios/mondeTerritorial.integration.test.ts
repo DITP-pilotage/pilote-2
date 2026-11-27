@@ -1,5 +1,5 @@
 import { createIntegrationTest } from "@/test/createIntegrationTest";
-import type { GetChantiersToolOutput } from "@/server/albert/tools/getChantiers";
+import type { GetChantiersOutput } from "@/server/albert/tools/getChantiers";
 import type { GetTauxAvancementTerritoireOutput } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChantierIndicateurs";
 import type { GetChantierCommentairesOutput } from "@/server/albert/tools/getChantierCommentaires";
@@ -8,7 +8,7 @@ import { seedEvalWorld } from "../world";
 import { createDataTools, executeTool } from "./dataTools";
 import { seedMondeTerritorial } from "./mondeTerritorial";
 
-const idsDesChantiers = (output: GetChantiersToolOutput) =>
+const idsDesChantiers = (output: GetChantiersOutput) =>
   output.resultats.flatMap((resultat) =>
     resultat.chantiers.map((chantier) => chantier.chantier.id),
   );
@@ -23,7 +23,7 @@ describe("seedMondeTerritorial", () => {
       const tools = createDataTools({ user: world.users.ditp });
 
       // When
-      const enRetard = await executeTool<GetChantiersToolOutput>({
+      const enRetard = await executeTool<GetChantiersOutput>({
         tool: tools.getChantiers,
         input: {
           perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
@@ -31,7 +31,7 @@ describe("seedMondeTerritorial", () => {
           view: "en_retard",
         },
       });
-      const enDifficulte = await executeTool<GetChantiersToolOutput>({
+      const enDifficulte = await executeTool<GetChantiersOutput>({
         tool: tools.getChantiers,
         input: {
           perimetre: { type: "SELECTION", territoire_codes: ["REG-53"] },
@@ -174,7 +174,7 @@ describe("seedMondeTerritorial", () => {
       const tools = createDataTools({ user: world.users.coordinateur });
 
       // When
-      const chantiers = await executeTool<GetChantiersToolOutput>({
+      const chantiers = await executeTool<GetChantiersOutput>({
         tool: tools.getChantiers,
         input: {
           perimetre: {

@@ -15,7 +15,7 @@ import {
   createRedigerComparaisonTerritoiresTool,
   redigerComparaisonTerritoiresInputSchema,
 } from "@/server/albert/tools/redigerComparaisonTerritoires";
-import type { ChantierRenvoye } from "@/server/albert/tools/getChantiers";
+import type { ChantierCollecte } from "@/server/albert/tools/collecteChantiers";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { Perimetre } from "@/server/albert/domain/Perimetre";
 import type {
@@ -96,8 +96,8 @@ const chantier = (id: string): ChantierResult => ({
   commentaires: { donnees: null, autresResultats: null },
 });
 
-// Le même chantier, tel que get_chantiers le renvoie
-const chantierRenvoye = (id: string): ChantierRenvoye => ({
+// Le même chantier, tel que la collecte le lit
+const chantierCollecte = (id: string): ChantierCollecte => ({
   chantier: {
     id,
     nom: `Chantier ${id}`,
@@ -247,7 +247,7 @@ const DONNEES_DU_NORD: DonneesEncart = {
         territoire_code: "DEPT-59",
         territoire_nom: "Nord",
         jalon: 2025,
-        chantiers: [chantierRenvoye("CH-071")],
+        chantiers: [chantierCollecte("CH-071")],
       },
     ],
   },
@@ -257,7 +257,7 @@ const DONNEES_DU_NORD: DonneesEncart = {
         territoire_code: "DEPT-59",
         territoire_nom: "Nord",
         jalon: 2025,
-        chantiers: [chantierRenvoye("CH-045")],
+        chantiers: [chantierCollecte("CH-045")],
       },
     ],
   },
