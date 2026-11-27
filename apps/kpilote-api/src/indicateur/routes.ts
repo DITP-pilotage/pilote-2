@@ -7,6 +7,7 @@ import {
 import {
   indicateurApiModelSchema,
   listIndicateursQuerySchema,
+  MAX_INDICATEURS_EPINGLES,
   upsertIndicateurBodySchema,
 } from '@pilote/kpilote-shared/indicateur'
 import { listerNiveauxConfianceQuerySchema } from '@pilote/kpilote-shared/niveauConfiance'
@@ -347,7 +348,7 @@ const pinIndicateurRoute = createRoute({
   summary: 'Épingler un indicateur',
   description:
     'Épingle l’indicateur pour l’utilisateur courant ; recommencer ne change rien. Un utilisateur ' +
-    'épingle au plus 20 indicateurs qu’il peut lire : au-delà, la requête répond 409 ' +
+    `épingle au plus ${MAX_INDICATEURS_EPINGLES} indicateurs qu’il peut lire : au-delà, la requête répond 409 ` +
     '(`LIMITE_EPINGLES_ATTEINTE`). Réservé aux utilisateurs : une clé API n’a pas d’épingle.',
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
