@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { createIntegrationTest } from "@/test/createIntegrationTest";
 import { fixtures } from "@/test/fixtures";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
@@ -142,6 +143,98 @@ describe("GetChantiersQuery — taux d'avancement", () => {
           chantier: expect.objectContaining({ id: chantier.id }),
           taux_avancement: null,
         }),
+      ]);
+    }),
+  );
+});
+
+describe("GetChantiersQuery — synthèse des résultats", () => {
+  const query = new GetChantiersQuery({ prisma: new PrismaPilote() });
+
+  const semerChantierEnBretagne = async () => {
+    const chantier = await fixtures.chantierIdentite({
+      ministeres_acronymes: ["MIN-01"],
+      statut: "PUBLIE",
+    });
+    await fixtures.chantierTerritoire({
+      id: chantier.id,
+      territoire_code: "REG-53",
+      code_insee: "53",
+      maille: "REG",
+      zone_id: "REG-53",
+      est_applicable: true,
+    });
+    return chantier;
+  };
+
+  const territoireBretagne = {
+    territoire_code: "REG-53",
+    maille: "REG",
+    code_insee: "53",
+  };
+
+  it(
+    "lit la dernière synthèse publiée, pas un brouillon plus récent",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await semerChantierEnBretagne();
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        ...territoireBretagne,
+        statut: $Enums.statut_publication.PUBLIE,
+        commentaire: "Synthèse publiée",
+        meteo: "NUAGE",
+        date_modification: new Date("2026-01-01"),
+      });
+      // Un brouillon enregistré sans météo porte NON_RENSEIGNEE
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        ...territoireBretagne,
+        statut: $Enums.statut_publication.BROUILLON,
+        commentaire: "Brouillon",
+        meteo: "NON_RENSEIGNEE",
+        date_modification: new Date("2026-02-01"),
+      });
+
+      // When
+      const [resultat] = await query.execute({
+        territoireCodes: ["REG-53"],
+        jalon: 2026,
+        chantierIds: [chantier.id],
+      });
+
+      // Then
+      expect(
+        resultat.chantiers.map(({ synthese }) => ({
+          commentaire: synthese?.commentaire,
+          meteo: synthese?.meteo,
+        })),
+      ).toEqual([{ commentaire: "Synthèse publiée", meteo: "NUAGE" }]);
+    }),
+  );
+
+  it(
+    "ne renvoie pas de synthèse quand le chantier n'a qu'un brouillon",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await semerChantierEnBretagne();
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        ...territoireBretagne,
+        statut: $Enums.statut_publication.BROUILLON,
+        commentaire: "Brouillon",
+      });
+
+      // When
+      const [resultat] = await query.execute({
+        territoireCodes: ["REG-53"],
+        jalon: 2026,
+        chantierIds: [chantier.id],
+      });
+
+      // Then
+      expect(resultat.chantiers.map(({ synthese }) => synthese)).toEqual([
+        null,
       ]);
     }),
   );
