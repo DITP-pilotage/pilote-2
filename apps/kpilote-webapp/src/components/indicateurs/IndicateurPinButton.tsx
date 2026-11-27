@@ -32,7 +32,6 @@ export function IndicateurPinButton({
     <button
       type="button"
       aria-label={label}
-      aria-pressed={isPinned}
       title={isPinned ? 'Désépingler' : 'Épingler'}
       disabled={pin.isPending || unpin.isPending}
       onClick={() => {
