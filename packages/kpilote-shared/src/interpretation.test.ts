@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { interpretDifference, interpretExtremes } from './interpretation'
+import { directionOfDifference, interpretDifference, interpretExtremes } from './interpretation'
 
 describe('interpretDifference', () => {
   it.each([
@@ -32,5 +32,15 @@ describe('interpretExtremes', () => {
       max: 'neutral',
       min: 'neutral',
     })
+  })
+})
+
+describe('directionOfDifference', () => {
+  it.each([
+    { difference: 0.5, expected: 'HAUSSE' },
+    { difference: -0.8, expected: 'BAISSE' },
+    { difference: 0, expected: 'STABLE' },
+  ] as const)('différence $difference → $expected', ({ difference, expected }) => {
+    expect(directionOfDifference(difference)).toBe(expected)
   })
 })

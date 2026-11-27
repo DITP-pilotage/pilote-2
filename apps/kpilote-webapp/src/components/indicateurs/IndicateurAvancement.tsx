@@ -1,20 +1,28 @@
-import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import { type SensSouhaite, type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 import { useSuspenseQueries } from '@tanstack/react-query'
 
+import { IndicateurCardValeur } from '@/components/indicateurs/IndicateurCardValeur'
+import { IndicateurCardVariation } from '@/components/indicateurs/IndicateurCardVariation'
 import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
-import { formatMonthYearNumericFr, formatNumberFr } from '@/lib/format'
 import { derniereValeurQueryOptions } from '@/queries/dernieresValeurs'
 import { dernierTauxProgressionQueryOptions } from '@/queries/tauxProgression'
 
 export function IndicateurAvancementSkeleton() {
   return (
     <span
-      className="flex animate-pulse flex-col gap-1"
+      className="flex animate-pulse flex-col gap-4"
       role="status"
       aria-label="Chargement de la valeur d'avancement"
     >
-      <span className="h-6 w-16 rounded bg-border" />
-      <span className="h-[18px] w-20 rounded bg-border" />
+      <span className="flex flex-col gap-1">
+        <span className="h-8 w-24 rounded bg-border" />
+        <span className="h-4 w-28 rounded bg-border" />
+      </span>
+      <span className="flex flex-col gap-1">
+        <span className="h-4 w-20 rounded bg-border" />
+        <span className="h-5 w-36 rounded bg-border" />
+        <span className="h-5 w-40 rounded bg-border" />
+      </span>
     </span>
   )
 }
@@ -23,28 +31,29 @@ export function IndicateurAvancement({
   indicateurId,
   individus,
   unite,
+  sensSouhaite,
 }: {
   indicateurId: string
   individus: ReadonlyArray<string> | undefined
   unite: UniteIndicateurApiModel | null
+  sensSouhaite: SensSouhaite
 }) {
-  const [{ data }, { data: tauxData }] = useSuspenseQueries({
+  const [{ data: derniereValeur }, { data: tauxData }] = useSuspenseQueries({
     queries: [
       derniereValeurQueryOptions({ individus, indicateurId }),
       dernierTauxProgressionQueryOptions({ individus, indicateurId }),
     ],
   })
-  if (!data) {
-    return <span className="text-xs text-text-subtle">Pas de valeur</span>
-  }
   return (
-    <div className="flex flex-1 flex-col gap-1">
-      <span className="text-2xl font-bold leading-none text-blue-cumulus">
-        {formatNumberFr(data.valeur, unite)}
-      </span>
-      <span className="text-xs text-text-muted">{formatMonthYearNumericFr(data.date)}</span>
+    <div className="flex flex-1 flex-col gap-4">
+      <IndicateurCardValeur derniereValeur={derniereValeur} unite={unite} />
+      <IndicateurCardVariation
+        derniereValeur={derniereValeur}
+        unite={unite}
+        sensSouhaite={sensSouhaite}
+      />
       {tauxData != null && (
-        <div className="mt-auto pt-4">
+        <div className="mt-auto">
           <IndicateurProgression
             taux={tauxData.tauxProgression}
             valeurCible={tauxData.valeurCible}

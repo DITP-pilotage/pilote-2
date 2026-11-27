@@ -43,6 +43,10 @@ const getBatcher = (individus: ReadonlyArray<string> | undefined): Batcher => {
   return batcher
 }
 
+export const dernierTauxProgressionKeys = {
+  all: ['dernier-taux-progression'] as const,
+}
+
 export const dernierTauxProgressionQueryOptions = ({
   individus,
   indicateurId,
@@ -51,7 +55,7 @@ export const dernierTauxProgressionQueryOptions = ({
   indicateurId: string
 }) =>
   queryOptions({
-    queryKey: ['dernier-taux-progression', individus ?? null, indicateurId],
+    queryKey: [...dernierTauxProgressionKeys.all, individus ?? null, indicateurId],
     queryFn: (): Promise<DernierTauxProgressionApiModel | null> =>
       getBatcher(individus).fetch(indicateurId),
     staleTime: DEFAULT_STALE_TIME,
