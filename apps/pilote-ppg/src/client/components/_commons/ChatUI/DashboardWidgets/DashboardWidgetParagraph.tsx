@@ -1,18 +1,11 @@
-import { clsxm } from "@/utils/clsxm";
 import { DashboardPanel } from "./DashboardPanel";
 
 export const DashboardWidgetParagraph = ({
   contenu,
-  variant = "default",
 }: {
   contenu: string[];
-  variant?: "default" | "warning";
 }) => (
-  <DashboardPanel
-    className={clsxm({
-      "border-yellow-400 bg-yellow-50": variant === "warning",
-    })}
-  >
+  <DashboardPanel>
     <div className="space-y-2">
       {contenu.map((part, index) => (
         <p

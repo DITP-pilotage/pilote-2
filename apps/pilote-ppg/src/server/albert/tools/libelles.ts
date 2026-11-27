@@ -1,8 +1,4 @@
-import {
-  libellesMeteos,
-  meteosSaisissables,
-  type MeteoSaisissable,
-} from "@/shared/meteo/Meteo.interface";
+import { libellesMeteos } from "@/shared/meteo/Meteo.interface";
 import type { $Enums } from "@prisma/client";
 import type { TypeContenuChantier } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import { determineMaille } from "@/shared/maille/determineMaille";
@@ -22,21 +18,6 @@ export function libelleNiveauDeConfiance({
   meteo: string | null;
 }): string | null {
   return meteo === null ? null : (libellesMeteos[meteo] ?? null);
-}
-
-/**
- * L'inverse, pour le sous-agent du dashboard qui attend encore des codes.
- * Seuls les quatre niveaux saisissables ont un code.
- */
-export function codeMeteoDepuisLibelle({
-  libelle,
-}: {
-  libelle: string;
-}): MeteoSaisissable | null {
-  return (
-    meteosSaisissables.find((meteo) => libellesMeteos[meteo] === libelle) ??
-    null
-  );
 }
 
 const LIBELLES_TENDANCE: Record<string, string> = {

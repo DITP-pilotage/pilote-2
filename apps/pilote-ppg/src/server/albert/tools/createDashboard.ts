@@ -9,7 +9,6 @@ import {
 import { buildDashboardSystemPrompt } from "@/server/albert/subagents/dashboardSystemPrompt";
 import { Albert } from "@/server/albert/Albert";
 import type { GetIndicateurContexteQuery } from "@/server/chantiers/query/GetIndicateurContexteQuery";
-import { codeMeteoDepuisLibelle } from "@/server/albert/tools/libelles";
 
 const chantierContextSchema = z.object({
   id: chantierIdSchema,
@@ -18,16 +17,6 @@ const chantierContextSchema = z.object({
     .enum(["en_retard", "en_difficulte"])
     .optional()
     .describe("Statut du chantier si connu (en_retard ou en_difficulte)"),
-  niveau_de_confiance: z
-    .string()
-    .optional()
-    .describe(
-      "Libellé renvoyé par get_chantiers (ex. « Objectifs compromis »)",
-    ),
-  commentaire: z
-    .string()
-    .optional()
-    .describe("Commentaire de synthèse du chantier"),
 });
 
 export type ChantierContext = z.infer<typeof chantierContextSchema>;
@@ -209,21 +198,6 @@ export function verifierCarteAvecChantier({
   }
 }
 
-/**
- * Le sous-agent du dashboard attend encore des codes météo (SOLEIL…) pour
- * choisir l'emoji et le libellé : on lui reconvertit le libellé reçu. Un
- * libellé hors des quatre niveaux ne lui transmet pas de météo.
- */
-function pourLeSousAgent({
-  niveau_de_confiance,
-  ...chantier
-}: ChantierContext) {
-  const meteo = niveau_de_confiance
-    ? codeMeteoDepuisLibelle({ libelle: niveau_de_confiance })
-    : null;
-  return meteo ? { ...chantier, meteo } : chantier;
-}
-
 function buildSubagentPrompt(
   task: string,
   territoireCodes: string[],
@@ -235,9 +209,7 @@ function buildSubagentPrompt(
     "<context>",
     `territoire_codes: ${JSON.stringify(territoireCodes)}`,
     `jalons: ${JSON.stringify(jalons)}`,
-    ...(chantiers?.length
-      ? [`chantiers: ${JSON.stringify(chantiers.map(pourLeSousAgent))}`]
-      : []),
+    ...(chantiers?.length ? [`chantiers: ${JSON.stringify(chantiers)}`] : []),
     ...(indicateurs?.length
       ? [`indicateurs: ${JSON.stringify(indicateurs)}`]
       : []),
@@ -259,9 +231,10 @@ Ce qu'un dashboard sait afficher, et rien d'autre :
 - le taux d'avancement d'un territoire, la médiane et les valeurs remarquables (min, médiane, max) de ses sous-territoires ;
 - le nombre et la liste des chantiers en retard ou en difficulté d'un territoire ;
 - le tableau des indicateurs d'un chantier précis (VI, VA, VC, TA) ;
+- la météo et la synthèse des résultats d'un chantier précis sur un territoire ;
 - la carte de France d'un chantier précis, qui colore chaque région ou département selon le taux d'avancement, le niveau de confiance ou les propositions de valeur d'avancement de CE chantier ;
 - des courbes d'évolution dans le temps d'un indicateur précis (taux ou valeur d'avancement).
-Une carte compare les territoires pour un chantier : elle ne montre jamais les chantiers d'un territoire, et il n'existe pas de carte d'un département ou d'une région avec ses chantiers. Les cartes et le tableau des indicateurs exigent des chantiers identifiés, passés dans \`chantiers\`.
+Une carte compare les territoires pour un chantier : elle ne montre jamais les chantiers d'un territoire, et il n'existe pas de carte d'un département ou d'une région avec ses chantiers. Les cartes, le tableau des indicateurs et la synthèse des résultats exigent des chantiers identifiés, passés dans \`chantiers\`.
 Utilise-le pour : un dashboard, un cockpit, un tableau de bord, une cartographie, une courbe ou un graphique d'évolution.
 Ne l'utilise pas pour : un rendu absent de cette liste (répartition, histogramme, camembert, classement…) → clarify_with_choices, avec des alternatives réalisables.`,
       inputSchema: createDashboardInputSchema,

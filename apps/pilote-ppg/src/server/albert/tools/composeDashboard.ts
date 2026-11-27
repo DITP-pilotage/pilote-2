@@ -99,6 +99,18 @@ const widgetTableauIndicateursChantier = z
   })
   .strict();
 
+const widgetSyntheseDesResultats = z
+  .object({
+    type: z.literal("widget_synthese_des_resultats"),
+    chantier_id: chantierIdSchema,
+    territoire_code: territoireCodeSchema,
+    width: z
+      .union([z.literal(2), z.literal(4)])
+      .optional()
+      .describe("default_width=4, allowed_widths=[2,4]"),
+  })
+  .strict();
+
 const widgetListeChantiersEnRetard = z
   .object({
     type: z.literal("widget_liste_chantiers_en_retard"),
@@ -215,12 +227,6 @@ const widgetParagraph = z
       .describe(
         "Tableau de paragraphes. Chaque élément = un paragraphe séparé. JAMAIS de saut de ligne dans un élément.",
       ),
-    variant: z
-      .enum(["default", "warning"])
-      .optional()
-      .describe(
-        "default = neutre, warning = incohérence détectée (ex: chantier en retard mais météo favorable).",
-      ),
     width: z
       .union([z.literal(2), z.literal(4)])
       .optional()
@@ -260,6 +266,7 @@ const widgetInputSchema = z
     widgetNombreChantiersEnDifficulte,
     widgetValeursRemarquablesAvancement,
     widgetTableauIndicateursChantier,
+    widgetSyntheseDesResultats,
     widgetListeChantiersEnRetard,
     widgetListeChantiersEnDifficulte,
     widgetCartographieTauxAvancement,
