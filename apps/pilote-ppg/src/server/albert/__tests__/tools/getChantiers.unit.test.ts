@@ -2,10 +2,12 @@ import { describe, expect, test, vi } from "vitest";
 import { mock } from "vitest-mock-extended";
 import {
   classerChantiers,
+  collecterChantiers,
   createGetChantiersTool,
   getChantiersInputSchema,
   type GetChantiersInput,
   type GetChantiersOutput,
+  type GetChantiersToolOutput,
 } from "@/server/albert/tools/getChantiers";
 import type {
   ChantierResult,
@@ -51,7 +53,7 @@ const buildChantier = (id: string): ChantierResult => ({
 });
 
 // Le même chantier, tel que l'outil le renvoie : des libellés, pas des codes,
-// et sans commentaires territoriaux (get_chantier_commentaires les porte)
+// et aucun commentaire, synthèse comprise (get_chantier_commentaires les porte)
 const chantierRenvoye = (id: string) => ({
   chantier: {
     id,
@@ -70,11 +72,6 @@ const chantierRenvoye = (id: string) => ({
   niveau_de_confiance: "Objectifs compromis",
   est_en_retard: false,
   est_en_difficulte: true,
-  synthese: {
-    commentaire: "Deux postes restent vacants.",
-    date_commentaire: "2026-01-12",
-    auteur: personReference(AUTEUR_SYNTHESE_ID),
-  },
 });
 
 // La query ne filtre sur chantierIds que si la liste est non vide, comme GetChantiersQuery
@@ -97,6 +94,13 @@ const buildQuery = (chantiersDuTerritoire: string[]) =>
     ),
   });
 
+const territoireResolver = mock<TerritoireResolver>({
+  resoudre: async (perimetre: Perimetre) =>
+    perimetre.type === "SELECTION"
+      ? perimetre.territoire_codes
+      : ["NAT-FR", "REG-75"],
+});
+
 const buildTool = ({
   query,
   territoiresAccessibles,
@@ -106,12 +110,6 @@ const buildTool = ({
   territoiresAccessibles: string[];
   chantiersAccessibles: string[];
 }) => {
-  const territoireResolver = mock<TerritoireResolver>({
-    resoudre: async (perimetre: Perimetre) =>
-      perimetre.type === "SELECTION"
-        ? perimetre.territoire_codes
-        : ["NAT-FR", "REG-75"],
-  });
   return createGetChantiersTool({
     getChantiersQuery: query,
     territoireResolver,
@@ -127,7 +125,7 @@ const executeTool = async (
     tri?: GetChantiersInput["tri"];
     limite?: number;
   },
-): Promise<GetChantiersOutput> =>
+): Promise<GetChantiersToolOutput> =>
   tool.execute!(
     {
       jalon: 2026,
@@ -141,7 +139,59 @@ const executeTool = async (
       abortSignal: undefined,
       context: {},
     },
-  ) as Promise<GetChantiersOutput>;
+  ) as Promise<GetChantiersToolOutput>;
+
+describe("collecterChantiers", () => {
+  test("garde la synthèse, en texte, avec son auteur par sa référence", async () => {
+    // When
+    const sortie = await collecterChantiers({
+      input: {
+        perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
+        jalon: 2026,
+        view: "all",
+      },
+      getChantiersQuery: buildQuery(["CH-084"]),
+      territoireResolver,
+      territoiresAccessibles: ["REG-75"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // Then
+    expect(
+      sortie.resultats.flatMap((resultat) =>
+        resultat.chantiers.map((chantier) => chantier.synthese),
+      ),
+    ).toEqual([
+      {
+        commentaire: "Deux postes restent vacants.",
+        date_commentaire: "2026-01-12",
+        auteur: personReference(AUTEUR_SYNTHESE_ID),
+      },
+    ]);
+  });
+
+  test("hors périmètre, masque le commentaire, la date et l'auteur de la synthèse", async () => {
+    // When
+    const sortie = await collecterChantiers({
+      input: {
+        perimetre: { type: "SELECTION", territoire_codes: ["REG-75"] },
+        jalon: 2026,
+        view: "all",
+      },
+      getChantiersQuery: buildQuery(["CH-084"]),
+      territoireResolver,
+      territoiresAccessibles: ["REG-53"],
+      chantiersAccessibles: ["CH-084"],
+    });
+
+    // Then
+    expect(
+      sortie.resultats.flatMap((resultat) =>
+        resultat.chantiers.map((chantier) => chantier.synthese),
+      ),
+    ).toEqual([{ commentaire: null, date_commentaire: null }]);
+  });
+});
 
 describe("createGetChantiersTool execute", () => {
   test("sans chantier_ids, ne retourne que les chantiers accessibles à l'utilisateur", async () => {
@@ -241,7 +291,7 @@ describe("createGetChantiersTool execute", () => {
     expect(query.execute).not.toHaveBeenCalled();
   });
 
-  test("renvoie les libellés de la tendance, du niveau de confiance et de la maille de pilotage (D1), la synthèse en texte et les personnes par leur référence", async () => {
+  test("renvoie les libellés de la tendance, du niveau de confiance et de la maille de pilotage (D1) et les personnes par leur référence, sans la synthèse", async () => {
     // Given
     const tool = buildTool({
       query: buildQuery(["CH-084"]),
@@ -265,7 +315,7 @@ describe("createGetChantiersTool execute", () => {
     ]);
   });
 
-  test("hors périmètre, signale la restriction d'accès, garde le niveau de confiance et les directeurs de projet, masque la tendance, les commentaires et les personnes du territoire", async () => {
+  test("hors périmètre, signale la restriction d'accès, garde le niveau de confiance et les directeurs de projet, masque la tendance et les personnes du territoire, sans synthèse", async () => {
     // Given
     const tool = buildTool({
       query: buildQuery(["CH-084"]),
@@ -292,7 +342,6 @@ describe("createGetChantiersTool execute", () => {
             coordinateurs_territoriaux: [],
             tendance: null,
             est_en_difficulte: false,
-            synthese: { commentaire: null, date_commentaire: null },
           },
         ],
       },
@@ -358,9 +407,11 @@ describe("createGetChantiersTool execute", () => {
 });
 
 describe("classerChantiers", () => {
+  // classerChantiers opère sur la collecte, qui porte la synthèse
   const ligne = (id: string, ecart: number | null) => ({
     ...chantierRenvoye(id),
     ecart,
+    synthese: null,
   });
   const territoire = (
     territoire_code: string,

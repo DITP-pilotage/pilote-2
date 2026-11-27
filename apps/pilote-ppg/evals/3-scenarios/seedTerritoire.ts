@@ -32,7 +32,7 @@ export type SeededChantier = {
 
 // Date fixe : une date du jour rendrait les réponses différentes d'un run à
 // l'autre dès qu'Albert cite la date d'un commentaire.
-const DATE_SAISIE = new Date("2026-09-15T10:00:00Z");
+export const DATE_SAISIE = new Date("2026-09-15T10:00:00Z");
 
 /**
  * Sème un territoire complet à un jalon : ce que les outils de synthèse, de

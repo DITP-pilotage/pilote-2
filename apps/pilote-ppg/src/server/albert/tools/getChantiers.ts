@@ -146,6 +146,32 @@ export type GetChantiersOutput = {
   acces_refuse?: true;
 };
 
+/** Ce que l'outil donne au modèle : la collecte, sans la synthèse des résultats. */
+export type GetChantiersToolOutput = Omit<GetChantiersOutput, "resultats"> & {
+  resultats: (Omit<ResultatChantiers, "chantiers"> & {
+    chantiers: Omit<ChantierRenvoye, "synthese">[];
+  })[];
+};
+
+/**
+ * La synthèse des résultats reste dans la collecte, que lisent les encarts,
+ * mais pas dans ce que lit le modèle : il la prenait pour l'ensemble des
+ * commentaires et n'appelait pas `get_chantier_commentaires`.
+ */
+export function retirerSynthese(
+  sortie: GetChantiersOutput,
+): GetChantiersToolOutput {
+  return {
+    ...sortie,
+    resultats: sortie.resultats.map((resultat) => ({
+      ...resultat,
+      chantiers: resultat.chantiers.map(
+        ({ synthese: _synthese, ...chantier }) => chantier,
+      ),
+    })),
+  };
+}
+
 const NON_APPLICABLE_EN_RETARD_NAT_FR =
   "L'analyse des chantiers en retard ne peut pas être réalisée au niveau national.\n\nEn effet, cet indicateur repose sur une comparaison entre le taux d'avancement d'un chantier pour un territoire donné et la valeur médiane observée sur l'ensemble des autres territoires.";
 
@@ -398,14 +424,14 @@ export function createGetChantiersTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Renvoie les chantiers de chaque territoire du périmètre à un jalon. Pour chacun : taux d'avancement, écart à la médiane en points, tendance, niveau de confiance, s'il est en retard ou en difficulté, maille de pilotage, et le commentaire de la synthèse des résultats.
+      description: `Renvoie les chantiers de chaque territoire du périmètre à un jalon. Pour chacun : taux d'avancement, écart à la médiane en points, tendance, niveau de confiance, s'il est en retard ou en difficulté, et sa maille de pilotage.
 - \`view\`, \`tendance\` et \`chantier_ids\` se combinent.
 - \`non_applicable\` : les territoires où l'analyse demandée n'a pas de sens (pas de chantiers en retard au niveau national), avec la raison ; ce n'est pas une absence de résultat.
 - \`acces_refuse\` : l'utilisateur n'a accès à aucun des chantiers demandés.
-- \`acces_restreint\` : territoire hors de l'accès complet de l'utilisateur ; la tendance, le commentaire de synthèse et les personnes du territoire y sont masqués, ce n'est pas une absence de données.
+- \`acces_restreint\` : territoire hors de l'accès complet de l'utilisateur ; la tendance et les personnes du territoire y sont masquées, ce n'est pas une absence de données.
 - \`maille_de_pilotage\` null : la maille de pilotage du chantier n'est pas connue.
 - \`taux_avancement\` null : le taux d'avancement du chantier n'est pas calculé à ce jalon, en raison d'indicateurs non renseignés ; dis-le, sans le remplacer par un autre taux.
-- \`directeurs_projet\`, \`responsables_locaux\`, \`coordinateurs_territoriaux\` et l'\`auteur\` de la synthèse : les références des personnes, à recopier telles quelles pour les citer.
+- \`directeurs_projet\`, \`responsables_locaux\` et \`coordinateurs_territoriaux\` : les références des personnes, à recopier telles quelles pour les citer.
 - \`tri\` classe les chantiers tous territoires confondus ; \`limite\` (20 par défaut) garde les premiers.
 - \`total\` : le nombre de chantiers avant la limite. \`tronque\` : la liste est coupée ; dis-le (« les 20 plus en retard, sur 340 ») ou resserre la demande (vue, tendance, périmètre).
 Utilise-le pour : la situation d'un ou plusieurs chantiers (CH-XXX), « quels chantiers sont en retard, en difficulté, en baisse ? », « où ça coince ? », « les chantiers les plus en retard » (tri) ; un ensemble de territoires (« la Bretagne et ses départements », « toutes les régions », « tous les départements ») : un seul appel avec le \`perimetre\` adapté.
@@ -413,20 +439,22 @@ Ne l'utilise pas pour :
 - plusieurs catégories de signalement, ou une catégorie sans équivalent ici → get_chantiers_signales ;
 - les valeurs des indicateurs d'un chantier → get_indicateurs ;
 - les VA non à jour, les VI ou VC manquantes → get_indicateurs_a_completer ;
-- les commentaires d'un chantier (freins, actions, décisions, résultats…) → get_chantier_commentaires : ils ne sont pas ici.`,
+- les commentaires d'un chantier, synthèse des résultats comprise (freins, actions, décisions, résultats…) → get_chantier_commentaires.`,
       inputSchema: getChantiersInputSchema,
-      execute: async (input): Promise<GetChantiersOutput> =>
-        classerChantiers({
-          sortie: await collecterChantiers({
-            input,
-            getChantiersQuery,
-            territoireResolver,
-            territoiresAccessibles,
-            chantiersAccessibles,
+      execute: async (input): Promise<GetChantiersToolOutput> =>
+        retirerSynthese(
+          classerChantiers({
+            sortie: await collecterChantiers({
+              input,
+              getChantiersQuery,
+              territoireResolver,
+              territoiresAccessibles,
+              chantiersAccessibles,
+            }),
+            tri: input.tri,
+            limite: input.limite,
           }),
-          tri: input.tri,
-          limite: input.limite,
-        }),
+        ),
     });
   };
 }

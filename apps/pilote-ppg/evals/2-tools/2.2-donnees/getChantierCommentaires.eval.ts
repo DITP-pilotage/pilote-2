@@ -1,4 +1,6 @@
+import { fixtures } from "@/test/fixtures";
 import type { ToolCase } from "../../types";
+import { DATE_SAISIE } from "../../3-scenarios/seedTerritoire";
 import { toolSelectionEval } from "../toolSelectionEval";
 
 /**
@@ -22,9 +24,67 @@ import { toolSelectionEval } from "../toolSelectionEval";
  *
  * Les questions précisent le territoire, que l'outil exige. Les objectifs ne
  * sont pas territorialisés : les négatifs s'en passent.
+ *
+ * Les commentaires des territoires où un chantier est en difficulté (demande
+ * de recette) : `get_chantiers` trouve les territoires, puis
+ * `get_chantier_commentaires` lit tous leurs commentaires. L'agent se
+ * contentait de la synthèse des résultats que portait `get_chantiers`, et
+ * disait « sans commentaire » un territoire qui n'avait pas de synthèse. La
+ * suite sème donc une synthèse pour CH-006 en Bretagne : sans elle, l'agent
+ * n'a rien dont se contenter et le défaut ne se reproduit pas.
  */
 
+async function seedSyntheseCH006Bretagne() {
+  await fixtures.syntheseDesResultats({
+    chantier_id: "CH-006",
+    territoire_code: "REG-53",
+    maille: "REG",
+    code_insee: "53",
+    meteo: "ORAGE",
+    commentaire:
+      "Les recrutements de médecins prennent du retard : trois postes restent vacants. Le déploiement des maisons de santé est décalé au second semestre.",
+    date_creation: DATE_SAISIE,
+    date_modification: DATE_SAISIE,
+  });
+}
+
+const LIRE_LES_COMMENTAIRES_DE_CH006 = [
+  {
+    toolName: "get_chantiers",
+    input: { view: "en_difficulte", chantier_ids: ["CH-006"] },
+  },
+  {
+    toolName: "get_chantier_commentaires",
+    input: { chantier_id: "CH-006" },
+  },
+];
+
 const CASES: ToolCase[] = [
+  {
+    question:
+      "Fais-moi la synthèse des commentaires du CH-006 pour chaque région où il est en difficulté. Mets en évidence les sujets récurrents.",
+    reason:
+      "demande de recette : les régions en difficulté, puis tous leurs commentaires, pas la seule synthèse des résultats",
+    expected: LIRE_LES_COMMENTAIRES_DE_CH006,
+  },
+  {
+    question:
+      "Que disent les commentaires du CH-006 dans les régions où il est en difficulté ? Quels sujets reviennent ?",
+    reason: "même demande autrement formulée",
+    expected: LIRE_LES_COMMENTAIRES_DE_CH006,
+  },
+  {
+    question: "Quels chantiers sont en difficulté en Bretagne, et pourquoi ?",
+    reason:
+      "plusieurs chantiers : le « pourquoi » se lit dans les commentaires de chacun, pas dans la seule synthèse",
+    expected: [
+      { toolName: "get_chantiers", input: { view: "en_difficulte" } },
+      {
+        toolName: "get_chantier_commentaires",
+        input: { chantier_id: "CH-006" },
+      },
+    ],
+  },
   {
     question: "Qui a rédigé les commentaires du CH-004 au national ?",
     reason: "l'auteur d'un commentaire est porté par le commentaire (PIL-1860)",
@@ -124,4 +184,5 @@ toolSelectionEval({
   famille: "donnees",
   tool: "get_chantier_commentaires",
   cases: CASES,
+  seedSupplementaire: seedSyntheseCH006Bretagne,
 });

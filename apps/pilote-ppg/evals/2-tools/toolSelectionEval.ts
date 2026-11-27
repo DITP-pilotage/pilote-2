@@ -39,10 +39,13 @@ export function toolSelectionEval({
   famille,
   tool,
   cases,
+  seedSupplementaire,
 }: {
   famille: FamilleOutil;
   tool: string;
   cases: ToolCase[];
+  /** Données semées en plus du monde commun, pour cette seule suite. */
+  seedSupplementaire?: () => Promise<void>;
 }) {
   const world = seedWorldPerFile(async () => {
     const seeded = await seedEvalWorld();
@@ -60,6 +63,7 @@ export function toolSelectionEval({
     // L'outil du centre d'aide est toujours exposé : un cas négatif d'une
     // autre suite peut l'appeler, il doit trouver un vrai sommaire.
     await seedCentreAide();
+    await seedSupplementaire?.();
 
     return seeded;
   });

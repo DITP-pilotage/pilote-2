@@ -1,5 +1,4 @@
 import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
-import type { GetChantiersOutput } from "@/server/albert/tools/getChantiers";
 import type {
   GetTauxAvancementTerritoireOutput,
   GetTauxAvancementTerritoireResult,
@@ -44,10 +43,7 @@ export async function readGroundTruth({
     tauxAvancement.push(...taux.resultats);
 
     const lireVue = (view: "en_retard" | "en_difficulte") =>
-      executeTool<GetChantiersOutput>({
-        tool: tools.getChantiers,
-        input: { perimetre, jalon, view },
-      });
+      tools.collecterChantiers({ perimetre, jalon, view });
 
     chantiersEnRetard.push(...(await lireVue("en_retard")).resultats);
     chantiersEnDifficulte.push(...(await lireVue("en_difficulte")).resultats);
