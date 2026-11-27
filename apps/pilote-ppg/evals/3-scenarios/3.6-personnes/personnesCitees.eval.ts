@@ -81,8 +81,7 @@ scenarioEval({
     {
       question:
         "Qui a rédigé la synthèse des résultats du CH-005 en Bretagne, et qui l'a modifiée ?",
-      reason:
-        "Auteur et modificatrice de la synthèse, deux personnes ; seul get_chantier_commentaires renvoie la synthèse et ses auteurs",
+      reason: "Auteur et modificatrice de la synthèse, deux personnes",
       truthScope: { territoires: ["REG-53"] },
       expected: [
         {

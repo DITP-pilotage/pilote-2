@@ -3,7 +3,7 @@ import { getPrisma } from "@/server/framework/persistence/PrismaTransaction";
 import { fixtures } from "@/test/fixtures";
 import type { TypeContenuChantier } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { TerritoireRef } from "../seeds";
-import { indicateurDuChantier } from "../world";
+import { DATE_SAISIE, indicateurDuChantier } from "../world";
 
 export type Meteo = "SOLEIL" | "COUVERT" | "NUAGE" | "ORAGE";
 
@@ -29,10 +29,6 @@ export type SeededChantier = {
    */
   commentaires?: { type: TypeContenuChantier; contenu: string }[];
 };
-
-// Date fixe : une date du jour rendrait les réponses différentes d'un run à
-// l'autre dès qu'Albert cite la date d'un commentaire.
-export const DATE_SAISIE = new Date("2026-09-15T10:00:00Z");
 
 /**
  * Sème un territoire complet à un jalon : ce que les outils de synthèse, de
