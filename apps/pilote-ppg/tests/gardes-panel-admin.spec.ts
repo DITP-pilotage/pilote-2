@@ -13,6 +13,7 @@ const ADMIN_ONLY_PAGES = [
   "/panel-administrateur/albert",
   "/panel-administrateur/chantiers",
   `/panel-administrateur/chantiers/${CHANTIER_FOR_WRITES}`,
+  "/panel-administrateur/dimensions-matomo",
   "/panel-administrateur/gestion-token-api",
   "/panel-administrateur/habilitations-coordinateur",
   "/panel-administrateur/indicateurs",
@@ -115,6 +116,17 @@ test.describe("Pages du panel gardées par la seule session", () => {
       parentId: null,
     });
 
+    const dimensionsBefore = await prisma.analytics_dimension.findMany();
+    const dimension = await trpc.mutation("analytics.setDimensionSlot", {
+      dimension: "profil_pilote",
+      slot: 998,
+    });
+
+    expect(dimension.status).toBe(403);
+    expect(dimension.errorCode).toBe("ForbiddenError");
+    expect(await prisma.analytics_dimension.findMany()).toEqual(
+      dimensionsBefore,
+    );
     for (const refusal of [purgeLogsResult, featureFlips, nouveaute, article]) {
       expect(refusal.status).toBe(401);
       expect(refusal.errorCode).toBe("UnauthorizedError");
@@ -125,5 +137,22 @@ test.describe("Pages du panel gardées par la seule session", () => {
     expect(
       await prisma.article_centre_aide.count({ where: { id: articleId } }),
     ).toBe(0);
+  });
+});
+
+test.describe("Dimensions Matomo sans session", () => {
+  test("la correspondance se lit avant la connexion, mais pas une autre procédure du même lot", async ({
+    page,
+  }) => {
+    const trpc = new TrpcClient(page);
+
+    const slots = await trpc.query("analytics.dimensionSlots");
+    const batch = await page.request.get(
+      "/api/trpc/analytics.dimensionSlots,applicationLog.lister?batch=1",
+      { maxRedirects: 0 },
+    );
+
+    expect(slots.status).toBe(200);
+    expect(batch.status()).toBe(303);
   });
 });

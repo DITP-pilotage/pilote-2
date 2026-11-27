@@ -8,6 +8,7 @@ type RouteurTRPC = keyof (typeof appRouter)["_def"]["record"];
 
 const CATEGORIE_PAR_ROUTEUR_TRPC: Record<RouteurTRPC, CategorieLog> = {
   actualites: "contenu",
+  analytics: "systeme",
   annuaire: "utilisateur",
   albert: "albert",
   albertAccess: "albert",

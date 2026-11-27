@@ -111,6 +111,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/api/admin/unitaire") ||
     pathname.startsWith("/api/admin/acme-challenge") ||
     estAcmeChallenge ||
+    // Égalité stricte : un préfixe laisserait passer un batch commençant par cette lecture.
+    pathname === "/api/trpc/analytics.dimensionSlots" ||
     routesTrpcPubliques.some((route) => pathname.startsWith(route));
 
   if (!estRoutePublique) {

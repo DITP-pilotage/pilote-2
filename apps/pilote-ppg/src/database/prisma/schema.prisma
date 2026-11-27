@@ -1500,3 +1500,12 @@ model formation_periode_information_utilisateur {
   @@id([utilisateur_id, periode_id])
   @@schema("public")
 }
+
+model analytics_dimension {
+  cle        String   @id
+  slot       Int      @unique
+  created_at DateTime @default(now()) @db.Timestamptz
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  @@schema("public")
+}

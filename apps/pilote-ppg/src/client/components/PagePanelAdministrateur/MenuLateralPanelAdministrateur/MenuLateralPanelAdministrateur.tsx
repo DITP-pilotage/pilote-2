@@ -137,6 +137,12 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
       },
       {
         type: "item",
+        label: "Dimensions Matomo",
+        href: "/panel-administrateur/dimensions-matomo",
+        pageKey: "dimensions-matomo",
+      },
+      {
+        type: "item",
         label: "Logs applicatifs",
         href: "/panel-administrateur/logs",
         pageKey: "logs",
