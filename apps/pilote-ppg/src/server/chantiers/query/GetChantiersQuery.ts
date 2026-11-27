@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import { $Enums, type Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/framework/persistence/PrismaPilote";
 import { SEUIL_ECART_MEDIANE } from "@/shared/chantier/avancement/ecartMediane";
 
@@ -90,6 +90,7 @@ export class GetChantiersQuery {
           where: { jalon: params.jalon },
         },
         syntheses_des_resultats: {
+          where: { statut: $Enums.statut_publication.PUBLIE },
           orderBy: { date_modification: "desc" },
           take: 1,
         },
